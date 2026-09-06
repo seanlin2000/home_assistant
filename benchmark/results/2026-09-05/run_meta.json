@@ -101,5 +101,5 @@
   "chip": "Apple M1 Pro",
   "memory_bytes": "17179869184",
   "ollama_version": "ollama version is 0.33.3",
-  "git_commit": "e3336f5"
+  "git_commit": "3eb85b9"
 }
