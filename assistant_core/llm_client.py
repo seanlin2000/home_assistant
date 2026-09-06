@@ -36,12 +36,15 @@ class OllamaClient:
         started = time.perf_counter()
         first_token_at: float | None = None
         text_parts: list[str] = []
+        thinking_parts: list[str] = []
         tool_calls: list[ToolCall] = []
         last_chunk: ollama.ChatResponse | None = None
         async for chunk in await self._stream(messages, tools, policy):
             last_chunk = chunk
             if first_token_at is None and (chunk.message.content or chunk.message.tool_calls):
                 first_token_at = time.perf_counter()
+            if chunk.message.thinking:
+                thinking_parts.append(chunk.message.thinking)
             if chunk.message.content:
                 text_parts.append(chunk.message.content)
                 yield TextDelta(text=chunk.message.content)
@@ -51,7 +54,7 @@ class OllamaClient:
                 yield ToolCallRequest(call=call)
         content = "".join(text_parts)
         stats = ollama_stats(self._model, last_chunk, started, first_token_at)
-        yield Completion(message=Message(role=Role.ASSISTANT, content=content, tool_calls=tool_calls), stats=stats)
+        yield Completion(message=Message(role=Role.ASSISTANT, content=content, thinking="".join(thinking_parts), tool_calls=tool_calls), stats=stats)
 
     async def _stream(self, messages: list[Message], tools: list[ToolSpec], policy: AgentPolicy) -> AsyncIterator[ollama.ChatResponse]:
         request: dict[str, Any] = {

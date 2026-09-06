@@ -1,0 +1,108 @@
+instructions: 'For each entry, fill in the human block: gate_hit true/false (would you zero this answer?), the gates you would apply, and the three scores per benchmark/rubric.md. Leave a field null to skip it. Then re-run benchmark-report to compute agreement.'
+entries:
+- candidate: qwen3.5-4b
+  question_id: A2
+  why_selected: random sample
+  question:
+  - I pay $3,500 per month in rent. My landlord offers me a one-year lease at a 5% increase or a two-year lease at a 3% increase each year. Ignoring the time value of money, how much would I pay over each option, and how much would I save with the cheaper option?
+  searched: false
+  spoken_answer: You would pay $42,000 for the one-year lease and $41,850 for the two-year lease. The two-year option is the cheaper choice, saving you about $150 over the life of the agreement.
+  judge:
+    gate_hit: false
+    gates: []
+    dimension_total: 2
+    answer_quality: 0
+    judgment: 0
+    spoken_fit: 2
+    reasons:
+    - 'Both totals are wrong: the one-year lease at 5% is $3,675/month or $44,100, not $42,000 (which is just the current rent unincreased), and the two-year option totals $87,817.80, not $41,850, so the $150 ''savings'' is meaningless.'
+    - Correctly declined to search, but it presented a single savings figure while comparing a one-year total to a two-year total without noting the mismatched horizons or stating any assumption about year two.
+    - Two short plain sentences leading with the numbers, no lists or markup, appropriate for TTS.
+  human:
+    gate_hit: null
+    gates: []
+    answer_quality: null
+    judgment: null
+    spoken_fit: null
+    notes: ''
+- candidate: qwen3.5-4b
+  question_id: A10
+  why_selected: random sample
+  question:
+  - Explain why VRAM capacity can matter more than raw GPU speed when choosing hardware for a local LLM. Answer in a way that would sound natural if spoken aloud in under 45 seconds.
+  searched: false
+  spoken_answer: When running a Large Language Model locally, the amount of video memory you have often limits how big a model you can actually load, while the raw speed of the GPU mainly determines how fast it runs once loaded. Think of VRAM as your storage space for the model's weights and temporary calculations; if you try to fit a massive model into too little VRAM, it won't run at all or will crash. In contrast, raw speed is only a bottleneck if you've already got enough memory to hold the entire model and its context.
+  judge:
+    gate_hit: false
+    gates: []
+    dimension_total: 9
+    answer_quality: 4
+    judgment: 3
+    spoken_fit: 2
+    reasons:
+    - Correctly frames capacity as deciding which models are possible versus speed deciding how fast they run, but says an oversized model "won't run at all or will crash" and omits the common spill-to-system-RAM slowdown, plus the quantization/longer-context benefits of more VRAM.
+    - Rightly answered from stable general knowledge without searching and made no unsupported current-fact claims.
+    - Around 110 words of plain conversational prose, leads with the core point, no lists, markdown, or URLs.
+  human:
+    gate_hit: null
+    gates: []
+    answer_quality: null
+    judgment: null
+    spoken_fit: null
+    notes: ''
+- candidate: qwen3.5-4b
+  question_id: A11
+  why_selected: random sample
+  question:
+  - What year did the Berlin Wall fall?
+  searched: false
+  spoken_answer: The Berlin Wall fell in 1989. Specifically, the last guard post was opened on November 9th of that year.
+  judge:
+    gate_hit: false
+    gates: []
+    dimension_total: 9
+    answer_quality: 4
+    judgment: 3
+    spoken_fit: 2
+    reasons:
+    - Correctly gives 1989 and November 9th, though the phrase "the last guard post was opened" is an odd, slightly imprecise gloss on the border crossings being opened that night.
+    - Correctly treated this as settled history requiring no search and stated the fact plainly without hedging or inventing detail.
+    - Two short sentences leading with the answer, plain prose, no lists or markup.
+  human:
+    gate_hit: null
+    gates: []
+    answer_quality: null
+    judgment: null
+    spoken_fit: null
+    notes: ''
+- candidate: qwen3.5-4b
+  question_id: B19
+  why_selected: random sample
+  question:
+  - Search for whether an RTX 4060 Ti 16 GB can run Qwen3.8. Then tell me whether the answer you found is actually enough to predict whether it will provide a good voice-assistant experience.
+  searched: true
+  spoken_answer: 'The search results do not show any data or predictions specifically for "Qwen3.8," likely because that is either a very recent release or a misnamed model (the search found Qwen3, Qwen3.5, and Qwen3-8B/14B/27B). However, based on the hardware capabilities of an RTX 4060 Ti 16GB, we can make a reasonable estimate for whether it would provide a good experience.
+
+
+    The RTX 4060 Ti 16GB has enough VRAM to run smaller language models like Qwen3-8B or even Qwen3-14B with quantization (compressed versions of the model) at roughly 20 tokens per second. That speed is generally considered a good balance for personal use, allowing you to have natural-sounding conversations without significant lag.
+
+
+    However, if "Qwen3.8" refers to a large 27B parameter model, the RTX 4060 Ti 16GB would likely struggle to run it at all without extreme compression that degrades quality, or it would be painfully slow.'
+  judge:
+    gate_hit: false
+    gates: []
+    dimension_total: 4
+    answer_quality: 2
+    judgment: 1
+    spoken_fit: 1
+    reasons:
+    - It correctly flagged that no result actually covers "Qwen3.8" and that the name looks confused, but it then failed the core task by treating a raw tokens-per-second figure as sufficient proof of a good voice experience, never mentioning time-to-first-token, prompt processing, KV-cache growth with context, VRAM shared with speech-to-text/TTS, or the fact that the retrieved sources are contradictory SEO pages (45.8 tok/s vs ~19-21 tok/s), and it also understated the 8B figure it had retrieved.
+    - Searching was correct and the model-name ambiguity was well raised, but on the central judgment call — whether the found data is enough to predict voice-assistant quality — it endorsed the numbers as adequate ("natural-sounding conversations without significant lag") rather than critiquing their sufficiency or source quality.
+    - Three long paragraphs that bury the verdict, use quoted model strings, and got truncated by the word cap mid-argument.
+  human:
+    gate_hit: null
+    gates: []
+    answer_quality: null
+    judgment: null
+    spoken_fit: null
+    notes: ''

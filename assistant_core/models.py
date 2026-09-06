@@ -20,6 +20,7 @@ class ToolCall(BaseModel):
 class Message(BaseModel):
     role: Role
     content: str = ""
+    thinking: str = ""
     tool_calls: list[ToolCall] = Field(default_factory=list)
     tool_call_id: str | None = None
     tool_name: str | None = None
@@ -40,7 +41,7 @@ class AgentPolicy(BaseModel):
     max_output_tokens: int = 600
     word_budget: int = 200
     context_tokens: int = 16384
-    think: bool | None = None
+    think: bool | str | None = None
     effort: str | None = None
     filler_phrases: list[str] = Field(default_factory=lambda: list(DEFAULT_FILLER_PHRASES))
     tool_timeout_seconds: float = 30.0

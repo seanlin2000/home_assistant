@@ -25,6 +25,7 @@ candidates:
     label: Gemma 4 E4B, QAT int4
     provider: ollama
     model: gemma4:e4b-it-qat
+    think: false
   - key: qwen3.5-9b
     label: Qwen 3.5 9B, Q4_K_M
     provider: ollama
@@ -34,15 +35,18 @@ candidates:
     label: gpt-oss 20B, MXFP4
     provider: ollama
     model: gpt-oss:20b
+    think: low
   - key: gemma4-26b-a4b-iq3
     label: Gemma 4 26B-A4B, UD-IQ3_XXS (3-bit preview)
     provider: ollama
     model: hf.co/unsloth/gemma-4-26B-A4B-it-GGUF:UD-IQ3_XXS
+    think: false
     preview: true
   - key: gemma4-26b-a4b-iq4
     label: Gemma 4 26B-A4B, UD-IQ4_XS (preview, tight fit)
     provider: ollama
     model: hf.co/unsloth/gemma-4-26B-A4B-it-GGUF:UD-IQ4_XS
+    think: false
     preview: true
   - key: qwen3.6-35b-a3b-iq3
     label: Qwen 3.6 35B-A3B, UD-IQ3_XXS (3-bit preview)

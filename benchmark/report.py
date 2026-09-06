@@ -27,6 +27,9 @@ class CandidateReport:
     def maximum(self, category: Category | None = None) -> int:
         return 10 * sum(1 for score in self.scores if category is None or score.category == category)
 
+    def gated_question_count(self) -> int:
+        return sum(1 for score in self.scores if score.gates)
+
     def gate_counts(self) -> dict[Gate, int]:
         counts: dict[Gate, int] = {}
         for score in self.scores:
@@ -113,14 +116,14 @@ def render_summary_table(reports: list[CandidateReport], baseline: CandidateRepo
     lines = [
         "## Scores",
         "",
-        "| Candidate | Total | Category A | Category B | vs baseline | Gate failures | Quality /5 | Judgment /3 | Spoken /2 | Unjudged |",
+        "| Candidate | Total | Category A | Category B | vs baseline | Gated questions | Quality /5 | Judgment /3 | Spoken /2 | Unjudged |",
         "|---|---|---|---|---|---|---|---|---|---|",
     ]
     for report in sorted(reports, key=lambda item: item.total(), reverse=True):
         ratio = f"{report.total() / baseline.total():.0%}" if baseline and baseline.total() else "n/a"
         unjudged = len(report.scores) - len(report.judged())
         lines.append(
-            f"| {label(report)} | {report.total()}/{report.maximum()} | {report.total(Category.A)}/{report.maximum(Category.A)} | {report.total(Category.B)}/{report.maximum(Category.B)} | {ratio} | {sum(report.gate_counts().values())} | {report.mean_dimension('answer_quality'):.1f} | {report.mean_dimension('judgment'):.1f} | {report.mean_dimension('spoken_fit'):.1f} | {unjudged} |"
+            f"| {label(report)} | {report.total()}/{report.maximum()} | {report.total(Category.A)}/{report.maximum(Category.A)} | {report.total(Category.B)}/{report.maximum(Category.B)} | {ratio} | {report.gated_question_count()} | {report.mean_dimension('answer_quality'):.1f} | {report.mean_dimension('judgment'):.1f} | {report.mean_dimension('spoken_fit'):.1f} | {unjudged} |"
         )
     return "\n".join(lines)
 

@@ -70,7 +70,7 @@ class Candidate(BaseModel):
     label: str
     provider: str
     model: str
-    think: bool | None = None
+    think: bool | str | None = None
     effort: str | None = None
     preview: bool = False
     baseline: bool = False
