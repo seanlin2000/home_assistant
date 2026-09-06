@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It correctly reports from the GPCB excerpt that the RTX 5060 Ti 16GB has drifted past $500 and that the RX 9060 XT 16GB at about $450 is the only 16 GB card reliably under budget, but it never checks or names a concrete used NVIDIA listing even though the user said used hardware was acceptable.",
+  "judgment_reason": "It says plainly that the NVIDIA constraint cannot be met at $500 rather than recommending an over-budget card, and offers the AMD alternative and the used-market route as clearly labelled options.",
+  "spoken_fit_reason": "Three sentences of plain prose with prices spoken as words and no lists, tables, or URLs carried over from the excerpts."
+}

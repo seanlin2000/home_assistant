@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": false,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The headline refusal is defensible, but the user asked for the best hardware approach available today and the answer names no hardware and no prices, instead calling Llama 3.1 8B and Qwen2.5 7B 'the best available open-source models' and pointing at a 'Perplexity open-source stack', all asserted with zero tool calls behind them.",
+  "judgment_reason": "It did the thing the question was really testing, saying explicitly that the requirements cannot be met rather than quietly inflating the budget, and it flagged that the hybrid fallback 'won't be fully local', but it reached that verdict without checking today's hardware prices at all.",
+  "spoken_fit_reason": "About 120 words of plain prose leading with the refusal, no lists, markdown or URLs."
+}

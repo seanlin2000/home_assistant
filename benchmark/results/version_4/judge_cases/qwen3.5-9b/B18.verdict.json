@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It puts 'the Coder series models at 7B or 32B parameters' in one 17-20 GB bracket, then says Qwen 2.5 Coder 7B at Q4_K_M uses 10-11 GB when no excerpt supports that and the forum post puts the 7B download at 4.5 GB, and its speed tradeoff is backwards: it claims lower-bit quantization is slower because 'fewer bits per weight means more compute cycles', when decode is memory-bandwidth bound and smaller quants generally run faster.",
+  "judgment_reason": "It searched as instructed but issued a 2024-anchored query that returned mostly Coder-series pages, so it never engages with the current lineup the same results surfaced, such as Qwen 3.6 27B's headroom or the MoE expert-offload option for a 16 GB card.",
+  "spoken_fit_reason": "Roughly 300 words of dense quant strings like Q4_K_M and Q3_K_M with parenthetical VRAM ranges, which ran past the word cap so the listener never heard the actual recommendation."
+}

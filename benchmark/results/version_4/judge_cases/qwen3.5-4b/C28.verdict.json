@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The $2,398 monthly payment matches the sketch exactly, but it transposed the tool's own total interest of 463,353 into \"four hundred sixty-three thousand five hundred thirty-five\", an error too small to mislead on a figure the user asked for only roughly.",
+  "judgment_reason": "It called the amortization tool instead of estimating or searching, and reported both figures the user asked for without padding.",
+  "spoken_fit_reason": "One sentence with both amounts written out as words, which reads naturally aloud, though the fully spelled-out interest figure is a mouthful where \"about four hundred sixty-three thousand\" would have served."
+}

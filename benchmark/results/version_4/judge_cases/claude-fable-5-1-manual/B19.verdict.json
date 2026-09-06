@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The critical-reading half is excellent, correctly flagging that the ModelFit numbers are bandwidth estimates rather than measurements and that they say nothing about time to first word, prompt processing on long search results, thinking mode, or answer quality, but it never uses the retrieved Kingy table that answers the literal question, that Qwen3.8-27B on a 16 GB card is experiment-only with 24 GB the fit-first minimum.",
+  "judgment_reason": "Opened by admitting nothing tested that exact pairing, labelled its own answer a projection, and told the listener what to measure instead of predicting an experience it could not support.",
+  "spoken_fit_reason": "Plain prose with model and card names spelled out phonetically and no lists or URLs, though seven sentences is longer than the question needed."
+}

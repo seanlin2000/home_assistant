@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It reports $1,623.23 against a reference of roughly $19,091, because the growth_schedule call used 3 periods at 4 percent each on a single $500 rather than 36 monthly deposits at a monthly rate.",
+  "judgment_reason": "It repeated a figure that is less than a tenth of the $18,000 the user would have deposited over three years without noticing the result was impossible.",
+  "spoken_fit_reason": "One short sentence with the amount spoken in words, which would read cleanly aloud."
+}

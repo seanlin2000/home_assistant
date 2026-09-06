@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It covers only pickup pattern, placement, and room reverberation, omitting most of the reference sketch — the far-field array with beamforming, acoustic echo cancellation, a local wake-word path, speaker separation from the mic, and where the speech compute runs — and its advice to prefer a wide omnidirectional pattern over a directional one works against the beamforming approach far-field capture actually relies on.",
+  "judgment_reason": "It respected the no-product-names constraint and answered without searching, but presented the omnidirectional-versus-directional trade-off as settled with no caveat.",
+  "spoken_fit_reason": "Four sentences of plain prose that lead with the three areas, no brand names, lists, or markdown."
+}

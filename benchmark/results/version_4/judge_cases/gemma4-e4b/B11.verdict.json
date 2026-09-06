@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The 3.75 percent figure is traceable to the Trading Economics excerpt, but the second half of the question goes unanswered: it never uses the Forbes excerpt's 3.50 to 3.75 percent target range or the July hold to describe how the rate actually moved over the year, offering only that the Fed \"has been using interest rates to manage inflation\".",
+  "judgment_reason": "Searching was the right call for a live rate, but it padded the trend half with generic commentary instead of saying the retrieved sources gave it no year-long history.",
+  "spoken_fit_reason": "Two sentences of plain prose leading with the rate, no URLs, citation markers, or lists despite the bracketed sources in the tool output."
+}

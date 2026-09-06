@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The $2,398.20 payment and roughly $463,353 in total interest both match the reference sketch and come straight from the loan_payment tool result.",
+  "judgment_reason": "It answered both halves from a single correct tool call without searching and without inventing figures.",
+  "spoken_fit_reason": "Two sentences with every figure spelled out for speech and no formatting artifacts."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 0,
+  "spoken_fit": 1,
+  "answer_quality_reason": "Only the one-year figures ($3,675 and $44,100) are right; it leaves year one of the two-year lease at $3,500 with no increase, gets $85,260 instead of $87,817.80, and then reports a $41,160 'saving' that is really just the cost of a missing twelfth month times twelve.",
+  "judgment_reason": "It compared a one-year total against a two-year total as if they were interchangeable and stated no assumption about the unknown second-year renewal, which was the central judgment the question demanded.",
+  "spoken_fit_reason": "No markdown or lists, but a multi-paragraph arithmetic narration with inline parenthetical math that ran past the word cap and cut the conclusion off before the listener heard it."
+}

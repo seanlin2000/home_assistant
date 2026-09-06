@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It synthesizes the real mechanism from the excerpts rather than parroting them, naming HBM scarcity, TSMC CoWoS packaging, data center demand spilling into consumer cards and rising 3nm wafer cost, but skips the most current driver the same results surfaced, the GDDR7 crunch behind Nvidia's August 2026 price notice and the reported 30-40% cut to RTX 50-series output.",
+  "judgment_reason": "Searching was clearly right and no claim goes beyond the excerpts, but the query it issued was anchored to '2024' when the sources it needed are from 2026, which is why the freshest material stayed out of the answer.",
+  "spoken_fit_reason": "About 145 words of plain prose in one paragraph, leading with the cause and using no lists, URLs or citation markers."
+}

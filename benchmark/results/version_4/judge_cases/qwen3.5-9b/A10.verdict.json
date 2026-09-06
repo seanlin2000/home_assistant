@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It lands the core point that capacity is a hard gatekeeper while speed only sets how fast a model that already fits will run, but says a too-large model 'simply cannot run at all' rather than that it spills to slower memory and crawls, and never mentions that more memory also allows lighter quantization and longer context.",
+  "judgment_reason": "Answering from general knowledge was right, but the user asked for something speakable in under 45 seconds and it did not shape the response to that brief.",
+  "spoken_fit_reason": "Plain conversational prose with no lists or markup, but roughly 130 words runs past the under-45-seconds the user asked for."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Every figure matches the sketch (44,100; 3,605 and 43,260; 3,713.15 and 44,557.80; 87,817.80) and it gives both the 840 first-year comparison and a labelled two-year comparison at 90,405 versus 87,817.80.",
+  "judgment_reason": "It refused to state a single bare savings number, flagged that the second-year renewal on the one-year path is unknown, and explicitly labelled the five percent renewal as an assumption.",
+  "spoken_fit_reason": "Numbers are spelled out in words and delivered as flowing prose with no lists or markup, and the extra length is what the multi-option comparison required."
+}

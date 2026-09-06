@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It correctly explains that a model exceeding VRAM must swap to slower system RAM and bottlenecks regardless of processor speed, but does not mention that more memory also permits less aggressive quantization and longer context.",
+  "judgment_reason": "Answered from general knowledge without searching and stayed well inside the 120-word limit while honoring the spoken-aloud framing.",
+  "spoken_fit_reason": "Around ninety words of flowing prose with a working-desk analogy, no lists, URLs, or markdown."
+}

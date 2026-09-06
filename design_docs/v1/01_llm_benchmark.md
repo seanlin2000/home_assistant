@@ -247,3 +247,23 @@ The Q3_K_S preview (12.4 GB on disk, 13.7 GB loaded with context) kept only 8.3 
 
 The rubric the subagent reads is the same file the API judge received as its system prompt, and the case text is rendered by the same function. What differs: the API path enforced the verdict schema at decode time and ran at the API's default settings, while the subagent writes the JSON itself (malformed files are rejected on import and re-run) and grades with its own thinking budget. The comparison with pass 1 is therefore Opus against Opus, under close but not identical conditions.
 
+
+### Passes 3 and 4: where the router's directive lives, 2026-09-06
+
+Pass 2 showed Qwen 3.5 9B ignoring the calculator on every arithmetic question even though the router had appended the instruction to the user's message. Pass 3 (prompt 1.3) moved that directive into the system prompt for the turn and added a worked example, including a finished spoken answer. Pass 4 (prompt 1.4) kept the placement but trimmed each directive to the instruction and one example call, because in pass 3 the smaller models had started imitating the example's answer instead of making the call. Only the three small models ran under 1.3 and 1.4; the large models still wait for a prompt decision. Results folders were renamed from dates to `version_N` at the same time, and from pass 4 on the search backend is Startpage and Yahoo rather than Google, Bing, Brave, and DuckDuckGo (doc 03, section 13).
+
+| Candidate | Pass 2 (1.2, user-message note) | Pass 3 (1.3, system prompt with worked example) | Pass 4 (1.4, system prompt with example call) |
+|---|---|---|---|
+| Qwen 3.5 9B | 156 (A 72, B 39, C 45), calculator on 1 of 6 | 183 (A 80, B 56, C 47), calculator on 4 of 6 | 125 (A 60, B 18, C 47), calculator on 1 of 6 |
+| Qwen 3.5 4B | 151 (A 70, B 31, C 50) | 145 (A 62, B 36, C 47) | 162 (A 75, B 37, C 50) |
+| Gemma 4 E4B | 174 (A 74, B 58, C 42), searched 11 of 11 | 138 (A 72, B 34, C 32), searched 6 of 11, 4 empty answers | 162 (A 65, B 45, C 52), searched 8 of 11, 1 empty answer |
+| Hand-written reference | 226 | not judged (ran during the engine outage) | 241 |
+
+What the three passes say:
+
+- **Category B is noisy at one pass per model.** Qwen 3.5 9B's B score went 39, 56, 18 across three passes with the same questions, and in pass 4 six of its eleven B answers were gated for stating a current figure no excerpt supported. Search results differ from day to day, sampling runs at temperature 0.7, and the judge is a fresh Opus session each time. Swings of this size are larger than any effect a directive wording could plausibly have, so single passes cannot rank prompt variants on B. Categories A and C move far less and are where prompt effects can be read.
+- **The worked example is what made Qwen 3.5 9B call the calculator.** With it (pass 3) the model called the tools on four arithmetic questions; without it (passes 2 and 4) on one, and it did the digits itself, which is where its C losses come from (C24, C26, C27 wrong in pass 4). The one question where it did call a tool, the mortgage, was fully correct in both passes.
+- **Gemma 4 E4B reacts badly to the same block.** It searched every B question in pass 2 and skipped some in both system-prompt variants. Its empty answers have a cause in Ollama's server log: Gemma sometimes emits a tool call that Ollama's Gemma parser cannot read (for example an arithmetic expression left unquoted), the call and the reply are both dropped, and the harness records an empty answer. That is a Gemma-on-Ollama failure independent of the directive's wording.
+- **The reference ceiling is stable** (226, 241) and its losses are all in category B, where even a hand-written answer over the same excerpts drew three fabrication gates. The judge holds a firm line on stating anything the excerpts do not contain.
+
+Open decision before the large models run: keep prompt 1.4, or a 1.5 that restores the worked example for the calculate directive only (it helped the model that needed it and arithmetic questions are not where Gemma's problem was) while the search directive stays as the call alone.

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Matches the sketch, roughly half a kilowatt hour a day and about fourteen and a half over thirty days for about 4.32, with every rounding hedged by the word about.",
+  "judgment_reason": "Used the given price rather than assuming a rate, showed the intermediate steps, and noted standby draw as an addition without letting it muddy the requested figure.",
+  "spoken_fit_reason": "Leads with the dollar answer in one short sentence, then two more of plain prose with all numbers spelled out."
+}

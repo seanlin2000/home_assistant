@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It reaches the right conditional recommendation of 24 GB, but misstates the difference as \"that extra twenty-four gigabytes of VRAM\" when the step is 8 GB, and never quantifies what the $400 actually buys (roughly 13B-class to 30B-class models, or higher quantization and longer context).",
+  "judgment_reason": "It carried the prior turn forward without asking the user to restate the two machines and hedged the recommendation on intended model size, but left the size threshold vague as \"very small or optimized\" models.",
+  "spoken_fit_reason": "A single sentence that leads with the recommendation, spells out the numbers, and carries no lists or markdown."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The hardware verdict tracks the Kingy guide's 24 GB fit-first minimum and the spill-to-system-RAM warning, but the second half of the question goes underserved: it never notes that ModelFit states its tok/s figures are estimates rather than measured benchmarks, never raises time-to-first-token as the thing that actually decides a voice experience, and refers to 'the smaller Qwen3.8 variants' when the excerpts list only the 27B dense and the 2.4T MoE.",
+  "judgment_reason": "It searched as instructed and was honest that loading the model is not the same as a good experience, but it closed by asking which quantization the user plans to run instead of naming the latency evidence that was missing from the sources.",
+  "spoken_fit_reason": "About 110 words of plain prose that lead with the verdict, with no lists, URLs or markup."
+}

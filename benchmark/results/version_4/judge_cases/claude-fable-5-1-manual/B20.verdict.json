@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Prices are traceable, the 899 dollar M6 Mac mini with 16GB and the used 3090 at 750 to 950 before the rest of the build, and the memory-upgrade math matches the retrieved 200 and 400 dollar Apple RAM tiers, but claiming either box handles the ten to thirty billion parameter range overstates what a base 16GB Mac mini can hold.",
+  "judgment_reason": "Led with an explicit no on ChatGPT-like quality exactly as asked, flagged that the GPU alone nearly consumes the budget, and told the user to raise the budget deliberately rather than doing it quietly.",
+  "spoken_fit_reason": "Four sentences opening with the direct no, all prices and card names spoken as words, no lists or URLs."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The Qwen3.8-27B at UD-Q3_K_XL with 12.5 GiB of weights and 3.5 GiB left over versus a 14B at Q4_K_M around 9 GB with roughly 7 GB of KV headroom is faithful to excerpt [1] and genuinely explains the quality-versus-context tradeoff, but speed is one of the four axes the user named and the answer never mentions it despite the source table listing about 30 to 35 tokens per second for the 14B builds.",
+  "judgment_reason": "It searched as instructed, leaned on the one source that actually measured 16GB builds rather than the vaguer roundup posts, and was honest that the 27B fits only at 3-bit rather than claiming it runs at Q4.",
+  "spoken_fit_reason": "Markdown bold around Qwen3.8-27B and UD-Q3_K_XL reaches the spoken output, and quant tags like Q4_K_M and UD-Q3_K_XL read aloud as noise across roughly 230 words that the word cap then truncated."
+}

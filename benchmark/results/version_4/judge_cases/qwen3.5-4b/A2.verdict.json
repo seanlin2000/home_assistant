@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It compounded the rent monthly instead of annually, reporting $58,495.44 for one year and $124,107.43 for two against the sketch's 44,100 and 87,817.80, so every number spoken is wrong.",
+  "judgment_reason": "It presented $65,611.99 as a \"saving\" from comparing a one-year total against a two-year total without noting the options cover different lengths or that the second year of the one-year path is unknown.",
+  "spoken_fit_reason": "Three sentences of plain prose that lead with the totals, no lists or markup."
+}

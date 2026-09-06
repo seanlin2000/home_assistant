@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "No excerpt supports a custom wake word on the Voice Preview Edition specifically: the Nabu Casa page for that device lists only Hey Jarvis, Hey Mycroft and Okay Nabu, and the How-To Geek author it leans on ends by saying his on-device-wake-word speaker 'couldn't easily use a custom model' and that he tested on a Mac instead, yet the answer generalizes the openWakeWord streaming path to the device as settled fact.",
+  "judgment_reason": "It searched as instructed and did name and justify a source as asked, but it picked a blog walkthrough over the device-specific Nabu Casa documentation that was retrieved in the same call, and passed over the caveat inside that very blog post.",
+  "spoken_fit_reason": "About 100 words of plain prose in two short paragraphs, with no URLs, lists or citation markers, and it names the source in words as the user requested."
+}

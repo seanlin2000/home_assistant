@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It correctly says the claim is wrong because all weights must sit in VRAM regardless of how many activate per token, but overstates typical MoE size as \"often hundreds of billions\" and never gives the sketch's point that 4B active at 4-bit is only about 2 GB of per-token traffic, which is what makes it fast.",
+  "judgment_reason": "It rejected the false premise outright and then asked for the two things that actually decide the number, total parameter count and precision, instead of inventing a model size.",
+  "spoken_fit_reason": "One plain-prose paragraph that opens with \"That statement isn't technically correct\", no lists or markup, and the extra length is warranted by the request to explain exactly why."
+}

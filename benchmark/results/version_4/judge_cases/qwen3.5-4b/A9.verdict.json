@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It asks for origin, dates, trip length, budget, and interests and pins the ambiguity of \"warm\" with the Florida versus Thailand contrast, but omits the sketch's domestic-versus-international question, passport and visa status, and tolerance for crowds.",
+  "judgment_reason": "It named the assumptions to avoid, budget shape, travel style, and date flexibility, and never slipped into recommending a destination as though the question were already answerable.",
+  "spoken_fit_reason": "Plain prose with no lists, but roughly 200 words over two paragraphs, including a spoken-out \"e.g., solo vs. family, luxury vs. backpacking\" parenthetical."
+}

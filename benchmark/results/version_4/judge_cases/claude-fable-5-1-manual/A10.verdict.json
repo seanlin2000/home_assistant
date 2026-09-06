@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Contains every element of the sketch: a model that does not fit fails or spills to slower memory and crawls, speed only governs a model that already fits, and more memory buys higher precision and longer context.",
+  "judgment_reason": "Respected the under-45-seconds framing at roughly a hundred words and closed with the actionable ordering, buy memory first then speed, without inventing a budget or card.",
+  "spoken_fit_reason": "Four short sentences of plain prose leading with the thesis, no lists, markdown, or jargon that would trip a text-to-speech engine."
+}

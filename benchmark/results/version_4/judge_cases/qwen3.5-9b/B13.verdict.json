@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The destination ideas are reasonable general knowledge, but the user asked about current schedules and weather and the answer supplies neither, instead telling the listener to go check the boat schedule themselves.",
+  "judgment_reason": "It was right to search, but the excerpts returned only sunrise tables and a garbled BBC string with no usable forecast for tomorrow, and rather than saying so it opened with 'Based on the weather information' and asserted clouds with possible light rain that appears nowhere in what was retrieved.",
+  "spoken_fit_reason": "One ~110-word paragraph of plain prose with no lists, URLs or markup."
+}

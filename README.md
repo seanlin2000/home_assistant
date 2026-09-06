@@ -4,7 +4,7 @@ A voice assistant for a small studio apartment that keeps its data at home. Say 
 
 ## Status
 
-Phase 2 (proof of concept) is running. Benchmark passes 1 and 2 are complete (`benchmark/results/version_1/report.md`, `benchmark/results/version_2/report.md`); pass 3 moves the router's directive into the system prompt. Home Assistant OS runs in a VM on the Mac with our `studio_assistant` conversation agent deployed, Whisper and Kokoro served from the Mac, Piper and openWakeWord as add-ons, and a "Jarvis" Assist pipeline wired end to end. Typed questions through Home Assistant's conversation API answer from the local model, call the calculator, and search the web; the voice puck and music are not connected yet. The as-built state of each part is in `design_docs/v1/`, with departures from the original design in `design_docs/v1/DEVIATIONS.md`.
+Phase 2 (proof of concept) is running. Benchmark passes 1 to 4 are complete (`benchmark/results/version_N/report.md`); passes 3 and 4 tried two placements of the router's directive in the system prompt, and the large models have not yet run under either. Home Assistant OS runs in a VM on the Mac with our `studio_assistant` conversation agent deployed, Whisper and Kokoro served from the Mac, Piper and openWakeWord as add-ons, and a "Jarvis" Assist pipeline wired end to end. Typed questions through Home Assistant's conversation API answer from the local model, call the calculator, and search the web; the voice puck and music are not connected yet. The as-built state of each part is in `design_docs/v1/`, with departures from the original design in `design_docs/v1/DEVIATIONS.md`.
 
 ## How it fits together
 
@@ -44,12 +44,12 @@ Upgrade dependencies deliberately with `scripts/dev_setup.sh --upgrade`, review 
 
 ```
 scripts/searxng.sh up                                  # local search aggregator (Docker)
-uv run benchmark-run --run version_3 --candidate qwen3.5-9b   # one folder per pass of the agent; omit --candidate for every model
-uv run benchmark-judge version_3 --export              # write judge cases for the Opus subagent; --import reads its verdicts back
-uv run benchmark-report version_3                      # writes report.md and the review sheet
-uv run benchmark-report version_3 --compare version_2  # with a table against the previous pass
-uv run benchmark-manual claude-fable-5-1-manual --run version_3   # replay hand-written reference answers through the same loop
-uv run python scripts/benchmark_llm.py --run version_3 # raw tokens per second per model
+uv run benchmark-run --run version_4 --candidate qwen3.5-9b   # one folder per pass of the agent; omit --candidate for every model
+uv run benchmark-judge version_4 --export              # write judge cases for the Opus subagent; --import reads its verdicts back
+uv run benchmark-report version_4                      # writes report.md and the review sheet
+uv run benchmark-report version_4 --compare version_3  # with a table against the previous pass
+uv run benchmark-manual claude-fable-5-1-manual --run version_4   # replay hand-written reference answers through the same loop
+uv run python scripts/benchmark_llm.py --run version_4 # raw tokens per second per model
 ```
 
 ## License

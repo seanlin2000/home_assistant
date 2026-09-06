@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Names nearly every missing item in the sketch (origin, dates and length, a budget number, definition of warm, international travel and passport, companions, interests) and every assumption to avoid, including that warm means a beach and that public transport implies a big city.",
+  "judgment_reason": "Explicitly refuses to name a destination as if the answer were known and ends by saying it would ask the questions first, which is the judgment the question was probing.",
+  "spoken_fit_reason": "Five sentences of flowing prose with the missing-information list woven in rather than bulleted, and no markup or place names to mislead."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Hits every item in the sketch, including beamforming mic array with echo cancellation, open placement at seated head height, on-device wake word, a local box with enough memory to keep the speech models loaded, speaker-mic separation, and network reliability.",
+  "judgment_reason": "Honored the no-product-names constraint completely and ordered the considerations by impact instead of listing them flat, and correctly answered from stable knowledge without searching.",
+  "spoken_fit_reason": "Ordinals are spoken inline rather than as a bulleted list, and there is no markdown, URL, or brand name, though it runs long at seven sentences."
+}

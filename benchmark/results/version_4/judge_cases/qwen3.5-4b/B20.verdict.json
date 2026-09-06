@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It correctly says the ChatGPT-quality requirement cannot be met under $1,000 and grounds the Mac Mini M6 and RTX 5060 Ti prices in the excerpts, but contradicts itself by saying a 32B model needs \"at least 24GB of VRAM on a consumer GPU like the RTX 5060 Ti 16GB\", and ignores excerpt [1], a complete verified $1,000 build running 14B at 40 tokens per second, which is the direct answer to what hardware approach is best.",
+  "judgment_reason": "It did exactly what the user asked and refused to quietly inflate the budget, opening with \"currently impossible\", but then calls a $900 to $1,100 Mac Mini one that \"fits the budget\" without flagging the upper end, and never touches the web-search or microphone side of the build.",
+  "spoken_fit_reason": "Plain prose leading with the refusal, but roughly 230 words over three paragraphs whose third largely repeats the second, and the word cap cut it before the closing recommendation."
+}

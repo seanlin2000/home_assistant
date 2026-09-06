@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Both conversions match the sketch, about 22 degrees Celsius and about 3.1 miles, with the rounding signalled by the word about.",
+  "judgment_reason": "Used the conversion tool for both quantities and rounded to the precision a spoken answer needs without dropping accuracy.",
+  "spoken_fit_reason": "A single sentence answering both halves, numbers spelled out, nothing extra."
+}

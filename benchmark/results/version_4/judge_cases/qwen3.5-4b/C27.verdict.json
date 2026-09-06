@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "$4.32 for a 30-day month matches the reference sketch, and it restates the four hours a day and thirty cents per kilowatt hour the figure rests on.",
+  "judgment_reason": "It used the energy tool with the rate the user supplied rather than searching or assuming a price, and added no invented standby-power caveat.",
+  "spoken_fit_reason": "One sentence that leads with the dollar figure and spells the rate out in words for the speech engine."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Four dollars and thirty-two cents per month matches the reference sketch's 4.32 for a 30-day month, derived from the energy_cost tool with the user's own 120 watts, 4 hours, and 30 cents per kilowatt hour.",
+  "judgment_reason": "It used the tool rather than doing the arithmetic itself, needed no rate assumption because the price was given, and did not search.",
+  "spoken_fit_reason": "One sentence that leads with the figure in spoken dollars and cents, with no lists or markdown."
+}

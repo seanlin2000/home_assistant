@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 1,
+  "answer_quality_reason": "Qwen 3 8B and Qwen 3.6 27B are both traceable to the retrieved excerpts, but it ignores the concrete memory math the Spheron excerpt supplied (8B at FP16 needs the full 16 GB with no KV-cache room, FP8 drops it to about 8 GB) and offers only a generic textbook account of quantization instead of the quality-versus-memory-versus-speed tradeoffs the user asked for.",
+  "judgment_reason": "It searched as instructed and hedged the 27B recommendation on quantization, but never mentions that its own source puts that model at 22 GB, which is over the stated 16 GB card.",
+  "spoken_fit_reason": "Opens with a content-free \"depends heavily on\" hedge and closes with a long generic paragraph on quantization and speed, running well past what this listener needs even for a multi-part question."
+}

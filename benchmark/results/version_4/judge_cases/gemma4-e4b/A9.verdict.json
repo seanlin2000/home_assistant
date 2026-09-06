@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It names budget, travel dates, and the meaning of \"warm\" plus the beach-versus-city and solo-travel assumptions, but omits the departure location and trip length, which the sketch lists among the most important gaps.",
+  "judgment_reason": "It refuses to name any destination and answers the meta-question about missing information and unsafe assumptions exactly as asked.",
+  "spoken_fit_reason": "Two sentences of plain prose covering both halves of the question with no lists or markdown."
+}

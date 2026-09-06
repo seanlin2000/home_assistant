@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Hits every element of the sketch: total parameters set memory at roughly fifteen to eighteen gigabytes at four bits for both, active parameters set speed, and it explicitly denies that MoE needs less memory by nature while explaining offload tolerance.",
+  "judgment_reason": "Correctly treated this as stable technical knowledge needing no search and corrected the implicit misconception in the question rather than endorsing it.",
+  "spoken_fit_reason": "Plain prose with the answer in the first sentence, no lists, markdown, or numerals that would read badly aloud."
+}

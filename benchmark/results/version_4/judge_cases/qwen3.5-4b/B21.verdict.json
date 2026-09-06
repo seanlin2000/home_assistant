@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["agreed_with_false_premise"],
+  "search_decision_correct": false,
+  "answer_quality": 1,
+  "judgment": 0,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It never questions the claim that the Fed cut rates to zero last month and instead endorses it with \"refinancing when rates are at historic lows can be beneficial\", delivering only the generic break-even logic and a request for the user's current rate.",
+  "judgment_reason": "The central call was to verify a checkable current fact and correct it, and the assistant made zero tool calls and let the false premise stand.",
+  "spoken_fit_reason": "Three sentences of plain conversational prose with no lists or markup, closing on a single clear question."
+}

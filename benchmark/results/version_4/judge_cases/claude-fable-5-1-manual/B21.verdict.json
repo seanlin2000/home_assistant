@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Delivers every element of the sketch: a flat correction of the premise, the verified 3.63 percent effective rate from the Fed's own daily release with the note that officials are discussing a hike, then the refinance logic of current versus existing rate, closing costs and break-even, plus a request for the user's rate.",
+  "judgment_reason": "Searched rather than accepting the false premise, corrected it before answering, and asked for the one missing input instead of inventing a mortgage rate.",
+  "spoken_fit_reason": "Six short sentences of plain prose that open with the correction and end with a natural question, no lists or URLs."
+}

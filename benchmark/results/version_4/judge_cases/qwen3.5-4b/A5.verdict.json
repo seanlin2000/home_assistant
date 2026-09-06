@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It gets the mic array, beamforming, low latency, and reverberation points, but misses most of the sketch: echo cancellation, placement away from walls, a local wake-word chip, speaker quality and separation, where the compute runs, and always-on audio privacy, and substitutes an irrelevant battery-life point for them.",
+  "judgment_reason": "It honored the no-product-names constraint throughout, answered from general knowledge without searching, and kept the advice aimed at the stated priority of voice quality over automation.",
+  "spoken_fit_reason": "Two sentences of plain prose that open directly on the design considerations, with no lists, markdown, or brand names."
+}

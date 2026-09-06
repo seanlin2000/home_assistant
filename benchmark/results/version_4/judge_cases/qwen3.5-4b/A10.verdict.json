@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It lands the sketch's core point that a model too big for VRAM either fails or spills to far slower RAM and CPU, and that capacity gates what can run at all, but never mentions the secondary benefit of larger memory allowing lighter quantization and longer context.",
+  "judgment_reason": "It answered from general knowledge without a needless search and respected the 120-word cap, coming in around 117 words with no padding or hedging.",
+  "spoken_fit_reason": "Four conversational sentences, no lists or markup, and it closes on the memorable line that fitting the model is the first requirement before speed matters."
+}

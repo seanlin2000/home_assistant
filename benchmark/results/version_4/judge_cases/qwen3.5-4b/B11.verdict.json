@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The 3.50 to 3.75 percent target and the 3.63 percent effective rate are traceable to the H.15 and Polymarket excerpts, but the second half of the question is answered with \"the rate remained relatively stable\" over the last year, which no excerpt supports, and it never mentions the September 15-16 FOMC meeting the sources say is near a coin flip on a hike.",
+  "judgment_reason": "Searching was the right call for a rate that moves, but rather than saying the retrieved sources only covered recent weeks it asserted a twelve-month path it had no evidence for, and it garbled the upcoming September meeting as discussion \"earlier in the year\".",
+  "spoken_fit_reason": "Three sentences of plain prose leading with the rate, no URLs, citation markers, or lists."
+}

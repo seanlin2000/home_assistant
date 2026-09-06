@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The 38.5% share is right, but $2,850 raised by 4% is $2,964 and the answer states $2,960 flatly, with no wording to signal it is a rounded figure.",
+  "judgment_reason": "The only real call here was whether to search, and it correctly answered from arithmetic instead.",
+  "spoken_fit_reason": "Two short sentences that give each requested number directly, plain prose with no markup."
+}
