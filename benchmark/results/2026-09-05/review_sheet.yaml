@@ -28,7 +28,7 @@ entries:
 - candidate: qwen3.5-4b
   question_id: A10
   why_selected: random sample
-  question: &id009
+  question: &id010
   - Explain why VRAM capacity can matter more than raw GPU speed when choosing hardware for a local LLM. Answer in a way that would sound natural if spoken aloud in under 45 seconds.
   searched: false
   spoken_answer: When running a Large Language Model locally, the amount of video memory you have often limits how big a model you can actually load, while the raw speed of the GPU mainly determines how fast it runs once loaded. Think of VRAM as your storage space for the model's weights and temporary calculations; if you try to fit a massive model into too little VRAM, it won't run at all or will crash. In contrast, raw speed is only a bottleneck if you've already got enough memory to hold the entire model and its context.
@@ -344,7 +344,7 @@ entries:
 - candidate: gpt-oss-20b
   question_id: A7
   why_selected: random sample
-  question: &id008
+  question: &id009
   - I have a computer that consumes 50 watts when idle and 300 watts during active inference. If I interact with it for roughly one hour per day, estimate the monthly electricity cost. State your assumptions instead of pretending you know exactly how much time it spends under load.
   searched: false
   spoken_answer: If you use the computer for about one hour each day and leave it on the rest of the time, you’re drawing roughly 1.45 kilowatt‑hours per day – that’s the one hour at 300 watts plus 23 hours at 50 watts, all divided by a thousand. Over a typical 30‑day month that’s about 43.5 kilowatt‑hours. If you’re paying about thirteen cents per kilowatt‑hour, the monthly bill would come out near five and a half dollars. The key assumptions are the one‑hour active window, the 50‑watt idle draw, and the energy rate; if any of those change, the cost will shift accordingly.
@@ -598,7 +598,7 @@ entries:
 - candidate: gemma4-26b-a4b-iq4
   question_id: B21
   why_selected: random sample
-  question:
+  question: &id008
   - Since the Fed cut rates to zero last month, should I refinance my mortgage?
   searched: false
   spoken_answer: I'm actually not sure which month you're referring to, as the Federal Reserve hasn't cut rates to zero in quite some time. If you can tell me which specific rate cut you're looking at, I can help you run the numbers on whether refinancing makes sense for your situation.
@@ -614,6 +614,112 @@ entries:
     - It correctly rejected the false premise but never verified the actual current federal funds rate and gave none of the refinance logic (current mortgage rates versus the user's rate, closing costs, break-even), leaving the question effectively unanswered.
     - Good instinct to push back on the premise, but it failed to search to confirm the current rate and asked the user to name a rate cut rather than asking for the genuinely useful missing information, their current mortgage rate.
     - Two short sentences of plain prose, leads with the correction, no lists or markup.
+  human:
+    gate_hit: null
+    gates: []
+    answer_quality: null
+    judgment: null
+    spoken_fit: null
+    notes: ''
+- candidate: qwen3.6-35b-a3b-iq3
+  question_id: A1
+  why_selected: random sample
+  question: *id007
+  searched: false
+  spoken_answer: 'The short answer is that a Mixture of Experts model routes each input token to only a small subset of its total parameters, whereas a dense model uses all its parameters for every single token. This means the 16 GB GPU only needs to load the weights for the active experts into fast memory for one calculation, while the dense model requires the entire 30 billion parameters to be resident in memory at once, which far exceeds 16 GB.
+
+
+    To break down the memory difference, we have to look at how model weights are stored. A standard dense model with 30 billion parameters requires roughly 120 gigabytes of VRAM if you are using standard 4-bit quantization, which is the most common way to fit large models on consumer hardware. Even with aggressive quantization, you simply cannot fit all those numbers into a 16 GB card.
+
+
+    In contrast, the MoE model still has those 30 billion parameters total, but they are split across many different "experts." For any given prompt, the model might only activate two or four of those experts. So'
+  judge:
+    gate_hit: false
+    gates: []
+    dimension_total: 3
+    answer_quality: 1
+    judgment: 1
+    spoken_fit: 1
+    reasons:
+    - The answer asserts exactly the misconception the reference sketch warns against — that an MoE needs only the active experts resident in VRAM — and compounds it with a fabricated figure ("30 billion parameters requires roughly 120 gigabytes of VRAM ... using standard 4-bit quantization", off by roughly 8x), never distinguishing storage (total params) from compute (active params).
+    - Correctly chose not to search, but confidently stated a badly wrong VRAM number and never flagged the real conditions (aggressive quantization or CPU offload of idle experts) under which a 30B MoE fits 16 GB.
+    - Leads with a direct answer but runs three paragraphs and got truncated mid-sentence by the word cap, so the listener heard an unfinished explanation.
+  human:
+    gate_hit: null
+    gates: []
+    answer_quality: null
+    judgment: null
+    spoken_fit: null
+    notes: ''
+- candidate: qwen3.6-35b-a3b-iq3
+  question_id: A8
+  why_selected: random sample
+  question: *id006
+  searched: false
+  spoken_answer: I would recommend the second design, the one with a router and deterministic tools. It’s more reliable, faster, and cheaper because most daily commands are repetitive and don't need creative reasoning. Reserving the large model for complex questions saves costs and reduces errors on simple tasks.
+  judge:
+    gate_hit: false
+    gates: []
+    dimension_total: 7
+    answer_quality: 3
+    judgment: 2
+    spoken_fit: 2
+    reasons:
+    - 'It picks the router design with valid reasons (latency, cost, reliability on repetitive commands) but omits the sketch''s key counterpoints: routing errors and added complexity, and when a single large LLM is acceptable.'
+    - Correctly answered from general knowledge without searching and gave a clear recommendation, but glossed over the tradeoffs and conditions under which the simpler single-model design would be fine.
+    - Three plain sentences leading with the recommendation, no lists or markup — ideal for text-to-speech.
+  human:
+    gate_hit: null
+    gates: []
+    answer_quality: null
+    judgment: null
+    spoken_fit: null
+    notes: ''
+- candidate: qwen3.6-35b-a3b-iq3
+  question_id: A11
+  why_selected: random sample
+  question: *id005
+  searched: false
+  spoken_answer: The Berlin Wall fell in 1989.
+  judge:
+    gate_hit: false
+    gates: []
+    dimension_total: 10
+    answer_quality: 5
+    judgment: 3
+    spoken_fit: 2
+    reasons:
+    - Correctly states 1989, matching the reference sketch for settled history.
+    - Correctly answered from general knowledge without searching a stable historical fact.
+    - A single plain sentence that leads with the answer, ideal for TTS.
+  human:
+    gate_hit: null
+    gates: []
+    answer_quality: null
+    judgment: null
+    spoken_fit: null
+    notes: ''
+- candidate: qwen3.6-35b-a3b-iq3
+  question_id: B21
+  why_selected: random sample
+  question: *id008
+  searched: false
+  spoken_answer: 'I’m sorry, but I need to correct a misunderstanding in your question. The Federal Reserve has not cut rates to zero last month; current interest rates are significantly higher than that. Because the premise is incorrect, I cannot give you a specific recommendation based on a rate cut that didn''t happen.
+
+
+    To give you accurate advice, I would need to know your current mortgage rate and the current rates available in the market. Would you like me to look up today''s average mortgage rates so we can compare them to yours?'
+  judge:
+    gate_hit: true
+    gates:
+    - did_not_search_on_search_question
+    dimension_total: 7
+    answer_quality: 3
+    judgment: 2
+    spoken_fit: 2
+    reasons:
+    - It correctly rejected the false premise, but never verified the current federal funds rate and omitted the refinance logic (comparing current mortgage rates, closing costs, break-even time), only offering to look rates up later.
+    - Good pushback on the shaky premise and an appropriate request for the user's current rate, but it should have searched to confirm the rate rather than asserting the correction unverified and deferring the lookup.
+    - Plain prose, leads with the correction, no lists or URLs, and ends with a natural spoken follow-up question.
   human:
     gate_hit: null
     gates: []
@@ -648,7 +754,7 @@ entries:
 - candidate: claude-fable-5-1-manual
   question_id: A7
   why_selected: random sample
-  question: *id008
+  question: *id009
   searched: false
   spoken_answer: Roughly six to thirteen dollars a month, and here is the arithmetic. If the machine sits at fifty watts for twenty three hours and three hundred watts for one hour a day, that is about one point one five kilowatt hours idle plus zero point three under load, so one point four five kilowatt hours a day or around forty three and a half a month. At fifteen cents per kilowatt hour that is about six and a half dollars, at thirty cents about thirteen. Two caveats. I am assuming your electricity rate, and residential rates in the US range roughly between those numbers. And I am treating your hour of use as a full hour at three hundred watts, which overstates it, since a machine mostly waits for you even during an interactive session. The idle draw is the real cost driver here, about five sixths of the total.
   judge:
@@ -697,7 +803,7 @@ entries:
 - candidate: claude-fable-5-1-manual
   question_id: A10
   why_selected: random sample
-  question: *id009
+  question: *id010
   searched: false
   spoken_answer: Because memory decides whether a model runs at all, and speed only decides how fast it runs once it fits. If a model does not fit in your graphics memory, it either fails to load or spills into slower system memory and slows to a crawl, so a faster card with less memory can be strictly worse. More memory also means you can run the model at higher precision, which improves answer quality, and keep a longer conversation in context. So buy enough memory for the models you want first, then worry about speed.
   judge:

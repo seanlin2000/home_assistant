@@ -10,6 +10,7 @@ Read the answer, decide on gates and scores, then record them in review_sheet.ya
 - [gpt-oss-20b](#review-gpt-oss-20b): [A1](#review-gpt-oss-20b-a1), [A7](#review-gpt-oss-20b-a7), [B18](#review-gpt-oss-20b-b18), [B20](#review-gpt-oss-20b-b20)
 - [gemma4-26b-a4b-iq3](#review-gemma4-26b-a4b-iq3): [A4](#review-gemma4-26b-a4b-iq3-a4), [A8](#review-gemma4-26b-a4b-iq3-a8), [A11](#review-gemma4-26b-a4b-iq3-a11), [B19](#review-gemma4-26b-a4b-iq3-b19)
 - [gemma4-26b-a4b-iq4](#review-gemma4-26b-a4b-iq4): [A4](#review-gemma4-26b-a4b-iq4-a4), [A8](#review-gemma4-26b-a4b-iq4-a8), [B16](#review-gemma4-26b-a4b-iq4-b16), [B21](#review-gemma4-26b-a4b-iq4-b21)
+- [qwen3.6-35b-a3b-iq3](#review-qwen3-6-35b-a3b-iq3): [A1](#review-qwen3-6-35b-a3b-iq3-a1), [A8](#review-qwen3-6-35b-a3b-iq3-a8), [A11](#review-qwen3-6-35b-a3b-iq3-a11), [B21](#review-qwen3-6-35b-a3b-iq3-b21)
 - [claude-fable-5-1-manual](#review-claude-fable-5-1-manual): [A1](#review-claude-fable-5-1-manual-a1), [A7](#review-claude-fable-5-1-manual-a7), [A9](#review-claude-fable-5-1-manual-a9), [A10](#review-claude-fable-5-1-manual-a10)
 
 <a id="review-qwen3-5-4b"></a>
@@ -491,6 +492,90 @@ You should be cautious with advertised rents, though, because those numbers ofte
 - It correctly rejected the false premise but never verified the actual current federal funds rate and gave none of the refinance logic (current mortgage rates versus the user's rate, closing costs, break-even), leaving the question effectively unanswered.
 - Good instinct to push back on the premise, but it failed to search to confirm the current rate and asked the user to name a rate cut rather than asking for the genuinely useful missing information, their current mortgage rate.
 - Two short sentences of plain prose, leads with the correction, no lists or markup.
+
+[Back to top](#review-sheet)
+
+<a id="review-qwen3-6-35b-a3b-iq3"></a>
+
+## qwen3.6-35b-a3b-iq3 (4 to review)
+
+<a id="review-qwen3-6-35b-a3b-iq3-a1"></a>
+
+### qwen3.6-35b-a3b-iq3 / A1 (random sample)
+
+**Question:** Why can a 16 GB GPU sometimes run an MoE model with 30 billion total parameters, but not necessarily a 30 billion parameter dense model? Explain the difference between active parameters and the memory required to store the model.
+
+**Searched:** False
+
+**Spoken answer:**
+
+> The short answer is that a Mixture of Experts model routes each input token to only a small subset of its total parameters, whereas a dense model uses all its parameters for every single token. This means the 16 GB GPU only needs to load the weights for the active experts into fast memory for one calculation, while the dense model requires the entire 30 billion parameters to be resident in memory at once, which far exceeds 16 GB.
+
+To break down the memory difference, we have to look at how model weights are stored. A standard dense model with 30 billion parameters requires roughly 120 gigabytes of VRAM if you are using standard 4-bit quantization, which is the most common way to fit large models on consumer hardware. Even with aggressive quantization, you simply cannot fit all those numbers into a 16 GB card.
+
+In contrast, the MoE model still has those 30 billion parameters total, but they are split across many different "experts." For any given prompt, the model might only activate two or four of those experts. So
+
+**Judge:** gates=none, quality 1/5, judgment 1/3, spoken 1/2
+
+- The answer asserts exactly the misconception the reference sketch warns against — that an MoE needs only the active experts resident in VRAM — and compounds it with a fabricated figure ("30 billion parameters requires roughly 120 gigabytes of VRAM ... using standard 4-bit quantization", off by roughly 8x), never distinguishing storage (total params) from compute (active params).
+- Correctly chose not to search, but confidently stated a badly wrong VRAM number and never flagged the real conditions (aggressive quantization or CPU offload of idle experts) under which a 30B MoE fits 16 GB.
+- Leads with a direct answer but runs three paragraphs and got truncated mid-sentence by the word cap, so the listener heard an unfinished explanation.
+
+<a id="review-qwen3-6-35b-a3b-iq3-a8"></a>
+
+### qwen3.6-35b-a3b-iq3 / A8 (random sample)
+
+**Question:** For a personal AI assistant, compare these two designs: one large LLM handles every request, versus a smaller router that sends simple commands to deterministic tools and only uses a larger LLM for complex questions. Which would you recommend and why?
+
+**Searched:** False
+
+**Spoken answer:**
+
+> I would recommend the second design, the one with a router and deterministic tools. It’s more reliable, faster, and cheaper because most daily commands are repetitive and don't need creative reasoning. Reserving the large model for complex questions saves costs and reduces errors on simple tasks.
+
+**Judge:** gates=none, quality 3/5, judgment 2/3, spoken 2/2
+
+- It picks the router design with valid reasons (latency, cost, reliability on repetitive commands) but omits the sketch's key counterpoints: routing errors and added complexity, and when a single large LLM is acceptable.
+- Correctly answered from general knowledge without searching and gave a clear recommendation, but glossed over the tradeoffs and conditions under which the simpler single-model design would be fine.
+- Three plain sentences leading with the recommendation, no lists or markup — ideal for text-to-speech.
+
+<a id="review-qwen3-6-35b-a3b-iq3-a11"></a>
+
+### qwen3.6-35b-a3b-iq3 / A11 (random sample)
+
+**Question:** What year did the Berlin Wall fall?
+
+**Searched:** False
+
+**Spoken answer:**
+
+> The Berlin Wall fell in 1989.
+
+**Judge:** gates=none, quality 5/5, judgment 3/3, spoken 2/2
+
+- Correctly states 1989, matching the reference sketch for settled history.
+- Correctly answered from general knowledge without searching a stable historical fact.
+- A single plain sentence that leads with the answer, ideal for TTS.
+
+<a id="review-qwen3-6-35b-a3b-iq3-b21"></a>
+
+### qwen3.6-35b-a3b-iq3 / B21 (random sample)
+
+**Question:** Since the Fed cut rates to zero last month, should I refinance my mortgage?
+
+**Searched:** False
+
+**Spoken answer:**
+
+> I’m sorry, but I need to correct a misunderstanding in your question. The Federal Reserve has not cut rates to zero last month; current interest rates are significantly higher than that. Because the premise is incorrect, I cannot give you a specific recommendation based on a rate cut that didn't happen.
+
+To give you accurate advice, I would need to know your current mortgage rate and the current rates available in the market. Would you like me to look up today's average mortgage rates so we can compare them to yours?
+
+**Judge:** gates=['did_not_search_on_search_question'], quality 3/5, judgment 2/3, spoken 2/2
+
+- It correctly rejected the false premise, but never verified the current federal funds rate and omitted the refinance logic (comparing current mortgage rates, closing costs, break-even time), only offering to look rates up later.
+- Good pushback on the shaky premise and an appropriate request for the user's current rate, but it should have searched to confirm the rate rather than asserting the correction unverified and deferring the lookup.
+- Plain prose, leads with the correction, no lists or URLs, and ends with a natural spoken follow-up question.
 
 [Back to top](#review-sheet)
 
