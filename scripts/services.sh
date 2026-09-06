@@ -84,7 +84,7 @@ install_agents() {
     write_plist mcp "$PROJECT_DIR/.venv/bin/web-search-mcp"
     ENV_KEYS=() ENV_VALUES=()
     write_plist whisper "$PROJECT_DIR/.venv/bin/wyoming-mlx-whisper" --uri tcp://0.0.0.0:10300 --model mlx-community/whisper-large-v3-turbo --language en
-    write_plist kokoro "$PROJECT_DIR/.venv/bin/wyoming-kokoro-torch" --uri tcp://0.0.0.0:10210 --voice af_heart --data-dir "$HOME/.cache/wyoming-kokoro" --streaming --device cpu
+    write_plist kokoro "$PROJECT_DIR/.venv/bin/kokoro-server" --uri tcp://0.0.0.0:10210 --voice af_heart --data-dir "$HOME/.cache/wyoming-kokoro" --streaming --device cpu
     start_agents
 }
 

@@ -57,9 +57,7 @@ async def tts(args: argparse.Namespace) -> None:
             event = await client.read_event()
             if event is None:
                 break
-            if AudioStart.is_type(event.type):
-                first_audio_at = first_audio_at or time.perf_counter()
-            elif AudioChunk.is_type(event.type):
+            if AudioChunk.is_type(event.type):
                 first_audio_at = first_audio_at or time.perf_counter()
                 chunks.append(AudioChunk.from_event(event))
             elif AudioStop.is_type(event.type):
