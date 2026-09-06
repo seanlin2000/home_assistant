@@ -215,3 +215,7 @@ How to read a 3-bit preview: if it scores near the frontier baseline, that is st
 - Review sheet: a seeded 20% sample per candidate plus every case where the judge's view of the search decision disagrees with the harness. Human fields are preserved across re-renders.
 - The harness starts `web_search_mcp` as a subprocess with `WEB_SEARCH_CACHE_DIR=results/D/cache`, so every candidate in a run sees identical search results.
 - Memory fit is read from Ollama's `/api/ps` after a warm-up call that uses the run's context length, so the first question does not pay a model reload.
+
+### Prompt version 1.2 and the calculator tools, 2026-09-06
+
+All 2026-09-05 results were produced with prompt version 1.1 and only the three search tools. On 2026-09-06 the MCP server gained eight calculator tools (doc 03, section 11) and the system prompt gained a rule that multi-step arithmetic must go through them. The fairness rule still holds within a run date: every candidate on a given date sees the same prompt and the same tool list, and `run_meta.json` records the prompt version. Calculator calls do not count as searches for the gates. The first use is a rerun of A2 and A7 for the candidates that fit the laptop, to measure the change on the questions it targets before rerunning the whole set.

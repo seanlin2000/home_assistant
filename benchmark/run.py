@@ -18,6 +18,7 @@ from assistant_core import agent_loop
 from assistant_core.anthropic_client import AnthropicClient
 from assistant_core.llm_client import LLMClient, OllamaClient
 from assistant_core.models import AgentPolicy, Done, Message, Role, Transcript
+from assistant_core.prompts import PROMPT_VERSION
 from assistant_core.tools import McpToolBox
 from benchmark.costs import estimate_cost_usd
 from benchmark.mcp_process import McpServerProcess
@@ -70,6 +71,7 @@ def write_run_metadata(run_dir: Path, config: BenchmarkConfig, question_set: Que
     run_dir.mkdir(parents=True, exist_ok=True)
     metadata = {
         "question_set_version": question_set.version,
+        "prompt_version": PROMPT_VERSION,
         "policy": config.policy.model_dump(),
         "candidates": [candidate.model_dump() for candidate in config.candidates],
         "machine": platform.platform(),

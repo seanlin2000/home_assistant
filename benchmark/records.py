@@ -29,6 +29,8 @@ class Gate(StrEnum):
     RUN_ERROR = "run_error"
 
 
+SEARCH_TOOL_NAMES = frozenset({"search_and_read", "web_search", "fetch_page"})
+
 JUDGE_GATES = (Gate.FABRICATED_CURRENT_FACT, Gate.VIOLATED_EXPLICIT_CONSTRAINT, Gate.PRESENTED_ESTIMATE_AS_FACT, Gate.LOST_PRIOR_TURN_CONTEXT, Gate.AGREED_WITH_FALSE_PREMISE)
 
 
@@ -129,7 +131,11 @@ class QuestionResult(BaseModel):
 
     @property
     def searched(self) -> bool:
-        return any(transcript.tool_exchanges for transcript in self.turns)
+        return any(exchange.call.name in SEARCH_TOOL_NAMES for transcript in self.turns for exchange in transcript.tool_exchanges)
+
+    @property
+    def calculator_call_count(self) -> int:
+        return sum(1 for transcript in self.turns for exchange in transcript.tool_exchanges if exchange.call.name not in SEARCH_TOOL_NAMES)
 
     @property
     def tool_call_count(self) -> int:

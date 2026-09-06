@@ -14,6 +14,7 @@ Phase 0. The design is written and frozen in `design_docs/v0/`. No code yet. The
                                    └──▶ our conversation agent ──▶ Ollama + local model
                                                  │                       │ tool call
                                                  │                 web_search_mcp ──▶ SearXNG ──▶ the web
+                                                 │                 (+ calculator_mcp tools, same server)
                                                  └──▶ Kokoro / Piper ──▶ puck speaker
   Music Assistant + Spotify ──▶ Sonos
 ```

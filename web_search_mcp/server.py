@@ -1,7 +1,8 @@
-"""Three tools over streamable HTTP: search_and_read (what small models should use), web_search, and fetch_page."""
+"""The agent's tool server over streamable HTTP: search_and_read (what small models should use), web_search, fetch_page, and the calculator tools."""
 
 from mcp.server.mcpserver import MCPServer
 
+from calculator_mcp.register import register_calculator_tools
 from web_search_mcp.page_extractor import PageExcerpt, PageExtractor
 from web_search_mcp.query_cache import QueryCache
 from web_search_mcp.searxng_client import SearchResult, SearxngClient
@@ -12,7 +13,10 @@ def build_server(settings: SearchSettings, searxng: SearxngClient | None = None,
     cache = QueryCache(settings.cache_dir)
     searxng = searxng or SearxngClient(settings, cache)
     extractor = extractor or PageExtractor(settings, cache)
-    server = MCPServer("web-search", instructions="Web search backed by a local SearXNG instance. Prefer search_and_read for questions; it returns readable excerpts from the top pages.")
+    server = MCPServer(
+        "assistant-tools",
+        instructions="Web search backed by a local SearXNG instance plus exact calculator tools. Prefer search_and_read for questions about the world; use the calculator tools for any arithmetic.",
+    )
 
     @server.tool()
     async def search_and_read(query: str) -> str:
@@ -35,6 +39,7 @@ def build_server(settings: SearchSettings, searxng: SearxngClient | None = None,
             return f"Could not extract readable text from {url}."
         return " ".join(text.split()[: settings.words_per_page * 2])
 
+    register_calculator_tools(server)
     return server
 
 

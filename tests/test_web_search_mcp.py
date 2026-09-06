@@ -24,7 +24,8 @@ async def test_tools_are_listed_and_callable_in_process() -> None:
     server = build_server(SearchSettings(), searxng=FakeSearxng(), extractor=FakeExtractor())
     async with McpToolBox(server) as toolbox:
         names = [spec.name for spec in await toolbox.list_tools()]
-        assert names == ["search_and_read", "web_search", "fetch_page"]
+        assert names[:3] == ["search_and_read", "web_search", "fetch_page"]
+        assert "calculate" in names and "convert" in names
         assert "query" in (await toolbox.list_tools())[0].input_schema["properties"]
         grounded = await toolbox.call(ToolCall(id="1", name="search_and_read", arguments={"query": "fed funds rate"}))
         assert grounded.startswith('Read 1 of 1 results for "fed funds rate".')

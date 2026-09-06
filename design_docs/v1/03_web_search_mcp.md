@@ -110,3 +110,32 @@ The two lower-level tools exist for flexibility: `web_search` returns only the r
 - Defaults: 4 pages read, 600 words per page, 2,000 words total, 6 s fetch timeout, social networks and hard paywalls skipped, tables kept during extraction because rate and price pages keep their numbers in tables.
 - Measured on the prototype: a `search_and_read` call against live SearXNG took about 7 s and returned about 2,000 words from 4 of 28 results; a cached repeat returned instantly with identical text.
 - SearXNG runs from `docker/searxng/docker-compose.yml` with `scripts/searxng.sh up|down|status|logs`; the secret is generated into `docker/searxng/.env`, which git ignores. Google, Brave, and DuckDuckGo all returned results on the first day; Bing is configured but was not observed in the first samples.
+
+## 11. Calculator tools, added 2026-09-06
+
+The same MCP server now also publishes eight calculator tools from the `calculator_mcp` package. The motivation is benchmark question A2 (a lease with a 5 percent rise versus two 3 percent rises): every local model set the problem up correctly and then got the digits wrong, because a language model predicts the next token and does not carry. A calculator turns the arithmetic into a lookup the model only has to describe.
+
+```
+  model (Ollama)                     MCP server, one process, one port 8765
+  ┌─────────────────────┐  tools/list  ┌──────────────────────────────────────────┐
+  │ sees 11 tool schemas│◀────────────│ web_search_mcp.server.build_server        │
+  │ system prompt says: │             │   search_and_read / web_search / fetch_page│──▶ SearXNG
+  │ "never do multi-step│  tools/call │   register_calculator_tools(server)        │
+  │  arithmetic yourself│────────────▶│     calculate  percent  convert            │
+  └─────────────────────┘             │     growth_schedule  energy_cost           │
+        ▲  tool result:               │     loan_payment  break_even  date_math    │──▶ calculator_mcp.functions (pure Python)
+        │  "result: 87,817.80         └──────────────────────────────────────────┘
+        │   spoken: starting from 3,500 ... cumulative total is 87,817.80
+        │   schedule: period 1: 3,605 each, 43,260 for the period ..."
+```
+
+**How the model decides to call one.** There is no router. The MCP server publishes each tool's name, description, and JSON argument schema; the agent loop copies that list into every chat request; the model reads it like any other text and, at each step, either writes prose or emits a structured tool call. The description is therefore the routing rule, so each one says when to use it ("for any calculation with more than one step and always for money"), and the system prompt repeats the rule in its own words. Ollama's chat API has no way to force a tool call, so the decision is always the model's.
+
+**Design rules for the functions** (`calculator_mcp/functions.py`):
+
+- `calculate(expression)` evaluates a whitelisted Python AST: numbers, `+ - * / // % **`, parentheses, percent literals like `15%`, thousands separators and `$` signs, and `round sqrt abs min max log exp floor ceil`. Anything else (names, attribute access, calls outside the list, huge exponents, division by zero) raises a `CalculatorError` whose message tells the model what is allowed. It is never `eval`.
+- The other tools are shaped for spoken questions: `percent(kind, a, b)`, `convert(value, from_unit, to_unit)` over a fixed unit table (temperature handled as an affine conversion), `growth_schedule` (compounding laid out period by period), `energy_cost` (watts, hours a day, price per kilowatt hour, idle watts), `loan_payment`, `break_even`, and `date_math`.
+- Every tool returns the exact number first and a spoken sentence second; rounding happens only in the sentence. Errors return as text starting with `Calculator error:` so a model can correct its arguments and try again instead of the loop failing.
+- No currency conversion (needs live rates, so it belongs to search) and no statistics (no data source).
+
+**Benchmark bookkeeping.** `QuestionResult.searched` in `benchmark/records.py` now counts only the three search tools, so a calculator call on a Category A question does not trip the "searched on a no-search question" gate. The system prompt is version 1.2 and `run_meta.json` records the prompt version, because results under 1.1 and 1.2 are not directly comparable.
