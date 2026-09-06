@@ -247,14 +247,37 @@ REVIEW_INSTRUCTIONS = "For each entry, fill in the human block: gate_hit true/fa
 
 
 def render_review_markdown(entries: list[dict]) -> str:
-    parts = ["# Review sheet\n\nRead the answer, decide on gates and scores, then record them in review_sheet.yaml."]
+    by_candidate: dict[str, list[dict]] = {}
     for entry in entries:
-        judge = entry["judge"]
-        parts.append(
-            f"## {entry['candidate']} / {entry['question_id']} ({entry['why_selected']})\n\n**Question:** {' / '.join(entry['question'])}\n\n**Searched:** {entry['searched']}\n\n**Spoken answer:**\n\n> {entry['spoken_answer']}\n\n**Judge:** gates={judge['gates'] or 'none'}, quality {judge['answer_quality']}/5, judgment {judge['judgment']}/3, spoken {judge['spoken_fit']}/2\n\n"
-            + "\n".join(f"- {reason}" for reason in judge["reasons"])
-        )
+        by_candidate.setdefault(entry["candidate"], []).append(entry)
+    parts = ["# Review sheet\n\nRead the answer, decide on gates and scores, then record them in review_sheet.yaml.", render_review_contents(by_candidate)]
+    for candidate, candidate_entries in by_candidate.items():
+        parts.append(f'<a id="{anchor(candidate)}"></a>\n\n## {candidate} ({len(candidate_entries)} to review)')
+        parts.extend(render_review_entry(entry) for entry in candidate_entries)
+        parts.append("[Back to top](#review-sheet)")
     return "\n\n".join(parts) + "\n"
+
+
+def render_review_contents(by_candidate: dict[str, list[dict]]) -> str:
+    lines = ["## Contents", ""]
+    for candidate, candidate_entries in by_candidate.items():
+        question_links = ", ".join(f"[{entry['question_id']}](#{anchor(candidate, entry['question_id'])})" for entry in candidate_entries)
+        lines.append(f"- [{candidate}](#{anchor(candidate)}): {question_links}")
+    return "\n".join(lines)
+
+
+def render_review_entry(entry: dict) -> str:
+    judge = entry["judge"]
+    return (
+        f'<a id="{anchor(entry["candidate"], entry["question_id"])}"></a>\n\n'
+        f"### {entry['candidate']} / {entry['question_id']} ({entry['why_selected']})\n\n**Question:** {' / '.join(entry['question'])}\n\n**Searched:** {entry['searched']}\n\n**Spoken answer:**\n\n> {entry['spoken_answer']}\n\n**Judge:** gates={judge['gates'] or 'none'}, quality {judge['answer_quality']}/5, judgment {judge['judgment']}/3, spoken {judge['spoken_fit']}/2\n\n"
+        + "\n".join(f"- {reason}" for reason in judge["reasons"])
+    )
+
+
+def anchor(candidate: str, question_id: str | None = None) -> str:
+    slug = candidate.replace(".", "-")
+    return f"review-{slug}" if question_id is None else f"review-{slug}-{question_id.lower()}"
 
 
 if __name__ == "__main__":

@@ -87,6 +87,16 @@
       "baseline": false
     },
     {
+      "key": "qwen3.6-27b-q3ks",
+      "label": "Qwen 3.6 27B dense, Q3_K_S (3-bit preview, spills to CPU on 16 GB)",
+      "provider": "ollama",
+      "model": "hf.co/unsloth/Qwen3.6-27B-GGUF:Q3_K_S",
+      "think": false,
+      "effort": null,
+      "preview": true,
+      "baseline": false
+    },
+    {
       "key": "claude-opus-5",
       "label": "Claude Opus 5 (frontier baseline, adaptive thinking)",
       "provider": "anthropic",
@@ -95,11 +105,21 @@
       "effort": null,
       "preview": false,
       "baseline": true
+    },
+    {
+      "key": "claude-fable-5-1-manual",
+      "label": "Claude Fable 5.1, answered by hand in the coding session (reference ceiling)",
+      "provider": "manual",
+      "model": "claude-fable-5-1 (manual)",
+      "think": null,
+      "effort": null,
+      "preview": false,
+      "baseline": false
     }
   ],
   "machine": "macOS-15.7.3-arm64-arm-64bit",
   "chip": "Apple M1 Pro",
   "memory_bytes": "17179869184",
   "ollama_version": "ollama version is 0.33.3",
-  "git_commit": "39b9ce4"
+  "git_commit": "dbd24f1"
 }

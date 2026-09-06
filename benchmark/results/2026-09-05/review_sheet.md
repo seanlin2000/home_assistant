@@ -2,7 +2,21 @@
 
 Read the answer, decide on gates and scores, then record them in review_sheet.yaml.
 
-## qwen3.5-4b / A2 (random sample)
+## Contents
+
+- [qwen3.5-4b](#review-qwen3-5-4b): [A2](#review-qwen3-5-4b-a2), [A10](#review-qwen3-5-4b-a10), [A11](#review-qwen3-5-4b-a11), [B19](#review-qwen3-5-4b-b19)
+- [gemma4-e4b](#review-gemma4-e4b): [A2](#review-gemma4-e4b-a2), [A4](#review-gemma4-e4b-a4), [B15](#review-gemma4-e4b-b15), [B19](#review-gemma4-e4b-b19)
+- [qwen3.5-9b](#review-qwen3-5-9b): [A2](#review-qwen3-5-9b-a2), [B12](#review-qwen3-5-9b-b12), [B17](#review-qwen3-5-9b-b17), [B20](#review-qwen3-5-9b-b20)
+- [gpt-oss-20b](#review-gpt-oss-20b): [A1](#review-gpt-oss-20b-a1), [A7](#review-gpt-oss-20b-a7), [B18](#review-gpt-oss-20b-b18), [B20](#review-gpt-oss-20b-b20)
+- [claude-fable-5-1-manual](#review-claude-fable-5-1-manual): [A1](#review-claude-fable-5-1-manual-a1), [A7](#review-claude-fable-5-1-manual-a7), [A9](#review-claude-fable-5-1-manual-a9), [A10](#review-claude-fable-5-1-manual-a10)
+
+<a id="review-qwen3-5-4b"></a>
+
+## qwen3.5-4b (4 to review)
+
+<a id="review-qwen3-5-4b-a2"></a>
+
+### qwen3.5-4b / A2 (random sample)
 
 **Question:** I pay $3,500 per month in rent. My landlord offers me a one-year lease at a 5% increase or a two-year lease at a 3% increase each year. Ignoring the time value of money, how much would I pay over each option, and how much would I save with the cheaper option?
 
@@ -18,7 +32,9 @@ Read the answer, decide on gates and scores, then record them in review_sheet.ya
 - Correctly declined to search, but it presented a single savings figure while comparing a one-year total to a two-year total without noting the mismatched horizons or stating any assumption about year two.
 - Two short plain sentences leading with the numbers, no lists or markup, appropriate for TTS.
 
-## qwen3.5-4b / A10 (random sample)
+<a id="review-qwen3-5-4b-a10"></a>
+
+### qwen3.5-4b / A10 (random sample)
 
 **Question:** Explain why VRAM capacity can matter more than raw GPU speed when choosing hardware for a local LLM. Answer in a way that would sound natural if spoken aloud in under 45 seconds.
 
@@ -34,7 +50,9 @@ Read the answer, decide on gates and scores, then record them in review_sheet.ya
 - Rightly answered from stable general knowledge without searching and made no unsupported current-fact claims.
 - Around 110 words of plain conversational prose, leads with the core point, no lists, markdown, or URLs.
 
-## qwen3.5-4b / A11 (random sample)
+<a id="review-qwen3-5-4b-a11"></a>
+
+### qwen3.5-4b / A11 (random sample)
 
 **Question:** What year did the Berlin Wall fall?
 
@@ -50,7 +68,9 @@ Read the answer, decide on gates and scores, then record them in review_sheet.ya
 - Correctly treated this as settled history requiring no search and stated the fact plainly without hedging or inventing detail.
 - Two short sentences leading with the answer, plain prose, no lists or markup.
 
-## qwen3.5-4b / B19 (random sample)
+<a id="review-qwen3-5-4b-b19"></a>
+
+### qwen3.5-4b / B19 (random sample)
 
 **Question:** Search for whether an RTX 4060 Ti 16 GB can run Qwen3.8. Then tell me whether the answer you found is actually enough to predict whether it will provide a good voice-assistant experience.
 
@@ -70,7 +90,15 @@ However, if "Qwen3.8" refers to a large 27B parameter model, the RTX 4060 Ti 16G
 - Searching was correct and the model-name ambiguity was well raised, but on the central judgment call — whether the found data is enough to predict voice-assistant quality — it endorsed the numbers as adequate ("natural-sounding conversations without significant lag") rather than critiquing their sufficiency or source quality.
 - Three long paragraphs that bury the verdict, use quoted model strings, and got truncated by the word cap mid-argument.
 
-## gemma4-e4b / A2 (random sample)
+[Back to top](#review-sheet)
+
+<a id="review-gemma4-e4b"></a>
+
+## gemma4-e4b (4 to review)
+
+<a id="review-gemma4-e4b-a2"></a>
+
+### gemma4-e4b / A2 (random sample)
 
 **Question:** I pay $3,500 per month in rent. My landlord offers me a one-year lease at a 5% increase or a two-year lease at a 3% increase each year. Ignoring the time value of money, how much would I pay over each option, and how much would I save with the cheaper option?
 
@@ -86,7 +114,9 @@ However, if "Qwen3.8" refers to a large 27B parameter model, the RTX 4060 Ti 16G
 - It correctly avoided searching but botched the central arithmetic and never noted that the two options cover different lengths, which is the key judgment the question demanded.
 - It is short, list-free plain prose that leads with the result, but the mangled number phrasing ("four twenty-one thousand dollars") would sound broken read aloud.
 
-## gemma4-e4b / A4 (random sample)
+<a id="review-gemma4-e4b-a4"></a>
+
+### gemma4-e4b / A4 (random sample)
 
 **Question:** My plant is growing new leaves quickly near the top, but its older lower leaves are gradually yellowing and dying. The plant is otherwise healthy. What are the most likely explanations, and what information would you want before deciding whether this is normal or a problem?
 
@@ -102,7 +132,9 @@ However, if "Qwen3.8" refers to a large 27B parameter model, the RTX 4060 Ti 16G
 - Correctly skipped a search and asked for missing information rather than asserting a single cause, but the follow-up questions are thin (no light, season, pattern of yellowing, drainage, or rate of leaf loss) and it leads by framing this as likely a problem.
 - Three short sentences of plain prose that lead with the likely causes and close with a clear question, with no lists or markup.
 
-## gemma4-e4b / B15 (random sample)
+<a id="review-gemma4-e4b-b15"></a>
+
+### gemma4-e4b / B15 (random sample)
 
 **Question:** Find me the best current option for a 16 GB NVIDIA GPU under $500. Used hardware is acceptable.
 
@@ -118,7 +150,9 @@ However, if "Qwen3.8" refers to a large 27B parameter model, the RTX 4060 Ti 16G
 - The question was specific enough (16 GB NVIDIA, under $500, used okay) to research and answer, possibly with a brief use-case caveat; deferring entirely and skipping the search was the wrong call, though asking about workload is not absurd.
 - Two short, plain-prose sentences that would read cleanly aloud with no formatting artifacts.
 
-## gemma4-e4b / B19 (random sample)
+<a id="review-gemma4-e4b-b19"></a>
+
+### gemma4-e4b / B19 (random sample)
 
 **Question:** Search for whether an RTX 4060 Ti 16 GB can run Qwen3.8. Then tell me whether the answer you found is actually enough to predict whether it will provide a good voice-assistant experience.
 
@@ -136,7 +170,15 @@ However, the search results do not provide a direct benchmark or specific metric
 - Searching was correct since it was instructed, and it rightly said the result doesn't settle the voice-assistant question, but it then punted with a clarifying question instead of doing the critical reading the question asked for, and never flagged the estimate-versus-benchmark issue.
 - Two short paragraphs of plain prose with numbers spelled out for TTS, no lists, markdown, or URLs.
 
-## qwen3.5-9b / A2 (random sample)
+[Back to top](#review-sheet)
+
+<a id="review-qwen3-5-9b"></a>
+
+## qwen3.5-9b (4 to review)
+
+<a id="review-qwen3-5-9b-a2"></a>
+
+### qwen3.5-9b / A2 (random sample)
 
 **Question:** I pay $3,500 per month in rent. My landlord offers me a one-year lease at a 5% increase or a two-year lease at a 3% increase each year. Ignoring the time value of money, how much would I pay over each option, and how much would I save with the cheaper option?
 
@@ -152,7 +194,9 @@ However, the search results do not provide a direct benchmark or specific metric
 - It compared a 12-month total against a 24-month total as if that were a savings figure, exactly the error the question is designed to catch, and stated no assumption about the unknown second-year renewal.
 - Plain prose, three sentences, leads with the numbers and no lists or markup — it would read aloud cleanly even though the content is wrong.
 
-## qwen3.5-9b / B12 (random sample)
+<a id="review-qwen3-5-9b-b12"></a>
+
+### qwen3.5-9b / B12 (random sample)
 
 **Question:** I'm looking for a computer to run a local LLM with approximately $1,000 total budget. What hardware can I buy today that gives me the most usable VRAM for the money?
 
@@ -168,7 +212,9 @@ However, the search results do not provide a direct benchmark or specific metric
 - The question explicitly asks what can be bought today under a budget, which demands a price check, yet the assistant searched nothing and asserted dollar figures as if confirmed, with no estimate hedging.
 - Plain prose with no markdown or URLs, but three dense run-on sentences that bury the recommendation in qualifiers make it hard to follow aloud.
 
-## qwen3.5-9b / B17 (random sample)
+<a id="review-qwen3-5-9b-b17"></a>
+
+### qwen3.5-9b / B17 (random sample)
 
 **Question:** Search for the answer to this question: "Is the Home Assistant Voice Preview Edition capable of running a custom wake word?" Give me the answer and explain which source you trusted and why.
 
@@ -184,7 +230,9 @@ However, the search results do not provide a direct benchmark or specific metric
 - The user explicitly asked it to search and to name the source it trusted; the assistant made zero tool calls yet asserted it had consulted and vetted the official docs.
 - Brief and answer-first, but speaking a backticked filename like `config.yaml` is a formatting slip for text-to-speech.
 
-## qwen3.5-9b / B20 (random sample)
+<a id="review-qwen3-5-9b-b20"></a>
+
+### qwen3.5-9b / B20 (random sample)
 
 **Question:** I want to build a local voice assistant for under $1,000 all-in. It should answer general questions at roughly ChatGPT-like quality, perform web searches when necessary, and work entirely locally except for those searches. Find the best hardware approach available today. If my requirements cannot realistically be met within the budget, tell me explicitly instead of quietly increasing the budget.
 
@@ -200,7 +248,15 @@ However, the search results do not provide a direct benchmark or specific metric
 - The user explicitly asked to be told outright if the requirements are unrealistic within $1,000, and the assistant instead affirmed 'you can absolutely build' it and only softly hinted at reduced quality at the end, while also skipping the search this pricing-dependent question required.
 - No lists or markdown and it leads with a direct claim, but the three sentences are long and dense with technical names, making it a bit of a wall to hear aloud.
 
-## gpt-oss-20b / A1 (random sample)
+[Back to top](#review-sheet)
+
+<a id="review-gpt-oss-20b"></a>
+
+## gpt-oss-20b (4 to review)
+
+<a id="review-gpt-oss-20b-a1"></a>
+
+### gpt-oss-20b / A1 (random sample)
 
 **Question:** Why can a 16 GB GPU sometimes run an MoE model with 30 billion total parameters, but not necessarily a 30 billion parameter dense model? Explain the difference between active parameters and the memory required to store the model.
 
@@ -218,7 +274,9 @@ With a dense 30‑billion‑parameter model, every weight is used for every toke
 - Correctly answered from general knowledge without searching, but it confidently stated the mechanism backwards and hedged nothing, failing the one judgment call that mattered (separating compute/speed from storage).
 - Plain prose with no lists or markup and it opens with a direct answer, but two dense paragraphs of explanation run longer than needed for speech.
 
-## gpt-oss-20b / A7 (random sample)
+<a id="review-gpt-oss-20b-a7"></a>
+
+### gpt-oss-20b / A7 (random sample)
 
 **Question:** I have a computer that consumes 50 watts when idle and 300 watts during active inference. If I interact with it for roughly one hour per day, estimate the monthly electricity cost. State your assumptions instead of pretending you know exactly how much time it spends under load.
 
@@ -234,7 +292,9 @@ With a dense 30‑billion‑parameter model, every weight is used for every toke
 - It correctly skipped searching and flagged the rate and idle draw as assumptions, but treated the full hour at peak load as given despite the user explicitly raising that uncertainty, and offered only a single rate rather than a plausible range.
 - Four short sentences of plain prose that lead with the daily kWh and land on the dollar figure, with no lists, markdown, or citations.
 
-## gpt-oss-20b / B18 (random sample)
+<a id="review-gpt-oss-20b-b18"></a>
+
+### gpt-oss-20b / B18 (random sample)
 
 **Question:** Search for the latest information about the Qwen open-source model family. I want to know which currently available models are realistic to run locally on approximately 16 GB of GPU memory. Don't just list models—explain the tradeoffs between model quality, quantization, memory usage, and speed.
 
@@ -252,7 +312,9 @@ Quantization is the main trade‑off: 4‑bit gives you the lowest memory footpr
 - Searching was correct as instructed, but the assistant did only one shallow pass and then stated invented VRAM figures as certainties rather than flagging the conflicting vendor guidance (17 GB total memory vs. VRAM) that the excerpts explicitly highlighted.
 - Plain prose with no lists or markup, but it ran long enough to be truncated by the word cap so the listener never heard the concluding recommendation.
 
-## gpt-oss-20b / B20 (random sample)
+<a id="review-gpt-oss-20b-b20"></a>
+
+### gpt-oss-20b / B20 (random sample)
 
 **Question:** I want to build a local voice assistant for under $1,000 all-in. It should answer general questions at roughly ChatGPT-like quality, perform web searches when necessary, and work entirely locally except for those searches. Find the best hardware approach available today. If my requirements cannot realistically be met within the budget, tell me explicitly instead of quietly increasing the budget.
 
@@ -268,7 +330,15 @@ Quantization is the main trade‑off: 4‑bit gives you the lowest memory footpr
 - It correctly chose to search and explicitly refused to inflate the budget, but it ignored the tool's instruction to tell the user the search returned nothing and instead spoke unsourced current pricing as if verified.
 - Plain prose with no lists or markup and the refusal comes first, but it is a single dense ~160-word paragraph that runs longer than a spoken answer needs.
 
-## claude-fable-5-1-manual / A1 (random sample)
+[Back to top](#review-sheet)
+
+<a id="review-claude-fable-5-1-manual"></a>
+
+## claude-fable-5-1-manual (4 to review)
+
+<a id="review-claude-fable-5-1-manual-a1"></a>
+
+### claude-fable-5-1-manual / A1 (random sample)
 
 **Question:** Why can a 16 GB GPU sometimes run an MoE model with 30 billion total parameters, but not necessarily a 30 billion parameter dense model? Explain the difference between active parameters and the memory required to store the model.
 
@@ -284,7 +354,9 @@ Quantization is the main trade‑off: 4‑bit gives you the lowest memory footpr
 - Correctly answered from stable general knowledge without searching, and framed the quantization assumption (four bits) explicitly rather than asserting a bare number.
 - Leads with the core distinction in one sentence, plain prose, no lists or markup, and stays compact for a technical explanation.
 
-## claude-fable-5-1-manual / A7 (random sample)
+<a id="review-claude-fable-5-1-manual-a7"></a>
+
+### claude-fable-5-1-manual / A7 (random sample)
 
 **Question:** I have a computer that consumes 50 watts when idle and 300 watts during active inference. If I interact with it for roughly one hour per day, estimate the monthly electricity cost. State your assumptions instead of pretending you know exactly how much time it spends under load.
 
@@ -300,7 +372,9 @@ Quantization is the main trade‑off: 4‑bit gives you the lowest memory footpr
 - It explicitly flags the electricity rate as an assumption and notes that treating the full hour at 300 watts overstates the load, exactly the judgment calls the prompt demanded, with no needless search.
 - Leads with the dollar range, uses spoken-out numbers with no lists or markup, and stays only as long as the requested assumption statement requires.
 
-## claude-fable-5-1-manual / A9 (random sample)
+<a id="review-claude-fable-5-1-manual-a9"></a>
+
+### claude-fable-5-1-manual / A9 (random sample)
 
 **Question:** I say: "I want to go somewhere warm but not too expensive, preferably with good public transportation." What information is missing before you can make a good recommendation, and what assumptions should you avoid making?
 
@@ -316,7 +390,9 @@ Quantization is the main trade‑off: 4‑bit gives you the lowest memory footpr
 - Correctly declined to search a preference-elicitation question, invented no preferences, and closed by offering to ask the clarifying questions.
 - Plain conversational prose, no lists or markup, and compact enough to read aloud naturally despite covering many items.
 
-## claude-fable-5-1-manual / A10 (random sample)
+<a id="review-claude-fable-5-1-manual-a10"></a>
+
+### claude-fable-5-1-manual / A10 (random sample)
 
 **Question:** Explain why VRAM capacity can matter more than raw GPU speed when choosing hardware for a local LLM. Answer in a way that would sound natural if spoken aloud in under 45 seconds.
 
@@ -331,3 +407,5 @@ Quantization is the main trade‑off: 4‑bit gives you the lowest memory footpr
 - Covers every element of the sketch: capacity gates whether a model runs at all, spilling to system memory crawls, more VRAM allows higher precision (less aggressive quantization) and longer context, with the correct priority ordering.
 - Correctly answered from stable general knowledge without searching and framed the tradeoff as a buying heuristic without inventing specific hardware claims.
 - Roughly 100 words of plain conversational prose, leads with the core point, no lists or markup, comfortably under 45 seconds aloud.
+
+[Back to top](#review-sheet)
