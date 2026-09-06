@@ -11,7 +11,7 @@ services:
   ollama_host: http://127.0.0.1:11434
   searxng_url: http://127.0.0.1:8080
   mcp_host: 127.0.0.1
-  mcp_port: 8765
+  mcp_port: 8766  # the product's MCP service owns 8765; the benchmark runs its own server with a per-run cache on a separate port
   results_dir: benchmark/results
 
 # preview: a reduced-precision build of a model whose production version does not fit the prototype machine.
