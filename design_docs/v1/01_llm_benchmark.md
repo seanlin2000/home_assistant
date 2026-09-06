@@ -145,9 +145,11 @@ Ollama's default GPU memory ceiling on a 16 GB Mac is about 12 GB and can be rai
 | Gemma 4 26B-A4B, UD-IQ3_XXS | 11.4 GB | fits | reduced-precision preview of a production candidate |
 | Gemma 4 26B-A4B, UD-IQ4_XS | 13.6 GB | tight, after raising the ceiling | closer to production precision |
 | Qwen 3.6-35B-A3B, UD-IQ3_XXS | 13.2 GB | tight | reduced-precision preview of the other production candidate |
+| Qwen 3.6-27B dense, Q3_K_S (added 2026-09-06) | 12.4 GB | spills to CPU under the default 12 GB ceiling; latency flagged, quality still scored | reduced-precision preview of the dense production candidate |
 | Frontier model via API | n/a | n/a | quality ceiling on the same harness |
+| Hand-written answers by Claude Fable 5.1 (`benchmark-manual`) | n/a | n/a | reference ceiling for the question set itself; composed by hand in the coding session with the real search tool, not a purchasable candidate |
 
-Not testable on this machine: Qwen 3.5/3.6-27B dense (17 GB), Qwen 3.6-35B-A3B at Q4 (~20 GB), Gemma 4 31B dense, gpt-oss-120b.
+Not testable on this machine at production precision: Qwen 3.5/3.6-27B dense at Q4 (17 GB), Qwen 3.6-35B-A3B at Q4 (~20 GB), Gemma 4 31B dense, gpt-oss-120b. The user chose to add only the Qwen 3.6-27B 3-bit preview from the larger-model candidates researched on 2026-09-05, judging Gemma 4 31B unlikely to differ enough from the 26B MoE to change the decision and declining NVIDIA Nemotron.
 
 How to read a 3-bit preview: if it scores near the frontier baseline, that is strong evidence its 4-bit production version will too. If it scores poorly, that is only weak evidence against the production version, because 3-bit quantization measurably hurts reasoning. The report labels previews and states this caveat next to their scores.
 
@@ -206,7 +208,7 @@ How to read a 3-bit preview: if it scores near the frontier baseline, that is st
 ## 13. As built, 2026-09-05
 
 - Question set v1.1: 22 questions (A1 to A11, B11 to B21). Maximum 220 per model, 110 per category. See `benchmark/questions.yaml`; every question carries `expected_search`, optional `constraints` (`max_words`, `budget_usd`, `no_product_names`), the gates the judge should watch for, and a reference sketch for reasoning questions.
-- Commands: `uv run benchmark-run [--candidate KEY]... [--question ID]... [--date D] [--force] [--delete-models]`, `uv run benchmark-judge D`, `uv run benchmark-report D`, `uv run python scripts/benchmark_llm.py`. Runs resume: questions already in `results/D/<key>.jsonl` are skipped unless `--force`.
+- Commands: `uv run benchmark-run [--candidate KEY]... [--question ID]... [--date D] [--force] [--delete-models]`, `uv run benchmark-judge D`, `uv run benchmark-report D`, `uv run benchmark-manual KEY [--date D]` (replays hand-written answers from `benchmark/manual/KEY.yaml` through the same loop and tool server), `uv run python scripts/benchmark_llm.py`. Runs resume: questions already in `results/D/<key>.jsonl` are skipped unless `--force`.
 - Harness gates (`benchmark/gates.py`): searched on a no-search question, did not search on a search question, malformed tool call, more than the tool-round cap, no final answer, word limit exceeded, and `run_error` when the model call itself failed.
 - Judge (`benchmark/judge.py`): `messages.parse` with the `JudgeVerdict` pydantic model as the required output shape; `benchmark/rubric.md` is the system prompt verbatim. Each score records the judge's model id and token usage. Sampling temperature cannot be set on Claude Opus 5, so determinism comes from the structured schema and the fixed rubric rather than temperature 0.
 - Report (`benchmark/report.py`): scores table with the fraction of the baseline, gate counts by type, latency and word counts (logged, not scored), per-question matrix, judge agreement once `review_sheet.yaml` is filled in, and the paid API spend for the run.

@@ -1,0 +1,145 @@
+# Answers written by hand by Claude Fable 5.1 inside the coding session on 2026-09-06, replayed through the agent loop by benchmark-manual.
+# The queries are executed for real against the run's shared search cache, so the transcripts carry the same excerpts a model would have seen.
+# This is a reference ceiling for the question set, not a purchasable candidate: the answers were composed with unlimited time and with the questions visible in full.
+candidate_key: claude-fable-5-1-manual
+answered_by: Claude Fable 5.1, by hand in the Claude Code session
+questions:
+  - question_id: A1
+    turns:
+      - answer: >-
+          Because memory is set by the total parameter count, but speed is set by the active count. A mixture of experts model with thirty billion total parameters still has to keep all thirty billion weights loaded, so at four bits it needs roughly fifteen to eighteen gigabytes, about the same as a dense thirty billion model, and both are a tight or impossible fit in sixteen gigabytes. The difference is what happens when it does not fit. A dense model touches every weight on every token, so anything spilled to system memory drags the whole thing to a crawl. The mixture of experts model only routes each token through a few experts, so the rarely used experts can sit in slower system memory without hurting much, and the small active set keeps it fast. So it is not that the mixture of experts needs less memory by nature, it is that it tolerates being partly outside the graphics card far better.
+
+  - question_id: A2
+    turns:
+      - answer: >-
+          The one year lease at five percent comes to three thousand six hundred seventy five a month, or forty four thousand one hundred for the year. The two year lease at three percent a year is three thousand six hundred five a month in year one, forty three thousand two hundred sixty, and three thousand seven hundred thirteen fifteen a month in year two, forty four thousand five hundred fifty seven eighty, so eighty seven thousand eight hundred seventeen eighty over both years. Comparing the first year alone, the two year lease saves you eight hundred forty dollars. Over two years the comparison depends on what a renewal after the one year lease would cost, which nobody knows yet. If you assume another five percent bump, the one year path totals ninety thousand four hundred five, and the two year lease saves about two thousand five hundred eighty seven.
+
+  - question_id: A3
+    turns:
+      - answer: >-
+          No, that is not correct. Active parameters decide how much computation each token needs, not how much memory the model takes. Every token can be routed to different experts, so all of the experts have to be loaded and ready, which means memory is set by the total parameter count plus the working memory for the conversation. Four billion active parameters at four bits is about two gigabytes of weights read per token, which is why these models are fast, but the whole model is several times that size. A four gigabyte card could only work if the total model were tiny, or if most of the experts were parked in system memory and swapped in, which is slow and defeats the point.
+
+  - question_id: A4
+    turns:
+      - answer: >-
+          The most likely explanation is ordinary aging. Many plants shed their oldest, lowest leaves as they push new growth up top, and if the plant is otherwise vigorous that is usually normal. The main alternatives are a nitrogen shortage, because nitrogen is mobile and the plant pulls it from old leaves to feed new ones, lower leaves being shaded out by the canopy, or a root problem from overwatering or a pot it has outgrown. Before calling it a problem I would want to know what kind of plant it is, how many leaves are going and how fast, how you water and whether the pot drains, how much light it gets, when you last fertilized, and whether the yellowing is even across the leaf or patterned along the veins. If you tell me the species and your watering routine, I can narrow it down.
+
+  - question_id: A5
+    turns:
+      - answer: >-
+          The single biggest factor is the microphone array. You want several microphones spaced apart with beamforming, so the device can focus on your voice from across the room, plus acoustic echo cancellation so it can hear you over its own speaker. Second is placement, out in the open, away from walls, the fridge, and the air conditioner, roughly at head height when you are seated. Third is where the wake word runs. It should be detected on the device itself so the microphones are not streaming audio anywhere until you speak the wake word. Fourth is the round trip. Speech recognition, the language model, and speech synthesis should all run on a machine on your local network with enough memory to keep them loaded, because every hop adds delay and natural conversation dies above a couple of seconds. Finally, keep the speaker physically separate from the microphones if you can, and give the whole thing a wired or strong wireless connection, since dropouts feel like the assistant ignoring you.
+
+  - question_id: A6
+    turns:
+      - answer: >-
+          For running local language models, go with twenty four gigabytes unless the price gap is painful. Memory decides which models you can run at all and at what precision. Sixteen gigabytes comfortably holds models up to around fourteen billion parameters at four bit, while twenty four lets you run thirty billion class models, or the same model at higher precision and with a much longer context. Speed matters less, because a model that does not fit either fails or crawls. If you tell me which models you have in mind and the price difference, I can be more specific.
+      - answer: >-
+          Not really, four hundred dollars is a fair price for that step. It is the difference between being capped at roughly fourteen billion parameter models and being able to run the thirty billion class, which is a noticeable jump in answer quality, and it also buys you longer context and less aggressive compression on whatever you run. The exceptions would be if the models you actually want already fit in sixteen gigabytes, or if the four hundred dollars would come out of something else you need. Since local language models are your main goal, I would still pay it.
+
+  - question_id: A7
+    turns:
+      - answer: >-
+          Roughly six to thirteen dollars a month, and here is the arithmetic. If the machine sits at fifty watts for twenty three hours and three hundred watts for one hour a day, that is about one point one five kilowatt hours idle plus zero point three under load, so one point four five kilowatt hours a day or around forty three and a half a month. At fifteen cents per kilowatt hour that is about six and a half dollars, at thirty cents about thirteen. Two caveats. I am assuming your electricity rate, and residential rates in the US range roughly between those numbers. And I am treating your hour of use as a full hour at three hundred watts, which overstates it, since a machine mostly waits for you even during an interactive session. The idle draw is the real cost driver here, about five sixths of the total.
+
+  - question_id: A8
+    turns:
+      - answer: >-
+          I would recommend the router design for a personal assistant. Most of what you ask an assistant at home is simple and repetitive, like timers, music, lights, and weather, and those should be fast and deterministic, not left to a model that might phrase the command creatively or take two seconds to think about it. Sending those to fixed tools makes them instant and predictable, and it reserves the large model for open ended questions where its judgment is actually worth the latency. The costs are real though. You now have a routing step that can misclassify, two code paths to maintain, and a seam where a request that is half command and half question can fall through. A single large model is simpler and more flexible, and it is a fine choice if latency and cost do not bother you or if your requests are mostly open ended. For a home assistant where speed on the common case matters, the router wins.
+
+  - question_id: A9
+    turns:
+      - answer: >-
+          Before I could recommend anything I would need to know where you are starting from, when and for how long you are going, and what not too expensive means to you as a number. I would also want to know what counts as warm, whether you are open to leaving the country and have the passport and visas for it, who is traveling with you, and what you like doing once you are there. The assumptions to avoid are guessing your home city or currency, assuming warm means a beach, assuming you want a big city because you mentioned public transport, and picking a season for you. It would also be a mistake to name a destination as if the answer were already known. So what I would actually do is ask you those few questions first.
+
+  - question_id: A10
+    turns:
+      - answer: >-
+          Because memory decides whether a model runs at all, and speed only decides how fast it runs once it fits. If a model does not fit in your graphics memory, it either fails to load or spills into slower system memory and slows to a crawl, so a faster card with less memory can be strictly worse. More memory also means you can run the model at higher precision, which improves answer quality, and keep a longer conversation in context. So buy enough memory for the models you want first, then worry about speed.
+
+  - question_id: A11
+    turns:
+      - answer: >-
+          The Berlin Wall fell in nineteen eighty nine, on the ninth of November.
+
+  - question_id: B11
+    turns:
+      - queries:
+          - federal funds rate september 2026
+          - fed funds rate history 2025 2026 rate cuts
+        answer: >-
+          The effective federal funds rate is three point six three percent as of the third of September, according to the Federal Reserve's daily H point fifteen release, with the target range at three and a half to three and three quarters. A year ago it was about four and a quarter, so it has come down roughly three quarters of a point. That happened through three quarter point cuts in September, October, and December of twenty twenty five, and the Fed has held steady at every meeting so far in twenty twenty six. One caveat on direction, the sources I read describe officials talking about a possible hike at the mid September meeting because inflation is still above target, so the next move may be up rather than down.
+
+  - question_id: B12
+    turns:
+      - queries:
+          - best computer under $1000 for local LLM most VRAM 2026
+          - used RTX 3090 price September 2026
+        answer: >-
+          The most usable memory for a thousand dollars today is a used R T X thirty ninety, which gives you twenty four gigabytes, but only if the rest of the build stays cheap. Used thirty nineties are trading around seven hundred fifty to nine hundred fifty dollars right now, so you would need a used or reused processor, motherboard, and memory to stay under budget, and it draws three hundred fifty watts. The safer all new path is a twelve gigabyte R T X thirty sixty build, slower and more limited but comfortably within the budget. Sixteen gigabyte cards like the fifty sixty T I sit in between, though their prices have drifted well above list this year. I would avoid any machine marketed as an A I P C with eight gigabytes of memory, the neural chip does not substitute for graphics memory. Prices are swinging week to week, so check the thirty ninety listings the day you buy.
+
+  - question_id: B13
+    turns:
+      - queries:
+          - Lucerne scenic day trip public transport
+          - Lucerne weather forecast September 7 2026
+        answer: >-
+          Tomorrow looks like a good day for the mountains. The forecast for Lucerne on the seventh is sunny with a high around twenty six and a low around sixteen, so I would pick a trip with views. The classic options from the city are Mount Rigi, reached by boat across the lake and then a cogwheel train, or Mount Pilatus, which combines a boat, the steep cogwheel railway, and a cable car back down in a loop. Both count as public transport, the lake boats are part of the network and are covered by the Swiss Travel Pass, and your hotel's visitor card covers buses and trains in the city zone but not the mountain sections. I could not pull exact departure times, so check the S B B app tonight for the first boat and the cogwheel connections, and note that the good weather makes the early departures the quiet ones.
+
+  - question_id: B14
+    turns:
+      - queries:
+          - why nvidia gpu prices increased 2026 supply chain
+        answer: >-
+          The short version is that it is a memory shortage, not a chip shortage. The data center buildout is consuming high bandwidth memory and the newer G D D R seven memory faster than the memory makers can produce it, and they are steering what they have toward those higher margin customers. That leaves fewer memory chips for consumer graphics cards, and in August Nvidia told its big customers that its A I server systems would cost more than fifteen percent more starting next year, at the same time that retail prices on the fifty series jumped. The mid range took the biggest hit, the sixteen gigabyte fifty sixty T I rose about thirty nine percent between June and August, while the top cards moved only a few percent. Reporting also suggests Nvidia is cutting its gaming card production by a third or more because it cannot get the memory, and A M D has followed with roughly ten percent increases of its own. So this is a memory supply problem showing up in two markets at once, and it is unlikely to ease until memory capacity catches up with data center demand.
+
+  - question_id: B15
+    turns:
+      - queries:
+          - best 16GB nvidia gpu under $500 2026 used
+          - used RTX 4060 Ti 16GB price 2026
+        answer: >-
+          Honestly, right now there is no sixteen gigabyte Nvidia card I can point to under five hundred dollars, new or used. The fifty sixty T I sixteen gigabyte lists at four twenty nine but has been selling at six hundred or more, and the older forty sixty T I sixteen gigabyte, which should be the used bargain, was tracking around five sixty in August, above its original price, because sixteen gigabyte cards are scarce. If you are set on Nvidia, the best move is to watch the used forty sixty T I and pounce if one dips under five hundred. If the brand is negotiable, A M D's R X ninety sixty X T with sixteen gigabytes is around four hundred fifty and is the one sixteen gigabyte card that reliably fits the budget today.
+
+  - question_id: B16
+    turns:
+      - queries:
+          - Long Island City rent trends 2026 market report
+        answer: >-
+          Based on the market data I found, a four percent annual increase looks a bit steep for Long Island City right now. The median asking rent is about forty five hundred a month as of June, which is roughly fifty five dollars below the peak set last September, so asking rents have been flat to slightly down over the past year. If your starting rent is at market, four percent a year is above what the market itself has done. That said, be careful with that comparison. Asking rents are what landlords hope for, not what leases sign at, and they hide concessions like free months. The median also shifts with what is listed, and Long Island City has added thousands of new luxury units, which pull the number up without your building changing. Rents are also seasonal, most leases sign in summer when asking prices peak. The better comparison is what similar units in your building actually rented for, and whether your current rent is already below market. A two year lease at four percent is worth it mainly if it locks in a below market starting rent.
+
+  - question_id: B17
+    turns:
+      - queries:
+          - Home Assistant Voice Preview Edition custom wake word
+        answer: >-
+          Yes, with one caveat. The official Home Assistant documentation shows that you can create your own wake words using the openWakeWord add on running inside Home Assistant, and any voice satellite, including the Voice Preview Edition, can be pointed at that engine. So a custom phrase is supported. The caveat is that the documentation I read describes running the custom wake word on the Home Assistant server rather than on the device's own chip, so if you specifically want the puck to detect your custom word locally, that is the part I would verify. I trusted the Home Assistant documentation over the blog posts that came up because it is the project's own maintained guide, it was specific about which versions and add ons are required, and the blogs were older tutorials for a different detector.
+
+  - question_id: B18
+    turns:
+      - queries:
+          - Qwen 3.6 models run locally 16GB VRAM quantization
+        answer: >-
+          The current family is Qwen three point six, and it comes in two sizes that matter for you, a twenty seven billion dense model and a thirty five billion mixture of experts model that only activates about three billion parameters per token. On sixteen gigabytes neither fits at the standard four bit quantization, the dense model needs about eighteen gigabytes there and the mixture needs more than twenty, but both have three bit builds that squeeze in. The tradeoffs work like this. The dense twenty seven billion gives the best quality per parameter but reads every weight on every token, so it is slow and anything spilled out of graphics memory hurts badly. The mixture of experts is larger on disk but much faster because only three billion parameters are active, and it tolerates having some experts in system memory. Going from four bit to three bit saves a few gigabytes at a small but real quality cost. For sixteen gigabytes I would try the thirty five billion mixture at three bit for speed, and the smaller Qwen models in the four to nine billion range if you want it to fit comfortably with room for a long conversation.
+
+  - question_id: B19
+    turns:
+      - queries:
+          - RTX 4060 Ti 16GB Qwen3.8 run locally
+        answer: >-
+          I did not find anything that tests Qwen three point eight on that card specifically, so the honest answer is a projection. The sources show the forty sixty T I with sixteen gigabytes running fourteen billion parameter models at around twenty tokens per second and small models much faster, so a Qwen three point eight model of that size would fit and run. But no, that is not enough to predict a good voice assistant experience. Those figures are estimates from memory bandwidth, not measurements, and they only cover generation speed. For voice what you feel is the delay before the first word, which depends on how fast the card reads the prompt, especially a long search result, and whether the model spends time thinking before it answers. They also say nothing about whether the model gives short, correct spoken answers and decides well when to search. You would want to measure the time to first word with a realistic prompt and judge answer quality on your own questions before trusting the card for this.
+
+  - question_id: B20
+    turns:
+      - queries:
+          - local voice assistant hardware under $1000 ChatGPT quality 2026
+          - Mac mini M6 price 24GB 32GB
+          - used RTX 3090 price September 2026
+        answer: >-
+          The direct answer is no, not at ChatGPT like quality. For a thousand dollars all in, including a microphone device, the best approaches today are a Mac mini with the M six chip, which starts at eight hundred ninety nine with sixteen gigabytes of memory, or a PC built around a used twenty four gigabyte R T X thirty ninety, which alone runs seven hundred fifty to nine hundred fifty dollars before the rest of the machine. Either one gives you a capable local model in the ten to thirty billion parameter range with web search, which handles everyday questions well. But the models that feel like ChatGPT need far more memory than either box has, and the mid range Mac configurations with more memory push you past the budget once you add the voice hardware. So set the expectation at good, fast answers for common questions and searched facts, not frontier quality, or raise the budget deliberately for a machine with more memory.
+
+  - question_id: B21
+    turns:
+      - queries:
+          - federal funds rate september 2026
+        answer: >-
+          The Fed did not cut rates to zero. The effective federal funds rate is three point six three percent as of the third of September according to the Federal Reserve's own daily release, and the discussion in the sources is about whether they might raise it at the mid September meeting, not cut it. So the premise is off, and mortgage rates have not collapsed. Whether to refinance still comes down to the usual math. Compare the rate you could get today with the rate you have, weigh the closing costs against the monthly savings, and see how many months it takes to break even against how long you plan to stay. What is your current rate?

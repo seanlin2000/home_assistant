@@ -54,11 +54,24 @@ candidates:
     model: hf.co/unsloth/Qwen3.6-35B-A3B-GGUF:UD-IQ3_XXS
     think: false
     preview: true
+  - key: qwen3.6-27b-q3ks
+    label: Qwen 3.6 27B dense, Q3_K_S (3-bit preview, spills to CPU on 16 GB)
+    provider: ollama
+    model: hf.co/unsloth/Qwen3.6-27B-GGUF:Q3_K_S
+    think: false
+    preview: true
   - key: claude-opus-5
     label: Claude Opus 5 (frontier baseline, adaptive thinking)
     provider: anthropic
     model: claude-opus-5
     baseline: true
+
+  # manual: answers written by hand and replayed through the same loop and tools (benchmark-manual). A reference point, not a purchasable candidate.
+  - key: claude-fable-5-1-manual
+    label: Claude Fable 5.1, answered by hand in the coding session (reference ceiling)
+    provider: manual
+    model: claude-fable-5-1 (manual)
+    baseline: false
 
 judge:
   model: claude-opus-5

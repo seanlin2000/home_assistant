@@ -31,7 +31,7 @@ def test_question_set_shape() -> None:
 
 def test_config_loads_every_candidate_with_a_provider() -> None:
     config = load_config(Path("benchmark/config.yaml"))
-    assert {candidate.provider for candidate in config.candidates} == {"ollama", "anthropic"}
+    assert {candidate.provider for candidate in config.candidates} == {"ollama", "anthropic", "manual"}
     assert config.policy.max_tool_rounds == 4
 
 

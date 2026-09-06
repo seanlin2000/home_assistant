@@ -31,7 +31,7 @@
       "label": "Gemma 4 E4B, QAT int4",
       "provider": "ollama",
       "model": "gemma4:e4b-it-qat",
-      "think": null,
+      "think": false,
       "effort": null,
       "preview": false,
       "baseline": false
@@ -51,7 +51,7 @@
       "label": "gpt-oss 20B, MXFP4",
       "provider": "ollama",
       "model": "gpt-oss:20b",
-      "think": null,
+      "think": "low",
       "effort": null,
       "preview": false,
       "baseline": false
@@ -61,7 +61,7 @@
       "label": "Gemma 4 26B-A4B, UD-IQ3_XXS (3-bit preview)",
       "provider": "ollama",
       "model": "hf.co/unsloth/gemma-4-26B-A4B-it-GGUF:UD-IQ3_XXS",
-      "think": null,
+      "think": false,
       "effort": null,
       "preview": true,
       "baseline": false
@@ -71,7 +71,7 @@
       "label": "Gemma 4 26B-A4B, UD-IQ4_XS (preview, tight fit)",
       "provider": "ollama",
       "model": "hf.co/unsloth/gemma-4-26B-A4B-it-GGUF:UD-IQ4_XS",
-      "think": null,
+      "think": false,
       "effort": null,
       "preview": true,
       "baseline": false
@@ -101,5 +101,5 @@
   "chip": "Apple M1 Pro",
   "memory_bytes": "17179869184",
   "ollama_version": "ollama version is 0.33.3",
-  "git_commit": "3eb85b9"
+  "git_commit": "39b9ce4"
 }

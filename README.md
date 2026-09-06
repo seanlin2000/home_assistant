@@ -45,6 +45,7 @@ scripts/searxng.sh up                                  # local search aggregator
 uv run benchmark-run --candidate qwen3.5-9b            # or omit --candidate for every model in benchmark/config.yaml
 uv run benchmark-judge 2026-09-05                      # needs ANTHROPIC_API_KEY in .env
 uv run benchmark-report 2026-09-05                     # writes report.md and the review sheet
+uv run benchmark-manual claude-fable-5-1-manual       # replay hand-written reference answers through the same loop
 uv run python scripts/benchmark_llm.py                 # raw tokens per second per model
 ```
 

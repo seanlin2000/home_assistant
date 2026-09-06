@@ -129,6 +129,9 @@ def build_llm(candidate: Candidate, config: BenchmarkConfig) -> LLMClient | None
         return OllamaClient(candidate.model, host=config.services.ollama_host)
     if candidate.provider == "anthropic":
         return build_anthropic_client(candidate)
+    if candidate.provider == "manual":
+        console.print(f"[dim]Skipping {candidate.key}: manual candidates are produced by benchmark-manual, not run.[/dim]")
+        return None
     raise ValueError(f"unknown provider {candidate.provider}")
 
 

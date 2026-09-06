@@ -23,6 +23,7 @@ web-search-mcp = "web_search_mcp.server:main"
 benchmark-run = "benchmark.run:main"
 benchmark-judge = "benchmark.judge:main"
 benchmark-report = "benchmark.report:main"
+benchmark-manual = "benchmark.manual_run:main"
 
 [dependency-groups]
 dev = [
