@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It covers only mic sensitivity, noise filtering, array pickup pattern and room reflections, omitting most of the sketch: wake-word handling, echo cancellation, latency from mic to recognition, speaker quality and separation, where the compute runs, and privacy of always-on audio.",
+  "judgment_reason": "It honored the no-product-names constraint and rightly skipped a search, but it drifted into \"look for devices that emphasize conversational clarity\" shopping advice instead of the hardware design factors asked for.",
+  "spoken_fit_reason": "Three plain sentences that answer directly, with no lists, markdown, or URLs."
+}

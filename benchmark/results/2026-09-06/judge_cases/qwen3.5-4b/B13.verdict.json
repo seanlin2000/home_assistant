@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It inverts the retrieved hourly forecast, which puts the rain chance at 44% and 67% at 07:00 and 08:00 and near zero from noon to 19:00, yet tells the listener rain comes in the afternoon and to depart in the morning, and it never settles on one recommended trip, ending with an incoherent 'bus ride to Weggis with the train to Interlaken or Pilatus'.",
+  "judgment_reason": "It correctly ran both a transport search and a weather search, but drew the opposite conclusion from the weather table it retrieved and then hedged across five destinations instead of choosing one for a single day.",
+  "spoken_fit_reason": "Three long paragraphs that overran the word cap mid-answer, with a parenthetical '(around 3mm)' and a degree symbol that read badly aloud."
+}

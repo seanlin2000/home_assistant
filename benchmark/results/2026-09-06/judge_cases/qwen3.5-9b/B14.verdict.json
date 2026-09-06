@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": false,
+  "answer_quality": 2,
+  "judgment": 0,
+  "spoken_fit": 2,
+  "answer_quality_reason": "With no retrieval it asserts a current shortage of high-end GPUs, current export restrictions, and NVIDIA presently prioritizing data centers over consumer supply, none of which is grounded in anything, and the causes it names are the generic AI-boom story the user said was not what they were asking for.",
+  "judgment_reason": "The question turned entirely on what changed recently in the supply chain, which is unanswerable from memory, and it made no tool call at all.",
+  "spoken_fit_reason": "Three sentences of plain prose with no lists, markdown, or URLs, though each runs long for a listener."
+}

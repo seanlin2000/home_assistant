@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Combines both searches well, pairing the sunny forecast with the Rigi and Pilatus boat-plus-cogwheel routes and the Swiss Travel Pass and Zone 10 visitor-card coverage from the transport pages, but it quotes the seventh as around twenty six and sixteen when the easeweather row for that day reads 27 and 18.",
+  "judgment_reason": "Searched a question that genuinely needs tomorrow's forecast, and instead of inventing departure times it said plainly that it could not pull them and told the listener to check the SBB app tonight.",
+  "spoken_fit_reason": "Five sentences of plain prose opening with the verdict that tomorrow suits the mountains, with SBB spelled out and no lists or URLs."
+}

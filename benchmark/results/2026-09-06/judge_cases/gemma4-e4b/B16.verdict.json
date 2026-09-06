@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It tells the user the board approved a 'maximum annual adjustment of five point two five percent', but excerpt [1] gives 5.25% as the total increase for a two-year lease (against 2.75% for one year), so the answer turns roughly 2.6% per year into 5.25% per year and wrongly reassures the user that 4% annual is below the cap.",
+  "judgment_reason": "It applied a Rent Guidelines Board figure that governs only rent-stabilized apartments without asking or noting whether the user's unit is stabilized, and it offered to look up Long Island City asking rents later instead of doing the market comparison the question asked for.",
+  "spoken_fit_reason": "Short paragraphs of plain prose that lead with the verdict, with percentages spelled out in words and no lists or markup."
+}

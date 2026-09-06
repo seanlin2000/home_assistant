@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It gives $18,637 with $637 of interest when the sketch requires roughly $19,091 with about $1,091 of interest, so the headline figure is off by around $450 and the interest is understated by nearly half; only the $18,000 contribution total is right.",
+  "judgment_reason": "It stated a materially wrong balance as a flat result with no hedge on a question where a spoken wrong number is the main risk.",
+  "spoken_fit_reason": "The colon-led \"Here's how it breaks down:\" and the parenthetical \"$500 x 12 months x 3 years\" read as written arithmetic rather than speech."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact", "violated_explicit_constraint"],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It invents a \"high-end RTX 3080 with 16 GB\", a card that does not exist, and floats an RTX 3090 as a used find under $500 when the only retrieved price for it is $1,499, while ignoring the two stronger sources stating that NVIDIA's 16GB option has drifted past $500 and the RX 9060 XT is the only 16GB card reliably under it.",
+  "judgment_reason": "It searched as asked but leaned on the weakest of the four sources for its pick and never told the user that the retrieved evidence says the 16GB-NVIDIA-under-$500 constraint may not be satisfiable today.",
+  "spoken_fit_reason": "Three sentences of plain prose that lead with a named recommendation, with no lists, URLs, or citation markers."
+}

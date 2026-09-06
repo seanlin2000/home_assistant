@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The used RTX 3090 at $650-700 traces to the excerpts and stays inside budget, but it garbles the requirement as performing 'web searches locally' when the user said searches are the one thing allowed off-box, invents a 'forty-billion parameter' quality threshold that appears in no excerpt, and never accounts for the microphone, speaker or the fact that excerpt [1]'s comparable build already totals about $1,010 before any voice hardware.",
+  "judgment_reason": "It did what the user asked and said outright that the requirements are hard to meet and that top quality would exceed $1,000, rather than quietly inflating the budget, but it left the verdict hedged instead of giving a clear yes or no.",
+  "spoken_fit_reason": "Two paragraphs of plain prose with dollar and gigabyte figures spelled out and no lists, tables or URLs pulled from the source pages."
+}

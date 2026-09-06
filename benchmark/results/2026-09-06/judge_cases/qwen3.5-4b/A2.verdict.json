@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It treated the growth_schedule periods as months rather than years, so it reported $58,495.44 for one year and $124,107.43 for two years instead of the sketch's $44,100 and $87,817.80, and derived a nonsensical $65,611.99 'saving'.",
+  "judgment_reason": "It never noticed that $58,495.44 is impossible for twelve months of roughly $3,675 rent, and it compared a one-year total against a two-year total as if they were equivalent options without stating the mismatch in lease length.",
+  "spoken_fit_reason": "Three short plain-prose sentences that lead with the totals and name the cheaper option, with no markup."
+}

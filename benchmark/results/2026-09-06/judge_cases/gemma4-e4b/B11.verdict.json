@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The 3.5% to 3.75% range, the July 29, 2026 hold and the five consecutive pauses all trace to excerpt [1], but it says the cuts brought the rate 'down from 4.25%' when the source says the prior range was 4.25%-4.5%, and it omits that the change came as three 25 basis point cuts in September, October and December 2025.",
+  "judgment_reason": "It correctly treated the rate as a current fact, searched once, and built its answer from the retrieved excerpts rather than memory.",
+  "spoken_fit_reason": "Two sentences, no URLs, citation markers or lists, leading with the current range before the twelve-month history."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Covers the whole sketch in five sentences: capacity decides whether a model runs at all, spilling to system memory crawls, and more memory buys higher precision and longer context.",
+  "judgment_reason": "Answered from stable hardware knowledge without searching and respected the spoken length the question asked for.",
+  "spoken_fit_reason": "About a hundred words of plain prose, well under the 120-word cap, leading with the answer and closing with a usable rule of thumb."
+}

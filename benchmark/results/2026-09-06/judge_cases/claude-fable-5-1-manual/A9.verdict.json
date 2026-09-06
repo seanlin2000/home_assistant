@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Names the missing items from the sketch (origin, dates and length, a budget number, what warm means, passport and visas, companions, interests) and the assumptions to avoid, including that warm means a beach and that public transport implies a big city.",
+  "judgment_reason": "Explicitly refused to name a destination as if the answer were known and ended by saying it would ask rather than guess.",
+  "spoken_fit_reason": "Compact spoken prose with the missing information folded into two sentences instead of a bulleted checklist."
+}

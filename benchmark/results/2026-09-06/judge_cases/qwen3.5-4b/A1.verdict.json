@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 2,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It inverts the key point of the reference sketch by claiming MoE lets you fit a model that a dense model of the same total size could not fit, and adds concrete errors (a 30B dense model needing 'roughly 120 GB', experts chosen 'randomly', and an invented 'Gemma-2b-mix' MoE) while never mentioning quantization or that total parameters set storage for both.",
+  "judgment_reason": "Correctly answered from general knowledge without searching, but asserted the 120 GB figure and the 4-to-8-byte weight assumption with unwarranted confidence instead of flagging that quantization is what decides whether either model fits.",
+  "spoken_fit_reason": "Three long paragraphs that ran past the word cap mid-explanation, with markdown emphasis markers like *total* that a TTS engine would read wrong."
+}

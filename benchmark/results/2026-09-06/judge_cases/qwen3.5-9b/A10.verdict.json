@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It gets the core of the sketch right, that VRAM decides whether the model fits and that spilling to system RAM degrades speed by an order of magnitude, but leaves out that more memory also permits lighter quantization and longer context.",
+  "judgment_reason": "No search was needed and none happened, and it kept the framing conditional rather than overclaiming a specific hardware verdict.",
+  "spoken_fit_reason": "Roughly ninety words in three flowing sentences, well under the 120-word cap and free of lists or markup."
+}

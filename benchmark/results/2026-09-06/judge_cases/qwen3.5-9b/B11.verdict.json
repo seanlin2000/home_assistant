@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The current 3.50% to 3.75% range and 3.63% effective rate are correctly traced to the excerpts, but the \"last year\" narrative misreads the source, placing the 5.33% peak in mid-2024 when the table shows it reached in August 2023, and reaching back two years instead of describing the Sep 2025 to Sep 2026 window of three cuts then holds.",
+  "judgment_reason": "It searched a genuinely time-sensitive question and every figure it spoke came from the retrieved pages rather than memory.",
+  "spoken_fit_reason": "Two sentences that lead with the rate, no URLs, citation markers, or lists, though the second sentence runs long."
+}

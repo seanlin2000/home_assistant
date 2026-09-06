@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It correctly identifies the memory shortage (HBM4e and GDDR7 consumed by data-center build-out) from excerpt [1] and the demand-spillover mechanism from excerpt [2], which is exactly the causal story the user asked for, but it omits two other retrieved mechanisms: TSMC CoWoS advanced-packaging capacity and the reported 30-40 percent cut to discrete gaming GPU production.",
+  "judgment_reason": "It searched as the question required and answered the 'what changed' question the user actually asked rather than reciting the price tables the excerpts were full of.",
+  "spoken_fit_reason": "Two paragraphs of plain prose with no lists, URLs or citation markers, leading with the cause."
+}

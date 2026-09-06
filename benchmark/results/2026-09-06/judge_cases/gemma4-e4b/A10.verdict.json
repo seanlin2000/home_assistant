@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It gets the core point that capacity decides whether the model and its context fit and that spilling to system RAM crawls, but it never says a model that does not fit may not run at all, and it does not mention that more memory allows less aggressive quantization.",
+  "judgment_reason": "It answered from general knowledge without searching and stayed well inside the spoken-length constraint the user set.",
+  "spoken_fit_reason": "Roughly 75 words in three flowing sentences with no lists, markup or acronyms that would trip a TTS engine, comfortably under 45 seconds aloud."
+}

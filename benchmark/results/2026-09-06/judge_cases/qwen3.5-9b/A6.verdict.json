@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It correctly holds the 24 GB recommendation against the $400 and names VRAM as the bottleneck, but never makes the sketch's concrete trade concrete, saying nothing about the step from roughly 13B-class to 30B-class models or about higher quantization and longer context.",
+  "judgment_reason": "It carried the prior turn forward without asking which two machines were meant and qualified the answer with the budget-constraint exception.",
+  "spoken_fit_reason": "Three sentences of plain prose with numbers spoken as words and no markup."
+}

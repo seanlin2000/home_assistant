@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It gives the correct 1989 but adds an imprecise flourish, saying the wall was \"completely opened by December\" when the opening was November 9 of that year.",
+  "judgment_reason": "It treated a settled historical date as general knowledge and did not search, which is the right call for this question.",
+  "spoken_fit_reason": "A single sentence that leads with the year, with no lists or markup."
+}

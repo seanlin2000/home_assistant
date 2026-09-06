@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The 38.5 percent share is right but the increased rent is given as roughly $2,956 when the sketch requires $2,964, so the dollar figure the listener would actually act on is wrong.",
+  "judgment_reason": "It spoke a wrong dollar amount without hedging and then claimed it had \"applied the growth schedule\", describing a calculator step the transcript shows it never called.",
+  "spoken_fit_reason": "Three plain sentences that lead with both answers, no lists or markup."
+}

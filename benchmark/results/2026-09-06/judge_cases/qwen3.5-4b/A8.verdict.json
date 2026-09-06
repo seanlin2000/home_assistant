@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It recommends the router design and covers latency, cost, deterministic reliability for timers and calendar lookups, the large model reserved for open questions, and the extra glue code as the cost, but never mentions routing errors themselves as a failure mode.",
+  "judgment_reason": "It answered without searching, committed to a recommendation rather than hedging, and named the condition under which the single-LLM design is easier, namely deploying via an API with no custom infrastructure.",
+  "spoken_fit_reason": "Three paragraphs of roughly 200 words with quoted phrases and em-dash asides, well past the length this comparison needed."
+}

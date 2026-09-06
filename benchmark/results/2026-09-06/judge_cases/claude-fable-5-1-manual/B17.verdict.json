@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The yes is right, but it hedges that on-device custom detection is the part it would verify when the third result, a microWakeWord model repo, states outright that custom models run directly on the Voice PE's ESP32-S3 with no server involved, so it leaned on the generic openWakeWord docs page over the source that actually answered the question.",
+  "judgment_reason": "It searched as instructed and gave the requested source rationale honestly, correctly dismissing the older Snowboy tutorial, but its stated reason for trust skipped over the on-point repository it had retrieved.",
+  "spoken_fit_reason": "Opens with yes and one caveat, four sentences of plain prose with no URLs, YAML, or citation markers despite the sources being full of them."
+}

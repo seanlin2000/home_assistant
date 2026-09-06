@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Hits every part of the sketch by denying the zero-rate premise, citing the 3.63 percent effective rate and the talk of a hike at the mid-September meeting, then giving the refinance math of current rate versus yours, closing costs and break-even; the small blemishes are dating the reading to September third when Macrotrends says September second and crediting the Federal Reserve's own daily release rather than the aggregator it read.",
+  "judgment_reason": "It searched before answering, refused the false premise in the first sentence, and asked for the user's current rate instead of inventing one.",
+  "spoken_fit_reason": "Six short sentences of plain prose that open with the correction and end on a single clarifying question."
+}

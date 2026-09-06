@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It names budget, travel dates and the meaning of 'warm', but omits the most basic missing item in the sketch, where the user is departing from, along with trip length, domestic versus international and passport or visa status, and it lists only one assumption to avoid.",
+  "judgment_reason": "It correctly refused to name a destination or invent a home city, budget level or season, and rightly did not search for a question about what it does not know.",
+  "spoken_fit_reason": "Two plain sentences, no lists or markup, that answer the two halves of the question directly."
+}

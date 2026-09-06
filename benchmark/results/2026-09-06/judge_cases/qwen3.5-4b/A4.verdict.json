@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It covers normal senescence with nutrients recycled upward, root-bound roots, and light competition, and asks for species, repotting, watering and light, but offers a muddled 'underwatering if the lower leaves have had less time to acclimate to dry conditions' in place of the sketch's overwatering or root problems and never mentions nitrogen mobility or the pattern of the yellowing.",
+  "judgment_reason": "It explicitly withholds a verdict until it knows the species, repotting history, watering and light, which is exactly the ask-rather-than-assert behavior the question demanded.",
+  "spoken_fit_reason": "A single unbroken paragraph of roughly 180 words with an em-dash aside and a semicolon-separated list of questions, listenable but well past what this question needed."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The second half is sharp, correctly noting the 4060 Ti numbers are bandwidth estimates covering only decode and that voice hinges on time to first word, but the first half falls back on the 14B table at around twenty tokens per second while the codersera result it retrieved gives Qwen3.8-27B sizing directly, an 18 GB default with a 13.4 GB Q3 build for smaller cards, plus the xhigh reasoning default that can think for twenty minutes.",
+  "judgment_reason": "It labelled its own answer a projection rather than a measurement, refused to say the card would deliver a good voice experience, and told the user to measure time to first word on realistic prompts instead.",
+  "spoken_fit_reason": "Plain prose that opens with the honest framing and keeps model names spoken out, with no tables, quant strings, or URLs leaking through from the sources."
+}

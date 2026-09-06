@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It holds the 24 GB recommendation against the $400 delta without asking what the machines were, but it stays generic about 'bigger or better local LLMs' and never names the concrete step the sketch asks for, roughly 13B-class to 30B-class, or the higher quantization and longer context that the extra memory buys.",
+  "judgment_reason": "It rightly did not search and kept its prior stance, but it gave no conditional (tight budget, or target models that already fit in 16 GB) even though it opened turn one by saying the answer depends on model size.",
+  "spoken_fit_reason": "Two plain sentences that lead with the recommendation and spell dollar and gigabyte figures in words, with no markup."
+}

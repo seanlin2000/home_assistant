@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Both figures match the sketch exactly: 22.2 degrees Celsius and 3.11 miles, each taken from a convert call rather than done in the model's head.",
+  "judgment_reason": "It made one calculator call per conversion and did not search a question that needed no web data.",
+  "spoken_fit_reason": "A single sentence with both numbers written out in words and no lists or markup."
+}

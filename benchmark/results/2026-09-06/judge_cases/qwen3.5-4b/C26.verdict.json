@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It reports 38.51 percent and $2,964, matching the sketch's 38.5 percent and 2,964 exactly.",
+  "judgment_reason": "It used the percent and growth tools for both figures, did not search, and correctly took the final_amount of 2,964 rather than the tool's misleading 35,568 cumulative line.",
+  "spoken_fit_reason": "Two short sentences that give each answer in order, plain prose with no markup."
+}

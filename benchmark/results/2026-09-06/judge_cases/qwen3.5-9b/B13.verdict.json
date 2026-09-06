@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Every claim traces to the excerpts, the 83 degree sunny forecast from meteoblue, the forty-five minute Zurich run and Rhine Falls routing from the Lucerne tourism page, and Pilatus from the day-trip guide, though it offers four options without committing to one and gives frequencies rather than any actual departure times.",
+  "judgment_reason": "It searched a genuinely current question, combined the weather source with the transport source rather than parroting one, and flagged the Swiss Travel Pass as conditional on doing multiple excursions.",
+  "spoken_fit_reason": "Plain conversational prose with temperatures and durations spoken as words, no lists, URLs, or citation markers, and the extra length is justified by a question that asked for both weather and options."
+}

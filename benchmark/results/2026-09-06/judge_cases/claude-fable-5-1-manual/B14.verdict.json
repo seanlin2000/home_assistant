@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 0,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The search returned nothing, yet the answer asserts precise current facts with no source behind them, including an August Nvidia notice of a fifteen percent AI server increase, a thirty nine percent June-to-August jump on the 16 GB 5060 Ti, a production cut of a third, and roughly ten percent AMD increases; the underlying memory-shortage narrative is coherent but nothing in it is verified.",
+  "judgment_reason": "The tool result explicitly said to tell the user nothing was found and to caveat an answer from memory, and the reply instead delivers dated figures as established reporting without ever mentioning that the search came back empty.",
+  "spoken_fit_reason": "Plain spoken prose that leads with the memory-not-chip framing and spells out GDDR7 and AMD for speech, with no lists or markup."
+}

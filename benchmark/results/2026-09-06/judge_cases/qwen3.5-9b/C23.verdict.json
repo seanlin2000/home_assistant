@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The $11.61 tip and $76.11 total match the reference sketch exactly.",
+  "judgment_reason": "It treated a simple arithmetic request as arithmetic, did not search, and added no invented assumptions.",
+  "spoken_fit_reason": "A single sentence giving both numbers, with no lists, markup, or symbols that would trip a speech engine."
+}

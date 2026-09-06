@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The $4.32 per month and 14.4 kilowatt-hours over 30 days match the reference sketch exactly and come straight from the energy_cost tool result.",
+  "judgment_reason": "It used the calculator rather than doing the math itself, and reasoned explicitly that no idle power was given so it should not be included.",
+  "spoken_fit_reason": "The final message is two short sentences leading with the dollar figure, with the tool-planning narration kept out of the spoken answer."
+}

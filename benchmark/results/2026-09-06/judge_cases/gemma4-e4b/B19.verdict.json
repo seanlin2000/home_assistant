@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It correctly reports the offload finding from excerpt [2] but says the data is not enough to predict the voice experience when that same excerpt gives decisive numbers (2.4 to 4.1 tok/s, chat TTFT of 25.6 seconds, an F grade on every workload) that clearly rule out a good voice assistant, and it says offload gives 'lower latency' when it means higher.",
+  "judgment_reason": "The skeptical framing about what a fit check can and cannot tell you is right in spirit, but it under-read strong evidence already in hand rather than drawing the conclusion the numbers supported.",
+  "spoken_fit_reason": "Two short paragraphs of plain prose, no lists, tables or citation markers, with the gigabyte figure spelled out."
+}

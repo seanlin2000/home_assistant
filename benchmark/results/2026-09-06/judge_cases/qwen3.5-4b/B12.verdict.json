@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact", "violated_explicit_constraint"],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "Only the 7900 XT at $650 traces to excerpt [3]; the 'RTX 4080 Super at roughly $800' is not in any excerpt (the table lists a plain 4080 at $820) and the used RTX 3090 price claim has no source at all, so most of the recommendation is unsupported.",
+  "judgment_reason": "It searched as required but treated a $1,000 whole-computer budget as a GPU budget, asserting that a $650-700 card plus CPU, RAM, storage and cooling stays 'without exceeding $1,000 total' without flagging how tight or unrealistic that is.",
+  "spoken_fit_reason": "Four dense sentences of about 110 words stacked with model numbers, and the '$650-$700' en-dash range would not read cleanly aloud."
+}

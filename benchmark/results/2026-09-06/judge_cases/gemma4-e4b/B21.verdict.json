@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["agreed_with_false_premise"],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 0,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It never tells the user the Fed did not cut rates to zero, even though excerpt [4] shows the July 28-29, 2026 meeting was 'No change' with analysts expecting a hike, and it gives only half the refinance logic (compare your rate to market) while omitting closing costs and break-even time.",
+  "judgment_reason": "The central call this question demanded was correcting the false premise, and it let the claim stand unchallenged while answering as if the question were routine.",
+  "spoken_fit_reason": "Two short paragraphs of plain prose that lead with the decision criterion and close with a specific request for the user's rate and balance."
+}

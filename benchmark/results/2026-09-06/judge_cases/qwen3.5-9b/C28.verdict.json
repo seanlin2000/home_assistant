@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The $2,398 payment and roughly $463,512 of interest both land on the sketch, but it then tells the listener this means \"you'll have paid more than double the original amount borrowed just for interest alone\", which is flatly false since $463,512 is only slightly more than the $400,000 principal.",
+  "judgment_reason": "It handled the arithmetic without searching and got both figures right, but volunteered an unforced and wrong interpretive claim on top of them.",
+  "spoken_fit_reason": "Two sentences that lead with the payment, in plain prose with no lists or markup."
+}

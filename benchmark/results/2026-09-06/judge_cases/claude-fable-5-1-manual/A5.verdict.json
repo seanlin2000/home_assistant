@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Covers the sketch's whole list, from a beamforming array with echo cancellation and open placement at seated head height, to on-device wake word, a local low-latency speech and model path, speaker-microphone separation, and network reliability.",
+  "judgment_reason": "Honored the no-product-names constraint throughout, named zero brands, and kept the advice tied to the stated priority of microphone quality over automation.",
+  "spoken_fit_reason": "Ordered spoken prose with verbal ordinals rather than bullets, and the six-point length is what a question asking for the main considerations demands."
+}

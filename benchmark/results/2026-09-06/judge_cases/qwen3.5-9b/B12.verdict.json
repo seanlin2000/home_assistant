@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The headline pick, an RTX 4060 Ti 16GB \"for around $400 to $500\", and the RTX 3090 \"under $800\" appear nowhere in the four retrieved pages, and the one card that is in the price table, the 7900 XT at $650, is mentioned only vaguely, so the answer largely ignores the sourced pricing it had in hand.",
+  "judgment_reason": "It searched, which was right, but then answered from memory prices instead of the retrieved table and never reconciled an $800 card plus \"a solid CPU and other components\" with the stated $1,000 total system budget.",
+  "spoken_fit_reason": "Five sentences that read as a spoken enumeration of four different cards, too long for a listener and slow to land on a single recommendation."
+}

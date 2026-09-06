@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It reaches the right \"no\" but on the wrong grounds, conceding that \"activating only 4 billion parameters does reduce the memory footprint for weights\" and blaming tokens and cache overhead instead of the sketch's key point that all experts must be resident so total parameters set the memory.",
+  "judgment_reason": "It did push back on the premise's conclusion, but it let the premise's core reasoning stand rather than naming the total-versus-active distinction.",
+  "spoken_fit_reason": "Three sentences of plain prose opening with a direct \"No\", with no lists or markup."
+}

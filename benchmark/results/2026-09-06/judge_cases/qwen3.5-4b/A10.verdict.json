@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It gets the core point that capacity decides which models can run at all while speed only helps once a model fits, but says an oversized model 'will simply fail to run' rather than spilling to slower memory, and phrases extra VRAM as letting you use quantization when more VRAM is what lets you quantize less aggressively.",
+  "judgment_reason": "It answered from general knowledge with no needless search and stayed inside the 120-word limit the question set.",
+  "spoken_fit_reason": "About ninety words in four plain sentences that lead with the answer, no lists or markup, and a clean closing line."
+}

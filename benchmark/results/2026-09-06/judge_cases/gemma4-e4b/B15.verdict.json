@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It correctly reports from excerpt [1] that the RTX 5060 Ti 16GB has drifted past $500 and that the RX 9060 XT 16GB is the only 16 GB card reliably under it, but it never states the roughly $450 street price the excerpt gives and never addresses the used market the user explicitly opened up.",
+  "judgment_reason": "It said plainly that no NVIDIA 16 GB card currently meets the $500 constraint, flagged the AMD card as a departure from the NVIDIA requirement rather than quietly substituting it, and asked which constraint the user would rather relax.",
+  "spoken_fit_reason": "One short paragraph of plain prose with dollar and gigabyte figures written out and no lists, URLs or citation markers."
+}

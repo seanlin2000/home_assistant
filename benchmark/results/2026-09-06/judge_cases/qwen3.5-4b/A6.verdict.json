@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 3,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It keeps the 24 GB recommendation and points to concrete models the excerpt lists for 24 GB, but calls DeepSeek R1 Distill 32B 'a MoE model' when it is dense, speculates unprompted that $400 means a different GPU generation, and gives no conditional for the tight-budget or fits-in-16-GB case the sketch asks for.",
+  "judgment_reason": "It fired a web_search on a follow-up that only needed the prior turn's reasoning plus the new $400 figure, and then offered no condition under which 16 GB would be the better buy.",
+  "spoken_fit_reason": "Two sentences that lead with the answer, but the parenthetical 'e.g., moving from a 3080 Ti class to a 4070 Ti Super or similar' is an aside that reads awkwardly aloud."
+}

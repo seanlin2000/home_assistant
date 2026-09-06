@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It rejects the premise with the right core reason, that the GPU must hold all parameters and not just the active ones, but it wrongly drags in 'gradients and optimizer states' (training state, irrelevant to inference) and omits the point that 4B active at 4-bit is roughly 2 GB of per-token traffic, which is why it feels fast.",
+  "judgment_reason": "It refused the false premise outright and did not search for something answerable from general knowledge.",
+  "spoken_fit_reason": "Short and plain overall, but the markdown emphasis around *not* is a formatting slip for a TTS engine."
+}

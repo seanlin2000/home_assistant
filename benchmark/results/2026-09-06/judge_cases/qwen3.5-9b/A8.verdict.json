@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It picks the router design for the right reasons of cost, latency and determinism on simple commands, but omits the sketch's counterweights entirely: routing errors, the extra moving parts, and when a single large model is the fine choice.",
+  "judgment_reason": "It committed to a recommendation without hedging, but presented the router as having no downside and called the deterministic path \"free\" without qualification.",
+  "spoken_fit_reason": "Four sentences of plain prose that lead with the recommendation, no lists or markup, with only a slightly redundant closing line."
+}

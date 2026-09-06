@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact", "violated_explicit_constraint"],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The headline no on ChatGPT-like quality is right and the 899 dollar M6 Mac mini traces to the appleinsider table, but the claim that a used 3090 runs seven hundred fifty to nine hundred fifty is in none of the excerpts, which give 1,032 on getpcparts, 1,291 on GPU Poet and 1,500 on RigPrice, so half the recommendation rests on an invented price.",
+  "judgment_reason": "It did the thing the user explicitly asked for by refusing the quality requirement outright and telling them to raise the budget deliberately if they want more, yet it still presents a 3090 build as an all-in thousand-dollar path when the retrieved prices put the card alone above that.",
+  "spoken_fit_reason": "Opens with the direct no, three sentences of plain prose with model names and dollar figures spelled out for speech."
+}
