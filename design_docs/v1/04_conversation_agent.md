@@ -111,3 +111,12 @@ Set through the component's UI config flow and stored by Home Assistant: Ollama 
 - Home Assistant "Voice chapter 10" (continue conversation, ask question): [home-assistant.io blog](https://www.home-assistant.io/blog/2025/06/25/voice-chapter-10/)
 - Ollama chat API with tools: [github.com/ollama/ollama/blob/main/docs/api.md](https://github.com/ollama/ollama/blob/main/docs/api.md)
 - pytest-homeassistant-custom-component: [github.com/MatthewFlamm/pytest-homeassistant-custom-component](https://github.com/MatthewFlamm/pytest-homeassistant-custom-component)
+
+## 11. As built, 2026-09-05
+
+- `assistant_core/models.py` holds the typed vocabulary: `Message` (with `provider_payload` so Anthropic thinking and tool-use blocks can be echoed back unchanged), `ToolCall`, `ToolSpec`, `AgentPolicy`, the model-client events (`TextDelta`, `ToolCallRequest`, `MalformedToolCall`, `Completion`), the agent events (`FillerSpoken`, `ToolStarted`, `ToolFinished`, `AnswerDelta`, `Done`), and `Transcript`.
+- `agent_loop.run(conversation, llm, tools, policy, memory)` is an async generator. The filler sentence is yielded the moment the first tool call arrives, before the tool runs. Tool failures are turned into a notice the model sees rather than an exception. At the tool-round cap the pending calls get a "tool limit reached" notice and the model is asked once more to answer.
+- The spoken word cap is applied to the stream: past the budget, speech stops at the end of the current sentence and `Transcript.truncated` is set. `spoken_text` is what the listener heard across the whole turn; `final_answer` is the model's last message in full.
+- `llm_client.OllamaClient` streams through the `ollama` package with `think` passed only when the candidate config sets it, and retries once without it for model families that reject the switch. `llm_client.AnthropicClient` uses `beta.messages.stream` with adaptive thinking and the server-side refusal fallback, and records the model that actually answered.
+- `tools.McpToolBox` wraps the MCP client; `memory.NoMemory` is the v1 memory implementation.
+- The Home Assistant adapter (`custom_components/studio_assistant`) is not built yet; it belongs to Phase 2.

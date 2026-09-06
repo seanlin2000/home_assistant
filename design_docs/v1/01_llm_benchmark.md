@@ -202,3 +202,14 @@ How to read a 3-bit preview: if it scores near the frontier baseline, that is st
 - Qwen 3.8 open weights require thinking on: [Latent Space](https://www.latent.space/p/ainews-qwen-38-max24t-and-27b-new)
 - gpt-oss-20b memory on 16 GB Macs: [willitrunai.com](https://willitrunai.com/blog/gpt-oss-20b-vram-requirements)
 - Gemma 4 thinking toggle: [gemma4.dev thinking mode](https://gemma4.dev/docs/concepts/thinking-mode)
+
+## 13. As built, 2026-09-05
+
+- Question set v1.1: 22 questions (A1 to A11, B11 to B21). Maximum 220 per model, 110 per category. See `benchmark/questions.yaml`; every question carries `expected_search`, optional `constraints` (`max_words`, `budget_usd`, `no_product_names`), the gates the judge should watch for, and a reference sketch for reasoning questions.
+- Commands: `uv run benchmark-run [--candidate KEY]... [--question ID]... [--date D] [--force] [--delete-models]`, `uv run benchmark-judge D`, `uv run benchmark-report D`, `uv run python scripts/benchmark_llm.py`. Runs resume: questions already in `results/D/<key>.jsonl` are skipped unless `--force`.
+- Harness gates (`benchmark/gates.py`): searched on a no-search question, did not search on a search question, malformed tool call, more than the tool-round cap, no final answer, word limit exceeded, and `run_error` when the model call itself failed.
+- Judge (`benchmark/judge.py`): `messages.parse` with the `JudgeVerdict` pydantic model as the required output shape; `benchmark/rubric.md` is the system prompt verbatim. Each score records the judge's model id and token usage. Sampling temperature cannot be set on Claude Opus 5, so determinism comes from the structured schema and the fixed rubric rather than temperature 0.
+- Report (`benchmark/report.py`): scores table with the fraction of the baseline, gate counts by type, latency and word counts (logged, not scored), per-question matrix, judge agreement once `review_sheet.yaml` is filled in, and the paid API spend for the run.
+- Review sheet: a seeded 20% sample per candidate plus every case where the judge's view of the search decision disagrees with the harness. Human fields are preserved across re-renders.
+- The harness starts `web_search_mcp` as a subprocess with `WEB_SEARCH_CACHE_DIR=results/D/cache`, so every candidate in a run sees identical search results.
+- Memory fit is read from Ollama's `/api/ps` after a warm-up call that uses the run's context length, so the first question does not pay a model reload.

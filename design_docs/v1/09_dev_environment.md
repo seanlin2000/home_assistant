@@ -98,3 +98,12 @@ Most of this will be familiar from data work; two things are worth stating plain
 - uv lock and sync semantics: [docs.astral.sh/uv/concepts/projects/sync](https://docs.astral.sh/uv/concepts/projects/sync/)
 - Home Assistant custom component manifest: [developers.home-assistant.io/docs/creating_integration_manifest](https://developers.home-assistant.io/docs/creating_integration_manifest/)
 - pytest-homeassistant-custom-component: [github.com/MatthewFlamm/pytest-homeassistant-custom-component](https://github.com/MatthewFlamm/pytest-homeassistant-custom-component)
+
+## 11. As built, 2026-09-05
+
+- `uv 0.12`, Python 3.12.14 installed by uv, `pyproject.toml` with hatchling and the three packages listed explicitly, `uv.lock` committed. Console scripts: `web-search-mcp`, `benchmark-run`, `benchmark-judge`, `benchmark-report`.
+- `scripts/dev_setup.sh` is the documented way to create or refresh the environment. It runs `uv sync --frozen` (or `uv lock --upgrade && uv sync` with `--upgrade`) and then `chflags -R nohidden .venv`. The flag matters because this repository lives in an iCloud-synced Desktop folder, macOS marks dot-prefixed trees there as hidden, and Python 3.12.14 skips hidden `.pth` files, which removes the project's own packages from the environment. Moving the repository out of an iCloud-synced folder would remove the need for this step.
+- `scripts/lint.sh` runs black and isort through `uv run`, then shfmt and shellcheck on the shell scripts, skipping `.venv`.
+- Docker Desktop 29.7 provides the daemon; its CLI is used from the application bundle because the `/usr/local/bin` link was not created. `scripts/searxng.sh` adds that path itself.
+- Ollama 0.33.3 from Homebrew, started with `brew services start ollama`.
+- Pinned versions of the third-party packages are in `uv.lock`; the notable ones on the first day were `anthropic 1.4.0`, `mcp 2.1.1`, `ollama 0.6.2`, `trafilatura 2.2.0`, `pydantic 2.13.5`.

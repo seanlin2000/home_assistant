@@ -26,13 +26,26 @@ Phase 0. The design is written and frozen in `design_docs/v0/`. No code yet. The
 
 ## Development
 
-All Python runs from a `uv`-managed virtual environment in this folder. See `design_docs/v0/09_dev_environment.md`. Once code exists:
+All Python runs from a `uv`-managed virtual environment in this folder. See `design_docs/v1/09_dev_environment.md`.
 
 ```
-brew install uv
+brew install uv shfmt shellcheck
 uv python install 3.12
-uv sync
+scripts/dev_setup.sh          # uv sync --frozen, then clears the macOS hidden flag on .venv
 uv run pytest
+scripts/lint.sh               # black, isort, shfmt, shellcheck
+```
+
+Upgrade dependencies deliberately with `scripts/dev_setup.sh --upgrade`, review the `uv.lock` diff, run the tests, commit.
+
+## Benchmark
+
+```
+scripts/searxng.sh up                                  # local search aggregator (Docker)
+uv run benchmark-run --candidate qwen3.5-9b            # or omit --candidate for every model in benchmark/config.yaml
+uv run benchmark-judge 2026-09-05                      # needs ANTHROPIC_API_KEY in .env
+uv run benchmark-report 2026-09-05                     # writes report.md and the review sheet
+uv run python scripts/benchmark_llm.py                 # raw tokens per second per model
 ```
 
 ## License
