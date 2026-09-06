@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "'The Berlin Wall fell in 1989' is exactly the year the sketch calls for, with nothing an expert would add for a spoken answer.",
+  "judgment_reason": "It recognized settled history and answered from knowledge with zero tool calls rather than searching a date that cannot change.",
+  "spoken_fit_reason": "A single sentence that is the answer, no lists, markup, or citation markers."
+}

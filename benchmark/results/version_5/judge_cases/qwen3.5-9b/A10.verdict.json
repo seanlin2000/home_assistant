@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It gets the core point that a model too big for VRAM offloads to system RAM and crawls so raw speed stops mattering, but omits the sketch's second half about larger memory allowing less aggressive quantization and longer context.",
+  "judgment_reason": "Answered from general knowledge without a needless search and stayed well inside the 120-word limit at roughly 85 words.",
+  "spoken_fit_reason": "Three sentences of plain prose, no lists or markdown, and short enough to read aloud in under 45 seconds."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The final assistant message is empty, so none of the reference figures (3,675/month, 44,100, 87,817.80, or the 840 year-one difference) were delivered.",
+  "judgment_reason": "No judgment was exercised at all; the assistant produced nothing and made no calculator calls despite an explicit arithmetic request.",
+  "spoken_fit_reason": "There was nothing for the listener to hear."
+}

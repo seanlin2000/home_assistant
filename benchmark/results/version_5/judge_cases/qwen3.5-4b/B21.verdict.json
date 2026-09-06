@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It rejects the false premise outright and gives the real 3.50%-3.75% range from excerpt [2], then asks for the user's rate as the sketch allows, but it takes the outlier excerpt [4] at face value to claim an 85% chance of a September cut when [1], [7], and [8] all describe the market leaning toward a hike.",
+  "judgment_reason": "It searched before answering, corrected the premise, and asked for the current rate and goal instead of inventing them, but adopted the single source pointing the opposite way from the rest without noticing the disagreement.",
+  "spoken_fit_reason": "Two short paragraphs that lead with the correction and close with three plain questions, no lists, URLs, or markdown."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "'About 38 percent' is within the sketch's accepted range for 38.5 and is hedged as approximate, and $2,964 after the 4 percent increase is exact.",
+  "judgment_reason": "The percent tool returned a nonsensical 210,900 and it discarded that rather than speaking it, while still reaching the right share of income.",
+  "spoken_fit_reason": "A single sentence delivering both figures, no lists, markdown, or citation markers."
+}

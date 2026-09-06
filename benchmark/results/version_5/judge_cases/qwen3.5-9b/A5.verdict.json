@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It covers only a mic array, noise filtering and low latency, missing most of the sketch: beamforming and echo cancellation, device placement away from walls, a local wake-word chip, speaker quality and mic separation, where the compute runs, and always-on audio privacy.",
+  "judgment_reason": "Honored the no-product-names constraint and did not search, but framed the reply as \"look for a model\" shopping advice rather than the hardware design considerations asked for.",
+  "spoken_fit_reason": "Three plain-prose sentences that open with the top priority, no lists, markdown, or URLs."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The used RTX 3090 at about $750 for 24GB and the RTX 5070 Ti at $750 for 16GB both trace cleanly to excerpt [1], but the user asked for a whole computer on $1,000 total and the answer never accounts for the CPU, board, RAM, and power supply that a $749 card leaves no room for, nor for excerpt [2] pricing the same 3090 at $800-999.",
+  "judgment_reason": "Searching was right, but it treated a $1,000 total-computer budget as a $1,000 GPU budget and said nothing about the shortfall or the spread in used 3090 street prices.",
+  "spoken_fit_reason": "Three sentences of prose with prices spelled out as words and no lists, URLs, or citation markers."
+}

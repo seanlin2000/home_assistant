@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It names the two strongest sketch causes, natural senescence with nutrient reallocation and a deficiency hitting older foliage first, and asks for species, light and watering, but omits overwatering, root problems and shading of lower leaves as candidates.",
+  "judgment_reason": "It answered without searching, offered causes as possibilities rather than a verdict, and explicitly requested the missing information needed to decide.",
+  "spoken_fit_reason": "Two sentences of plain prose that lead with the likely explanations and end with the questions, with no lists or markup."
+}

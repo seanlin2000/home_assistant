@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The Pilatus, Rigi, and Titlis options trace to excerpt [3], but 'Weather is forecast to be mild around 60 to 70°F with some rain likely' is presented as tomorrow's forecast when every weather excerpt returned only September climatology (monthly high ranges and an average of 7 rainy days), and no actual current schedule was retrieved despite the user asking about them.",
+  "judgment_reason": "The decision to search was right, but the searches came back with month-average weather and no next-day forecast and it passed that off as tomorrow's conditions instead of saying the forecast was unavailable.",
+  "spoken_fit_reason": "Three sentences of prose leading with the destinations, no lists, URLs, or citation markers, though it is on the long side for a spoken reply."
+}

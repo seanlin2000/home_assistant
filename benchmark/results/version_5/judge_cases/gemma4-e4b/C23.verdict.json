@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Both figures match the reference exactly, an 11.61 tip and a 76.11 total, and each came from a calculator call rather than mental arithmetic.",
+  "judgment_reason": "It used the calculator for both steps as expected for an arithmetic question and did not search.",
+  "spoken_fit_reason": "One sentence with the amounts spelled out as dollars and cents, no lists or markup."
+}

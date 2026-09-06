@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["agreed_with_false_premise"],
+  "search_decision_correct": false,
+  "answer_quality": 1,
+  "judgment": 0,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It lets the claim that the Fed cut rates to zero last month stand entirely unchallenged, and the refinance guidance it does give omits closing costs and break-even time, listing only what it would need to know.",
+  "judgment_reason": "The central call was to check the false premise against the actual current federal funds rate and say plainly that rates were not cut to zero, and the assistant neither searched nor pushed back.",
+  "spoken_fit_reason": "Two sentences of plain prose with no markup, but the second is a run-on request for four pieces of information and no answer is offered."
+}

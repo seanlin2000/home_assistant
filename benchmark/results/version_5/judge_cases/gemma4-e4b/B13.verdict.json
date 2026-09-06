@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 1,
+  "judgment": 0,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It offers no day-trip options, no schedule information and no weather, only a request for the date; the one sliver of value is noting that departure time affects schedules.",
+  "judgment_reason": "The central call was to search for current schedules and weather and it made no tool call at all, asking the user for today's date rather than proceeding.",
+  "spoken_fit_reason": "A single plain-prose sentence with no markup, but it is a question back to the user rather than any answer."
+}

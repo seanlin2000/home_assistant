@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It gets departure location, the vagueness of 'warm', and budget, but omits dates and trip length, domestic versus international and passport or visa status, travel companions, and interests, and its 'avoid assuming' examples ('cheap means $50 a night', 'every subway ride is free') are idiosyncratic rather than the real traps like assuming warm means a beach.",
+  "judgment_reason": "It refused to name any destination and said plainly that a suggestion without a starting point and budget would be a random guess, which is exactly the call this question tests.",
+  "spoken_fit_reason": "Three sentences of plain prose with no lists or markup, a touch long but listenable."
+}

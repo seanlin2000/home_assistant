@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The figures match the reference exactly at 1.45 kWh a day, 43.50 kWh a month and $6.52 at fifteen cents, but it omits the sketch's caveat that the machine is probably not drawing the full 300 watts for the whole hour.",
+  "judgment_reason": "It named the electricity rate as an assumption and called the result an estimate, but let the full-hour-at-300-watts assumption pass unstated even though the user explicitly asked about that.",
+  "spoken_fit_reason": "Two sentences that lead with the dollar figure, with numbers spelled out for speech and no lists or markup."
+}

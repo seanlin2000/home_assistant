@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The $4,024 median and $3,795-$4,450 middle range are correctly pulled from excerpt [1], but it asserts \"Long Island City's rental inventory is tight right now\" when the only supply figure retrieved (2.8 months, seller's market) is for condo sales, it never reconciles excerpt [4]'s conflicting $2,800-$3,000 LIC one-bedroom average, and it misses excerpt [3]'s four closed rentals at a $3,040 median, the sharpest available evidence that signed rents sit well below asking.",
+  "judgment_reason": "Right to search and it did raise the concessions caveat the question asked about, but it computed the 4% increase as \"roughly $160\" off the market median even though the user never stated their own rent.",
+  "spoken_fit_reason": "Four dense sentences of roughly 150 words with several dollar figures and percentiles, listenable but too long and slow to reach the verdict on the 4% offer."
+}

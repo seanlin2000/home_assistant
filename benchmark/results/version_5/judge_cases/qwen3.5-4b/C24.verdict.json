@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It states $19,479 when the sketch gives about $19,091 end-of-month or $19,154 beginning-of-month, because the tool was told to grow 4 percent per year over three yearly periods rather than compound monthly, and it never mentions that $18,000 of the balance is the deposits themselves.",
+  "judgment_reason": "Not searching was right, but it accepted a schedule showing only three periods of 4 percent for a question that specified monthly compounding over thirty-six months, and did no sanity check on the result.",
+  "spoken_fit_reason": "Two sentences that lead with the figure in plain prose, with no lists, markdown, or citation markers."
+}

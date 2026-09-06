@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "Both conversions match the sketch exactly at 22.2 degrees Celsius and 3.11 miles.",
+  "judgment_reason": "Treated a pure conversion as arithmetic rather than searching and answered both halves of the question.",
+  "spoken_fit_reason": "It narrates the method first, spelling out \"subtract 32\" and \"multiply by 5/9\" and \"0.621371\" across two paragraphs, so the two numbers the listener wants arrive at the end of each."
+}

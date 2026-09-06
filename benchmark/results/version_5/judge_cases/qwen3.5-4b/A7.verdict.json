@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The arithmetic matches the sketch (1.45 kWh a day, 43.5 a month, about seven dollars at sixteen cents) and both assumptions are named, but it never notes that the machine probably is not drawing the full 300 watts for the whole hour, nor gives a range for a rate it guessed.",
+  "judgment_reason": "It labeled the split and the price as assumptions as asked, but treated the active hour as exactly 300 watts when the user specifically warned against pretending to know the time under load.",
+  "spoken_fit_reason": "Two sentences opening with the assumptions and landing the figure, numbers written as words, no lists or markup."
+}

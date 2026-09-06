@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It covers all four tradeoffs the user asked for, but the headline recommendation is unsound: it says a 17-18 GB q4_K_M checkpoint 'fits' a 16 GB card by inventing a '~13-14 GB usable' figure, quotes '25-35 tokens per second' on 16 GB when excerpt [3] measured ~35 on a 24 GB RTX 4090, and transfers excerpt [2]'s GPT-4o coding parity from Qwen 2.5 Coder 32B to Qwen 3.8-27B.",
+  "judgment_reason": "It searched as instructed but never confronted the obvious fit problem its own numbers created, and ignored the 13.4 GB Q3 GGUF that excerpt [1] offers specifically for smaller GPUs.",
+  "spoken_fit_reason": "A bulleted list with bold markdown, backticked tags like `q4_K_M`, and en-dash ranges, run long enough that the word cap cut it off mid-bullet."
+}

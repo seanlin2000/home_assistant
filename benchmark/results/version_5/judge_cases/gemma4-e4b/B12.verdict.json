@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The used RTX 3090 24 GB pick and the RTX 4060 Ti 16 GB fallback both trace to the excerpts and are the right VRAM-per-dollar calls, but the user asked for a whole computer on $1,000 and the answer only prices the graphics card, ignoring the rest of the build.",
+  "judgment_reason": "Searching was correct and it explicitly checked the card against the budget, but it did not flag that an $800 to $999 used card leaves nothing of a $1,000 total computer budget, nor that the excerpts call 2026 prices a volatile snapshot.",
+  "spoken_fit_reason": "Three sentences of plain prose with capacities spelled out and no lists, URLs or citation markers."
+}

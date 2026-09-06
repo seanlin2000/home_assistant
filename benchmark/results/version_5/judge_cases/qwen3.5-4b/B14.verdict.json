@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It synthesizes the real mechanism from excerpts [1] and [2] (CoWoS packaging limits, HBM lines booked out, memory above 80% of the bill of materials, the RTX 5090 doubling off MSRP, AI buyers spilling into consumer cards) rather than parroting prices, but it calls HBM the expensive component on a consumer graphics card when the sources say consumer boards use GDDR7 whose capacity HBM is crowding out.",
+  "judgment_reason": "It searched for a market question whose answer turns on events from July and August 2026 and kept every claim tied to what came back, without inventing a forecast.",
+  "spoken_fit_reason": "Four sentences of connected prose with no lists, markdown, or citation markers, and the one acronym is expanded on first use; the length is justified by a question that asked for the mechanism."
+}

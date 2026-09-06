@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It delivers no market comparison and never touches the second half of the question about the risks of using advertised rents, which required no data at all.",
+  "judgment_reason": "It failed to search on a question about current rental conditions and instead blocked on the user's current rent, which is not needed to judge whether a four percent annual increase tracks the market.",
+  "spoken_fit_reason": "Two short sentences of plain prose with no markup, but the listener hears only a request for information rather than an answer."
+}

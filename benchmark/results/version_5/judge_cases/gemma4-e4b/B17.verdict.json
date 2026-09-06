@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The final assistant message is empty, so neither the wake-word answer nor the source explanation was given.",
+  "judgment_reason": "The user explicitly instructed a search and the assistant made no tool call and produced nothing.",
+  "spoken_fit_reason": "There was nothing for the listener to hear."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It picks the router design with sound reasons (latency, cost, deterministic local tools), but never names the router's cost of misrouting and extra moving parts and never says when the single-model design would be fine, both of which the sketch requires.",
+  "judgment_reason": "Not searching was right, but it imported an unstated premise that the single-model design means 'sending every conversation to the cloud' and leaned on that privacy argument the question never raised.",
+  "spoken_fit_reason": "Four sentences of plain prose that lead with the recommendation, no lists or markup, only slightly longer than needed."
+}

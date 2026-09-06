@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It names only natural senescence and root-bound stress, missing the sketch's nitrogen mobility from old to new leaves, shading of lower leaves, and overwatering or root rot, and its follow-up questions skip light, fertilizer history, and whether the yellowing is uniform or patterned.",
+  "judgment_reason": "It offered candidate causes rather than committing to one and explicitly asked what it would need to know before calling it normal, which is what the question demanded.",
+  "spoken_fit_reason": "Two sentences of plain prose leading with the two explanations, though the em-dash aside restating the user's symptoms adds a little length."
+}

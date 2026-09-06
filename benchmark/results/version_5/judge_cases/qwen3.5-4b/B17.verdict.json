@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The 'yes, with setup' verdict is supportable from the microWakeWord models in [6] and the streaming wake word steps in [2], but the user asked which source it trusted and why and the answer only says 'according to the sources' and 'official documentation and community guides', naming none.",
+  "judgment_reason": "It searched as instructed but did no source selection at all, lumping the official home-assistant.io and Nabu Casa pages together with unresolved community forum threads like [3], where a user is still asking whether this works.",
+  "spoken_fit_reason": "Four sentences of prose but with markdown backticks around `openwakeword`, which a text-to-speech engine would read as stray characters."
+}

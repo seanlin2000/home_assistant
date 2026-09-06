@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It correctly reports from [1] and [4] that the 27B runs only at Q2 or Q3-tier quants with about 12K context, but the second half of the question goes half-answered: it never says the sources measured no latency or time-to-first-token for this card and model, which is the number a voice assistant actually lives on, and it skips [7] and [2] recommending a 14B as the right fit for 16 GB.",
+  "judgment_reason": "It refused a flat yes or no, questioned what 'good' means, and hedged its speed guess as 'would likely be' rather than asserting it, but stopped short of naming the specific evidence gap the user was probing for.",
+  "spoken_fit_reason": "Two paragraphs of roughly 150 words that take until the second half to reach the verdict, though there are no lists, URLs, or markdown."
+}

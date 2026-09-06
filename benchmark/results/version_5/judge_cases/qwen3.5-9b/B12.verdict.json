@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The used RTX 3090 at about $900 for 24 GB and 32B-class models is well grounded in excerpts [1] and [2], but the user asked about a whole computer on $1,000 total and the answer covers only the card, and it places the RTX 5080 in a \"$750 to $1,000 range\" when the same source's comparison table prices it at ~$1,400.",
+  "judgment_reason": "Searching was the right call and the used-versus-new trade-off is stated honestly, but it never flags that a $900 GPU plus the 750W-plus power supply the source mentions leaves nothing of a $1,000 total build budget.",
+  "spoken_fit_reason": "Plain prose leading with the recommendation and no lists or URLs, though it runs to five sentences and closes with a two-part follow-up question."
+}

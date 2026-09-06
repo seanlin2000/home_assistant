@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 0,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Every number is invented: it uses a $4,000 base instead of $3,675 or $3,605, gives $48,000 and $100,800 totals, and concludes a nonsensical $36,000 savings, matching nothing in the reference sketch.",
+  "judgment_reason": "Correctly declined to search, but made zero calculator calls on a pure arithmetic question and asserted a comparison without stating the unknown second-year renewal assumption the sketch requires.",
+  "spoken_fit_reason": "Three plain-prose sentences leading with the totals, no markdown, lists, or URLs."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": false,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It rejects the zero-rate premise and asks for the user's existing rate as the sketch requires, but with no search it invents two specific current facts, that \"the Federal Reserve's most recent action was raising rates in July 2024\" and that there are \"no cuts projected for September 2026\", and it omits closing costs and break-even time from the refinance logic.",
+  "judgment_reason": "Correcting the false premise and asking for the user's current rate were the right calls, but it never searched to establish what the rate actually is and instead substituted an invented Fed history.",
+  "spoken_fit_reason": "Two plain-prose sentences that lead with the correction, no lists, markdown, or URLs."
+}

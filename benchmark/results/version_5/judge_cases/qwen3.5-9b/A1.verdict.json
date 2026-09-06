@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It asserts \"you only need enough VRAM to store those active weights ... not the full 30 billion parameter set\", which is the exact misconception the reference sketch says a correct answer must avoid, since all experts' weights must still be held in memory.",
+  "judgment_reason": "Correctly answered from general knowledge without searching, but stated a confidently wrong memory claim with no hedge or mention of quantization and CPU offload.",
+  "spoken_fit_reason": "Three plain-prose sentences that lead with the claim, no lists, markdown, or citations."
+}

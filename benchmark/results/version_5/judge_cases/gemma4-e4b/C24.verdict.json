@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It reports 19,478.78 against the reference of about 19,091 end-of-month or 19,154 start-of-month, because the tool was called with 3 periods at 4 percent each rather than 36 monthly periods, and it never notes that 18,000 of the balance is the deposits themselves.",
+  "judgment_reason": "It correctly reached for the calculator instead of searching, but accepted a schedule that visibly shows only three annual periods for a thirty-six-month question and stated the result to the cent without flagging the end-of-month versus start-of-month assumption.",
+  "spoken_fit_reason": "A single sentence with the figure spelled out for speech and no lists or markup, though quoting cents on a projection is more precision than a listener needs."
+}

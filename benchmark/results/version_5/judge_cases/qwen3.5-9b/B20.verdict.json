@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The core verdict is right and well sourced, using excerpt [3]'s point that used RTX 3090s now average about $1,000 on eBay to show nothing is left for case, PSU, CPU, board or storage, but it asserts without support that ChatGPT-class local models require \"fine-tuned versions ... which cost money to download or train\", muddles the search point into \"performing web searches locally isn't possible without an internet connection\", ignores excerpt [2]'s $799 Mac Mini M4 route, and never mentions microphone or speaker hardware for a voice assistant.",
+  "judgment_reason": "It did exactly what the question demanded, opening with \"not realistic today\" and naming the shortfall explicitly rather than quietly stretching past $1,000.",
+  "spoken_fit_reason": "One roughly 280-word block of prose with a \"Here's why:\" colon and enough length that the word cap cut the listener off before the closing summary."
+}

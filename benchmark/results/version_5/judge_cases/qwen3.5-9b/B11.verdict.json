@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The 3.63 percent level is traceable to the H.15 and Macrotrends excerpts, but the twelve-month history it was asked for is invented: \"a slow climb from earlier lows\" and \"ticked up gradually through July and August\" contradict excerpt [3], which says the Fed held at 3.50-3.75 percent at every meeting so far this year, and it never reports that target range.",
+  "judgment_reason": "Searching was the right call for a live rate, but it filled the unretrieved twelve-month trajectory with a confident invented trend instead of saying the excerpts only showed a year of holds.",
+  "spoken_fit_reason": "Three sentences of plain prose leading with the rate, no lists, URLs, or citation markers."
+}

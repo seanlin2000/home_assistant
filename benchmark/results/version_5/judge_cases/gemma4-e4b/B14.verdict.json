@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It synthesizes across three excerpts rather than parroting one, naming AI data-center demand spillover, CoWoS packaging limits, the HBM shortage and GDDR7 kit costs, but misses the causal link the sources give that memory makers shifting lines to HBM is what tightened GDDR7 supply, and omits foundry allocation and export controls.",
+  "judgment_reason": "It correctly searched for a question about a recent market shift and grounded every claim in the retrieved material without inventing figures.",
+  "spoken_fit_reason": "Plain prose that leads with the cause, with no lists, markdown or URLs, and the extra length is warranted since the user explicitly asked for the mechanism rather than prices."
+}

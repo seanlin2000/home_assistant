@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It gives the correct year, nineteen eighty nine, which is exactly what the reference sketch requires.",
+  "judgment_reason": "It recognized this as settled history and answered directly with no search, which is the behavior the question was designed to test.",
+  "spoken_fit_reason": "A single sentence with the year spelled out for speech, though the 'I can tell you that' preamble is a slight throat-clear."
+}
