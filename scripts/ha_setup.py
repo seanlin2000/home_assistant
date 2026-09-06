@@ -43,10 +43,25 @@ WYOMING_SERVICES = {"whisper": ("Whisper on the Mac", 10300), "kokoro": ("Kokoro
 PIPELINE_NAME = "Jarvis"
 
 
+def discover_base(host: str) -> str:
+    """Home Assistant OS 18 serves the API on port 80 and answers port 8123 with a redirect; older installs serve 8123 directly. Follow one redirect to find out."""
+    for candidate in (f"http://{host}:8123", f"http://{host}"):
+        try:
+            response = httpx.get(f"{candidate}/api/onboarding", timeout=10, follow_redirects=False)
+        except httpx.HTTPError:
+            continue
+        if response.status_code in (200, 401):
+            return candidate
+        if response.is_redirect and response.headers.get("location"):
+            target = httpx.URL(response.headers["location"])
+            return f"{target.scheme}://{target.host}" + (f":{target.port}" if target.port else "")
+    return f"http://{host}:8123"
+
+
 class HomeAssistant:
-    def __init__(self, host: str, token: str | None = None) -> None:
+    def __init__(self, host: str, token: str | None = None, base: str | None = None) -> None:
         self.host = host
-        self.base = f"http://{host}:8123"
+        self.base = base or discover_base(host)
         self.token = token
         self.http = httpx.AsyncClient(base_url=self.base, timeout=60)
         self._ws_id = 0
@@ -65,9 +80,17 @@ class HomeAssistant:
             raise RuntimeError(f"POST {path} -> {response.status_code} {response.text[:300]}")
         return response.json() if response.content else None
 
+    async def supervisor(self, method: str, endpoint: str, data: dict[str, Any] | None = None) -> Any:
+        """Supervisor calls go over the websocket `supervisor/api` command, as the frontend does. On Home Assistant 2026.9 the REST proxy at
+        /api/hassio answered 401 to a valid owner token; the websocket route accepted the same token."""
+        message: dict[str, Any] = {"type": "supervisor/api", "endpoint": endpoint, "method": method}
+        if data is not None:
+            message["data"] = data
+        return await self.ws(message)
+
     async def ws(self, message: dict[str, Any]) -> Any:
         """One websocket command with authentication; the websocket API exposes things REST does not (tokens, pipelines, registries)."""
-        async with websockets.connect(f"ws://{self.host}:8123/api/websocket", max_size=None) as socket:
+        async with websockets.connect(self.base.replace("http://", "ws://", 1) + "/api/websocket", max_size=None) as socket:
             await socket.recv()
             await socket.send(json.dumps({"type": "auth", "access_token": self.token}))
             auth = json.loads(await socket.recv())
@@ -178,7 +201,7 @@ async def password_login(ha: HomeAssistant, client_id: str, username: str, passw
 
 
 async def addons(ha: HomeAssistant, args: argparse.Namespace) -> None:
-    await ha.post("/api/hassio/store/reload", ok_statuses=(200,))
+    await ha.supervisor("post", "/store/reload")
     samba_password = env_value("HA_SAMBA_PASSWORD", generate=True)
     save_env("HA_SAMBA_USER", "homeassistant")
     ADDONS["core_samba"]["options"] = {
@@ -196,24 +219,24 @@ async def addons(ha: HomeAssistant, args: argparse.Namespace) -> None:
 
 
 async def install_addon(ha: HomeAssistant, slug: str, options: dict[str, Any] | None) -> None:
-    info = (await ha.get(f"/api/hassio/addons/{slug}/info"))["data"]
+    info = await ha.supervisor("get", f"/addons/{slug}/info")
     if info["version"] is None:
         print(f"addons: installing {slug} ...")
-        await ha.post(f"/api/hassio/store/addons/{slug}/install", ok_statuses=(200,))
+        await ha.supervisor("post", f"/store/addons/{slug}/install")
         info = await wait_for_addon(ha, slug)
     else:
         print(f"addons: {slug} already installed ({info['version']})")
     if options is not None:
-        await ha.post(f"/api/hassio/addons/{slug}/options", {"options": options}, ok_statuses=(200,))
+        await ha.supervisor("post", f"/addons/{slug}/options", {"options": options})
     if info["state"] != "started":
-        await ha.post(f"/api/hassio/addons/{slug}/start", ok_statuses=(200,))
-    await ha.post(f"/api/hassio/addons/{slug}/options", {"boot": "auto", "watchdog": True}, ok_statuses=(200,))
+        await ha.supervisor("post", f"/addons/{slug}/start")
+    await ha.supervisor("post", f"/addons/{slug}/options", {"boot": "auto", "watchdog": True})
 
 
 async def wait_for_addon(ha: HomeAssistant, slug: str, timeout_seconds: int = 900) -> dict[str, Any]:
     deadline = time.time() + timeout_seconds
     while time.time() < deadline:
-        info = (await ha.get(f"/api/hassio/addons/{slug}/info"))["data"]
+        info = await ha.supervisor("get", f"/addons/{slug}/info")
         if info["version"] is not None:
             return info
         await asyncio.sleep(10)
@@ -319,6 +342,8 @@ async def main_async() -> None:
         raise SystemExit("pass --host or set HA_HOST in .env")
     ha = HomeAssistant(args.host, dotenv_values(ENV_PATH).get("HA_TOKEN"))
     await wait_for_api(ha)
+    save_env("HA_BASE", ha.base)
+    print(f"Home Assistant API at {ha.base}")
     for name, step in (("onboarding", onboarding), ("addons", addons), ("integrations", integrations), ("pipeline", pipeline)):
         if args.only and name not in args.only:
             continue

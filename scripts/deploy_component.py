@@ -77,7 +77,8 @@ def sync(source: Path, target: Path) -> None:
 
 
 def restart_home_assistant(host: str, token: str) -> None:
-    response = httpx.post(f"http://{host}:8123/api/services/homeassistant/restart", headers={"Authorization": f"Bearer {token}"}, timeout=30)
+    base = os.environ.get("HA_BASE") or f"http://{host}:8123"
+    response = httpx.post(f"{base}/api/services/homeassistant/restart", headers={"Authorization": f"Bearer {token}"}, timeout=30)
     response.raise_for_status()
     print("Home Assistant restarting")
 
