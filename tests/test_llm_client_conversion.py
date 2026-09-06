@@ -1,4 +1,5 @@
-from assistant_core.llm_client import assistant_blocks, split_system_prompt, to_anthropic_messages, to_ollama_message
+from assistant_core.anthropic_client import assistant_blocks, split_system_prompt, to_anthropic_messages
+from assistant_core.llm_client import to_ollama_message
 from assistant_core.models import Message, Role, ToolCall
 
 

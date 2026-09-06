@@ -19,3 +19,4 @@ benchmark/results/**/cache/
 
 # Copyrighted reference material; the repo is public
 clean-code.pdf
+vm/

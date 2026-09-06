@@ -1,0 +1,36 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Studio Assistant",
+        "description": "Point the agent at Ollama and the web search tool running on the Mac.",
+        "data": {
+          "ollama_url": "Ollama URL",
+          "model": "Ollama model tag",
+          "mcp_url": "Web search MCP URL"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Could not reach Ollama at that URL.",
+      "model_not_found": "Ollama does not have that model. Pull it first."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Answer policy",
+        "data": {
+          "temperature": "Sampling temperature",
+          "word_budget": "Spoken word budget",
+          "max_tool_rounds": "Maximum search rounds per question",
+          "context_tokens": "Context window (tokens)",
+          "max_output_tokens": "Maximum tokens per model call",
+          "think": "Let the model think before answering",
+          "tool_timeout_seconds": "Search timeout (seconds)",
+          "continue_conversation": "Keep the microphone open after each answer"
+        }
+      }
+    }
+  }
+}

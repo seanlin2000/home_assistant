@@ -1,0 +1,115 @@
+#!/usr/bin/env bash
+# Install, start, stop, and inspect the native macOS services that Home Assistant talks to over the LAN.
+#
+#   scripts/services.sh install      write launchd agents for whisper, kokoro, mcp (and ollama with LAN binding) and load them
+#   scripts/services.sh start|stop   load/unload the agents
+#   scripts/services.sh status       show what is listening on each port
+#   scripts/services.sh logs NAME    tail a service log (whisper|kokoro|mcp|ollama)
+#   scripts/services.sh uninstall    unload and remove the agents
+#
+# Ports: Ollama 11434, Whisper 10300, Kokoro 10210, MCP 8765 (design_docs/v1/08 section 7). Everything binds 0.0.0.0 so the VM can reach it.
+set -euo pipefail
+
+PROJECT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+AGENTS_DIR="$HOME/Library/LaunchAgents"
+LOG_DIR="$HOME/Library/Logs/studio-assistant"
+PREFIX="com.studio-assistant"
+SERVICES=(ollama mcp whisper kokoro)
+OLLAMA_BIN="$(command -v ollama || echo /opt/homebrew/bin/ollama)"
+
+usage() {
+    sed -n '2,10p' "$0"
+    exit 1
+}
+
+plist_path() { echo "$AGENTS_DIR/$PREFIX.$1.plist"; }
+
+write_plist() {
+    # $1 name, $2.. program arguments; environment via ENV_KEYS/ENV_VALUES arrays
+    local name="$1"
+    shift
+    local path
+    path="$(plist_path "$name")"
+    {
+        cat <<EOF
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0"><dict>
+  <key>Label</key><string>$PREFIX.$name</string>
+  <key>ProgramArguments</key><array>
+EOF
+        for arg in "$@"; do echo "    <string>$arg</string>"; done
+        cat <<EOF
+  </array>
+  <key>WorkingDirectory</key><string>$PROJECT_DIR</string>
+  <key>EnvironmentVariables</key><dict>
+    <key>HOME</key><string>$HOME</string>
+    <key>PATH</key><string>/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+EOF
+        local i
+        for i in "${!ENV_KEYS[@]}"; do echo "    <key>${ENV_KEYS[$i]}</key><string>${ENV_VALUES[$i]}</string>"; done
+        cat <<EOF
+  </dict>
+  <key>RunAtLoad</key><true/>
+  <key>KeepAlive</key><true/>
+  <key>ThrottleInterval</key><integer>10</integer>
+  <key>StandardOutPath</key><string>$LOG_DIR/$name.log</string>
+  <key>StandardErrorPath</key><string>$LOG_DIR/$name.log</string>
+</dict></plist>
+EOF
+    } >"$path"
+    echo "wrote $path"
+}
+
+install_agents() {
+    mkdir -p "$AGENTS_DIR" "$LOG_DIR"
+    # Ollama: Homebrew's service binds to localhost only; ours binds the LAN and keeps the model loaded.
+    brew services stop ollama >/dev/null 2>&1 || true
+    ENV_KEYS=(OLLAMA_HOST OLLAMA_KEEP_ALIVE OLLAMA_MAX_LOADED_MODELS) ENV_VALUES=(0.0.0.0:11434 -1 1)
+    write_plist ollama "$OLLAMA_BIN" serve
+    ENV_KEYS=(WEB_SEARCH_HOST WEB_SEARCH_PORT) ENV_VALUES=(0.0.0.0 8765)
+    write_plist mcp "$PROJECT_DIR/.venv/bin/web-search-mcp"
+    ENV_KEYS=() ENV_VALUES=()
+    write_plist whisper "$PROJECT_DIR/.venv/bin/wyoming-mlx-whisper" --uri tcp://0.0.0.0:10300 --model mlx-community/whisper-large-v3-turbo --language en
+    write_plist kokoro "$PROJECT_DIR/.venv/bin/wyoming-kokoro-torch" --uri tcp://0.0.0.0:10210 --voice af_heart
+    start_agents
+}
+
+start_agents() {
+    for name in "${SERVICES[@]}"; do
+        [[ -f "$(plist_path "$name")" ]] && launchctl bootstrap "gui/$(id -u)" "$(plist_path "$name")" 2>/dev/null || launchctl kickstart -k "gui/$(id -u)/$PREFIX.$name" 2>/dev/null || true
+    done
+    sleep 2
+    status
+}
+
+stop_agents() {
+    for name in "${SERVICES[@]}"; do
+        launchctl bootout "gui/$(id -u)/$PREFIX.$name" 2>/dev/null || true
+    done
+}
+
+status() {
+    local ports=("ollama:11434" "mcp:8765" "whisper:10300" "kokoro:10210")
+    for entry in "${ports[@]}"; do
+        local name="${entry%%:*}" port="${entry##*:}"
+        if lsof -nP -iTCP:"$port" -sTCP:LISTEN >/dev/null 2>&1; then
+            echo "$name: listening on $port"
+        else
+            echo "$name: NOT listening on $port"
+        fi
+    done
+}
+
+case "${1:-}" in
+install) install_agents ;;
+start) start_agents ;;
+stop) stop_agents ;;
+status) status ;;
+logs) tail -n 50 -f "$LOG_DIR/${2:?service name}.log" ;;
+uninstall)
+    stop_agents
+    for name in "${SERVICES[@]}"; do rm -f "$(plist_path "$name")"; done
+    ;;
+*) usage ;;
+esac

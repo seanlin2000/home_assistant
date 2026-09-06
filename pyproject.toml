@@ -26,11 +26,18 @@ benchmark-report = "benchmark.report:main"
 benchmark-manual = "benchmark.manual_run:main"
 
 [dependency-groups]
+deploy = [
+    "websockets>=17.1",
+]
 dev = [
     "black>=24.4",
     "isort>=5.13",
     "pytest>=8.2",
     "pytest-asyncio>=0.23",
+]
+voice = [
+    "wyoming-kokoro-torch>=3.2.0",
+    "wyoming-mlx-whisper>=1.5.0",
 ]
 
 [build-system]

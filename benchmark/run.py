@@ -15,7 +15,8 @@ from dotenv import load_dotenv
 from rich.console import Console
 
 from assistant_core import agent_loop
-from assistant_core.llm_client import AnthropicClient, LLMClient, OllamaClient
+from assistant_core.anthropic_client import AnthropicClient
+from assistant_core.llm_client import LLMClient, OllamaClient
 from assistant_core.models import AgentPolicy, Done, Message, Role, Transcript
 from assistant_core.tools import McpToolBox
 from benchmark.costs import estimate_cost_usd
