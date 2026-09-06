@@ -1,4 +1,4 @@
-# LLM benchmark report, 2026-09-05
+# LLM benchmark report, version_1
 
 Question set v1.2, 28 questions, 10 points each. Any gate failure zeroes a question. System prompt v1.1; question routing off.
 

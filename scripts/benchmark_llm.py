@@ -2,7 +2,6 @@
 
 import argparse
 import asyncio
-from datetime import date
 from pathlib import Path
 
 import ollama
@@ -22,7 +21,7 @@ console = Console()
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Measure tokens per second and time to first token per candidate.")
     parser.add_argument("--candidate", action="append", help="candidate key; repeatable; default all Ollama candidates")
-    parser.add_argument("--date", default=date.today().isoformat())
+    parser.add_argument("--run", required=True, help="results folder name (version_1, version_2, ...)")
     return parser.parse_args()
 
 
@@ -43,7 +42,7 @@ async def main_async(args: argparse.Namespace) -> None:
         await unload(client, candidate.model)
     table = render_table(rows)
     console.print(table)
-    write_markdown(Path(config.services.results_dir) / args.date / "speed.md", rows)
+    write_markdown(Path(config.services.results_dir) / args.run / "speed.md", rows)
 
 
 async def measure(client: ollama.AsyncClient, model: str, word_target: int, context_tokens: int) -> ollama.GenerateResponse:

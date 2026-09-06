@@ -9,7 +9,6 @@ import asyncio
 import signal
 import sys
 from collections.abc import AsyncIterator
-from datetime import date
 from pathlib import Path
 
 import yaml
@@ -109,7 +108,7 @@ class ScriptedAnswerClient:
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Replay hand-written answers through the agent loop and write a results file.")
     parser.add_argument("candidate", help="candidate key; reads benchmark/manual/<key>.yaml")
-    parser.add_argument("--date", default=date.today().isoformat(), help="results folder name, default today")
+    parser.add_argument("--run", required=True, help="results folder name under benchmark/results (version_1, version_2, ...)")
     return parser.parse_args()
 
 
@@ -124,7 +123,7 @@ async def main_async(args: argparse.Namespace) -> None:
     question_set = load_questions(QUESTIONS_PATH)
     candidate = config.candidate(args.candidate)
     answers = load_answers(MANUAL_DIR / f"{candidate.key}.yaml")
-    run_dir = Path(config.services.results_dir) / args.date
+    run_dir = Path(config.services.results_dir) / args.run
     async with McpServerProcess(config.services, run_dir / "cache") as mcp_url:
         async with McpToolBox(mcp_url) as toolbox:
             results = [await replay_question(question, answers.by_id(question.id), candidate, toolbox, config.policy) for question in question_set.questions]

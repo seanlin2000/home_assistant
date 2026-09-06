@@ -7,7 +7,6 @@ import platform
 import signal
 import subprocess
 import sys
-from datetime import date
 from pathlib import Path
 
 import anthropic
@@ -36,7 +35,7 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Run the LLM benchmark.")
     parser.add_argument("--candidate", action="append", help="candidate key from config.yaml; repeatable; default all")
     parser.add_argument("--question", action="append", help="question id; repeatable; default all")
-    parser.add_argument("--date", default=date.today().isoformat(), help="results folder name, default today")
+    parser.add_argument("--run", required=True, help="results folder name under benchmark/results, one per pass of the agent: version_1, version_2, ...")
     parser.add_argument("--force", action="store_true", help="re-run questions that already have a result")
     parser.add_argument("--delete-models", action="store_true", help="delete each Ollama model after its run to save disk")
     return parser.parse_args()
@@ -52,7 +51,7 @@ def main() -> None:
 async def main_async(args: argparse.Namespace) -> None:
     config = load_config(CONFIG_PATH)
     question_set = load_questions(QUESTIONS_PATH)
-    run_dir = Path(config.services.results_dir) / args.date
+    run_dir = Path(config.services.results_dir) / args.run
     candidates = [config.candidate(key) for key in args.candidate] if args.candidate else config.candidates
     questions = [question_set.by_id(qid) for qid in args.question] if args.question else question_set.questions
     await ensure_searxng(config.services.searxng_url)

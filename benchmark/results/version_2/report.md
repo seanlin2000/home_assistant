@@ -1,4 +1,4 @@
-# LLM benchmark report, 2026-09-06
+# LLM benchmark report, version_2
 
 Question set v1.2, 28 questions, 10 points each. Any gate failure zeroes a question. System prompt v1.2; question routing on.
 
@@ -13,7 +13,7 @@ Total counts a gated question as zero; ungated total ignores the gates and sums 
 | Qwen 3.5 9B, Q4_K_M | 156/280 | 182/280 | 72/110 | 39/110 | 45/60 | n/a | 6 | 2.8 | 2.0 | 1.8 | 0 |
 | Qwen 3.5 4B, Q4_K_M | 151/280 | 179/280 | 70/110 | 31/110 | 50/60 | n/a | 7 | 3.0 | 2.0 | 1.3 | 0 |
 
-## Compared with 2026-09-05
+## Compared with version_1
 
 Totals on the questions both passes share, so new questions do not inflate the second pass.
 

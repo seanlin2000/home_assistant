@@ -31,7 +31,7 @@ SCORE_RANGES = {"answer_quality": (0, 5), "judgment": (0, 3), "spoken_fit": (0, 
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Judge benchmark transcripts.")
-    parser.add_argument("date", help="results folder name under benchmark/results")
+    parser.add_argument("run", help="results folder name under benchmark/results (version_1, version_2, ...)")
     parser.add_argument("--candidate", action="append", help="candidate key; repeatable; default every results file in the folder")
     parser.add_argument("--force", action="store_true", help="re-judge questions that already have a score")
     parser.add_argument("--export", action="store_true", help="write pending cases to judge_cases/ for a subagent instead of calling the API")
@@ -48,7 +48,7 @@ def main() -> None:
 async def main_async(args: argparse.Namespace) -> None:
     config = load_config(CONFIG_PATH)
     question_set = load_questions(QUESTIONS_PATH)
-    run_dir = Path(config.services.results_dir) / args.date
+    run_dir = Path(config.services.results_dir) / args.run
     rubric = RUBRIC_PATH.read_text()
     if args.export:
         for results_path in results_files(run_dir, args.candidate):

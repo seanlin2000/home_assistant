@@ -88,7 +88,7 @@ class CandidateReport:
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Render the benchmark report and review sheet.")
-    parser.add_argument("date", help="results folder name under benchmark/results")
+    parser.add_argument("run", help="results folder name under benchmark/results (version_1, version_2, ...)")
     parser.add_argument("--compare", help="an earlier results folder to compare against, question by question")
     return parser.parse_args()
 
@@ -97,10 +97,10 @@ def main() -> None:
     args = parse_args()
     config = load_config(CONFIG_PATH)
     question_set = load_questions(QUESTIONS_PATH)
-    run_dir = Path(config.services.results_dir) / args.date
+    run_dir = Path(config.services.results_dir) / args.run
     reports = load_reports(run_dir, config.candidates)
     previous = load_reports(Path(config.services.results_dir) / args.compare, config.candidates) if args.compare else None
-    (run_dir / "report.md").write_text(render_report(args.date, question_set, reports, run_dir, previous, args.compare))
+    (run_dir / "report.md").write_text(render_report(args.run, question_set, reports, run_dir, previous, args.compare))
     write_review_sheet(run_dir, question_set, reports, config.judge.review_sample_fraction, config.judge.review_seed)
     print(f"wrote {run_dir / 'report.md'} and {run_dir / 'review_sheet.yaml'}")
 
@@ -115,10 +115,10 @@ def load_reports(run_dir: Path, candidates: list[Candidate]) -> list[CandidateRe
     return reports
 
 
-def render_report(run_date: str, question_set: QuestionSet, reports: list[CandidateReport], run_dir: Path, previous: list[CandidateReport] | None = None, previous_date: str | None = None) -> str:
+def render_report(run_name: str, question_set: QuestionSet, reports: list[CandidateReport], run_dir: Path, previous: list[CandidateReport] | None = None, previous_name: str | None = None) -> str:
     baseline = next((report for report in reports if report.candidate.baseline), None)
     sections = [
-        f"# LLM benchmark report, {run_date}\n\nQuestion set v{question_set.version}, {len(question_set.questions)} questions, 10 points each. Any gate failure zeroes a question.{render_run_meta(run_dir)}",
+        f"# LLM benchmark report, {run_name}\n\nQuestion set v{question_set.version}, {len(question_set.questions)} questions, 10 points each. Any gate failure zeroes a question.{render_run_meta(run_dir)}",
         render_summary_table(reports, baseline),
         render_gate_table(reports),
         render_router_table(question_set, reports),
@@ -128,8 +128,8 @@ def render_report(run_date: str, question_set: QuestionSet, reports: list[Candid
         render_judge(reports),
         render_spend(reports),
     ]
-    if previous is not None and previous_date:
-        sections.insert(2, render_comparison(reports, previous, previous_date))
+    if previous is not None and previous_name:
+        sections.insert(2, render_comparison(reports, previous, previous_name))
     if any(report.candidate.preview for report in reports):
         sections.insert(2, f"> {PREVIEW_CAVEAT}")
     return "\n\n".join(sections) + "\n"
@@ -172,9 +172,9 @@ def count_correct(outcomes: list[tuple[Question, object]]) -> int:
     return sum(1 for question, decision in outcomes if decision.route == question.route)
 
 
-def render_comparison(reports: list[CandidateReport], previous: list[CandidateReport], previous_date: str) -> str:
+def render_comparison(reports: list[CandidateReport], previous: list[CandidateReport], previous_name: str) -> str:
     lines = [
-        f"## Compared with {previous_date}",
+        f"## Compared with {previous_name}",
         "",
         "Totals on the questions both passes share, so new questions do not inflate the second pass.",
         "",

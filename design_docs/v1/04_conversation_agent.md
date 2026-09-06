@@ -174,3 +174,17 @@ Three things had to change once the code ran inside Home Assistant's own Python 
 - **The filler sentence depends on the tool.** A calculator call used to say "Let me pull some sources on that." `AgentPolicy` now has `calculate_filler_phrases` ("Let me work that out.", "One second, doing the math.") and `agent_loop.filler_for` picks the list by whether the first tool of the turn is in `SEARCH_TOOL_NAMES`, which moved to `assistant_core.models` so the benchmark and the loop share one definition.
 
 Deployment is `scripts/deploy_component.py`: it stages the component with `assistant_core` vendored under `vendor/` (minus `anthropic_client.py`), mounts the VM's `config` share over SMB (the Samba add-on), copies the tree into `custom_components/studio_assistant`, unmounts, and calls the restart service. Home Assistant 2026.9 usually drops that HTTP connection as it shuts down instead of answering, so the script treats a dropped connection as accepted and polls `/api/` until the API is back (about 30 s).
+
+## 14. As built, 2026-09-06: the directive moves into the system prompt (prompt 1.3)
+
+Pass 2 showed the router choosing "calculate" correctly for Qwen 3.5 9B on every arithmetic question while the model made zero calculator calls; a rerun of the eight arithmetic questions reproduced it exactly. The directive was a bracketed "[Assistant note: ...]" appended to the user's message, which models read as part of the request rather than as an operator rule. From prompt version 1.3, `apply_route` appends the directive to the system prompt for that turn and leaves the user's message untouched:
+
+```
+ SYSTEM  base prompt (unchanged)
+         + "Routing for this question: CALCULATE.
+            This question needs arithmetic. Call the calculator tools (...) for every number; do not do the math yourself. ...
+            Example. Question: "What is 15 percent of 80 dollars?"  Tool call: percent(kind="of", a=15, b=80)  Tool result: ...  Answer: ..."
+ USER    exactly what the user said
+```
+
+The search route gets the matching block with one `search_and_read` example. The wording stays a plain instruction: nothing in the harness enforces it, so it makes no claims about what happens to an answer that ignores it, at the user's request. Latency is unchanged (about ninety more prompt tokens, no extra call). The route record on the transcript and the router accuracy table are unaffected, so passes remain comparable on routing; answer scores are compared pass to pass in `benchmark/results/version_3/report.md`.

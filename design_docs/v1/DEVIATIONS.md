@@ -4,7 +4,7 @@ Every place the build departed from the frozen design in `design_docs/v0/`, with
 
 | Section | Entries |
 |---|---|
-| [01 LLM benchmark](#01-llm-benchmark) | 12 |
+| [01 LLM benchmark](#01-llm-benchmark) | 13 |
 | [02 Local LLM](#02-local-llm) | 1 |
 | [03 Web search MCP](#03-web-search-mcp) | 5 |
 | [04 Conversation agent](#04-conversation-agent) | 6 |
@@ -29,6 +29,7 @@ Every place the build departed from the frozen design in `design_docs/v0/`, with
 | 2026-09-07 | Candidate models | 02, 08 | The Qwen 3.6-27B dense preview was stopped after one question and dropped from both passes. | Only 8.3 of its 13.7 GB stayed on the GPU; with the 16k context it pushed the Mac to 13.8 GB of swap and generated at 0.09 tokens per second (3,179 s for one 270-token answer), so 22 questions would have taken days and the measurement would have said nothing about the model. A dense 27B needs a 32 GB machine; it stays in the hardware discussion, not the benchmark. |
 | 2026-09-06 | Judge | 04 | Judging runs through a Claude Code subagent on the user's subscription (`benchmark-judge --export`, the `benchmark-judge` project agent on Opus, `benchmark-judge --import`) instead of the Anthropic API. | The user did not want prepaid API credit spent on grading when a subagent of the same model can do it. Same rubric text, same model family; not byte-identical conditions (no structured-output enforcement, the agent's own thinking settings), which the report notes. The API path is kept for reference. |
 | 2026-09-06 | Benchmark MCP server | 03 | The benchmark's MCP server runs on port 8766, refuses to start if the port is taken, and checks the tool list it reaches is its own. | A leftover pass-1 server on 8765 answered the readiness check and served the first pass-2 runs without the calculator tools; those results and $4.87 of judging were discarded. |
+| 2026-09-06 | Results folders | 09 | Results folders are named by pass (`version_1`, `version_2`, ...; a subset rerun gets a suffix such as `version_2_recheck_qwen3.5-9b`) and every benchmark command takes that name (`--run`), replacing the dated folders of v0. | A date does not say which agent version produced the numbers, and two passes can land on the same day; the user asked for pass names. |
 
 ## 02 Local LLM
 

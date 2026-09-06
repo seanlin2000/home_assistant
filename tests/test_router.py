@@ -62,12 +62,18 @@ async def test_follow_up_turns_pass_earlier_user_turns_as_context() -> None:
     assert "Earlier the user said: I am choosing between 16 and 24 GB." in classifier.calls[0]
 
 
-def test_apply_route_annotates_only_the_last_user_message() -> None:
+def test_apply_route_appends_the_directive_to_the_system_prompt_and_leaves_the_user_message_alone() -> None:
     messages = [Message(role=Role.SYSTEM, content="sys"), Message(role=Role.USER, content="first"), Message(role=Role.ASSISTANT, content="a"), Message(role=Role.USER, content="second")]
     search = apply_route(messages, rule_route("search the web for it"))
-    assert search[-1].content == f"second\n\n{SEARCH_DIRECTIVE}" and search[1].content == "first" and messages[-1].content == "second"
+    assert search[0].content == f"sys\n\n{SEARCH_DIRECTIVE.rstrip()}" and search[-1].content == "second" and messages[0].content == "sys"
     calc = apply_route(messages, rule_route("what is 15% of $80 plus $20"))
-    assert calc[-1].content.endswith(CALCULATE_DIRECTIVE)
+    assert calc[0].content.endswith(CALCULATE_DIRECTIVE.rstrip()) and "do not do the math yourself" in calc[0].content
     from assistant_core.models import RouteDecision
 
     assert apply_route(messages, RouteDecision(route=Route.ANSWER, source="model")) is messages
+
+
+def test_apply_route_prepends_a_system_message_when_there_is_none() -> None:
+    messages = [Message(role=Role.USER, content="what is 15% of $80 plus $20")]
+    calc = apply_route(messages, rule_route(messages[0].content))
+    assert calc[0].role == Role.SYSTEM and calc[0].content == CALCULATE_DIRECTIVE.rstrip() and calc[1] is messages[0]
