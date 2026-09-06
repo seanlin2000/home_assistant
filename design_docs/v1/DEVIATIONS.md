@@ -7,7 +7,7 @@ Every place the build departed from the frozen design in `design_docs/v0/`, with
 | [01 LLM benchmark](#01-llm-benchmark) | 13 |
 | [02 Local LLM](#02-local-llm) | 1 |
 | [03 Web search MCP](#03-web-search-mcp) | 7 |
-| [04 Conversation agent](#04-conversation-agent) | 7 |
+| [04 Conversation agent](#04-conversation-agent) | 8 |
 | [05 Voice pipeline](#05-voice-pipeline) | 1 |
 | [06 Home Assistant core](#06-home-assistant-core) | 5 |
 | [08 Hardware and deployment](#08-hardware-and-deployment) | 2 |
@@ -60,6 +60,7 @@ Every place the build departed from the frozen design in `design_docs/v0/`, with
 | 2026-09-06 | Agent loop, question router | 01 | A router decides search / calculate / answer before the model's first call (rules first, then one structured-output call to the same model) and appends a bracketed directive to the user message. Applies to every candidate, the baseline included, and is scored separately in the report. | Pass 1 showed local models answering implicit current-fact questions from memory and miscomputing arithmetic they had set up correctly; tool descriptions alone did not move them, and Ollama cannot force a tool call. |
 | 2026-09-06 | Agent loop, filler sentence | 05 | The filler spoken while the first tool runs depends on the tool: search tools get the web phrases from v0 ("Let me pull some sources on that."), calculator tools get `calculate_filler_phrases` ("Let me work that out."). `SEARCH_TOOL_NAMES` moved into `assistant_core.models` so the loop and the benchmark share it. | Heard in the first end-to-end test inside Home Assistant: a percentage question was answered with "Let me pull some sources on that", which is wrong and, for a privacy-minded user, alarming when nothing left the network. |
 | 2026-09-06 | Agent loop, route directive | 01 | Prompt 1.3 moved the router's directive from a note appended to the user's message into the system prompt for the turn, with a worked example; prompt 1.4 trimmed both directives to the bare example call after pass 3 showed the smaller models imitating the example's finished answer instead of making the tool call. Wording is a plain instruction with no invented consequences. | Pass 2 and a rerun showed Qwen 3.5 9B routed to calculate on every arithmetic question and calling no tool; models weight the system prompt over trailing notes. The user asked for the plain wording. |
+| 2026-09-06 | System prompt (`assistant_core/prompts.py`) | 04 | The system prompt carries today's date on its second line, filled in per request by `system_prompt()`. | Pass 4 showed the small models writing search queries pinned to 2024 and 2025 because nothing told them the year; the line removes that class of stale queries at no latency cost. Prompt version 1.5. |
 
 ## 05 Voice pipeline
 

@@ -9,6 +9,7 @@ from collections.abc import AsyncIterator
 from assistant_core.llm_client import LLMClient
 from assistant_core.memory import ConversationMemory, NoMemory
 from assistant_core.models import (
+    SEARCH_TOOL_NAMES,
     AgentEvent,
     AgentPolicy,
     AnswerDelta,
@@ -19,7 +20,6 @@ from assistant_core.models import (
     MalformedToolCall,
     Message,
     Role,
-    SEARCH_TOOL_NAMES,
     TextDelta,
     ToolCall,
     ToolCallRequest,
@@ -28,7 +28,7 @@ from assistant_core.models import (
     ToolStarted,
     Transcript,
 )
-from assistant_core.prompts import SYSTEM_PROMPT
+from assistant_core.prompts import system_prompt
 from assistant_core.router import apply_route, decide_route
 from assistant_core.tools import ToolBox
 
@@ -80,7 +80,7 @@ async def run(conversation: list[Message], llm: LLMClient, tools: ToolBox, polic
     started = time.perf_counter()
     memory = memory or NoMemory()
     messages = build_messages(conversation, memory)
-    transcript = Transcript(model=llm.model_name, system_prompt=SYSTEM_PROMPT, conversation=list(conversation))
+    transcript = Transcript(model=llm.model_name, system_prompt=system_prompt(), conversation=list(conversation))
     cap = SpokenAnswerCap(policy.word_budget)
     tool_specs = await load_tool_specs(tools, transcript)
     if policy.route_questions and tool_specs:
@@ -107,7 +107,8 @@ async def run(conversation: list[Message], llm: LLMClient, tools: ToolBox, polic
 
 def build_messages(conversation: list[Message], memory: ConversationMemory) -> list[Message]:
     context = memory.get_context(conversation)
-    system_text = SYSTEM_PROMPT if not context else f"{SYSTEM_PROMPT}\n\nWhat you remember about this user:\n{context}"
+    base = system_prompt()
+    system_text = base if not context else f"{base}\n\nWhat you remember about this user:\n{context}"
     return [Message(role=Role.SYSTEM, content=system_text), *conversation]
 
 

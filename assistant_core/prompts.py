@@ -1,7 +1,9 @@
 """The one system prompt every model sees. Identical wording across candidates is a benchmark fairness rule."""
 
+from datetime import date
+
 PERSONA_NAME = "Jarvis"
-PROMPT_VERSION = "1.4"  # 1.2 adds the calculator rule; 1.3 moves the router directive into the system prompt with a worked example; 1.4 trims the directives to the call alone
+PROMPT_VERSION = "1.5"  # 1.2 adds the calculator rule; 1.3 moves the router directive into the system prompt with a worked example; 1.4 trims the directives to the call alone; 1.5 adds today's date
 
 SYSTEM_PROMPT = f"""You are {PERSONA_NAME}, a voice assistant in a small studio apartment. Everything you say is read aloud by a text-to-speech engine, so write the way a thoughtful person talks.
 
@@ -22,3 +24,15 @@ When to search the web
 When to calculate
 - Never do arithmetic with more than one step in your head. For money, percentages, compounding, unit conversions, electricity costs, loan payments, and dates, call the calculator tools and repeat their result. Set up the numbers from the question, let the tool do the digits, then explain what the number means.
 - Calculator tools are not web searches; using them on a reasoning question is fine and expected."""
+
+DATE_LINE = "Today is {today}. Use this date whenever a question depends on what is current; do not assume an earlier year in your searches or answers."
+
+
+def system_prompt(today: date | None = None) -> str:
+    """The system prompt with today's date on its second line.
+
+    Without it the models assume the year their training ended and search for last year's prices and schedules; pass 4 of the benchmark
+    had fourteen of forty-six queries pinned to 2024 or 2025. The date is filled in per request so the text is never frozen in the code."""
+    line = DATE_LINE.format(today=f"{today or date.today():%A, %B %-d, %Y}")
+    first_paragraph, rest = SYSTEM_PROMPT.split("\n\n", 1)
+    return f"{first_paragraph}\n{line}\n\n{rest}"
