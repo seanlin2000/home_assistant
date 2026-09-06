@@ -19,8 +19,8 @@ class LLMClient(Protocol):
 
     def chat(self, messages: list[Message], tools: list[ToolSpec], policy: AgentPolicy) -> AsyncIterator[LLMEvent]: ...
 
-    async def classify(self, system_prompt: str, user_text: str, schema: dict[str, Any]) -> dict[str, Any]:
-        """One short, non-streaming call that must return JSON matching schema; used by the router."""
+    async def classify(self, system_prompt: str, user_text: str, schema: dict[str, Any], policy: AgentPolicy) -> dict[str, Any]:
+        """One short, non-streaming call that must return JSON matching schema; used by the router. Takes the policy so the request matches the chat calls (Ollama reloads a model whose context length changes)."""
         ...
 
 
@@ -58,14 +58,15 @@ class OllamaClient:
         stats = ollama_stats(self._model, last_chunk, started, first_token_at)
         yield Completion(message=Message(role=Role.ASSISTANT, content=content, thinking="".join(thinking_parts), tool_calls=tool_calls), stats=stats)
 
-    async def classify(self, system_prompt: str, user_text: str, schema: dict[str, Any]) -> dict[str, Any]:
+    async def classify(self, system_prompt: str, user_text: str, schema: dict[str, Any], policy: AgentPolicy) -> dict[str, Any]:
+        # num_ctx must equal the chat calls' value: a different context length makes Ollama reload the model (about 5 s for a 6 GB model).
         request: dict[str, Any] = {
             "model": self._model,
             "messages": [{"role": "system", "content": system_prompt}, {"role": "user", "content": user_text}],
             "format": schema,
             "stream": False,
             "keep_alive": self._keep_alive,
-            "options": {"temperature": 0, "num_predict": CLASSIFY_MAX_TOKENS},
+            "options": {"temperature": 0, "num_predict": CLASSIFY_MAX_TOKENS, "num_ctx": policy.context_tokens},
             "think": False,
         }
         try:

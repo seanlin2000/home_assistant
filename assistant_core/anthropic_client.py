@@ -39,7 +39,7 @@ class AnthropicClient:
             yield ToolCallRequest(call=call)
         yield completion
 
-    async def classify(self, system_prompt: str, user_text: str, schema: dict[str, Any]) -> dict[str, Any]:
+    async def classify(self, system_prompt: str, user_text: str, schema: dict[str, Any], policy: AgentPolicy) -> dict[str, Any]:
         response = await self._client.messages.create(
             model=self._model,
             max_tokens=CLASSIFY_MAX_TOKENS,

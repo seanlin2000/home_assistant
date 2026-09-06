@@ -83,7 +83,7 @@ async def run(conversation: list[Message], llm: LLMClient, tools: ToolBox, polic
     cap = SpokenAnswerCap(policy.word_budget)
     tool_specs = await load_tool_specs(tools, transcript)
     if policy.route_questions and tool_specs:
-        transcript.route = await decide_route(llm, conversation)
+        transcript.route = await decide_route(llm, conversation, policy)
         messages = apply_route(messages, transcript.route)
     for round_index in range(policy.max_tool_rounds + 1):
         turn = ModelTurn()

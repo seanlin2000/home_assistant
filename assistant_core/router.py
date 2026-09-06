@@ -9,14 +9,15 @@ import re
 import time
 
 from assistant_core.llm_client import LLMClient
-from assistant_core.models import Message, Role, Route, RouteDecision
+from assistant_core.models import AgentPolicy, Message, Role, Route, RouteDecision
 
 ROUTE_SCHEMA = {"type": "object", "properties": {"route": {"type": "string", "enum": [route.value for route in Route]}}, "required": ["route"]}
 
 ROUTER_SYSTEM_PROMPT = """You sort spoken questions for a home voice assistant. Reply with JSON only: {"route": "search" | "calculate" | "answer"}.
-search: the correct answer depends on facts that change over time or that the assistant cannot know without checking: current prices, rates, news, weather, schedules, product availability, recent releases, market conditions, or anything the user explicitly asks to be searched or looked up.
+search: the correct answer depends on facts that change over time or that the assistant cannot know without checking: current prices, rates, news, weather, schedules, product availability, recent releases, market conditions, what to buy today, whether an offer is competitive right now, or a claim about a recent event. Also anything the user explicitly asks to be searched or looked up.
 calculate: the correct answer requires arithmetic on numbers in the question: percentages, totals over time, compounding, unit or temperature conversions, energy costs, loan payments, tips, splits, or date differences.
-answer: everything else: explanations, reasoning, advice from what the user said, comparisons of ideas, opinions, clarifying questions."""
+answer: everything else: explanations of how things work, reasoning, advice from what the user said, comparisons of ideas, opinions, clarifying questions, and settled history even when it sounds topical.
+Examples: "What hardware gives the most memory for a thousand dollars today?" -> search. "Is a four percent rent increase competitive in my neighborhood?" -> search. "Since the central bank cut rates last month, should I refinance?" -> search. "What year did the Berlin Wall fall?" -> answer. "Why can a sparse model run on a smaller GPU?" -> answer. "What is fifteen percent of eighty dollars?" -> calculate."""
 
 SEARCH_DIRECTIVE = "[Assistant note: this question needs current information from the web. Call search_and_read before answering; do not answer it from memory.]"
 CALCULATE_DIRECTIVE = "[Assistant note: this question needs arithmetic. Call the calculator tools (calculate, percent, convert, growth_schedule, energy_cost, loan_payment, break_even, date_math) for every number; do not do the math yourself.]"
@@ -45,11 +46,11 @@ def rule_route(text: str) -> RouteDecision | None:
     return None
 
 
-async def model_route(llm: LLMClient, text: str, earlier_user_turns: list[str]) -> RouteDecision:
+async def model_route(llm: LLMClient, text: str, earlier_user_turns: list[str], policy: AgentPolicy) -> RouteDecision:
     started = time.perf_counter()
     context = "".join(f"Earlier the user said: {turn}\n" for turn in earlier_user_turns[-2:])
     try:
-        raw = await llm.classify(ROUTER_SYSTEM_PROMPT, f"{context}Question: {text}", ROUTE_SCHEMA)
+        raw = await llm.classify(ROUTER_SYSTEM_PROMPT, f"{context}Question: {text}", ROUTE_SCHEMA, policy)
         route = Route(raw["route"])
         detail = "model classified"
     except Exception as error:  # noqa: BLE001 - a broken router must never block the answer
@@ -57,14 +58,14 @@ async def model_route(llm: LLMClient, text: str, earlier_user_turns: list[str]) 
     return RouteDecision(route=route, source="model", detail=detail, seconds=time.perf_counter() - started)
 
 
-async def decide_route(llm: LLMClient, conversation: list[Message]) -> RouteDecision:
+async def decide_route(llm: LLMClient, conversation: list[Message], policy: AgentPolicy) -> RouteDecision:
     user_turns = [message.content for message in conversation if message.role == Role.USER]
     if not user_turns:
         return RouteDecision(route=Route.ANSWER, source="none", detail="no user message")
     decision = rule_route(user_turns[-1])
     if decision is not None:
         return decision
-    return await model_route(llm, user_turns[-1], user_turns[:-1])
+    return await model_route(llm, user_turns[-1], user_turns[:-1], policy)
 
 
 def apply_route(messages: list[Message], decision: RouteDecision) -> list[Message]:

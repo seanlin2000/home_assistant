@@ -89,7 +89,7 @@ class ScriptedAnswerClient:
         yield TextDelta(text=self._turn.answer)
         yield Completion(message=Message(role=Role.ASSISTANT, content=self._turn.answer), stats=self._stats())
 
-    async def classify(self, system_prompt: str, user_text: str, schema: dict) -> dict:
+    async def classify(self, system_prompt: str, user_text: str, schema: dict, policy: AgentPolicy) -> dict:
         """The hand-written script is its own router: the route is whatever tools the scripted turn uses."""
         if self._turn is None:
             raise RuntimeError("load_turn must be called before classify")

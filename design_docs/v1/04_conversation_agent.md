@@ -146,7 +146,7 @@ Pass 1 of the benchmark showed two failure patterns the model alone did not fix:
 Design rules:
 
 - **Rules only fire when they cannot be wrong.** The explicit-search pattern needs an imperative ("search for", "look up", "find me the latest"); a noun like "web search" does not count. The arithmetic pattern needs at least two numbers and a cue such as a percent sign, "per month", "watts", or "mortgage". A test asserts that no rule fires wrongly on any benchmark question; on question set 1.2 rules decide 15 of 28 questions.
-- **The model layer is the same model classifying its own question.** It costs one short call (about 40 output tokens) before the first real call. It is measured separately in the report because it may or may not beat the tool descriptions.
+- **The model layer is the same model classifying its own question.** It costs one short call (about 10 output tokens, 1.1 s on Gemma 4 E4B) before the first real call. The request must use the same `num_ctx` as the chat calls: Ollama reloads a model whose context length changes, and the first pass-2 attempt paid about 5 s twice per question for exactly that reason before the fix. It is measured separately in the report because it may or may not beat the tool descriptions.
 - **A broken router never blocks an answer.** Any exception in the model layer yields the answer route with the error in `detail`.
 - **The directive is visible in the transcript.** It is appended to the user message, so the judge sees it; the rubric tells the judge it came from the harness. The `route_questions` policy flag turns the whole layer off.
 

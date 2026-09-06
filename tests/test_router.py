@@ -4,11 +4,12 @@ from pathlib import Path
 
 import pytest
 
-from assistant_core.models import Message, Role, Route
+from assistant_core.models import AgentPolicy, Message, Role, Route
 from assistant_core.router import CALCULATE_DIRECTIVE, SEARCH_DIRECTIVE, apply_route, decide_route, rule_route
 from benchmark.records import load_questions
 
 QUESTIONS = load_questions(Path("benchmark/questions.yaml"))
+POLICY = AgentPolicy()
 
 
 class FakeClassifier:
@@ -17,7 +18,7 @@ class FakeClassifier:
     def __init__(self, route: str | None = "search", fail: bool = False) -> None:
         self.route, self.fail, self.calls = route, fail, []
 
-    async def classify(self, system_prompt: str, user_text: str, schema: dict) -> dict:
+    async def classify(self, system_prompt: str, user_text: str, schema: dict, policy) -> dict:
         self.calls.append(user_text)
         if self.fail:
             raise RuntimeError("model down")
@@ -40,12 +41,12 @@ def test_rules_catch_explicit_searches_and_plain_arithmetic() -> None:
 @pytest.mark.asyncio
 async def test_model_layer_runs_only_when_no_rule_fires_and_defaults_on_failure() -> None:
     classifier = FakeClassifier("search")
-    decision = await decide_route(classifier, [Message(role=Role.USER, content="What is the current federal funds rate?")])
+    decision = await decide_route(classifier, [Message(role=Role.USER, content="What is the current federal funds rate?")], POLICY)
     assert decision.route == Route.SEARCH and decision.source == "model" and classifier.calls
     quiet = FakeClassifier()
-    ruled = await decide_route(quiet, [Message(role=Role.USER, content="Search for the latest Qwen release")])
+    ruled = await decide_route(quiet, [Message(role=Role.USER, content="Search for the latest Qwen release")], POLICY)
     assert ruled.source == "rule" and quiet.calls == []
-    broken = await decide_route(FakeClassifier(fail=True), [Message(role=Role.USER, content="Why is the sky blue?")])
+    broken = await decide_route(FakeClassifier(fail=True), [Message(role=Role.USER, content="Why is the sky blue?")], POLICY)
     assert broken.route == Route.ANSWER and "router failed" in broken.detail
 
 
@@ -57,7 +58,7 @@ async def test_follow_up_turns_pass_earlier_user_turns_as_context() -> None:
         Message(role=Role.ASSISTANT, content="Go 24."),
         Message(role=Role.USER, content="Does it change if it costs more?"),
     ]
-    await decide_route(classifier, conversation)
+    await decide_route(classifier, conversation, POLICY)
     assert "Earlier the user said: I am choosing between 16 and 24 GB." in classifier.calls[0]
 
 
