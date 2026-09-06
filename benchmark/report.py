@@ -125,6 +125,7 @@ def render_report(run_date: str, question_set: QuestionSet, reports: list[Candid
         render_latency_table(reports),
         render_matrix(question_set, reports),
         render_agreement(run_dir, reports),
+        render_judge(reports),
         render_spend(reports),
     ]
     if previous is not None and previous_date:
@@ -285,6 +286,15 @@ def human_total(entry: dict) -> int | None:
     if any(human[name] is None for name in ("answer_quality", "judgment", "spoken_fit")):
         return None
     return human["answer_quality"] + human["judgment"] + human["spoken_fit"]
+
+
+def render_judge(reports: list[CandidateReport]) -> str:
+    """Name the judge that produced the scores. Passes judged through the API and passes judged by a Claude Code subagent used the same rubric, but they
+    are different sessions of the model, so cross-pass score comparisons carry that caveat."""
+    labels = sorted({score.judge_model for report in reports for score in report.scores if score.judge_model})
+    if not labels:
+        return "## Judge\n\nNo judged scores yet."
+    return "## Judge\n\nScores in this pass were produced by: " + ", ".join(labels) + ". Same rubric and output schema as every other pass; a subagent judge costs nothing but is a different session of the model than an API judge, so compare totals across passes with that in mind."
 
 
 def render_spend(reports: list[CandidateReport]) -> str:

@@ -90,6 +90,10 @@ The rule layer is model-independent, so its row is the same for every candidate;
 
 Review sheet not yet filled in.
 
+## Judge
+
+Scores in this pass were produced by: claude-opus-5 (Claude Code subagent). Same rubric and output schema as every other pass; a subagent judge costs nothing but is a different session of the model than an API judge, so compare totals across passes with that in mind.
+
 ## Paid API spend for this run
 
 About $0.00 (baseline run plus judging, at Claude Opus 5 list prices).

@@ -86,6 +86,10 @@ No routed results in this run.
 
 Review sheet not yet filled in.
 
+## Judge
+
+Scores in this pass were produced by: claude-opus-5. Same rubric and output schema as every other pass; a subagent judge costs nothing but is a different session of the model than an API judge, so compare totals across passes with that in mind.
+
 ## Paid API spend for this run
 
 About $6.77 (baseline run plus judging, at Claude Opus 5 list prices).
