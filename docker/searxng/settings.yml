@@ -3,10 +3,17 @@
 use_default_settings:
   engines:
     keep_only:
+      # The big four scrape-based engines block a single home address after bursts (Google needs JavaScript since 2026-09,
+      # Brave rate-limits, DuckDuckGo answers with a CAPTCHA page); the smaller engines below keep search alive when they do.
       - google
       - bing
       - brave
       - duckduckgo
+      - mojeek
+      - qwant
+      - startpage
+      - yahoo
+      - wikipedia
 
 general:
   instance_name: "studio-search"

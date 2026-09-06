@@ -6,7 +6,7 @@ Every place the build departed from the frozen design in `design_docs/v0/`, with
 |---|---|
 | [01 LLM benchmark](#01-llm-benchmark) | 13 |
 | [02 Local LLM](#02-local-llm) | 1 |
-| [03 Web search MCP](#03-web-search-mcp) | 6 |
+| [03 Web search MCP](#03-web-search-mcp) | 7 |
 | [04 Conversation agent](#04-conversation-agent) | 7 |
 | [05 Voice pipeline](#05-voice-pipeline) | 1 |
 | [06 Home Assistant core](#06-home-assistant-core) | 5 |
@@ -47,6 +47,7 @@ Every place the build departed from the frozen design in `design_docs/v0/`, with
 | 2026-09-06 | Calculator tools | 01, 04 | The MCP server also serves eight deterministic calculator tools (`calculator_mcp`), and the system prompt (version 1.2) tells the model never to do multi-step arithmetic itself. | Every local model set up A2 correctly and then miscomputed the digits. A whitelisted expression evaluator plus a few spoken-question-shaped helpers (percent, convert, growth schedule, energy cost, loan, break-even, dates) moves the digits out of the model. One server and one port keep the component's configuration unchanged. |
 | 2026-09-06 | Page fetching | 04 | `fetch_page` and page reading refuse non-public addresses (resolved before connecting and on every redirect hop) and stop reading past 2 MB. | The model chooses fetch URLs and web pages can steer it; without the check an injected instruction could reach the router, the Home Assistant VM, or Ollama's API from the tool server, or flood the model with a giant page. |
 | 2026-09-06 | SearXNG client | 01 | The client keeps a minimum gap (default 3 s, `WEB_SEARCH_MIN_SECONDS_BETWEEN_SEARCHES`) between live SearXNG requests; cached queries never wait. | During pass 3 all four upstream engines stopped answering at once (Brave rate limit, DuckDuckGo CAPTCHA, Bing connection refused, Google empty pages) after a day of benchmark bursts; a single spoken question never notices the gap, back-to-back benchmark searches do. |
+| 2026-09-06 | SearXNG engines | 01 | SearXNG keeps Mojeek, Qwant, Startpage, Yahoo, and Wikipedia enabled alongside Google, Bing, Brave, and DuckDuckGo. | On 2026-09-06 all four scrape-based engines refused a single home address at once: Google now serves a JavaScript-required page (SearXNG issue #5286 and successors), Brave rate-limits, DuckDuckGo answers with a CAPTCHA, and SearXNG 2026.9.5's Bing engine drops the connection. Startpage (Google's index) and Yahoo (Bing's) answered, so pass 4 onward searches through them; passes 1 to 3 searched Google, Bing, Brave, and DuckDuckGo. Within a pass every candidate sees the same engines, which is what fairness requires. |
 
 ## 04 Conversation agent
 
