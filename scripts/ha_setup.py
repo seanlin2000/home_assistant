@@ -222,25 +222,36 @@ async def install_addon(ha: HomeAssistant, slug: str, options: dict[str, Any] | 
     info = await ha.supervisor("get", f"/addons/{slug}/info")
     if info["version"] is None:
         print(f"addons: installing {slug} ...")
-        await ha.supervisor("post", f"/store/addons/{slug}/install")
+        try:
+            await ha.supervisor("post", f"/store/addons/{slug}/install")
+        except RuntimeError as error:
+            # The websocket proxy gives up before a long image pull finishes and reports an empty unknown_error while the Supervisor carries on.
+            print(f"addons: install call for {slug} returned {error}; waiting for the Supervisor to finish")
         info = await wait_for_addon(ha, slug)
     else:
         print(f"addons: {slug} already installed ({info['version']})")
     if options is not None:
-        await ha.supervisor("post", f"/addons/{slug}/options", {"options": options})
+        # Merge over the add-on's own defaults: add-ons add required options over time (Samba gained network_discovery) and a partial payload is rejected.
+        current = (await ha.supervisor("get", f"/addons/{slug}/info")).get("options") or {}
+        await ha.supervisor("post", f"/addons/{slug}/options", {"options": {**current, **options}})
     if info["state"] != "started":
-        await ha.supervisor("post", f"/addons/{slug}/start")
+        try:
+            await ha.supervisor("post", f"/addons/{slug}/start")
+        except RuntimeError as error:
+            print(f"addons: start call for {slug} returned {error}; waiting for it to come up")
+        await wait_for_addon(ha, slug, state="started")
     await ha.supervisor("post", f"/addons/{slug}/options", {"boot": "auto", "watchdog": True})
 
 
-async def wait_for_addon(ha: HomeAssistant, slug: str, timeout_seconds: int = 900) -> dict[str, Any]:
+async def wait_for_addon(ha: HomeAssistant, slug: str, timeout_seconds: int = 900, state: str | None = None) -> dict[str, Any]:
+    """Poll until the add-on is installed (version set) and, if asked, in the given state."""
     deadline = time.time() + timeout_seconds
     while time.time() < deadline:
         info = await ha.supervisor("get", f"/addons/{slug}/info")
-        if info["version"] is not None:
+        if info["version"] is not None and (state is None or info["state"] == state):
             return info
         await asyncio.sleep(10)
-    raise SystemExit(f"add-on {slug} did not finish installing")
+    raise SystemExit(f"add-on {slug} did not reach {state or 'installed'} within {timeout_seconds}s")
 
 
 # ---------------------------------------------------------------- step 3: integrations
