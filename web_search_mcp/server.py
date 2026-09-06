@@ -7,6 +7,7 @@ from web_search_mcp.page_extractor import PageExcerpt, PageExtractor
 from web_search_mcp.query_cache import QueryCache
 from web_search_mcp.searxng_client import SearchResult, SearxngClient
 from web_search_mcp.settings import SearchSettings, settings_from_environment
+from web_search_mcp.url_guard import UnsafeUrl
 
 
 def build_server(settings: SearchSettings, searxng: SearxngClient | None = None, extractor: PageExtractor | None = None) -> MCPServer:
@@ -33,8 +34,11 @@ def build_server(settings: SearchSettings, searxng: SearxngClient | None = None,
 
     @server.tool()
     async def fetch_page(url: str) -> str:
-        """Fetch one web page and return its main text, trimmed to a readable length."""
-        text = await extractor.read_page(url)
+        """Fetch one public web page and return its main text, trimmed to a readable length. Only public http(s) addresses are allowed."""
+        try:
+            text = await extractor.read_page(url)
+        except UnsafeUrl as error:
+            return f"Refused to fetch {url}: {error}. Only public web addresses can be read."
         if not text:
             return f"Could not extract readable text from {url}."
         return " ".join(text.split()[: settings.words_per_page * 2])

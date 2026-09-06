@@ -11,6 +11,8 @@ class SearchSettings(BaseModel):
     words_per_page: int = 600
     total_word_budget: int = 2000
     fetch_timeout_seconds: float = 6.0
+    max_page_bytes: int = 2_000_000  # stop reading a page past this; a hostile page cannot flood the model
+    max_redirects: int = 5
     results_to_return: int = 8
     cache_dir: str | None = None
     user_agent: str = "Mozilla/5.0 (Macintosh; Intel Mac OS X 14_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0 Safari/537.36"

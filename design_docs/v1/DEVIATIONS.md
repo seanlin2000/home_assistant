@@ -6,7 +6,7 @@ Every place the build departed from the frozen design in `design_docs/v0/`, with
 |---|---|
 | [01 LLM benchmark](#01-llm-benchmark) | 9 |
 | [02 Local LLM](#02-local-llm) | 1 |
-| [03 Web search MCP](#03-web-search-mcp) | 4 |
+| [03 Web search MCP](#03-web-search-mcp) | 5 |
 | [04 Conversation agent](#04-conversation-agent) | 5 |
 | [05 Voice pipeline](#05-voice-pipeline) | 1 |
 | [06 Home Assistant core](#06-home-assistant-core) | 2 |
@@ -41,6 +41,8 @@ Every place the build departed from the frozen design in `design_docs/v0/`, with
 | 2026-09-05 | MCP SDK | 04 | The `mcp` Python package (the MCP SDK, running on Python 3.12) released its major version 2 between design and build: the server class is now `MCPServer` (was FastMCP) and the client is `mcp.client.client.Client`, which accepts a URL or an in-process server object. | Library moved between design and build; the in-process client made the tool server testable without sockets. |
 | 2026-09-05 | Page extraction | | Page extraction keeps HTML tables. | The first smoke test dropped the rate table from the Federal Reserve's H.15 page, which is exactly the fact the model searched for. |
 | 2026-09-06 | Calculator tools | 01, 04 | The MCP server also serves eight deterministic calculator tools (`calculator_mcp`), and the system prompt (version 1.2) tells the model never to do multi-step arithmetic itself. | Every local model set up A2 correctly and then miscomputed the digits. A whitelisted expression evaluator plus a few spoken-question-shaped helpers (percent, convert, growth schedule, energy cost, loan, break-even, dates) moves the digits out of the model. One server and one port keep the component's configuration unchanged. |
+
+| 2026-09-06 | Page fetching | 04 | `fetch_page` and page reading refuse non-public addresses (resolved before connecting and on every redirect hop) and stop reading past 2 MB. | The model chooses fetch URLs and web pages can steer it; without the check an injected instruction could reach the router, the Home Assistant VM, or Ollama's API from the tool server, or flood the model with a giant page. |
 
 ## 04 Conversation agent
 

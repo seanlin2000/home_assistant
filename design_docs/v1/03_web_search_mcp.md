@@ -139,3 +139,30 @@ The same MCP server now also publishes eight calculator tools from the `calculat
 - No currency conversion (needs live rates, so it belongs to search) and no statistics (no data source).
 
 **Benchmark bookkeeping.** `QuestionResult.searched` in `benchmark/records.py` now counts only the three search tools, so a calculator call on a Category A question does not trip the "searched on a no-search question" gate. The system prompt is version 1.2 and `run_meta.json` records the prompt version, because results under 1.1 and 1.2 are not directly comparable.
+
+## 12. Fetch safety, added 2026-09-06
+
+The model picks the URLs that `fetch_page` reads, and a web page can tell the model which URL to pick. That is prompt injection, and it cannot be prevented at the model; what can be bounded is what an obeyed instruction reaches. Two limits were added to the fetch path in `web_search_mcp/page_extractor.py` and `web_search_mcp/url_guard.py`:
+
+```
+  fetch_page(url) / search results
+        │
+        ▼
+  ensure_public_url(url)          scheme must be http or https
+        │                         host must not be localhost, *.local, *.internal, *.lan, *.home, *.arpa
+        │                         host is resolved; every address must be globally routable
+        │                         (no 10/8, 172.16/12, 192.168/16, 127/8, 169.254/16, ::1, fe80::/10, IPv4-mapped IPv6, multicast)
+        ▼
+  GET without automatic redirects
+        │  3xx ─▶ resolve the Location header ─▶ back to ensure_public_url (at most 5 hops)
+        ▼
+  stream the body; stop past max_page_bytes (2 MB) or a larger declared content-length
+        ▼
+  trafilatura.extract ─▶ text only; no JavaScript runs, nothing is written except the text cache
+```
+
+- A refused address raises `UnsafeUrl`. `fetch_page` returns a sentence saying the fetch was refused, so the model can tell the user rather than retry; `search_and_read` silently skips that result and reads the next one.
+- The resolver and the HTTP transport are injectable, which is how the tests pretend a public-looking name resolves to the router and serve redirects without opening sockets.
+- Residual risk, accepted: a hostile DNS server could answer the check with a public address and the connection a moment later with a private one (DNS rebinding). Pinning the connection to the checked address would break TLS verification; the tool server's own network exposure (LAN only, no credentials, no control tools) keeps the payoff of that attack low.
+
+The broader rule for the product stays: never give the model a tool that acts on the home without an intent or confirmation layer in front of it, and treat anything derived from a web page as data, never as an instruction.
