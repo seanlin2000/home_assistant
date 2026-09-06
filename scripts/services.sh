@@ -61,8 +61,21 @@ EOF
     echo "wrote $path"
 }
 
+prepare_kokoro() {
+    # wyoming-kokoro-torch downloads voices itself but expects the model weights and config in its data directory.
+    local data_dir="$HOME/.cache/wyoming-kokoro"
+    mkdir -p "$data_dir"
+    if [[ ! -e "$data_dir/kokoro-v1_0.pth" ]]; then
+        local snapshot
+        snapshot="$("$PROJECT_DIR/.venv/bin/python" -c "from huggingface_hub import snapshot_download; print(snapshot_download('hexgrad/Kokoro-82M', allow_patterns=['kokoro-v1_0.pth','config.json']))")"
+        ln -sf "$snapshot/kokoro-v1_0.pth" "$data_dir/kokoro-v1_0.pth"
+        ln -sf "$snapshot/config.json" "$data_dir/config.json"
+    fi
+}
+
 install_agents() {
     mkdir -p "$AGENTS_DIR" "$LOG_DIR"
+    prepare_kokoro
     # Ollama: Homebrew's service binds to localhost only; ours binds the LAN and keeps the model loaded.
     brew services stop ollama >/dev/null 2>&1 || true
     ENV_KEYS=(OLLAMA_HOST OLLAMA_KEEP_ALIVE OLLAMA_MAX_LOADED_MODELS) ENV_VALUES=(0.0.0.0:11434 -1 1)
@@ -71,7 +84,7 @@ install_agents() {
     write_plist mcp "$PROJECT_DIR/.venv/bin/web-search-mcp"
     ENV_KEYS=() ENV_VALUES=()
     write_plist whisper "$PROJECT_DIR/.venv/bin/wyoming-mlx-whisper" --uri tcp://0.0.0.0:10300 --model mlx-community/whisper-large-v3-turbo --language en
-    write_plist kokoro "$PROJECT_DIR/.venv/bin/wyoming-kokoro-torch" --uri tcp://0.0.0.0:10210 --voice af_heart
+    write_plist kokoro "$PROJECT_DIR/.venv/bin/wyoming-kokoro-torch" --uri tcp://0.0.0.0:10210 --voice af_heart --data-dir "$HOME/.cache/wyoming-kokoro" --streaming --device cpu
     start_agents
 }
 
