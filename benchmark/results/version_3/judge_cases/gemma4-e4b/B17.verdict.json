@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The core verdict, yes but only via custom firmware such as Open Voice PE, is supported by result three, but it answers the 'which source and why' half only by pointing at 'the first source' and 'the third source' with no reason, misattributes the openWakeWord claim to a generic Assist tutorial, and never mentions that the official Nabu Casa page limits the stock device to Hey Jarvis, Hey Mycroft, and Okay Nabu.",
+  "judgment_reason": "It searched as instructed and correctly hedged the yes behind a firmware requirement, but it leaned on a third-party GitHub repository without noting it is unofficial community firmware, which is the trust distinction the question asked for.",
+  "spoken_fit_reason": "Two sentences of otherwise clean prose, but referring aloud to 'the first source' and 'the third source' by ordinal is a citation-marker slip that means nothing to a listener."
+}

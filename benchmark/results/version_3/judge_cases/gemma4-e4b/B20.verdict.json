@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 0,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It declares ChatGPT-like local quality 'achievable' on the $420 build even though the very excerpt it cites says that machine's 16GB fits a 3B LLM, and it never addresses the web-search half of the requirement or the gap between a 3B model and the quality the user asked for.",
+  "judgment_reason": "The user explicitly invited an honest no if the requirements were unrealistic, and the assistant instead affirmed feasibility against what its own retrieved source implies.",
+  "spoken_fit_reason": "Two short paragraphs of plain prose with the verdict up front, no lists, URLs, or citation markers."
+}

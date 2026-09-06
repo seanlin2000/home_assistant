@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It compounded the rent monthly instead of annually, reporting $58,495.44 for one year and $124,107.43 for two against the sketch's $44,100 and $87,817.80, then contradicted itself by saying both first years cost the same $58,495.44.",
+  "judgment_reason": "It never noticed that a 5 percent annual increase on $3,500 rent cannot produce $6,285 monthly by month twelve, and it invented a $65,611.99 'savings' that compares one year against two.",
+  "spoken_fit_reason": "The answer contains a bulleted list with bold markdown and ran past the word cap, so the listener heard a truncated fragment ending mid-list."
+}

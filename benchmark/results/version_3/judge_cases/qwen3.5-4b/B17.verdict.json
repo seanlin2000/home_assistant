@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The verdict and the Hey Jarvis, Hey Mycroft, Okay Nabu list trace directly to the Nabu Casa support page and the open-voice-pe workaround to the GitHub result, but the user explicitly asked which source was trusted and why, and the answer never names or justifies one.",
+  "judgment_reason": "It searched as instructed and did prefer the vendor page over the generic wake-word tutorial, but it left the source-justification half of the request unanswered and did not note that the support page calls those three the 'default' options rather than the only ones.",
+  "spoken_fit_reason": "Two short plain-prose paragraphs opening with a direct no, no lists, URLs, or markdown despite the documentation-heavy sources."
+}

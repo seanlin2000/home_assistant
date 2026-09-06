@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It names budget, season, and duration and warns against assuming 'warm' means a beach, but omits the most important missing item, the departure city, along with domestic versus international travel and passport or visa status, companions, and interests.",
+  "judgment_reason": "It resisted naming any destination and framed the reply entirely as missing information plus assumptions to avoid, which is exactly what the question demanded.",
+  "spoken_fit_reason": "Two sentences of plain prose covering both halves of the question, with no lists or markup."
+}

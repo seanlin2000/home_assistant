@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The final message is only the preamble 'I will calculate the total rent for both the one-year and two-year lease options' and contains none of the sketch's numbers (3,675 per month, 44,100, 87,817.80, or the 840 year-one difference).",
+  "judgment_reason": "It announced a calculation, made zero calculator calls, and delivered no result or assumption about the unknown second-year renewal, so the central judgment of the question was never made.",
+  "spoken_fit_reason": "One plain sentence that would read cleanly aloud but states no answer at all."
+}

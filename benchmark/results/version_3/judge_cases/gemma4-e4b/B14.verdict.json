@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It synthesizes three real mechanisms from the excerpts, AI demand outstripping Blackwell supply, 30 to 50 percent higher costs at TSMC's Arizona fab, and China export restrictions, but omits the GDDR7 and HBM memory reallocation from result three, which is the most concrete supply-chain change retrieved.",
+  "judgment_reason": "It searched on a genuinely current market question and answered the mechanism the user asked about rather than reciting the price tables the excerpts offered.",
+  "spoken_fit_reason": "Three sentences of connected prose with no model names or dollar figures dumped in, no lists, URLs, or citation markers."
+}

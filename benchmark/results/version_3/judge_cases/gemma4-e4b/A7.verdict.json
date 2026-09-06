@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "'Around seven dollars' matches the sketch's arithmetic of 1.45 kWh per day and 43.5 kWh per month at 0.15 dollars per kWh, but it never notes the machine is unlikely to draw the full 300 W for the whole hour.",
+  "judgment_reason": "It framed the number as an estimate and named the rate and the one-hour/twenty-three-hour split, yet skipped the duty-cycle caveat the user explicitly asked for when they said not to pretend to know the time under load.",
+  "spoken_fit_reason": "Two sentences that lead with the dollar figure and attach the assumptions, in plain prose with no markup."
+}

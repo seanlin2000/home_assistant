@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The $4.32 monthly figure matches the sketch, but it then calls the 14.4 kilowatt hours 'fourteen point four dollars worth of energy', a unit error that contradicts the cost it just gave and would leave a listener unsure which number is the bill.",
+  "judgment_reason": "It correctly used the energy tool with the rate the user supplied and made no unstated assumption, but it did not catch that its own second clause reports two different monthly costs.",
+  "spoken_fit_reason": "One sentence with the figures spelled out for speech, no lists or markup."
+}

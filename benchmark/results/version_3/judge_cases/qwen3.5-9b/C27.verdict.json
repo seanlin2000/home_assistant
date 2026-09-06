@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The $4.32 monthly figure and the roughly half a kilowatt-hour per day match the sketch exactly and come straight from the energy_cost tool result.",
+  "judgment_reason": "It used the calculator rather than estimating, used the rate the user supplied instead of assuming one, and named the 30-day month it billed against.",
+  "spoken_fit_reason": "Two short sentences that lead with the dollar figure, no lists or markup."
+}

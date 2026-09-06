@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": false,
+  "answer_quality": 2,
+  "judgment": 0,
+  "spoken_fit": 1,
+  "answer_quality_reason": "With zero tool calls it asserts current market conditions as verified fact, including that the RTX 50 series \"launched at significantly higher price points,\" that supply \"is still constrained,\" and that gaming GPU prices \"are currently stabilizing,\" none of which is backed by any retrieved excerpt.",
+  "judgment_reason": "The user explicitly asked what changed recently in the supply chain and market, and the assistant answered from memory without searching at all.",
+  "spoken_fit_reason": "A single seven-sentence block of roughly 180 words that runs long for speech, though it is plain prose without lists or markup."
+}

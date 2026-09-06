@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It correctly says the claim is incorrect because the full weights must be resident regardless of how few activate per token, but it never explains that different tokens route to different experts and it garbles the arithmetic by calling it 'a 4-billion-parameter model'.",
+  "judgment_reason": "It rejected the false premise outright, did not search for a question that needs no search, and asked for the one genuinely missing fact, the model's total parameter count.",
+  "spoken_fit_reason": "Two short plain-prose paragraphs that open with 'That statement is incorrect', with no lists, markdown, or citations."
+}

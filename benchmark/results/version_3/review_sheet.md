@@ -1,0 +1,365 @@
+# Review sheet
+
+Read the answer, decide on gates and scores, then record them in review_sheet.yaml.
+
+## Contents
+
+- [qwen3.5-4b](#review-qwen3-5-4b): [A2](#review-qwen3-5-4b-a2), [A5](#review-qwen3-5-4b-a5), [A10](#review-qwen3-5-4b-a10), [A11](#review-qwen3-5-4b-a11), [B19](#review-qwen3-5-4b-b19), [C25](#review-qwen3-5-4b-c25)
+- [gemma4-e4b](#review-gemma4-e4b): [A2](#review-gemma4-e4b-a2), [A4](#review-gemma4-e4b-a4), [B15](#review-gemma4-e4b-b15), [B19](#review-gemma4-e4b-b19), [C23](#review-gemma4-e4b-c23), [C27](#review-gemma4-e4b-c27)
+- [qwen3.5-9b](#review-qwen3-5-9b): [A2](#review-qwen3-5-9b-a2), [B12](#review-qwen3-5-9b-b12), [B17](#review-qwen3-5-9b-b17), [B18](#review-qwen3-5-9b-b18), [B20](#review-qwen3-5-9b-b20), [C24](#review-qwen3-5-9b-c24)
+
+<a id="review-qwen3-5-4b"></a>
+
+## qwen3.5-4b (6 to review)
+
+<a id="review-qwen3-5-4b-a2"></a>
+
+### qwen3.5-4b / A2 (random sample)
+
+**Question:** I pay $3,500 per month in rent. My landlord offers me a one-year lease at a 5% increase or a two-year lease at a 3% increase each year. Ignoring the time value of money, how much would I pay over each option, and how much would I save with the cheaper option?
+
+**Searched:** False
+
+**Spoken answer:**
+
+> Over a one-year lease with a 5% increase, you would pay $58,495.44 total. Over a two-year lease with a 3% increase each year, you would pay $124,107.43 total. The two-year option is significantly more expensive over the full two-year period; however, if your question meant to compare the one-year cost against the first year of the two-year option (which would be $58,495.44 for one year at 3% vs. $58,495.44 for one year at 5%), there is no difference in the first year's total, but the second year of the two-year lease costs an additional $46,107.43 compared to renewing for another year at a higher rate.
+
+To clarify:
+- One-year lease (5% increase): Total over one year is **$58,495.44**.
+
+**Judge:** gates=none, quality 0/5, judgment 0/3, spoken 0/2
+
+- It compounded the rent monthly instead of annually, reporting $58,495.44 for one year and $124,107.43 for two against the sketch's $44,100 and $87,817.80, then contradicted itself by saying both first years cost the same $58,495.44.
+- It never noticed that a 5 percent annual increase on $3,500 rent cannot produce $6,285 monthly by month twelve, and it invented a $65,611.99 'savings' that compares one year against two.
+- The answer contains a bulleted list with bold markdown and ran past the word cap, so the listener heard a truncated fragment ending mid-list.
+
+<a id="review-qwen3-5-4b-a5"></a>
+
+### qwen3.5-4b / A5 (random sample)
+
+**Question:** I live in a 500-square-foot studio and want a voice assistant that can hear me from across the room. I care more about microphone quality and natural conversation than smart-home automation. Give me the main hardware design considerations without recommending specific products.
+
+**Searched:** False
+
+**Spoken answer:**
+
+> For a 500-square-foot studio where you need reliable hearing and natural conversation, the primary hardware focus shifts away from smart home integrations toward acoustic physics and spatial audio engineering. You are essentially asking for an assistant that can "hear" over your own voice in a small room, which creates a specific set of challenges regarding microphone placement, beamforming technology, and noise cancellation capabilities.
+
+The core design consideration is the array configuration; since you want to hear someone across the room without needing complex multi-room coordination, a single high-fidelity directional microphone or a compact array with advanced beamforming is usually more effective than a large, scattered setup often found in bulky smart hubs. The goal here is to focus on sound coming from a specific direction while rejecting background noise, which is far more critical in a small living space than managing multiple sensors for lights or locks.
+
+Beyond the microphones themselves, the audio processing chip and algorithms are paramount. You need hardware that can perform real-time signal processing to separate your voice from ambient room tone—like refrigerator hums or city traffic—and ensure latency remains low enough that the conversation feels natural rather than robotic.
+
+**Judge:** gates=none, quality 2/5, judgment 2/3, spoken 1/2
+
+- It covers beamforming, noise rejection, latency, and placement but contradicts itself by first recommending a directional mic or compact array and later saying the design should 'prioritize omnidirectional sensitivity', and it omits the wake-word path, echo cancellation of its own speaker, where the speech compute runs, and always-on audio privacy.
+- It respected the no-product-names constraint and correctly did not search, but it presented two opposing microphone directives as if both were the recommendation instead of naming the tradeoff.
+- Four dense paragraphs of preamble that ran past the word cap, so the listener heard it stop mid-thought after the third paragraph.
+
+<a id="review-qwen3-5-4b-a10"></a>
+
+### qwen3.5-4b / A10 (random sample)
+
+**Question:** Explain why VRAM capacity can matter more than raw GPU speed when choosing hardware for a local LLM. Answer in a way that would sound natural if spoken aloud in under 45 seconds.
+
+**Searched:** False
+
+**Spoken answer:**
+
+> When running a local Large Language Model, VRAM capacity matters far more than raw processing speed because the model itself is massive; its weights often exceed 20 gigabytes just to sit idle on your drive. Your GPU can only load a slice of the model into memory at once based on its VRAM size, which means you get either a faster inference for a smaller model or a slower but fully capable experience with a larger one. If your VRAM is too small, you cannot even load the most popular models to run locally, regardless of how fast your GPU can crunch numbers.
+
+**Judge:** gates=none, quality 3/5, judgment 2/3, spoken 2/2
+
+- It lands the main point that too little VRAM means you cannot load the model at all, but it first claims the GPU 'can only load a slice of the model into memory at once', which contradicts that closing line and misdescribes the mechanism, and it never mentions quantization or context length.
+- Right not to search and it stayed inside the 120-word cap, but it asserted a confident mechanism that conflicts with its own final sentence.
+- A single paragraph of about a hundred words, plain spoken prose with no lists or markup, comfortably under 45 seconds.
+
+<a id="review-qwen3-5-4b-a11"></a>
+
+### qwen3.5-4b / A11 (random sample)
+
+**Question:** What year did the Berlin Wall fall?
+
+**Searched:** False
+
+**Spoken answer:**
+
+> The Berlin Wall fell in 1989.
+
+**Judge:** gates=none, quality 5/5, judgment 3/3, spoken 2/2
+
+- It gives 1989, exactly what the reference sketch requires, with nothing to add or fix.
+- It recognized settled history and answered from knowledge with zero tool calls rather than searching.
+- A single sentence that is the answer, with no markup of any kind.
+
+<a id="review-qwen3-5-4b-b19"></a>
+
+### qwen3.5-4b / B19 (random sample)
+
+**Question:** Search for whether an RTX 4060 Ti 16 GB can run Qwen3.8. Then tell me whether the answer you found is actually enough to predict whether it will provide a good voice-assistant experience.
+
+**Searched:** True
+
+**Spoken answer:**
+
+> Yes, an RTX 4060 Ti 16GB can technically run Qwen3.8 (the 27B parameter model), but the experience is very poor. Benchmarks indicate that with host memory offload to make it fit, you can expect roughly two tokens per second and latency times of up to eighty seconds for the first response, making it far too slow for a helpful voice assistant.
+
+Finding that the model fits "barely" via offloading does not predict whether it will provide a good experience; in fact, this specific constraint usually results in sluggish performance rather than smooth interaction.
+
+**Judge:** gates=['presented_estimate_as_fact'], quality 3/5, judgment 1/3, spoken 2/2
+
+- The verdict of technically yes but far too slow is right and the two tokens per second and roughly eighty second first-token figures match the retrieved pages, but the critical-reading half is thin and misses that both of those pages label their numbers 'estimates, not measurements'.
+- It made the fit-does-not-equal-experience point the question was after, yet it introduced modeled engine estimates with the words 'benchmarks indicate', which is exactly the uncritical reading the question was testing for.
+- Two short paragraphs of plain prose, verdict first, with no lists, URLs, or markdown.
+
+<a id="review-qwen3-5-4b-c25"></a>
+
+### qwen3.5-4b / C25 (random sample)
+
+**Question:** It's 72 degrees Fahrenheit outside. What is that in Celsius, and how far is a 5 kilometer run in miles?
+
+**Searched:** False
+
+**Spoken answer:**
+
+> Seventy-two degrees Fahrenheit is about twenty-two point two degrees Celsius, and a five-kilometer run is roughly three point one miles long.
+
+**Judge:** gates=none, quality 5/5, judgment 3/3, spoken 2/2
+
+- 22.2 Celsius and 3.1 miles both match the reference sketch, with the rounding flagged by 'about' and 'roughly'.
+- It used the conversion tool for both figures in one turn and did not search.
+- A single sentence with numbers spelled out, which reads naturally through a speech engine.
+
+[Back to top](#review-sheet)
+
+<a id="review-gemma4-e4b"></a>
+
+## gemma4-e4b (6 to review)
+
+<a id="review-gemma4-e4b-a2"></a>
+
+### gemma4-e4b / A2 (random sample)
+
+**Question:** I pay $3,500 per month in rent. My landlord offers me a one-year lease at a 5% increase or a two-year lease at a 3% increase each year. Ignoring the time value of money, how much would I pay over each option, and how much would I save with the cheaper option?
+
+**Searched:** False
+
+**Spoken answer:**
+
+> I will calculate the total rent for both the one-year and two-year lease options, and then determine the difference in cost between the two.
+
+**Judge:** gates=none, quality 0/5, judgment 0/3, spoken 1/2
+
+- The final message is only the preamble 'I will calculate the total rent for both the one-year and two-year lease options' and contains none of the sketch's numbers (3,675 per month, 44,100, 87,817.80, or the 840 year-one difference).
+- It announced a calculation, made zero calculator calls, and delivered no result or assumption about the unknown second-year renewal, so the central judgment of the question was never made.
+- One plain sentence that would read cleanly aloud but states no answer at all.
+
+<a id="review-gemma4-e4b-a4"></a>
+
+### gemma4-e4b / A4 (random sample)
+
+**Question:** My plant is growing new leaves quickly near the top, but its older lower leaves are gradually yellowing and dying. The plant is otherwise healthy. What are the most likely explanations, and what information would you want before deciding whether this is normal or a problem?
+
+**Searched:** False
+
+**Spoken answer:**
+
+> This pattern of new growth at the top paired with older leaves yellowing at the bottom is quite common and suggests a few possibilities. The most likely explanations are related to nutrient movement within the plant, where it is prioritizing new growth by drawing resources from older, lower leaves, or it could be a sign of a specific environmental stress.
+
+Before I can give you a more definitive answer, I would like to know a few things. Could you tell me what kind of plant it is, and what kind of soil it is currently in?
+
+**Judge:** gates=none, quality 3/5, judgment 3/3, spoken 2/2
+
+- It gets the mobile-nutrient and senescence mechanism right but reduces everything else to 'a specific environmental stress', omitting overwatering or root problems, shading of lower leaves, and pot-bound roots, and it asks only about species and soil rather than watering, light, fertilizer, or rate of leaf loss.
+- It correctly declined to name a single cause, said it needed more information before deciding, and answered from general knowledge without a needless search.
+- Two short plain-prose paragraphs ending in a direct question, with no lists or markup.
+
+<a id="review-gemma4-e4b-b15"></a>
+
+### gemma4-e4b / B15 (random sample)
+
+**Question:** Find me the best current option for a 16 GB NVIDIA GPU under $500. Used hardware is acceptable.
+
+**Searched:** True
+
+**Spoken answer:**
+
+> I need to search the web to find the best current options for a sixteen gigabyte NVIDIA GPU under five hundred dollars, including used hardware.
+Based on the information gathered, the Nvidia GeForce RTX fifty sixty Ti sixteen gigabyte is consistently mentioned as the "do-everything" pick for that budget, offering high-settings fourteen-forty-eight-hundred p gaming and entry into AI features. While it is noted that the newer sixteenth gigabyte variant often retails above five hundred dollars, it is still mentioned as a top consideration. Alternatively, if the priority is pure gaming value, the AMD Radeon RX ninety sixty XT sixteen gigabyte is presented as the strongest budget competitor under five hundred dollars.
+
+**Judge:** gates=none, quality 2/5, judgment 2/3, spoken 1/2
+
+- Its headline pick, the RTX 5060 Ti 16GB, is one the excerpts say sits at $600 or more, its fallback is an AMD card when the user asked for NVIDIA, and it never mentions the discounted RTX 4060 Ti 16GB that result three flags as the same 16GB mission or the used market the user explicitly opened up.
+- It did disclose that the 16GB variant often retails above five hundred dollars, but it hedged with 'still a top consideration' instead of stating plainly that no new NVIDIA 16GB card reliably lands under the budget and steering to used or clearance stock.
+- The number expansion breaks down badly for speech, with '1440p' rendered as 'fourteen-forty-eight-hundred p' and '16GB' as 'sixteenth gigabyte', and the reply reads as commentary on sources ('is consistently mentioned', 'is presented as') rather than a direct recommendation.
+
+<a id="review-gemma4-e4b-b19"></a>
+
+### gemma4-e4b / B19 (random sample)
+
+**Question:** Search for whether an RTX 4060 Ti 16 GB can run Qwen3.8. Then tell me whether the answer you found is actually enough to predict whether it will provide a good voice-assistant experience.
+
+**Searched:** False
+
+**Spoken answer:**
+
+> 
+
+**Judge:** gates=['did_not_search_on_search_question', 'no_final_answer'], quality 0/5, judgment 0/3, spoken 0/2
+
+- The final assistant message is empty, so neither the RTX 4060 Ti question nor the follow-up about whether the finding predicts voice-assistant quality is addressed.
+- The user explicitly instructed a search and the assistant made zero tool calls and returned nothing.
+- There is no text to speak.
+
+<a id="review-gemma4-e4b-c23"></a>
+
+### gemma4-e4b / C23 (random sample)
+
+**Question:** We just got a $64.50 dinner bill. What's an 18 percent tip, and what's the total with the tip?
+
+**Searched:** False
+
+**Spoken answer:**
+
+> 
+
+**Judge:** gates=['no_final_answer'], quality 0/5, judgment 0/3, spoken 0/2
+
+- The final assistant message is empty, so neither the 11.61 tip nor the 76.11 total from the reference sketch was given.
+- A trivial two-step percentage the calculator tools were there for produced zero tool calls and no output.
+- There is no text to speak.
+
+<a id="review-gemma4-e4b-c27"></a>
+
+### gemma4-e4b / C27 (random sample)
+
+**Question:** My TV draws 120 watts. If I watch about 4 hours a day and electricity costs 30 cents per kilowatt hour, what does it cost me per month?
+
+**Searched:** False
+
+**Spoken answer:**
+
+> The estimated cost to run your television is about four dollars and thirty-two cents per month.
+
+**Judge:** gates=none, quality 5/5, judgment 3/3, spoken 2/2
+
+- About four dollars and thirty-two cents per month matches the sketch's 4.32 for a 30-day month exactly.
+- It passed all four given values straight to the energy_cost tool and invented no rate, since the price was supplied.
+- A single sentence leading with the figure, spelled out for speech with no markup.
+
+[Back to top](#review-sheet)
+
+<a id="review-qwen3-5-9b"></a>
+
+## qwen3.5-9b (6 to review)
+
+<a id="review-qwen3-5-9b-a2"></a>
+
+### qwen3.5-9b / A2 (random sample)
+
+**Question:** I pay $3,500 per month in rent. My landlord offers me a one-year lease at a 5% increase or a two-year lease at a 3% increase each year. Ignoring the time value of money, how much would I pay over each option, and how much would I save with the cheaper option?
+
+**Searched:** False
+
+**Spoken answer:**
+
+> Over one year, you'd pay $36,750 with the 5% increase ($3,500 times 1.05), while the two-year option costs $38,820 total—$4,500 in year one and $4,635 in year two (a 3% increase each year). The one-year lease is cheaper by $2,070 compared to the two-year option.
+
+**Judge:** gates=none, quality 1/5, judgment 1/3, spoken 2/2
+
+- Every figure is wrong: it gives $36,750 for year one instead of $44,100, invents "$4,500 in year one and $4,635 in year two" for the two-year lease, and concludes the one-year lease saves $2,070 when year one is actually $840 cheaper on the two-year lease.
+- It never notes that the two options cover different lengths or that the one-year path's second year is unknown, and it did the multi-step arithmetic in-head with zero calculator calls despite the calculate route.
+- Two short plain-prose sentences that lead with the totals, with no markdown or lists.
+
+<a id="review-qwen3-5-9b-b12"></a>
+
+### qwen3.5-9b / B12 (random sample)
+
+**Question:** I'm looking for a computer to run a local LLM with approximately $1,000 total budget. What hardware can I buy today that gives me the most usable VRAM for the money?
+
+**Searched:** True
+
+**Spoken answer:**
+
+> For approximately $1,000 today, your best bet for usable VRAM is a used NVIDIA RTX 3090 with 24GB of memory, which typically runs around $900 and lets you comfortably run large models like the Qwen 32B at high quality. If you prefer buying new instead of used, the safest option within your budget is an RTX 4080 Super or RTX 5070 Ti with 16GB VRAM, but those will cap out around 14B to 16B models rather than the 32B class. The RTX 3090’s main tradeoffs are its high power draw requiring a strong power supply and running hot in some cases, whereas new cards come with warranties and better efficiency.
+
+**Judge:** gates=none, quality 3/5, judgment 1/3, spoken 2/2
+
+- The used RTX 3090 at 24GB and roughly $900, the 16GB new alternatives, and the power and warranty tradeoffs all trace to excerpts [2], [3], and [4], but the user asked for a whole computer on a $1,000 total budget and the answer only prices the graphics card.
+- It searched appropriately and cited real price points, yet never flags that a $900 card leaves essentially nothing for the rest of the machine, so the stated total budget is quietly glossed over.
+- Three plain-prose sentences leading with the recommendation, with no URLs, lists, or citation markers despite heavily tabular sources.
+
+<a id="review-qwen3-5-9b-b17"></a>
+
+### qwen3.5-9b / B17 (random sample)
+
+**Question:** Search for the answer to this question: "Is the Home Assistant Voice Preview Edition capable of running a custom wake word?" Give me the answer and explain which source you trusted and why.
+
+**Searched:** True
+
+**Spoken answer:**
+
+> Yes, the Home Assistant Voice Preview Edition can run a custom wake word, but you need to install additional software like openWakeWord and set up a Wyoming satellite in Home Assistant. I trusted the official Home Assistant documentation because it directly addresses wake words and explains how to configure them using openWakeWord and other components. The GitHub project for Open Voice PE also confirms that custom firmware can enable local wake word detection with openWakeWord, giving you more flexibility than the default system.
+
+**Judge:** gates=none, quality 4/5, judgment 2/3, spoken 2/2
+
+- The "yes, with openWakeWord" conclusion is supported by excerpt [3], but it blurs the key distinction visible in excerpt [2] that stock Voice PE firmware offers only Hey Jarvis, Hey Mycroft, and Okay Nabu, so a custom wake word requires flashing unofficial community firmware.
+- It searched as instructed and named its sources, but it credits the "official Home Assistant documentation" for the answer when excerpt [1] covers the ATOM Echo and general Assist setup rather than the Voice PE device itself.
+- Three plain-prose sentences opening with the yes, no URLs, lists, or citation markers.
+
+<a id="review-qwen3-5-9b-b18"></a>
+
+### qwen3.5-9b / B18 (random sample)
+
+**Question:** Search for the latest information about the Qwen open-source model family. I want to know which currently available models are realistic to run locally on approximately 16 GB of GPU memory. Don't just list models—explain the tradeoffs between model quality, quantization, memory usage, and speed.
+
+**Searched:** True
+
+**Spoken answer:**
+
+> For around 16 GB of GPU memory, the most realistic Qwen models are the 4B and 7B variants when quantized, as they comfortably fit within your budget while maintaining decent quality. The 14B model can be run with significant performance loss using aggressive quantization (like Q3 or Q4), but it’s on the edge of feasibility. Larger models like the 32B require at least 48 GB to run smoothly even with quantization, so they’re not practical for your setup right now.
+
+Here’s the tradeoff: smaller models like Qwen-7B (or newer Qwen3-7B) in Q4 quantization take about 15–17 GB of VRAM and are fast enough for everyday tasks without noticeable lag. Dropping to Q3 quantization saves a bit more memory but reduces reasoning quality slightly—especially on complex math or coding questions. The 4B version is even lighter (around 9–10 GB at Q4) and perfect for quick chats or as a fallback when you’re juggling other apps, though it’s noticeably less capable than the 7B.
+
+**Judge:** gates=['fabricated_current_fact'], quality 1/5, judgment 1/3, spoken 1/2
+
+- It contradicts the very excerpt it retrieved, claiming the 32B "requires at least 48 GB" when excerpt [3] lists Qwen3-32B at 19.2 GB VRAM at Q4 and the 14B at 8.4 GB, and it invents both a nonexistent "Qwen3-7B" (excerpt [2] lists 0.6B, 1.7B, 4B, 8B, 14B, 32B, 30B-A3B, 235B) and absurd footprints of 15-17 GB for a 7B at Q4 and 9-10 GB for a 4B.
+- It searched as instructed and did structure the answer around quality-versus-quantization tradeoffs, but it ignored the concrete per-model VRAM table it had just retrieved and never mentions the 30B-A3B MoE that is the most relevant option at this memory size.
+- Two multi-sentence paragraphs long enough to be cut off by the word cap mid-argument, though the prose itself has no lists or markup.
+
+<a id="review-qwen3-5-9b-b20"></a>
+
+### qwen3.5-9b / B20 (random sample)
+
+**Question:** I want to build a local voice assistant for under $1,000 all-in. It should answer general questions at roughly ChatGPT-like quality, perform web searches when necessary, and work entirely locally except for those searches. Find the best hardware approach available today. If my requirements cannot realistically be met within the budget, tell me explicitly instead of quietly increasing the budget.
+
+**Searched:** True
+
+**Spoken answer:**
+
+> You can't realistically run a ChatGPT-quality local voice assistant for under $1,000 all-in today. The best you can do is use an Intel NUC or mini-PC with 16GB RAM and an NVIDIA RTX 3050/4050 GPU to run small models like Qwen3.5-7B or Llama 3.2-3B at about 3 tokens per second, which feels choppy but usable. The hardware stack would cost roughly $600 to $800 for the mini-PC and GPU, plus maybe $150 for a Pi 5 as a wake-word node, leaving little room for speakers or peripherals. If you want smoother responses under a second, you'd need an RTX 3090 or a Mac Studio, which pushes your budget well past $1,000.
+
+**Judge:** gates=none, quality 3/5, judgment 2/3, spoken 2/2
+
+- The headline call is right and well stated, but the supporting detail is shaky: it names a "Qwen3.5-7B" that appears nowhere in the leaderboard excerpt, converts excerpt [3]'s "about 3 seconds" of RTX 3050 latency into "about 3 tokens per second," and skips the 16GB RTX 5060 Ti at 1.5 to 3 seconds that the same source offers as the nearer-budget option.
+- It did exactly what was asked by declaring the requirement unmeetable under $1,000 rather than quietly stretching it, but the $600-to-$800 and $150 cost figures are its own numbers with no source and no statement that they are guesses.
+- Four plain-prose sentences that open with the explicit no, with no lists, URLs, or markdown.
+
+<a id="review-qwen3-5-9b-c24"></a>
+
+### qwen3.5-9b / C24 (random sample)
+
+**Question:** If I put $500 a month into a savings account that pays 4 percent a year, compounded monthly, how much will I have after three years?
+
+**Searched:** False
+
+**Spoken answer:**
+
+> If you contribute $500 each month to a savings account with a 4 percent annual interest rate compounded monthly for three years, you'll have approximately $18,723. The calculation includes your total contributions of $18,000 plus about $723 in interest earned over the period.
+
+**Judge:** gates=none, quality 2/5, judgment 1/3, spoken 2/2
+
+- It correctly splits the result into $18,000 of deposits plus interest, but the balance of $18,723 and interest of $723 are wrong: the sketch gives about $19,091 end-of-month or $19,154 start-of-month, roughly $1,091 of interest.
+- Its two tool calls only computed 500 x 12 x 3 and "4 percent of 100," neither of which is the annuity, so the final figure was produced in-head and presented as if calculated.
+- Two plain-prose sentences leading with the balance and then the breakdown, no lists or markup.
+
+[Back to top](#review-sheet)

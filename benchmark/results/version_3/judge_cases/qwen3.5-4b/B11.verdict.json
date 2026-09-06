@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The current 3.50 to 3.75 percent target and 3.63 percent effective rate match the retrieved table, but the 'last year' part reaches back to the August 2024 peak of 5.33 percent, which is two years of history, and it omits the actual story of the past year, that the last change was December 2025 and every 2026 meeting has been a hold.",
+  "judgment_reason": "Searching was the right call and it leaned on the FRED-sourced page rather than the prediction-market page, but it did not say when the figures were current or that rates have been unchanged since December.",
+  "spoken_fit_reason": "Two sentences, the rate first, no URLs, citation markers, or list formatting."
+}

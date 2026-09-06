@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It leads with normal senescence and resource redirection to new growth and adds watering, light, and temperature as alternatives, but omits the mobile-nutrient (nitrogen) explanation and pot-bound roots from the reference sketch.",
+  "judgment_reason": "It explicitly declines to declare a single cause and asks for species, daily light, recent moves, and watering changes before deciding, which is exactly the judgment the question demanded.",
+  "spoken_fit_reason": "Three conversational sentences ending in the questions it needs answered, with no markdown or lists."
+}

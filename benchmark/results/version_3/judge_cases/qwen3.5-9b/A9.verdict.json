@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It asks for dates/season, budget level, and interests and warns against equating \"warm\" with tropical, but omits the most basic missing item in the sketch, the departure location, along with trip length, domestic versus international, and passport or visa status.",
+  "judgment_reason": "It never invents a preference or names a destination as the recommendation, using Lisbon and Mexico City only as counterexamples to the tropical assumption.",
+  "spoken_fit_reason": "Four plain-prose sentences with no lists or markdown, though the trailing assumption discussion runs slightly long for speech."
+}

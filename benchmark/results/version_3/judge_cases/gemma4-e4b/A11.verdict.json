@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "'The Berlin Wall fell in nineteen eighty nine' is exactly the year the reference sketch calls for.",
+  "judgment_reason": "It recognized settled history and answered from knowledge with zero tool calls rather than searching a question that only sounds current.",
+  "spoken_fit_reason": "One sentence, the year spelled out for text to speech, no markup of any kind."
+}

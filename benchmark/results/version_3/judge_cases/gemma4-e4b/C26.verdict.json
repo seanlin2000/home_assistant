@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The tool returned 38.51 percent but the final assistant message is empty, so neither that figure nor the 2,964 post-increase rent ever reached the listener.",
+  "judgment_reason": "It stopped after one of the two required calculations and never made the 4 percent increase call or spoke a result.",
+  "spoken_fit_reason": "There is no text to speak."
+}

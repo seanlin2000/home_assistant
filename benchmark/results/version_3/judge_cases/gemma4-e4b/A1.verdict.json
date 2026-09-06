@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It asserts the exact misconception the sketch warns against, saying the lower active parameter count is what allows the MoE to 'fit within the limited memory of the GPU', then contradicts itself by admitting storage is set by total parameters, and never mentions quantization or CPU expert offload as the real reason a 30B MoE can fit 16 GB.",
+  "judgment_reason": "Answering from general knowledge without searching was the right call, but it never flagged that a 30B model at 4-bit is borderline on 16 GB and stated the fit claim with unwarranted confidence.",
+  "spoken_fit_reason": "Three short paragraphs of plain prose with no lists, markdown, or citations, and it opens with the direct reason rather than preamble."
+}

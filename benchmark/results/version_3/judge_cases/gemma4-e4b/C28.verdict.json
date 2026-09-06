@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Both numbers match the sketch: 2,398.20 a month and roughly 463,000 in total interest from the loan_payment result.",
+  "judgment_reason": "It used the amortization tool rather than estimating, and rounded the interest to 'roughly' while keeping the payment exact, which is the right split for a spoken answer.",
+  "spoken_fit_reason": "Two sentences with all figures written out for speech, answer first, no lists or markup."
+}

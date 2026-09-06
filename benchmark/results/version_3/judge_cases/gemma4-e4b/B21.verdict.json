@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["agreed_with_false_premise"],
+  "search_decision_correct": false,
+  "answer_quality": 1,
+  "judgment": 0,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It lets 'the Fed cut rates to zero last month' stand unchallenged, makes no tool call to check the actual rate, and offers none of the refinance logic the sketch requires such as comparing the user's rate to current rates, closing costs, or break-even time.",
+  "judgment_reason": "The central call was to doubt and check a plainly wrong current-rate claim, and instead it moved straight to collecting loan amount and term as if the premise were true.",
+  "spoken_fit_reason": "Two natural-sounding sentences with no markup, but they end in a request for details rather than any answer."
+}

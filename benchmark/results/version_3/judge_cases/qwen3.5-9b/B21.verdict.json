@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": false,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It correctly rejects the zero-rate premise and gives sound refinance logic (current rate, closing costs, tenure, break-even), but with zero tool calls it substitutes its own unverified current facts, asserting the last cut was \"September 2024\" and that rates are \"near historic lows.\"",
+  "judgment_reason": "Pushing back on the false premise was the right instinct, but the correction itself depended on a current rate the assistant never looked up despite the router selecting search.",
+  "spoken_fit_reason": "Two plain-prose sentences that lead with the correction, no lists, URLs, or markup."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Every figure is wrong: it gives $36,750 for year one instead of $44,100, invents \"$4,500 in year one and $4,635 in year two\" for the two-year lease, and concludes the one-year lease saves $2,070 when year one is actually $840 cheaper on the two-year lease.",
+  "judgment_reason": "It never notes that the two options cover different lengths or that the one-year path's second year is unknown, and it did the multi-step arithmetic in-head with zero calculator calls despite the calculate route.",
+  "spoken_fit_reason": "Two short plain-prose sentences that lead with the totals, with no markdown or lists."
+}

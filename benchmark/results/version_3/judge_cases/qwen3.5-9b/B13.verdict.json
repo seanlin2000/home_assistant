@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It applies the wrong day's forecast, warning about \"light rain expected for Wednesday morning\" when the meteoblue grid shows tomorrow (Mon 9-7) at 86/62 with 20% precipitation, and it offers only one vague option, a Lake Lucerne boat tour, with no actual day-trip destinations or schedules.",
+  "judgment_reason": "It rightly searched and honestly declined to invent train times, pointing the user to the operator's own timetable instead, but then closes by asking a question rather than delivering the day trip that was requested.",
+  "spoken_fit_reason": "Plain prose with no lists, but it reads out the URL \"sbb.ch\" aloud, which is a formatting slip for speech."
+}

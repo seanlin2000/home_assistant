@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Pilatus, Rigi, and Titlis with their transport modes are right and the 19 and 18 October closure dates match the operator pages, but the user asked about tomorrow in early September and the answer answers for October, gives no actual departure time despite having the Pilatus cogwheel timetable, and misses that the Titlis Rotair is closed from 17 August to 11 December.",
+  "judgment_reason": "Searching was correct, but it queried 'October 2024' rather than tomorrow's date and then reported a temperature as an expectation for tomorrow without saying it was a monthly climate average or that a live forecast was never retrieved.",
+  "spoken_fit_reason": "Two sentences of plain prose leading with the three destinations, no lists, markdown, or URLs read aloud."
+}

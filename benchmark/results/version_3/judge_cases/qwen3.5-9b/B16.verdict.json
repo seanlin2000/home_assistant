@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The 4.6% citywide and 5.6% Queens figures trace correctly to excerpt [1] and support the \"just under market\" verdict, but the central risk it was asked to explain, that asking rents measure new listings rather than renewals like the one being offered, is never mentioned; it lists broker fees and utilities instead.",
+  "judgment_reason": "It searched appropriately and raised skepticism about advertised rents, but the Zumper LIC source failed to load and it silently substituted citywide and borough numbers for Long Island City without telling the listener it had no neighborhood data.",
+  "spoken_fit_reason": "Two long but plain-prose sentences that lead with the comparison, no lists, URLs, or markdown."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It correctly reports from excerpt [1] that no NVIDIA 16GB card holds under $500 because the RTX 5060 Ti 16GB has drifted past it, and names the RX 9060 XT as the only reliable 16GB option, but it garbles a spec by offering to look for a \"used RTX 3060 Ti 12GB,\" which is neither a 12GB nor a 16GB card.",
+  "judgment_reason": "It said no when the hard constraint could not be met rather than stretching the budget, flagged that the AMD alternative is not NVIDIA, and asked which direction the user wants before spending another search.",
+  "spoken_fit_reason": "Four sentences of plain prose that lead with the verdict, no URLs, lists, or citation markers."
+}

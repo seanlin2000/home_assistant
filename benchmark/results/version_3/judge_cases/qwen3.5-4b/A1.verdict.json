@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It asserts the exact misconception the sketch rules out, saying a MoE's VRAM need is set by active parameters and then reversing to claim a 16 GB card could fit a dense 30B but would struggle with the MoE, and it even expands MoE as 'Memory-of-Estate'.",
+  "judgment_reason": "Not searching was right, but it delivered a self-contradictory technical claim with full confidence and never flagged that the storage-versus-compute distinction is the crux.",
+  "spoken_fit_reason": "Two plain-prose paragraphs with no lists, markdown, or URLs, and it opens directly on the distinction being asked about."
+}

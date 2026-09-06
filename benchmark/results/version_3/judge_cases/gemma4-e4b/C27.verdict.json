@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "About four dollars and thirty-two cents per month matches the sketch's 4.32 for a 30-day month exactly.",
+  "judgment_reason": "It passed all four given values straight to the energy_cost tool and invented no rate, since the price was supplied.",
+  "spoken_fit_reason": "A single sentence leading with the figure, spelled out for speech with no markup."
+}

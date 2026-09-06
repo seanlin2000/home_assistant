@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The 3.50 to 3.75 percent range and 3.63 percent effective rate are traceable to the excerpts, but the second half answers the wrong span, tracing the decline from the August 2023 peak of 5.33 percent instead of the last year, and it omits what the excerpts show for that year: 4.33 percent twelve months ago, three cuts ending in December 2025, and holds at all four 2026 meetings.",
+  "judgment_reason": "Searching was clearly right for a rate question, but it anchored on the weaker 'as of June 2026' figure when result four gave an effective rate current to the week of September 2, 2026.",
+  "spoken_fit_reason": "Two sentences of plain prose with the numbers written out for speech and no URLs or citation markers."
+}

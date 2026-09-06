@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It correctly concludes no NVIDIA 16 GB card lands under $500, matching the source that puts the RTX 5060 Ti 16GB well past $500, but its fallback of a used RTX 3070 8GB 'around $500-$600' is priced at $379.99 in the only retrieved listing and has half the VRAM the user asked for.",
+  "judgment_reason": "Saying the constraint cannot be met was the right central call and it flagged the stretch rather than hiding it, but it then proposed a card that satisfies neither the 16 GB nor the $500 requirement.",
+  "spoken_fit_reason": "One short paragraph that leads with the verdict, in plain prose with no lists, markdown, or source URLs."
+}

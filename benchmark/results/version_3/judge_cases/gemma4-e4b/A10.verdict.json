@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It gets the central point that a model too large for VRAM spills to slower system memory and crawls regardless of core speed, but leaves out the secondary benefit that more memory allows less aggressive quantization and longer context.",
+  "judgment_reason": "Answering from general knowledge with no search was right, and it respected the spoken-length framing without padding or hedging.",
+  "spoken_fit_reason": "Roughly eighty words in two flowing sentences, well under the 120-word limit, with no lists, markdown, or citations."
+}
