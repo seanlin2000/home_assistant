@@ -4,7 +4,9 @@ import argparse
 import asyncio
 import json
 import platform
+import signal
 import subprocess
+import sys
 from datetime import date
 from pathlib import Path
 
@@ -41,6 +43,8 @@ def parse_args() -> argparse.Namespace:
 
 
 def main() -> None:
+    # A plain SIGTERM would kill this process without unwinding the context managers, leaving the MCP child alive on its port.
+    signal.signal(signal.SIGTERM, lambda *_: sys.exit(143))
     load_dotenv(Path(".env"))
     asyncio.run(main_async(parse_args()))
 
