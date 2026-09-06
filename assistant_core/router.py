@@ -22,18 +22,15 @@ Examples: "What hardware gives the most memory for a thousand dollars today?" ->
 # Since prompt version 1.3 the directive is appended to the system prompt for the turn, not to the user's message: models weight operator
 # instructions above trailing notes in the request, and one worked example shows the exact call shape. The wording stays a plain instruction;
 # nothing in the harness enforces it, so it makes no threats about what happens to an answer that ignores it.
+# Prompt 1.4 trimmed both blocks after pass 3: the search example had shown a finished spoken answer, and the smaller models imitated the answer
+# instead of the tool call. Each block now shows the call and nothing else.
 SEARCH_DIRECTIVE = """Routing for this question: SEARCH.
-This question needs current information from the web. Call search_and_read before answering; do not answer it from memory. Read the numbered excerpts it returns, then answer from them in one to three sentences.
-Example. Question: "What does a used RTX 3090 sell for right now?"
-  Tool call: search_and_read(query="used RTX 3090 price")
-  Answer, from the excerpts: "Used 3090s are listing around eleven to thirteen hundred dollars this week."
+This question needs current information from the web. Call search_and_read first; do not answer it from memory. Answer from the excerpts it returns.
+Example call: search_and_read(query="used RTX 3090 price")
 """
 CALCULATE_DIRECTIVE = """Routing for this question: CALCULATE.
-This question needs arithmetic. Call the calculator tools (calculate, percent, convert, growth_schedule, energy_cost, loan_payment, break_even, date_math) for every number; do not do the math yourself. Take the numbers from the question, call the tool, then say what the result means in one or two sentences.
-Example. Question: "What is 15 percent of 80 dollars?"
-  Tool call: percent(kind="of", a=15, b=80)
-  Tool result: result: 12.00 | spoken: 15 percent of 80 is 12.00
-  Answer: "Fifteen percent of eighty dollars is twelve dollars."
+This question needs arithmetic. Call the calculator tools (calculate, percent, convert, growth_schedule, energy_cost, loan_payment, break_even, date_math) for every number; do not do the math yourself. Then say what the result means.
+Example call: percent(kind="of", a=15, b=80)
 """
 DIRECTIVES = {Route.SEARCH: SEARCH_DIRECTIVE, Route.CALCULATE: CALCULATE_DIRECTIVE}
 

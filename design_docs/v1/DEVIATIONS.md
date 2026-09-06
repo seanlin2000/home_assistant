@@ -6,8 +6,8 @@ Every place the build departed from the frozen design in `design_docs/v0/`, with
 |---|---|
 | [01 LLM benchmark](#01-llm-benchmark) | 13 |
 | [02 Local LLM](#02-local-llm) | 1 |
-| [03 Web search MCP](#03-web-search-mcp) | 5 |
-| [04 Conversation agent](#04-conversation-agent) | 6 |
+| [03 Web search MCP](#03-web-search-mcp) | 6 |
+| [04 Conversation agent](#04-conversation-agent) | 7 |
 | [05 Voice pipeline](#05-voice-pipeline) | 1 |
 | [06 Home Assistant core](#06-home-assistant-core) | 5 |
 | [08 Hardware and deployment](#08-hardware-and-deployment) | 2 |
@@ -46,6 +46,7 @@ Every place the build departed from the frozen design in `design_docs/v0/`, with
 | 2026-09-05 | Page extraction | | Page extraction keeps HTML tables. | The first smoke test dropped the rate table from the Federal Reserve's H.15 page, which is exactly the fact the model searched for. |
 | 2026-09-06 | Calculator tools | 01, 04 | The MCP server also serves eight deterministic calculator tools (`calculator_mcp`), and the system prompt (version 1.2) tells the model never to do multi-step arithmetic itself. | Every local model set up A2 correctly and then miscomputed the digits. A whitelisted expression evaluator plus a few spoken-question-shaped helpers (percent, convert, growth schedule, energy cost, loan, break-even, dates) moves the digits out of the model. One server and one port keep the component's configuration unchanged. |
 | 2026-09-06 | Page fetching | 04 | `fetch_page` and page reading refuse non-public addresses (resolved before connecting and on every redirect hop) and stop reading past 2 MB. | The model chooses fetch URLs and web pages can steer it; without the check an injected instruction could reach the router, the Home Assistant VM, or Ollama's API from the tool server, or flood the model with a giant page. |
+| 2026-09-06 | SearXNG client | 01 | The client keeps a minimum gap (default 3 s, `WEB_SEARCH_MIN_SECONDS_BETWEEN_SEARCHES`) between live SearXNG requests; cached queries never wait. | During pass 3 all four upstream engines stopped answering at once (Brave rate limit, DuckDuckGo CAPTCHA, Bing connection refused, Google empty pages) after a day of benchmark bursts; a single spoken question never notices the gap, back-to-back benchmark searches do. |
 
 ## 04 Conversation agent
 
@@ -57,6 +58,7 @@ Every place the build departed from the frozen design in `design_docs/v0/`, with
 | 2026-09-06 | HA component, testing | 09 | The component is not tested with `pytest-homeassistant-custom-component`. Its Home-Assistant-free logic lives in `adapter.py` and is unit-tested by loading that file directly; the Home-Assistant-bound entity and config flow are verified by loading them in the real Home Assistant OS VM. | Home Assistant 2026 requires Python 3.13 and pins hundreds of packages (including an `httpx` major version that conflicts with the `anthropic` SDK), so it cannot share the project's 3.12 lock file. A second environment just for that test harness was judged not worth it for a two-file adapter. |
 | 2026-09-06 | Agent loop, question router | 01 | A router decides search / calculate / answer before the model's first call (rules first, then one structured-output call to the same model) and appends a bracketed directive to the user message. Applies to every candidate, the baseline included, and is scored separately in the report. | Pass 1 showed local models answering implicit current-fact questions from memory and miscomputing arithmetic they had set up correctly; tool descriptions alone did not move them, and Ollama cannot force a tool call. |
 | 2026-09-06 | Agent loop, filler sentence | 05 | The filler spoken while the first tool runs depends on the tool: search tools get the web phrases from v0 ("Let me pull some sources on that."), calculator tools get `calculate_filler_phrases` ("Let me work that out."). `SEARCH_TOOL_NAMES` moved into `assistant_core.models` so the loop and the benchmark share it. | Heard in the first end-to-end test inside Home Assistant: a percentage question was answered with "Let me pull some sources on that", which is wrong and, for a privacy-minded user, alarming when nothing left the network. |
+| 2026-09-06 | Agent loop, route directive | 01 | Prompt 1.3 moved the router's directive from a note appended to the user's message into the system prompt for the turn, with a worked example; prompt 1.4 trimmed both directives to the bare example call after pass 3 showed the smaller models imitating the example's finished answer instead of making the tool call. Wording is a plain instruction with no invented consequences. | Pass 2 and a rerun showed Qwen 3.5 9B routed to calculate on every arithmetic question and calling no tool; models weight the system prompt over trailing notes. The user asked for the plain wording. |
 
 ## 05 Voice pipeline
 

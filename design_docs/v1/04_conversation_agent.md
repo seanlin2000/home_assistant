@@ -188,3 +188,7 @@ Pass 2 showed the router choosing "calculate" correctly for Qwen 3.5 9B on every
 ```
 
 The search route gets the matching block with one `search_and_read` example. The wording stays a plain instruction: nothing in the harness enforces it, so it makes no claims about what happens to an answer that ignores it, at the user's request. Latency is unchanged (about ninety more prompt tokens, no extra call). The route record on the transcript and the router accuracy table are unaffected, so passes remain comparable on routing; answer scores are compared pass to pass in `benchmark/results/version_3/report.md`.
+
+### Prompt 1.4, same day
+
+Pass 3 (`benchmark/results/version_3/report.md`) showed the trade: Qwen 3.5 9B started calling the calculator (1 of 6 arithmetic questions in pass 2, 4 of 6 in pass 3) and gained 27 points, but Gemma 4 E4B searched on only 6 of 11 questions it was routed to search on (11 of 11 in pass 2) and lost 36, and both Qwens skipped one search. The search block's example had shown a finished spoken answer, and the small models imitated the answer rather than the call. Prompt 1.4 cuts each block to the instruction plus one example call and nothing after it. Pass 4 measures that.

@@ -166,3 +166,7 @@ The model picks the URLs that `fetch_page` reads, and a web page can tell the mo
 - Residual risk, accepted: a hostile DNS server could answer the check with a public address and the connection a moment later with a private one (DNS rebinding). Pinning the connection to the checked address would break TLS verification; the tool server's own network exposure (LAN only, no credentials, no control tools) keeps the payoff of that attack low.
 
 The broader rule for the product stays: never give the model a tool that acts on the home without an intent or confirmation layer in front of it, and treat anything derived from a web page as data, never as an instruction.
+
+## 13. As built, 2026-09-06: engine rate limits
+
+A day of benchmark passes, each firing dozens of searches within an hour, got the Mac's address throttled by every engine behind SearXNG at the same time: Brave answered "too many requests", DuckDuckGo demanded a CAPTCHA, Bing refused the connection, and Google returned empty pages while still answering a plain browser request from the same machine. The search tool then returned "No search results" and told the model to say so, which the harness records; the affected candidates were set aside and rerun later. Two changes came out of it: `SearxngClient` now waits a minimum gap between live requests (default 3 s; cached queries never wait), and the benchmark's search cache is kept per pass so a rerun of the same pass does not re-hit the engines. If Google stays blocked, the design's fallback of a Brave Search API key still applies.

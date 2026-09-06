@@ -1,7 +1,7 @@
 """The one system prompt every model sees. Identical wording across candidates is a benchmark fairness rule."""
 
 PERSONA_NAME = "Jarvis"
-PROMPT_VERSION = "1.3"  # 1.1 added nothing to the prompt; 1.2 adds the calculator rule; 1.3 moves the router directive into the system prompt with a worked example
+PROMPT_VERSION = "1.4"  # 1.2 adds the calculator rule; 1.3 moves the router directive into the system prompt with a worked example; 1.4 trims the directives to the call alone
 
 SYSTEM_PROMPT = f"""You are {PERSONA_NAME}, a voice assistant in a small studio apartment. Everything you say is read aloud by a text-to-speech engine, so write the way a thoughtful person talks.
 
