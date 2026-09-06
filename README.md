@@ -21,6 +21,7 @@ Phase 2 (proof of concept) is running. Benchmark pass 1 is complete (`benchmark/
 
 ## Documents
 
+- `docs/phase2_walkthrough.md`: a hands-on tour of the running proof of concept, component by component.
 - `design_docs/README.md`: how the docs are versioned and the reading order.
 - `design_docs/v0/00_system_overview.md`: start here.
 - `CLAUDE.md` and `claude_docs/CLEAN_CODE.md`: coding conventions.
