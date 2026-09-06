@@ -7,10 +7,10 @@ Every place the build departed from the frozen design in `design_docs/v0/`, with
 | [01 LLM benchmark](#01-llm-benchmark) | 12 |
 | [02 Local LLM](#02-local-llm) | 1 |
 | [03 Web search MCP](#03-web-search-mcp) | 5 |
-| [04 Conversation agent](#04-conversation-agent) | 5 |
+| [04 Conversation agent](#04-conversation-agent) | 6 |
 | [05 Voice pipeline](#05-voice-pipeline) | 1 |
-| [06 Home Assistant core](#06-home-assistant-core) | 4 |
-| [08 Hardware and deployment](#08-hardware-and-deployment) | 1 |
+| [06 Home Assistant core](#06-home-assistant-core) | 5 |
+| [08 Hardware and deployment](#08-hardware-and-deployment) | 2 |
 | [09 Dev environment](#09-dev-environment) | 3 |
 
 ## 01 LLM benchmark
@@ -55,6 +55,7 @@ Every place the build departed from the frozen design in `design_docs/v0/`, with
 | 2026-09-06 | HA component, conversation history | 06 | In Home Assistant, earlier turns are replayed to the model as spoken text only (user and assistant messages); tool calls and retrieved excerpts from earlier turns are not carried into the next turn. The benchmark's two-turn question keeps the full transcript. | Home Assistant's chat log stores the streamed assistant text; re-sending kilobytes of old search excerpts on every follow-up would cost prompt-processing time on every turn for little benefit. Noted as a difference between benchmark and product. |
 | 2026-09-06 | HA component, testing | 09 | The component is not tested with `pytest-homeassistant-custom-component`. Its Home-Assistant-free logic lives in `adapter.py` and is unit-tested by loading that file directly; the Home-Assistant-bound entity and config flow are verified by loading them in the real Home Assistant OS VM. | Home Assistant 2026 requires Python 3.13 and pins hundreds of packages (including an `httpx` major version that conflicts with the `anthropic` SDK), so it cannot share the project's 3.12 lock file. A second environment just for that test harness was judged not worth it for a two-file adapter. |
 | 2026-09-06 | Agent loop, question router | 01 | A router decides search / calculate / answer before the model's first call (rules first, then one structured-output call to the same model) and appends a bracketed directive to the user message. Applies to every candidate, the baseline included, and is scored separately in the report. | Pass 1 showed local models answering implicit current-fact questions from memory and miscomputing arithmetic they had set up correctly; tool descriptions alone did not move them, and Ollama cannot force a tool call. |
+| 2026-09-06 | Agent loop, filler sentence | 05 | The filler spoken while the first tool runs depends on the tool: search tools get the web phrases from v0 ("Let me pull some sources on that."), calculator tools get `calculate_filler_phrases` ("Let me work that out."). `SEARCH_TOOL_NAMES` moved into `assistant_core.models` so the loop and the benchmark share it. | Heard in the first end-to-end test inside Home Assistant: a percentage question was answered with "Let me pull some sources on that", which is wrong and, for a privacy-minded user, alarming when nothing left the network. |
 
 ## 05 Voice pipeline
 
@@ -70,12 +71,14 @@ Every place the build departed from the frozen design in `design_docs/v0/`, with
 | 2026-09-06 | HA configuration | | Home Assistant is configured by `scripts/ha_setup.py` through its REST and websocket APIs (onboarding, add-ons, integrations, pipeline) rather than through the UI steps in section 3. | Lets the proof of concept be rebuilt from scratch without clicking, and documents every setting in code. The UI path still works. |
 | 2026-09-06 | HA API port | 08, 09 | Home Assistant OS 18.2 with core 2026.9.1 serves the API on port 80 and answers 8123 with a redirect; `ha_setup.py` discovers the base URL and saves it as `HA_BASE` for the other scripts. | Found when the setup script waited on 8123 for a 200 that never came. |
 | 2026-09-06 | Supervisor access | | Add-on management goes through the websocket `supervisor/api` command rather than the `/api/hassio` REST proxy, tolerates the websocket's timeout on long image pulls by polling the add-on state, and merges our options over the add-on's defaults. | The REST proxy returned 401 to a valid owner token on this build; the websocket route (which the frontend uses) accepted it. Samba had gained a required option, so a partial options payload was rejected. |
+| 2026-09-06 | HA API discovery | 08, 09 | After onboarding completes, port 8123 stops listening entirely and `/api/onboarding` returns 404, so `ha_setup.py` probes `/api/` (any answer below 500 means a live server) and reuses the saved `HA_BASE`. Flows in progress are listed over the websocket, since REST answers 405. Created Wyoming entry ids are recorded in `.env` so reruns do not duplicate them. | The earlier discovery rule (200 or 401 on `/api/onboarding`) left the script polling a closed port for fifteen minutes on the first rerun after onboarding, and the first rerun created duplicate Whisper and Kokoro entries. |
 
 ## 08 Hardware and deployment
 
 | Date | Part of the system | Also touches | Deviation | Why |
 |---|---|---|---|---|
 | 2026-09-06 | Ollama service (launchd), MCP server binding | 03 | Ollama runs under our own launchd agent (`OLLAMA_HOST=0.0.0.0`, keep-alive forever) instead of Homebrew's service, and the MCP server binds `0.0.0.0`. | Homebrew's Ollama service binds localhost only, so the VM could not reach it. Both are LAN-only, unauthenticated services on a home network; the design accepts that. |
+| 2026-09-06 | Component deployment (SMB) | 06 | `deploy_component.py` treats a dropped connection on the restart call as success and polls `/api/` until Home Assistant is back, and the deploy procedure now forbids deploying while the Supervisor is pulling add-on images. | Home Assistant 2026.9 closes the connection as it restarts instead of answering 200, and a deploy attempted during image pulls left a kernel-level hung SMB mount on the Mac that only `sudo umount -f` could clear (doc 08 §11). |
 
 ## 09 Dev environment
 

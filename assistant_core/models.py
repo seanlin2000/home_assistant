@@ -60,14 +60,22 @@ class AgentPolicy(BaseModel):
     effort: str | None = None
     route_questions: bool = True
     filler_phrases: list[str] = Field(default_factory=lambda: list(DEFAULT_FILLER_PHRASES))
+    calculate_filler_phrases: list[str] = Field(default_factory=lambda: list(DEFAULT_CALCULATE_FILLER_PHRASES))
     tool_timeout_seconds: float = 30.0
 
 
+# Spoken while the first tool call of a turn runs, so the user hears something within a second or two. Search and calculation get different
+# lines because "checking the web" is wrong, and mildly alarming, when the assistant is only doing arithmetic locally.
 DEFAULT_FILLER_PHRASES = (
     "Let me pull some sources on that.",
     "One moment, checking the web.",
     "Understood, let me look that up.",
 )
+DEFAULT_CALCULATE_FILLER_PHRASES = (
+    "Let me work that out.",
+    "One second, doing the math.",
+)
+SEARCH_TOOL_NAMES = frozenset({"search_and_read", "web_search", "fetch_page"})
 
 
 class GenerationStats(BaseModel):

@@ -107,3 +107,26 @@ Kokoro synthesizes about 14 times faster than real time on an M1 CPU, so a ten-s
 - Piper voices and samples: [rhasspy.github.io/piper-samples](https://rhasspy.github.io/piper-samples/)
 - Kokoro model: [huggingface.co/hexgrad/Kokoro-82M](https://huggingface.co/hexgrad/Kokoro-82M), Wyoming wrapper: [github.com/nordwestt/kokoro-wyoming](https://github.com/nordwestt/kokoro-wyoming)
 - Kokoro speed on Apple Silicon: [runanywhere.ai](https://www.runanywhere.ai/blog/metalrt-speech-fastest-stt-tts-apple-silicon)
+
+## 10. As built, 2026-09-06
+
+The pipeline exists in Home Assistant as "Jarvis" and is the preferred pipeline. Verified from typed text through the agent and Piper with the `assist_pipeline/run` websocket command (start stage `intent`, end stage `tts`):
+
+```
+ run-start ─▶ intent-start ─▶ (agent: router + gemma4:e4b-it-qat, warm) ─▶ intent-end  2.3 s  "The capital of Australia is Canberra."
+                                                                       └─▶ tts-start ─▶ tts-end  +0.0 s  /api/tts_proxy/….mp3 (Piper, en_US)
+```
+
+| Stage | Engine | Where it runs | Notes |
+|---|---|---|---|
+| Wake word | `wake_word.openwakeword` (add-on 2.1.1) | VM | Not wired to the pipeline until a puck exists; the Voice PE puck detects "Hey Jarvis" on-device anyway |
+| Speech to text | `stt.mlx_whisper` (Wyoming, `wyoming-mlx-whisper`, port 10300) | Mac, Metal | Verified directly against the Wyoming server earlier (2.7 s for a 3.7 s clip); not yet exercised through the pipeline, which needs audio input |
+| Agent | `conversation.studio_assistant` | VM, calling the Mac | Doc 04 §13 |
+| Text to speech | `tts.piper` (add-on 2.3.4, `en_US-lessac-medium`) by default; `tts.kokoro` (Wyoming, port 10210) available | VM / Mac | `ha_setup.py --tts kokoro` switches the pipeline |
+
+Two details that only showed up at run time:
+
+- Piper and Kokoro advertise region codes (`en_US`, `en_GB`), not `en`. A pipeline saved with `tts_language: en` is accepted by the pipeline editor and then fails every run with `tts-not-supported`. The setup script writes `en_US`.
+- Home Assistant starts TTS the moment the agent's streamed text ends, so the time the listener waits is the agent's time. With the model warm and no tool call, that was 2.3 s here; the first question after a model load was 35 s, which is why Ollama's keep-alive matters (doc 08 §6).
+
+Still to do for voice: the puck (Phase 3 hardware), wake-word assignment, and a spoken end-to-end test with real audio through Whisper.

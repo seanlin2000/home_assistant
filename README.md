@@ -4,7 +4,7 @@ A voice assistant for a small studio apartment that keeps its data at home. Say 
 
 ## Status
 
-Phase 0. The design is written and frozen in `design_docs/v0/`. No code yet. The next step is a benchmark that runs twenty real-world questions through candidate open-weight models on a 16 GB MacBook to choose the model and, from that, the hardware.
+Phase 2 (proof of concept) is running. Benchmark pass 1 is complete (`benchmark/results/2026-09-05/report.md`); pass 2 with the question router is next. Home Assistant OS runs in a VM on the Mac with our `studio_assistant` conversation agent deployed, Whisper and Kokoro served from the Mac, Piper and openWakeWord as add-ons, and a "Jarvis" Assist pipeline wired end to end. Typed questions through Home Assistant's conversation API answer from the local model, call the calculator, and search the web; the voice puck and music are not connected yet. The as-built state of each part is in `design_docs/v1/`, with departures from the original design in `design_docs/v1/DEVIATIONS.md`.
 
 ## How it fits together
 

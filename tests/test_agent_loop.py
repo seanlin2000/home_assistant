@@ -87,3 +87,11 @@ async def test_multi_turn_conversation_carries_history() -> None:
     assert second[-1].transcript.final_answer == "Still 24 GB."
     assert isinstance(second[0], AnswerDelta)
     assert not any(isinstance(event, (FillerSpoken, ToolStarted)) for event in second)
+
+
+async def test_calculator_call_speaks_the_math_filler_not_the_web_one() -> None:
+    llm = ScriptedLLM([tool_turn("18% of 245", tool_name="percent"), text_turn("Forty-four dollars and ten cents.")])
+    policy = AgentPolicy(filler_phrases=["Checking the web."], calculate_filler_phrases=["Doing the math."])
+    events = await collect(llm, FakeToolBox(), policy)
+    assert isinstance(events[0], FillerSpoken)
+    assert events[0].text == "Doing the math."

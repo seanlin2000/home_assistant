@@ -44,17 +44,18 @@ PIPELINE_NAME = "Jarvis"
 
 
 def discover_base(host: str) -> str:
-    """Home Assistant OS 18 serves the API on port 80 and answers port 8123 with a redirect; older installs serve 8123 directly. Follow one redirect to find out."""
+    """Home Assistant OS 18 serves the API on port 80 and, during onboarding, answers port 8123 with a redirect; older installs serve 8123 directly.
+    Any HTTP answer below 500 counts as a live server: /api/ gives 401 without a token, and /api/onboarding turns into a 404 once onboarding is done."""
     for candidate in (f"http://{host}:8123", f"http://{host}"):
         try:
-            response = httpx.get(f"{candidate}/api/onboarding", timeout=10, follow_redirects=False)
+            response = httpx.get(f"{candidate}/api/", timeout=10, follow_redirects=False)
         except httpx.HTTPError:
             continue
-        if response.status_code in (200, 401):
-            return candidate
         if response.is_redirect and response.headers.get("location"):
             target = httpx.URL(response.headers["location"])
             return f"{target.scheme}://{target.host}" + (f":{target.port}" if target.port else "")
+        if response.status_code < 500:
+            return candidate
     return f"http://{host}:8123"
 
 
@@ -129,7 +130,7 @@ async def wait_for_api(ha: HomeAssistant, timeout_seconds: int = 900) -> None:
     deadline = time.time() + timeout_seconds
     while time.time() < deadline:
         try:
-            response = await ha.http.get("/api/onboarding")
+            response = await ha.http.get("/api/")
             if response.status_code in (200, 401):
                 return
         except httpx.HTTPError:
@@ -259,12 +260,17 @@ async def wait_for_addon(ha: HomeAssistant, slug: str, timeout_seconds: int = 90
 
 async def integrations(ha: HomeAssistant, args: argparse.Namespace) -> None:
     entries = await ha.get("/api/config/config_entries/entry")
-    titles = {(entry["domain"], entry["title"]) for entry in entries}
+    entry_ids = {entry["entry_id"] for entry in entries}
+    saved = dotenv_values(ENV_PATH)
     for key, (title, port) in WYOMING_SERVICES.items():
-        if ("wyoming", title) in titles or any(entry["domain"] == "wyoming" and str(port) in json.dumps(entry) for entry in entries):
+        # The Wyoming flow titles the entry after the remote service name and the entry listing hides host and port, so the only reliable
+        # rerun check is the entry id we recorded when we created it.
+        env_key = f"HA_WYOMING_{key.upper()}_ENTRY"
+        if saved.get(env_key) in entry_ids:
             print(f"integrations: wyoming {key} present")
             continue
-        await run_flow(ha, "wyoming", {"host": args.mac_ip, "port": port}, title)
+        created = await run_flow(ha, "wyoming", {"host": args.mac_ip, "port": port}, title)
+        save_env(env_key, created["result"]["entry_id"])
     await confirm_discovered_flows(ha)
     if not any(entry["domain"] == "studio_assistant" for entry in entries):
         await run_flow(ha, "studio_assistant", {"ollama_url": f"http://{args.mac_ip}:11434", "model": args.model, "mcp_url": f"http://{args.mac_ip}:8765/mcp"}, "Studio Assistant")
@@ -272,17 +278,19 @@ async def integrations(ha: HomeAssistant, args: argparse.Namespace) -> None:
         print("integrations: studio_assistant present")
 
 
-async def run_flow(ha: HomeAssistant, handler: str, user_input: dict[str, Any], label: str) -> None:
+async def run_flow(ha: HomeAssistant, handler: str, user_input: dict[str, Any], label: str) -> dict[str, Any]:
     flow = await ha.post("/api/config/config_entries/flow", {"handler": handler})
     result = await ha.post(f"/api/config/config_entries/flow/{flow['flow_id']}", user_input)
     if result.get("type") != "create_entry":
         raise RuntimeError(f"{handler} flow did not create an entry: {json.dumps(result)[:400]}")
     print(f"integrations: added {label}")
+    return result
 
 
 async def confirm_discovered_flows(ha: HomeAssistant) -> None:
     """Add-ons such as Piper and Music Assistant announce themselves; their flows only need a confirmation click."""
-    for flow in await ha.get("/api/config/config_entries/flow"):
+    # Flows in progress are only listed over the websocket; REST answers 405 to GET on the flow collection.
+    for flow in await ha.ws({"type": "config_entries/flow/progress"}):
         if flow.get("context", {}).get("source") != "hassio":
             continue
         result = await ha.post(f"/api/config/config_entries/flow/{flow['flow_id']}", {})
@@ -307,7 +315,7 @@ async def pipeline(ha: HomeAssistant, args: argparse.Namespace) -> None:
         "stt_engine": stt,
         "stt_language": "en",
         "tts_engine": tts,
-        "tts_language": "en",
+        "tts_language": "en_US",  # Piper and Kokoro advertise region codes (en_US, en_GB); a bare "en" is rejected at run time with tts-not-supported
         "tts_voice": None,
         "wake_word_entity": None,
         "wake_word_id": None,
@@ -351,7 +359,8 @@ async def main_async() -> None:
     args = parse_args()
     if not args.host:
         raise SystemExit("pass --host or set HA_HOST in .env")
-    ha = HomeAssistant(args.host, dotenv_values(ENV_PATH).get("HA_TOKEN"))
+    saved = dotenv_values(ENV_PATH)
+    ha = HomeAssistant(args.host, saved.get("HA_TOKEN"), saved.get("HA_BASE"))
     await wait_for_api(ha)
     save_env("HA_BASE", ha.base)
     print(f"Home Assistant API at {ha.base}")

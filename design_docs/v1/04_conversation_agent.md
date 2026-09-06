@@ -151,3 +151,26 @@ Design rules:
 - **The directive is visible in the transcript.** It is appended to the user message, so the judge sees it; the rubric tells the judge it came from the harness. The `route_questions` policy flag turns the whole layer off.
 
 Packages: `re` for the rule layer; `ollama`'s `format` argument (a JSON schema the server constrains decoding to) for the local model layer; the Anthropic SDK's `tool_choice={"type": "tool"}` for the baseline. Code: `assistant_core/router.py`, the `classify` method on each client, and four lines in `agent_loop.run`.
+
+## 13. As built, 2026-09-06: the component running inside Home Assistant
+
+The `studio_assistant` component is deployed and answering in the Home Assistant OS VM (core 2026.9.1). Verified through `POST /api/conversation/process` against `conversation.studio_assistant`: a plain question (answered from the model, 35 s on the first call while Ollama loaded the model), a percentage question (calculator tool, 6 s), an explicit web search (search tool through the MCP server on the Mac, 19 s), a compounding question (`growth_schedule`, 17 s), and a follow-up that correctly recalled the first question of the conversation. `continue_conversation` is true on every reply, so the microphone stays open.
+
+```
+ Home Assistant VM (192.168.1.156)                         Mac (192.168.1.152)
+ ┌──────────────────────────────────────────────┐          ┌────────────────────────────────┐
+ │ conversation.studio_assistant                │ HTTP     │ Ollama :11434  gemma4:e4b-it-qat│
+ │   conversation.py  ─▶ agent_loop.run(...)    │─────────▶│                                │
+ │   vendor/assistant_core/                     │          ├────────────────────────────────┤
+ │     router ─▶ llm_client (ollama) ─▶ loop    │ MCP/HTTP │ web_search_mcp :8765/mcp       │
+ │     mcp_http.HttpMcpToolBox (httpx only)     │─────────▶│   search tools + calculator    │
+ └──────────────────────────────────────────────┘          └────────────────────────────────┘
+```
+
+Three things had to change once the code ran inside Home Assistant's own Python rather than our venv:
+
+- **`tools.py` imports `mcp` lazily.** Home Assistant ships `mcp==1.26.0` for its built-in MCP integration; our venv has `mcp` 2.1.1, whose `mcp.client.client.Client` does not exist in 1.x. The component never uses `McpToolBox` (it uses the httpx-only `HttpMcpToolBox`), but `agent_loop` imports `tools` for the `ToolBox` protocol, so the module-level import made the whole component fail to load with `ModuleNotFoundError: No module named 'mcp.client.client'`. The import now happens inside `McpToolBox.__aenter__`, and `render_tool_result` duck-types the result instead of importing the `mcp` types.
+- **The Ollama client is built off the event loop.** Creating `ollama.AsyncClient` creates an `httpx.AsyncClient`, which loads the CA bundle from disk; Home Assistant flags that as a blocking call in the event loop. `conversation.py` constructs it with `hass.async_add_executor_job`.
+- **The filler sentence depends on the tool.** A calculator call used to say "Let me pull some sources on that." `AgentPolicy` now has `calculate_filler_phrases` ("Let me work that out.", "One second, doing the math.") and `agent_loop.filler_for` picks the list by whether the first tool of the turn is in `SEARCH_TOOL_NAMES`, which moved to `assistant_core.models` so the benchmark and the loop share one definition.
+
+Deployment is `scripts/deploy_component.py`: it stages the component with `assistant_core` vendored under `vendor/` (minus `anthropic_client.py`), mounts the VM's `config` share over SMB (the Samba add-on), copies the tree into `custom_components/studio_assistant`, unmounts, and calls the restart service. Home Assistant 2026.9 usually drops that HTTP connection as it shuts down instead of answering, so the script treats a dropped connection as accepted and polls `/api/` until the API is back (about 30 s).

@@ -134,3 +134,10 @@ Running cost: Mac mini averaging 8 W, puck 1.5 W, Sonos 2 W idle, about 100 kWh 
 - Apple M5 neural accelerators and time to first token: [machinelearning.apple.com](https://machinelearning.apple.com/research/exploring-llms-mlx-m5)
 - Home Assistant OS on macOS with UTM: [home-assistant.io/installation/macos](https://www.home-assistant.io/installation/macos)
 - Gemma 4 26B-A4B quantization sizes: [unsloth GGUF page](https://huggingface.co/unsloth/gemma-4-26B-A4B-it-GGUF)
+
+## 11. As built, 2026-09-06: deploying into the VM
+
+- The component reaches the VM over SMB: the Samba add-on shares `/config`, and `scripts/deploy_component.py` mounts it with `mount_smbfs` at a temporary path, copies the staged tree, and unmounts. Credentials come from `.env` (`HA_SAMBA_USER`, `HA_SAMBA_PASSWORD`); the share is reachable from private address ranges only.
+- **A hung SMB mount blocks everything that touches it.** While the VM was saturated pulling add-on images, one deploy's mount stopped answering. On macOS a stalled SMB mount lives in the kernel: `umount`, `diskutil unmount force`, and even `ls` on the path block forever, a second mount of the same share fails with "File exists" whatever hostname is used, and only `sudo umount -f` (or a reboot) clears it. Restarting the Samba add-on on the VM side did not help. Rule for the future: do not deploy while the Supervisor is installing add-ons, and if a mount hangs, stop and clear it as root before retrying.
+- Home Assistant's own Python (3.14 in core 2026.9.1) pins `mcp==1.26.0`, `httpx==0.28.1`, and `pydantic==2.13.4`. Anything vendored into the component must import cleanly against those; the project venv keeps `mcp` 2.x for the benchmark. See doc 04 §13.
+- Ollama, the MCP server, Whisper, and Kokoro must listen on the Mac's LAN address (`0.0.0.0`), and macOS asks once, per binary, whether to allow incoming connections; the answer must be "allow" or the VM's calls time out.

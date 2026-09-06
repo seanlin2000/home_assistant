@@ -30,7 +30,7 @@ class Gate(StrEnum):
     RUN_ERROR = "run_error"
 
 
-SEARCH_TOOL_NAMES = frozenset({"search_and_read", "web_search", "fetch_page"})
+from assistant_core.models import SEARCH_TOOL_NAMES  # noqa: E402 - shared with the agent loop so both agree on what counts as a search
 
 JUDGE_GATES = (Gate.FABRICATED_CURRENT_FACT, Gate.VIOLATED_EXPLICIT_CONSTRAINT, Gate.PRESENTED_ESTIMATE_AS_FACT, Gate.LOST_PRIOR_TURN_CONTEXT, Gate.AGREED_WITH_FALSE_PREMISE)
 

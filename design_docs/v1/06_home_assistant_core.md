@@ -117,3 +117,25 @@ The VM costs 3 to 4 GB of memory and a few minutes of setup. The alternative is 
 - Spotify integration: [home-assistant.io/integrations/spotify](https://www.home-assistant.io/integrations/spotify/)
 - Met.no integration: [home-assistant.io/integrations/met](https://www.home-assistant.io/integrations/met/)
 - Home Assistant Green: [home-assistant.io/green](https://www.home-assistant.io/green/)
+
+## 11. As built, 2026-09-06
+
+Home Assistant OS 18.2 (core 2026.9.1) runs in the UTM VM at 192.168.1.156, set up end to end by `scripts/ha_setup.py`. What is in place:
+
+| Piece | State |
+|---|---|
+| Onboarding | Owner account created, location "Studio", long-lived token in `.env` as `HA_TOKEN` |
+| Add-ons | Samba 12.10.0, Piper 2.3.4, openWakeWord 2.1.1, Music Assistant 2.10.2, ESPHome 2026.8.2; all started, boot auto, watchdog on |
+| Wyoming integrations | Whisper (Mac, 10300) and Kokoro (Mac, 10210) added by the script; Piper and openWakeWord discovered from their add-ons and confirmed; Music Assistant confirmed |
+| Conversation agent | `conversation.studio_assistant` from our component (doc 04 §13) |
+| Pipeline | "Jarvis": `stt.mlx_whisper` → `conversation.studio_assistant` → `tts.piper`, English, local intents preferred, set as the preferred pipeline |
+
+Details learned on this build, all handled in the script:
+
+- The API is on port 80. During onboarding port 8123 answers with a redirect to it; after onboarding 8123 stops listening altogether and `/api/onboarding` returns 404. Discovery therefore probes `/api/` (401 without a token is a healthy answer) and reuses the saved `HA_BASE` when there is one. The first version waited on 8123 for fifteen minutes.
+- Flows in progress are listed only over the websocket (`config_entries/flow/progress`); the REST collection answers 405 to GET.
+- The Wyoming config flow titles the entry after the remote service's name ("mlx-whisper", "kokoro") and the entry listing does not expose host or port, so the script records the entry ids it created in `.env` (`HA_WYOMING_WHISPER_ENTRY`, `HA_WYOMING_KOKORO_ENTRY`) and checks those on reruns. Before that check existed one rerun created a second Whisper and a second Kokoro entry (`stt.mlx_whisper_2`, `tts.kokoro_2`); they are harmless and can be removed from Settings → Devices & services.
+- Restarting Home Assistant through the REST service call usually returns a dropped connection rather than a 200; the restart still happens and the API is back in about 30 s.
+- Supervisor log endpoints (`/core/logs`) return plain text and cannot be read through the websocket proxy; the `system_log/list` websocket command gives the recent errors with full tracebacks and was enough to debug the component.
+
+Memory on the 16 GB Mac while all of this runs: QEMU about 7.5 GB resident, Whisper 2.5 GB, Docker with SearXNG 1.7 GB, Kokoro about 1 GB, with 3.5 to 5.5 GB of swap in use. It works, but macOS killed background shell tasks for low memory twice during the setup, and this is the state the benchmark must not share (doc 01).

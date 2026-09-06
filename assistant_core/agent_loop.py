@@ -19,6 +19,7 @@ from assistant_core.models import (
     MalformedToolCall,
     Message,
     Role,
+    SEARCH_TOOL_NAMES,
     TextDelta,
     ToolCall,
     ToolCallRequest,
@@ -131,12 +132,18 @@ async def stream_model_turn(
         elif isinstance(event, ToolCallRequest):
             if not turn.tool_calls:
                 mark_first_spoken(transcript, started)
-                yield FillerSpoken(text=random.choice(policy.filler_phrases))
+                yield FillerSpoken(text=filler_for(event.call.name, policy))
             turn.tool_calls.append(event.call)
         elif isinstance(event, MalformedToolCall):
             turn.malformed.append(event.raw)
         elif isinstance(event, Completion):
             turn.completion = event
+
+
+def filler_for(tool_name: str, policy: AgentPolicy) -> str:
+    """The sentence spoken while the first tool of a turn runs: a web line for search tools, a math line for everything else."""
+    phrases = policy.filler_phrases if tool_name in SEARCH_TOOL_NAMES else policy.calculate_filler_phrases
+    return random.choice(phrases or policy.filler_phrases)
 
 
 def mark_first_spoken(transcript: Transcript, started: float) -> None:

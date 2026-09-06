@@ -14,8 +14,8 @@ def text_turn(*chunks: str) -> list[LLMEvent]:
     ]
 
 
-def tool_turn(query: str, call_id: str = "call_0") -> list[LLMEvent]:
-    call = ToolCall(id=call_id, name="search_and_read", arguments={"query": query})
+def tool_turn(query: str, call_id: str = "call_0", tool_name: str = "search_and_read") -> list[LLMEvent]:
+    call = ToolCall(id=call_id, name=tool_name, arguments={"query": query})
     return [ToolCallRequest(call=call), Completion(message=Message(role=Role.ASSISTANT, content="", tool_calls=[call]), stats=GenerationStats(model="fake", total_seconds=0.1))]
 
 

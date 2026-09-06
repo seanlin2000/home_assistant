@@ -59,7 +59,8 @@ class StudioAssistantEntity(conversation.ConversationEntity):
     async def _async_handle_message(self, user_input: conversation.ConversationInput, chat_log: conversation.ChatLog) -> conversation.ConversationResult:
         settings = {**self.entry.data, **self.entry.options}
         history = adapter.chat_log_to_conversation(chat_log.content)
-        llm = OllamaClient(settings[CONF_MODEL], host=settings[CONF_OLLAMA_URL], keep_alive="30m")
+        # Built off the event loop: the underlying httpx client loads the CA bundle from disk when it is created, which Home Assistant flags as a blocking call.
+        llm = await self.hass.async_add_executor_job(OllamaClient, settings[CONF_MODEL], settings[CONF_OLLAMA_URL], "30m")
         policy = adapter.policy_from_settings(settings)
         try:
             async with HttpMcpToolBox(settings[CONF_MCP_URL], client=get_async_client(self.hass), timeout_seconds=policy.tool_timeout_seconds) as tools:

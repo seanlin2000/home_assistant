@@ -13,6 +13,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import time
 import urllib.parse
 from pathlib import Path
 
@@ -78,9 +79,24 @@ def sync(source: Path, target: Path) -> None:
 
 def restart_home_assistant(host: str, token: str) -> None:
     base = os.environ.get("HA_BASE") or f"http://{host}:8123"
-    response = httpx.post(f"{base}/api/services/homeassistant/restart", headers={"Authorization": f"Bearer {token}"}, timeout=30)
-    response.raise_for_status()
-    print("Home Assistant restarting")
+    headers = {"Authorization": f"Bearer {token}"}
+    try:
+        response = httpx.post(f"{base}/api/services/homeassistant/restart", headers=headers, timeout=30)
+        response.raise_for_status()
+    except httpx.RemoteProtocolError:
+        pass  # Home Assistant 2026.9 often drops the connection as it shuts down instead of answering the restart call; the restart still happens.
+    print("Home Assistant restarting", end="", flush=True)
+    deadline = time.time() + 300
+    while time.time() < deadline:
+        time.sleep(5)
+        try:
+            if httpx.get(f"{base}/api/", headers=headers, timeout=5).status_code == 200:
+                print(" ... back up")
+                return
+        except httpx.HTTPError:
+            pass
+        print(".", end="", flush=True)
+    raise SystemExit(f"Home Assistant did not come back at {base} within 300s")
 
 
 if __name__ == "__main__":
