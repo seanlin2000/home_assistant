@@ -8,6 +8,8 @@ Read the answer, decide on gates and scores, then record them in review_sheet.ya
 - [gemma4-e4b](#review-gemma4-e4b): [A2](#review-gemma4-e4b-a2), [A4](#review-gemma4-e4b-a4), [B15](#review-gemma4-e4b-b15), [B19](#review-gemma4-e4b-b19)
 - [qwen3.5-9b](#review-qwen3-5-9b): [A2](#review-qwen3-5-9b-a2), [B12](#review-qwen3-5-9b-b12), [B17](#review-qwen3-5-9b-b17), [B20](#review-qwen3-5-9b-b20)
 - [gpt-oss-20b](#review-gpt-oss-20b): [A1](#review-gpt-oss-20b-a1), [A7](#review-gpt-oss-20b-a7), [B18](#review-gpt-oss-20b-b18), [B20](#review-gpt-oss-20b-b20)
+- [gemma4-26b-a4b-iq3](#review-gemma4-26b-a4b-iq3): [A4](#review-gemma4-26b-a4b-iq3-a4), [A8](#review-gemma4-26b-a4b-iq3-a8), [A11](#review-gemma4-26b-a4b-iq3-a11), [B19](#review-gemma4-26b-a4b-iq3-b19)
+- [gemma4-26b-a4b-iq4](#review-gemma4-26b-a4b-iq4): [A4](#review-gemma4-26b-a4b-iq4-a4), [A8](#review-gemma4-26b-a4b-iq4-a8), [B16](#review-gemma4-26b-a4b-iq4-b16), [B21](#review-gemma4-26b-a4b-iq4-b21)
 - [claude-fable-5-1-manual](#review-claude-fable-5-1-manual): [A1](#review-claude-fable-5-1-manual-a1), [A7](#review-claude-fable-5-1-manual-a7), [A9](#review-claude-fable-5-1-manual-a9), [A10](#review-claude-fable-5-1-manual-a10)
 
 <a id="review-qwen3-5-4b"></a>
@@ -329,6 +331,166 @@ Quantization is the main trade‑off: 4‑bit gives you the lowest memory footpr
 - The verdict of "can't be done well under $1,000" is defensible, but the reasoning rests on stale model references (GPT-NeoX-20B, LLaMA-2-13B) and unverified prices, and it never mentions concrete viable paths (used 12GB GPU build, Mac mini, Whisper plus a small local model) or what quality tier is actually reachable at the budget.
 - It correctly chose to search and explicitly refused to inflate the budget, but it ignored the tool's instruction to tell the user the search returned nothing and instead spoke unsourced current pricing as if verified.
 - Plain prose with no lists or markup and the refusal comes first, but it is a single dense ~160-word paragraph that runs longer than a spoken answer needs.
+
+[Back to top](#review-sheet)
+
+<a id="review-gemma4-26b-a4b-iq3"></a>
+
+## gemma4-26b-a4b-iq3 (4 to review)
+
+<a id="review-gemma4-26b-a4b-iq3-a4"></a>
+
+### gemma4-26b-a4b-iq3 / A4 (random sample)
+
+**Question:** My plant is growing new leaves quickly near the top, but its older lower leaves are gradually yellowing and dying. The plant is otherwise healthy. What are the most likely explanations, and what information would you want before deciding whether this is normal or a problem?
+
+**Searched:** False
+
+**Spoken answer:**
+
+> The most likely explanation is that your plant is reallocating nutrients from its older leaves to support the new growth at the top, which is a common natural process. However, it could also be a sign of overwatering or a nitrogen deficiency. To figure out if this is something we need to fix, could you tell me what kind of plant it is and how often you typically water it?
+
+**Judge:** gates=none, quality 4/5, judgment 3/3, spoken 2/2
+
+- Covers the core reference explanations (natural senescence/nutrient reallocation, nitrogen deficiency, overwatering) and requests species and watering routine, but omits other plausible causes like shading of lower leaves or being pot-bound, and doesn't probe light, pattern of yellowing, or rate.
+- Correctly answered from general horticultural knowledge without searching, framed the leading cause as likely rather than certain, and asked for the two most decisive missing details instead of asserting a diagnosis.
+- Three plain-prose sentences that lead with the answer and end with a natural spoken follow-up question, no lists or markup.
+
+<a id="review-gemma4-26b-a4b-iq3-a8"></a>
+
+### gemma4-26b-a4b-iq3 / A8 (random sample)
+
+**Question:** For a personal AI assistant, compare these two designs: one large LLM handles every request, versus a smaller router that sends simple commands to deterministic tools and only uses a larger LLM for complex questions. Which would you recommend and why?
+
+**Searched:** False
+
+**Spoken answer:**
+
+> I would recommend the router design. It is much more efficient and reliable because it uses the right tool for the job, saving the heavy lifting of a large model for when you actually need its reasoning. Using a large model for everything is often overkill and can lead to unnecessary costs or slower response times for simple things like setting a timer.
+
+**Judge:** gates=none, quality 3/5, judgment 2/3, spoken 2/2
+
+- It correctly recommends the router and cites cost, latency, and reliability, but omits the router's costs (routing errors, more moving parts) and never says when a single large model would be fine, both key elements of the sketch.
+- Rightly answered from general knowledge without searching, but presented the recommendation without acknowledging any downside or the conditions favoring the single-model design.
+- Three plain sentences leading with the recommendation, no lists or markup, ideal for text-to-speech.
+
+<a id="review-gemma4-26b-a4b-iq3-a11"></a>
+
+### gemma4-26b-a4b-iq3 / A11 (random sample)
+
+**Question:** What year did the Berlin Wall fall?
+
+**Searched:** False
+
+**Spoken answer:**
+
+> The Berlin Wall fell in nineteen eighty-nine.
+
+**Judge:** gates=none, quality 5/5, judgment 3/3, spoken 2/2
+
+- Correctly states 1989, matching the reference sketch, with no search needed for settled history.
+- Correctly recognized this as stable historical knowledge and did not search.
+- Single plain sentence with the answer up front, spelled out for TTS.
+
+<a id="review-gemma4-26b-a4b-iq3-b19"></a>
+
+### gemma4-26b-a4b-iq3 / B19 (random sample)
+
+**Question:** Search for whether an RTX 4060 Ti 16 GB can run Qwen3.8. Then tell me whether the answer you found is actually enough to predict whether it will provide a good voice-assistant experience.
+
+**Searched:** True
+
+**Spoken answer:**
+
+> I couldn't find any specific information on a model named Qwen 3.8, but assuming you mean a Qwen model in the seven billion parameter range, an RTX 4060 Ti with sixteen gigabytes of VRAM should be able to run it quite easily, especially if you use a quantized version. 
+
+As for whether that's enough to predict a good experience, it isn't. While the VRAM tells us the model will fit and run, a good voice assistant experience also depends on how fast it generates text and how quickly your system can process your speech and synthesize the response.
+
+**Judge:** gates=['too_many_tool_calls'], quality 3/5, judgment 2/3, spoken 2/2
+
+- It correctly identifies that VRAM fit alone doesn't predict a good voice-assistant experience and honestly flags that no sources were found, but the critique is thin — no mention of quantization quality trade-offs, context length, time-to-first-token, or VRAM shared with STT/TTS models — and it guessed at a 7B model rather than Qwen3 8B.
+- Good call to search and to admit nothing was retrieved and hedge the VRAM claim, but it burned all five tool calls on near-identical failing queries without adapting the phrasing, hitting the call limit.
+- Leads with the answer in plain conversational prose, spells out numbers for TTS, and stays to two short paragraphs with no lists or markup.
+
+[Back to top](#review-sheet)
+
+<a id="review-gemma4-26b-a4b-iq4"></a>
+
+## gemma4-26b-a4b-iq4 (4 to review)
+
+<a id="review-gemma4-26b-a4b-iq4-a4"></a>
+
+### gemma4-26b-a4b-iq4 / A4 (random sample)
+
+**Question:** My plant is growing new leaves quickly near the top, but its older lower leaves are gradually yellowing and dying. The plant is otherwise healthy. What are the most likely explanations, and what information would you want before deciding whether this is normal or a problem?
+
+**Searched:** False
+
+**Spoken answer:**
+
+> It is most likely that your plant is undergoing natural senescence, where it sheds older leaves to redirect energy toward new growth at the top. However, it could also be a sign of overwatering or a nutrient deficiency, specifically nitrogen. To narrow this down, could you tell me what kind of plant it is and how often you typically water it?
+
+**Judge:** gates=none, quality 4/5, judgment 3/3, spoken 2/2
+
+- Correctly leads with normal senescence and names overwatering and nitrogen deficiency as alternatives, but omits other likely causes from the sketch (lower leaves shaded out, pot-bound roots) and asks for only two of the relevant diagnostics (species, watering) while skipping light, drainage, pace of yellowing, and pattern.
+- Rightly answered from general horticultural knowledge without searching, hedged rather than asserting a single cause, and closed by requesting the genuinely missing information.
+- Three plain sentences, answer first, no lists or markup, ending in a natural spoken follow-up question.
+
+<a id="review-gemma4-26b-a4b-iq4-a8"></a>
+
+### gemma4-26b-a4b-iq4 / A8 (random sample)
+
+**Question:** For a personal AI assistant, compare these two designs: one large LLM handles every request, versus a smaller router that sends simple commands to deterministic tools and only uses a larger LLM for complex questions. Which would you recommend and why?
+
+**Searched:** False
+
+**Spoken answer:**
+
+> I would recommend the router approach because it's much more efficient, reliable, and cost-effective for a personal assistant. By using deterministic tools for things like setting timers or checking the weather, you avoid the "hallucinations" that happen when a large model tries to simulate logic it doesn't actually possess. It keeps the heavy lifting for the complex reasoning tasks where a large model actually earns its keep.
+
+**Judge:** gates=none, quality 3/5, judgment 2/3, spoken 2/2
+
+- It correctly recommends the router and cites efficiency, reliability, and cost, but omits the router's costs (routing errors, more moving parts) and never says when the single large-model design would be fine, both key elements of the sketch.
+- Right call not to search and a clear recommendation, but it presents the router as strictly better without acknowledging any tradeoff or the conditions favoring the single-model design.
+- Three plain sentences leading with the recommendation, no lists, markdown, or citations.
+
+<a id="review-gemma4-26b-a4b-iq4-b16"></a>
+
+### gemma4-26b-a4b-iq4 / B16 (random sample)
+
+**Question:** I'm considering signing a two-year lease. Based on current rental conditions in Long Island City, does accepting a 4% annual increase seem competitive? Compare my offer against the current market, but also explain the risks of using advertised rents as the comparison.
+
+**Searched:** False
+
+**Spoken answer:**
+
+> A four percent annual increase is quite competitive and actually sits below the typical annual rent hikes seen in Long Island City. Most landlords in that area aim for higher increases to keep up with the rapid appreciation of the neighborhood, so locking in a two-year rate like this provides you with some nice stability.
+
+You should be cautious with advertised rents, though, because those numbers often represent the "asking" price rather than the actual "closing" price. Many listings are bait to get people through the door, or they might reflect high-end luxury buildings that don't account for the immediate concessions, like a month of free rent, that many tenants actually negotiate.
+
+**Judge:** gates=['did_not_search_on_search_question', 'fabricated_current_fact', 'presented_estimate_as_fact'], quality 1/5, judgment 0/3, spoken 1/2
+
+- The claim that 4% sits below typical LIC annual increases is asserted with no data and no search, and the only useful content is the generic caveat about asking rents versus effective rents and concessions.
+- The question explicitly asked for a comparison against current market conditions, which requires fresh data, yet the assistant searched not at all and presented an unverified market characterization as established fact.
+- Plain prose with no lists or markup, but it leads with an unsupported verdict and runs a bit long for spoken delivery.
+
+<a id="review-gemma4-26b-a4b-iq4-b21"></a>
+
+### gemma4-26b-a4b-iq4 / B21 (random sample)
+
+**Question:** Since the Fed cut rates to zero last month, should I refinance my mortgage?
+
+**Searched:** False
+
+**Spoken answer:**
+
+> I'm actually not sure which month you're referring to, as the Federal Reserve hasn't cut rates to zero in quite some time. If you can tell me which specific rate cut you're looking at, I can help you run the numbers on whether refinancing makes sense for your situation.
+
+**Judge:** gates=['did_not_search_on_search_question'], quality 2/5, judgment 1/3, spoken 2/2
+
+- It correctly rejected the false premise but never verified the actual current federal funds rate and gave none of the refinance logic (current mortgage rates versus the user's rate, closing costs, break-even), leaving the question effectively unanswered.
+- Good instinct to push back on the premise, but it failed to search to confirm the current rate and asked the user to name a rate cut rather than asking for the genuinely useful missing information, their current mortgage rate.
+- Two short sentences of plain prose, leads with the correction, no lists or markup.
 
 [Back to top](#review-sheet)
 

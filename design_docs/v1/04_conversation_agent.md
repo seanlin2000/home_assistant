@@ -120,3 +120,34 @@ Set through the component's UI config flow and stored by Home Assistant: Ollama 
 - `llm_client.OllamaClient` streams through the `ollama` package with `think` passed only when the candidate config sets it, and retries once without it for model families that reject the switch. `llm_client.AnthropicClient` uses `beta.messages.stream` with adaptive thinking and the server-side refusal fallback, and records the model that actually answered.
 - `tools.McpToolBox` wraps the MCP client; `memory.NoMemory` is the v1 memory implementation.
 - The Home Assistant adapter (`custom_components/studio_assistant`) is not built yet; it belongs to Phase 2.
+
+## 12. As built, 2026-09-06: the question router
+
+Pass 1 of the benchmark showed two failure patterns the model alone did not fix: local models answered implicit "current fact" questions from memory instead of searching, and they set up arithmetic correctly and then miscomputed it. The tool descriptions and the system prompt are the only levers a model reads, and Ollama has no way to force a tool call, so the loop now decides for the model before it speaks.
+
+```
+ user text ──▶ rule layer (regex, 0 ms)
+               │  "search the web", "look up", "find me the latest" ─▶ search
+               │  two or more numbers + an arithmetic cue           ─▶ calculate
+               │  nothing matched
+               ▼
+             model layer (one structured-output call, temperature 0, JSON {"route": ...})
+               │  Ollama: chat(format=<json schema>, think=False)   Anthropic: forced tool_choice
+               ▼
+             RouteDecision(route, source="rule"|"model", detail, seconds)  ── recorded on the Transcript
+               │
+               ├─ search    ─▶ append "[Assistant note: ... call search_and_read before answering ...]" to the user message
+               ├─ calculate ─▶ append "[Assistant note: ... call the calculator tools for every number ...]"
+               └─ answer    ─▶ message unchanged
+                                                    ▼
+                                    normal loop: model ─▶ tools ─▶ model ─▶ spoken answer
+```
+
+Design rules:
+
+- **Rules only fire when they cannot be wrong.** The explicit-search pattern needs an imperative ("search for", "look up", "find me the latest"); a noun like "web search" does not count. The arithmetic pattern needs at least two numbers and a cue such as a percent sign, "per month", "watts", or "mortgage". A test asserts that no rule fires wrongly on any benchmark question; on question set 1.2 rules decide 15 of 28 questions.
+- **The model layer is the same model classifying its own question.** It costs one short call (about 40 output tokens) before the first real call. It is measured separately in the report because it may or may not beat the tool descriptions.
+- **A broken router never blocks an answer.** Any exception in the model layer yields the answer route with the error in `detail`.
+- **The directive is visible in the transcript.** It is appended to the user message, so the judge sees it; the rubric tells the judge it came from the harness. The `route_questions` policy flag turns the whole layer off.
+
+Packages: `re` for the rule layer; `ollama`'s `format` argument (a JSON schema the server constrains decoding to) for the local model layer; the Anthropic SDK's `tool_choice={"type": "tool"}` for the baseline. Code: `assistant_core/router.py`, the `classify` method on each client, and four lines in `agent_loop.run`.

@@ -10,6 +10,7 @@ import ollama
 from assistant_core.models import AgentPolicy, Completion, GenerationStats, LLMEvent, Message, Role, TextDelta, ToolCall, ToolCallRequest, ToolSpec
 
 NANOSECONDS_PER_SECOND = 1_000_000_000
+CLASSIFY_MAX_TOKENS = 40
 
 
 class LLMClient(Protocol):
@@ -17,6 +18,10 @@ class LLMClient(Protocol):
     def model_name(self) -> str: ...
 
     def chat(self, messages: list[Message], tools: list[ToolSpec], policy: AgentPolicy) -> AsyncIterator[LLMEvent]: ...
+
+    async def classify(self, system_prompt: str, user_text: str, schema: dict[str, Any]) -> dict[str, Any]:
+        """One short, non-streaming call that must return JSON matching schema; used by the router."""
+        ...
 
 
 class OllamaClient:
@@ -52,6 +57,25 @@ class OllamaClient:
         content = "".join(text_parts)
         stats = ollama_stats(self._model, last_chunk, started, first_token_at)
         yield Completion(message=Message(role=Role.ASSISTANT, content=content, thinking="".join(thinking_parts), tool_calls=tool_calls), stats=stats)
+
+    async def classify(self, system_prompt: str, user_text: str, schema: dict[str, Any]) -> dict[str, Any]:
+        request: dict[str, Any] = {
+            "model": self._model,
+            "messages": [{"role": "system", "content": system_prompt}, {"role": "user", "content": user_text}],
+            "format": schema,
+            "stream": False,
+            "keep_alive": self._keep_alive,
+            "options": {"temperature": 0, "num_predict": CLASSIFY_MAX_TOKENS},
+            "think": False,
+        }
+        try:
+            response = await self._client.chat(**request)
+        except ollama.ResponseError as error:
+            if "think" not in str(error).lower():
+                raise
+            del request["think"]
+            response = await self._client.chat(**request)
+        return json.loads(response.message.content)
 
     async def _stream(self, messages: list[Message], tools: list[ToolSpec], policy: AgentPolicy) -> AsyncIterator[ollama.ChatResponse]:
         request: dict[str, Any] = {

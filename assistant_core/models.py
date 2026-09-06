@@ -11,6 +11,21 @@ class Role(StrEnum):
     TOOL = "tool"
 
 
+class Route(StrEnum):
+    SEARCH = "search"
+    CALCULATE = "calculate"
+    ANSWER = "answer"
+
+
+class RouteDecision(BaseModel):
+    """What the router decided before the model spoke: which tool family the question needs and which layer decided it."""
+
+    route: Route
+    source: str  # "rule", "model", or "none"
+    detail: str = ""
+    seconds: float = 0.0
+
+
 class ToolCall(BaseModel):
     id: str
     name: str
@@ -43,6 +58,7 @@ class AgentPolicy(BaseModel):
     context_tokens: int = 16384
     think: bool | str | None = None
     effort: str | None = None
+    route_questions: bool = True
     filler_phrases: list[str] = Field(default_factory=lambda: list(DEFAULT_FILLER_PHRASES))
     tool_timeout_seconds: float = 30.0
 
@@ -127,6 +143,7 @@ class Transcript(BaseModel):
     total_seconds: float = 0.0
     time_to_first_token_seconds: float | None = None
     time_to_first_spoken_seconds: float | None = None
+    route: RouteDecision | None = None
     error: str | None = None
 
 

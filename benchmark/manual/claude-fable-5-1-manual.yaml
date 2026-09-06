@@ -11,7 +11,10 @@ questions:
 
   - question_id: A2
     turns:
-      - answer: >-
+      - calls:
+          - {name: calculate, arguments: {expression: "3500 * 1.05 * 12"}}
+          - {name: growth_schedule, arguments: {start: 3500, rate_percent: 3, periods: 2, per_period_multiplier: 12}}
+        answer: >-
           The one year lease at five percent comes to three thousand six hundred seventy five a month, or forty four thousand one hundred for the year. The two year lease at three percent a year is three thousand six hundred five a month in year one, forty three thousand two hundred sixty, and three thousand seven hundred thirteen fifteen a month in year two, forty four thousand five hundred fifty seven eighty, so eighty seven thousand eight hundred seventeen eighty over both years. Comparing the first year alone, the two year lease saves you eight hundred forty dollars. Over two years the comparison depends on what a renewal after the one year lease would cost, which nobody knows yet. If you assume another five percent bump, the one year path totals ninety thousand four hundred five, and the two year lease saves about two thousand five hundred eighty seven.
 
   - question_id: A3
@@ -38,7 +41,10 @@ questions:
 
   - question_id: A7
     turns:
-      - answer: >-
+      - calls:
+          - {name: energy_cost, arguments: {watts: 300, hours_per_day: 1, price_per_kwh: 0.15, days: 30, idle_watts: 50}}
+          - {name: energy_cost, arguments: {watts: 300, hours_per_day: 1, price_per_kwh: 0.30, days: 30, idle_watts: 50}}
+        answer: >-
           Roughly six to thirteen dollars a month, and here is the arithmetic. If the machine sits at fifty watts for twenty three hours and three hundred watts for one hour a day, that is about one point one five kilowatt hours idle plus zero point three under load, so one point four five kilowatt hours a day or around forty three and a half a month. At fifteen cents per kilowatt hour that is about six and a half dollars, at thirty cents about thirteen. Two caveats. I am assuming your electricity rate, and residential rates in the US range roughly between those numbers. And I am treating your hour of use as a full hour at three hundred watts, which overstates it, since a machine mostly waits for you even during an interactive session. The idle draw is the real cost driver here, about five sixths of the total.
 
   - question_id: A8
@@ -143,3 +149,49 @@ questions:
           - federal funds rate september 2026
         answer: >-
           The Fed did not cut rates to zero. The effective federal funds rate is three point six three percent as of the third of September according to the Federal Reserve's own daily release, and the discussion in the sources is about whether they might raise it at the mid September meeting, not cut it. So the premise is off, and mortgage rates have not collapsed. Whether to refinance still comes down to the usual math. Compare the rate you could get today with the rate you have, weigh the closing costs against the monthly savings, and see how many months it takes to break even against how long you plan to stay. What is your current rate?
+
+  - question_id: C23
+    turns:
+      - calls:
+          - {name: percent, arguments: {kind: of, a: 18, b: 64.5}}
+          - {name: calculate, arguments: {expression: "64.50 * 1.18"}}
+        answer: >-
+          Eighteen percent of sixty four fifty is eleven dollars and sixty one cents, so the total with the tip comes to seventy six dollars and eleven cents.
+
+  - question_id: C24
+    turns:
+      - calls:
+          - {name: calculate, arguments: {expression: "500 * ((1 + 0.04/12)**36 - 1) / (0.04/12)"}}
+        answer: >-
+          About nineteen thousand ninety dollars if you deposit at the end of each month, or a little over nineteen thousand one hundred fifty if you deposit at the start. Eighteen thousand of that is your own deposits, so the interest comes to roughly eleven hundred dollars. That assumes the four percent rate holds for all three years.
+
+  - question_id: C25
+    turns:
+      - calls:
+          - {name: convert, arguments: {value: 72, from_unit: f, to_unit: c}}
+          - {name: convert, arguments: {value: 5, from_unit: km, to_unit: mi}}
+        answer: >-
+          Seventy two Fahrenheit is about twenty two degrees Celsius, and a five kilometer run is about three point one miles.
+
+  - question_id: C26
+    turns:
+      - calls:
+          - {name: percent, arguments: {kind: is_what_percent, a: 2850, b: 7400}}
+          - {name: percent, arguments: {kind: increase_by, a: 4, b: 2850}}
+        answer: >-
+          Rent takes about thirty eight and a half percent of your take-home pay. After a four percent increase it would be two thousand nine hundred sixty four dollars a month, which pushes that share to just over forty percent.
+
+  - question_id: C27
+    turns:
+      - calls:
+          - {name: energy_cost, arguments: {watts: 120, hours_per_day: 4, price_per_kwh: 0.30, days: 30}}
+        answer: >-
+          About four dollars and thirty cents a month. Four hours at one hundred twenty watts is roughly half a kilowatt hour a day, about fourteen and a half kilowatt hours over a thirty day month, at thirty cents each. Standby draw while it is off would add a little on top of that.
+
+  - question_id: C28
+    turns:
+      - calls:
+          - {name: loan_payment, arguments: {principal: 400000, annual_rate_percent: 6, years: 30}}
+        answer: >-
+          About two thousand three hundred ninety eight dollars a month for principal and interest, before property taxes and insurance. Over the thirty years you pay roughly eight hundred sixty three thousand in total, so about four hundred sixty three thousand of that is interest.
+

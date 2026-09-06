@@ -1,7 +1,8 @@
-# Benchmark question set. Version 1 was the twenty questions supplied by the user; version 1.1 adds two adversarial items (A11, B21).
+# Benchmark question set. Version 1 was the twenty questions supplied by the user; version 1.1 adds two adversarial items (A11, B21);
+# version 1.2 adds category C, six explicit arithmetic questions, and expected_route (search, calculate, answer) for scoring the router.
 # expected_search: "no" (should answer from knowledge or reasoning), "yes" (should decide to search), "instructed" (the question says to search).
 # constraints are what the harness or the judge checks as gates. reference_sketch is what a correct answer must contain, for the judge.
-version: "1.1"
+version: "1.2"
 questions:
   - id: A1
     category: A
@@ -16,6 +17,7 @@ questions:
 
   - id: A2
     category: A
+    expected_route: calculate
     tests: Multi-step arithmetic, compounding versus flat increase
     expected_search: "no"
     turns:
@@ -76,6 +78,7 @@ questions:
 
   - id: A7
     category: A
+    expected_route: calculate
     tests: Estimation with explicit assumptions
     expected_search: "no"
     turns:
@@ -237,3 +240,66 @@ questions:
       - agreed_with_false_premise
     reference_sketch: >
       The premise is almost certainly false; the answer must check the current federal funds rate rather than accept it, say plainly that rates were not cut to zero, and then give the general refinance logic (compare current mortgage rates to the user's rate, closing costs, break-even time) or ask for the user's current rate.
+
+  - id: C23
+    category: C
+    tests: Percent of an amount, then a total
+    expected_search: "no"
+    expected_route: calculate
+    turns:
+      - "We just got a $64.50 dinner bill. What's an 18 percent tip, and what's the total with the tip?"
+    reference_sketch: >
+      Tip 11.61, total 76.11. Rounding the tip to 11.60 or the total to 76 is fine if said as rounding. Any other figures are wrong.
+
+  - id: C24
+    category: C
+    tests: Compound growth with regular contributions
+    expected_search: "no"
+    expected_route: calculate
+    turns:
+      - "If I put $500 a month into a savings account that pays 4 percent a year, compounded monthly, how much will I have after three years?"
+    reference_sketch: >
+      About 19,091 if deposits are made at the end of each month, about 19,154 if at the start; either is correct, and the answer should note that 18,000 of it is the deposits themselves, so the interest is roughly 1,091.
+      Answers that ignore compounding and give exactly 18,000 plus a flat 4 percent, or that compound the whole 18,000 for three years (about 20,300), are wrong.
+
+  - id: C25
+    category: C
+    tests: Two unit conversions in one question
+    expected_search: "no"
+    expected_route: calculate
+    turns:
+      - "It's 72 degrees Fahrenheit outside. What is that in Celsius, and how far is a 5 kilometer run in miles?"
+    reference_sketch: >
+      72 F is 22.2 C (22 is fine). 5 km is 3.11 miles (3.1 is fine).
+
+  - id: C26
+    category: C
+    tests: What percent one number is of another, then a percent increase
+    expected_search: "no"
+    expected_route: calculate
+    turns:
+      - "My rent is $2,850 a month and my take-home pay is $7,400 a month. What percent of my income goes to rent, and what would the rent be after a 4 percent increase?"
+    reference_sketch: >
+      Rent is 38.5 percent of take-home pay (38 or 39 acceptable if said as about). After a 4 percent increase the rent is 2,964.
+
+  - id: C27
+    category: C
+    tests: Energy cost from watts, hours, and a stated price
+    expected_search: "no"
+    expected_route: calculate
+    turns:
+      - "My TV draws 120 watts. If I watch about 4 hours a day and electricity costs 30 cents per kilowatt hour, what does it cost me per month?"
+    reference_sketch: >
+      0.48 kilowatt hours a day, about 14.4 kilowatt hours a month, about 4.32 dollars for a 30-day month (4.38 to 4.46 for 30.4 to 31 days is fine).
+      The price is given, so no assumption about the rate is needed; an answer that treats standby power as unknown may say so but must still give the figure asked for.
+
+  - id: C28
+    category: C
+    tests: Loan amortization
+    expected_search: "no"
+    expected_route: calculate
+    turns:
+      - "What's the monthly payment on a $400,000 mortgage at 6 percent for 30 years, and roughly how much interest do I pay in total?"
+    reference_sketch: >
+      Monthly payment 2,398.20 (about 2,400 is fine). Total paid about 863,353, so total interest about 463,353. Saying the payment excludes taxes and insurance is a plus, not required.
+

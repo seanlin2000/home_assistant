@@ -152,11 +152,19 @@ def render_harness_notes(result: QuestionResult, gates: list[Gate]) -> str:
     return "\n".join(
         [
             "# Harness observations",
-            f"Searched: {'yes' if result.searched else 'no'}; tool calls: {result.tool_call_count}",
+            f"Searched: {'yes' if result.searched else 'no'}; tool calls: {result.tool_call_count}; calculator calls: {result.calculator_call_count}",
+            render_route_note(result),
             f"Harness gates already applied: {', '.join(gate.value for gate in gates) or 'none'}",
             "Grade the final ASSISTANT message of the last turn as the answer. Return the structured verdict.",
         ]
     )
+
+
+def render_route_note(result: QuestionResult) -> str:
+    decision = result.route
+    if decision is None:
+        return "Router: not run"
+    return f"Router decided '{decision.route.value}' by {decision.source} ({decision.detail})"
 
 
 if __name__ == "__main__":

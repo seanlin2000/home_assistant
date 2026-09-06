@@ -10,6 +10,8 @@ from assistant_core.models import AgentPolicy, Completion, GenerationStats, LLME
 
 ANTHROPIC_FALLBACK_BETA = "server-side-fallback-2026-06-01"
 ANTHROPIC_FALLBACK_MODELS = [{"model": "claude-opus-4-8"}]
+CLASSIFY_TOOL_NAME = "classify"
+CLASSIFY_MAX_TOKENS = 100
 
 
 class AnthropicClient:
@@ -36,6 +38,20 @@ class AnthropicClient:
         for call in completion.message.tool_calls:
             yield ToolCallRequest(call=call)
         yield completion
+
+    async def classify(self, system_prompt: str, user_text: str, schema: dict[str, Any]) -> dict[str, Any]:
+        response = await self._client.messages.create(
+            model=self._model,
+            max_tokens=CLASSIFY_MAX_TOKENS,
+            system=system_prompt,
+            messages=[{"role": "user", "content": user_text}],
+            tools=[{"name": CLASSIFY_TOOL_NAME, "description": "Record the classification.", "input_schema": schema}],
+            tool_choice={"type": "tool", "name": CLASSIFY_TOOL_NAME},
+        )
+        for block in response.content:
+            if block.type == "tool_use" and block.name == CLASSIFY_TOOL_NAME:
+                return dict(block.input)
+        raise ValueError("classifier returned no tool call")
 
     def _request(self, messages: list[Message], tools: list[ToolSpec], policy: AgentPolicy) -> dict[str, Any]:
         system_text, conversation = split_system_prompt(messages)

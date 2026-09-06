@@ -1,14 +1,16 @@
 """Merge harness gates and judge verdicts into report.md, and produce the human review sheet."""
 
 import argparse
+import json
 import random
 import statistics
 from pathlib import Path
 
 import yaml
 
+from assistant_core.models import Route
 from benchmark.costs import estimate_cost_usd
-from benchmark.records import Candidate, Category, Gate, QuestionResult, QuestionSet, Score, load_config, load_questions, read_jsonl
+from benchmark.records import Candidate, Category, Gate, Question, QuestionResult, QuestionSet, Score, load_config, load_questions, read_jsonl
 
 CONFIG_PATH = Path("benchmark/config.yaml")
 QUESTIONS_PATH = Path("benchmark/questions.yaml")
@@ -62,6 +64,17 @@ class CandidateReport:
         flags = {result.memory_fit.fully_on_gpu for result in self.results}
         return "n/a" if flags == {None} else ("yes" if flags == {True} else "NO")
 
+    def route_outcomes(self, question_set: QuestionSet) -> list[tuple[Question, object]]:
+        """(question, decision) for every result whose final turn was routed."""
+        outcomes = []
+        for result in self.results:
+            if result.route is not None:
+                outcomes.append((question_set.by_id(result.question_id), result.route))
+        return outcomes
+
+    def score_for(self, question_id: str) -> Score | None:
+        return next((score for score in self.scores if score.question_id == question_id), None)
+
     def api_cost_usd(self) -> float:
         calls = [stats for result in self.results for transcript in result.turns for stats in transcript.model_calls]
         baseline = estimate_cost_usd(sum(stats.prompt_tokens or 0 for stats in calls), sum(stats.output_tokens or 0 for stats in calls)) if self.candidate.provider == "anthropic" else 0.0
@@ -72,6 +85,7 @@ class CandidateReport:
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Render the benchmark report and review sheet.")
     parser.add_argument("date", help="results folder name under benchmark/results")
+    parser.add_argument("--compare", help="an earlier results folder to compare against, question by question")
     return parser.parse_args()
 
 
@@ -81,7 +95,8 @@ def main() -> None:
     question_set = load_questions(QUESTIONS_PATH)
     run_dir = Path(config.services.results_dir) / args.date
     reports = load_reports(run_dir, config.candidates)
-    (run_dir / "report.md").write_text(render_report(args.date, question_set, reports, run_dir))
+    previous = load_reports(Path(config.services.results_dir) / args.compare, config.candidates) if args.compare else None
+    (run_dir / "report.md").write_text(render_report(args.date, question_set, reports, run_dir, previous, args.compare))
     write_review_sheet(run_dir, question_set, reports, config.judge.review_sample_fraction, config.judge.review_seed)
     print(f"wrote {run_dir / 'report.md'} and {run_dir / 'review_sheet.yaml'}")
 
@@ -96,36 +111,104 @@ def load_reports(run_dir: Path, candidates: list[Candidate]) -> list[CandidateRe
     return reports
 
 
-def render_report(run_date: str, question_set: QuestionSet, reports: list[CandidateReport], run_dir: Path) -> str:
+def render_report(run_date: str, question_set: QuestionSet, reports: list[CandidateReport], run_dir: Path, previous: list[CandidateReport] | None = None, previous_date: str | None = None) -> str:
     baseline = next((report for report in reports if report.candidate.baseline), None)
     sections = [
-        f"# LLM benchmark report, {run_date}\n\nQuestion set v{question_set.version}, {len(question_set.questions)} questions, 10 points each. Any gate failure zeroes a question.",
+        f"# LLM benchmark report, {run_date}\n\nQuestion set v{question_set.version}, {len(question_set.questions)} questions, 10 points each. Any gate failure zeroes a question.{render_run_meta(run_dir)}",
         render_summary_table(reports, baseline),
         render_gate_table(reports),
+        render_router_table(question_set, reports),
         render_latency_table(reports),
         render_matrix(question_set, reports),
         render_agreement(run_dir, reports),
         render_spend(reports),
     ]
+    if previous is not None and previous_date:
+        sections.insert(2, render_comparison(reports, previous, previous_date))
     if any(report.candidate.preview for report in reports):
         sections.insert(2, f"> {PREVIEW_CAVEAT}")
     return "\n\n".join(sections) + "\n"
+
+
+def render_run_meta(run_dir: Path) -> str:
+    meta_path = run_dir / "run_meta.json"
+    if not meta_path.exists():
+        return ""
+    meta = json.loads(meta_path.read_text())
+    return f" System prompt v{meta.get('prompt_version', '1.1')}; question routing {'on' if meta.get('policy', {}).get('route_questions', False) else 'off'}."
+
+
+def render_router_table(question_set: QuestionSet, reports: list[CandidateReport]) -> str:
+    routed = [report for report in reports if report.route_outcomes(question_set)]
+    if not routed:
+        return "## Router\n\nNo routed results in this run."
+    lines = [
+        "## Router accuracy (search / calculate / answer decided before the model spoke)",
+        "",
+        "The rule layer is model-independent, so its row is the same for every candidate; the model layer is the candidate classifying its own question.",
+        "",
+        "| Candidate | Rule layer fired | Rule correct | Model layer decided | Model correct | Overall correct | Median router time | Misroutes (got, expected) |",
+        "|---|---|---|---|---|---|---|---|",
+    ]
+    for report in routed:
+        outcomes = report.route_outcomes(question_set)
+        by_rule = [(question, decision) for question, decision in outcomes if decision.source == "rule"]
+        by_model = [(question, decision) for question, decision in outcomes if decision.source == "model"]
+        correct = [(question, decision) for question, decision in outcomes if decision.route == question.route]
+        misroutes = ", ".join(f"{question.id} ({decision.route.value}, {question.route.value})" for question, decision in outcomes if decision.route != question.route) or "none"
+        model_seconds = [decision.seconds for _, decision in by_model]
+        lines.append(
+            f"| {label(report)} | {len(by_rule)} | {count_correct(by_rule)}/{len(by_rule)} | {len(by_model)} | {count_correct(by_model)}/{len(by_model)} | {len(correct)}/{len(outcomes)} ({len(correct) / len(outcomes):.0%}) | {statistics.median(model_seconds) if model_seconds else 0:.2f} s | {misroutes} |"
+        )
+    return "\n".join(lines)
+
+
+def count_correct(outcomes: list[tuple[Question, object]]) -> int:
+    return sum(1 for question, decision in outcomes if decision.route == question.route)
+
+
+def render_comparison(reports: list[CandidateReport], previous: list[CandidateReport], previous_date: str) -> str:
+    lines = [
+        f"## Compared with {previous_date}",
+        "",
+        "Totals on the questions both passes share, so new questions do not inflate the second pass.",
+        "",
+        "| Candidate | Shared questions | Previous | This pass | Change | Previous gated | This pass gated |",
+        "|---|---|---|---|---|---|---|",
+    ]
+    earlier = {report.candidate.key: report for report in previous}
+    for report in reports:
+        old = earlier.get(report.candidate.key)
+        if old is None:
+            continue
+        shared = sorted({score.question_id for score in report.scores} & {score.question_id for score in old.scores})
+        before = sum(old.score_for(qid).total for qid in shared)
+        after = sum(report.score_for(qid).total for qid in shared)
+        gated_before = sum(1 for qid in shared if old.score_for(qid).gates)
+        gated_after = sum(1 for qid in shared if report.score_for(qid).gates)
+        lines.append(f"| {label(report)} | {len(shared)} | {before}/{10 * len(shared)} | {after}/{10 * len(shared)} | {after - before:+d} | {gated_before} | {gated_after} |")
+    return "\n".join(lines)
 
 
 def render_summary_table(reports: list[CandidateReport], baseline: CandidateReport | None) -> str:
     lines = [
         "## Scores",
         "",
-        "| Candidate | Total | Category A | Category B | vs baseline | Gated questions | Quality /5 | Judgment /3 | Spoken /2 | Unjudged |",
-        "|---|---|---|---|---|---|---|---|---|---|",
+        "| Candidate | Total | Category A | Category B | Category C | vs baseline | Gated questions | Quality /5 | Judgment /3 | Spoken /2 | Unjudged |",
+        "|---|---|---|---|---|---|---|---|---|---|---|",
     ]
     for report in sorted(reports, key=lambda item: item.total(), reverse=True):
         ratio = f"{report.total() / baseline.total():.0%}" if baseline and baseline.total() else "n/a"
         unjudged = len(report.scores) - len(report.judged())
         lines.append(
-            f"| {label(report)} | {report.total()}/{report.maximum()} | {report.total(Category.A)}/{report.maximum(Category.A)} | {report.total(Category.B)}/{report.maximum(Category.B)} | {ratio} | {report.gated_question_count()} | {report.mean_dimension('answer_quality'):.1f} | {report.mean_dimension('judgment'):.1f} | {report.mean_dimension('spoken_fit'):.1f} | {unjudged} |"
+            f"| {label(report)} | {report.total()}/{report.maximum()} | {report.total(Category.A)}/{report.maximum(Category.A)} | {report.total(Category.B)}/{report.maximum(Category.B)} | {category_cell(report, Category.C)} | {ratio} | {report.gated_question_count()} | {report.mean_dimension('answer_quality'):.1f} | {report.mean_dimension('judgment'):.1f} | {report.mean_dimension('spoken_fit'):.1f} | {unjudged} |"
         )
     return "\n".join(lines)
+
+
+def category_cell(report: CandidateReport, category: Category) -> str:
+    maximum = report.maximum(category)
+    return "n/a" if maximum == 0 else f"{report.total(category)}/{maximum}"
 
 
 def label(report: CandidateReport) -> str:

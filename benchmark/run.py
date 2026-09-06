@@ -200,8 +200,9 @@ def print_result_line(question: Question, result: QuestionResult) -> None:
         return
     final = result.final
     searched = "search" if result.searched else "no search"
+    route = f"route={result.route.route.value}/{result.route.source}" if result.route else "route=off"
     console.print(
-        f"  {question.id:<4} {searched:<9} calls={result.tool_call_count} ttft={final.time_to_first_token_seconds or 0:.1f}s total={final.total_seconds:.1f}s words={len(final.final_answer.split())}"
+        f"  {question.id:<4} {searched:<9} {route:<24} calls={result.tool_call_count} ttft={final.time_to_first_token_seconds or 0:.1f}s total={final.total_seconds:.1f}s words={len(final.final_answer.split())}"
     )
 
 

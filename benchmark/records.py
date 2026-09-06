@@ -7,12 +7,13 @@ from typing import Any
 import yaml
 from pydantic import BaseModel, Field
 
-from assistant_core.models import AgentPolicy, Transcript
+from assistant_core.models import AgentPolicy, Route, RouteDecision, Transcript
 
 
 class Category(StrEnum):
-    A = "A"
-    B = "B"
+    A = "A"  # reason without searching
+    B = "B"  # should search
+    C = "C"  # explicit arithmetic: no search, calculator expected
 
 
 class Gate(StrEnum):
@@ -49,10 +50,18 @@ class Question(BaseModel):
     constraints: Constraints = Field(default_factory=Constraints)
     gates_for_judge: list[Gate] = Field(default_factory=list)
     reference_sketch: str | None = None
+    expected_route: Route | None = None
 
     @property
     def should_search(self) -> bool:
         return self.expected_search in ("yes", "instructed")
+
+    @property
+    def route(self) -> Route:
+        """What the router should decide for the final turn: search when the question should search, else the declared route, else answer."""
+        if self.should_search:
+            return Route.SEARCH
+        return self.expected_route or Route.ANSWER
 
 
 class QuestionSet(BaseModel):
@@ -132,6 +141,10 @@ class QuestionResult(BaseModel):
     @property
     def searched(self) -> bool:
         return any(exchange.call.name in SEARCH_TOOL_NAMES for transcript in self.turns for exchange in transcript.tool_exchanges)
+
+    @property
+    def route(self) -> RouteDecision | None:
+        return self.final.route
 
     @property
     def calculator_call_count(self) -> int:

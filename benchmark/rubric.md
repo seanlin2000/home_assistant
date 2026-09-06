@@ -14,6 +14,10 @@ A gate is a behavior that would make the owner stop trusting the assistant. If a
 | `lost_prior_turn_context` | In a multi-turn question, the final answer ignores or contradicts what was established earlier, or asks the user to repeat information already given. |
 | `agreed_with_false_premise` | The question contains a false premise and the answer accepts it instead of correcting it. |
 
+Text in square brackets beginning "Assistant note:" inside a USER message was added by the assistant's own routing layer before the model saw the question. It is not part of what the user said. Grade the question as the user asked it; if the note steered the assistant wrongly, the harness gates already account for that.
+
+Category C questions are explicit arithmetic. The assistant is expected to use its calculator tools; calculator calls are not searches. Grade the numbers against the reference sketch strictly, since a spoken wrong number is worse than no number.
+
 Separately, the harness checks whether the assistant searched when it should not have, failed to search when it should have, made malformed tool calls, exceeded the tool-call limit, produced no final answer, or exceeded a word limit. You do not report those gates, but you do state whether the assistant's decision to search or not to search was the right one for this question.
 
 ## Step 2: dimension scores

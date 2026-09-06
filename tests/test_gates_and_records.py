@@ -23,7 +23,8 @@ QUESTIONS = load_questions(Path("benchmark/questions.yaml"))
 
 
 def test_question_set_shape() -> None:
-    assert len(QUESTIONS.questions) == 22
+    assert len(QUESTIONS.questions) == 28
+    assert QUESTIONS.by_id("C23").route.value == "calculate" and QUESTIONS.by_id("B11").route.value == "search" and QUESTIONS.by_id("A1").route.value == "answer"
     assert QUESTIONS.by_id("A6").turns[1].startswith("Suppose")
     assert QUESTIONS.by_id("A10").constraints.max_words == 120
     assert QUESTIONS.by_id("B21").should_search is True

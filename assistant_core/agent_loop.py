@@ -28,6 +28,7 @@ from assistant_core.models import (
     Transcript,
 )
 from assistant_core.prompts import SYSTEM_PROMPT
+from assistant_core.router import apply_route, decide_route
 from assistant_core.tools import ToolBox
 
 TOOL_LIMIT_NOTICE = "Tool call limit reached. Answer the user now with what you already know; do not call any more tools."
@@ -81,6 +82,9 @@ async def run(conversation: list[Message], llm: LLMClient, tools: ToolBox, polic
     transcript = Transcript(model=llm.model_name, system_prompt=SYSTEM_PROMPT, conversation=list(conversation))
     cap = SpokenAnswerCap(policy.word_budget)
     tool_specs = await load_tool_specs(tools, transcript)
+    if policy.route_questions and tool_specs:
+        transcript.route = await decide_route(llm, conversation)
+        messages = apply_route(messages, transcript.route)
     for round_index in range(policy.max_tool_rounds + 1):
         turn = ModelTurn()
         async for event in stream_model_turn(llm, messages, tool_specs, policy, turn, cap, transcript, started):

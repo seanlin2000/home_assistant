@@ -219,3 +219,9 @@ How to read a 3-bit preview: if it scores near the frontier baseline, that is st
 ### Prompt version 1.2 and the calculator tools, 2026-09-06
 
 All 2026-09-05 results were produced with prompt version 1.1 and only the three search tools. On 2026-09-06 the MCP server gained eight calculator tools (doc 03, section 11) and the system prompt gained a rule that multi-step arithmetic must go through them. The fairness rule still holds within a run date: every candidate on a given date sees the same prompt and the same tool list, and `run_meta.json` records the prompt version. Calculator calls do not count as searches for the gates. The first use is a rerun of A2 and A7 for the candidates that fit the laptop, to measure the change on the questions it targets before rerunning the whole set.
+
+### Question set 1.2 and the second pass, 2026-09-06
+
+Pass 2 changes three things at once, deliberately, because they ship together: the calculator tools, the question router (doc 04, section 12), and six explicit arithmetic questions in a new category C (C23 to C28: a tip, monthly savings with compounding, two unit conversions, rent as a share of income, a television's energy cost, and a mortgage payment). Every question now carries an expected route (search, calculate, or answer), derived from `expected_search` unless declared, so the report can score the router on its own: how many questions the rule layer decided and got right, how many the model layer decided and got right, the median router time, and the misroutes by question.
+
+Pass 2 runs the full set on every candidate, including the frontier baseline and the hand-written reference, into `results/2026-09-06/`. Pass 1 stays untouched in `results/2026-09-05/`; the new report includes a comparison table restricted to the questions both passes share, so the new category does not inflate the second pass. Command: `benchmark-report 2026-09-06 --compare 2026-09-05`.

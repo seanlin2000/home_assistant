@@ -28,7 +28,7 @@ entries:
 - candidate: qwen3.5-4b
   question_id: A10
   why_selected: random sample
-  question: &id006
+  question: &id009
   - Explain why VRAM capacity can matter more than raw GPU speed when choosing hardware for a local LLM. Answer in a way that would sound natural if spoken aloud in under 45 seconds.
   searched: false
   spoken_answer: When running a Large Language Model locally, the amount of video memory you have often limits how big a model you can actually load, while the raw speed of the GPU mainly determines how fast it runs once loaded. Think of VRAM as your storage space for the model's weights and temporary calculations; if you try to fit a massive model into too little VRAM, it won't run at all or will crash. In contrast, raw speed is only a bottleneck if you've already got enough memory to hold the entire model and its context.
@@ -53,7 +53,7 @@ entries:
 - candidate: qwen3.5-4b
   question_id: A11
   why_selected: random sample
-  question:
+  question: &id005
   - What year did the Berlin Wall fall?
   searched: false
   spoken_answer: The Berlin Wall fell in 1989. Specifically, the last guard post was opened on November 9th of that year.
@@ -133,7 +133,7 @@ entries:
 - candidate: gemma4-e4b
   question_id: A4
   why_selected: random sample
-  question:
+  question: &id004
   - My plant is growing new leaves quickly near the top, but its older lower leaves are gradually yellowing and dying. The plant is otherwise healthy. What are the most likely explanations, and what information would you want before deciding whether this is normal or a problem?
   searched: false
   spoken_answer: This pattern often suggests a nutrient issue or a watering problem. The most likely explanations are that the plant is experiencing nutrient deficiencies, specifically mobile nutrients, or that it is being overwatered. To help me narrow this down, could you tell me what kind of plant it is and if you are using a specific watering schedule or fertilizer?
@@ -316,7 +316,7 @@ entries:
 - candidate: gpt-oss-20b
   question_id: A1
   why_selected: random sample
-  question: &id004
+  question: &id007
   - Why can a 16 GB GPU sometimes run an MoE model with 30 billion total parameters, but not necessarily a 30 billion parameter dense model? Explain the difference between active parameters and the memory required to store the model.
   searched: false
   spoken_answer: 'A 16‑gigabyte GPU can run a 30‑billion‑parameter mixture‑of‑experts model because, at any given step, only a tiny fraction of those parameters are actually “active.” In an MoE layer each token activates just a handful of experts, so only the weight matrices of those experts plus a small routing overhead need to fit in memory. The rest of the 30 billion parameters stay on disk or in slower memory until they’re called.
@@ -344,7 +344,7 @@ entries:
 - candidate: gpt-oss-20b
   question_id: A7
   why_selected: random sample
-  question: &id005
+  question: &id008
   - I have a computer that consumes 50 watts when idle and 300 watts during active inference. If I interact with it for roughly one hour per day, estimate the monthly electricity cost. State your assumptions instead of pretending you know exactly how much time it spends under load.
   searched: false
   spoken_answer: If you use the computer for about one hour each day and leave it on the rest of the time, you’re drawing roughly 1.45 kilowatt‑hours per day – that’s the one hour at 300 watts plus 23 hours at 50 watts, all divided by a thousand. Over a typical 30‑day month that’s about 43.5 kilowatt‑hours. If you’re paying about thirteen cents per kilowatt‑hour, the monthly bill would come out near five and a half dollars. The key assumptions are the one‑hour active window, the 50‑watt idle draw, and the energy rate; if any of those change, the cost will shift accordingly.
@@ -418,10 +418,213 @@ entries:
     judgment: null
     spoken_fit: null
     notes: ''
+- candidate: gemma4-26b-a4b-iq3
+  question_id: A4
+  why_selected: random sample
+  question: *id004
+  searched: false
+  spoken_answer: The most likely explanation is that your plant is reallocating nutrients from its older leaves to support the new growth at the top, which is a common natural process. However, it could also be a sign of overwatering or a nitrogen deficiency. To figure out if this is something we need to fix, could you tell me what kind of plant it is and how often you typically water it?
+  judge:
+    gate_hit: false
+    gates: []
+    dimension_total: 9
+    answer_quality: 4
+    judgment: 3
+    spoken_fit: 2
+    reasons:
+    - Covers the core reference explanations (natural senescence/nutrient reallocation, nitrogen deficiency, overwatering) and requests species and watering routine, but omits other plausible causes like shading of lower leaves or being pot-bound, and doesn't probe light, pattern of yellowing, or rate.
+    - Correctly answered from general horticultural knowledge without searching, framed the leading cause as likely rather than certain, and asked for the two most decisive missing details instead of asserting a diagnosis.
+    - Three plain-prose sentences that lead with the answer and end with a natural spoken follow-up question, no lists or markup.
+  human:
+    gate_hit: null
+    gates: []
+    answer_quality: null
+    judgment: null
+    spoken_fit: null
+    notes: ''
+- candidate: gemma4-26b-a4b-iq3
+  question_id: A8
+  why_selected: random sample
+  question: &id006
+  - 'For a personal AI assistant, compare these two designs: one large LLM handles every request, versus a smaller router that sends simple commands to deterministic tools and only uses a larger LLM for complex questions. Which would you recommend and why?'
+  searched: false
+  spoken_answer: I would recommend the router design. It is much more efficient and reliable because it uses the right tool for the job, saving the heavy lifting of a large model for when you actually need its reasoning. Using a large model for everything is often overkill and can lead to unnecessary costs or slower response times for simple things like setting a timer.
+  judge:
+    gate_hit: false
+    gates: []
+    dimension_total: 7
+    answer_quality: 3
+    judgment: 2
+    spoken_fit: 2
+    reasons:
+    - It correctly recommends the router and cites cost, latency, and reliability, but omits the router's costs (routing errors, more moving parts) and never says when a single large model would be fine, both key elements of the sketch.
+    - Rightly answered from general knowledge without searching, but presented the recommendation without acknowledging any downside or the conditions favoring the single-model design.
+    - Three plain sentences leading with the recommendation, no lists or markup, ideal for text-to-speech.
+  human:
+    gate_hit: null
+    gates: []
+    answer_quality: null
+    judgment: null
+    spoken_fit: null
+    notes: ''
+- candidate: gemma4-26b-a4b-iq3
+  question_id: A11
+  why_selected: random sample
+  question: *id005
+  searched: false
+  spoken_answer: The Berlin Wall fell in nineteen eighty-nine.
+  judge:
+    gate_hit: false
+    gates: []
+    dimension_total: 10
+    answer_quality: 5
+    judgment: 3
+    spoken_fit: 2
+    reasons:
+    - Correctly states 1989, matching the reference sketch, with no search needed for settled history.
+    - Correctly recognized this as stable historical knowledge and did not search.
+    - Single plain sentence with the answer up front, spelled out for TTS.
+  human:
+    gate_hit: null
+    gates: []
+    answer_quality: null
+    judgment: null
+    spoken_fit: null
+    notes: ''
+- candidate: gemma4-26b-a4b-iq3
+  question_id: B19
+  why_selected: random sample
+  question: *id002
+  searched: true
+  spoken_answer: "I couldn't find any specific information on a model named Qwen 3.8, but assuming you mean a Qwen model in the seven billion parameter range, an RTX 4060 Ti with sixteen gigabytes of VRAM should be able to run it quite easily, especially if you use a quantized version. \n\nAs for whether that's enough to predict a good experience, it isn't. While the VRAM tells us the model will fit and run, a good voice assistant experience also depends on how fast it generates text and how quickly your system can process your speech and synthesize the response."
+  judge:
+    gate_hit: true
+    gates:
+    - too_many_tool_calls
+    dimension_total: 7
+    answer_quality: 3
+    judgment: 2
+    spoken_fit: 2
+    reasons:
+    - It correctly identifies that VRAM fit alone doesn't predict a good voice-assistant experience and honestly flags that no sources were found, but the critique is thin — no mention of quantization quality trade-offs, context length, time-to-first-token, or VRAM shared with STT/TTS models — and it guessed at a 7B model rather than Qwen3 8B.
+    - Good call to search and to admit nothing was retrieved and hedge the VRAM claim, but it burned all five tool calls on near-identical failing queries without adapting the phrasing, hitting the call limit.
+    - Leads with the answer in plain conversational prose, spells out numbers for TTS, and stays to two short paragraphs with no lists or markup.
+  human:
+    gate_hit: null
+    gates: []
+    answer_quality: null
+    judgment: null
+    spoken_fit: null
+    notes: ''
+- candidate: gemma4-26b-a4b-iq4
+  question_id: A4
+  why_selected: random sample
+  question: *id004
+  searched: false
+  spoken_answer: It is most likely that your plant is undergoing natural senescence, where it sheds older leaves to redirect energy toward new growth at the top. However, it could also be a sign of overwatering or a nutrient deficiency, specifically nitrogen. To narrow this down, could you tell me what kind of plant it is and how often you typically water it?
+  judge:
+    gate_hit: false
+    gates: []
+    dimension_total: 9
+    answer_quality: 4
+    judgment: 3
+    spoken_fit: 2
+    reasons:
+    - Correctly leads with normal senescence and names overwatering and nitrogen deficiency as alternatives, but omits other likely causes from the sketch (lower leaves shaded out, pot-bound roots) and asks for only two of the relevant diagnostics (species, watering) while skipping light, drainage, pace of yellowing, and pattern.
+    - Rightly answered from general horticultural knowledge without searching, hedged rather than asserting a single cause, and closed by requesting the genuinely missing information.
+    - Three plain sentences, answer first, no lists or markup, ending in a natural spoken follow-up question.
+  human:
+    gate_hit: null
+    gates: []
+    answer_quality: null
+    judgment: null
+    spoken_fit: null
+    notes: ''
+- candidate: gemma4-26b-a4b-iq4
+  question_id: A8
+  why_selected: random sample
+  question: *id006
+  searched: false
+  spoken_answer: I would recommend the router approach because it's much more efficient, reliable, and cost-effective for a personal assistant. By using deterministic tools for things like setting timers or checking the weather, you avoid the "hallucinations" that happen when a large model tries to simulate logic it doesn't actually possess. It keeps the heavy lifting for the complex reasoning tasks where a large model actually earns its keep.
+  judge:
+    gate_hit: false
+    gates: []
+    dimension_total: 7
+    answer_quality: 3
+    judgment: 2
+    spoken_fit: 2
+    reasons:
+    - It correctly recommends the router and cites efficiency, reliability, and cost, but omits the router's costs (routing errors, more moving parts) and never says when the single large-model design would be fine, both key elements of the sketch.
+    - Right call not to search and a clear recommendation, but it presents the router as strictly better without acknowledging any tradeoff or the conditions favoring the single-model design.
+    - Three plain sentences leading with the recommendation, no lists, markdown, or citations.
+  human:
+    gate_hit: null
+    gates: []
+    answer_quality: null
+    judgment: null
+    spoken_fit: null
+    notes: ''
+- candidate: gemma4-26b-a4b-iq4
+  question_id: B16
+  why_selected: random sample
+  question:
+  - I'm considering signing a two-year lease. Based on current rental conditions in Long Island City, does accepting a 4% annual increase seem competitive? Compare my offer against the current market, but also explain the risks of using advertised rents as the comparison.
+  searched: false
+  spoken_answer: 'A four percent annual increase is quite competitive and actually sits below the typical annual rent hikes seen in Long Island City. Most landlords in that area aim for higher increases to keep up with the rapid appreciation of the neighborhood, so locking in a two-year rate like this provides you with some nice stability.
+
+
+    You should be cautious with advertised rents, though, because those numbers often represent the "asking" price rather than the actual "closing" price. Many listings are bait to get people through the door, or they might reflect high-end luxury buildings that don''t account for the immediate concessions, like a month of free rent, that many tenants actually negotiate.'
+  judge:
+    gate_hit: true
+    gates:
+    - did_not_search_on_search_question
+    - fabricated_current_fact
+    - presented_estimate_as_fact
+    dimension_total: 2
+    answer_quality: 1
+    judgment: 0
+    spoken_fit: 1
+    reasons:
+    - The claim that 4% sits below typical LIC annual increases is asserted with no data and no search, and the only useful content is the generic caveat about asking rents versus effective rents and concessions.
+    - The question explicitly asked for a comparison against current market conditions, which requires fresh data, yet the assistant searched not at all and presented an unverified market characterization as established fact.
+    - Plain prose with no lists or markup, but it leads with an unsupported verdict and runs a bit long for spoken delivery.
+  human:
+    gate_hit: null
+    gates: []
+    answer_quality: null
+    judgment: null
+    spoken_fit: null
+    notes: ''
+- candidate: gemma4-26b-a4b-iq4
+  question_id: B21
+  why_selected: random sample
+  question:
+  - Since the Fed cut rates to zero last month, should I refinance my mortgage?
+  searched: false
+  spoken_answer: I'm actually not sure which month you're referring to, as the Federal Reserve hasn't cut rates to zero in quite some time. If you can tell me which specific rate cut you're looking at, I can help you run the numbers on whether refinancing makes sense for your situation.
+  judge:
+    gate_hit: true
+    gates:
+    - did_not_search_on_search_question
+    dimension_total: 5
+    answer_quality: 2
+    judgment: 1
+    spoken_fit: 2
+    reasons:
+    - It correctly rejected the false premise but never verified the actual current federal funds rate and gave none of the refinance logic (current mortgage rates versus the user's rate, closing costs, break-even), leaving the question effectively unanswered.
+    - Good instinct to push back on the premise, but it failed to search to confirm the current rate and asked the user to name a rate cut rather than asking for the genuinely useful missing information, their current mortgage rate.
+    - Two short sentences of plain prose, leads with the correction, no lists or markup.
+  human:
+    gate_hit: null
+    gates: []
+    answer_quality: null
+    judgment: null
+    spoken_fit: null
+    notes: ''
 - candidate: claude-fable-5-1-manual
   question_id: A1
   why_selected: random sample
-  question: *id004
+  question: *id007
   searched: false
   spoken_answer: Because memory is set by the total parameter count, but speed is set by the active count. A mixture of experts model with thirty billion total parameters still has to keep all thirty billion weights loaded, so at four bits it needs roughly fifteen to eighteen gigabytes, about the same as a dense thirty billion model, and both are a tight or impossible fit in sixteen gigabytes. The difference is what happens when it does not fit. A dense model touches every weight on every token, so anything spilled to system memory drags the whole thing to a crawl. The mixture of experts model only routes each token through a few experts, so the rarely used experts can sit in slower system memory without hurting much, and the small active set keeps it fast. So it is not that the mixture of experts needs less memory by nature, it is that it tolerates being partly outside the graphics card far better.
   judge:
@@ -445,7 +648,7 @@ entries:
 - candidate: claude-fable-5-1-manual
   question_id: A7
   why_selected: random sample
-  question: *id005
+  question: *id008
   searched: false
   spoken_answer: Roughly six to thirteen dollars a month, and here is the arithmetic. If the machine sits at fifty watts for twenty three hours and three hundred watts for one hour a day, that is about one point one five kilowatt hours idle plus zero point three under load, so one point four five kilowatt hours a day or around forty three and a half a month. At fifteen cents per kilowatt hour that is about six and a half dollars, at thirty cents about thirteen. Two caveats. I am assuming your electricity rate, and residential rates in the US range roughly between those numbers. And I am treating your hour of use as a full hour at three hundred watts, which overstates it, since a machine mostly waits for you even during an interactive session. The idle draw is the real cost driver here, about five sixths of the total.
   judge:
@@ -494,7 +697,7 @@ entries:
 - candidate: claude-fable-5-1-manual
   question_id: A10
   why_selected: random sample
-  question: *id006
+  question: *id009
   searched: false
   spoken_answer: Because memory decides whether a model runs at all, and speed only decides how fast it runs once it fits. If a model does not fit in your graphics memory, it either fails to load or spills into slower system memory and slows to a crawl, so a faster card with less memory can be strictly worse. More memory also means you can run the model at higher precision, which improves answer quality, and keep a longer conversation in context. So buy enough memory for the models you want first, then worry about speed.
   judge:
