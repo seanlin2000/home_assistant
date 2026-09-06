@@ -4,7 +4,7 @@ Every place the build departed from the frozen design in `design_docs/v0/`, with
 
 | Section | Entries |
 |---|---|
-| [01 LLM benchmark](#01-llm-benchmark) | 9 |
+| [01 LLM benchmark](#01-llm-benchmark) | 10 |
 | [02 Local LLM](#02-local-llm) | 1 |
 | [03 Web search MCP](#03-web-search-mcp) | 5 |
 | [04 Conversation agent](#04-conversation-agent) | 5 |
@@ -26,6 +26,7 @@ Every place the build departed from the frozen design in `design_docs/v0/`, with
 | 2026-09-06 | Candidate models | | Qwen 3.6-27B dense joins the candidate list as a Q3_K_S preview (12.4 GB; Unsloth publishes no IQ3_XXS for this model). Gemma 4 31B and NVIDIA Nemotron 3 Nano were researched and not added. | User decision: only the 27B was worth the run time; the dense model will spill past the default GPU ceiling, so its latency is flagged and only its quality counts. |
 | 2026-09-06 | Question set | | Question set 1.2 adds category C, six explicit arithmetic questions, and an expected route per question. | To measure the calculator and the router directly, not only through A2 and A7. |
 | 2026-09-06 | Report | | Pass 2 writes to its own dated folder; `benchmark-report --compare` adds a table against an earlier pass restricted to shared questions, and the report scores the router separately. | The user asked that the first report never be overwritten and that the router's classification accuracy be measured on its own. |
+| 2026-09-07 | Candidate models | 02, 08 | The Qwen 3.6-27B dense preview was stopped after one question and dropped from both passes. | Only 8.3 of its 13.7 GB stayed on the GPU; with the 16k context it pushed the Mac to 13.8 GB of swap and generated at 0.09 tokens per second (3,179 s for one 270-token answer), so 22 questions would have taken days and the measurement would have said nothing about the model. A dense 27B needs a 32 GB machine; it stays in the hardware discussion, not the benchmark. |
 
 ## 02 Local LLM
 
