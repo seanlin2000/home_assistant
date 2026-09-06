@@ -229,3 +229,21 @@ Pass 2 runs the full set on every candidate, including the frontier baseline and
 ### Qwen 3.6-27B dense: not runnable here, 2026-09-07
 
 The Q3_K_S preview (12.4 GB on disk, 13.7 GB loaded with context) kept only 8.3 GB on the GPU. The rest lived in swap, and the first answer took 53 minutes at 0.09 tokens per second. The run was stopped and the candidate removed from both passes; it remains in `config.yaml` for a 32 GB machine. This is the clearest evidence so far that dense models above about 12 GB are out of reach on 16 GB, whatever their quality.
+
+### Judging through a Claude Code subagent, 2026-09-06
+
+```
+  benchmark-judge <date> --export        results/<date>/judge_cases/rubric.md
+                                         results/<date>/judge_cases/<candidate>/<qid>.md      (question, transcript, harness notes)
+                                         results/<date>/judge_cases/<candidate>/manifest.json
+          │
+          ▼  Agent tool, subagent "benchmark-judge" (Opus, tools Read/Write/Glob), one run per candidate folder
+                                         results/<date>/judge_cases/<candidate>/<qid>.verdict.json
+          │
+          ▼
+  benchmark-judge <date> --import        validates each verdict (gate names, score ranges) and writes <candidate>.scores.jsonl
+                                         with judge_model "claude-opus-5 (Claude Code subagent)" and zero API tokens
+```
+
+The rubric the subagent reads is the same file the API judge received as its system prompt, and the case text is rendered by the same function. What differs: the API path enforced the verdict schema at decode time and ran at the API's default settings, while the subagent writes the JSON itself (malformed files are rejected on import and re-run) and grades with its own thinking budget. The comparison with pass 1 is therefore Opus against Opus, under close but not identical conditions.
+

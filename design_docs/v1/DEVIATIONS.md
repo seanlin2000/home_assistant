@@ -4,12 +4,12 @@ Every place the build departed from the frozen design in `design_docs/v0/`, with
 
 | Section | Entries |
 |---|---|
-| [01 LLM benchmark](#01-llm-benchmark) | 10 |
+| [01 LLM benchmark](#01-llm-benchmark) | 12 |
 | [02 Local LLM](#02-local-llm) | 1 |
 | [03 Web search MCP](#03-web-search-mcp) | 5 |
 | [04 Conversation agent](#04-conversation-agent) | 5 |
 | [05 Voice pipeline](#05-voice-pipeline) | 1 |
-| [06 Home Assistant core](#06-home-assistant-core) | 2 |
+| [06 Home Assistant core](#06-home-assistant-core) | 4 |
 | [08 Hardware and deployment](#08-hardware-and-deployment) | 1 |
 | [09 Dev environment](#09-dev-environment) | 3 |
 
@@ -27,6 +27,8 @@ Every place the build departed from the frozen design in `design_docs/v0/`, with
 | 2026-09-06 | Question set | | Question set 1.2 adds category C, six explicit arithmetic questions, and an expected route per question. | To measure the calculator and the router directly, not only through A2 and A7. |
 | 2026-09-06 | Report | | Pass 2 writes to its own dated folder; `benchmark-report --compare` adds a table against an earlier pass restricted to shared questions, and the report scores the router separately. | The user asked that the first report never be overwritten and that the router's classification accuracy be measured on its own. |
 | 2026-09-07 | Candidate models | 02, 08 | The Qwen 3.6-27B dense preview was stopped after one question and dropped from both passes. | Only 8.3 of its 13.7 GB stayed on the GPU; with the 16k context it pushed the Mac to 13.8 GB of swap and generated at 0.09 tokens per second (3,179 s for one 270-token answer), so 22 questions would have taken days and the measurement would have said nothing about the model. A dense 27B needs a 32 GB machine; it stays in the hardware discussion, not the benchmark. |
+| 2026-09-06 | Judge | 04 | Judging runs through a Claude Code subagent on the user's subscription (`benchmark-judge --export`, the `benchmark-judge` project agent on Opus, `benchmark-judge --import`) instead of the Anthropic API. | The user did not want prepaid API credit spent on grading when a subagent of the same model can do it. Same rubric text, same model family; not byte-identical conditions (no structured-output enforcement, the agent's own thinking settings), which the report notes. The API path is kept for reference. |
+| 2026-09-06 | Benchmark MCP server | 03 | The benchmark's MCP server runs on port 8766, refuses to start if the port is taken, and checks the tool list it reaches is its own. | A leftover pass-1 server on 8765 answered the readiness check and served the first pass-2 runs without the calculator tools; those results and $4.87 of judging were discarded. |
 
 ## 02 Local LLM
 
@@ -66,6 +68,8 @@ Every place the build departed from the frozen design in `design_docs/v0/`, with
 |---|---|---|---|---|
 | 2026-09-06 | HAOS VM (UTM) | 08 | The Home Assistant OS VM is created from the command line (`scripts/haos_vm.sh create`, UTM's AppleScript interface) instead of by hand in the UTM window. | Reproducible, and it records the exact settings (4 GB, 2 cores, UEFI, VirtIO disk, bridged on the Mac's default interface). |
 | 2026-09-06 | HA configuration | | Home Assistant is configured by `scripts/ha_setup.py` through its REST and websocket APIs (onboarding, add-ons, integrations, pipeline) rather than through the UI steps in section 3. | Lets the proof of concept be rebuilt from scratch without clicking, and documents every setting in code. The UI path still works. |
+| 2026-09-06 | HA API port | 08, 09 | Home Assistant OS 18.2 with core 2026.9.1 serves the API on port 80 and answers 8123 with a redirect; `ha_setup.py` discovers the base URL and saves it as `HA_BASE` for the other scripts. | Found when the setup script waited on 8123 for a 200 that never came. |
+| 2026-09-06 | Supervisor access | | Add-on management goes through the websocket `supervisor/api` command rather than the `/api/hassio` REST proxy, tolerates the websocket's timeout on long image pulls by polling the add-on state, and merges our options over the add-on's defaults. | The REST proxy returned 401 to a valid owner token on this build; the websocket route (which the frontend uses) accepted it. Samba had gained a required option, so a partial options payload was rejected. |
 
 ## 08 Hardware and deployment
 
