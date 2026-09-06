@@ -1,0 +1,32 @@
+# SearXNG settings for the studio assistant.
+# Only the keys that differ from the image defaults are listed; everything else is inherited.
+use_default_settings:
+  engines:
+    keep_only:
+      - google
+      - bing
+      - brave
+      - duckduckgo
+
+general:
+  instance_name: "studio-search"
+  debug: false
+
+server:
+  # The secret is injected from the SEARXNG_SECRET environment variable (see docker-compose.yml).
+  secret_key: "replaced-by-SEARXNG_SECRET-environment-variable"
+  # The rate limiter is meant for public instances; this one is reachable only from localhost.
+  limiter: false
+  image_proxy: false
+
+search:
+  safe_search: 0
+  default_lang: "en"
+  # json is what web_search_mcp consumes; html keeps the web UI usable for debugging.
+  formats:
+    - html
+    - json
+
+outgoing:
+  request_timeout: 6.0
+  max_request_timeout: 10.0

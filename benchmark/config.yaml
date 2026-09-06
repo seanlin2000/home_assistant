@@ -1,0 +1,63 @@
+# Benchmark configuration. Every candidate runs with the same policy; see design_docs/v1/01_llm_benchmark.md section 6 for the fairness rules.
+policy:
+  temperature: 0.7
+  max_tool_rounds: 4
+  max_output_tokens: 600
+  word_budget: 200
+  context_tokens: 16384
+  tool_timeout_seconds: 60
+
+services:
+  ollama_host: http://127.0.0.1:11434
+  searxng_url: http://127.0.0.1:8080
+  mcp_host: 127.0.0.1
+  mcp_port: 8765
+  results_dir: benchmark/results
+
+# preview: a reduced-precision build of a model whose production version does not fit the prototype machine.
+candidates:
+  - key: qwen3.5-4b
+    label: Qwen 3.5 4B, Q4_K_M
+    provider: ollama
+    model: qwen3.5:4b
+    think: false
+  - key: gemma4-e4b
+    label: Gemma 4 E4B, QAT int4
+    provider: ollama
+    model: gemma4:e4b-it-qat
+  - key: qwen3.5-9b
+    label: Qwen 3.5 9B, Q4_K_M
+    provider: ollama
+    model: qwen3.5:9b
+    think: false
+  - key: gpt-oss-20b
+    label: gpt-oss 20B, MXFP4
+    provider: ollama
+    model: gpt-oss:20b
+  - key: gemma4-26b-a4b-iq3
+    label: Gemma 4 26B-A4B, UD-IQ3_XXS (3-bit preview)
+    provider: ollama
+    model: hf.co/unsloth/gemma-4-26B-A4B-it-GGUF:UD-IQ3_XXS
+    preview: true
+  - key: gemma4-26b-a4b-iq4
+    label: Gemma 4 26B-A4B, UD-IQ4_XS (preview, tight fit)
+    provider: ollama
+    model: hf.co/unsloth/gemma-4-26B-A4B-it-GGUF:UD-IQ4_XS
+    preview: true
+  - key: qwen3.6-35b-a3b-iq3
+    label: Qwen 3.6 35B-A3B, UD-IQ3_XXS (3-bit preview)
+    provider: ollama
+    model: hf.co/unsloth/Qwen3.6-35B-A3B-GGUF:UD-IQ3_XXS
+    think: false
+    preview: true
+  - key: claude-opus-5
+    label: Claude Opus 5 (frontier baseline, adaptive thinking)
+    provider: anthropic
+    model: claude-opus-5
+    baseline: true
+
+judge:
+  model: claude-opus-5
+  concurrency: 4
+  review_sample_fraction: 0.2
+  review_seed: 20260905

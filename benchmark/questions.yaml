@@ -1,0 +1,239 @@
+# Benchmark question set. Version 1 was the twenty questions supplied by the user; version 1.1 adds two adversarial items (A11, B21).
+# expected_search: "no" (should answer from knowledge or reasoning), "yes" (should decide to search), "instructed" (the question says to search).
+# constraints are what the harness or the judge checks as gates. reference_sketch is what a correct answer must contain, for the judge.
+version: "1.1"
+questions:
+  - id: A1
+    category: A
+    tests: Technical explanation without misleading simplification
+    expected_search: "no"
+    turns:
+      - "Why can a 16 GB GPU sometimes run an MoE model with 30 billion total parameters, but not necessarily a 30 billion parameter dense model? Explain the difference between active parameters and the memory required to store the model."
+    reference_sketch: >
+      Both models must hold all weights in memory, so the total parameter count sets the memory need for both; a 30B model at 4-bit needs roughly 15 to 18 GB either way and may not fit 16 GB.
+      An MoE activates only a few experts per token, so it is faster and needs less compute, not less memory. It runs on 16 GB only when quantized small enough or when some experts are offloaded to CPU RAM, which the sparse activation makes tolerable.
+      A correct answer separates speed and compute (active parameters) from storage (total parameters) and does not claim MoE needs less VRAM by nature.
+
+  - id: A2
+    category: A
+    tests: Multi-step arithmetic, compounding versus flat increase
+    expected_search: "no"
+    turns:
+      - "I pay $3,500 per month in rent. My landlord offers me a one-year lease at a 5% increase or a two-year lease at a 3% increase each year. Ignoring the time value of money, how much would I pay over each option, and how much would I save with the cheaper option?"
+    reference_sketch: >
+      One-year at 5%: 3,675 per month, 44,100 for the year. Two-year at 3% each year: year one 3,605 per month (43,260), year two 3,713.15 per month (44,557.80), total 87,817.80.
+      The options cover different lengths, so a fair comparison states that: year one alone is 840 cheaper on the two-year lease; over two years the two-year lease totals 87,817.80 versus 44,100 plus an unknown second-year renewal on the one-year path.
+      Credit answers that either compare year one (840 savings) or note that the second year of the one-year path is unknown and state an assumption. Any answer that presents a single "savings" number without saying what it is comparing is incomplete.
+
+  - id: A3
+    category: A
+    tests: Challenging a false premise
+    expected_search: "no"
+    turns:
+      - "Someone says that because an MoE model only activates 4 billion parameters per token, a 4 GB GPU should be enough to run it. Is that correct? Explain exactly why or why not."
+    gates_for_judge:
+      - agreed_with_false_premise
+    reference_sketch: >
+      Not correct. All experts must be resident because different tokens route to different experts, so memory is set by total parameters (plus KV cache and activations), not by the 4B active.
+      4B active parameters at 4-bit is about 2 GB of compute traffic per token, which is why it is fast, but the full model is several times larger. A clear "no" with this reasoning is required.
+
+  - id: A4
+    category: A
+    tests: Diagnosis under uncertainty, asking for missing information
+    expected_search: "no"
+    turns:
+      - "My plant is growing new leaves quickly near the top, but its older lower leaves are gradually yellowing and dying. The plant is otherwise healthy. What are the most likely explanations, and what information would you want before deciding whether this is normal or a problem?"
+    reference_sketch: >
+      Likely explanations: normal senescence of old leaves as the plant puts energy into new growth; nitrogen (mobile nutrient) deficiency moving from old to new leaves; lower leaves shaded out; overwatering or root issues; pot-bound roots.
+      Information wanted: species, how many leaves and how fast, watering routine and drainage, light, fertilizer history, season, whether yellowing is uniform or patterned, soil moisture. Should ask rather than assert one cause.
+
+  - id: A5
+    category: A
+    tests: Planning under constraints, no product names
+    expected_search: "no"
+    turns:
+      - "I live in a 500-square-foot studio and want a voice assistant that can hear me from across the room. I care more about microphone quality and natural conversation than smart-home automation. Give me the main hardware design considerations without recommending specific products."
+    constraints:
+      no_product_names: true
+    gates_for_judge:
+      - violated_explicit_constraint
+    reference_sketch: >
+      Far-field microphone array with beamforming and echo cancellation; placement away from walls and noise sources; a dedicated wake-word chip so the mic is always listening locally; low-latency path from mic to speech recognition; speaker quality and separation from the mic; where the compute runs (local box with enough memory and a fast path for speech models); network reliability; privacy of always-on audio.
+      Must not name specific products or brands.
+
+  - id: A6
+    category: A
+    tests: Two-turn context
+    expected_search: "no"
+    turns:
+      - "I'm deciding between a computer with 16 GB of VRAM and one with 24 GB. I primarily care about running a local LLM."
+      - "Suppose the 24 GB machine costs $400 more. Does that change your recommendation?"
+    gates_for_judge:
+      - lost_prior_turn_context
+    reference_sketch: >
+      Turn one should favor 24 GB for local LLMs because memory sets which models fit and at what quantization and context.
+      Turn two must build on that without asking what the two machines were: weigh $400 against the step from roughly 13B-class to 30B-class models, or higher quantization and longer context, and give a conditional recommendation (still 24 GB for someone whose primary goal is local LLMs, unless budget is tight or their target models fit in 16 GB).
+
+  - id: A7
+    category: A
+    tests: Estimation with explicit assumptions
+    expected_search: "no"
+    turns:
+      - "I have a computer that consumes 50 watts when idle and 300 watts during active inference. If I interact with it for roughly one hour per day, estimate the monthly electricity cost. State your assumptions instead of pretending you know exactly how much time it spends under load."
+    gates_for_judge:
+      - presented_estimate_as_fact
+    reference_sketch: >
+      Assume 1 hour at 300 W and 23 hours at 50 W per day: 0.3 kWh plus 1.15 kWh, about 1.45 kWh per day, about 43.5 kWh per month.
+      At an assumed rate, e.g. 0.15 to 0.30 dollars per kWh, that is roughly 6.50 to 13 dollars per month. Must state the electricity rate as an assumption and note that the machine is probably not at 300 W for the whole hour.
+
+  - id: A8
+    category: A
+    tests: Systems thinking, comparing designs
+    expected_search: "no"
+    turns:
+      - "For a personal AI assistant, compare these two designs: one large LLM handles every request, versus a smaller router that sends simple commands to deterministic tools and only uses a larger LLM for complex questions. Which would you recommend and why?"
+    reference_sketch: >
+      Router design: lower latency and cost for common commands, deterministic behavior for things like music and timers, and the large model reserved for open questions; costs are routing errors and more moving parts.
+      Single large LLM: simpler, more flexible, but slower and more expensive on every request and less predictable for simple commands.
+      A reasoned recommendation for the router design for a personal assistant (most requests are simple and latency matters) with a note on when the single-model design is fine.
+
+  - id: A9
+    category: A
+    tests: Recognizing ambiguity instead of inventing preferences
+    expected_search: "no"
+    turns:
+      - "I say: \"I want to go somewhere warm but not too expensive, preferably with good public transportation.\" What information is missing before you can make a good recommendation, and what assumptions should you avoid making?"
+    reference_sketch: >
+      Missing: departure location, dates and trip length, budget number, what "warm" means, domestic or international, passport and visa, travel companions, interests, tolerance for crowds.
+      Avoid assuming: home city, currency and budget level, that warm means beach, that they want a city, a specific season. Should not name a destination as if the answer were known.
+
+  - id: A10
+    category: A
+    tests: Spoken concision, under 45 seconds
+    expected_search: "no"
+    turns:
+      - "Explain why VRAM capacity can matter more than raw GPU speed when choosing hardware for a local LLM. Answer in a way that would sound natural if spoken aloud in under 45 seconds."
+    constraints:
+      max_words: 120
+    reference_sketch: >
+      If the model does not fit in VRAM it either cannot run or spills to slower memory and crawls, so capacity decides which models are possible at all; speed only decides how fast a model that already fits will run. Bigger memory also allows less aggressive quantization and longer context. Short, spoken, no lists.
+
+  - id: A11
+    category: A
+    tests: Adversarial, sounds current but is settled history; should not search
+    expected_search: "no"
+    turns:
+      - "What year did the Berlin Wall fall?"
+    reference_sketch: >
+      1989 (November 9, 1989). A one-sentence answer with no search.
+
+  - id: B11
+    category: B
+    tests: Freshness detection, source synthesis
+    expected_search: "yes"
+    turns:
+      - "What is the current federal funds rate, and how has it changed over the last year?"
+    gates_for_judge:
+      - fabricated_current_fact
+
+  - id: B12
+    category: B
+    tests: Current prices under a budget
+    expected_search: "yes"
+    turns:
+      - "I'm looking for a computer to run a local LLM with approximately $1,000 total budget. What hardware can I buy today that gives me the most usable VRAM for the money?"
+    constraints:
+      budget_usd: 1000
+    gates_for_judge:
+      - fabricated_current_fact
+      - violated_explicit_constraint
+
+  - id: B13
+    category: B
+    tests: Combining current sources
+    expected_search: "yes"
+    turns:
+      - "I'm staying in Lucerne and want to take a scenic day trip tomorrow using public transportation. What are my best options, considering current schedules and weather?"
+    gates_for_judge:
+      - fabricated_current_fact
+
+  - id: B14
+    category: B
+    tests: Research synthesis, not snippet parroting
+    expected_search: "yes"
+    turns:
+      - "Why have NVIDIA GPU prices increased recently? I don't just want the current prices—I want to understand what changed in the supply chain or market."
+    gates_for_judge:
+      - fabricated_current_fact
+
+  - id: B15
+    category: B
+    tests: Shopping research with a hard constraint
+    expected_search: "yes"
+    turns:
+      - "Find me the best current option for a 16 GB NVIDIA GPU under $500. Used hardware is acceptable."
+    constraints:
+      budget_usd: 500
+    gates_for_judge:
+      - fabricated_current_fact
+      - violated_explicit_constraint
+
+  - id: B16
+    category: B
+    tests: Search plus skepticism about the comparison
+    expected_search: "yes"
+    turns:
+      - "I'm considering signing a two-year lease. Based on current rental conditions in Long Island City, does accepting a 4% annual increase seem competitive? Compare my offer against the current market, but also explain the risks of using advertised rents as the comparison."
+    gates_for_judge:
+      - fabricated_current_fact
+
+  - id: B17
+    category: B
+    tests: Source selection (instructed search)
+    expected_search: "instructed"
+    turns:
+      - "Search for the answer to this question: \"Is the Home Assistant Voice Preview Edition capable of running a custom wake word?\" Give me the answer and explain which source you trusted and why."
+    gates_for_judge:
+      - fabricated_current_fact
+
+  - id: B18
+    category: B
+    tests: Technical research synthesis (instructed search)
+    expected_search: "instructed"
+    turns:
+      - "Search for the latest information about the Qwen open-source model family. I want to know which currently available models are realistic to run locally on approximately 16 GB of GPU memory. Don't just list models—explain the tradeoffs between model quality, quantization, memory usage, and speed."
+    gates_for_judge:
+      - fabricated_current_fact
+
+  - id: B19
+    category: B
+    tests: Critical reading of results (instructed search)
+    expected_search: "instructed"
+    turns:
+      - "Search for whether an RTX 4060 Ti 16 GB can run Qwen3.8. Then tell me whether the answer you found is actually enough to predict whether it will provide a good voice-assistant experience."
+    gates_for_judge:
+      - fabricated_current_fact
+
+  - id: B20
+    category: B
+    tests: Research with conflicting constraints, willingness to say no
+    expected_search: "yes"
+    turns:
+      - "I want to build a local voice assistant for under $1,000 all-in. It should answer general questions at roughly ChatGPT-like quality, perform web searches when necessary, and work entirely locally except for those searches. Find the best hardware approach available today. If my requirements cannot realistically be met within the budget, tell me explicitly instead of quietly increasing the budget."
+    constraints:
+      budget_usd: 1000
+    gates_for_judge:
+      - fabricated_current_fact
+      - violated_explicit_constraint
+
+  - id: B21
+    category: B
+    tests: Adversarial, false current premise; should search and correct it
+    expected_search: "yes"
+    turns:
+      - "Since the Fed cut rates to zero last month, should I refinance my mortgage?"
+    gates_for_judge:
+      - fabricated_current_fact
+      - agreed_with_false_premise
+    reference_sketch: >
+      The premise is almost certainly false; the answer must check the current federal funds rate rather than accept it, say plainly that rates were not cut to zero, and then give the general refinance logic (compare current mortgage rates to the user's rate, closing costs, break-even time) or ask for the user's current rate.
