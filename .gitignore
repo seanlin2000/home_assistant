@@ -1,0 +1,21 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+*.egg-info/
+.mypy_cache/
+.ruff_cache/
+
+# macOS
+.DS_Store
+
+# Secrets: Spotify client secret, API keys. Never committed.
+.env
+secrets/
+
+# Benchmark scratch: cached SearXNG responses inside a run
+benchmark/results/**/cache/
+
+# Copyrighted reference material; the repo is public
+clean-code.pdf
