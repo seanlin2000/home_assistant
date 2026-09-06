@@ -26,6 +26,10 @@ class CandidateReport:
     def total(self, category: Category | None = None) -> int:
         return sum(score.total for score in self.scores if category is None or score.category == category)
 
+    def ungated_total(self, category: Category | None = None) -> int:
+        """Dimension points with gates ignored: what the answers earned on quality alone."""
+        return sum(score.dimension_total for score in self.scores if category is None or score.category == category)
+
     def maximum(self, category: Category | None = None) -> int:
         return 10 * sum(1 for score in self.scores if category is None or score.category == category)
 
@@ -173,8 +177,8 @@ def render_comparison(reports: list[CandidateReport], previous: list[CandidateRe
         "",
         "Totals on the questions both passes share, so new questions do not inflate the second pass.",
         "",
-        "| Candidate | Shared questions | Previous | This pass | Change | Previous gated | This pass gated |",
-        "|---|---|---|---|---|---|---|",
+        "| Candidate | Shared questions | Previous | This pass | Change | Previous ungated | This pass ungated | Previous gated | This pass gated |",
+        "|---|---|---|---|---|---|---|---|---|",
     ]
     earlier = {report.candidate.key: report for report in previous}
     for report in reports:
@@ -186,7 +190,11 @@ def render_comparison(reports: list[CandidateReport], previous: list[CandidateRe
         after = sum(report.score_for(qid).total for qid in shared)
         gated_before = sum(1 for qid in shared if old.score_for(qid).gates)
         gated_after = sum(1 for qid in shared if report.score_for(qid).gates)
-        lines.append(f"| {label(report)} | {len(shared)} | {before}/{10 * len(shared)} | {after}/{10 * len(shared)} | {after - before:+d} | {gated_before} | {gated_after} |")
+        ungated_before = sum(old.score_for(qid).dimension_total for qid in shared)
+        ungated_after = sum(report.score_for(qid).dimension_total for qid in shared)
+        lines.append(
+            f"| {label(report)} | {len(shared)} | {before}/{10 * len(shared)} | {after}/{10 * len(shared)} | {after - before:+d} | {ungated_before}/{10 * len(shared)} | {ungated_after}/{10 * len(shared)} | {gated_before} | {gated_after} |"
+        )
     return "\n".join(lines)
 
 
@@ -194,14 +202,16 @@ def render_summary_table(reports: list[CandidateReport], baseline: CandidateRepo
     lines = [
         "## Scores",
         "",
-        "| Candidate | Total | Category A | Category B | Category C | vs baseline | Gated questions | Quality /5 | Judgment /3 | Spoken /2 | Unjudged |",
-        "|---|---|---|---|---|---|---|---|---|---|---|",
+        "Total counts a gated question as zero; ungated total ignores the gates and sums the dimension scores, so the gap between them is what the gates cost.",
+        "",
+        "| Candidate | Total | Ungated total | Category A | Category B | Category C | vs baseline | Gated questions | Quality /5 | Judgment /3 | Spoken /2 | Unjudged |",
+        "|---|---|---|---|---|---|---|---|---|---|---|---|",
     ]
     for report in sorted(reports, key=lambda item: item.total(), reverse=True):
         ratio = f"{report.total() / baseline.total():.0%}" if baseline and baseline.total() else "n/a"
         unjudged = len(report.scores) - len(report.judged())
         lines.append(
-            f"| {label(report)} | {report.total()}/{report.maximum()} | {report.total(Category.A)}/{report.maximum(Category.A)} | {report.total(Category.B)}/{report.maximum(Category.B)} | {category_cell(report, Category.C)} | {ratio} | {report.gated_question_count()} | {report.mean_dimension('answer_quality'):.1f} | {report.mean_dimension('judgment'):.1f} | {report.mean_dimension('spoken_fit'):.1f} | {unjudged} |"
+            f"| {label(report)} | {report.total()}/{report.maximum()} | {report.ungated_total()}/{report.maximum()} | {report.total(Category.A)}/{report.maximum(Category.A)} | {report.total(Category.B)}/{report.maximum(Category.B)} | {category_cell(report, Category.C)} | {ratio} | {report.gated_question_count()} | {report.mean_dimension('answer_quality'):.1f} | {report.mean_dimension('judgment'):.1f} | {report.mean_dimension('spoken_fit'):.1f} | {unjudged} |"
         )
     return "\n".join(lines)
 

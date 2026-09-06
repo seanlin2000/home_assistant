@@ -4,16 +4,18 @@ Question set v1.2, 28 questions, 10 points each. Any gate failure zeroes a quest
 
 ## Scores
 
-| Candidate | Total | Category A | Category B | Category C | vs baseline | Gated questions | Quality /5 | Judgment /3 | Spoken /2 | Unjudged |
-|---|---|---|---|---|---|---|---|---|---|---|
-| Claude Fable 5.1, answered by hand in the coding session (reference ceiling) | 196/220 | 110/110 | 86/110 | n/a | n/a | 1 | 4.4 | 2.8 | 2.0 | 0 |
-| Gemma 4 26B-A4B, UD-IQ4_XS (preview, tight fit) (preview) | 103/220 | 79/110 | 24/110 | n/a | n/a | 8 | 2.5 | 1.6 | 1.9 | 0 |
-| Gemma 4 26B-A4B, UD-IQ3_XXS (3-bit preview) (preview) | 99/220 | 83/110 | 16/110 | n/a | n/a | 9 | 2.7 | 1.8 | 2.0 | 0 |
-| Gemma 4 E4B, QAT int4 | 88/220 | 70/110 | 18/110 | n/a | n/a | 8 | 2.0 | 1.4 | 1.8 | 0 |
-| Qwen 3.5 4B, Q4_K_M | 87/220 | 60/110 | 27/110 | n/a | n/a | 7 | 2.2 | 1.5 | 1.5 | 0 |
-| Qwen 3.6 35B-A3B, UD-IQ3_XXS (3-bit preview) (preview) | 86/220 | 75/110 | 11/110 | n/a | n/a | 9 | 2.3 | 1.5 | 1.5 | 0 |
-| Qwen 3.5 9B, Q4_K_M | 76/220 | 66/110 | 10/110 | n/a | n/a | 9 | 2.0 | 1.2 | 1.6 | 0 |
-| gpt-oss 20B, MXFP4 | 65/220 | 34/110 | 31/110 | n/a | n/a | 11 | 2.4 | 1.5 | 1.5 | 0 |
+Total counts a gated question as zero; ungated total ignores the gates and sums the dimension scores, so the gap between them is what the gates cost.
+
+| Candidate | Total | Ungated total | Category A | Category B | Category C | vs baseline | Gated questions | Quality /5 | Judgment /3 | Spoken /2 | Unjudged |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| Claude Fable 5.1, answered by hand in the coding session (reference ceiling) | 196/220 | 203/220 | 110/110 | 86/110 | n/a | n/a | 1 | 4.4 | 2.8 | 2.0 | 0 |
+| Gemma 4 26B-A4B, UD-IQ4_XS (preview, tight fit) (preview) | 103/220 | 133/220 | 79/110 | 24/110 | n/a | n/a | 8 | 2.5 | 1.6 | 1.9 | 0 |
+| Gemma 4 26B-A4B, UD-IQ3_XXS (3-bit preview) (preview) | 99/220 | 142/220 | 83/110 | 16/110 | n/a | n/a | 9 | 2.7 | 1.8 | 2.0 | 0 |
+| Gemma 4 E4B, QAT int4 | 88/220 | 116/220 | 70/110 | 18/110 | n/a | n/a | 8 | 2.0 | 1.4 | 1.8 | 0 |
+| Qwen 3.5 4B, Q4_K_M | 87/220 | 116/220 | 60/110 | 27/110 | n/a | n/a | 7 | 2.2 | 1.5 | 1.5 | 0 |
+| Qwen 3.6 35B-A3B, UD-IQ3_XXS (3-bit preview) (preview) | 86/220 | 116/220 | 75/110 | 11/110 | n/a | n/a | 9 | 2.3 | 1.5 | 1.5 | 0 |
+| Qwen 3.5 9B, Q4_K_M | 76/220 | 108/220 | 66/110 | 10/110 | n/a | n/a | 9 | 2.0 | 1.2 | 1.6 | 0 |
+| gpt-oss 20B, MXFP4 | 65/220 | 117/220 | 34/110 | 31/110 | n/a | n/a | 11 | 2.4 | 1.5 | 1.5 | 0 |
 
 > Preview builds run at 3-bit precision because the 4-bit production build does not fit the prototype machine. A high preview score is strong evidence for the production build; a low one is only weak evidence against it.
 
