@@ -130,9 +130,9 @@ Once the repository had five packages and forty commits pushed straight to `main
                   ├──▶ Codex review (bot) ──▶ Claude fixes, replies, resolves ──▶ @codex review   (loop, PR 2)
                   │
                   ▼
-               branch protection on main: PR required, 1 approval, both jobs green, all threads resolved
+               branch protection on main: PR required, both jobs green, all threads resolved, no bypass
                   │
-               one human Approve ──▶ auto-merge (squash)
+               one human click on Merge (squash)
 ```
 
 **Git hooks.** Git runs executable files from a hooks directory at fixed moments; `pre-commit` runs before a commit is recorded and a non-zero exit cancels it. Hooks are not versioned by default (they live in `.git/hooks`), so the repository keeps them in `.githooks/` and `scripts/dev_setup.sh` points git there with `git config core.hooksPath .githooks`. The hook checks the working tree as a whole rather than only the staged files: the repository is small, the three steps take about twenty seconds, and this keeps the hook and CI identical. `git commit --no-verify` skips the hook; CI catches that.
@@ -141,6 +141,6 @@ Once the repository had five packages and forty commits pushed straight to `main
 
 **PR references (`pr-refs`).** A pull request description has one section per important change, and every bullet ends with the lines a reviewer should read. Typing line numbers from memory produces wrong ones, so `uv run pr-refs resolve deslop/checks.py:count_lines` prints the real span of that definition as `` `deslop/checks.py:41-58` (`count_lines`) ``, and for files without symbols `uv run pr-refs resolve .githooks/pre-commit:"uv run deslop"` prints a range that contains that text. `uv run pr-refs check body.md` re-verifies every reference against the checked-out code, and the `pr-description` CI job does the same on every push, so a reference that goes stale after a later commit blocks the merge until it is re-resolved.
 
-**GitHub Actions and branch protection.** GitHub Actions runs the workflow in `.github/workflows/checks.yml` on a fresh Ubuntu machine for every pull request; it installs the locked environment with `uv sync --frozen` (without the `voice` group, whose MLX wheels exist only for Apple Silicon) and runs the same commands as the hook. Branch protection is a repository setting that makes `main` accept only merges of pull requests whose required jobs passed, with one approving review and every review thread resolved. Since GitHub does not count a bot's approval, that one approval is the human step.
+**GitHub Actions and branch protection.** GitHub Actions runs the workflow in `.github/workflows/checks.yml` on a fresh Ubuntu machine for every pull request; it installs the locked environment with `uv sync --frozen` (without the `voice` group, whose MLX wheels exist only for Apple Silicon) and runs the same commands as the hook. Branch protection is a repository setting that makes `main` accept only merges of pull requests whose required jobs passed and whose review threads are all resolved. No approving review is required: GitHub never lets a pull request's author approve their own PR, and on a one-person repository the author is always the same person, so a required approval would block every merge. The human step is the Merge click itself, after reading the review rounds.
 
 Sources: [git hooks](https://git-scm.com/docs/githooks), [GitHub branch protection](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches), [Python `tokenize`](https://docs.python.org/3/library/tokenize.html), [Python `ast`](https://docs.python.org/3/library/ast.html).
