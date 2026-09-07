@@ -49,7 +49,7 @@ Choose the language model, and therefore the hardware, from evidence instead of 
 
 ## 4. Question set, version 1
 
-Stored verbatim in `benchmark/questions.yaml`. Category A should be answered without searching. Category B should trigger a search. Metadata per question: `expected_search` (no / yes / instructed, where "instructed" means the question itself says to search), explicit constraints to check, and a reference sketch for Category A.
+Stored verbatim in `benchmark/questions.yaml`. Category A should be answered without searching. Category B should trigger a search. Category C, added in question set 1.2, should go through the calculator tools. Metadata per question: `expected_search` (no / yes / instructed, where "instructed" means the question itself says to search), explicit constraints to check, and a reference sketch for Category A.
 
 ### Category A: answer from reasoning or knowledge, do not search
 
@@ -80,6 +80,19 @@ Stored verbatim in `benchmark/questions.yaml`. Category A should be answered wit
 | B18 | Technical research synthesis (instructed search) | Search for the latest information about the Qwen open-source model family. I want to know which currently available models are realistic to run locally on approximately 16 GB of GPU memory. Don't just list models—explain the tradeoffs between model quality, quantization, memory usage, and speed. |
 | B19 | Critical reading of results (instructed search) | Search for whether an RTX 4060 Ti 16 GB can run Qwen3.8. Then tell me whether the answer you found is actually enough to predict whether it will provide a good voice-assistant experience. |
 | B20 | Research with conflicting constraints, willingness to say no | I want to build a local voice assistant for under $1,000 all-in. It should answer general questions at roughly ChatGPT-like quality, perform web searches when necessary, and work entirely locally except for those searches. Find the best hardware approach available today. If my requirements cannot realistically be met within the budget, tell me explicitly instead of quietly increasing the budget. |
+
+### Category C: arithmetic through the calculator tools (added in question set 1.2)
+
+The router should mark every one of these `calculate`, the model should call the calculator tools rather than do the digits itself, and no search is expected. Each carries a reference sketch with the exact figures and the tolerances the judge accepts.
+
+| Id | Tests | Question | Reference figures |
+|---|---|---|---|
+| C23 | Percent of an amount, then a total | We just got a $64.50 dinner bill. What's an 18 percent tip, and what's the total with the tip? | Tip 11.61, total 76.11; rounding to 11.60 or 76 is fine if said as rounding. |
+| C24 | Compound growth with regular contributions | If I put $500 a month into a savings account that pays 4 percent a year, compounded monthly, how much will I have after three years? | About 19,091 (end-of-month deposits) or 19,154 (start of month); 18,000 of it is deposits, so interest is about 1,091. A flat 4 percent on 18,000, or compounding the whole 18,000 for three years (about 20,300), is wrong. |
+| C25 | Two unit conversions in one question | It's 72 degrees Fahrenheit outside. What is that in Celsius, and how far is a 5 kilometer run in miles? | 22.2 C (22 is fine); 3.11 miles (3.1 is fine). |
+| C26 | What percent one number is of another, then a percent increase | My rent is $2,850 a month and my take-home pay is $7,400 a month. What percent of my income goes to rent, and what would the rent be after a 4 percent increase? | 38.5 percent (38 or 39 if said as about); 2,964 after the increase. |
+| C27 | Energy cost from watts, hours, and a stated price | My TV draws 120 watts. If I watch about 4 hours a day and electricity costs 30 cents per kilowatt hour, what does it cost me per month? | 0.48 kWh a day, about 14.4 kWh a month, about 4.32 dollars for 30 days (4.38 to 4.46 for 30.4 to 31 days is fine). The rate is given, so no assumption is needed. |
+| C28 | Loan amortization | What's the monthly payment on a $400,000 mortgage at 6 percent for 30 years, and roughly how much interest do I pay in total? | Payment 2,398.20 (about 2,400 is fine); total paid about 863,353, so interest about 463,353. Noting that taxes and insurance are excluded is a plus. |
 
 ### Notes for version 1.1
 

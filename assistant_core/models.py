@@ -148,6 +148,7 @@ class Transcript(BaseModel):
     truncated: bool = False
     tool_call_count: int = 0
     hit_tool_round_cap: bool = False
+    empty_completion_retries: int = 0  # times the model returned neither text nor a tool call and was asked again
     total_seconds: float = 0.0
     time_to_first_token_seconds: float | None = None
     time_to_first_spoken_seconds: float | None = None

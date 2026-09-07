@@ -19,6 +19,11 @@ def tool_turn(query: str, call_id: str = "call_0", tool_name: str = "search_and_
     return [ToolCallRequest(call=call), Completion(message=Message(role=Role.ASSISTANT, content="", tool_calls=[call]), stats=GenerationStats(model="fake", total_seconds=0.1))]
 
 
+def empty_turn() -> list[LLMEvent]:
+    """What Ollama hands back when it swallowed the model's output: a completion with no text and no tool calls."""
+    return [Completion(message=Message(role=Role.ASSISTANT, content=""), stats=GenerationStats(model="fake", total_seconds=0.1))]
+
+
 class ScriptedLLM:
     def __init__(self, turns: list[list[LLMEvent]]) -> None:
         self._turns = list(turns)

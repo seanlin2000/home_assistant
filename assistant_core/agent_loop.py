@@ -29,6 +29,8 @@ from assistant_core.models import (
     Transcript,
 )
 from assistant_core.prompts import system_prompt
+
+EMPTY_COMPLETION_RETRIES = 1
 from assistant_core.router import apply_route, decide_route
 from assistant_core.tools import ToolBox
 
@@ -90,6 +92,12 @@ async def run(conversation: list[Message], llm: LLMClient, tools: ToolBox, polic
         turn = ModelTurn()
         async for event in stream_model_turn(llm, messages, tool_specs, policy, turn, cap, transcript, started):
             yield event
+        if turn_is_empty(turn) and transcript.empty_completion_retries < EMPTY_COMPLETION_RETRIES:
+            transcript.empty_completion_retries += 1
+            transcript.model_calls.append(turn.completion.stats)
+            turn = ModelTurn()
+            async for event in stream_model_turn(llm, messages, tool_specs, policy, turn, cap, transcript, started):
+                yield event
         record_turn(transcript, turn, messages)
         if not turn.tool_calls:
             break
@@ -103,6 +111,13 @@ async def run(conversation: list[Message], llm: LLMClient, tools: ToolBox, polic
     finish_transcript(transcript, turn, cap, messages, started)
     memory.remember(transcript.conversation)
     yield Done(transcript=transcript)
+
+
+def turn_is_empty(turn: ModelTurn) -> bool:
+    """True when the model produced neither words nor a tool call. Gemma 4 on Ollama does this about one answer in seven: it writes a tool call with
+    a small formatting slip, Ollama's parser drops it without reporting anything, and the reply arrives empty. Read aloud, that is silence, so the
+    loop asks once more before giving up."""
+    return turn.completion is not None and not turn.text_parts and not turn.tool_calls and not turn.malformed
 
 
 def build_messages(conversation: list[Message], memory: ConversationMemory) -> list[Message]:

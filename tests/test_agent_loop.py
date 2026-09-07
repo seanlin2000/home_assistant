@@ -1,7 +1,7 @@
 from assistant_core import agent_loop
 from assistant_core.agent_loop import SpokenAnswerCap
 from assistant_core.models import AgentEvent, AgentPolicy, AnswerDelta, Done, FillerSpoken, Message, Role, ToolFinished, ToolStarted
-from tests.fakes import FakeToolBox, ScriptedLLM, text_turn, tool_turn
+from tests.fakes import FakeToolBox, ScriptedLLM, empty_turn, text_turn, tool_turn
 
 
 async def collect(llm: ScriptedLLM, tools: FakeToolBox, policy: AgentPolicy | None = None) -> list[AgentEvent]:
@@ -95,3 +95,21 @@ async def test_calculator_call_speaks_the_math_filler_not_the_web_one() -> None:
     events = await collect(llm, FakeToolBox(), policy)
     assert isinstance(events[0], FillerSpoken)
     assert events[0].text == "Doing the math."
+
+
+async def test_empty_completion_is_retried_once_and_the_retry_answers() -> None:
+    llm = ScriptedLLM([empty_turn(), text_turn("Yes, it can.")])
+    events = await collect(llm, FakeToolBox())
+    transcript = events[-1].transcript
+    assert transcript.final_answer == "Yes, it can."
+    assert transcript.empty_completion_retries == 1
+    assert len(transcript.model_calls) == 2
+    assert len(llm.seen_messages) == 2 and llm.seen_messages[1] == llm.seen_messages[0]
+
+
+async def test_second_empty_completion_is_accepted_as_an_empty_answer() -> None:
+    llm = ScriptedLLM([empty_turn(), empty_turn()])
+    events = await collect(llm, FakeToolBox())
+    transcript = events[-1].transcript
+    assert transcript.final_answer == ""
+    assert transcript.empty_completion_retries == 1
