@@ -4,7 +4,10 @@ import importlib.util
 from dataclasses import dataclass
 from pathlib import Path
 
+import httpx
+
 from assistant_core.models import AgentPolicy, AnswerDelta, Done, FillerSpoken, Role, ToolCall, ToolStarted, Transcript
+from assistant_core.turn_record import TurnRecord, turn_record_from_transcript
 
 ADAPTER_PATH = Path("custom_components/studio_assistant/adapter.py")
 spec = importlib.util.spec_from_file_location("studio_assistant_adapter", ADAPTER_PATH)
@@ -64,3 +67,41 @@ def test_policy_from_settings_overrides_only_what_is_set() -> None:
     defaults = AgentPolicy()
     assert (policy.temperature, policy.word_budget, policy.think) == (0.3, 150, True)
     assert (policy.max_tool_rounds, policy.context_tokens, policy.tool_timeout_seconds) == (defaults.max_tool_rounds, defaults.context_tokens, defaults.tool_timeout_seconds)
+
+
+async def test_on_done_receives_the_transcript_before_the_stream_ends() -> None:
+    transcript = Transcript(model="m", system_prompt="", conversation=[], final_answer="Done.")
+    seen = []
+    deltas = [delta async for delta in adapter.agent_events_to_deltas(events_from([AnswerDelta(text="Done."), Done(transcript=transcript)]), on_done=seen.append)]
+    assert seen == [transcript]
+    assert deltas[-1] == {"content": "Done."}
+
+
+def record_for_test() -> TurnRecord:
+    return turn_record_from_transcript(Transcript(model="m", system_prompt="", conversation=[], final_answer="It is 30."))
+
+
+async def test_post_turn_record_sends_json_and_reports_success() -> None:
+    received = {}
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        received["url"] = str(request.url)
+        received["body"] = request.read()
+        return httpx.Response(204)
+
+    async with httpx.AsyncClient(transport=httpx.MockTransport(handler)) as client:
+        assert await adapter.post_turn_record(client, "http://mac:8765/turns", record_for_test()) is True
+    assert received["url"] == "http://mac:8765/turns"
+    assert TurnRecord.model_validate_json(received["body"]).final_answer == "It is 30."
+
+
+async def test_post_turn_record_swallows_every_failure() -> None:
+    def refuse(request: httpx.Request) -> httpx.Response:
+        raise httpx.ConnectError("connection refused")
+
+    def reject(request: httpx.Request) -> httpx.Response:
+        return httpx.Response(503, json={"error": "not configured"})
+
+    for transport in (httpx.MockTransport(refuse), httpx.MockTransport(reject)):
+        async with httpx.AsyncClient(transport=transport) as client:
+            assert await adapter.post_turn_record(client, "http://mac:8765/turns", record_for_test()) is False

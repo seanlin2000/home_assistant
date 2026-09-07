@@ -8,7 +8,10 @@ import logging
 from collections.abc import AsyncIterator
 from typing import Any, Protocol
 
+import httpx
+
 from assistant_core.models import AgentEvent, AgentPolicy, AnswerDelta, Done, FillerSpoken, Message, Role, Transcript
+from assistant_core.turn_record import TurnRecord
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -64,6 +67,23 @@ def log_transcript(transcript: Transcript) -> None:
     )
     for exchange in transcript.tool_exchanges:
         _LOGGER.debug("  tool %s(%s) in %.1fs%s", exchange.call.name, exchange.call.arguments, exchange.seconds, f" error={exchange.error}" if exchange.error else "")
+
+
+TURN_RECORD_TIMEOUT_SECONDS = 3.0
+
+
+async def post_turn_record(client: httpx.AsyncClient, url: str, record: TurnRecord, timeout: float = TURN_RECORD_TIMEOUT_SECONDS) -> bool:
+    """Send one turn's record to the tool server's /turns route (design doc 10 §3.4). Best effort: every failure is logged at debug level and swallowed,
+    because a missing log line must never cost the user an answer or a warning in Home Assistant's log."""
+    try:
+        response = await client.post(url, content=record.model_dump_json(), headers={"content-type": "application/json"}, timeout=timeout)
+    except Exception as error:  # noqa: BLE001 - anything from a refused connection to a cancelled loop
+        _LOGGER.debug("studio_assistant: turn record not posted to %s (%s)", url, error)
+        return False
+    if response.status_code != 204:
+        _LOGGER.debug("studio_assistant: turn record rejected by %s with %s: %s", url, response.status_code, response.text[:200])
+        return False
+    return True
 
 
 def policy_from_settings(settings: dict[str, Any], defaults: AgentPolicy | None = None) -> AgentPolicy:

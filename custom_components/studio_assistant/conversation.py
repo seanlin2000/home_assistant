@@ -15,6 +15,8 @@ from homeassistant.helpers.httpx_client import get_async_client
 from assistant_core import agent_loop
 from assistant_core.llm_client import OllamaClient
 from assistant_core.mcp_http import HttpMcpToolBox
+from assistant_core.models import Transcript
+from assistant_core.turn_record import turn_record_from_transcript, turns_url_from_mcp_url
 
 from . import adapter
 from .const import CONF_CONTINUE_CONVERSATION, CONF_MCP_URL, CONF_MODEL, CONF_OLLAMA_URL, DEFAULT_CONTINUE_CONVERSATION, DOMAIN
@@ -65,17 +67,24 @@ class StudioAssistantEntity(conversation.ConversationEntity):
         try:
             async with HttpMcpToolBox(settings[CONF_MCP_URL], client=get_async_client(self.hass), timeout_seconds=policy.tool_timeout_seconds) as tools:
                 events = agent_loop.run(history, llm, tools, policy)
-                async for _content in chat_log.async_add_delta_content_stream(self.entity_id, adapter.agent_events_to_deltas(events)):
+                async for _content in chat_log.async_add_delta_content_stream(self.entity_id, adapter.agent_events_to_deltas(events, on_done=self._record_turn)):
                     pass
         except Exception as error:  # the tool server being down must not silence the assistant
             _LOGGER.warning("studio_assistant: search tool unavailable (%s); answering without it", error)
             events = agent_loop.run(history, llm, UnavailableToolBox(), policy)
-            async for _content in chat_log.async_add_delta_content_stream(self.entity_id, adapter.agent_events_to_deltas(events)):
+            async for _content in chat_log.async_add_delta_content_stream(self.entity_id, adapter.agent_events_to_deltas(events, on_done=self._record_turn)):
                 pass
         result = conversation.async_get_result_from_chat_log(user_input, chat_log)
         if settings.get(CONF_CONTINUE_CONVERSATION, DEFAULT_CONTINUE_CONVERSATION):
             return conversation.ConversationResult(response=result.response, conversation_id=result.conversation_id, continue_conversation=True)
         return result
+
+    def _record_turn(self, transcript: Transcript) -> None:
+        """Called when the agent loop finishes a turn. The post runs as a background task so the spoken answer is never held up by logging."""
+        settings = {**self.entry.data, **self.entry.options}
+        url = turns_url_from_mcp_url(settings[CONF_MCP_URL])
+        record = turn_record_from_transcript(transcript, source="home_assistant")
+        self.hass.async_create_background_task(adapter.post_turn_record(get_async_client(self.hass), url, record), name="studio_assistant turn record")
 
 
 class UnavailableToolBox:
