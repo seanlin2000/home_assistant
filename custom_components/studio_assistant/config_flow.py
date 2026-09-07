@@ -50,8 +50,10 @@ def connection_schema(defaults: dict[str, Any]) -> vol.Schema:
 
 
 def policy_schema(defaults: dict[str, Any]) -> vol.Schema:
+    """The options form: the model tag plus the loop policy. The model lives here as well as in the initial setup so it can be swapped without re-adding the integration."""
     return vol.Schema(
         {
+            vol.Optional(CONF_MODEL, default=defaults.get(CONF_MODEL, DEFAULT_MODEL)): str,
             vol.Optional(CONF_TEMPERATURE, default=defaults.get(CONF_TEMPERATURE, DEFAULT_TEMPERATURE)): vol.Coerce(float),
             vol.Optional(CONF_WORD_BUDGET, default=defaults.get(CONF_WORD_BUDGET, DEFAULT_WORD_BUDGET)): vol.Coerce(int),
             vol.Optional(CONF_MAX_TOOL_ROUNDS, default=defaults.get(CONF_MAX_TOOL_ROUNDS, DEFAULT_MAX_TOOL_ROUNDS)): vol.Coerce(int),
