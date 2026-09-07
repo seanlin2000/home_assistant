@@ -48,7 +48,7 @@ uv run benchmark-run --run version_5 --candidate qwen3.5-9b   # one folder per p
 uv run benchmark-judge version_5 --export              # write judge cases for the Opus subagent; --import reads its verdicts back
 uv run benchmark-report version_5                      # writes report.md and the review sheet
 uv run benchmark-report version_5 --compare version_4  # with a table against the previous pass
-uv run benchmark-manual claude-fable-5-1-manual --run version_5   # replay hand-written reference answers through the same loop
+uv run benchmark-manual claude-fable-5-1-manual-2 --run version_5 # replay the closed-book reference answers through the same loop
 uv run python scripts/benchmark_llm.py --run version_5 # raw tokens per second per model
 ```
 

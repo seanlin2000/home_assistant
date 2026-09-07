@@ -13,6 +13,7 @@ Read the answer, decide on gates and scores, then record them in review_sheet.ya
 - [gemma4-26b-a4b-iq4](#review-gemma4-26b-a4b-iq4): [A4](#review-gemma4-26b-a4b-iq4-a4), [A8](#review-gemma4-26b-a4b-iq4-a8), [B13](#review-gemma4-26b-a4b-iq4-b13), [B16](#review-gemma4-26b-a4b-iq4-b16), [B21](#review-gemma4-26b-a4b-iq4-b21), [C23](#review-gemma4-26b-a4b-iq4-c23)
 - [qwen3.6-35b-a3b-iq3](#review-qwen3-6-35b-a3b-iq3): [A1](#review-qwen3-6-35b-a3b-iq3-a1), [A8](#review-qwen3-6-35b-a3b-iq3-a8), [B21](#review-qwen3-6-35b-a3b-iq3-b21), [C23](#review-qwen3-6-35b-a3b-iq3-c23), [C25](#review-qwen3-6-35b-a3b-iq3-c25), [C28](#review-qwen3-6-35b-a3b-iq3-c28)
 - [claude-fable-5-1-manual](#review-claude-fable-5-1-manual): [A1](#review-claude-fable-5-1-manual-a1), [A4](#review-claude-fable-5-1-manual-a4), [A7](#review-claude-fable-5-1-manual-a7), [A9](#review-claude-fable-5-1-manual-a9), [A10](#review-claude-fable-5-1-manual-a10), [C26](#review-claude-fable-5-1-manual-c26)
+- [claude-fable-5-1-manual-2](#review-claude-fable-5-1-manual-2): [A2](#review-claude-fable-5-1-manual-2-a2), [A5](#review-claude-fable-5-1-manual-2-a5), [A6](#review-claude-fable-5-1-manual-2-a6), [B13](#review-claude-fable-5-1-manual-2-b13), [B17](#review-claude-fable-5-1-manual-2-b17), [B18](#review-claude-fable-5-1-manual-2-b18)
 
 <a id="review-qwen3-5-4b"></a>
 
@@ -1047,5 +1048,119 @@ That said, mortgage rates have likely moved down somewhat from their peaks, thou
 - Both required numbers are right, about 38.5 percent of take-home pay and 2,964 after the increase, and the added note that the share climbs to just over forty percent checks out.
 - It used the percent tool for both parts and added the one genuinely useful implication rather than inventing budgeting advice the user did not ask for.
 - Two short sentences of plain prose with the figures spoken out and no lists or markdown.
+
+[Back to top](#review-sheet)
+
+<a id="review-claude-fable-5-1-manual-2"></a>
+
+## claude-fable-5-1-manual-2 (6 to review)
+
+<a id="review-claude-fable-5-1-manual-2-a2"></a>
+
+### claude-fable-5-1-manual-2 / A2 (random sample)
+
+**Question:** I pay $3,500 per month in rent. My landlord offers me a one-year lease at a 5% increase or a two-year lease at a 3% increase each year. Ignoring the time value of money, how much would I pay over each option, and how much would I save with the cheaper option?
+
+**Searched:** False
+
+**Spoken answer:**
+
+> On the one-year lease at five percent you would pay three thousand six hundred seventy-five a month, forty-four thousand one hundred dollars for the year. On the two-year lease at three percent a year, year one is three thousand six hundred five a month, forty-three thousand two hundred sixty for the year, and year two is three thousand seven hundred thirteen dollars and fifteen cents a month, forty-four thousand five hundred fifty-seven dollars and eighty cents, so eighty-seven thousand eight hundred seventeen dollars and eighty cents over both years. The two options cover different lengths, so the clean comparison is the first year, where the two-year lease saves you eight hundred forty dollars. Over two years it depends on what your rent would be after the one-year lease ends, which we do not know; the two-year deal wins unless you expect that renewal to come in under about three percent, or you might want to move.
+
+**Judge:** gates=['too_many_tool_calls'], quality 5/5, judgment 3/3, spoken 2/2
+
+- All figures match the sketch exactly (44,100 for the one-year option; 43,260 and 44,557.80 giving 87,817.80 for the two-year) and it states the 840 saving is the first-year comparison.
+- It named the length mismatch and said the two-year total depends on an unknown renewal rate rather than presenting a single bare savings number.
+- Numbers are spelled out for speech and the answer leads, with no lists or markup, though it is necessarily long because the question asked for both totals and the difference.
+
+<a id="review-claude-fable-5-1-manual-2-a5"></a>
+
+### claude-fable-5-1-manual-2 / A5 (random sample)
+
+**Question:** I live in a 500-square-foot studio and want a voice assistant that can hear me from across the room. I care more about microphone quality and natural conversation than smart-home automation. Give me the main hardware design considerations without recommending specific products.
+
+**Searched:** False
+
+**Spoken answer:**
+
+> The core is the microphone: for a room that size you want a far-field microphone array, several capsules with beamforming and acoustic echo cancellation, so it can pick your voice out across the room and still hear you while it is playing sound itself; that matters more than anything else you buy. Place it centrally on an open surface, away from walls, the fridge, and the air conditioner, roughly at speaking height rather than on the floor or behind a screen. Do wake-word detection on the device itself with a low-power always-on chip so it responds instantly and does not stream audio anywhere until you address it, then send audio over a wired or strong wireless link to a machine with enough memory for speech recognition and the language model, since latency is what makes conversation feel natural. Give it a decent speaker physically separated from the mics, and plan for privacy with a hardware mute switch and local processing wherever you can.
+
+**Judge:** gates=none, quality 5/5, judgment 3/3, spoken 2/2
+
+- Covers the far-field array with beamforming and echo cancellation, placement away from walls and appliances, an always-on local wake-word chip, the latency path to speech recognition and the LLM host, speaker separation from the mics, and privacy, which is the sketch's full list.
+- It honored the no-product-names constraint throughout and correctly ranked the microphone array as the decision that matters most for the stated priority.
+- Prose paragraph with no brand names, bullets, or markup, and the length is justified by a request for the main considerations.
+
+<a id="review-claude-fable-5-1-manual-2-a6"></a>
+
+### claude-fable-5-1-manual-2 / A6 (random sample)
+
+**Question:** I'm deciding between a computer with 16 GB of VRAM and one with 24 GB. I primarily care about running a local LLM. / Suppose the 24 GB machine costs $400 more. Does that change your recommendation?
+
+**Searched:** False
+
+**Spoken answer:**
+
+> Not really, four hundred dollars is cheap for that jump. It is the difference between being capped at roughly fourteen billion parameter models and being able to run the thirty billion class that competes with hosted assistants, plus more room for context and less aggressive quantization on everything smaller, so per gigabyte of usable capacity it is a good price. I would only take the sixteen gigabyte machine if the extra four hundred genuinely strains your budget, or if you have already tested the specific models you want and they fit in sixteen with headroom.
+
+**Judge:** gates=none, quality 5/5, judgment 3/3, spoken 2/2
+
+- The second turn weighs the $400 against the jump from roughly fourteen-billion-parameter models to the thirty-billion class plus context headroom, and gives the conditional exception for a strained budget or already-verified models, exactly as the sketch requires.
+- It carried the prior turn's 24 GB recommendation forward without asking the user to restate the two machines and named the conditions that would flip it.
+- Three sentences of plain prose that answer 'not really' up front.
+
+<a id="review-claude-fable-5-1-manual-2-b13"></a>
+
+### claude-fable-5-1-manual-2 / B13 (random sample)
+
+**Question:** I'm staying in Lucerne and want to take a scenic day trip tomorrow using public transportation. What are my best options, considering current schedules and weather?
+
+**Searched:** True
+
+**Spoken answer:**
+
+> For tomorrow, Monday the seventh, the two classic picks are Mount Rigi, boat from Lucerne to Vitznau, the cogwheel railway to the summit, and the cable car down to Weggis for the boat back, or the Pilatus Golden Round Trip, boat to Alpnachstad, the steep cogwheel up, cable cars down to Kriens, and a bus back into town; both are in season, since the lake boats run year round and the Pilatus loop runs into the autumn. Weather is the caveat: the forecasts I found are automated ones showing a warm day around twenty-six degrees with a chance of afternoon thunderstorms, so I would start early and take a morning boat, pier one for Rigi or pier two for Pilatus. If the morning looks stormy, the Lucerne to Interlaken Express, about two hours each way past several lakes, is a fine wet-weather alternative. I could not pull a live departure list, so check exact times in the SBB app before you leave. Do you have a Swiss Travel Pass, since that changes which option is cheapest?
+
+**Judge:** gates=none, quality 5/5, judgment 3/3, spoken 2/2
+
+- Every concrete claim is traceable: the Rigi and Pilatus Golden Round Trip legs, the May-to-November Pilatus season and year-round lake boats, pier one for Vitznau and pier two for Alpnachstad from the SGV page, and the roughly two-hour Luzern-Interlaken Express, with the forecast drawn from the retrieved 27-degree and thundery-showers entries.
+- It labelled the forecasts as automated, admitted it could not pull a live departure list and told the user to check SBB, and asked about a Swiss Travel Pass because it changes which option is cheapest.
+- Plain prose with no lists, URLs, or markup, though the opening sentence packs both full itineraries into one long breath.
+
+<a id="review-claude-fable-5-1-manual-2-b17"></a>
+
+### claude-fable-5-1-manual-2 / B17 (random sample)
+
+**Question:** Search for the answer to this question: "Is the Home Assistant Voice Preview Edition capable of running a custom wake word?" Give me the answer and explain which source you trusted and why.
+
+**Searched:** True
+
+**Spoken answer:**
+
+> Yes, but with a caveat. Nabu Casa's own support page says the wake words built into the Voice Preview Edition are a fixed set of three, Okay Nabu, Hey Jarvis, and Hey Mycroft, running on the device itself. To use a custom wake word you move detection into Home Assistant with openWakeWord, which the official Home Assistant docs say lets you train your own wake word, and a community firmware also adds openWakeWord support on the device. I trusted the Nabu Casa support article and the Home Assistant documentation because they come from the company that makes the device and reflect its current firmware, whereas the community project is one developer's repository that may lag behind. Note that openWakeWord currently only handles English wake words.
+
+**Judge:** gates=none, quality 4/5, judgment 3/3, spoken 2/2
+
+- Correctly answers yes-with-a-caveat and traces it to the three built-in options on the Nabu Casa support page and the Home Assistant doc's line that you can create your own wake words with openWakeWord, but the closing claim that openWakeWord only handles English appears in no excerpt.
+- It explained its source ranking as the question demanded, preferring the manufacturer's own pages over the single-developer GitHub firmware because that repository may lag the current firmware.
+- Opens with 'Yes, but with a caveat' and stays in plain prose with no URLs, markdown, or step lists despite the sources being full of them.
+
+<a id="review-claude-fable-5-1-manual-2-b18"></a>
+
+### claude-fable-5-1-manual-2 / B18 (random sample)
+
+**Question:** Search for the latest information about the Qwen open-source model family. I want to know which currently available models are realistic to run locally on approximately 16 GB of GPU memory. Don't just list models—explain the tradeoffs between model quality, quantization, memory usage, and speed.
+
+**Searched:** True
+
+**Spoken answer:**
+
+> The newest Qwen you can run locally is Qwen three point eight twenty-seven B, released in mid August under Apache two, and on sixteen gigabytes it is a compromise: its standard four-bit files are seventeen to nineteen gigabytes, so you either drop to a smaller quantization around fourteen and a half gigabytes at a real quality cost, or split it between GPU and system RAM and accept a few tokens a second. The comfortable fits are Qwen three point five nine B at about eleven gigabytes in eight-bit, Qwen three fourteen B at four-bit around ten gigabytes, and the Qwen three point six thirty-five B mixture of experts with three billion active, which runs well with some experts on the CPU. The tradeoff is that quality scales with total parameters, memory with parameters times bits per weight, and speed with bytes read per token: a small dense model at high precision is fast and clean, a big dense model squeezed to two or three bits fits but degrades, and a mixture of experts gives big-model knowledge at small-model speed as long as every expert lives somewhere. Also cap the thinking mode, which defaults to maximum effort.
+
+**Judge:** gates=none, quality 4/5, judgment 3/3, spoken 2/2
+
+- It correctly identifies Qwen3.8-27B as the newest locally runnable release and names the retrieved 17-to-18 gigabyte quantized footprint, then gives the requested tradeoff model of quality scaling with total parameters, memory with parameters times bits, and speed with bytes read per token, but it omits the KV-cache caveat the same source called decisive for whether these numbers hold.
+- It searched as instructed and framed the 27B as a compromise on 16 GB rather than claiming it fits, offering the smaller dense models and the 35B-A3B with CPU offload as the honest alternatives.
+- All model names and numbers are spelled out for speech and there is no markup, though the answer is dense and the second sentence reads as a spoken list of three options.
 
 [Back to top](#review-sheet)

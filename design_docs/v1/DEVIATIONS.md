@@ -4,7 +4,7 @@ Every place the build departed from the frozen design in `design_docs/v0/`, with
 
 | Section | Entries |
 |---|---|
-| [01 LLM benchmark](#01-llm-benchmark) | 13 |
+| [01 LLM benchmark](#01-llm-benchmark) | 14 |
 | [02 Local LLM](#02-local-llm) | 1 |
 | [03 Web search MCP](#03-web-search-mcp) | 7 |
 | [04 Conversation agent](#04-conversation-agent) | 9 |
@@ -30,6 +30,7 @@ Every place the build departed from the frozen design in `design_docs/v0/`, with
 | 2026-09-06 | Judge | 04 | Judging runs through a Claude Code subagent on the user's subscription (`benchmark-judge --export`, the `benchmark-judge` project agent on Opus, `benchmark-judge --import`) instead of the Anthropic API. | The user did not want prepaid API credit spent on grading when a subagent of the same model can do it. Same rubric text, same model family; not byte-identical conditions (no structured-output enforcement, the agent's own thinking settings), which the report notes. The API path is kept for reference. |
 | 2026-09-06 | Benchmark MCP server | 03 | The benchmark's MCP server runs on port 8766, refuses to start if the port is taken, and checks the tool list it reaches is its own. | A leftover pass-1 server on 8765 answered the readiness check and served the first pass-2 runs without the calculator tools; those results and $4.87 of judging were discarded. |
 | 2026-09-06 | Results folders | 09 | Results folders are named by pass (`version_1`, `version_2`, ...; a subset rerun gets a suffix such as `version_2_recheck_qwen3.5-9b`) and every benchmark command takes that name (`--run`), replacing the dated folders of v0. | A date does not say which agent version produced the numbers, and two passes can land on the same day; the user asked for pass names. |
+| 2026-09-07 | Manual reference candidate | | The reference ceiling is a second hand-written pass (`claude-fable-5-1-manual-2`) authored closed book by a fresh Claude Fable 5.1 subagent with the live tools and no access to earlier answers, results, docs, or memory; the first pass stays in the results as a superseded candidate. | The first reference had been written against another pass's excerpts and inside the session that had seen every result, so its category B score was unfair to it and its independence was doubtful. The user asked for the closed-book pass to become the reference: 226 against 217, with the two passes bounding the ceiling at roughly 220. |
 
 ## 02 Local LLM
 
