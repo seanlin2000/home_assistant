@@ -6,7 +6,7 @@ Every place the build departed from the frozen design in `design_docs/v0/`, with
 |---|---|
 | [01 LLM benchmark](#01-llm-benchmark) | 14 |
 | [02 Local LLM](#02-local-llm) | 1 |
-| [03 Web search MCP](#03-web-search-mcp) | 7 |
+| [03 Web search MCP](#03-web-search-mcp) | 8 |
 | [04 Conversation agent](#04-conversation-agent) | 9 |
 | [05 Voice pipeline](#05-voice-pipeline) | 1 |
 | [06 Home Assistant core](#06-home-assistant-core) | 5 |
@@ -50,6 +50,7 @@ Every place the build departed from the frozen design in `design_docs/v0/`, with
 | 2026-09-06 | Page fetching | 04 | `fetch_page` and page reading refuse non-public addresses (resolved before connecting and on every redirect hop) and stop reading past 2 MB. | The model chooses fetch URLs and web pages can steer it; without the check an injected instruction could reach the router, the Home Assistant VM, or Ollama's API from the tool server, or flood the model with a giant page. |
 | 2026-09-06 | SearXNG client | 01 | The client keeps a minimum gap (default 3 s, `WEB_SEARCH_MIN_SECONDS_BETWEEN_SEARCHES`) between live SearXNG requests; cached queries never wait. | During pass 3 all four upstream engines stopped answering at once (Brave rate limit, DuckDuckGo CAPTCHA, Bing connection refused, Google empty pages) after a day of benchmark bursts; a single spoken question never notices the gap, back-to-back benchmark searches do. |
 | 2026-09-06 | SearXNG engines | 01 | SearXNG keeps Startpage, Yahoo, and Wikipedia enabled alongside Google, Bing, Brave, and DuckDuckGo (Mojeek and Qwant were tried the same day, returned nothing, and were dropped at the user's request). | On 2026-09-06 all four scrape-based engines refused a single home address at once: Google now serves a JavaScript-required page (SearXNG issue #5286 and successors), Brave rate-limits, DuckDuckGo answers with a CAPTCHA, and SearXNG 2026.9.5's Bing engine drops the connection. Startpage (Google's index) and Yahoo (Bing's) answered, so pass 4 onward searches through them; passes 1 to 3 searched Google, Bing, Brave, and DuckDuckGo. Within a pass every candidate sees the same engines, which is what fairness requires. |
+| 2026-09-07 | URL guard and tool server exposure | 10 | The DNS-rebinding gap that v0 and v1 §12 recorded as an accepted residual risk is closed: `fetch_page` connects to the address the guard approved (name in `Host` and TLS SNI) and re-checks the peer address after connecting; the LAN-bound server accepts only `Host` values on `WEB_SEARCH_ALLOWED_HOSTS` and rejects browser `Origin` headers with 421. | A whole-repository security review on 2026-09-07 rated the gap Medium: anyone on the LAN, or a web page steering the model, could make `fetch_page` read the router, the cameras, Home Assistant, or SearXNG. The doc's reason for accepting it was wrong: pinning does not break TLS when the client is told the real name for the handshake, which the locked httpx 0.28.1 supports through the `sni_hostname` request extension. The Host allow-list costs one line in the plist and closes the browser route into the server. |
 
 ## 04 Conversation agent
 

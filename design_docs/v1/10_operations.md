@@ -236,6 +236,7 @@ The mini is reachable only on the home network. No router port is forwarded, and
 | `MINI_HOST`, `MINI_USER`, `MINI_PROJECT_DIR`, `MINI_MODEL` | `.env` on the laptop | The mini's address (a DHCP reservation), the login user, the clone path on the mini (relative to its home), the model `push-models` copies. During laptop testing: `localhost`, the laptop user, a second clone. |
 | `HEALTH_INTERVAL_SECONDS`, `HEALTH_CHECK_FLAGS` | environment of `services.sh install` | 300; empty on the mini, `--no-remediate` on the laptop |
 | `WEB_SEARCH_TURNS_DIR` | mcp launchd plist, written by `services.sh` | `~/Library/Logs/studio-assistant/turns` |
+| `WEB_SEARCH_ALLOWED_HOSTS` | mcp launchd plist, written by `services.sh`; the environment of `services.sh install` overrides it | `<LAN address>:8765,localhost:8765,127.0.0.1:8765`. The LAN address comes from `ipconfig getifaddr en0`; rerun `services.sh install` after an address change (the DHCP reservation makes that rare), and set the variable by hand on a Mac whose LAN interface is not `en0`. |
 | `STUDIO_LOG_DIR` | environment, optional | Overrides the log directory, for tests |
 | Health interval | `services.sh` | 300 s |
 | Health thresholds and cooldowns | `ops/health.py` policy | The table in §3.5 |

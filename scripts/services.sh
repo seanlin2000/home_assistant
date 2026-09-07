@@ -89,7 +89,12 @@ install_agents() {
     brew services stop ollama >/dev/null 2>&1 || true
     ENV_KEYS=(OLLAMA_HOST OLLAMA_KEEP_ALIVE OLLAMA_MAX_LOADED_MODELS) ENV_VALUES=(0.0.0.0:11434 -1 1)
     write_plist ollama "$OLLAMA_BIN" serve
-    ENV_KEYS=(WEB_SEARCH_HOST WEB_SEARCH_PORT WEB_SEARCH_TURNS_DIR) ENV_VALUES=(0.0.0.0 8765 "$LOG_DIR/turns")
+    # Bound to the LAN, the tool server answers only requests that name this machine (Host header); a web page cannot reach it by DNS rebinding.
+    # WEB_SEARCH_ALLOWED_HOSTS in the environment overrides the derived list (the mini's interface may not be en0). Rerun install after an address change.
+    local lan_address
+    lan_address="$(ipconfig getifaddr en0 2>/dev/null || true)"
+    ENV_KEYS=(WEB_SEARCH_HOST WEB_SEARCH_PORT WEB_SEARCH_TURNS_DIR WEB_SEARCH_ALLOWED_HOSTS)
+    ENV_VALUES=(0.0.0.0 8765 "$LOG_DIR/turns" "${WEB_SEARCH_ALLOWED_HOSTS:-${lan_address:+$lan_address:8765,}localhost:8765,127.0.0.1:8765}")
     write_plist mcp "$PROJECT_DIR/.venv/bin/web-search-mcp"
     ENV_KEYS=() ENV_VALUES=()
     write_plist whisper "$PROJECT_DIR/.venv/bin/wyoming-mlx-whisper" --uri tcp://0.0.0.0:10300 --model mlx-community/whisper-large-v3-turbo --language en
