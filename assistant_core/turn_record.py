@@ -52,7 +52,9 @@ class TurnRecord(BaseModel):
 
 
 def summarize_tool_call(exchange: ToolExchange) -> ToolCallSummary:
-    return ToolCallSummary(round_index=exchange.round_index, name=exchange.call.name, arguments=exchange.call.arguments, seconds=exchange.seconds, result_chars=len(exchange.result), error=exchange.error)
+    return ToolCallSummary(
+        round_index=exchange.round_index, name=exchange.call.name, arguments=exchange.call.arguments, seconds=exchange.seconds, result_chars=len(exchange.result), error=exchange.error
+    )
 
 
 def turn_record_from_transcript(transcript: Transcript, source: str = "home_assistant", recorded_at: datetime | None = None) -> TurnRecord:

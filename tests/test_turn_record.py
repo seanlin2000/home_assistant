@@ -16,7 +16,10 @@ def searched_transcript() -> Transcript:
             Message(role=Role.ASSISTANT, content="It is three and a half to three and three quarters percent."),
         ],
         tool_exchanges=[ToolExchange(round_index=0, call=call, result="x" * 5000, seconds=4.2)],
-        model_calls=[GenerationStats(model="gemma4:12b", prompt_tokens=1800, output_tokens=40, total_seconds=3.0), GenerationStats(model="gemma4:12b", prompt_tokens=6200, output_tokens=90, total_seconds=7.5)],
+        model_calls=[
+            GenerationStats(model="gemma4:12b", prompt_tokens=1800, output_tokens=40, total_seconds=3.0),
+            GenerationStats(model="gemma4:12b", prompt_tokens=6200, output_tokens=90, total_seconds=7.5),
+        ],
         malformed_tool_calls=["{bad"],
         spoken_text="Let me pull some sources. It is three and a half to three and three quarters percent.",
         final_answer="It is three and a half to three and three quarters percent.",

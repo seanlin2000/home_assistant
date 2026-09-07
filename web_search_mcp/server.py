@@ -1,12 +1,20 @@
 """The agent's tool server over streamable HTTP: search_and_read (what small models should use), web_search, fetch_page, and the calculator tools."""
 
-from mcp.server.mcpserver import MCPServer
+from pathlib import Path
 
+from mcp.server.mcpserver import MCPServer
+from pydantic import ValidationError
+from starlette.requests import Request
+from starlette.responses import JSONResponse, Response
+
+from assistant_core.models import REQUIRED_TOOL_NAMES
+from assistant_core.turn_record import TURNS_ROUTE, TurnRecord
 from calculator_mcp.register import register_calculator_tools
 from web_search_mcp.page_extractor import PageExcerpt, PageExtractor
 from web_search_mcp.query_cache import QueryCache
 from web_search_mcp.searxng_client import SearchResult, SearxngClient
 from web_search_mcp.settings import SearchSettings, settings_from_environment
+from web_search_mcp.turn_log import TurnLog
 from web_search_mcp.url_guard import UnsafeUrl
 
 
@@ -44,7 +52,31 @@ def build_server(settings: SearchSettings, searxng: SearxngClient | None = None,
         return " ".join(text.split()[: settings.words_per_page * 2])
 
     register_calculator_tools(server)
+    register_operations_routes(server, TurnLog(Path(settings.turns_dir)) if settings.turns_dir else None)
     return server
+
+
+def register_operations_routes(server: MCPServer, turn_log: TurnLog | None) -> None:
+    """Two plain HTTP routes beside the MCP endpoint (design doc 10): the health check proves this server is ours, and the component posts its turn records.
+
+    Custom routes bypass MCP's session handling; like the rest of the server they are reachable only on the LAN."""
+
+    @server.custom_route("/healthz", ["GET"])
+    async def healthz(request: Request) -> Response:
+        names = sorted(tool.name for tool in await server.list_tools())
+        missing = sorted(REQUIRED_TOOL_NAMES - set(names))
+        return JSONResponse({"status": "ok" if not missing else "degraded", "tools": names, "missing": missing, "turns_dir": str(turn_log.directory) if turn_log else None})
+
+    @server.custom_route(TURNS_ROUTE, ["POST"])
+    async def turns(request: Request) -> Response:
+        if turn_log is None:
+            return JSONResponse({"error": "turn logging is not configured (WEB_SEARCH_TURNS_DIR unset)"}, status_code=503)
+        try:
+            record = TurnRecord.model_validate_json(await request.body())
+        except ValidationError as error:
+            return JSONResponse({"error": "not a TurnRecord", "detail": error.errors(include_input=False, include_url=False)[:3]}, status_code=400)
+        turn_log.append(record)
+        return Response(status_code=204)
 
 
 def render_result_list(results: list[SearchResult]) -> str:

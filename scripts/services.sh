@@ -80,7 +80,7 @@ install_agents() {
     brew services stop ollama >/dev/null 2>&1 || true
     ENV_KEYS=(OLLAMA_HOST OLLAMA_KEEP_ALIVE OLLAMA_MAX_LOADED_MODELS) ENV_VALUES=(0.0.0.0:11434 -1 1)
     write_plist ollama "$OLLAMA_BIN" serve
-    ENV_KEYS=(WEB_SEARCH_HOST WEB_SEARCH_PORT) ENV_VALUES=(0.0.0.0 8765)
+    ENV_KEYS=(WEB_SEARCH_HOST WEB_SEARCH_PORT WEB_SEARCH_TURNS_DIR) ENV_VALUES=(0.0.0.0 8765 "$LOG_DIR/turns")
     write_plist mcp "$PROJECT_DIR/.venv/bin/web-search-mcp"
     ENV_KEYS=() ENV_VALUES=()
     write_plist whisper "$PROJECT_DIR/.venv/bin/wyoming-mlx-whisper" --uri tcp://0.0.0.0:10300 --model mlx-community/whisper-large-v3-turbo --language en
