@@ -30,7 +30,6 @@ DATE_LINE = "Today is {today}. Use this date whenever a question depends on what
 
 def system_prompt(today: date | None = None) -> str:
     """The system prompt with today's date on its second line.
-
     Without it the models assume the year their training ended and search for last year's prices and schedules; pass 4 of the benchmark
     had fourteen of forty-six queries pinned to 2024 or 2025. The date is filled in per request so the text is never frozen in the code."""
     line = DATE_LINE.format(today=f"{today or date.today():%A, %B %-d, %Y}")

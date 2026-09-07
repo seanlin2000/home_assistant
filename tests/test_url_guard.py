@@ -1,5 +1,7 @@
 """The fetch path must refuse private addresses at every hop and stop reading oversized pages."""
 
+from collections.abc import Callable
+
 import httpx
 import pytest
 
@@ -58,7 +60,7 @@ async def test_ensure_public_url_rejects_schemes_names_and_private_resolutions()
             await ensure_public_url(bad, resolver)
 
 
-def extractor_with(handler, resolver_table: dict[str, list[str]], **settings) -> PageExtractor:
+def extractor_with(handler: Callable[[httpx.Request], httpx.Response], resolver_table: dict[str, list[str]], **settings: int) -> PageExtractor:
     return PageExtractor(SearchSettings(**settings), QueryCache(None), resolver=fake_resolver(resolver_table), transport=httpx.MockTransport(handler))
 
 

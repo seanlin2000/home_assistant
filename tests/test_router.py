@@ -18,7 +18,7 @@ class FakeClassifier:
     def __init__(self, route: str | None = "search", fail: bool = False) -> None:
         self.route, self.fail, self.calls = route, fail, []
 
-    async def classify(self, system_prompt: str, user_text: str, schema: dict, policy) -> dict:
+    async def classify(self, system_prompt: str, user_text: str, schema: dict, policy: AgentPolicy) -> dict:
         self.calls.append(user_text)
         if self.fail:
             raise RuntimeError("model down")

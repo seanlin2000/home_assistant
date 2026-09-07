@@ -5,7 +5,7 @@ objects in and AgentEvent objects out. Everything the entity does is these two c
 """
 
 import logging
-from collections.abc import AsyncIterator
+from collections.abc import AsyncIterator, Callable
 from typing import Any, Protocol
 
 import httpx
@@ -37,7 +37,7 @@ def chat_log_to_conversation(contents: list[Any]) -> list[Message]:
     return conversation
 
 
-async def agent_events_to_deltas(events: AsyncIterator[AgentEvent], on_done=None) -> AsyncIterator[dict[str, Any]]:
+async def agent_events_to_deltas(events: AsyncIterator[AgentEvent], on_done: Callable[[Transcript], None] | None = None) -> AsyncIterator[dict[str, Any]]:
     """Turn the agent's event stream into one streamed assistant message: filler sentence first, then the answer as it arrives."""
     yield {"role": "assistant"}
     spoke = False

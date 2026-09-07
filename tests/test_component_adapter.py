@@ -1,12 +1,14 @@
 """The Home Assistant adapter is loaded by file path because the component package itself imports Home Assistant, which is not installed in this venv."""
 
 import importlib.util
+from collections.abc import AsyncIterator
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Any
 
 import httpx
 
-from assistant_core.models import AgentPolicy, AnswerDelta, Done, FillerSpoken, Role, ToolCall, ToolStarted, Transcript
+from assistant_core.models import AgentEvent, AgentPolicy, AnswerDelta, Done, FillerSpoken, Role, ToolCall, ToolStarted, Transcript
 from assistant_core.turn_record import TurnRecord, turn_record_from_transcript
 
 ADAPTER_PATH = Path("custom_components/studio_assistant/adapter.py")
@@ -38,11 +40,11 @@ def test_chat_log_keeps_spoken_turns_only() -> None:
     ]
 
 
-async def collect(events):
+async def collect(events: AsyncIterator[AgentEvent]) -> list[dict[str, Any]]:
     return [delta async for delta in adapter.agent_events_to_deltas(events)]
 
 
-async def events_from(items):
+async def events_from(items: list[AgentEvent]) -> AsyncIterator[AgentEvent]:
     for item in items:
         yield item
 

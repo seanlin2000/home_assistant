@@ -113,7 +113,7 @@ async def run(conversation: list[Message], llm: LLMClient, tools: ToolBox, polic
     yield Done(transcript=transcript)
 
 
-def turn_is_empty(turn: ModelTurn) -> bool:
+def turn_is_empty(turn: ModelTurn) -> bool:  # deslop: allow-comments
     """True when the model produced neither words nor a tool call. Gemma 4 on Ollama does this about one answer in seven: it writes a tool call with
     a small formatting slip, Ollama's parser drops it without reporting anything, and the reply arrives empty. Read aloud, that is silence, so the
     loop asks once more before giving up."""

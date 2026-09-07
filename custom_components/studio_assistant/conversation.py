@@ -15,7 +15,7 @@ from homeassistant.helpers.httpx_client import get_async_client
 from assistant_core import agent_loop
 from assistant_core.llm_client import OllamaClient
 from assistant_core.mcp_http import HttpMcpToolBox
-from assistant_core.models import Transcript
+from assistant_core.models import ToolCall, Transcript
 from assistant_core.turn_record import turn_record_from_transcript, turns_url_from_mcp_url
 
 from . import adapter
@@ -93,5 +93,5 @@ class UnavailableToolBox:
     async def list_tools(self) -> list:
         return []
 
-    async def call(self, call) -> str:
+    async def call(self, call: ToolCall) -> str:
         raise ConnectionError("tool server unavailable")

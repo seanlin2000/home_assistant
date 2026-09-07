@@ -1,5 +1,7 @@
 """The httpx-only MCP client must parse both response encodings and talk to the real web_search_mcp server."""
 
+from pathlib import Path
+
 import httpx
 import pytest
 
@@ -14,7 +16,7 @@ def test_parse_sse_extracts_every_data_event() -> None:
     assert find_response(messages, 2) == {"jsonrpc": "2.0", "id": 2, "result": {}}
 
 
-async def test_lists_and_calls_tools_on_the_real_server(unused_tcp_port: int, tmp_path) -> None:
+async def test_lists_and_calls_tools_on_the_real_server(unused_tcp_port: int, tmp_path: Path) -> None:
     from benchmark.mcp_process import McpServerProcess
     from benchmark.records import Services
 
