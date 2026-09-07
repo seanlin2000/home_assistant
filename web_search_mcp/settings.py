@@ -7,6 +7,7 @@ class SearchSettings(BaseModel):
     searxng_url: str = "http://127.0.0.1:8080"
     host: str = "127.0.0.1"
     port: int = 8765
+    allowed_hosts: str = ""  # comma-separated Host header values (host:port) accepted when bound to the LAN; empty means no Host check (localhost binds)
     pages_to_read: int = 4
     words_per_page: int = 600
     total_word_budget: int = 2000
@@ -31,6 +32,10 @@ class SearchSettings(BaseModel):
         "bloomberg.com",
         "nytimes.com",
     )
+
+
+def allowed_host_list(settings: SearchSettings) -> list[str]:
+    return [entry.strip() for entry in settings.allowed_hosts.split(",") if entry.strip()]
 
 
 def settings_from_environment() -> SearchSettings:

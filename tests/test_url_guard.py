@@ -8,7 +8,7 @@ import pytest
 from web_search_mcp.page_extractor import PageExtractor
 from web_search_mcp.query_cache import QueryCache
 from web_search_mcp.settings import SearchSettings
-from web_search_mcp.url_guard import UnsafeUrl, ensure_public_url, is_public_address
+from web_search_mcp.url_guard import UnsafeUrl, ensure_public_url, host_header, is_public_address, pin_url_to_address
 
 HTML = {"content-type": "text/html; charset=utf-8"}
 
@@ -67,7 +67,7 @@ def extractor_with(handler: Callable[[httpx.Request], httpx.Response], resolver_
 @pytest.mark.asyncio
 async def test_redirect_to_a_private_address_is_refused_even_after_a_public_first_hop() -> None:
     def handler(request: httpx.Request) -> httpx.Response:
-        if request.url.host == "public.example":
+        if request.headers["host"] == "public.example":
             return httpx.Response(302, headers={"location": "http://192.168.1.1/admin"})
         return httpx.Response(200, headers=HTML, text="<html><body><p>router admin</p></body></html>")
 
@@ -86,6 +86,67 @@ async def test_public_redirects_are_followed_and_text_extracted() -> None:
     extractor = extractor_with(handler, {"news.example": ["93.184.216.34"]})
     text = await extractor.read_page("http://news.example/old")
     assert "federal funds rate" in text
+
+
+def test_pinning_swaps_the_host_and_keeps_everything_else() -> None:
+    assert pin_url_to_address("http://news.example/a/b?q=1", "93.184.216.34") == "http://93.184.216.34/a/b?q=1"
+    assert pin_url_to_address("https://news.example:8443/x", "93.184.216.34") == "https://93.184.216.34:8443/x"
+    assert pin_url_to_address("https://v6.example/", "2606:2800:220:1:248:1893:25c8:1946") == "https://[2606:2800:220:1:248:1893:25c8:1946]/"
+    assert host_header("https://news.example:8443/x") == "news.example:8443"
+    assert host_header("http://news.example/") == "news.example"
+
+
+@pytest.mark.asyncio
+async def test_connection_goes_to_the_checked_address_with_the_name_in_host_and_tls() -> None:
+    seen: list[httpx.Request] = []
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        seen.append(request)
+        return httpx.Response(200, headers=HTML, text="<html><body><article><p>" + "Pinned page text. " * 30 + "</p></article></body></html>")
+
+    extractor = extractor_with(handler, {"news.example": ["93.184.216.34", "93.184.216.35"]})
+    assert "Pinned page text" in await extractor.read_page("https://news.example:8443/story")
+    request = seen[0]
+    assert request.url.host == "93.184.216.34" and request.url.port == 8443
+    assert request.headers["host"] == "news.example:8443"
+    assert request.extensions["sni_hostname"] == "news.example"
+
+
+class FakeNetworkStream:
+    def __init__(self, peer: tuple[str, int]) -> None:
+        self._peer = peer
+
+    def get_extra_info(self, info: str) -> object:
+        return self._peer if info == "server_addr" else None
+
+
+class RebindingTransport(httpx.AsyncBaseTransport):
+    """Pretends the operating system resolved the name to a private address after the guard approved a public one."""
+
+    def __init__(self, peer: tuple[str, int]) -> None:
+        self._peer = peer
+        self.body_reads = 0
+
+    async def handle_async_request(self, request: httpx.Request) -> httpx.Response:
+        transport = self
+
+        class Body(httpx.AsyncByteStream):
+            async def __aiter__(self):
+                transport.body_reads += 1
+                yield b"<html><body><p>router admin</p></body></html>"
+
+        return httpx.Response(200, headers=HTML, stream=Body(), extensions={"network_stream": FakeNetworkStream(self._peer)})
+
+
+@pytest.mark.asyncio
+async def test_a_connection_that_lands_on_a_private_peer_is_refused_before_the_body_is_read() -> None:
+    transport = RebindingTransport(("192.168.1.1", 80))
+    extractor = PageExtractor(SearchSettings(), QueryCache(None), resolver=fake_resolver({"r.evil.example": ["93.184.216.34"]}), transport=transport)
+    with pytest.raises(UnsafeUrl):
+        await extractor.read_page("http://r.evil.example/")
+    assert transport.body_reads == 0
+    public = RebindingTransport(("93.184.216.34", 80))
+    assert "router admin" in await PageExtractor(SearchSettings(), QueryCache(None), resolver=fake_resolver({"ok.example": ["93.184.216.34"]}), transport=public).read_page("http://ok.example/")
 
 
 @pytest.mark.asyncio

@@ -9,7 +9,7 @@ import pytest
 
 from assistant_core.models import GenerationStats, Message, Role, Transcript
 from assistant_core.turn_record import TURNS_ROUTE, turn_record_from_transcript
-from web_search_mcp.server import build_server
+from web_search_mcp.server import build_server, transport_security_for
 from web_search_mcp.settings import SearchSettings
 from web_search_mcp.turn_log import TurnLog
 
@@ -26,10 +26,10 @@ def sample_record():
     return turn_record_from_transcript(transcript)
 
 
-def client_for(tmp_path: Path | None) -> httpx.AsyncClient:
-    settings = SearchSettings(searxng_url="http://127.0.0.1:1", turns_dir=str(tmp_path) if tmp_path else None)
+def client_for(tmp_path: Path | None, allowed_hosts: str = "") -> httpx.AsyncClient:
+    settings = SearchSettings(searxng_url="http://127.0.0.1:1", turns_dir=str(tmp_path) if tmp_path else None, allowed_hosts=allowed_hosts)
     server = build_server(settings)
-    return httpx.AsyncClient(transport=httpx.ASGITransport(app=server.streamable_http_app()), base_url="http://testserver")
+    return httpx.AsyncClient(transport=httpx.ASGITransport(app=server.streamable_http_app(transport_security=transport_security_for(settings))), base_url="http://testserver")
 
 
 @pytest.mark.asyncio
@@ -92,3 +92,25 @@ def test_turn_log_read_since_returns_records_in_day_order(tmp_path: Path):
         log.path_for(day).write_text(record.model_dump_json() + "\n")
     assert len(log.read_since(date(2026, 9, 1))) == 2
     assert len(log.read_since(date(2026, 9, 2))) == 1
+
+
+@pytest.mark.asyncio
+async def test_host_allow_list_turns_away_other_names_and_browser_origins(tmp_path: Path) -> None:
+    async with client_for(tmp_path, allowed_hosts="mac.lan:8765, 127.0.0.1:8765") as client:
+        body = sample_record().model_dump_json()
+        assert (await client.post(TURNS_ROUTE, content=body, headers={"host": "testserver"})).status_code == 421
+        assert (await client.get("/healthz", headers={"host": "evil.example:8765"})).status_code == 421
+        assert (await client.post(TURNS_ROUTE, content=body, headers={"host": "mac.lan:8765", "origin": "http://mac.lan:8765"})).status_code == 421
+        assert (await client.post(TURNS_ROUTE, content=body, headers={"host": "mac.lan:8765"})).status_code == 204
+        assert (await client.get("/healthz", headers={"host": "127.0.0.1:8765"})).status_code == 200
+    assert sum(len(day.read_text().splitlines()) for day in tmp_path.iterdir()) == 1
+
+
+@pytest.mark.asyncio
+async def test_host_allow_list_also_guards_the_mcp_endpoint(tmp_path: Path) -> None:
+    settings = SearchSettings(searxng_url="http://127.0.0.1:1", turns_dir=str(tmp_path), allowed_hosts="mac.lan:8765")
+    app = build_server(settings).streamable_http_app(transport_security=transport_security_for(settings))
+    mcp_headers = {"content-type": "application/json", "accept": "application/json, text/event-stream"}
+    async with app.router.lifespan_context(app), httpx.AsyncClient(transport=httpx.ASGITransport(app=app), base_url="http://testserver") as client:
+        assert (await client.post("/mcp", content=b"{}", headers=mcp_headers | {"host": "evil.example:8765"})).status_code == 421
+        assert (await client.post("/mcp", content=b"{}", headers=mcp_headers | {"host": "mac.lan:8765"})).status_code != 421

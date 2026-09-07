@@ -8,7 +8,7 @@ from pydantic import BaseModel
 from web_search_mcp.query_cache import QueryCache
 from web_search_mcp.searxng_client import SearchResult
 from web_search_mcp.settings import SearchSettings
-from web_search_mcp.url_guard import Resolver, UnsafeUrl, ensure_public_url, system_resolver
+from web_search_mcp.url_guard import Resolver, UnsafeUrl, ensure_public_url, host_header, is_public_address, pin_url_to_address, system_resolver
 
 SKIPPED_EXTENSIONS = (".pdf", ".zip", ".png", ".jpg", ".jpeg", ".gif", ".mp4", ".mp3")
 
@@ -64,12 +64,19 @@ class PageExtractor:
         return (extracted or "").strip()
 
     async def _download(self, url: str) -> str:
-        """Follow redirects by hand so every hop is checked against the public-address rule, and stop reading past the byte cap."""
+        """Follow redirects by hand so every hop is checked against the public-address rule, and stop reading past the byte cap.
+
+        Each hop connects to the address the check approved, not to the name: the URL's host is swapped for that address while the real name goes
+        in the Host header and, for https, in the TLS handshake (`sni_hostname`), so certificate verification still checks the real name. After the
+        connection is up the peer address is checked once more, which also covers a transport that resolved on its own."""
         headers = {"User-Agent": self._settings.user_agent, "Accept-Language": "en-US,en;q=0.9"}
         async with httpx.AsyncClient(timeout=self._settings.fetch_timeout_seconds, follow_redirects=False, headers=headers, transport=self._transport) as client:
             for _ in range(self._settings.max_redirects + 1):
-                await ensure_public_url(url, self._resolver)
-                async with client.stream("GET", url) as response:
+                addresses = await ensure_public_url(url, self._resolver)
+                hostname = urlparse(url).hostname or ""
+                extensions = {"sni_hostname": hostname} if urlparse(url).scheme == "https" else {}
+                async with client.stream("GET", pin_url_to_address(url, addresses[0]), headers={"Host": host_header(url)}, extensions=extensions) as response:
+                    refuse_unless_public_peer(response)
                     if response.is_redirect:
                         url = urljoin(url, response.headers.get("location", ""))
                         continue
@@ -98,6 +105,14 @@ class PageExtractor:
             return False
         host = parsed.netloc.lower().removeprefix("www.")
         return not any(host == blocked or host.endswith(f".{blocked}") for blocked in self._settings.blocked_domains)
+
+
+def refuse_unless_public_peer(response: httpx.Response) -> None:
+    """Raise UnsafeUrl if the socket behind this response reached a non-public address. Injected transports (tests) carry no network stream and pass."""
+    stream = response.extensions.get("network_stream")
+    peer = stream.get_extra_info("server_addr") if stream is not None else None
+    if peer and not is_public_address(str(peer[0])):
+        raise UnsafeUrl(f"connection reached non-public address {peer[0]}")
 
 
 def to_excerpt(result: SearchResult, text: str, words_per_page: int) -> PageExcerpt:

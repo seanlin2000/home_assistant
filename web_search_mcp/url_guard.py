@@ -9,7 +9,7 @@ import asyncio
 import ipaddress
 import socket
 from collections.abc import Awaitable, Callable
-from urllib.parse import urlparse
+from urllib.parse import urlparse, urlunparse
 
 Resolver = Callable[[str], Awaitable[list[str]]]
 
@@ -37,8 +37,9 @@ def is_public_address(address: str) -> bool:
     return parsed.is_global and not parsed.is_multicast
 
 
-async def ensure_public_url(url: str, resolver: Resolver = system_resolver) -> None:
-    """Raise UnsafeUrl unless url uses http(s) and every address its host resolves to is public."""
+async def ensure_public_url(url: str, resolver: Resolver = system_resolver) -> list[str]:
+    """Raise UnsafeUrl unless url uses http(s) and every address its host resolves to is public; return those addresses so the caller can connect
+    to one of them instead of resolving the name a second time (a hostile zone can answer the second lookup differently)."""
     parsed = urlparse(url)
     if parsed.scheme not in ALLOWED_SCHEMES:
         raise UnsafeUrl(f"scheme '{parsed.scheme}' is not allowed")
@@ -56,6 +57,21 @@ async def ensure_public_url(url: str, resolver: Resolver = system_resolver) -> N
     for address in addresses:
         if not is_public_address(address):
             raise UnsafeUrl(f"'{host}' resolves to non-public address {address}")
+    return addresses
+
+
+def pin_url_to_address(url: str, address: str) -> str:
+    """The same URL with its host replaced by an already-checked address. The original name travels in the Host header and in TLS instead."""
+    parsed = urlparse(url)
+    host = f"[{address}]" if ":" in address else address
+    netloc = f"{host}:{parsed.port}" if parsed.port else host
+    return urlunparse(parsed._replace(netloc=netloc))
+
+
+def host_header(url: str) -> str:
+    parsed = urlparse(url)
+    hostname = parsed.hostname or ""
+    return f"{hostname}:{parsed.port}" if parsed.port else hostname
 
 
 def is_ip_literal(host: str) -> bool:
