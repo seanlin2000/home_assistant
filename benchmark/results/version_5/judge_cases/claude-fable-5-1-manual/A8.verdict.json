@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It recommends the router for the sketch's reasons, latency and determinism on common commands like timers and lights with the big model reserved for open questions, and names the real costs of misclassification, two code paths, and half-command half-question requests.",
+  "judgment_reason": "It committed to a recommendation while stating the condition under which the single-model design is fine, namely mostly open-ended requests or indifference to latency and cost.",
+  "spoken_fit_reason": "Opens with the recommendation and stays in plain prose with no lists or markdown, at a length the comparison justifies."
+}

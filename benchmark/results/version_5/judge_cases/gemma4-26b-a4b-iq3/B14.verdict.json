@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "Synthesises three genuine mechanisms from the excerpts - demand spillover from unobtainable H100/B200 allocations, wafer capacity rerouted from GDDR to HBM, and NVIDIA's 30-40% cut to consumer Blackwell output - rather than parroting prices, though it drops the CoWoS advanced-packaging bottleneck the first source led with.",
+  "judgment_reason": "Correctly searched for a market question and answered the 'why' the user asked for instead of reciting current price tags it could not verify.",
+  "spoken_fit_reason": "The 'three main reasons' colon-and-enumeration structure ran past the word cap, so the listener was cut off mid-sentence on the third reason."
+}

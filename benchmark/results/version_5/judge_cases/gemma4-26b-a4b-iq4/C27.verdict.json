@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The 4.32 per month figure matches the sketch's thirty-day calculation from 0.48 kilowatt hours a day.",
+  "judgment_reason": "It used the energy tool with the user's own numbers and named the thirty-day month it assumed for the monthly figure.",
+  "spoken_fit_reason": "Two short sentences leading with the cost, spoken in words."
+}

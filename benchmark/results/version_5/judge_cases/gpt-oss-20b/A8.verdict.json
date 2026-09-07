@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It recommends the router and gives the latency and cost reasoning with concrete examples like timers and weather, but never names the router design's costs, routing errors and more moving parts, and never says when the single-large-model design would be the right choice, so half the comparison the sketch asks for is missing.",
+  "judgment_reason": "It commits to a clear recommendation rather than hedging, but presents the hybrid as 'the best of both worlds' with no acknowledgement of its failure mode.",
+  "spoken_fit_reason": "Five sentences of plain prose that open with the recommendation, with no lists or markup."
+}

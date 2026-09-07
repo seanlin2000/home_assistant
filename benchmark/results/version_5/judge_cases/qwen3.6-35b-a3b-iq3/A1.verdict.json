@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It gets the offload mechanism right but frames MoE as inherently needing less VRAM, never says the total parameter count sets the storage requirement for both, omits quantization, and drags in optimizer states and gradients which are training-only and irrelevant to running inference.",
+  "judgment_reason": "Correctly answered from general knowledge without searching, but presented expert offloading as automatic rather than a runtime and quantization dependent choice.",
+  "spoken_fit_reason": "Plain prose in two paragraphs with no lists, markdown or URLs, leading with the structural difference the question asked about."
+}

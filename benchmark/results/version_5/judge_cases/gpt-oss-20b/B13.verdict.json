@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The 27-degree sunny forecast for 7 September traces to the easeweather table, but the itineraries invent logistics no excerpt supports and several are wrong, an 'SBB train from Lucerne to Vitznau' when Vitznau is a boat and bus stop, and a 'ferry to Alpnachstad' from Vitznau.",
+  "judgment_reason": "Searching was right for a weather-and-schedule question, but the retrieval returned no timetable at all and it never said so, instead asserting departure frequency, four-to-five-hour durations and ticket coverage as if verified.",
+  "spoken_fit_reason": "Six paragraphs with a 'first / another option' enumeration and a sign-off, long enough that the harness cut the spoken output mid-itinerary."
+}

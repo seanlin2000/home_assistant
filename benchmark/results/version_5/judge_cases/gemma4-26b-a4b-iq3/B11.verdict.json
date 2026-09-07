@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The 3.50-3.75% target and ~3.63% effective rate are traceable to the retrieved excerpts, but saying the rate 'remained steady' over the last year misreads the FRED table it was given, which shows cuts from 4.22% in September 2025 down to 3.72% by December, and it never quantifies the roughly 75 basis point decline.",
+  "judgment_reason": "Rightly searched for a live rate and stuck to the consistent sources rather than the Trading Economics excerpt that quoted 3.75% and speculated about hikes.",
+  "spoken_fit_reason": "Two short paragraphs of plain prose with numbers written out for speech and no URLs or citation markers."
+}

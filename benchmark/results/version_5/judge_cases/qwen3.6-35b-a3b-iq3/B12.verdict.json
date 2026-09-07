@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Picks the used RTX 3090 at 24 GB for six to seven hundred dollars as the best VRAM per dollar, which the retrieved guide backs at $650-750, and offers the new RTX 4060 Ti 16 GB as the alternative with the right model-size ceilings.",
+  "judgment_reason": "Searched correctly and synthesised across sources, but never flagged that the same excerpts put a complete 3090 build at $1,000-1,300 and warn 2026 GPU prices run 1.5 to 2 times MSRP, so the total may land above the stated budget.",
+  "spoken_fit_reason": "Spells the numbers out in words for the speech engine and stays in plain prose across two paragraphs with no lists or URLs."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Ties the 7 September sunny, 27-degree forecast to three options drawn straight from the excerpts (Pilatus Golden Round Trip, Rigi by boat and rack railway, the Brünig Pass run to Interlaken), but says almost nothing about schedules beyond naming a direct train, and skips the 3.8 mm of rain listed alongside that same 'sunny' forecast row.",
+  "judgment_reason": "Searched for both weather and itineraries and combined them rather than answering one half of the question.",
+  "spoken_fit_reason": "Four short prose paragraphs with no lists, URLs or markup, leading with the weather verdict and the two best picks."
+}

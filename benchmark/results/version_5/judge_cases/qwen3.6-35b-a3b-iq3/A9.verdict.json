@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Asks for origin, budget, dates and trip length and warns against assuming a continent, a shared definition of cheap, city over beach, or flying, missing only what 'warm' means to the user and passport or visa constraints.",
+  "judgment_reason": "Named no destination and invented no preferences, which is the whole point of the question.",
+  "spoken_fit_reason": "Plain prose in two short paragraphs with the questions enumerated verbally rather than as a bulleted list, no markup."
+}

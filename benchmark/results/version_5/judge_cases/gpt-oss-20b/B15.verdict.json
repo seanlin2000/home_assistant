@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The bottom line that no 16 GB NVIDIA card fits $500 is supportable, but the supporting facts contradict its own retrieval: it never mentions the RTX 5060 Ti 16GB the sources are actually about, calls the 12 GB 4070 a 16 GB card, and says a used 3070 or 3080 10GB costs 'close to $500' when the retrieved sold data puts them at about $213 and $295 to $365.",
+  "judgment_reason": "It correctly refused to force a recommendation that breaks the $500 budget and flagged the stretch option as over budget, but it ignored the RX 9060 XT 16GB at roughly $450 that the top source names as the only 16 GB card under $500, which the user would plainly want to hear.",
+  "spoken_fit_reason": "One paragraph of about five sentences that opens with the refusal, no lists, markdown, or URLs."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["violated_explicit_constraint"],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The card pick and the $800-1,000 used 3090 price are traceable to the excerpts, but the user asked for a whole computer on $1,000 total and the answer spends the entire budget on the GPU alone, then adds a 750-watt power supply requirement without ever saying the build no longer fits.",
+  "judgment_reason": "It never flags the gap between a $900 GPU and a $1,000 complete machine, only gesturing at it in a closing offer to look for 'component bundles that fit your budget'.",
+  "spoken_fit_reason": "Five paragraphs with a colon-led 'two main paths' enumeration that overran the word cap and were cut off before the second path."
+}

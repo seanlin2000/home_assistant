@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The $2,398.20 payment and roughly $463,353 in total interest both match the reference sketch.",
+  "judgment_reason": "Ran the amortization through the loan tool and did not search for a question that needed no lookup.",
+  "spoken_fit_reason": "Two sentences with the dollar figures written out for speech."
+}

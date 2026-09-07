@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The critical-reading half is excellent, naming the ModelFit numbers as bandwidth estimates rather than measurements and pointing at time to first word and prompt processing, but it declares it found nothing specific when the excerpts state Qwen3.8-27B is 17 to 18 GB at Q4 with a 13.4 GB Q3 build for smaller cards, and it instead projects from a fourteen billion parameter Qwen3.8 that no source mentions.",
+  "judgment_reason": "It refused to turn a throughput estimate into a prediction about voice experience and told the user exactly what to measure instead, which is the judgment the question was testing.",
+  "spoken_fit_reason": "Plain prose that opens by admitting the gap, with model names spelled out for speech and no lists or URLs."
+}

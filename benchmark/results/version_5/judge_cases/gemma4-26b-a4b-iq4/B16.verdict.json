@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 2,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It correctly splits the question on stabilized versus market-rate and cites the retrieved Order #57 figure of 4.5 percent for a two-year stabilized lease, and covers the advertised-rent risks (teaser pricing, stale listings, hidden fees), though its 'quite competitive' verdict for market-rate rests on no Long Island City data at all.",
+  "judgment_reason": "It asked whether the building is rent-stabilized rather than inventing that fact, but never told the user its search turned up no Long Island City rent data before offering a market-rate verdict.",
+  "spoken_fit_reason": "Three paragraphs ending in a question, with a spoken quotation around 'teaser' rates, runs longer than a listener needs."
+}

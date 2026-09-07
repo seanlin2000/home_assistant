@@ -267,3 +267,30 @@ What the three passes say:
 - **The reference ceiling is stable** (226, 241) and its losses are all in category B, where even a hand-written answer over the same excerpts drew three fabrication gates. The judge holds a firm line on stating anything the excerpts do not contain.
 
 Open decision before the large models run: keep prompt 1.4, or a 1.5 that restores the worked example for the calculate directive only (it helped the model that needed it and arithmetic questions are not where Gemma's problem was) while the search directive stays as the call alone.
+
+### Pass 5: every runnable model under prompt 1.5, 2026-09-06
+
+Prompt 1.5 is prompt 1.4 plus one line stating today's date (doc 04). All seven local candidates ran in one pass, small models first, then the four large ones with each deleted after its run, then the hand-written reference. Searches went through Startpage and Yahoo, later joined again by Brave and DuckDuckGo as their blocks expired. No search failures, no run errors.
+
+| Candidate | Total /280 | A /110 | B /110 | C /60 | Gated | Median answer | On GPU |
+|---|---|---|---|---|---|---|---|
+| Gemma 4 26B-A4B, UD-IQ4_XS | 232 | 95 | 78 | 59 | 1 | 155 s | 7.5 of 15.2 GB |
+| Hand-written reference | 217 | 109 | 48 | 60 | 5 | n/a | n/a |
+| Qwen 3.6 35B-A3B, UD-IQ3_XXS | 208 | 76 | 72 | 60 | 4 | 156 s | 8.5 of 14.1 GB |
+| Gemma 4 26B-A4B, UD-IQ3_XXS | 199 | 84 | 56 | 59 | 5 | 84 s | 7.5 of 12.8 GB |
+| Qwen 3.5 4B | 157 | 72 | 33 | 52 | 7 | 9 s | all |
+| Gemma 4 E4B | 154 | 74 | 35 | 45 | 9 | 5 s | all |
+| Qwen 3.5 9B | 154 | 80 | 28 | 46 | 7 | 11 s | all |
+| gpt-oss 20B, MXFP4 | 145 | 63 | 25 | 57 | 9 | 51 s | 9.9 of 14.0 GB |
+
+What the pass says:
+
+- **The date line worked as intended.** Across the small models, pass 4 had thirteen search queries pinned to 2024 or 2025; pass 5 had none. It did not by itself raise category B scores, whose losses remain unsupported claims and skipped searches.
+- **The large mixture-of-experts previews are a different class.** Gemma 4 26B-A4B at IQ4_XS scored 232, the top score of any local model in any pass, with a single gate; Qwen 3.6 35B-A3B at IQ3_XXS scored 208; the 3-bit Gemma preview 199. Every one of them called the calculator on all six arithmetic questions and searched every question that needed it. Their remaining losses are answers that overrun the spoken word cap and, for Qwen 3.6, literal markdown read aloud. Since these are reduced-quantization previews, the production 4-bit versions should score at least this well (doc 01, section 5's reading rule).
+- **The small models plateau near 155.** Three passes of prompt variants moved them within noise of each other. Qwen 3.5 9B still calls the calculator on one arithmetic question in six and does the rest in its head, which costs it a third of category C.
+- **gpt-oss 20B is not a candidate.** Lowest total, six fabrication gates, and 51 s median answers with the model split across GPU and CPU.
+- **The reference ceiling's category B score is misleading this pass.** The hand-written answers were composed against the excerpts of an earlier pass; this pass's searches returned different pages, so five of the answers' figures now count as fabrications against excerpts they were never written from (B12, B14, B16, B18, B20). Its ungated total, 245, is the fairer ceiling. A fixed reference replayed against live search is only a ceiling on the day it is written; a future pass should re-author it against that pass's cache or freeze the cache it was written against.
+- **Gemma 4 E4B's empty answers have a mechanism.** Replaying its four empty pass-5 questions against Ollama returned a valid tool call every time, at the same output length the run recorded, so in the run Gemma emitted a call that Ollama's Gemma parser dropped without surfacing it, presumably a small formatting slip of the kind that produced logged "invalid character" warnings in pass 4. About one answer in seven is lost this way for this model alone. A retry-on-empty step in the agent loop would recover most of them and also matters in production, where an empty answer is silence.
+- **Latency is for projection only.** On the 16 GB laptop the large models spill to the CPU and answer in one to three minutes. Fully resident on a 32 GB machine, the same models generate ten to twenty times faster (doc 02); the M5 and M6 neural accelerators cut prompt reading, which dominates a searched answer, by a further factor of three to four.
+
+Decision-gate reading: a 26B or 35B mixture-of-experts model at full 4-bit quantization is the model to deploy, which points at the 32 GB tier (doc 08). The model remains swappable; the harness and prompt are what the project keeps.

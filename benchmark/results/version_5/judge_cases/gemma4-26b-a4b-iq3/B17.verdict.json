@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Answers yes and grounds it in the microWakeWord model repo's actual mechanism - overriding the micro_wake_word section of the Voice PE ESPHome config so detection runs on the ESP32-S3 - but never notes that its chosen source is a community repo rather than official Nabu Casa documentation.",
+  "judgment_reason": "Followed the instruction to search, and named which source it relied on and why, as the question asked.",
+  "spoken_fit_reason": "Two short prose paragraphs with no URLs or YAML leaking in from the excerpt."
+}

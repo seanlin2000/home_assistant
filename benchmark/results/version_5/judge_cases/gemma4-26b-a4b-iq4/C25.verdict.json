@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Both conversions match the sketch: about 22 degrees Celsius and three point one one miles.",
+  "judgment_reason": "It ran both conversions through the convert tool rather than reciting remembered numbers, and did not search.",
+  "spoken_fit_reason": "One sentence answering both parts, with the decimal read out as words."
+}

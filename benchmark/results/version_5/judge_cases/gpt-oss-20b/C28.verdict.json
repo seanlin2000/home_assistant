@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Both numbers match the reference sketch and the tool output, about 2,398 a month and roughly 463,352 in total interest.",
+  "judgment_reason": "It used the loan tool rather than attempting amortization in prose, and did not search a question that needs no search.",
+  "spoken_fit_reason": "Two sentences with both large amounts spelled out in words, no lists or markup."
+}

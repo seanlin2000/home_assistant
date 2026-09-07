@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Every figure traces to a retrieved excerpt, the 3.50 to 3.75 target range and 3.63 effective rate from the rate pages and the 4.33 level 'one year ago' from the MarketXLS series, and the stated 0.70 point decline is the correct difference.",
+  "judgment_reason": "It searched a genuinely current rate, then ran a second targeted search specifically to get the year-ago figure the question's second half needed rather than estimating it.",
+  "spoken_fit_reason": "Two sentences of plain prose leading with the current rate, with percentages spoken out and no URLs or citation markers despite eight retrieved sources."
+}

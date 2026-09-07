@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "About 38.5 percent and 2,964 dollars both match the reference sketch, with the percentage correctly hedged as 'about'.",
+  "judgment_reason": "Used the percent and calculate tools for both steps and did not search.",
+  "spoken_fit_reason": "Two sentences with the figures written out for speech."
+}

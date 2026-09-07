@@ -53,7 +53,7 @@ entries:
 - candidate: qwen3.5-4b
   question_id: A10
   why_selected: random sample
-  question:
+  question: &id012
   - Explain why VRAM capacity can matter more than raw GPU speed when choosing hardware for a local LLM. Answer in a way that would sound natural if spoken aloud in under 45 seconds.
   searched: false
   spoken_answer: VRAM capacity often matters more than raw GPU speed because large language models require massive amounts of memory to load the model weights and handle context into your computer at once. Even with an incredibly fast processor, you're bottlenecked by how much data fits in that memory; exceeding VRAM forces the system to use slower storage like your hard drive, which dramatically slows performance. For local LLMs specifically, if your RAM is full, the model simply won't run or will degrade so badly it becomes unusable regardless of how fast your GPU can compute.
@@ -78,7 +78,7 @@ entries:
 - candidate: qwen3.5-4b
   question_id: A11
   why_selected: random sample
-  question:
+  question: &id005
   - What year did the Berlin Wall fall?
   searched: false
   spoken_answer: The Berlin Wall fell in 1989.
@@ -131,7 +131,7 @@ entries:
 - candidate: qwen3.5-4b
   question_id: C25
   why_selected: random sample
-  question:
+  question: &id010
   - It's 72 degrees Fahrenheit outside. What is that in Celsius, and how far is a 5 kilometer run in miles?
   searched: false
   spoken_answer: 72 degrees Fahrenheit is about 22 degrees Celsius, which is a comfortable running temperature. A 5 kilometer run is roughly 3 miles and 110 yards.
@@ -181,7 +181,7 @@ entries:
 - candidate: gemma4-e4b
   question_id: A4
   why_selected: random sample
-  question:
+  question: &id004
   - My plant is growing new leaves quickly near the top, but its older lower leaves are gradually yellowing and dying. The plant is otherwise healthy. What are the most likely explanations, and what information would you want before deciding whether this is normal or a problem?
   searched: false
   spoken_answer: The most likely explanations for this pattern are that the plant is exhibiting natural senescence, meaning it is reallocating nutrients from the older leaves to support new growth at the top, or that it is experiencing a mild nutrient deficiency that is affecting older foliage first. To help me decide whether this is normal or a problem, I would need to know what kind of plant it is, how much light it receives, and what its watering routine has been lately.
@@ -258,7 +258,7 @@ entries:
 - candidate: gemma4-e4b
   question_id: C23
   why_selected: random sample
-  question:
+  question: &id006
   - We just got a $64.50 dinner bill. What's an 18 percent tip, and what's the total with the tip?
   searched: false
   spoken_answer: The tip on your sixty-four dollars and fifty cents dinner bill at eighteen percent is eleven dollars and sixty-one cents, which brings your total to seventy-six dollars and eleven cents.
@@ -283,7 +283,7 @@ entries:
 - candidate: gemma4-e4b
   question_id: C27
   why_selected: random sample
-  question:
+  question: &id003
   - My TV draws 120 watts. If I watch about 4 hours a day and electricity costs 30 cents per kilowatt hour, what does it cost me per month?
   searched: false
   spoken_answer: The cost for your television would be approximately four dollars and thirty-two cents per month. This is based on it drawing one hundred twenty watts for four hours each day at a cost of thirty cents per kilowatt hour.
@@ -450,6 +450,741 @@ entries:
     - It gives $18,392 where the reference sketch requires about $19,091 end-of-month or $19,154 beginning-of-month, understating the interest by roughly $700, and it never breaks out that $18,000 of the balance is the deposits themselves.
     - It was right not to search, but it produced a four-digit figure to the dollar with zero calculator calls and did not state whether deposits fall at the start or end of each month.
     - Two short plain-prose sentences leading with the figure, no lists or markdown.
+  human:
+    gate_hit: null
+    gates: []
+    answer_quality: null
+    judgment: null
+    spoken_fit: null
+    notes: ''
+- candidate: gpt-oss-20b
+  question_id: A1
+  why_selected: random sample
+  question: &id009
+  - Why can a 16 GB GPU sometimes run an MoE model with 30 billion total parameters, but not necessarily a 30 billion parameter dense model? Explain the difference between active parameters and the memory required to store the model.
+  searched: false
+  spoken_answer: A 30‑billion‑parameter dense model needs to keep every weight in memory at once, so its 30 billion numbers have to fit in the GPU’s VRAM. A 30‑billion‑parameter MoE (Mixture‑of‑Experts) model, on the other hand, only loads into memory the subset of experts that are “active” for each token. If the routing layer activates, say, three experts out of a thousand, the GPU only has to hold the parameters of those three experts plus the shared layers, so the memory footprint can be well under 30 billion numbers. In short, the total parameter count tells you how much memory you’d need if you stored everything, but the active‑parameter count tells you how much you actually need to keep in VRAM while a particular batch is running.
+  judge:
+    gate_hit: false
+    gates: []
+    dimension_total: 5
+    answer_quality: 1
+    judgment: 2
+    spoken_fit: 2
+    reasons:
+    - It asserts the exact misconception the reference sketch rules out, claiming the GPU 'only has to hold the parameters of those three experts plus the shared layers, so the memory footprint can be well under 30 billion numbers', when all experts must be resident and MoE saves compute rather than storage.
+    - Answering from general knowledge without searching was the right call, but it stated a confident wrong technical claim with no hedge and never mentioned quantization or CPU offload as the real reason 16 GB can work.
+    - Plain prose in about five sentences with no lists, markdown, or URLs, and it opens directly with the dense-model explanation.
+  human:
+    gate_hit: null
+    gates: []
+    answer_quality: null
+    judgment: null
+    spoken_fit: null
+    notes: ''
+- candidate: gpt-oss-20b
+  question_id: B19
+  why_selected: random sample
+  question: *id002
+  searched: true
+  spoken_answer: Yes, a 4060 Ti with 16 GB of VRAM can technically run a Qwen 3.8 model, but only a smaller‑quantized version that fits in the 16‑GB budget. The flagship 27‑billion‑parameter Qwen 3.8 checkpoint is about 18 GB at Q4, so on a 16‑GB card it would have to spill a portion of its weights and KV cache to system memory, which slows decoding noticeably. In practice that means the card can handle the model, but the latency and throughput will be much lower than on a card that holds the whole model in VRAM. For a smooth, voice‑assistant‑style experience—quick turn‑around for each user prompt—you’d want a GPU that can keep the entire 27‑B model in memory, such as a 24‑GB or 32‑GB variant. So while the 4060 Ti can run it, the performance would likely be too sluggish for a satisfying real‑time voice assistant.
+  judge:
+    gate_hit: false
+    gates: []
+    dimension_total: 5
+    answer_quality: 2
+    judgment: 1
+    spoken_fit: 2
+    reasons:
+    - The fit half is sound and traceable, an 18 GB Q4 27B spilling on a 16 GB card, but it never answers the second half the user actually asked, whether what it found is enough to predict a voice-assistant experience, and it ignores the 13.4 GB Q3 GGUF the same source names as the 16GB path.
+    - It searched as instructed but delivered a confident latency verdict off numbers the ModelFit source labels 'estimates, not measured benchmarks', and never raised the missing pieces a voice pipeline turns on, time to first token, wake-word and speech-to-text overhead, or reasoning-effort defaults the guide warns about.
+    - A single paragraph of five sentences leading with the verdict, plain prose with no lists, markdown, or URLs.
+  human:
+    gate_hit: null
+    gates: []
+    answer_quality: null
+    judgment: null
+    spoken_fit: null
+    notes: ''
+- candidate: gpt-oss-20b
+  question_id: B21
+  why_selected: random sample
+  question: &id008
+  - Since the Fed cut rates to zero last month, should I refinance my mortgage?
+  searched: true
+  spoken_answer: Your mortgage probably isn’t a good candidate for refinancing right now. The Fed’s last move pushed the federal‑funds rate back up to a 3.5‑3.75 percent range, and that’s the benchmark that most mortgage lenders use. If your current loan is at, say, 3 percent or lower, you’re already below market rates, so a new loan would likely cost you more in interest and fees than you’d save. Even if your rate is higher, the savings you’d get from a lower rate might be offset by the closing costs and the fact that the Fed’s policy is still leaning toward tightening rather than easing. In short, unless you can lock in a rate that’s noticeably below what the market is offering—something that’s unlikely when rates are hovering around 3.5 percent—it’s usually better to keep what you have.
+  judge:
+    gate_hit: true
+    gates:
+    - agreed_with_false_premise
+    - fabricated_current_fact
+    dimension_total: 3
+    answer_quality: 1
+    judgment: 0
+    spoken_fit: 2
+    reasons:
+    - It never tells the user rates were not cut to zero, and instead accommodates the false story by saying 'the Fed's last move pushed the federal-funds rate back up to a 3.5-3.75 percent range' when every retrieved source says the Fed has held at 3.50-3.75 percent since December 2025 with no hike, then compounds it by treating the fed funds rate as the mortgage rate the user would be offered.
+    - The search was the right call and it reached the retrieved rate, but it failed the central task of correcting the premise, invented a rate increase the sources contradict, and never asked what rate the user's existing mortgage carries before telling them not to refinance.
+    - One paragraph of about 130 words that opens with the recommendation, plain prose with no lists, markdown, or URLs.
+  human:
+    gate_hit: null
+    gates: []
+    answer_quality: null
+    judgment: null
+    spoken_fit: null
+    notes: ''
+- candidate: gpt-oss-20b
+  question_id: C26
+  why_selected: random sample
+  question: &id013
+  - My rent is $2,850 a month and my take-home pay is $7,400 a month. What percent of my income goes to rent, and what would the rent be after a 4 percent increase?
+  searched: false
+  spoken_answer: Your rent is about thirty‑eight and a half percent of your take‑home pay. If it rises by four percent, it would become roughly two thousand nine hundred sixty‑four dollars a month.
+  judge:
+    gate_hit: false
+    gates: []
+    dimension_total: 10
+    answer_quality: 5
+    judgment: 3
+    spoken_fit: 2
+    reasons:
+    - Both figures match the reference sketch, 38.5 percent of take-home pay and 2,964 after the 4 percent increase, each traced to a tool result.
+    - Its first percent call used the wrong operation kind and returned 210,900, and it caught that immediately and reran with is_what_percent rather than speaking the nonsense number.
+    - Two sentences with the percentage and the dollar amount spelled out in words, no lists or markup.
+  human:
+    gate_hit: null
+    gates: []
+    answer_quality: null
+    judgment: null
+    spoken_fit: null
+    notes: ''
+- candidate: gpt-oss-20b
+  question_id: C27
+  why_selected: random sample
+  question: *id003
+  searched: false
+  spoken_answer: Watching your TV for about four hours a day uses roughly 0.48 kilowatt‑hours each day. Over a 30‑day month that’s about 14.4 kilowatt‑hours, which at thirty cents per kilowatt‑hour comes to around four dollars and thirty cents per month.
+  judge:
+    gate_hit: false
+    gates: []
+    dimension_total: 10
+    answer_quality: 5
+    judgment: 3
+    spoken_fit: 2
+    reasons:
+    - It matches the reference sketch on all three figures, 0.48 kWh a day, 14.4 kWh over a 30-day month and about 4.32 dollars, spoken as 'around four dollars and thirty cents' with the rounding signalled.
+    - It used the energy tool with the given 30-cent rate rather than assuming one, set idle watts to zero for a TV that is only on while watched, and named the 30-day month it used.
+    - Two sentences that walk daily to monthly to dollars, plain prose with no lists or markup.
+  human:
+    gate_hit: null
+    gates: []
+    answer_quality: null
+    judgment: null
+    spoken_fit: null
+    notes: ''
+- candidate: gemma4-26b-a4b-iq3
+  question_id: A4
+  why_selected: random sample
+  question: *id004
+  searched: false
+  spoken_answer: 'The most likely causes are either a nitrogen deficiency or natural aging, where the plant moves nutrients from old growth to support new development. It could also be a sign of overwatering, which can lead to root issues that prevent nutrient uptake.
+
+
+    To help me figure out if this is a problem, could you tell me how often you water it and if you''ve noticed any spots or changes in texture on those yellowing leaves?'
+  judge:
+    gate_hit: false
+    gates: []
+    dimension_total: 9
+    answer_quality: 4
+    judgment: 3
+    spoken_fit: 2
+    reasons:
+    - Names natural senescence, mobile nitrogen moving to new growth, and overwatering or root problems, but its follow-up questions cover only watering and leaf appearance, skipping species, light, shading and fertilizer history from the sketch.
+    - Explicitly declines to settle on one cause and asks the user for the missing watering and leaf-pattern details instead of inventing them.
+    - Three sentences of plain prose leading with the likely causes, then one clear question.
+  human:
+    gate_hit: null
+    gates: []
+    answer_quality: null
+    judgment: null
+    spoken_fit: null
+    notes: ''
+- candidate: gemma4-26b-a4b-iq3
+  question_id: A8
+  why_selected: random sample
+  question: &id007
+  - 'For a personal AI assistant, compare these two designs: one large LLM handles every request, versus a smaller router that sends simple commands to deterministic tools and only uses a larger LLM for complex questions. Which would you recommend and why?'
+  searched: false
+  spoken_answer: I would recommend the router approach, as it is significantly more efficient, reliable, and cost-effective. By using a smaller model to direct simple tasks to deterministic tools, you avoid the "hallucinations" and reasoning errors that even large models sometimes make when performing basic functions like setting a timer or checking the weather. This architecture also saves you a lot of money and processing power because you aren't firing up a massive, expensive model for every trivial request.
+  judge:
+    gate_hit: false
+    gates: []
+    dimension_total: 7
+    answer_quality: 3
+    judgment: 2
+    spoken_fit: 2
+    reasons:
+    - Picks the router and gives sound reasons (deterministic tools avoid hallucinated timers, no large model per trivial request), but the question asked for a comparison and it never states the router's costs - routing errors and more moving parts - nor when the single-LLM design is fine.
+    - Right to answer without searching and to commit to a recommendation, but it presents the router as strictly better with no acknowledged downside.
+    - Three sentences of plain prose that open with the recommendation.
+  human:
+    gate_hit: null
+    gates: []
+    answer_quality: null
+    judgment: null
+    spoken_fit: null
+    notes: ''
+- candidate: gemma4-26b-a4b-iq3
+  question_id: A11
+  why_selected: random sample
+  question: *id005
+  searched: false
+  spoken_answer: The Berlin Wall fell in nineteen eighty-nine.
+  judge:
+    gate_hit: false
+    gates: []
+    dimension_total: 10
+    answer_quality: 5
+    judgment: 3
+    spoken_fit: 2
+    reasons:
+    - States 1989, exactly what the reference sketch requires, with nothing to add.
+    - Recognised settled history and answered without a search, which is the whole point of this adversarial item.
+    - A single sentence with the year spelled out for speech.
+  human:
+    gate_hit: null
+    gates: []
+    answer_quality: null
+    judgment: null
+    spoken_fit: null
+    notes: ''
+- candidate: gemma4-26b-a4b-iq3
+  question_id: B19
+  why_selected: random sample
+  question: *id002
+  searched: true
+  spoken_answer: 'Yes, an RTX 4060 Ti with 16 GB of VRAM can run Qwen 3.8B models quite easily, as they only require about seven gigabytes of memory at recommended settings. It can even run the larger 8B version comfortably with plenty of room to spare.
+
+
+    However, knowing that the model will run is not enough to predict a good voice-assistant experience. While the hardware can handle the model, a smooth assistant also depends on how fast it generates text, the quality of the speech-to-text and text-to-speech systems you use, and whether the latency—the delay between you speaking and the assistant responding—is low enough to feel natural.'
+  judge:
+    gate_hit: true
+    gates:
+    - fabricated_current_fact
+    dimension_total: 6
+    answer_quality: 2
+    judgment: 2
+    spoken_fit: 2
+    reasons:
+    - It read 'Qwen3.8' as a 3.8-billion-parameter model and reported a seven-gigabyte figure that belongs to Qwen 3 4B, while the one on-point excerpt it retrieved says Qwen3.8 27B needs 16.5 GB against 14.4 GB usable and spills to roughly 2 tokens per second; the second paragraph on latency and the speech pipeline is the part that holds up.
+    - It gave the right skeptical answer to the second half - that fitting in VRAM says nothing about generation speed, speech-to-text and text-to-speech quality, or end-to-end latency - but accepted its own search results uncritically for the first half.
+    - Two short paragraphs of plain prose, answer first, no lists or citation markers.
+  human:
+    gate_hit: null
+    gates: []
+    answer_quality: null
+    judgment: null
+    spoken_fit: null
+    notes: ''
+- candidate: gemma4-26b-a4b-iq3
+  question_id: C23
+  why_selected: random sample
+  question: *id006
+  searched: false
+  spoken_answer: An eighteen percent tip comes out to eleven dollars and sixty-one cents. That brings your total for the dinner to seventy-six dollars and eleven cents.
+  judge:
+    gate_hit: false
+    gates: []
+    dimension_total: 10
+    answer_quality: 5
+    judgment: 3
+    spoken_fit: 2
+    reasons:
+    - Tip of 11.61 and total of 76.11 match the reference sketch exactly.
+    - Used the calculator for both steps rather than doing the arithmetic in its head, and did not search.
+    - Two sentences with the dollar amounts spoken out in full.
+  human:
+    gate_hit: null
+    gates: []
+    answer_quality: null
+    judgment: null
+    spoken_fit: null
+    notes: ''
+- candidate: gemma4-26b-a4b-iq3
+  question_id: C28
+  why_selected: random sample
+  question: &id011
+  - What's the monthly payment on a $400,000 mortgage at 6 percent for 30 years, and roughly how much interest do I pay in total?
+  searched: false
+  spoken_answer: Your monthly payment would be two thousand, three hundred ninety-eight dollars and twenty cents. Over the full thirty years, you would pay roughly four hundred sixty-three thousand, three hundred fifty-three dollars in total interest.
+  judge:
+    gate_hit: false
+    gates: []
+    dimension_total: 10
+    answer_quality: 5
+    judgment: 3
+    spoken_fit: 2
+    reasons:
+    - The $2,398.20 payment and roughly $463,353 in total interest both match the reference sketch.
+    - Ran the amortization through the loan tool and did not search for a question that needed no lookup.
+    - Two sentences with the dollar figures written out for speech.
+  human:
+    gate_hit: null
+    gates: []
+    answer_quality: null
+    judgment: null
+    spoken_fit: null
+    notes: ''
+- candidate: gemma4-26b-a4b-iq4
+  question_id: A4
+  why_selected: random sample
+  question: *id004
+  searched: false
+  spoken_answer: 'The most likely explanation is that your plant is undergoing natural senescence, where it reallocates nutrients from older leaves to support new growth at the top. However, it could also be a sign of overwatering, a nitrogen deficiency, or a gradual buildup of salts in the soil.
+
+
+    To help me narrow it down, could you tell me how often you water it, what kind of plant it is, and if you''ve noticed any other changes like spots on the leaves or a change in soil texture?'
+  judge:
+    gate_hit: false
+    gates: []
+    dimension_total: 9
+    answer_quality: 4
+    judgment: 3
+    spoken_fit: 2
+    reasons:
+    - It leads with natural senescence and nutrient reallocation and adds overwatering, nitrogen deficiency and salt buildup, but omits the sketch's shading of lower leaves and pot-bound roots, and its follow-up list leaves out light and how fast the leaves are dropping.
+    - It offered candidate causes as possibilities and asked for species, watering routine and other symptoms rather than asserting a single diagnosis.
+    - Four sentences of plain prose that lead with the likeliest cause and end with a natural spoken question.
+  human:
+    gate_hit: null
+    gates: []
+    answer_quality: null
+    judgment: null
+    spoken_fit: null
+    notes: ''
+- candidate: gemma4-26b-a4b-iq4
+  question_id: A8
+  why_selected: random sample
+  question: *id007
+  searched: false
+  spoken_answer: I would recommend the router-based design, as it is much more efficient, reliable, and cost-effective. Using a smaller router to handle simple tasks like setting timers or checking the weather via deterministic tools prevents the "hallucinations" that often occur when a large model tries to guess a result instead of calculating it. Plus, you'll save a significant amount of money and computing power by not firing up a massive model for every trivial request.
+  judge:
+    gate_hit: false
+    gates: []
+    dimension_total: 8
+    answer_quality: 3
+    judgment: 3
+    spoken_fit: 2
+    reasons:
+    - 'It picks the router design and gives determinism for timers and weather plus cost savings, but it is a one-sided case: no routing-error or added-complexity cost, no real characterization of the single-model design, and no note on when one big model is fine.'
+    - It committed to a recommendation with reasons rather than hedging, and correctly treated this as a design question needing no search.
+    - Three sentences of plain prose leading with the recommendation, with only scare quotes around 'hallucinations' as a mild blemish.
+  human:
+    gate_hit: null
+    gates: []
+    answer_quality: null
+    judgment: null
+    spoken_fit: null
+    notes: ''
+- candidate: gemma4-26b-a4b-iq4
+  question_id: B13
+  why_selected: random sample
+  question:
+  - I'm staying in Lucerne and want to take a scenic day trip tomorrow using public transportation. What are my best options, considering current schedules and weather?
+  searched: true
+  spoken_answer: "Since tomorrow's weather is looking beautiful—sunny with a high of around thirty degrees Celsius—you should definitely take advantage of the clear skies with a mountain excursion. \n\nYour best option is the Mount Pilatus \"Golden Round Trip.\" It’s a classic for a reason: you can take a boat across Lake Lucerne, ride the world's steepest cogwheel railway up the mountain, and then descend via aerial cable cars. It’s incredibly scenic and very easy to do using the public transport network.\n\nIf you prefer something a bit more relaxed or want to avoid steep climbs, Mount Rigi is another fantastic choice. It's known as the \"Queen of the Mountains\" and offers lovely, gentle walks and rolling views. You can reach it by boat to Vitznau and then take the mountain railway up.\n\nLastly, if you're looking for high-alpine, glacier views, you could head to Mount Titlis near Engelberg. It's about a forty-five-minute train ride from Lucerne and offers a much more dramatic, snowy\
+    \ landscape, which is a great contrast to the warmth in the city."
+  judge:
+    gate_hit: false
+    gates: []
+    dimension_total: 8
+    answer_quality: 4
+    judgment: 3
+    spoken_fit: 1
+    reasons:
+    - It ties the recommendation to the retrieved 7 September forecast of sun near thirty degrees and every route detail (Pilatus boat plus cogwheel plus gondola, Rigi by boat to Vitznau, Titlis forty-five minutes by train) traces to the excerpts, but it offers three options rather than a pick and gives no actual timetable despite the user asking about current schedules.
+    - Searching was right for tomorrow's weather and it matched the mountain day to the clear forecast instead of guessing conditions.
+    - Four paragraphs covering three separate excursions is far more than a listener can hold, and it reads out quoted nicknames like 'Golden Round Trip' and 'Queen of the Mountains'.
+  human:
+    gate_hit: null
+    gates: []
+    answer_quality: null
+    judgment: null
+    spoken_fit: null
+    notes: ''
+- candidate: gemma4-26b-a4b-iq4
+  question_id: B16
+  why_selected: random sample
+  question:
+  - I'm considering signing a two-year lease. Based on current rental conditions in Long Island City, does accepting a 4% annual increase seem competitive? Compare my offer against the current market, but also explain the risks of using advertised rents as the comparison.
+  searched: true
+  spoken_answer: 'Whether a four percent annual increase is competitive depends entirely on whether your apartment is rent-stabilized or market-rate. If you are in a rent-stabilized unit, a four percent increase is actually slightly lower than the current guidelines, which set a four and a half percent increase for two-year leases. For a market-rate apartment, four percent is quite competitive, as many landlords aim for higher margins, though this varies by building and specific neighborhood demand.
+
+
+    When comparing your offer to advertised rents, keep in mind that those numbers are often "teaser" rates or represent the highest possible price a landlord hopes to get. Advertised rents don''t account for the actual cost of moving, the difference in amenities between a specific unit and a model unit, or the fact that many online listings are slightly outdated or include hidden fees.
+
+
+    To give you a more precise answer, do you know if your current building is rent-stabilized?'
+  judge:
+    gate_hit: false
+    gates: []
+    dimension_total: 7
+    answer_quality: 4
+    judgment: 2
+    spoken_fit: 1
+    reasons:
+    - 'It correctly splits the question on stabilized versus market-rate and cites the retrieved Order #57 figure of 4.5 percent for a two-year stabilized lease, and covers the advertised-rent risks (teaser pricing, stale listings, hidden fees), though its ''quite competitive'' verdict for market-rate rests on no Long Island City data at all.'
+    - It asked whether the building is rent-stabilized rather than inventing that fact, but never told the user its search turned up no Long Island City rent data before offering a market-rate verdict.
+    - Three paragraphs ending in a question, with a spoken quotation around 'teaser' rates, runs longer than a listener needs.
+  human:
+    gate_hit: null
+    gates: []
+    answer_quality: null
+    judgment: null
+    spoken_fit: null
+    notes: ''
+- candidate: gemma4-26b-a4b-iq4
+  question_id: B21
+  why_selected: random sample
+  question: *id008
+  searched: false
+  spoken_answer: I can't give you financial advice, but I can help you run the numbers to see if it makes sense for your specific situation. To figure out if a refinance would actually save you money, I'll need to know your current interest rate, your remaining loan balance, and what kind of closing costs you're expecting to pay. Would you like to go through those details now?
+  judge:
+    gate_hit: true
+    gates:
+    - agreed_with_false_premise
+    - did_not_search_on_search_question
+    dimension_total: 4
+    answer_quality: 2
+    judgment: 0
+    spoken_fit: 2
+    reasons:
+    - It asks for the current rate, balance and closing costs, which is part of the refinance logic, but it never questions the claim that the Fed cut rates to zero last month and never mentions current mortgage rates or a break-even period.
+    - The central call this question demanded was checking a suspicious current-rate claim, and it neither searched nor pushed back, opening instead with a needless refusal to give financial advice.
+    - Four short sentences of plain prose ending in a natural spoken question, with no markup.
+  human:
+    gate_hit: null
+    gates: []
+    answer_quality: null
+    judgment: null
+    spoken_fit: null
+    notes: ''
+- candidate: gemma4-26b-a4b-iq4
+  question_id: C23
+  why_selected: random sample
+  question: *id006
+  searched: false
+  spoken_answer: An eighteen percent tip comes to eleven dollars and sixty-one cents, making your total seventy-six dollars and eleven cents.
+  judge:
+    gate_hit: false
+    gates: []
+    dimension_total: 10
+    answer_quality: 5
+    judgment: 3
+    spoken_fit: 2
+    reasons:
+    - 'Both figures match the sketch exactly: 11.61 tip and 76.11 total.'
+    - It used the calculator tools for both steps rather than doing the arithmetic in its head, and did not search.
+    - One sentence with the amounts spelled out in dollars and cents.
+  human:
+    gate_hit: null
+    gates: []
+    answer_quality: null
+    judgment: null
+    spoken_fit: null
+    notes: ''
+- candidate: qwen3.6-35b-a3b-iq3
+  question_id: A1
+  why_selected: random sample
+  question: *id009
+  searched: false
+  spoken_answer: 'The main difference lies in how the model is structured and what actually needs to fit in your GPU memory. A dense model with 30 billion parameters requires all 30 billion weights to be loaded into memory at once because every parameter is active for every single input. In contrast, a Mixture of Experts model with the same total parameter count uses a sparse architecture. It splits its 30 billion parameters across many different "experts" and only activates a small subset of them—often just a few billion—for any given token. Since the weights of the inactive experts can remain in your system''s slower RAM and only the active weights are loaded into the fast VRAM, you can run the MoE model on a 16 GB card that wouldn''t be big enough for the dense version.
+
+
+    However, you still need enough VRAM to store the model''s optimizer states, gradients, and the KV cache for your context, which is why the active parameter count must be significantly lower than the total to fit comfortably on consumer hardware.'
+  judge:
+    gate_hit: false
+    gates: []
+    dimension_total: 7
+    answer_quality: 3
+    judgment: 2
+    spoken_fit: 2
+    reasons:
+    - It gets the offload mechanism right but frames MoE as inherently needing less VRAM, never says the total parameter count sets the storage requirement for both, omits quantization, and drags in optimizer states and gradients which are training-only and irrelevant to running inference.
+    - Correctly answered from general knowledge without searching, but presented expert offloading as automatic rather than a runtime and quantization dependent choice.
+    - Plain prose in two paragraphs with no lists, markdown or URLs, leading with the structural difference the question asked about.
+  human:
+    gate_hit: null
+    gates: []
+    answer_quality: null
+    judgment: null
+    spoken_fit: null
+    notes: ''
+- candidate: qwen3.6-35b-a3b-iq3
+  question_id: A8
+  why_selected: random sample
+  question: *id007
+  searched: false
+  spoken_answer: I recommend the second design, the hybrid approach with a router, for a personal AI assistant. A large language model is excellent at understanding nuance and reasoning, but it’s inefficient and sometimes error-prone for simple, well-defined tasks like setting an alarm or converting units. By using a smaller router to handle these deterministic actions through tools, you get faster, more reliable responses for everyday commands while reserving the heavy computational power of the larger model for the complex, creative, or ambiguous questions that truly need it. This split leads to a smoother, more responsive user experience overall.
+  judge:
+    gate_hit: false
+    gates: []
+    dimension_total: 7
+    answer_quality: 3
+    judgment: 2
+    spoken_fit: 2
+    reasons:
+    - Recommends the router and gives the right reasons about latency, determinism for simple commands and reserving the big model, but names none of the router design's costs such as routing errors and extra moving parts, and never says when the single-model design would be fine.
+    - Correctly answered without searching, but presented the recommendation as one-sided by omitting the tradeoff the comparison invited.
+    - Four sentences of plain prose opening with the recommendation, no lists or markup.
+  human:
+    gate_hit: null
+    gates: []
+    answer_quality: null
+    judgment: null
+    spoken_fit: null
+    notes: ''
+- candidate: qwen3.6-35b-a3b-iq3
+  question_id: B21
+  why_selected: random sample
+  question: *id008
+  searched: true
+  spoken_answer: 'I need to check the current state of interest rates and mortgages to give you a helpful answer.
+
+
+    I need to clarify something important here. The Fed did not cut rates to zero last month. The latest data shows the federal funds rate is currently around 3.75 percent, and in fact, markets are actually pricing in a potential rate *hike* at the upcoming September 15-16 meeting. There was no zero-rate cut in August 2026.
+
+
+    That said, mortgage rates have likely moved down somewhat from their peaks, though they haven''t hit zero. To tell you whether refinancing makes sense right now, I''d need to know your current mortgage rate and the terms of your loan. Do you know what rate you''re currently paying?'
+  judge:
+    gate_hit: false
+    gates: []
+    dimension_total: 8
+    answer_quality: 4
+    judgment: 3
+    spoken_fit: 1
+    reasons:
+    - Flatly corrects the premise with the 3.75 percent benchmark from the Trading Economics excerpt and the CNBC reporting that markets are pricing a possible hike at the September 15-16 meeting, weakened only by the unsourced aside that mortgage rates have likely moved down from their peaks.
+    - Searched before answering, refused the false premise outright, and asked for the user's current rate and loan terms rather than inventing a refinance recommendation.
+    - Two short paragraphs that lead with the correction, but the literal markdown asterisks around the word hike are a formatting slip a speech engine would stumble on.
+  human:
+    gate_hit: null
+    gates: []
+    answer_quality: null
+    judgment: null
+    spoken_fit: null
+    notes: ''
+- candidate: qwen3.6-35b-a3b-iq3
+  question_id: C23
+  why_selected: random sample
+  question: *id006
+  searched: false
+  spoken_answer: An 18 percent tip comes to $11.61. The total bill with the tip would be $76.11.
+  judge:
+    gate_hit: false
+    gates: []
+    dimension_total: 10
+    answer_quality: 5
+    judgment: 3
+    spoken_fit: 2
+    reasons:
+    - Gives $11.61 for the tip and $76.11 for the total, exactly the reference figures.
+    - Used the percent and calculate tools rather than doing the arithmetic in its head, and did not search on a pure arithmetic question.
+    - Two short sentences that lead with the tip then the total, with no lists or markup.
+  human:
+    gate_hit: null
+    gates: []
+    answer_quality: null
+    judgment: null
+    spoken_fit: null
+    notes: ''
+- candidate: qwen3.6-35b-a3b-iq3
+  question_id: C25
+  why_selected: random sample
+  question: *id010
+  searched: false
+  spoken_answer: That's about 22 degrees Celsius. A 5-kilometer run is roughly 3.11 miles.
+  judge:
+    gate_hit: false
+    gates: []
+    dimension_total: 10
+    answer_quality: 5
+    judgment: 3
+    spoken_fit: 2
+    reasons:
+    - About 22 degrees Celsius and 3.11 miles, both matching the reference sketch.
+    - Issued both conversions as tool calls in one step rather than converting from memory, and did not search.
+    - Two short sentences answering the two parts in order, with the Celsius figure sensibly rounded for speech.
+  human:
+    gate_hit: null
+    gates: []
+    answer_quality: null
+    judgment: null
+    spoken_fit: null
+    notes: ''
+- candidate: qwen3.6-35b-a3b-iq3
+  question_id: C28
+  why_selected: random sample
+  question: *id011
+  searched: false
+  spoken_answer: Your monthly payment would be about two thousand three hundred ninety-eight dollars. Over the life of the loan, you'd pay roughly four hundred sixty-three thousand dollars in interest.
+  judge:
+    gate_hit: false
+    gates: []
+    dimension_total: 10
+    answer_quality: 5
+    judgment: 3
+    spoken_fit: 2
+    reasons:
+    - About $2,398 a month and roughly $463,000 in total interest, matching the sketch's 2,398.20 and 463,353.
+    - Ran the amortization through the loan tool and rounded sensibly for speech without distorting either figure.
+    - Two sentences with the amounts spoken as words, leading with the payment.
+  human:
+    gate_hit: null
+    gates: []
+    answer_quality: null
+    judgment: null
+    spoken_fit: null
+    notes: ''
+- candidate: claude-fable-5-1-manual
+  question_id: A1
+  why_selected: random sample
+  question: *id009
+  searched: false
+  spoken_answer: Because memory is set by the total parameter count, but speed is set by the active count. A mixture of experts model with thirty billion total parameters still has to keep all thirty billion weights loaded, so at four bits it needs roughly fifteen to eighteen gigabytes, about the same as a dense thirty billion model, and both are a tight or impossible fit in sixteen gigabytes. The difference is what happens when it does not fit. A dense model touches every weight on every token, so anything spilled to system memory drags the whole thing to a crawl. The mixture of experts model only routes each token through a few experts, so the rarely used experts can sit in slower system memory without hurting much, and the small active set keeps it fast. So it is not that the mixture of experts needs less memory by nature, it is that it tolerates being partly outside the graphics card far better.
+  judge:
+    gate_hit: false
+    gates: []
+    dimension_total: 10
+    answer_quality: 5
+    judgment: 3
+    spoken_fit: 2
+    reasons:
+    - It separates storage from speed exactly as the sketch requires, giving the fifteen to eighteen gigabyte figure for both models and explaining that sparse routing makes expert offload to system memory tolerable rather than reducing memory need.
+    - It correctly answered from stable technical knowledge without searching and explicitly rejected the tempting false claim that MoE needs less VRAM by nature.
+    - Plain prose with no lists or markdown, opening with the one-line answer that memory is set by total parameters and speed by active ones.
+  human:
+    gate_hit: null
+    gates: []
+    answer_quality: null
+    judgment: null
+    spoken_fit: null
+    notes: ''
+- candidate: claude-fable-5-1-manual
+  question_id: A4
+  why_selected: random sample
+  question: *id004
+  searched: false
+  spoken_answer: The most likely explanation is ordinary aging. Many plants shed their oldest, lowest leaves as they push new growth up top, and if the plant is otherwise vigorous that is usually normal. The main alternatives are a nitrogen shortage, because nitrogen is mobile and the plant pulls it from old leaves to feed new ones, lower leaves being shaded out by the canopy, or a root problem from overwatering or a pot it has outgrown. Before calling it a problem I would want to know what kind of plant it is, how many leaves are going and how fast, how you water and whether the pot drains, how much light it gets, when you last fertilized, and whether the yellowing is even across the leaf or patterned along the veins. If you tell me the species and your watering routine, I can narrow it down.
+  judge:
+    gate_hit: false
+    gates: []
+    dimension_total: 10
+    answer_quality: 5
+    judgment: 3
+    spoken_fit: 2
+    reasons:
+    - It names senescence as most likely and then the sketch's alternatives, mobile nitrogen moving from old leaves to new, shading of lower leaves, and overwatering or a pot outgrown, then lists the diagnostic details it would want.
+    - It asked for species, watering routine, light, fertilizer history, and whether the yellowing is even or patterned rather than asserting a single cause.
+    - Plain conversational prose that leads with the answer and ends with a natural spoken follow-up question, no formatting artifacts.
+  human:
+    gate_hit: null
+    gates: []
+    answer_quality: null
+    judgment: null
+    spoken_fit: null
+    notes: ''
+- candidate: claude-fable-5-1-manual
+  question_id: A7
+  why_selected: random sample
+  question:
+  - I have a computer that consumes 50 watts when idle and 300 watts during active inference. If I interact with it for roughly one hour per day, estimate the monthly electricity cost. State your assumptions instead of pretending you know exactly how much time it spends under load.
+  searched: false
+  spoken_answer: Roughly six to thirteen dollars a month, and here is the arithmetic. If the machine sits at fifty watts for twenty three hours and three hundred watts for one hour a day, that is about one point one five kilowatt hours idle plus zero point three under load, so one point four five kilowatt hours a day or around forty three and a half a month. At fifteen cents per kilowatt hour that is about six and a half dollars, at thirty cents about thirteen. Two caveats. I am assuming your electricity rate, and residential rates in the US range roughly between those numbers. And I am treating your hour of use as a full hour at three hundred watts, which overstates it, since a machine mostly waits for you even during an interactive session. The idle draw is the real cost driver here, about five sixths of the total.
+  judge:
+    gate_hit: false
+    gates: []
+    dimension_total: 9
+    answer_quality: 4
+    judgment: 3
+    spoken_fit: 2
+    reasons:
+    - The 1.45 kWh per day, 43.5 per month and six to thirteen dollar range all match the sketch, but the closing claim that idle is about five sixths of the total overstates the tool's own 79 percent idle share.
+    - It named both assumptions the sketch demands, the electricity rate given as a fifteen to thirty cent range and the fact that a full hour at three hundred watts overstates real load.
+    - Leads with the six to thirteen dollar range and spells numbers out for speech, with the caveats as prose rather than a list, though it runs longer than needed.
+  human:
+    gate_hit: null
+    gates: []
+    answer_quality: null
+    judgment: null
+    spoken_fit: null
+    notes: ''
+- candidate: claude-fable-5-1-manual
+  question_id: A9
+  why_selected: random sample
+  question:
+  - 'I say: "I want to go somewhere warm but not too expensive, preferably with good public transportation." What information is missing before you can make a good recommendation, and what assumptions should you avoid making?'
+  searched: false
+  spoken_answer: Before I could recommend anything I would need to know where you are starting from, when and for how long you are going, and what not too expensive means to you as a number. I would also want to know what counts as warm, whether you are open to leaving the country and have the passport and visas for it, who is traveling with you, and what you like doing once you are there. The assumptions to avoid are guessing your home city or currency, assuming warm means a beach, assuming you want a big city because you mentioned public transport, and picking a season for you. It would also be a mistake to name a destination as if the answer were already known. So what I would actually do is ask you those few questions first.
+  judge:
+    gate_hit: false
+    gates: []
+    dimension_total: 10
+    answer_quality: 5
+    judgment: 3
+    spoken_fit: 2
+    reasons:
+    - It lists the sketch's missing items, origin, dates and length, a budget number, what warm means, passport and visa, companions and interests, and the assumptions to avoid, home city and currency, warm meaning beach, wanting a big city, and picking a season.
+    - It explicitly refuses to name a destination as if the answer were known and ends by saying it would ask the questions first.
+    - Plain prose in four sentences with no lists or markdown despite enumerating several items.
+  human:
+    gate_hit: null
+    gates: []
+    answer_quality: null
+    judgment: null
+    spoken_fit: null
+    notes: ''
+- candidate: claude-fable-5-1-manual
+  question_id: A10
+  why_selected: random sample
+  question: *id012
+  searched: false
+  spoken_answer: Because memory decides whether a model runs at all, and speed only decides how fast it runs once it fits. If a model does not fit in your graphics memory, it either fails to load or spills into slower system memory and slows to a crawl, so a faster card with less memory can be strictly worse. More memory also means you can run the model at higher precision, which improves answer quality, and keep a longer conversation in context. So buy enough memory for the models you want first, then worry about speed.
+  judge:
+    gate_hit: false
+    gates: []
+    dimension_total: 10
+    answer_quality: 5
+    judgment: 3
+    spoken_fit: 2
+    reasons:
+    - It covers the sketch fully in four sentences, that a model which does not fit fails or spills to slower memory, that a faster card with less memory can be strictly worse, and that more memory buys higher precision and longer context.
+    - It answered from stable knowledge without searching and ended with the practical ordering, buy memory for the models you want first, then speed.
+    - About a hundred words, well inside the 120-word limit, leading with the answer in plain prose with no lists or markdown.
+  human:
+    gate_hit: null
+    gates: []
+    answer_quality: null
+    judgment: null
+    spoken_fit: null
+    notes: ''
+- candidate: claude-fable-5-1-manual
+  question_id: C26
+  why_selected: random sample
+  question: *id013
+  searched: false
+  spoken_answer: Rent takes about thirty eight and a half percent of your take-home pay. After a four percent increase it would be two thousand nine hundred sixty four dollars a month, which pushes that share to just over forty percent.
+  judge:
+    gate_hit: false
+    gates: []
+    dimension_total: 10
+    answer_quality: 5
+    judgment: 3
+    spoken_fit: 2
+    reasons:
+    - Both required numbers are right, about 38.5 percent of take-home pay and 2,964 after the increase, and the added note that the share climbs to just over forty percent checks out.
+    - It used the percent tool for both parts and added the one genuinely useful implication rather than inventing budgeting advice the user did not ask for.
+    - Two short sentences of plain prose with the figures spoken out and no lists or markdown.
   human:
     gate_hit: null
     gates: []

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Opens with a flat 'No, that is not correct' and gives the right reason - all parameters must be resident plus KV cache and overhead - but omits why 4B active still makes it fast.",
+  "judgment_reason": "Correctly rejected the false premise outright and answered from general knowledge without a needless search.",
+  "spoken_fit_reason": "Two short paragraphs of plain prose that lead with the verdict, no lists or markup."
+}

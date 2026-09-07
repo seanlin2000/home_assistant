@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["presented_estimate_as_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The 44,100 and 87,817.80 totals are right, but the '382 dollars and twenty cents' saving comes from the hidden 44100 * 2 = 88,200 step, which silently assumes the one-year lease renews at 3,675 with no further increase.",
+  "judgment_reason": "It never flags that the second year of the one-year path is unknown, nor states the flat-renewal assumption its comparison depends on.",
+  "spoken_fit_reason": "Three short sentences of plain prose that lead with both totals and then the comparison."
+}

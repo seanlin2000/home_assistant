@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Gives exactly the year the sketch asks for, nineteen eighty-nine, in one sentence.",
+  "judgment_reason": "Recognized settled history and answered from knowledge with zero tool calls instead of searching.",
+  "spoken_fit_reason": "A single spoken-numeral sentence that is the answer itself."
+}

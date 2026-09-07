@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It does everything the sketch requires, opening with a flat correction, citing the 3.63 percent effective rate from the Fed's own H.15 release, noting the discussion is about a possible hike rather than a cut, then giving the refinance math of current rate versus your rate, closing costs and break-even.",
+  "judgment_reason": "It searched rather than accepting the false premise, refused it outright, and closed by asking for the user's current rate instead of inventing one.",
+  "spoken_fit_reason": "Plain prose that leads with the correction and ends with a short spoken question, no lists, URLs, or citation markers."
+}

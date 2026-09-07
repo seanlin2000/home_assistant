@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Every figure matches the sketch, 44,100 for the one-year lease and 43,260 plus 44,557.80 for the two-year, and it gives the 840 first-year saving before extending to a stated-assumption two-year comparison of 90,405 versus 87,817.80.",
+  "judgment_reason": "It flagged that the second year of the one-year path is unknown and labelled the five percent renewal as an assumption rather than presenting the 2,587 figure as fact.",
+  "spoken_fit_reason": "Numbers are spelled out in words for speech and the prose has no lists or markdown, though the run of figures makes it a dense listen."
+}

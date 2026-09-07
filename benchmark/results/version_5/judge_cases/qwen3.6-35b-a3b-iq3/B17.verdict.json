@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Correctly answers yes and points at the real mechanism, custom microWakeWord models flashed to the Voice PE's ESP32-S3 through ESPHome, but blurs that with the openWakeWord and Wyoming route from the generic Home Assistant page, which the excerpt describes for an Atom Echo rather than for the Voice PE.",
+  "judgment_reason": "Searched as instructed and named its sources, but the question asked which source it trusted and why, and it lumped official docs and a community GitHub repo together instead of saying the repo is the one that actually demonstrates this on Voice PE hardware.",
+  "spoken_fit_reason": "A single paragraph of plain prose leading with the yes, no URLs, repository paths or markup despite the code-heavy excerpts."
+}

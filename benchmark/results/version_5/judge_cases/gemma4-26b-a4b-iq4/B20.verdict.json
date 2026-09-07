@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 2,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The parts (RTX 5060 Ti 16GB at about $430, Ryzen 5 7600, 32 GB DDR5, 1 TB NVMe) and the used 3090 at roughly $700 all come from the excerpts, and it usefully adds the retrieved Assist plus faster-whisper plus Piper voice stack, but it never says what the whole build costs and ignores the web-search half of the requirement.",
+  "judgment_reason": "It was explicit that 14B-32B is the ceiling and that the 70B-class models rivalling top-tier ChatGPT will not fit, which is the honesty the user asked for, but it presented a parts list its own source totals at about $1,010 without stating a total or flagging that the budget is at its limit.",
+  "spoken_fit_reason": "Four paragraphs of parts and a closing offer overran the word cap, so the listener never heard the used 3090 option at all."
+}

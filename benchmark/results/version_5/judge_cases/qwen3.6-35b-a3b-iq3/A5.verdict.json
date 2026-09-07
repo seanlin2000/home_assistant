@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Covers the beamforming far-field array, on-device wake word and low-latency local speech, and speaker placement, but omits acoustic echo cancellation, where to place the device relative to walls and noise, and the privacy of always-on audio.",
+  "judgment_reason": "Answered from knowledge without searching and honoured the no-product-names constraint, describing categories such as a six-plus microphone array and an on-device NPU rather than any brand.",
+  "spoken_fit_reason": "Three plain-prose sentences leading with the microphone array, no lists, markdown or URLs."
+}

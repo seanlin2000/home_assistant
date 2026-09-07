@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It gives 19,090 for end-of-month deposits and just over 19,150 for start-of-month, and splits out the 18,000 of deposits from roughly 1,100 of interest, which is exactly the reference sketch.",
+  "judgment_reason": "It ran the annuity formula through the calculator, offered both deposit-timing conventions rather than silently picking one, and flagged that the four percent rate is assumed to hold.",
+  "spoken_fit_reason": "Three short sentences of plain prose with the numbers spelled out for speech and no lists or formulas read aloud."
+}

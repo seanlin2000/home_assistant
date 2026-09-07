@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It correctly grounds the yes in the official openWakeWord guide and flags on-device detection as unverified, but it ignores the two most device-specific results it retrieved, the Nabu Casa page listing only Hey Jarvis, Hey Mycroft and Okay Nabu as Voice PE options and the open-voice-pe repository whose whole purpose is adding openWakeWord to that device via custom firmware.",
+  "judgment_reason": "It named its source and its reason as asked and was honest about the limit of what it verified, but it dismissed the other results as older tutorials for a different detector when one was a current firmware project directly answering the question.",
+  "spoken_fit_reason": "Opens with 'Yes, with one caveat' and stays in plain prose for five sentences with no lists, URLs, or citation markers."
+}

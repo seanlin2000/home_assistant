@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Covers the far-field array, echo cancellation and noise suppression, and speaker quality, but omits placement, the local wake-word path, where the speech compute runs, latency, and always-on audio privacy from the sketch.",
+  "judgment_reason": "Honoured the 'no specific products' constraint throughout and answered from general knowledge without searching.",
+  "spoken_fit_reason": "Three sentences of plain prose, no brand names, lists or markup."
+}

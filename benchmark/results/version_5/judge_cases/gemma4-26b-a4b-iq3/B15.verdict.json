@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It is right that no new 16 GB NVIDIA card fits under $500 and that the 5060 Ti 16GB sits above $600, but the actual recommendation - a used RTX 4060 Ti 16GB - appears nowhere in the four excerpts except as a passing performance baseline, with no price or availability retrieved for it.",
+  "judgment_reason": "It deserves credit for saying up front that the budget is very hard to meet rather than pushing an over-budget card, but it then filled the gap with a card its search never priced instead of reporting that no qualifying NVIDIA option turned up.",
+  "spoken_fit_reason": "Two sentences of plain prose that lead with the constraint verdict."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It asserts the exact misconception the reference sketch rules out, claiming the GPU 'only has to hold the parameters of those three experts plus the shared layers, so the memory footprint can be well under 30 billion numbers', when all experts must be resident and MoE saves compute rather than storage.",
+  "judgment_reason": "Answering from general knowledge without searching was the right call, but it stated a confident wrong technical claim with no hedge and never mentioned quantization or CPU offload as the real reason 16 GB can work.",
+  "spoken_fit_reason": "Plain prose in about five sentences with no lists, markdown, or URLs, and it opens directly with the dense-model explanation."
+}

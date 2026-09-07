@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": false,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It does keep the 24 GB recommendation and make the 14B-versus-32B tier argument, but wraps it in a self-correcting monologue about GPU SKUs the user never mentioned and asserts that 24 GB 'usually lands you on the RTX 5090' and on a '5070 Ti Super', neither of which is in any excerpt and the former contradicting the retrieved listing of the 5090 at 32 GB.",
+  "judgment_reason": "Burned all five tool calls searching card prices for a question about whether $400 changes a preference it had already reasoned out, then narrated its own confusion instead of deciding.",
+  "spoken_fit_reason": "Contains a bulleted list with asterisks, bold markdown, a 'Here is why:' heading line, and trails off mid-sentence at 'Stick with the 24'."
+}

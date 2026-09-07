@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "19,090.78 is the end-of-month annuity figure the sketch calls for, but it omits the breakdown that 18,000 of that is the deposits themselves and only about 1,091 is interest.",
+  "judgment_reason": "Built the correct annuity expression in the calculator instead of estimating, and did not search.",
+  "spoken_fit_reason": "A single sentence with the amount spoken out."
+}

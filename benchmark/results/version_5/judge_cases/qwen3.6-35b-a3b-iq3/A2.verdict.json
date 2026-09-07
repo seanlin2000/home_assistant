@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Gives 44,100 for the one-year and 87,817.80 for the two-year, and puts them on a comparable two-year footing at 90,405 versus 87,817.80 for a 2,587.20 saving, all matching the tool schedules.",
+  "judgment_reason": "Recognised mid-way that the raw 43,717.80 difference compared unequal periods and explicitly named the renewal-at-5-percent assumption that makes the comparison fair.",
+  "spoken_fit_reason": "Four short spoken sentences that lead with the totals, no lists or markup."
+}

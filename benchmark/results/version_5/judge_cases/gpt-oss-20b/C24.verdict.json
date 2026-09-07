@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The annuity formula and the tool result of 19,090.78 are right, but the spoken figure is 'nineteen thousand ninety-seven dollars', which is not the number the calculator returned, and it never breaks out that 18,000 of the balance is the deposits so the interest is only about 1,091.",
+  "judgment_reason": "Correctly treated this as a calculator question and set up end-of-month compounding properly, but misread its own tool output when speaking the result.",
+  "spoken_fit_reason": "A single sentence with the amount spoken in words and a hedge of 'about', exactly the right length for speech."
+}

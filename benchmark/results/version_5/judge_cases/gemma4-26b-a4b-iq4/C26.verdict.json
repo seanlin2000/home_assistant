@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Both numbers match the sketch: about thirty-eight and a half percent of take-home pay and 2,964 after the four percent increase.",
+  "judgment_reason": "It used the percent and calculate tools for both steps and rounded the percentage with an explicit 'about'.",
+  "spoken_fit_reason": "Two short sentences with all figures spelled out for speech."
+}

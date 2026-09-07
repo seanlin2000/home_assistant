@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The fit half is sound and traceable, an 18 GB Q4 27B spilling on a 16 GB card, but it never answers the second half the user actually asked, whether what it found is enough to predict a voice-assistant experience, and it ignores the 13.4 GB Q3 GGUF the same source names as the 16GB path.",
+  "judgment_reason": "It searched as instructed but delivered a confident latency verdict off numbers the ModelFit source labels 'estimates, not measured benchmarks', and never raised the missing pieces a voice pipeline turns on, time to first token, wake-word and speech-to-text overhead, or reasoning-effort defaults the guide warns about.",
+  "spoken_fit_reason": "A single paragraph of five sentences leading with the verdict, plain prose with no lists, markdown, or URLs."
+}

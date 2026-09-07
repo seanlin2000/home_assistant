@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Both figures match the reference sketch exactly, 11.61 for the tip and 76.11 for the total, and both trace to the tool results.",
+  "judgment_reason": "It used the percent and calculate tools rather than doing the arithmetic itself, and did not search a question that needs no search.",
+  "spoken_fit_reason": "Two sentences with every amount written out in words, no digits, symbols, or lists."
+}

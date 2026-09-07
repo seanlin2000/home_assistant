@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It opens with 'That is not correct' and gives the core reason that the whole model must be resident in video memory, but omits why all experts must stay resident (different tokens route to different experts) and says nothing about KV cache or activations.",
+  "judgment_reason": "It rejected the false premise outright and answered from stable technical knowledge with no needless search.",
+  "spoken_fit_reason": "Two sentences of plain prose that lead with the verdict."
+}

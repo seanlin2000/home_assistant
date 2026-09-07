@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "Flatly corrects the premise with the 3.75 percent benchmark from the Trading Economics excerpt and the CNBC reporting that markets are pricing a possible hike at the September 15-16 meeting, weakened only by the unsourced aside that mortgage rates have likely moved down from their peaks.",
+  "judgment_reason": "Searched before answering, refused the false premise outright, and asked for the user's current rate and loan terms rather than inventing a refinance recommendation.",
+  "spoken_fit_reason": "Two short paragraphs that lead with the correction, but the literal markdown asterisks around the word hike are a formatting slip a speech engine would stumble on."
+}

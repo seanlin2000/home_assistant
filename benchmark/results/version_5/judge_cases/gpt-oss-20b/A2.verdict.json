@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Every figure is wrong: it applied no increase to year one ('forty-two thousand dollars the first year'), so the one-year total of 44,100 and the two-year total of 87,817.80 from the sketch never appear, and the spoken 'eighty-five thousand two-hundred' does not even match its own tool result of 85,260 or the 84,900 it subtracted from.",
+  "judgment_reason": "It never says the two options cover different lengths and never states an assumption about the unknown second-year renewal, and it silently compared a two-year total against a mislabeled one-year path.",
+  "spoken_fit_reason": "Short spoken prose with numbers written out and no lists or markup, though it runs to three paragraphs."
+}

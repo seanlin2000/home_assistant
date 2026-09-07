@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It read 'Qwen3.8' as a 3.8-billion-parameter model and reported a seven-gigabyte figure that belongs to Qwen 3 4B, while the one on-point excerpt it retrieved says Qwen3.8 27B needs 16.5 GB against 14.4 GB usable and spills to roughly 2 tokens per second; the second paragraph on latency and the speech pipeline is the part that holds up.",
+  "judgment_reason": "It gave the right skeptical answer to the second half - that fitting in VRAM says nothing about generation speed, speech-to-text and text-to-speech quality, or end-to-end latency - but accepted its own search results uncritically for the first half.",
+  "spoken_fit_reason": "Two short paragraphs of plain prose, answer first, no lists or citation markers."
+}

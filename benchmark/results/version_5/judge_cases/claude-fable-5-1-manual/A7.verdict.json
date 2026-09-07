@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The 1.45 kWh per day, 43.5 per month and six to thirteen dollar range all match the sketch, but the closing claim that idle is about five sixths of the total overstates the tool's own 79 percent idle share.",
+  "judgment_reason": "It named both assumptions the sketch demands, the electricity rate given as a fifteen to thirty cent range and the fact that a full hour at three hundred watts overstates real load.",
+  "spoken_fit_reason": "Leads with the six to thirteen dollar range and spells numbers out for speech, with the caveats as prose rather than a list, though it runs longer than needed."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Says 1989, which is exactly what the reference sketch requires.",
+  "judgment_reason": "Recognised settled history and answered directly with zero tool calls rather than searching a date that cannot change.",
+  "spoken_fit_reason": "A single short sentence that leads with the year, ideal for text to speech."
+}

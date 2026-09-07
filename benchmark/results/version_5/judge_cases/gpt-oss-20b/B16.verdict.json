@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It misreads the retrieved RGB order, treating the 4.5 percent two-year guideline as an annual rate and calling the user's 4 percent per year 'only a hair below the legal cap' when 4 percent compounded over two years is roughly double the 4.5 percent Order #57 allows for the full term.",
+  "judgment_reason": "It did separate the stabilized and free-market cases and gave a genuine account of why advertised rents mislead, but nothing in the four retrieved sources says anything about Long Island City market rents and it asserted '5 to 6 percent in recent months' rather than admitting it had no market data.",
+  "spoken_fit_reason": "Three paragraphs with a parenthetical aside, long enough that the harness cut the spoken output before the closing advice."
+}

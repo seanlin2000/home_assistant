@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The caveats about advertised rents, concessions, new luxury supply shifting the mix and seasonal signing are excellent, but the factual half invents a peak set last September and a 55 dollar decline and claims rents have been flat to slightly down over the year, when the retrieved reports show Long Island City up 2.1 percent year over year and Queens up 3.05 percent.",
+  "judgment_reason": "It searched appropriately, pushed back hard on the asking-rent comparison and ended with the right conditional, but it never flagged that its sources disagree on the Long Island City median by more than a thousand dollars and instead asserted a trend none of them supports.",
+  "spoken_fit_reason": "Plain prose with no lists or markdown that opens with the verdict, though at nine sentences it is a long listen even for a two-part question."
+}

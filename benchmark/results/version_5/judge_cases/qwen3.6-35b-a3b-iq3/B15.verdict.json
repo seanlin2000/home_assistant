@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["violated_explicit_constraint"],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 0,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The question asked for a 16 GB NVIDIA card and the headline pick is a 10 GB RTX 3080, with the only 16 GB suggestion being an AMD RX 9060 XT; it also states the 3080's thermal design power as thirty-two watts when the retrieved spec is 320 W.",
+  "judgment_reason": "The excerpts show every NVIDIA 16 GB option above the budget, the 5060 Ti 16GB at $569-599 and the used 4060 Ti 16GB at $500-822, so the honest answer was that the constraint cannot be met, but it silently dropped both the 16 GB and the NVIDIA requirement instead of saying so.",
+  "spoken_fit_reason": "Three paragraphs carrying literal markdown asterisks around the card names, and the output ran past the word cap so the listener never heard the RX 9060 XT paragraph."
+}
