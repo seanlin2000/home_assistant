@@ -8,19 +8,22 @@ syncs the component, unmounts, and asks Home Assistant to restart so the new cod
 """
 
 import argparse
+import asyncio
 import os
 import shutil
 import subprocess
 import sys
 import tempfile
-import time
 import urllib.parse
 from pathlib import Path
 
 import httpx
 from dotenv import load_dotenv
 
+from ops.ha_client import HomeAssistant, wait_for_api
+
 PROJECT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(PROJECT))  # scripts/ is not a package; make `ops` importable when run as a file
 COMPONENT = PROJECT / "custom_components" / "studio_assistant"
 CORE = PROJECT / "assistant_core"
 VENDOR_EXCLUDE = {"anthropic_client.py", "__pycache__"}
@@ -78,25 +81,19 @@ def sync(source: Path, target: Path) -> None:
 
 
 def restart_home_assistant(host: str, token: str) -> None:
-    base = os.environ.get("HA_BASE") or f"http://{host}:8123"
-    headers = {"Authorization": f"Bearer {token}"}
+    asyncio.run(restart_and_wait(HomeAssistant(host, token, os.environ.get("HA_BASE") or f"http://{host}:8123")))
+
+
+async def restart_and_wait(ha: HomeAssistant) -> None:
     try:
-        response = httpx.post(f"{base}/api/services/homeassistant/restart", headers=headers, timeout=30)
-        response.raise_for_status()
+        await ha.post("/api/services/homeassistant/restart")
     except httpx.RemoteProtocolError:
         pass  # Home Assistant 2026.9 often drops the connection as it shuts down instead of answering the restart call; the restart still happens.
-    print("Home Assistant restarting", end="", flush=True)
-    deadline = time.time() + 300
-    while time.time() < deadline:
-        time.sleep(5)
-        try:
-            if httpx.get(f"{base}/api/", headers=headers, timeout=5).status_code == 200:
-                print(" ... back up")
-                return
-        except httpx.HTTPError:
-            pass
-        print(".", end="", flush=True)
-    raise SystemExit(f"Home Assistant did not come back at {base} within 300s")
+    print("Home Assistant restarting ...", flush=True)
+    await asyncio.sleep(5)
+    await wait_for_api(ha, timeout_seconds=300, ok_statuses=(200,), poll_seconds=5)
+    await ha.close()
+    print("Home Assistant back up")
 
 
 if __name__ == "__main__":

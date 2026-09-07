@@ -8,6 +8,7 @@ import yaml
 from pydantic import BaseModel, Field
 
 from assistant_core.models import AgentPolicy, Route, RouteDecision, Transcript
+from utils.jsonl_utils import append_jsonl, read_jsonl, write_jsonl  # noqa: F401 - re-exported for the benchmark modules
 
 
 class Category(StrEnum):
@@ -198,22 +199,3 @@ class Score(BaseModel):
             return False
         harness_says_search_wrong = any(gate in (Gate.SEARCHED_ON_NO_SEARCH_QUESTION, Gate.DID_NOT_SEARCH_ON_SEARCH_QUESTION) for gate in self.harness_gates)
         return harness_says_search_wrong == self.judge.search_decision_correct
-
-
-def write_jsonl(path: Path, records: list[BaseModel]) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    with path.open("w") as handle:
-        for record in records:
-            handle.write(record.model_dump_json() + "\n")
-
-
-def append_jsonl(path: Path, record: BaseModel) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    with path.open("a") as handle:
-        handle.write(record.model_dump_json() + "\n")
-
-
-def read_jsonl(path: Path, record_type: type[BaseModel]) -> list[Any]:
-    if not path.exists():
-        return []
-    return [record_type.model_validate_json(line) for line in path.read_text().splitlines() if line.strip()]

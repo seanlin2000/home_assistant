@@ -22,11 +22,12 @@ import time
 from pathlib import Path
 from typing import Any
 
-import httpx
-import websockets
 from dotenv import dotenv_values, load_dotenv
 
+from ops.ha_client import HomeAssistant, entity_id, wait_for_api
+
 PROJECT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(PROJECT))  # scripts/ is not a package; make `ops` importable when run as a file
 ENV_PATH = PROJECT / ".env"
 MAC_IP_DEFAULT = "192.168.1.152"
 STEPS = ("onboarding", "addons", "integrations", "pipeline")
@@ -41,70 +42,6 @@ ADDONS = {
 }
 WYOMING_SERVICES = {"whisper": ("Whisper on the Mac", 10300), "kokoro": ("Kokoro on the Mac", 10210)}
 PIPELINE_NAME = "Jarvis"
-
-
-def discover_base(host: str) -> str:
-    """Home Assistant OS 18 serves the API on port 80 and, during onboarding, answers port 8123 with a redirect; older installs serve 8123 directly.
-    Any HTTP answer below 500 counts as a live server: /api/ gives 401 without a token, and /api/onboarding turns into a 404 once onboarding is done."""
-    for candidate in (f"http://{host}:8123", f"http://{host}"):
-        try:
-            response = httpx.get(f"{candidate}/api/", timeout=10, follow_redirects=False)
-        except httpx.HTTPError:
-            continue
-        if response.is_redirect and response.headers.get("location"):
-            target = httpx.URL(response.headers["location"])
-            return f"{target.scheme}://{target.host}" + (f":{target.port}" if target.port else "")
-        if response.status_code < 500:
-            return candidate
-    return f"http://{host}:8123"
-
-
-class HomeAssistant:
-    def __init__(self, host: str, token: str | None = None, base: str | None = None) -> None:
-        self.host = host
-        self.base = base or discover_base(host)
-        self.token = token
-        self.http = httpx.AsyncClient(base_url=self.base, timeout=60)
-        self._ws_id = 0
-
-    def headers(self) -> dict[str, str]:
-        return {"Authorization": f"Bearer {self.token}"} if self.token else {}
-
-    async def get(self, path: str) -> Any:
-        response = await self.http.get(path, headers=self.headers())
-        response.raise_for_status()
-        return response.json() if response.content else None
-
-    async def post(self, path: str, payload: Any = None, ok_statuses: tuple[int, ...] = (200, 201)) -> Any:
-        response = await self.http.post(path, json=payload, headers=self.headers())
-        if response.status_code not in ok_statuses:
-            raise RuntimeError(f"POST {path} -> {response.status_code} {response.text[:300]}")
-        return response.json() if response.content else None
-
-    async def supervisor(self, method: str, endpoint: str, data: dict[str, Any] | None = None) -> Any:
-        """Supervisor calls go over the websocket `supervisor/api` command, as the frontend does. On Home Assistant 2026.9 the REST proxy at
-        /api/hassio answered 401 to a valid owner token; the websocket route accepted the same token."""
-        message: dict[str, Any] = {"type": "supervisor/api", "endpoint": endpoint, "method": method}
-        if data is not None:
-            message["data"] = data
-        return await self.ws(message)
-
-    async def ws(self, message: dict[str, Any]) -> Any:
-        """One websocket command with authentication; the websocket API exposes things REST does not (tokens, pipelines, registries)."""
-        async with websockets.connect(self.base.replace("http://", "ws://", 1) + "/api/websocket", max_size=None) as socket:
-            await socket.recv()
-            await socket.send(json.dumps({"type": "auth", "access_token": self.token}))
-            auth = json.loads(await socket.recv())
-            if auth.get("type") != "auth_ok":
-                raise RuntimeError(f"websocket auth failed: {auth}")
-            self._ws_id += 1
-            await socket.send(json.dumps({"id": self._ws_id, **message}))
-            while True:
-                reply = json.loads(await socket.recv())
-                if reply.get("id") == self._ws_id:
-                    if not reply.get("success", True):
-                        raise RuntimeError(f"{message['type']} failed: {reply.get('error')}")
-                    return reply.get("result")
 
 
 def env_value(name: str, generate: bool = False) -> str:
@@ -124,19 +61,6 @@ def save_env(name: str, value: str) -> None:
     lines.append(f"{name}={value}")
     ENV_PATH.write_text("\n".join(lines) + "\n")
     ENV_PATH.chmod(0o600)
-
-
-async def wait_for_api(ha: HomeAssistant, timeout_seconds: int = 900) -> None:
-    deadline = time.time() + timeout_seconds
-    while time.time() < deadline:
-        try:
-            response = await ha.http.get("/api/")
-            if response.status_code in (200, 401):
-                return
-        except httpx.HTTPError:
-            pass
-        await asyncio.sleep(10)
-    raise SystemExit(f"Home Assistant did not answer at {ha.base} within {timeout_seconds}s")
 
 
 # ---------------------------------------------------------------- step 1: onboarding
@@ -331,13 +255,6 @@ async def pipeline(ha: HomeAssistant, args: argparse.Namespace) -> None:
     print(f"pipeline: '{PIPELINE_NAME}' uses {stt} -> {agent} -> {tts} (preferred)")
 
 
-def entity_id(registry: list[dict[str, Any]], domain: str, platform: str, needle: str) -> str:
-    matches = [entry["entity_id"] for entry in registry if entry["entity_id"].startswith(f"{domain}.") and entry["platform"] == platform and needle in json.dumps(entry).lower()]
-    if not matches:
-        raise SystemExit(f"no {domain} entity for platform {platform} matching {needle!r}; entities: {[e['entity_id'] for e in registry if e['entity_id'].startswith(domain)]}")
-    return matches[0]
-
-
 # ---------------------------------------------------------------- main
 
 
@@ -368,7 +285,7 @@ async def main_async() -> None:
         if args.only and name not in args.only:
             continue
         await step(ha, args)
-    await ha.http.aclose()
+    await ha.close()
 
 
 def main() -> None:

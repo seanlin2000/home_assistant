@@ -76,6 +76,8 @@ DEFAULT_CALCULATE_FILLER_PHRASES = (
     "One second, doing the math.",
 )
 SEARCH_TOOL_NAMES = frozenset({"search_and_read", "web_search", "fetch_page"})
+# The tools a live tool server must expose before the benchmark or the health check trusts it as ours (a stale server once served a different set).
+REQUIRED_TOOL_NAMES = frozenset({"search_and_read", "web_search", "fetch_page", "calculate", "percent", "convert"})
 
 
 class GenerationStats(BaseModel):

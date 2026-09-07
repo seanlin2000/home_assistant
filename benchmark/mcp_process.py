@@ -7,13 +7,12 @@ import subprocess
 import sys
 from pathlib import Path
 
-from assistant_core.models import ToolSpec
+from assistant_core.models import REQUIRED_TOOL_NAMES, ToolSpec
 from assistant_core.tools import McpToolBox
 from benchmark.records import Services
 
 READINESS_ATTEMPTS = 40
 READINESS_INTERVAL_SECONDS = 0.5
-REQUIRED_TOOLS = frozenset({"search_and_read", "web_search", "fetch_page", "calculate", "percent", "convert"})
 
 
 def ensure_port_free(host: str, port: int) -> None:
@@ -45,8 +44,8 @@ class McpServerProcess:
         if self._process.poll() is not None:
             raise RuntimeError(f"web_search_mcp exited with code {self._process.returncode}; something else answered at {self._services.mcp_url}")
         names = {tool.name for tool in tools}
-        if not REQUIRED_TOOLS <= names:
-            raise RuntimeError(f"the server at {self._services.mcp_url} is not this run's server: it lacks {sorted(REQUIRED_TOOLS - names)}")
+        if not REQUIRED_TOOL_NAMES <= names:
+            raise RuntimeError(f"the server at {self._services.mcp_url} is not this run's server: it lacks {sorted(REQUIRED_TOOL_NAMES - names)}")
         return self._services.mcp_url
 
     async def __aexit__(self, *exc_info: object) -> None:
