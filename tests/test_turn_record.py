@@ -35,7 +35,7 @@ def test_record_keeps_the_debugging_fields_and_drops_page_text() -> None:
     record = turn_record_from_transcript(searched_transcript(), recorded_at=datetime(2026, 9, 7, 3, 0, tzinfo=UTC))
     assert record.recorded_at == "2026-09-07T03:00:00+00:00"
     assert record.user_text == "What is the Fed rate today?"
-    assert record.history_turns == 3
+    assert record.history_turns == 2  # the earlier question and answer
     assert record.final_answer.startswith("It is three and a half")
     assert record.spoken_chars == len("Let me pull some sources. It is three and a half to three and three quarters percent.")
     assert record.route is not None and record.route.route == Route.SEARCH

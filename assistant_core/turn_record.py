@@ -29,7 +29,7 @@ class TurnRecord(BaseModel):
     source: str  # "home_assistant", "benchmark", "smoke"
     model: str
     user_text: str
-    history_turns: int  # messages in the conversation before this turn's question
+    history_turns: int  # messages in the conversation before this turn's question (0 for a fresh conversation)
     final_answer: str
     spoken_chars: int
     route: RouteDecision | None = None
@@ -59,12 +59,13 @@ def summarize_tool_call(exchange: ToolExchange) -> ToolCallSummary:
 
 def turn_record_from_transcript(transcript: Transcript, source: str = "home_assistant", recorded_at: datetime | None = None) -> TurnRecord:
     user_messages = [message for message in transcript.conversation if message.role == Role.USER]
+    user_indexes = [index for index, message in enumerate(transcript.conversation) if message.role == Role.USER]
     return TurnRecord(
         recorded_at=(recorded_at or datetime.now(UTC)).isoformat(timespec="seconds"),
         source=source,
         model=transcript.model,
         user_text=user_messages[-1].content if user_messages else "",
-        history_turns=max(len(transcript.conversation) - 1, 0),
+        history_turns=user_indexes[-1] if user_indexes else 0,
         final_answer=transcript.final_answer,
         spoken_chars=len(transcript.spoken_text),
         route=transcript.route,

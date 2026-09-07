@@ -37,6 +37,11 @@ def deploy_lock() -> Path:
     return log_dir() / "deploy.lock"
 
 
+def health_state() -> Path:
+    """Consecutive-failure counts and cooldown timestamps carried from one health check to the next."""
+    return log_dir() / "health_state.json"
+
+
 SERVICE_LOG_NAMES = ("ollama", "mcp", "whisper", "kokoro", "health")
 
 

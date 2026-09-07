@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
 # Install, start, stop, and inspect the native macOS services that Home Assistant talks to over the LAN.
 #
-#   scripts/services.sh install      write launchd agents for whisper, kokoro, mcp (and ollama with LAN binding) and load them
+#   scripts/services.sh install      write launchd agents for whisper, kokoro, mcp, ollama (LAN binding) and the 5-minute health check, and load them
 #   scripts/services.sh start|stop   load/unload the agents
-#   scripts/services.sh status       show what is listening on each port
-#   scripts/services.sh logs NAME    tail a service log (whisper|kokoro|mcp|ollama)
+#   scripts/services.sh restart NAME restart one agent (ollama|mcp|whisper|kokoro|health)
+#   scripts/services.sh status       show what is listening on each port and the last health snapshot
+#   scripts/services.sh logs NAME    tail a service log (whisper|kokoro|mcp|ollama|health)
 #   scripts/services.sh uninstall    unload and remove the agents
 #
 # Ports: Ollama 11434, Whisper 10300, Kokoro 10210, MCP 8765 (design_docs/v1/08 section 7). Everything binds 0.0.0.0 so the VM can reach it.
@@ -14,18 +15,20 @@ PROJECT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 AGENTS_DIR="$HOME/Library/LaunchAgents"
 LOG_DIR="$HOME/Library/Logs/studio-assistant"
 PREFIX="com.studio-assistant"
-SERVICES=(ollama mcp whisper kokoro)
+SERVICES=(ollama mcp whisper kokoro health)
+HEALTH_INTERVAL_SECONDS="${HEALTH_INTERVAL_SECONDS:-300}"
 OLLAMA_BIN="$(command -v ollama || echo /opt/homebrew/bin/ollama)"
 
 usage() {
-    sed -n '2,10p' "$0"
+    sed -n '2,11p' "$0"
     exit 1
 }
 
 plist_path() { echo "$AGENTS_DIR/$PREFIX.$1.plist"; }
 
 write_plist() {
-    # $1 name, $2.. program arguments; environment via ENV_KEYS/ENV_VALUES arrays
+    # $1 name, $2.. program arguments; environment via ENV_KEYS/ENV_VALUES arrays.
+    # PLIST_START_INTERVAL=N makes a periodic job (launchd runs it every N seconds) instead of a kept-alive daemon.
     local name="$1"
     shift
     local path
@@ -51,8 +54,14 @@ EOF
         cat <<EOF
   </dict>
   <key>RunAtLoad</key><true/>
-  <key>KeepAlive</key><true/>
-  <key>ThrottleInterval</key><integer>10</integer>
+EOF
+        if [[ -n "${PLIST_START_INTERVAL:-}" ]]; then
+            echo "  <key>StartInterval</key><integer>$PLIST_START_INTERVAL</integer>"
+        else
+            echo "  <key>KeepAlive</key><true/>"
+            echo "  <key>ThrottleInterval</key><integer>10</integer>"
+        fi
+        cat <<EOF
   <key>StandardOutPath</key><string>$LOG_DIR/$name.log</string>
   <key>StandardErrorPath</key><string>$LOG_DIR/$name.log</string>
 </dict></plist>
@@ -85,6 +94,9 @@ install_agents() {
     ENV_KEYS=() ENV_VALUES=()
     write_plist whisper "$PROJECT_DIR/.venv/bin/wyoming-mlx-whisper" --uri tcp://0.0.0.0:10300 --model mlx-community/whisper-large-v3-turbo --language en
     write_plist kokoro "$PROJECT_DIR/.venv/bin/kokoro-server" --uri tcp://0.0.0.0:10210 --voice af_heart --data-dir "$HOME/.cache/wyoming-kokoro" --streaming --device cpu
+    # HEALTH_CHECK_FLAGS="--no-remediate" installs an observe-only check (used on the laptop, where the VM is stopped on purpose most of the time).
+    read -ra health_flags <<<"${HEALTH_CHECK_FLAGS:-}"
+    PLIST_START_INTERVAL="$HEALTH_INTERVAL_SECONDS" write_plist health "$PROJECT_DIR/.venv/bin/python" "$PROJECT_DIR/scripts/health_check.py" "${health_flags[@]}"
     start_agents
 }
 
@@ -102,6 +114,12 @@ stop_agents() {
     done
 }
 
+restart_agent() {
+    local name="${1:?service name}"
+    launchctl kickstart -k "gui/$(id -u)/$PREFIX.$name" 2>/dev/null || launchctl bootstrap "gui/$(id -u)" "$(plist_path "$name")"
+    echo "restarted $name"
+}
+
 status() {
     local ports=("ollama:11434" "mcp:8765" "whisper:10300" "kokoro:10210")
     for entry in "${ports[@]}"; do
@@ -112,12 +130,22 @@ status() {
             echo "$name: NOT listening on $port"
         fi
     done
+    if launchctl print "gui/$(id -u)/$PREFIX.health" >/dev/null 2>&1; then
+        echo "health: checks every $HEALTH_INTERVAL_SECONDS s"
+    else
+        echo "health: agent NOT loaded"
+    fi
+    [[ -f "$LOG_DIR/maintenance" ]] && echo "MAINTENANCE FLAG SET: self-healing is off ($LOG_DIR/maintenance)"
+    if [[ -f "$LOG_DIR/health.json" ]]; then
+        "$PROJECT_DIR/.venv/bin/python" "$PROJECT_DIR/scripts/health_check.py" --last
+    fi
 }
 
 case "${1:-}" in
 install) install_agents ;;
 start) start_agents ;;
 stop) stop_agents ;;
+restart) restart_agent "${2:-}" ;;
 status) status ;;
 logs) tail -n 50 -f "$LOG_DIR/${2:?service name}.log" ;;
 uninstall)
