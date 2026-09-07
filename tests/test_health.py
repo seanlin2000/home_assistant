@@ -2,6 +2,9 @@
 
 import json
 from datetime import date
+from pathlib import Path
+
+import pytest
 
 from ops import health, paths
 from ops.health import Action, Check, Policy, State
@@ -96,7 +99,7 @@ def test_parsers_read_macos_output() -> None:
     assert health.parse_vm_status(1, "", "no such vm").ok is None
 
 
-def test_rotate_log_copy_truncates_and_keeps_three_generations(tmp_path) -> None:
+def test_rotate_log_copy_truncates_and_keeps_three_generations(tmp_path: Path) -> None:
     log = tmp_path / "ollama.log"
     log.write_text("small")
     assert health.rotate_log(log, over_bytes=100) is False
@@ -110,7 +113,7 @@ def test_rotate_log_copy_truncates_and_keeps_three_generations(tmp_path) -> None
     assert not (tmp_path / "ollama.log.4").exists()
 
 
-def test_prune_history_drops_old_snapshots(tmp_path) -> None:
+def test_prune_history_drops_old_snapshots(tmp_path: Path) -> None:
     path = tmp_path / "health.jsonl"
     lines = [json.dumps({"checked_at": day}) for day in ("2026-05-01T00:00:00+00:00", "2026-06-01T00:00:00+00:00", "2026-09-07T00:00:00+00:00")]
     path.write_text("\n".join(lines) + "\n")
@@ -118,7 +121,7 @@ def test_prune_history_drops_old_snapshots(tmp_path) -> None:
     assert path.read_text().count("\n") == 1
 
 
-def test_housekeeping_touches_every_file_under_the_log_dir(tmp_path, monkeypatch) -> None:
+def test_housekeeping_touches_every_file_under_the_log_dir(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv("STUDIO_LOG_DIR", str(tmp_path))
     paths.turns_dir().mkdir()
     (paths.turns_dir() / "2025-01-01.jsonl").write_text("{}\n")
