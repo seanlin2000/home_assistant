@@ -30,6 +30,9 @@ fi
 uv run black "${BLACK_OPTS[@]}" .
 uv run isort "${ISORT_OPTS[@]}" .
 
-# Shell (skip the virtual environment, which ships its own .sh files)
-find . -path ./.venv -prune -o -name "*.sh" -print0 | xargs -0 shfmt -i 4 "${SHFMT_OPTS[@]}"
-find . -path ./.venv -prune -o -name "*.sh" -print0 | xargs -0 shellcheck
+# Shell: every .sh file plus the git hooks, which have no extension (skip the virtual environment, which ships its own .sh files)
+shell_files() {
+    find . -path ./.venv -prune -o \( -name "*.sh" -o -path "./.githooks/*" \) -type f -print0
+}
+shell_files | xargs -0 shfmt -i 4 "${SHFMT_OPTS[@]}"
+shell_files | xargs -0 shellcheck
