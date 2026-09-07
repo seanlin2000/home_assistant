@@ -10,8 +10,9 @@ Every place the build departed from the frozen design in `design_docs/v0/`, with
 | [04 Conversation agent](#04-conversation-agent) | 9 |
 | [05 Voice pipeline](#05-voice-pipeline) | 1 |
 | [06 Home Assistant core](#06-home-assistant-core) | 5 |
-| [08 Hardware and deployment](#08-hardware-and-deployment) | 2 |
-| [09 Dev environment](#09-dev-environment) | 3 |
+| [08 Hardware and deployment](#08-hardware-and-deployment) | 4 |
+| [09 Dev environment](#09-dev-environment) | 6 |
+| [10 Operations](#10-operations) | 6 |
 
 ## 01 LLM benchmark
 
@@ -86,6 +87,8 @@ Every place the build departed from the frozen design in `design_docs/v0/`, with
 |---|---|---|---|---|
 | 2026-09-06 | Ollama service (launchd), MCP server binding | 03 | Ollama runs under our own launchd agent (`OLLAMA_HOST=0.0.0.0`, keep-alive forever) instead of Homebrew's service, and the MCP server binds `0.0.0.0`. | Homebrew's Ollama service binds localhost only, so the VM could not reach it. Both are LAN-only, unauthenticated services on a home network; the design accepts that. |
 | 2026-09-06 | Component deployment (SMB) | 06 | `deploy_component.py` treats a dropped connection on the restart call as success and polls `/api/` until Home Assistant is back, and the deploy procedure now forbids deploying while the Supervisor is pulling add-on images. | Home Assistant 2026.9 closes the connection as it restarts instead of answering 200, and a deploy attempted during image pulls left a kernel-level hung SMB mount on the Mac that only `sudo umount -f` could clear (doc 08 §11). |
+| 2026-09-07 | launchd agents | 10 | There is no `deploy/launchd/` folder of plist files; `scripts/services.sh install` writes the plists from a template (environment, program arguments, `KeepAlive` or `StartInterval`) and loads them. | One generator keeps the log paths, environment, and working directory consistent across the five agents, and the health agent's `StartInterval` is a one-line variation of the same template. |
+| 2026-09-07 | Health check cadence and actions | 10 | Doc 08 §6 promised a health check "every minute, restarting after five minutes down". As built it runs every five minutes with staged thresholds: agent kickstart after two failed checks (30 min cooldown), SearXNG after two, VM start at once, VM restart only after five consecutive Home Assistant failures (25 min, 2 h cooldown), nothing while a deploy holds the maintenance flag. | Home Assistant is legitimately unreachable for minutes during its own updates and add-on installs; a one-minute cadence with a five-minute trigger would restart the VM in the middle of them. Every action is recorded in the snapshot so the report can show what the machine did to itself. |
 
 ## 09 Dev environment
 
@@ -94,3 +97,19 @@ Every place the build departed from the frozen design in `design_docs/v0/`, with
 | 2026-09-05 | Docker CLI | 03 | Docker's CLI is used from the Docker Desktop app bundle rather than /usr/local/bin. | Docker Desktop did not create the symlink; scripts add the bundle path to PATH. |
 | 2026-09-05 | uv environment | | `scripts/dev_setup.sh` wraps `uv sync` and clears the macOS hidden flag on `.venv`. | The repo lives in an iCloud-synced Desktop folder; macOS flags dot-prefixed trees as hidden and Python 3.12.14 skips hidden `.pth` files, which made the project's packages vanish from the environment mid-session. |
 | 2026-09-05 | Repository location | | The repository moved from the iCloud-synced Desktop to `~/code/home_assistant`. | Beyond the hidden-flag problem, git inside the iCloud folder returned empty or missing objects for files it contained, and file reads were slow and inconsistent. The GitHub remote was verified intact and the working tree re-created from it. |
+| 2026-09-07 | Version record | 08 | `docs/VERSIONS.md` (promised in doc 09 §4) now exists, recording macOS, uv, Python, Ollama, model ids, Docker, UTM, Home Assistant OS and Core, add-ons, and the key wheels, with a refresh procedure. | Written when the operations tooling was built, two days after the design said it would be; the deploy tooling needed a known-good reference to compare against. |
+| 2026-09-07 | Manifest-versus-lock check | 10, 06 | The check that the component's `manifest.json` requirements match `uv.lock` (doc 09 §4) lives in `ops.deploy` (`manifest_lock_mismatches`), runs as a deploy preflight and in `ops.deploy status`, and has a test that runs it against the real files. | The deploy is the moment a drift would bite (Home Assistant installs the manifest's versions into its own Python); putting the check there means it cannot be skipped. |
+| 2026-09-07 | SearXNG image tag | 03 | `docker/searxng/docker-compose.yml` still uses `searxng/searxng:latest`; the tag is left unpinned on purpose for now and flagged here. | Pinning changes the search results the benchmark saw and should be a deliberate decision by the user, with a note in `docs/VERSIONS.md`, not a side effect of the operations work. |
+
+## 10 Operations
+
+Doc 10 was written after the design was frozen, so these rows record where the build departed from doc 10's own plan and from what docs 08 and 09 implied about operating the machine.
+
+| Date | Part of the system | Also touches | Deviation | Why |
+|---|---|---|---|---|
+| 2026-09-07 | Turn logging | 03, 04, 06 | The component posts a trimmed `TurnRecord` to a new `POST /turns` route on the tool server, which appends it under `~/Library/Logs/studio-assistant/turns/`; nothing is written inside the VM. Page text is dropped, the user's words and the answer are kept for 90 days. | One directory on the Mac's disk means one rsync retrieves every log, and it avoids the SMB share that once hung. Retention is the user's decision (turn records contain what was said in the apartment). |
+| 2026-09-07 | Health agent flags | 08 | `services.sh install` honours `HEALTH_CHECK_FLAGS`; the laptop runs the check with `--no-remediate`. Agents that are not loaded at all are reported as skipped, not failing. | On the laptop the VM and the speech services are stopped on purpose between sessions; a policy that "heals" them would start a 4 GB VM under the user's feet. |
+| 2026-09-07 | Log rotation | 08 | Copy-truncate from the daily housekeeping pass (20 MB, three generations) instead of macOS's `newsyslog`. | launchd holds the log files open in append mode; truncating in place needs no service restart, and restarting Ollama would reload the model. |
+| 2026-09-07 | Deploy protocol | 08, 09 | Deploys are laptop-driven and on demand (`scripts/mini.sh deploy`), pin an exact commit, run the tests on the mini, restart only what the diff touched, smoke-test from the laptop, and record `last_good_ref` for rollback. No timer pulls from `main`. | The user chose a deliberate deploy over a weekly pull: a broken commit should never reach the mini unattended, and the smoke test needs the laptop's view of both ends. |
+| 2026-09-07 | Security posture | 08 | SSH keys only (drop-in `010-studio-assistant.conf`), Remote Login restricted to one user, firewall allow-list, FileVault off with auto-login, Screen Sharing off after bootstrap, LAN only. | The user asked how to keep anyone but their laptop out; FileVault off is the trade for unattended recovery after a power cut. |
+| 2026-09-07 | Not yet built from doc 10's own text | | The Supervisor-busy guard before an SMB copy, free-disk in the health snapshot, and re-applying the firewall allow-list from the deploy are described as future hardening in doc 10 §6 rather than as done. | Written honestly after the build; each is small and none blocks the mini going live. |

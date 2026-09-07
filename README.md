@@ -22,6 +22,8 @@ Phase 2 (proof of concept) is running. Benchmark passes 1 to 5 are complete (`be
 ## Documents
 
 - `docs/phase2_walkthrough.md`: a hands-on tour of the running proof of concept, component by component.
+- `docs/VERSIONS.md`: what the running system was built and measured with, and how to refresh it.
+- `design_docs/v1/10_operations.md`: running, updating, and debugging the headless Mac mini from the laptop.
 - `design_docs/README.md`: how the docs are versioned and the reading order.
 - `design_docs/v0/00_system_overview.md`: start here.
 - `CLAUDE.md` and `claude_docs/CLEAN_CODE.md`: coding conventions.
@@ -39,6 +41,26 @@ scripts/lint.sh               # black, isort, shfmt, shellcheck
 ```
 
 Upgrade dependencies deliberately with `scripts/dev_setup.sh --upgrade`, review the `uv.lock` diff, run the tests, commit.
+
+## Operating the Mac that runs it
+
+Services on the Mac are launchd agents; the health check is a fifth agent that runs every five minutes and records what it sees (design doc 10).
+
+```
+scripts/services.sh install                    # write and load the agents (HEALTH_CHECK_FLAGS=--no-remediate on the laptop)
+scripts/services.sh status                     # ports plus the last health snapshot
+uv run python scripts/health_check.py --dry-run   # probe everything and say what the policy would do
+uv run python scripts/ops_report.py --days 1 ~/Library/Logs/studio-assistant   # this machine's turns, health, Ollama speeds
+```
+
+The Mac mini is driven from the laptop over SSH once `MINI_HOST` is in `.env`:
+
+```
+scripts/mini.sh bootstrap        # once: Homebrew, clone, venv, agents, SearXNG, power, firewall, SSH keys-only
+scripts/mini.sh push-env; scripts/mini.sh push-models; scripts/mini.sh push-vm
+scripts/mini.sh deploy           # pinned commit -> tests on the mini -> restart what changed -> smoke test -> mark good or roll back
+scripts/mini.sh logs; scripts/mini.sh report --days 7   # mirror the mini's logs into logs/mini/ and summarise them
+```
 
 ## Benchmark
 

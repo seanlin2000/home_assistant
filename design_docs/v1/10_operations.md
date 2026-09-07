@@ -52,7 +52,7 @@ A Mac out of the box has no user account, and the wizard that creates one only r
 `scripts/mini.sh bootstrap` copies `scripts/bootstrap_mac.sh` and the `Brewfile` to the mini and runs the script there in an interactive SSH session, because a few steps ask for the administrator password. Every step checks whether it is already done before doing it, so the script can be re-run after a failure. In order:
 
 1. Xcode command line tools (`git` needs them; if missing, the script says so and stops, because the installer is a GUI dialog).
-2. Homebrew, then `brew bundle` from the `Brewfile`: uv, git, ollama, shfmt, shellcheck, espeak-ng, and the Docker Desktop and UTM apps.
+2. Homebrew, then `brew bundle` from the `Brewfile`: uv, git, ollama, rsync (macOS ships an older `openrsync` that lacks several flags), shfmt, shellcheck, espeak-ng, and the Docker Desktop and UTM apps.
 3. `uv python install 3.12`, clone the repository (or fetch it if present) and check out the default branch as a detached commit. The mini never commits or pushes; it only ever pulls.
 4. `scripts/dev_setup.sh` builds the virtual environment from the lock file.
 5. `scripts/services.sh install` writes the five launchd agents (the four services plus the health check) and starts them.
@@ -72,6 +72,8 @@ A Mac out of the box has no user account, and the wizard that creates one only r
 ```
 
 Three things are deliberately not in the repository. Secrets live in `.env` and are copied once. Models are several gigabytes and content-addressed, so copying the laptop's blobs guarantees the mini runs the exact digest the benchmark scored, where a fresh `ollama pull` might fetch a newer build under the same tag. The Home Assistant VM is a single folder in UTM's documents directory that carries the whole configured Home Assistant, add-ons and all; copying it avoids re-running the setup script, and `push-vm` refuses to run while the laptop's copy of the VM is running, because two VMs with the same network address cannot coexist. The VM is given 3 GB on the mini rather than the laptop's 4 GB, which the memory budget in doc 08 §4 relies on.
+
+As built: `push-models` reads the model's manifest under `~/.ollama/models/manifests/` and copies exactly the blobs it names (`MINI_MODEL` in `.env`, default `gemma4:e4b-it-qat`); `push-models --pull` has the mini pull the tag instead when a fresh build is wanted. `push-vm` copies `~/Library/Containers/com.utmapp.UTM/Data/Documents/<VM name>.utm`; that folder is inside an app sandbox, so the terminal running `mini.sh` needs Full Disk Access (System Settings → Privacy & Security) or the copy fails with "Operation not permitted".
 
 ### 3.4 Every assistant turn writes one record
 
@@ -127,6 +129,8 @@ What it may do on its own is a policy table, not code scattered through the scri
 | HA API down while VM runs | `utmctl stop` then `start` | 5 consecutive checks (25 min) | 2 h |
 | Maintenance flag present | nothing | | |
 
+As built, `scripts/health_check.py` takes `--dry-run` (probe and print what it would do, write nothing), `--no-remediate` (record only), `--full` (the SearXNG query probe), `--json`, and `--last` (one line from the last snapshot, which `services.sh status` prints). Counts and cooldowns persist between runs in `health_state.json`. A launchd agent that is not loaded at all (booted out on purpose, as Whisper and Kokoro are on the laptop between sessions) is reported as skipped rather than failing, so a deliberate stop is never "healed". On the laptop the agent is installed with `HEALTH_CHECK_FLAGS=--no-remediate scripts/services.sh install`, because there the VM is stopped on purpose most of the time and the policy would otherwise keep starting it; the mini uses the default.
+
 Home Assistant legitimately disappears for minutes during its own updates and add-on installs, which is why the VM threshold is long. The maintenance flag is a file the deploy creates before it starts changing things and removes when the smoke test passes, so the health check never fights a deploy. Every action is recorded in the snapshot, so the report can show what the machine did to itself.
 
 ### 3.6 Log rotation and retention
@@ -181,7 +185,7 @@ launchd opens each service's log file in append mode and never closes it. The he
                                  ──▶ fail: flag left set, exit 2, "restore by hand"
 ```
 
-Pushing to the repository changes nothing on the mini. Going live is a separate, deliberate act: `scripts/mini.sh deploy` from the laptop. It refuses to start if the laptop's working tree has uncommitted changes or its commit has not been pushed, because the mini can only pull what the remote has. On the mini, `ops.deploy apply` raises the maintenance flag, fetches, checks out the exact commit, syncs the environment if the lock file changed, and runs the test suite; a failing suite aborts before anything is restarted. It then diffs the old and new commits and derives the smallest set of actions from a rules table:
+Pushing to the repository changes nothing on the mini. Going live is a separate, deliberate act: `scripts/mini.sh deploy` from the laptop. It refuses to start if the laptop's working tree has uncommitted changes or its commit has not been pushed, because the mini can only pull what the remote has. On the mini, `ops.deploy apply` takes a lock, raises the maintenance flag, fetches, checks out the exact commit, syncs the environment if the lock file changed, checks the component manifest against the lock, and runs the test suite; a failing preflight or suite returns the checkout (and the environment) to the old commit before anything is restarted, and leaves the flag set so the laptop's command reports it. It then diffs the old and new commits and derives the smallest set of actions from a rules table:
 
 | Changed path | Action |
 |---|---|
@@ -191,7 +195,8 @@ Pushing to the repository changes nothing on the mini. Going live is a separate,
 | `voice/` | restart Kokoro |
 | `scripts/services.sh` | rewrite and reload all agents |
 | `docker/searxng/` | restart SearXNG |
-| `ops/`, docs, benchmark, tests | nothing |
+| `utils/` | restart the tool server (it imports the JSON Lines helpers) |
+| `ops/`, docs, benchmark, tests | nothing (the health check is a fresh process every five minutes, so it picks up new code by itself) |
 
 Back on the laptop, `ops.smoke` asks Home Assistant one calculator question through the same conversation API the voice pipeline uses and expects the right number within a minute; this exercises Home Assistant, the component, Ollama, and the tool server in one call without touching the web. On success the commit is recorded as the last known good and the flag is cleared. On failure the mini is told to roll back: it checks out the last good commit and applies the reverse plan, the smoke test runs again, and the command exits non-zero with the failure printed. If even the rollback does not restore service the flag is left in place, self-healing stays off, and the command says so, because at that point a person should look before the machine restarts anything.
 
@@ -212,7 +217,8 @@ The mini is reachable only on the home network. No router port is forwarded, and
 
 | Package or tool | Role in this subsystem |
 |---|---|
-| `ops` (ours) | The Python behind every operation: `ha_client` (the Home Assistant REST and websocket helper, moved out of the setup script so the health check, smoke test, and deploy share it), `health` (probes, policy, housekeeping), `deploy` (plan from a diff, apply, rollback, last-good bookkeeping), `smoke` (one question through the conversation API), `report` (renders `logs/mini/` into a summary), `paths` (the one place that knows where files live). |
+| `ops` (ours) | The Python behind every operation: `ha_client` (the Home Assistant REST and websocket helper, moved out of the setup script so the health check, smoke test, and deploy share it), `health` (probes, policy, housekeeping), `deploy` (plan from a diff, apply, rollback, last-good bookkeeping, manifest-versus-lock preflight), `smoke` (one question through the conversation API), `pipeline_runs` (pulls Home Assistant's in-memory Assist debug runs into a file), `report` (renders `logs/mini/` into a summary), `paths` (the one place that knows where files live). |
+| `packaging`, `tomllib` | Parse the component manifest's requirement specifiers and `uv.lock` for the preflight. `packaging` arrives with the dev tools; `tomllib` is in the standard library. |
 | `assistant_core.turn_record` (ours) | The trimmed per-turn record and the function that builds it from a `Transcript`. Pure pydantic so it imports inside Home Assistant's own Python, where the component runs. |
 | `web_search_mcp` routes | Two plain HTTP routes added to the MCP server: `POST /turns` appends a record, `GET /healthz` proves the server is ours by listing its tools. The MCP library exposes custom routes for exactly this kind of health and admin endpoint. |
 | `httpx`, `pydantic` | Already project dependencies: HTTP probes and posts, typed records that serialise to JSON lines. |
@@ -227,7 +233,8 @@ The mini is reachable only on the home network. No router port is forwarded, and
 
 | Setting | Where | Value |
 |---|---|---|
-| `MINI_HOST`, `MINI_USER`, `MINI_PROJECT_DIR` | `.env` on the laptop | The mini's address (a DHCP reservation), the login user, the clone path on the mini. During laptop testing: `localhost`, the laptop user, a second clone. |
+| `MINI_HOST`, `MINI_USER`, `MINI_PROJECT_DIR`, `MINI_MODEL` | `.env` on the laptop | The mini's address (a DHCP reservation), the login user, the clone path on the mini (relative to its home), the model `push-models` copies. During laptop testing: `localhost`, the laptop user, a second clone. |
+| `HEALTH_INTERVAL_SECONDS`, `HEALTH_CHECK_FLAGS` | environment of `services.sh install` | 300; empty on the mini, `--no-remediate` on the laptop |
 | `WEB_SEARCH_TURNS_DIR` | mcp launchd plist, written by `services.sh` | `~/Library/Logs/studio-assistant/turns` |
 | `STUDIO_LOG_DIR` | environment, optional | Overrides the log directory, for tests |
 | Health interval | `services.sh` | 300 s |
@@ -236,18 +243,19 @@ The mini is reachable only on the home network. No router port is forwarded, and
 | Retention | `ops/health.py` | 90 days for turns and health history |
 | Smoke question | `ops/smoke.py` | "What is 12 percent of 250?" expecting "30", 60 s |
 | VM memory on the mini | `HAOS_VM_MEMORY_MB` / UTM config | 3072 MB |
-| Log directory layout on the mini | | `ollama.log mcp.log whisper.log kokoro.log health.log`, `turns/YYYY-MM-DD.jsonl`, `health.json`, `health.jsonl`, `last_good_ref`, `maintenance` (flag), `deploy.lock` |
+| Log directory layout on the mini | | `ollama.log mcp.log whisper.log kokoro.log health.log` (rotated copies `.1 .2 .3`), `turns/YYYY-MM-DD.jsonl`, `health.json`, `health.jsonl`, `health_state.json`, `last_good_ref`, `maintenance` (flag), `deploy.lock` |
+| Non-Python software | `Brewfile` | installed by `brew bundle` in the bootstrap; what was actually installed is recorded in `docs/VERSIONS.md` |
 | Mirror on the laptop | | `logs/mini/` with the same layout plus `pipeline_runs.jsonl`; git-ignored |
 
 ## 6. Failure modes
 
-- **A deploy dies halfway.** The maintenance flag stays, self-healing is off, and nothing tells you unless you look. `mini.sh status` prints the flag's age in red; `mini.sh rollback` or `ops.deploy clear-maintenance` resolves it.
-- **Deploy during a Home Assistant add-on install.** The SMB copy can hang (doc 08 §11). The deploy refuses to start while Home Assistant reports the Supervisor busy, and the copy has a timeout after which the deploy fails cleanly instead of hanging.
+- **A deploy dies halfway.** The maintenance flag stays, self-healing is off, and nothing tells you unless you look. `mini.sh status` prints `MAINTENANCE FLAG SET` on its own line; `mini.sh rollback` or `ops.deploy clear-maintenance` resolves it.
+- **Deploy during a Home Assistant add-on install.** The SMB copy can hang (doc 08 §11). Not yet guarded in code: the deploy does not check whether the Supervisor is busy, and a hung mount still needs `sudo umount -f` on the mini. The rule stands as procedure: do not deploy while an add-on update is running. Adding the Supervisor check to `ops.deploy` is the obvious next hardening step.
 - **Environment sync under a running interpreter.** `uv sync` replaces packages while `ops.deploy` itself is running from that environment. All of the deploy's imports happen at start and every action is a subprocess, so the running process is unaffected; the restarted services pick up the new packages.
 - **Health check and deploy fighting.** Prevented by the maintenance flag. The residual risk is a health run that started just before the flag was raised; its actions are limited to restarts, which the deploy's restarts supersede.
 - **VM restart loop.** If Home Assistant is genuinely broken, the health check would restart the VM every two hours forever. The cooldown bounds the damage, the report shows the pattern, and the fix is a person.
-- **Firewall prompt on a headless machine.** A new binary that listens on the LAN triggers a dialog nobody can click. The bootstrap allow-lists the known binaries; a new one (for example a new Python after an interpreter upgrade) needs the same `socketfilterfw --add`, which the deploy's environment-sync action re-applies.
-- **Disk fills with logs.** Rotation and pruning run daily; the health snapshot records free disk and the report flags under 10 GB.
+- **Firewall prompt on a headless machine.** A new binary that listens on the LAN triggers a dialog nobody can click. The bootstrap allow-lists the known binaries (Ollama, the virtual environment's Python and the interpreter it links to, Docker, UTM). A new one, for example a new Python after `uv python install` of a later version, needs the bootstrap rerun (`mini.sh bootstrap`, which is idempotent); the deploy does not re-apply the allow-list.
+- **Disk fills with logs.** Rotation (20 MB, three generations) and 90-day pruning run daily from the health check. Free disk is not yet in the snapshot; Ollama models and Docker images are the things that actually fill a 256 GB disk, and both are added by hand.
 - **Both machines run the VM.** Same network identity twice. `push-vm` refuses while the laptop's VM runs, and after the move the laptop's VM is deleted or left stopped.
 - **The laptop is asleep or away.** Nothing on the mini depends on the laptop. Logs accumulate on the mini for 90 days and are pulled whenever the laptop next asks.
 - **Lost SSH key.** With passwords off, a lost laptop key means Screen Sharing over the LAN with the account password, or the TV again. Keep a second key on a USB stick or a second machine.
@@ -265,7 +273,19 @@ The mini is reachable only on the home network. No router port is forwarded, and
 - **Detached checkout and the last good commit.** The mini checks out a specific commit hash rather than a branch, so what is running is unambiguous, and the hash that last passed the smoke test is written to a file. Rolling back is checking that hash out again.
 - **Smoke test.** The smallest end-to-end exercise that proves the system is alive: here, one question through the same path a spoken question takes.
 
-## 8. Sources
+## 8. As built and tested (2026-09-07)
+
+Everything above exists in the repository. What was exercised on the laptop before the mini exists:
+
+- `POST /turns` end to end: the component (0.2.0) was deployed to the VM, one calculator question was asked through the conversation API, and one line appeared in `~/Library/Logs/studio-assistant/turns/2026-09-07.jsonl` with the tool call, both model calls' token counts, and no page text. The turn took 57 s on the laptop because Home Assistant's config entry still points at `gemma4:12b`, which had to load under memory pressure; the record shows exactly that (`time_to_first_spoken_seconds` 44 s, first model call 44.6 s, second 9.6 s).
+- The health agent is installed on the laptop (`StartInterval 300`, `--no-remediate`) and writes `health.json`, `health.jsonl`, and `health_state.json`; `--dry-run` correctly proposed `vm_start` with the VM stopped and reported Whisper and Kokoro as skipped.
+- `ops.deploy apply --dry-run` against an older commit produced the expected plan (`reinstall_agents` for the services script, `deploy_component` for the changed core); the real `apply`, `rollback`, and the laptop-to-itself SSH drill still need Remote Login on the laptop, which requires the administrator password and is left to the user (the steps are in the plan and in `mini.sh`'s header).
+- `scripts/ops_report.py` renders from the laptop's own log directory; `bootstrap_mac.sh --dry-run` prints every step without changing anything.
+- 120 tests pass (`uv run pytest`), including the policy thresholds and cooldowns, rotation, pruning, the deploy rules, the manifest preflight, the report fixture, and the two HTTP routes.
+
+Not testable until the mini exists: `pmset`, the firewall allow-list and the SSH drop-in on a fresh machine, auto-login after a power cut, `push-vm` (sandboxed UTM folder, bridged interface name, DHCP reservation), Docker and UTM first-launch approvals, and the MLX wheels on the new chip.
+
+## 9. Sources
 
 - Apple, `launchd.plist(5)`: `KeepAlive`, `StartInterval`, `ThrottleInterval`.
 - Apple, `socketfilterfw` (Application Firewall command line), `pmset(1)`, `dseditgroup(8)`, `fdesetup(8)`.
