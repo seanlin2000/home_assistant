@@ -294,7 +294,11 @@ def render_judge(reports: list[CandidateReport]) -> str:
     labels = sorted({score.judge_model for report in reports for score in report.scores if score.judge_model})
     if not labels:
         return "## Judge\n\nNo judged scores yet."
-    return "## Judge\n\nScores in this pass were produced by: " + ", ".join(labels) + ". Same rubric and output schema as every other pass; a subagent judge costs nothing but is a different session of the model than an API judge, so compare totals across passes with that in mind."
+    return (
+        "## Judge\n\nScores in this pass were produced by: "
+        + ", ".join(labels)
+        + ". Same rubric and output schema as every other pass; a subagent judge costs nothing but is a different session of the model than an API judge, so compare totals across passes with that in mind."
+    )
 
 
 def render_spend(reports: list[CandidateReport]) -> str:
