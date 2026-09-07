@@ -33,14 +33,24 @@ Phase 2 (proof of concept) is running. Benchmark passes 1 to 5 are complete (`be
 All Python runs from a `uv`-managed virtual environment in this folder. See `design_docs/v1/09_dev_environment.md`.
 
 ```
-brew install uv shfmt shellcheck
+brew install uv shfmt shellcheck gh
 uv python install 3.12
-scripts/dev_setup.sh          # uv sync --frozen, then clears the macOS hidden flag on .venv
+scripts/dev_setup.sh          # uv sync --frozen, clears the macOS hidden flag on .venv, installs the pre-commit hook
 uv run pytest
 scripts/lint.sh               # black, isort, shfmt, shellcheck
+uv run deslop                 # typed parameters and comment-to-code ratio, per claude_docs/CLEAN_CODE.md
 ```
 
 Upgrade dependencies deliberately with `scripts/dev_setup.sh --upgrade`, review the `uv.lock` diff, run the tests, commit.
+
+### Changing the code
+
+`main` is protected: every change goes through a branch and a pull request. The pre-commit hook in `.githooks/` refuses a commit unless `scripts/lint.sh -c`,
+`uv run deslop`, and `uv run pytest` pass; CI (`.github/workflows/checks.yml`) runs the same three checks on the pull request and must be green to merge.
+
+The PR description follows `.github/pull_request_template.md`: a summary, then one section per important change whose bullets explain the business logic and
+end with a line reference. References come from `uv run pr-refs resolve path:symbol` and are checked by `uv run pr-refs check body.md` and by CI, so they are
+never typed from memory. See `design_docs/v1/09_dev_environment.md`, section 12.
 
 ## Operating the Mac that runs it
 

@@ -107,3 +107,40 @@ Most of this will be familiar from data work; two things are worth stating plain
 - Docker Desktop 29.7 provides the daemon; its CLI is used from the application bundle because the `/usr/local/bin` link was not created. `scripts/searxng.sh` adds that path itself.
 - Ollama 0.33.3 from Homebrew, started with `brew services start ollama`.
 - Pinned versions of the third-party packages are in `uv.lock`; the notable ones on the first day were `anthropic 1.4.0`, `mcp 2.1.1`, `ollama 0.6.2`, `trafilatura 2.2.0`, `pydantic 2.13.5`.
+
+## 12. Code review process, added 2026-09-07
+
+Once the repository had five packages and forty commits pushed straight to `main`, nothing was checking that new code followed `CLAUDE.md`. This section adds the checks and the path a change takes to reach `main`.
+
+```
+  laptop                                      GitHub
+  ──────                                      ──────
+  edit code
+     │
+  git commit ──▶ .githooks/pre-commit         (installed by scripts/dev_setup.sh)
+     │            1. scripts/lint.sh -c       black, isort, shfmt, shellcheck, check only
+     │            2. uv run deslop            typed parameters, comment-to-code ratio
+     │            3. uv run pytest -q         the whole suite (hermetic, ~20 s)
+     │          any failure refuses the commit and prints how to fix it
+     ▼
+  git push ──▶ pull request ──▶ .github/workflows/checks.yml
+                  │               job "checks":         the same three steps on ubuntu
+                  │               job "pr-description": uv run pr-refs check on the PR body
+                  │
+                  ├──▶ Codex review (bot) ──▶ Claude fixes, replies, resolves ──▶ @codex review   (loop, PR 2)
+                  │
+                  ▼
+               branch protection on main: PR required, 1 approval, both jobs green, all threads resolved
+                  │
+               one human Approve ──▶ auto-merge (squash)
+```
+
+**Git hooks.** Git runs executable files from a hooks directory at fixed moments; `pre-commit` runs before a commit is recorded and a non-zero exit cancels it. Hooks are not versioned by default (they live in `.git/hooks`), so the repository keeps them in `.githooks/` and `scripts/dev_setup.sh` points git there with `git config core.hooksPath .githooks`. The hook checks the working tree as a whole rather than only the staged files: the repository is small, the three steps take about twenty seconds, and this keeps the hook and CI identical. `git commit --no-verify` skips the hook; CI catches that.
+
+**deslop.** A small AST-based checker (`deslop/`) for the two rules in `claude_docs/CLEAN_CODE.md` that a script can judge without taste: every function parameter has a type annotation (`self` and `cls` excepted), and a function's comment lines, docstring included, never outnumber its code lines. Comments are found with Python's tokenizer rather than by scanning for `#`, so a `#` inside a string is never counted. When a short function carries a long comment that earns its place, `# deslop: allow-comments` on or above the `def` line exempts that one function from the ratio rule and leaves the exception visible in review. Findings print as `path:line: message`, and the exit code is 1 when there are any.
+
+**PR references (`pr-refs`).** A pull request description has one section per important change, and every bullet ends with the lines a reviewer should read. Typing line numbers from memory produces wrong ones, so `uv run pr-refs resolve deslop/checks.py:count_lines` prints the real span of that definition as `` `deslop/checks.py:41-58` (`count_lines`) ``, and for files without symbols `uv run pr-refs resolve .githooks/pre-commit:"uv run deslop"` prints a range that contains that text. `uv run pr-refs check body.md` re-verifies every reference against the checked-out code, and the `pr-description` CI job does the same on every push, so a reference that goes stale after a later commit blocks the merge until it is re-resolved.
+
+**GitHub Actions and branch protection.** GitHub Actions runs the workflow in `.github/workflows/checks.yml` on a fresh Ubuntu machine for every pull request; it installs the locked environment with `uv sync --frozen` (without the `voice` group, whose MLX wheels exist only for Apple Silicon) and runs the same commands as the hook. Branch protection is a repository setting that makes `main` accept only merges of pull requests whose required jobs passed, with one approving review and every review thread resolved. Since GitHub does not count a bot's approval, that one approval is the human step.
+
+Sources: [git hooks](https://git-scm.com/docs/githooks), [GitHub branch protection](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches), [Python `tokenize`](https://docs.python.org/3/library/tokenize.html), [Python `ast`](https://docs.python.org/3/library/ast.html).

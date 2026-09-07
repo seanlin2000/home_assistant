@@ -2,6 +2,7 @@
 
 ### General Notes
 1. When executing a code command, make sure that we are using the project's virtual environment rather than the local machine's python interpreter.
+2. Every change goes through a branch and a pull request; never push to `main`. The pre-commit hook (`.githooks/pre-commit`) must pass on its own; do not use `--no-verify`. PR descriptions follow `.github/pull_request_template.md`, with line references produced by `uv run pr-refs resolve`, never typed by hand.
 
 ### Coding Standards
 1. **Use clear and concise variable and function names**
