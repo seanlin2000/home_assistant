@@ -53,6 +53,16 @@
       "baseline": false
     },
     {
+      "key": "gemma4-12b",
+      "label": "Gemma 4 12B, Q4_K_M",
+      "provider": "ollama",
+      "model": "gemma4:12b",
+      "think": false,
+      "effort": null,
+      "preview": false,
+      "baseline": false
+    },
+    {
       "key": "gpt-oss-20b",
       "label": "gpt-oss 20B, MXFP4",
       "provider": "ollama",
@@ -127,5 +137,5 @@
   "chip": "Apple M1 Pro",
   "memory_bytes": "17179869184",
   "ollama_version": "ollama version is 0.33.3",
-  "git_commit": "bb9ef8a"
+  "git_commit": "96f5bed"
 }

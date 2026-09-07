@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It asks for starting location, timeframe, budget and what 'warm' means and warns against assuming currency, cost of living and preferred activities, missing only the sketch's domestic-versus-international, passport and visa, and travel companions.",
+  "judgment_reason": "It resisted naming any destination and correctly treated the request as underspecified rather than inventing a home city or a beach preference.",
+  "spoken_fit_reason": "Four plain sentences with no lists or markdown, and the missing-information list is delivered as prose."
+}

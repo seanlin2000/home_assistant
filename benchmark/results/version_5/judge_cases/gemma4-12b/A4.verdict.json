@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It names only natural senescence when the question asked for the most likely explanations, omitting the sketch's nitrogen deficiency, overwatering or root problems, pot-bound roots, and lower leaves being shaded out.",
+  "judgment_reason": "It did ask for the genuinely missing details (species, uniform versus patterned yellowing, watering and light changes) rather than inventing them, but it asserted one cause as 'the most likely reason' before gathering any of that.",
+  "spoken_fit_reason": "Four plain sentences that lead with the answer, no lists or markdown."
+}

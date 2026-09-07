@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It gets the central point that a fast GPU without enough VRAM spills to system RAM and crawls, but omits the sketch's secondary points that capacity decides which models are possible at all and that more memory allows lighter quantization and longer context.",
+  "judgment_reason": "No search was warranted and none was made, and it kept the answer inside the 120-word cap the question set.",
+  "spoken_fit_reason": "Three plain sentences well under the word cap, no lists or markdown, and the workspace analogy reads naturally aloud."
+}

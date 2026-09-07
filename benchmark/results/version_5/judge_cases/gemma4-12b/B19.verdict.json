@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The second half is strong and grounded, naming bandwidth and the xhigh reasoning_effort default as the reasons a 'can it run' answer does not predict voice latency, but the first half says the card can run the 18GB q4_K_M when that exceeds the 16GB of VRAM, and it never mentions the 13.4GB Q3 alternative or the roughly 2 tok/s penalty the ModelFit table gives for spilling to system RAM.",
+  "judgment_reason": "It made the central call correctly by refusing to treat 'fits' as 'good voice-assistant experience', but let a model that does not actually fit in VRAM stand as the recommendation with only a vague nod to 'smaller versions'.",
+  "spoken_fit_reason": "It emits literal markdown asterisks around the word 'can', which a text-to-speech engine would not handle."
+}

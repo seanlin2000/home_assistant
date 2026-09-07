@@ -53,7 +53,7 @@ entries:
 - candidate: qwen3.5-4b
   question_id: A10
   why_selected: random sample
-  question: &id012
+  question: &id003
   - Explain why VRAM capacity can matter more than raw GPU speed when choosing hardware for a local LLM. Answer in a way that would sound natural if spoken aloud in under 45 seconds.
   searched: false
   spoken_answer: VRAM capacity often matters more than raw GPU speed because large language models require massive amounts of memory to load the model weights and handle context into your computer at once. Even with an incredibly fast processor, you're bottlenecked by how much data fits in that memory; exceeding VRAM forces the system to use slower storage like your hard drive, which dramatically slows performance. For local LLMs specifically, if your RAM is full, the model simply won't run or will degrade so badly it becomes unusable regardless of how fast your GPU can compute.
@@ -78,7 +78,7 @@ entries:
 - candidate: qwen3.5-4b
   question_id: A11
   why_selected: random sample
-  question: &id005
+  question: &id007
   - What year did the Berlin Wall fall?
   searched: false
   spoken_answer: The Berlin Wall fell in 1989.
@@ -131,7 +131,7 @@ entries:
 - candidate: qwen3.5-4b
   question_id: C25
   why_selected: random sample
-  question: &id010
+  question: &id013
   - It's 72 degrees Fahrenheit outside. What is that in Celsius, and how far is a 5 kilometer run in miles?
   searched: false
   spoken_answer: 72 degrees Fahrenheit is about 22 degrees Celsius, which is a comfortable running temperature. A 5 kilometer run is roughly 3 miles and 110 yards.
@@ -181,7 +181,7 @@ entries:
 - candidate: gemma4-e4b
   question_id: A4
   why_selected: random sample
-  question: &id004
+  question: &id006
   - My plant is growing new leaves quickly near the top, but its older lower leaves are gradually yellowing and dying. The plant is otherwise healthy. What are the most likely explanations, and what information would you want before deciding whether this is normal or a problem?
   searched: false
   spoken_answer: This pattern of new growth at the top while older leaves yellow and die at the bottom is often a sign that the plant is naturally shedding older foliage to prioritize new development, or it could indicate a nutrient issue. To give you a more specific answer, I would like to know what kind of plant it is, where the plant is located, and how often you water it.
@@ -259,7 +259,7 @@ entries:
 - candidate: gemma4-e4b
   question_id: C23
   why_selected: random sample
-  question: &id006
+  question: &id008
   - We just got a $64.50 dinner bill. What's an 18 percent tip, and what's the total with the tip?
   searched: false
   spoken_answer: Let's calculate that for you. First, I will find eighteen percent of sixty-four dollars and fifty cents, and then I will add that amount to the original bill to give you the total.An eighteen percent tip on a sixty-four dollar and fifty cent bill is eleven dollars and sixty-one cents, making your total bill seventy-six dollars and eleven cents.
@@ -284,7 +284,7 @@ entries:
 - candidate: gemma4-e4b
   question_id: C27
   why_selected: random sample
-  question: &id003
+  question: &id004
   - My TV draws 120 watts. If I watch about 4 hours a day and electricity costs 30 cents per kilowatt hour, what does it cost me per month?
   searched: false
   spoken_answer: Your TV would cost you about four dollars and thirty-two cents per month with the given usage and electricity rate.
@@ -458,10 +458,160 @@ entries:
     judgment: null
     spoken_fit: null
     notes: ''
+- candidate: gemma4-12b
+  question_id: A10
+  why_selected: random sample
+  question: *id003
+  searched: false
+  spoken_answer: When running a large language model locally, VRAM is essentially the "workspace" for the model's brain. If your GPU is incredibly fast but doesn't have enough VRAM to hold the entire model, the system will have to offload parts of the model to your system RAM, which is significantly slower and can cause the generation speed to crawl. Having enough VRAM ensures the entire model stays on the GPU, allowing it to run at its full potential.
+  judge:
+    gate_hit: false
+    gates: []
+    dimension_total: 9
+    answer_quality: 4
+    judgment: 3
+    spoken_fit: 2
+    reasons:
+    - It gets the central point that a fast GPU without enough VRAM spills to system RAM and crawls, but omits the sketch's secondary points that capacity decides which models are possible at all and that more memory allows lighter quantization and longer context.
+    - No search was warranted and none was made, and it kept the answer inside the 120-word cap the question set.
+    - Three plain sentences well under the word cap, no lists or markdown, and the workspace analogy reads naturally aloud.
+  human:
+    gate_hit: null
+    gates: []
+    answer_quality: null
+    judgment: null
+    spoken_fit: null
+    notes: ''
+- candidate: gemma4-12b
+  question_id: B11
+  why_selected: random sample
+  question:
+  - What is the current federal funds rate, and how has it changed over the last year?
+  searched: true
+  spoken_answer: The current federal funds target range is between three point five zero and three point seventy-five percent, with an effective rate of three point sixty-three percent as of September 2026. Over the last year, the rate has remained steady at this level, following a series of reductions that took place in late 2025.
+  judge:
+    gate_hit: false
+    gates: []
+    dimension_total: 8
+    answer_quality: 3
+    judgment: 3
+    spoken_fit: 2
+    reasons:
+    - The 3.50 to 3.75 percent range and 3.63 percent effective rate are traceable to the H.15 excerpt, but it answers only half the question by saying the rate 'remained steady' over the last year when the retrieved table shows it fell from 4.22 percent in September 2025 through four cuts to 3.63 percent, a drop it never quantifies.
+    - A single well-aimed search was the right call for a rate that changes with each FOMC meeting, and it anchored on the Federal Reserve's own H.15 release rather than the Trading Economics forecast page.
+    - Two sentences that lead with the rate, numbers spelled out for speech, no URLs or citation markers.
+  human:
+    gate_hit: null
+    gates: []
+    answer_quality: null
+    judgment: null
+    spoken_fit: null
+    notes: ''
+- candidate: gemma4-12b
+  question_id: B19
+  why_selected: random sample
+  question: *id002
+  searched: true
+  spoken_answer: 'An RTX 4060 Ti with 16 GB of VRAM can run the Qwen 3.8 27B model, but only if you use a compressed version, specifically a four-bit quantization. Because the full model files are quite large, you would need to use a version like the "q4_K_M" format, which is approximately 18 gigabytes, though some smaller versions are available if you need to ensure it fits comfortably with your system''s overhead.
+
+
+    However, knowing that the card *can* run the model is not enough to determine if it will provide a good voice-assistant experience. A high-quality assistant requires low latency—meaning the model needs to generate text quickly enough for a real-time conversation—and the 4060 Ti has relatively limited memory bandwidth compared to higher-end cards. Additionally, the specific configuration of the software you use, such as the "reasoning effort" setting, will drastically impact how long the model takes to "think" before it starts speaking, which is a critical factor for a smooth interactive experience.'
+  judge:
+    gate_hit: false
+    gates: []
+    dimension_total: 6
+    answer_quality: 3
+    judgment: 2
+    spoken_fit: 1
+    reasons:
+    - The second half is strong and grounded, naming bandwidth and the xhigh reasoning_effort default as the reasons a 'can it run' answer does not predict voice latency, but the first half says the card can run the 18GB q4_K_M when that exceeds the 16GB of VRAM, and it never mentions the 13.4GB Q3 alternative or the roughly 2 tok/s penalty the ModelFit table gives for spilling to system RAM.
+    - It made the central call correctly by refusing to treat 'fits' as 'good voice-assistant experience', but let a model that does not actually fit in VRAM stand as the recommendation with only a vague nod to 'smaller versions'.
+    - It emits literal markdown asterisks around the word 'can', which a text-to-speech engine would not handle.
+  human:
+    gate_hit: null
+    gates: []
+    answer_quality: null
+    judgment: null
+    spoken_fit: null
+    notes: ''
+- candidate: gemma4-12b
+  question_id: C26
+  why_selected: random sample
+  question: &id005
+  - My rent is $2,850 a month and my take-home pay is $7,400 a month. What percent of my income goes to rent, and what would the rent be after a 4 percent increase?
+  searched: false
+  spoken_answer: Your rent takes up about thirty-eight point five one percent of your monthly take-home pay. If your rent were to increase by four percent, your new monthly payment would be two thousand nine hundred sixty-four dollars.
+  judge:
+    gate_hit: false
+    gates: []
+    dimension_total: 10
+    answer_quality: 5
+    judgment: 3
+    spoken_fit: 2
+    reasons:
+    - 'Both figures match the sketch: 38.51 percent of take-home pay and 2,964 after the 4 percent increase.'
+    - It noticed that its first percent call returned an absurd 210,900 and re-issued it with the is_what_percent mode rather than reporting the bad number.
+    - Two sentences with the figures spelled out for speech, though 'thirty-eight point five one percent' is more precision than a listener needs.
+  human:
+    gate_hit: null
+    gates: []
+    answer_quality: null
+    judgment: null
+    spoken_fit: null
+    notes: ''
+- candidate: gemma4-12b
+  question_id: C27
+  why_selected: random sample
+  question: *id004
+  searched: false
+  spoken_answer: It costs you about four dollars and thirty-two cents per month to run your television for four hours a day.
+  judge:
+    gate_hit: false
+    gates: []
+    dimension_total: 10
+    answer_quality: 5
+    judgment: 3
+    spoken_fit: 2
+    reasons:
+    - The 4.32 dollars a month matches the sketch exactly for a 30-day month at the stated 30 cents per kilowatt hour.
+    - The rate was given so no assumption was needed, and it used the energy_cost tool rather than computing in its head.
+    - A single sentence that leads with the cost and restates the usage, written out for speech.
+  human:
+    gate_hit: null
+    gates: []
+    answer_quality: null
+    judgment: null
+    spoken_fit: null
+    notes: ''
+- candidate: gemma4-12b
+  question_id: C28
+  why_selected: random sample
+  question: &id009
+  - What's the monthly payment on a $400,000 mortgage at 6 percent for 30 years, and roughly how much interest do I pay in total?
+  searched: false
+  spoken_answer: The monthly payment for that mortgage would be approximately two thousand three hundred ninety-eight dollars and twenty cents. Over the life of the thirty-year loan, you would pay about four hundred sixty-three thousand three hundred fifty-three dollars in total interest.
+  judge:
+    gate_hit: false
+    gates: []
+    dimension_total: 10
+    answer_quality: 5
+    judgment: 3
+    spoken_fit: 2
+    reasons:
+    - 'Both figures match the sketch: 2,398.20 a month and about 463,353 in total interest.'
+    - It used the loan_payment tool and reported its output faithfully without searching or inventing a rate.
+    - Two sentences with amounts spelled out for speech, no lists or markdown.
+  human:
+    gate_hit: null
+    gates: []
+    answer_quality: null
+    judgment: null
+    spoken_fit: null
+    notes: ''
 - candidate: gpt-oss-20b
   question_id: A1
   why_selected: random sample
-  question: &id009
+  question: &id012
   - Why can a 16 GB GPU sometimes run an MoE model with 30 billion total parameters, but not necessarily a 30 billion parameter dense model? Explain the difference between active parameters and the memory required to store the model.
   searched: false
   spoken_answer: A 30‑billion‑parameter dense model needs to keep every weight in memory at once, so its 30 billion numbers have to fit in the GPU’s VRAM. A 30‑billion‑parameter MoE (Mixture‑of‑Experts) model, on the other hand, only loads into memory the subset of experts that are “active” for each token. If the routing layer activates, say, three experts out of a thousand, the GPU only has to hold the parameters of those three experts plus the shared layers, so the memory footprint can be well under 30 billion numbers. In short, the total parameter count tells you how much memory you’d need if you stored everything, but the active‑parameter count tells you how much you actually need to keep in VRAM while a particular batch is running.
@@ -510,7 +660,7 @@ entries:
 - candidate: gpt-oss-20b
   question_id: B21
   why_selected: random sample
-  question: &id008
+  question: &id011
   - Since the Fed cut rates to zero last month, should I refinance my mortgage?
   searched: true
   spoken_answer: Your mortgage probably isn’t a good candidate for refinancing right now. The Fed’s last move pushed the federal‑funds rate back up to a 3.5‑3.75 percent range, and that’s the benchmark that most mortgage lenders use. If your current loan is at, say, 3 percent or lower, you’re already below market rates, so a new loan would likely cost you more in interest and fees than you’d save. Even if your rate is higher, the savings you’d get from a lower rate might be offset by the closing costs and the fact that the Fed’s policy is still leaning toward tightening rather than easing. In short, unless you can lock in a rate that’s noticeably below what the market is offering—something that’s unlikely when rates are hovering around 3.5 percent—it’s usually better to keep what you have.
@@ -537,8 +687,7 @@ entries:
 - candidate: gpt-oss-20b
   question_id: C26
   why_selected: random sample
-  question: &id013
-  - My rent is $2,850 a month and my take-home pay is $7,400 a month. What percent of my income goes to rent, and what would the rent be after a 4 percent increase?
+  question: *id005
   searched: false
   spoken_answer: Your rent is about thirty‑eight and a half percent of your take‑home pay. If it rises by four percent, it would become roughly two thousand nine hundred sixty‑four dollars a month.
   judge:
@@ -562,7 +711,7 @@ entries:
 - candidate: gpt-oss-20b
   question_id: C27
   why_selected: random sample
-  question: *id003
+  question: *id004
   searched: false
   spoken_answer: Watching your TV for about four hours a day uses roughly 0.48 kilowatt‑hours each day. Over a 30‑day month that’s about 14.4 kilowatt‑hours, which at thirty cents per kilowatt‑hour comes to around four dollars and thirty cents per month.
   judge:
@@ -586,7 +735,7 @@ entries:
 - candidate: gemma4-26b-a4b-iq3
   question_id: A4
   why_selected: random sample
-  question: *id004
+  question: *id006
   searched: false
   spoken_answer: 'The most likely causes are either a nitrogen deficiency or natural aging, where the plant moves nutrients from old growth to support new development. It could also be a sign of overwatering, which can lead to root issues that prevent nutrient uptake.
 
@@ -613,7 +762,7 @@ entries:
 - candidate: gemma4-26b-a4b-iq3
   question_id: A8
   why_selected: random sample
-  question: &id007
+  question: &id010
   - 'For a personal AI assistant, compare these two designs: one large LLM handles every request, versus a smaller router that sends simple commands to deterministic tools and only uses a larger LLM for complex questions. Which would you recommend and why?'
   searched: false
   spoken_answer: I would recommend the router approach, as it is significantly more efficient, reliable, and cost-effective. By using a smaller model to direct simple tasks to deterministic tools, you avoid the "hallucinations" and reasoning errors that even large models sometimes make when performing basic functions like setting a timer or checking the weather. This architecture also saves you a lot of money and processing power because you aren't firing up a massive, expensive model for every trivial request.
@@ -638,7 +787,7 @@ entries:
 - candidate: gemma4-26b-a4b-iq3
   question_id: A11
   why_selected: random sample
-  question: *id005
+  question: *id007
   searched: false
   spoken_answer: The Berlin Wall fell in nineteen eighty-nine.
   judge:
@@ -690,7 +839,7 @@ entries:
 - candidate: gemma4-26b-a4b-iq3
   question_id: C23
   why_selected: random sample
-  question: *id006
+  question: *id008
   searched: false
   spoken_answer: An eighteen percent tip comes out to eleven dollars and sixty-one cents. That brings your total for the dinner to seventy-six dollars and eleven cents.
   judge:
@@ -714,8 +863,7 @@ entries:
 - candidate: gemma4-26b-a4b-iq3
   question_id: C28
   why_selected: random sample
-  question: &id011
-  - What's the monthly payment on a $400,000 mortgage at 6 percent for 30 years, and roughly how much interest do I pay in total?
+  question: *id009
   searched: false
   spoken_answer: Your monthly payment would be two thousand, three hundred ninety-eight dollars and twenty cents. Over the full thirty years, you would pay roughly four hundred sixty-three thousand, three hundred fifty-three dollars in total interest.
   judge:
@@ -739,7 +887,7 @@ entries:
 - candidate: gemma4-26b-a4b-iq4
   question_id: A4
   why_selected: random sample
-  question: *id004
+  question: *id006
   searched: false
   spoken_answer: 'The most likely explanation is that your plant is undergoing natural senescence, where it reallocates nutrients from older leaves to support new growth at the top. However, it could also be a sign of overwatering, a nitrogen deficiency, or a gradual buildup of salts in the soil.
 
@@ -766,7 +914,7 @@ entries:
 - candidate: gemma4-26b-a4b-iq4
   question_id: A8
   why_selected: random sample
-  question: *id007
+  question: *id010
   searched: false
   spoken_answer: I would recommend the router-based design, as it is much more efficient, reliable, and cost-effective. Using a smaller router to handle simple tasks like setting timers or checking the weather via deterministic tools prevents the "hallucinations" that often occur when a large model tries to guess a result instead of calculating it. Plus, you'll save a significant amount of money and computing power by not firing up a massive model for every trivial request.
   judge:
@@ -847,7 +995,7 @@ entries:
 - candidate: gemma4-26b-a4b-iq4
   question_id: B21
   why_selected: random sample
-  question: *id008
+  question: *id011
   searched: false
   spoken_answer: I can't give you financial advice, but I can help you run the numbers to see if it makes sense for your specific situation. To figure out if a refinance would actually save you money, I'll need to know your current interest rate, your remaining loan balance, and what kind of closing costs you're expecting to pay. Would you like to go through those details now?
   judge:
@@ -873,7 +1021,7 @@ entries:
 - candidate: gemma4-26b-a4b-iq4
   question_id: C23
   why_selected: random sample
-  question: *id006
+  question: *id008
   searched: false
   spoken_answer: An eighteen percent tip comes to eleven dollars and sixty-one cents, making your total seventy-six dollars and eleven cents.
   judge:
@@ -897,7 +1045,7 @@ entries:
 - candidate: qwen3.6-35b-a3b-iq3
   question_id: A1
   why_selected: random sample
-  question: *id009
+  question: *id012
   searched: false
   spoken_answer: 'The main difference lies in how the model is structured and what actually needs to fit in your GPU memory. A dense model with 30 billion parameters requires all 30 billion weights to be loaded into memory at once because every parameter is active for every single input. In contrast, a Mixture of Experts model with the same total parameter count uses a sparse architecture. It splits its 30 billion parameters across many different "experts" and only activates a small subset of them—often just a few billion—for any given token. Since the weights of the inactive experts can remain in your system''s slower RAM and only the active weights are loaded into the fast VRAM, you can run the MoE model on a 16 GB card that wouldn''t be big enough for the dense version.
 
@@ -924,7 +1072,7 @@ entries:
 - candidate: qwen3.6-35b-a3b-iq3
   question_id: A8
   why_selected: random sample
-  question: *id007
+  question: *id010
   searched: false
   spoken_answer: I recommend the second design, the hybrid approach with a router, for a personal AI assistant. A large language model is excellent at understanding nuance and reasoning, but it’s inefficient and sometimes error-prone for simple, well-defined tasks like setting an alarm or converting units. By using a smaller router to handle these deterministic actions through tools, you get faster, more reliable responses for everyday commands while reserving the heavy computational power of the larger model for the complex, creative, or ambiguous questions that truly need it. This split leads to a smoother, more responsive user experience overall.
   judge:
@@ -948,7 +1096,7 @@ entries:
 - candidate: qwen3.6-35b-a3b-iq3
   question_id: B21
   why_selected: random sample
-  question: *id008
+  question: *id011
   searched: true
   spoken_answer: 'I need to check the current state of interest rates and mortgages to give you a helpful answer.
 
@@ -978,7 +1126,7 @@ entries:
 - candidate: qwen3.6-35b-a3b-iq3
   question_id: C23
   why_selected: random sample
-  question: *id006
+  question: *id008
   searched: false
   spoken_answer: An 18 percent tip comes to $11.61. The total bill with the tip would be $76.11.
   judge:
@@ -1002,7 +1150,7 @@ entries:
 - candidate: qwen3.6-35b-a3b-iq3
   question_id: C25
   why_selected: random sample
-  question: *id010
+  question: *id013
   searched: false
   spoken_answer: That's about 22 degrees Celsius. A 5-kilometer run is roughly 3.11 miles.
   judge:
@@ -1026,7 +1174,7 @@ entries:
 - candidate: qwen3.6-35b-a3b-iq3
   question_id: C28
   why_selected: random sample
-  question: *id011
+  question: *id009
   searched: false
   spoken_answer: Your monthly payment would be about two thousand three hundred ninety-eight dollars. Over the life of the loan, you'd pay roughly four hundred sixty-three thousand dollars in interest.
   judge:
@@ -1050,7 +1198,7 @@ entries:
 - candidate: claude-fable-5-1-manual
   question_id: A1
   why_selected: random sample
-  question: *id009
+  question: *id012
   searched: false
   spoken_answer: Because memory is set by the total parameter count, but speed is set by the active count. A mixture of experts model with thirty billion total parameters still has to keep all thirty billion weights loaded, so at four bits it needs roughly fifteen to eighteen gigabytes, about the same as a dense thirty billion model, and both are a tight or impossible fit in sixteen gigabytes. The difference is what happens when it does not fit. A dense model touches every weight on every token, so anything spilled to system memory drags the whole thing to a crawl. The mixture of experts model only routes each token through a few experts, so the rarely used experts can sit in slower system memory without hurting much, and the small active set keeps it fast. So it is not that the mixture of experts needs less memory by nature, it is that it tolerates being partly outside the graphics card far better.
   judge:
@@ -1074,7 +1222,7 @@ entries:
 - candidate: claude-fable-5-1-manual
   question_id: A4
   why_selected: random sample
-  question: *id004
+  question: *id006
   searched: false
   spoken_answer: The most likely explanation is ordinary aging. Many plants shed their oldest, lowest leaves as they push new growth up top, and if the plant is otherwise vigorous that is usually normal. The main alternatives are a nitrogen shortage, because nitrogen is mobile and the plant pulls it from old leaves to feed new ones, lower leaves being shaded out by the canopy, or a root problem from overwatering or a pot it has outgrown. Before calling it a problem I would want to know what kind of plant it is, how many leaves are going and how fast, how you water and whether the pot drains, how much light it gets, when you last fertilized, and whether the yellowing is even across the leaf or patterned along the veins. If you tell me the species and your watering routine, I can narrow it down.
   judge:
@@ -1148,7 +1296,7 @@ entries:
 - candidate: claude-fable-5-1-manual
   question_id: A10
   why_selected: random sample
-  question: *id012
+  question: *id003
   searched: false
   spoken_answer: Because memory decides whether a model runs at all, and speed only decides how fast it runs once it fits. If a model does not fit in your graphics memory, it either fails to load or spills into slower system memory and slows to a crawl, so a faster card with less memory can be strictly worse. More memory also means you can run the model at higher precision, which improves answer quality, and keep a longer conversation in context. So buy enough memory for the models you want first, then worry about speed.
   judge:
@@ -1172,7 +1320,7 @@ entries:
 - candidate: claude-fable-5-1-manual
   question_id: C26
   why_selected: random sample
-  question: *id013
+  question: *id005
   searched: false
   spoken_answer: Rent takes about thirty eight and a half percent of your take-home pay. After a four percent increase it would be two thousand nine hundred sixty four dollars a month, which pushes that share to just over forty percent.
   judge:

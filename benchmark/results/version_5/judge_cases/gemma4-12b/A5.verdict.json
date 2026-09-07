@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It covers the beamforming microphone array, low-latency processing and speaker fidelity, but omits most of the sketch: echo cancellation, placement away from walls and noise, a local wake-word path for always-on listening, mic-speaker separation, and the privacy question of always-on audio.",
+  "judgment_reason": "It honored the no-product-names constraint completely, correctly answered from stable knowledge without searching, and tied each factor back to the stated priority of hearing across the room.",
+  "spoken_fit_reason": "Plain prose, no lists or brand names, and the five sentences are justified by a request for the main design considerations."
+}

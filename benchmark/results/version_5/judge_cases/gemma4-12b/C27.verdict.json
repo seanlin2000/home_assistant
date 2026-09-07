@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The 4.32 dollars a month matches the sketch exactly for a 30-day month at the stated 30 cents per kilowatt hour.",
+  "judgment_reason": "The rate was given so no assumption was needed, and it used the energy_cost tool rather than computing in its head.",
+  "spoken_fit_reason": "A single sentence that leads with the cost and restates the usage, written out for speech."
+}

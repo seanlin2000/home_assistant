@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["violated_explicit_constraint"],
+  "search_decision_correct": false,
+  "answer_quality": 1,
+  "judgment": 0,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It recommends a build 'centered around an NVIDIA RTX 4090' for an all-in $1,000 budget, which that card alone would consume and exceed, and it names Llama 3 and Mistral as the quality answer without any retrieved evidence about what is available or what it costs today.",
+  "judgment_reason": "The user explicitly asked to be told if the requirements could not be met rather than have the budget quietly raised, and the answer opened by asserting 'you can certainly stay under your one-thousand-dollar budget' while recommending hardware that blows through it, and made zero tool calls on a question that required current pricing.",
+  "spoken_fit_reason": "Three paragraphs of build advice that ran past the word cap and were cut mid-sentence in the software stack section."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The one-year figure of 44,100 is right, but it treated the tool's 7,318.15 (two monthly rents) as a two-year total and reported 49,318.15 instead of 87,817.80, making the 5,218.15 savings figure meaningless.",
+  "judgment_reason": "It deserves credit for flagging that the two options cover different lengths, but it then built a comparison on an unstated and incoherent assumption that year two of the one-year path costs the original 3,500 per month.",
+  "spoken_fit_reason": "Three plain sentences leading with the dollar totals, no lists or markdown."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It picks the router design with sound reliability and cost reasoning, but the question asked for a comparison and it never characterizes the single-LLM option, omits latency (the sketch's main argument) and never mentions the router's costs of routing errors and extra moving parts.",
+  "judgment_reason": "It committed to a recommendation rather than hedging, but presented the router design as strictly better with no account of when a single large model would be the right call.",
+  "spoken_fit_reason": "Three plain sentences that open with the recommendation, no lists or markdown."
+}

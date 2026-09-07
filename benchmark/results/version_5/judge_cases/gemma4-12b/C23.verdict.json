@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Tip of 11.61 and total of 76.11 match the reference sketch exactly.",
+  "judgment_reason": "It used the percent and calculate tools rather than doing the arithmetic itself, and made no needless search.",
+  "spoken_fit_reason": "Two sentences with the amounts written out as words, ideal for text-to-speech."
+}

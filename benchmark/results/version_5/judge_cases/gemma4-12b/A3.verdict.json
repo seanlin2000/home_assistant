@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It gives a clear 'not correct' and the right reason, that all experts must be resident in VRAM so total parameters set the memory need, but omits the sketch's point that the 4B active parameters are what make it fast (roughly 2 GB of traffic per token) and never mentions KV cache or activations.",
+  "judgment_reason": "It rejected the false premise outright and correctly noted the only escapes are heavy quantization or splitting across GPUs.",
+  "spoken_fit_reason": "Leads with the verdict in plain prose with no lists or markdown, and the extra length is warranted by the 'explain exactly why' request."
+}

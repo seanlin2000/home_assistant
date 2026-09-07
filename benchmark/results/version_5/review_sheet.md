@@ -7,6 +7,7 @@ Read the answer, decide on gates and scores, then record them in review_sheet.ya
 - [qwen3.5-4b](#review-qwen3-5-4b): [A2](#review-qwen3-5-4b-a2), [A5](#review-qwen3-5-4b-a5), [A10](#review-qwen3-5-4b-a10), [A11](#review-qwen3-5-4b-a11), [B19](#review-qwen3-5-4b-b19), [C25](#review-qwen3-5-4b-c25)
 - [gemma4-e4b](#review-gemma4-e4b): [A2](#review-gemma4-e4b-a2), [A4](#review-gemma4-e4b-a4), [B15](#review-gemma4-e4b-b15), [B19](#review-gemma4-e4b-b19), [C23](#review-gemma4-e4b-c23), [C27](#review-gemma4-e4b-c27)
 - [qwen3.5-9b](#review-qwen3-5-9b): [A2](#review-qwen3-5-9b-a2), [B12](#review-qwen3-5-9b-b12), [B17](#review-qwen3-5-9b-b17), [B18](#review-qwen3-5-9b-b18), [B20](#review-qwen3-5-9b-b20), [C24](#review-qwen3-5-9b-c24)
+- [gemma4-12b](#review-gemma4-12b): [A10](#review-gemma4-12b-a10), [B11](#review-gemma4-12b-b11), [B19](#review-gemma4-12b-b19), [C26](#review-gemma4-12b-c26), [C27](#review-gemma4-12b-c27), [C28](#review-gemma4-12b-c28)
 - [gpt-oss-20b](#review-gpt-oss-20b): [A1](#review-gpt-oss-20b-a1), [B19](#review-gpt-oss-20b-b19), [B21](#review-gpt-oss-20b-b21), [C26](#review-gpt-oss-20b-c26), [C27](#review-gpt-oss-20b-c27)
 - [gemma4-26b-a4b-iq3](#review-gemma4-26b-a4b-iq3): [A4](#review-gemma4-26b-a4b-iq3-a4), [A8](#review-gemma4-26b-a4b-iq3-a8), [A11](#review-gemma4-26b-a4b-iq3-a11), [B19](#review-gemma4-26b-a4b-iq3-b19), [C23](#review-gemma4-26b-a4b-iq3-c23), [C28](#review-gemma4-26b-a4b-iq3-c28)
 - [gemma4-26b-a4b-iq4](#review-gemma4-26b-a4b-iq4): [A4](#review-gemma4-26b-a4b-iq4-a4), [A8](#review-gemma4-26b-a4b-iq4-a8), [B13](#review-gemma4-26b-a4b-iq4-b13), [B16](#review-gemma4-26b-a4b-iq4-b16), [B21](#review-gemma4-26b-a4b-iq4-b21), [C23](#review-gemma4-26b-a4b-iq4-c23)
@@ -356,6 +357,122 @@ Because the model would have to rely on offloading, it would likely not provide 
 - It gives $18,392 where the reference sketch requires about $19,091 end-of-month or $19,154 beginning-of-month, understating the interest by roughly $700, and it never breaks out that $18,000 of the balance is the deposits themselves.
 - It was right not to search, but it produced a four-digit figure to the dollar with zero calculator calls and did not state whether deposits fall at the start or end of each month.
 - Two short plain-prose sentences leading with the figure, no lists or markdown.
+
+[Back to top](#review-sheet)
+
+<a id="review-gemma4-12b"></a>
+
+## gemma4-12b (6 to review)
+
+<a id="review-gemma4-12b-a10"></a>
+
+### gemma4-12b / A10 (random sample)
+
+**Question:** Explain why VRAM capacity can matter more than raw GPU speed when choosing hardware for a local LLM. Answer in a way that would sound natural if spoken aloud in under 45 seconds.
+
+**Searched:** False
+
+**Spoken answer:**
+
+> When running a large language model locally, VRAM is essentially the "workspace" for the model's brain. If your GPU is incredibly fast but doesn't have enough VRAM to hold the entire model, the system will have to offload parts of the model to your system RAM, which is significantly slower and can cause the generation speed to crawl. Having enough VRAM ensures the entire model stays on the GPU, allowing it to run at its full potential.
+
+**Judge:** gates=none, quality 4/5, judgment 3/3, spoken 2/2
+
+- It gets the central point that a fast GPU without enough VRAM spills to system RAM and crawls, but omits the sketch's secondary points that capacity decides which models are possible at all and that more memory allows lighter quantization and longer context.
+- No search was warranted and none was made, and it kept the answer inside the 120-word cap the question set.
+- Three plain sentences well under the word cap, no lists or markdown, and the workspace analogy reads naturally aloud.
+
+<a id="review-gemma4-12b-b11"></a>
+
+### gemma4-12b / B11 (random sample)
+
+**Question:** What is the current federal funds rate, and how has it changed over the last year?
+
+**Searched:** True
+
+**Spoken answer:**
+
+> The current federal funds target range is between three point five zero and three point seventy-five percent, with an effective rate of three point sixty-three percent as of September 2026. Over the last year, the rate has remained steady at this level, following a series of reductions that took place in late 2025.
+
+**Judge:** gates=none, quality 3/5, judgment 3/3, spoken 2/2
+
+- The 3.50 to 3.75 percent range and 3.63 percent effective rate are traceable to the H.15 excerpt, but it answers only half the question by saying the rate 'remained steady' over the last year when the retrieved table shows it fell from 4.22 percent in September 2025 through four cuts to 3.63 percent, a drop it never quantifies.
+- A single well-aimed search was the right call for a rate that changes with each FOMC meeting, and it anchored on the Federal Reserve's own H.15 release rather than the Trading Economics forecast page.
+- Two sentences that lead with the rate, numbers spelled out for speech, no URLs or citation markers.
+
+<a id="review-gemma4-12b-b19"></a>
+
+### gemma4-12b / B19 (random sample)
+
+**Question:** Search for whether an RTX 4060 Ti 16 GB can run Qwen3.8. Then tell me whether the answer you found is actually enough to predict whether it will provide a good voice-assistant experience.
+
+**Searched:** True
+
+**Spoken answer:**
+
+> An RTX 4060 Ti with 16 GB of VRAM can run the Qwen 3.8 27B model, but only if you use a compressed version, specifically a four-bit quantization. Because the full model files are quite large, you would need to use a version like the "q4_K_M" format, which is approximately 18 gigabytes, though some smaller versions are available if you need to ensure it fits comfortably with your system's overhead.
+
+However, knowing that the card *can* run the model is not enough to determine if it will provide a good voice-assistant experience. A high-quality assistant requires low latency—meaning the model needs to generate text quickly enough for a real-time conversation—and the 4060 Ti has relatively limited memory bandwidth compared to higher-end cards. Additionally, the specific configuration of the software you use, such as the "reasoning effort" setting, will drastically impact how long the model takes to "think" before it starts speaking, which is a critical factor for a smooth interactive experience.
+
+**Judge:** gates=none, quality 3/5, judgment 2/3, spoken 1/2
+
+- The second half is strong and grounded, naming bandwidth and the xhigh reasoning_effort default as the reasons a 'can it run' answer does not predict voice latency, but the first half says the card can run the 18GB q4_K_M when that exceeds the 16GB of VRAM, and it never mentions the 13.4GB Q3 alternative or the roughly 2 tok/s penalty the ModelFit table gives for spilling to system RAM.
+- It made the central call correctly by refusing to treat 'fits' as 'good voice-assistant experience', but let a model that does not actually fit in VRAM stand as the recommendation with only a vague nod to 'smaller versions'.
+- It emits literal markdown asterisks around the word 'can', which a text-to-speech engine would not handle.
+
+<a id="review-gemma4-12b-c26"></a>
+
+### gemma4-12b / C26 (random sample)
+
+**Question:** My rent is $2,850 a month and my take-home pay is $7,400 a month. What percent of my income goes to rent, and what would the rent be after a 4 percent increase?
+
+**Searched:** False
+
+**Spoken answer:**
+
+> Your rent takes up about thirty-eight point five one percent of your monthly take-home pay. If your rent were to increase by four percent, your new monthly payment would be two thousand nine hundred sixty-four dollars.
+
+**Judge:** gates=none, quality 5/5, judgment 3/3, spoken 2/2
+
+- Both figures match the sketch: 38.51 percent of take-home pay and 2,964 after the 4 percent increase.
+- It noticed that its first percent call returned an absurd 210,900 and re-issued it with the is_what_percent mode rather than reporting the bad number.
+- Two sentences with the figures spelled out for speech, though 'thirty-eight point five one percent' is more precision than a listener needs.
+
+<a id="review-gemma4-12b-c27"></a>
+
+### gemma4-12b / C27 (random sample)
+
+**Question:** My TV draws 120 watts. If I watch about 4 hours a day and electricity costs 30 cents per kilowatt hour, what does it cost me per month?
+
+**Searched:** False
+
+**Spoken answer:**
+
+> It costs you about four dollars and thirty-two cents per month to run your television for four hours a day.
+
+**Judge:** gates=none, quality 5/5, judgment 3/3, spoken 2/2
+
+- The 4.32 dollars a month matches the sketch exactly for a 30-day month at the stated 30 cents per kilowatt hour.
+- The rate was given so no assumption was needed, and it used the energy_cost tool rather than computing in its head.
+- A single sentence that leads with the cost and restates the usage, written out for speech.
+
+<a id="review-gemma4-12b-c28"></a>
+
+### gemma4-12b / C28 (random sample)
+
+**Question:** What's the monthly payment on a $400,000 mortgage at 6 percent for 30 years, and roughly how much interest do I pay in total?
+
+**Searched:** False
+
+**Spoken answer:**
+
+> The monthly payment for that mortgage would be approximately two thousand three hundred ninety-eight dollars and twenty cents. Over the life of the thirty-year loan, you would pay about four hundred sixty-three thousand three hundred fifty-three dollars in total interest.
+
+**Judge:** gates=none, quality 5/5, judgment 3/3, spoken 2/2
+
+- Both figures match the sketch: 2,398.20 a month and about 463,353 in total interest.
+- It used the loan_payment tool and reported its output faithfully without searching or inventing a rate.
+- Two sentences with amounts spelled out for speech, no lists or markdown.
 
 [Back to top](#review-sheet)
 
