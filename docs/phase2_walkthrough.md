@@ -159,7 +159,7 @@ Worth a look:
 
 ### 4b. Chat with the assistant in the browser
 
-Click the **Assist** icon at the top right of any page (a speech bubble). It opens a chat window on the Jarvis pipeline. Type:
+Open the Overview dashboard, tap the three-dot menu at the top right, and choose **Assist**. Since the 2026.2 redesign there is no separate speech-bubble icon in the header; the entry lives in that menu, in the browser and in the Companion app alike. It opens a chat window on the Jarvis pipeline. Type:
 
 - "Why does bread rise?" (answers from the model, 2 to 5 seconds once warm)
 - "What is 18 percent of 245 dollars?" (you will see "Let me work that out." first, then the answer; that first sentence is the filler, spoken while the calculator runs)
