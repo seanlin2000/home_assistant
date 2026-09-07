@@ -146,7 +146,7 @@ async def stream_model_turn(
                 mark_first_spoken(transcript, started)
                 yield AnswerDelta(text=spoken)
         elif isinstance(event, ToolCallRequest):
-            if not turn.tool_calls:
+            if transcript.time_to_first_spoken_seconds is None:  # one filler per user turn, however many tool rounds follow
                 mark_first_spoken(transcript, started)
                 yield FillerSpoken(text=filler_for(event.call.name, policy))
             turn.tool_calls.append(event.call)

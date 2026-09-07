@@ -113,3 +113,10 @@ async def test_second_empty_completion_is_accepted_as_an_empty_answer() -> None:
     transcript = events[-1].transcript
     assert transcript.final_answer == ""
     assert transcript.empty_completion_retries == 1
+
+
+async def test_filler_is_spoken_once_even_when_tools_run_in_two_rounds() -> None:
+    llm = ScriptedLLM([tool_turn("18% of 64.50", "call_0", "percent"), tool_turn("11.61 + 64.50", "call_1", "calculate"), text_turn("Seventy-six eleven.")])
+    events = await collect(llm, FakeToolBox())
+    assert len([event for event in events if isinstance(event, FillerSpoken)]) == 1
+    assert events[-1].transcript.final_answer == "Seventy-six eleven."
