@@ -72,11 +72,7 @@ candidates:
     baseline: true
 
   # manual: answers written by hand and replayed through the same loop and tools (benchmark-manual). A reference point, not a purchasable candidate.
-  - key: claude-fable-5-1-manual
-    label: Claude Fable 5.1, first hand-written pass inside the coding session (superseded as reference)
-    provider: manual
-    model: claude-fable-5-1 (manual)
-    baseline: false
+  # The first hand-written pass (claude-fable-5-1-manual) was superseded by the closed-book pass on 2026-09-07; its files stay in results/version_5 but it is no longer a configured candidate, so reports omit it.
   - key: claude-fable-5-1-manual-2
     label: Claude Fable 5.1, closed-book hand-written pass by a fresh subagent (reference ceiling)
     provider: manual

@@ -10,7 +10,6 @@ Total counts a gated question as zero; ungated total ignores the gates and sums 
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | Gemma 4 26B-A4B, UD-IQ4_XS (preview, tight fit) (preview) | 232/280 | 236/280 | 95/110 | 78/110 | 59/60 | n/a | 1 | 4.0 | 2.7 | 1.8 | 0 |
 | Claude Fable 5.1, closed-book hand-written pass by a fresh subagent (reference ceiling) | 226/280 | 259/280 | 100/110 | 66/110 | 60/60 | n/a | 5 | 4.5 | 2.8 | 2.0 | 0 |
-| Claude Fable 5.1, first hand-written pass inside the coding session (superseded as reference) | 217/280 | 245/280 | 109/110 | 48/110 | 60/60 | n/a | 5 | 4.1 | 2.6 | 2.0 | 0 |
 | Qwen 3.6 35B-A3B, UD-IQ3_XXS (3-bit preview) (preview) | 208/280 | 230/280 | 76/110 | 72/110 | 60/60 | n/a | 4 | 3.9 | 2.6 | 1.6 | 0 |
 | Gemma 4 26B-A4B, UD-IQ3_XXS (3-bit preview) (preview) | 199/280 | 225/280 | 84/110 | 56/110 | 59/60 | n/a | 5 | 3.6 | 2.6 | 1.8 | 0 |
 | Gemma 4 12B, Q4_K_M | 186/280 | 201/280 | 81/110 | 53/110 | 52/60 | n/a | 4 | 3.3 | 2.2 | 1.7 | 0 |
@@ -30,7 +29,6 @@ Totals on the questions both passes share, so new questions do not inflate the s
 | Qwen 3.5 4B, Q4_K_M | 28 | 162/280 | 157/280 | -5 | 176/280 | 187/280 | 4 | 7 |
 | Gemma 4 E4B, QAT int4 | 28 | 162/280 | 176/280 | +14 | 174/280 | 186/280 | 5 | 5 |
 | Qwen 3.5 9B, Q4_K_M | 28 | 125/280 | 154/280 | +29 | 171/280 | 185/280 | 9 | 7 |
-| Claude Fable 5.1, first hand-written pass inside the coding session (superseded as reference) | 28 | 241/280 | 217/280 | -24 | 259/280 | 245/280 | 3 | 5 |
 
 ## Gate failures by type
 
@@ -44,7 +42,6 @@ Totals on the questions both passes share, so new questions do not inflate the s
 | Gemma 4 26B-A4B, UD-IQ3_XXS (3-bit preview) (preview) | 0 | 0 | 2 | 0 | 1 | 0 | 0 | 0 | 2 |
 | Gemma 4 26B-A4B, UD-IQ4_XS (preview, tight fit) (preview) | 1 | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | Qwen 3.6 35B-A3B, UD-IQ3_XXS (3-bit preview) (preview) | 0 | 0 | 2 | 0 | 0 | 0 | 1 | 3 | 1 |
-| Claude Fable 5.1, first hand-written pass inside the coding session (superseded as reference) | 0 | 0 | 5 | 0 | 0 | 0 | 0 | 0 | 1 |
 | Claude Fable 5.1, closed-book hand-written pass by a fresh subagent (reference ceiling) | 0 | 0 | 4 | 0 | 0 | 0 | 0 | 1 | 0 |
 
 ## Router accuracy (search / calculate / answer decided before the model spoke)
@@ -61,7 +58,6 @@ The rule layer is model-independent, so its row is the same for every candidate;
 | Gemma 4 26B-A4B, UD-IQ3_XXS (3-bit preview) (preview) | 12 | 12/12 | 16 | 16/16 | 28/28 (100%) | 15.97 s | none |
 | Gemma 4 26B-A4B, UD-IQ4_XS (preview, tight fit) (preview) | 12 | 12/12 | 16 | 16/16 | 28/28 (100%) | 33.68 s | none |
 | Qwen 3.6 35B-A3B, UD-IQ3_XXS (3-bit preview) (preview) | 12 | 12/12 | 16 | 16/16 | 28/28 (100%) | 18.01 s | none |
-| Claude Fable 5.1, first hand-written pass inside the coding session (superseded as reference) | 12 | 12/12 | 16 | 16/16 | 28/28 (100%) | 0.00 s | none |
 | Claude Fable 5.1, closed-book hand-written pass by a fresh subagent (reference ceiling) | 12 | 12/12 | 16 | 16/16 | 28/28 (100%) | 0.00 s | none |
 
 ## Logged, not scored (prototype machine, for projection only)
@@ -76,41 +72,40 @@ The rule layer is model-independent, so its row is the same for every candidate;
 | Gemma 4 26B-A4B, UD-IQ3_XXS (3-bit preview) (preview) | 28.4 s | 84.0 s | 104 | 11/28 | NO |
 | Gemma 4 26B-A4B, UD-IQ4_XS (preview, tight fit) (preview) | 61.6 s | 155.1 s | 97 | 10/28 | NO |
 | Qwen 3.6 35B-A3B, UD-IQ3_XXS (3-bit preview) (preview) | 50.5 s | 156.4 s | 130 | 12/28 | NO |
-| Claude Fable 5.1, first hand-written pass inside the coding session (superseded as reference) | 0.0 s | 0.0 s | 121 | 11/28 | n/a |
 | Claude Fable 5.1, closed-book hand-written pass by a fresh subagent (reference ceiling) | 0.0 s | 0.0 s | 121 | 11/28 | n/a |
 
 ## Per-question scores (G = gated to zero, - = not judged)
 
-| Question | qwen3.5-4b | gemma4-e4b | qwen3.5-9b | gemma4-12b | gpt-oss-20b | gemma4-26b-a4b-iq3 | gemma4-26b-a4b-iq4 | qwen3.6-35b-a3b-iq3 | claude-fable-5-1-manual | claude-fable-5-1-manual-2 |
-|---|---|---|---|---|---|---|---|---|---|---|
-| A1 | 4 | 8 | 5 | 7 | 5 | 8 | 9 | 7 | 10 | 10 |
-| A2 | 2 | G (0) | 3 | G (5) | 4 | G (6) | 8 | G (10) | 10 | G (10) |
-| A3 | 9 | 9 | 8 | 9 | G (8) | 9 | 9 | 8 | 10 | 10 |
-| A4 | 8 | 9 | 9 | 7 | 8 | 9 | 9 | 9 | 10 | 10 |
-| A5 | 8 | 7 | 6 | 8 | 5 | 8 | 8 | 8 | 10 | 10 |
-| A6 | G (4) | 7 | 6 | 7 | 7 | 7 | 7 | G (3) | 10 | 10 |
-| A7 | 8 | G (0) | 9 | 8 | 9 | 9 | 9 | 9 | 9 | 10 |
-| A8 | 7 | 8 | 7 | 7 | 7 | 7 | 8 | 7 | 10 | 10 |
-| A9 | 8 | 7 | 8 | 9 | 8 | 8 | 9 | 9 | 10 | 10 |
-| A10 | 8 | 9 | 9 | 9 | G (7) | 9 | 9 | 9 | 10 | 10 |
-| A11 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 |
-| B11 | G (5) | 6 | G (5) | 8 | 10 | 8 | 8 | 8 | 9 | G (7) |
-| B12 | 6 | 7 | 7 | 7 | - | G (4) | 8 | 8 | G (5) | G (5) |
-| B13 | G (5) | G (2) | G (4) | G (4) | G (3) | 9 | 8 | 9 | 9 | 10 |
-| B14 | 9 | 9 | G (3) | 8 | G (7) | 8 | 8 | 9 | G (6) | 10 |
-| B15 | G (4) | G (5) | 9 | 5 | G (6) | G (6) | 7 | G (1) | 5 | G (5) |
-| B16 | G (4) | 7 | G (6) | 5 | G (4) | 7 | 7 | 8 | G (6) | 9 |
-| B17 | 5 | 7 | G (3) | 5 | 5 | 9 | 10 | 8 | 7 | 9 |
-| B18 | G (3) | 4 | 5 | G (4) | 5 | 6 | 6 | 7 | G (5) | 9 |
-| B19 | 6 | 7 | G (5) | 6 | 5 | G (6) | 9 | 7 | 8 | 9 |
-| B20 | G (5) | 3 | 7 | G (2) | G (3) | G (4) | 7 | G (8) | G (6) | G (6) |
-| B21 | 7 | G (3) | G (5) | 9 | G (3) | 9 | G (4) | 8 | 10 | 10 |
-| C23 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 |
-| C24 | 4 | 2 | 4 | 2 | 7 | 9 | 9 | 10 | 10 | 10 |
-| C25 | 8 | 10 | 9 | 10 | 10 | 10 | 10 | 10 | 10 | 10 |
-| C26 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 |
-| C27 | 10 | 10 | 3 | 10 | 10 | 10 | 10 | 10 | 10 | 10 |
-| C28 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 |
+| Question | qwen3.5-4b | gemma4-e4b | qwen3.5-9b | gemma4-12b | gpt-oss-20b | gemma4-26b-a4b-iq3 | gemma4-26b-a4b-iq4 | qwen3.6-35b-a3b-iq3 | claude-fable-5-1-manual-2 |
+|---|---|---|---|---|---|---|---|---|---|
+| A1 | 4 | 8 | 5 | 7 | 5 | 8 | 9 | 7 | 10 |
+| A2 | 2 | G (0) | 3 | G (5) | 4 | G (6) | 8 | G (10) | G (10) |
+| A3 | 9 | 9 | 8 | 9 | G (8) | 9 | 9 | 8 | 10 |
+| A4 | 8 | 9 | 9 | 7 | 8 | 9 | 9 | 9 | 10 |
+| A5 | 8 | 7 | 6 | 8 | 5 | 8 | 8 | 8 | 10 |
+| A6 | G (4) | 7 | 6 | 7 | 7 | 7 | 7 | G (3) | 10 |
+| A7 | 8 | G (0) | 9 | 8 | 9 | 9 | 9 | 9 | 10 |
+| A8 | 7 | 8 | 7 | 7 | 7 | 7 | 8 | 7 | 10 |
+| A9 | 8 | 7 | 8 | 9 | 8 | 8 | 9 | 9 | 10 |
+| A10 | 8 | 9 | 9 | 9 | G (7) | 9 | 9 | 9 | 10 |
+| A11 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 |
+| B11 | G (5) | 6 | G (5) | 8 | 10 | 8 | 8 | 8 | G (7) |
+| B12 | 6 | 7 | 7 | 7 | - | G (4) | 8 | 8 | G (5) |
+| B13 | G (5) | G (2) | G (4) | G (4) | G (3) | 9 | 8 | 9 | 10 |
+| B14 | 9 | 9 | G (3) | 8 | G (7) | 8 | 8 | 9 | 10 |
+| B15 | G (4) | G (5) | 9 | 5 | G (6) | G (6) | 7 | G (1) | G (5) |
+| B16 | G (4) | 7 | G (6) | 5 | G (4) | 7 | 7 | 8 | 9 |
+| B17 | 5 | 7 | G (3) | 5 | 5 | 9 | 10 | 8 | 9 |
+| B18 | G (3) | 4 | 5 | G (4) | 5 | 6 | 6 | 7 | 9 |
+| B19 | 6 | 7 | G (5) | 6 | 5 | G (6) | 9 | 7 | 9 |
+| B20 | G (5) | 3 | 7 | G (2) | G (3) | G (4) | 7 | G (8) | G (6) |
+| B21 | 7 | G (3) | G (5) | 9 | G (3) | 9 | G (4) | 8 | 10 |
+| C23 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 |
+| C24 | 4 | 2 | 4 | 2 | 7 | 9 | 9 | 10 | 10 |
+| C25 | 8 | 10 | 9 | 10 | 10 | 10 | 10 | 10 | 10 |
+| C26 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 |
+| C27 | 10 | 10 | 3 | 10 | 10 | 10 | 10 | 10 | 10 |
+| C28 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 |
 
 ## Judge agreement
 
