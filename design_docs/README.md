@@ -34,3 +34,4 @@ Start with `00_system_overview.md`. Every other doc covers one subsystem that ha
 | `07_music_spotify.md` | Voice-controlled Spotify playback |
 | `08_hardware_and_deployment.md` | The always-on Mac and where each service runs |
 | `09_dev_environment.md` | Virtual environment, pinned dependencies, how to run things |
+| `10_operations.md` | Running, updating, watching, and debugging the headless Mac mini from the laptop (v1 only; added after the design was frozen) |
