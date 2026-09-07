@@ -13,6 +13,7 @@ import shutil
 import socket
 import subprocess
 import time
+from collections.abc import Awaitable
 from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
 
@@ -131,7 +132,7 @@ async def run_checks(settings: Settings, full: bool = False) -> dict[str, Check]
     return checks
 
 
-async def timed(name: str, probe) -> tuple[str, Check]:
+async def timed(name: str, probe: Awaitable[Check]) -> tuple[str, Check]:
     started = time.monotonic()
     try:
         check = await probe

@@ -18,4 +18,5 @@ else
 fi
 
 chflags -R nohidden .venv
+git config core.hooksPath .githooks
 uv run python -c "import assistant_core, benchmark, web_search_mcp; print('environment ready:', __import__('sys').executable)"

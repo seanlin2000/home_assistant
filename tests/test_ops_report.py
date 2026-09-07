@@ -10,7 +10,7 @@ from ops import report
 from ops.pipeline_runs import summarize
 
 
-def write_lines(path: Path, records) -> None:
+def write_lines(path: Path, records: list[dict]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text("".join(json.dumps(record) + "\n" for record in records))
 
@@ -88,7 +88,7 @@ def fixture_dir(tmp_path: Path) -> Path:
     return tmp_path
 
 
-def test_report_covers_turns_health_pipeline_and_ollama(tmp_path) -> None:
+def test_report_covers_turns_health_pipeline_and_ollama(tmp_path: Path) -> None:
     text = report.render(fixture_dir(tmp_path), days=7, today=date(2026, 9, 7))
     assert "Turns: 3" in text  # the June turn is outside the window
     assert "2026-09-06 2, 2026-09-07 1" in text
@@ -103,7 +103,7 @@ def test_report_covers_turns_health_pipeline_and_ollama(tmp_path) -> None:
     assert "prompt reading median 45 tok/s" in text and "generation median 25 tok/s" in text
 
 
-def test_report_on_an_empty_directory_does_not_crash(tmp_path) -> None:
+def test_report_on_an_empty_directory_does_not_crash(tmp_path: Path) -> None:
     text = report.render(tmp_path, days=1, today=date(2026, 9, 7))
     assert "Turns: 0" in text and "Health checks: 0" in text and "no print_timing" in text
 

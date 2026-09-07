@@ -1,0 +1,50 @@
+name: checks
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened, edited, ready_for_review]
+  push:
+    branches: [main]
+
+jobs:
+  checks:
+    name: checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+      - name: Install the locked environment (the voice group needs Apple Silicon wheels)
+        run: uv sync --frozen --no-group voice
+      - name: Install shfmt and shellcheck
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq shellcheck
+          sudo curl -sSL -o /usr/local/bin/shfmt https://github.com/mvdan/sh/releases/download/v3.14.0/shfmt_v3.14.0_linux_amd64
+          sudo chmod +x /usr/local/bin/shfmt
+      - name: Formatting check
+        run: scripts/lint.sh -c
+      - name: Deslop
+        run: uv run deslop
+      - name: Tests
+        run: uv run pytest -q
+
+  pr-description:
+    name: pr-description
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+      - run: uv sync --frozen --no-group voice
+      - name: Check every line reference in the description against the PR head
+        env:
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: |
+          printf '%s\n' "$PR_BODY" > "$RUNNER_TEMP/pr_body.md"
+          uv run pr-refs check "$RUNNER_TEMP/pr_body.md"

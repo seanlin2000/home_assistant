@@ -15,7 +15,7 @@ import os
 import subprocess
 import sys
 import tomllib
-from collections.abc import Iterable
+from collections.abc import Callable, Iterable
 from pathlib import Path
 
 from packaging.requirements import Requirement
@@ -172,7 +172,7 @@ def switch_to(ref: str, run_tests: bool, dry_run: bool) -> dict:
     return summary
 
 
-def with_lock(fn):
+def with_lock(fn: Callable[[], dict]) -> dict:
     paths.log_dir().mkdir(parents=True, exist_ok=True)
     with paths.deploy_lock().open("w") as handle:
         try:

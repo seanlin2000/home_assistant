@@ -8,16 +8,17 @@ those verdict files into scores. Without either flag the judge is called through
 import argparse
 import asyncio
 import json
+from collections.abc import Callable
 from pathlib import Path
 
 import anthropic
 from dotenv import load_dotenv
 from rich.console import Console
 
-from assistant_core.models import Transcript
+from assistant_core.models import Message, Transcript
 from benchmark.costs import estimate_cost_usd
 from benchmark.gates import harness_gates
-from benchmark.records import Gate, JudgeConfig, JudgeVerdict, Question, QuestionResult, Score, load_config, load_questions, read_jsonl, write_jsonl
+from benchmark.records import BenchmarkConfig, Gate, JudgeConfig, JudgeVerdict, Question, QuestionResult, Score, load_config, load_questions, read_jsonl, write_jsonl
 
 CONFIG_PATH = Path("benchmark/config.yaml")
 QUESTIONS_PATH = Path("benchmark/questions.yaml")
@@ -70,7 +71,9 @@ def results_files(run_dir: Path, candidate_keys: list[str] | None) -> list[Path]
     return sorted(path for path in run_dir.glob("*.jsonl") if not path.name.endswith(".scores.jsonl"))
 
 
-async def judge_candidate(results_path: Path, question_lookup, config, rubric: str, client: anthropic.AsyncAnthropic, semaphore: asyncio.Semaphore, force: bool) -> None:
+async def judge_candidate(
+    results_path: Path, question_lookup: Callable[[str], Question], config: BenchmarkConfig, rubric: str, client: anthropic.AsyncAnthropic, semaphore: asyncio.Semaphore, force: bool
+) -> None:
     scores_path = results_path.with_suffix(".scores.jsonl")
     results = read_jsonl(results_path, QuestionResult)
     existing = {} if force else {score.question_id: score for score in read_jsonl(scores_path, Score)}
@@ -88,7 +91,7 @@ def print_spend(scores: list[Score]) -> None:
     console.print(f"  judge usage: {input_tokens} in / {output_tokens} out, about ${estimate_cost_usd(input_tokens, output_tokens):.2f}")
 
 
-async def judge_one(question: Question, result: QuestionResult, config, rubric: str, client: anthropic.AsyncAnthropic, semaphore: asyncio.Semaphore) -> Score:
+async def judge_one(question: Question, result: QuestionResult, config: BenchmarkConfig, rubric: str, client: anthropic.AsyncAnthropic, semaphore: asyncio.Semaphore) -> Score:
     gates = harness_gates(question, result, config.policy.max_tool_rounds)
     if Gate.RUN_ERROR in gates:
         return Score(question_id=question.id, candidate_key=result.candidate_key, category=question.category, harness_gates=gates, judge=None, judge_error=result.error)
@@ -141,7 +144,7 @@ def cases_dir(results_path: Path) -> Path:
     return results_path.parent / "judge_cases" / results_path.stem
 
 
-def export_cases(results_path: Path, question_lookup, config, rubric: str, force: bool) -> None:
+def export_cases(results_path: Path, question_lookup: Callable[[str], Question], config: BenchmarkConfig, rubric: str, force: bool) -> None:
     """One markdown file per pending case, the rubric alongside, and a manifest the subagent walks."""
     pending, _ = pending_results(results_path, force)
     folder = cases_dir(results_path)
@@ -160,7 +163,7 @@ def export_cases(results_path: Path, question_lookup, config, rubric: str, force
     console.print(f"{results_path.stem}: exported {len(manifest)} cases to {folder}")
 
 
-def import_verdicts(results_path: Path, question_lookup, config, judge_label: str) -> None:
+def import_verdicts(results_path: Path, question_lookup: Callable[[str], Question], config: BenchmarkConfig, judge_label: str) -> None:
     """Turn the subagent's verdict files into scores; anything missing or malformed is reported and left unscored."""
     pending, existing = pending_results(results_path, force=False)
     folder = cases_dir(results_path)
@@ -212,7 +215,7 @@ def render_turn(index: int, transcript: Transcript) -> str:
     return "\n\n".join(parts)
 
 
-def render_message(message) -> str:
+def render_message(message: Message) -> str:
     if message.role.value == "user":
         return f"USER: {message.content}"
     if message.role.value == "tool":

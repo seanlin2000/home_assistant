@@ -1,6 +1,9 @@
 """The deploy rules table from design doc 10 §3.8 and the manifest-versus-lock preflight from doc 09 §4."""
 
 import json
+from pathlib import Path
+
+import pytest
 
 from ops import deploy
 
@@ -75,7 +78,7 @@ def test_the_real_manifest_matches_the_real_lock() -> None:
     assert deploy.manifest_lock_mismatches(deploy.MANIFEST.read_text(), deploy.LOCK.read_text()) == []
 
 
-def test_cli_status_reports_head_and_flags(monkeypatch, tmp_path, capsys) -> None:
+def test_cli_status_reports_head_and_flags(monkeypatch: pytest.MonkeyPatch, tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
     monkeypatch.setenv("STUDIO_LOG_DIR", str(tmp_path))
     assert deploy.main(["status"]) == 0
     report = json.loads(capsys.readouterr().out)

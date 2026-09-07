@@ -56,7 +56,7 @@ def build_server(settings: SearchSettings, searxng: SearxngClient | None = None,
     return server
 
 
-def register_operations_routes(server: MCPServer, turn_log: TurnLog | None) -> None:
+def register_operations_routes(server: MCPServer, turn_log: TurnLog | None) -> None:  # deslop: allow-comments
     """Two plain HTTP routes beside the MCP endpoint (design doc 10): the health check proves this server is ours, and the component posts its turn records.
 
     Custom routes bypass MCP's session handling; like the rest of the server they are reachable only on the LAN."""

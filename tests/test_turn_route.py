@@ -33,7 +33,7 @@ def client_for(tmp_path: Path | None) -> httpx.AsyncClient:
 
 
 @pytest.mark.asyncio
-async def test_post_turn_appends_one_line_per_record(tmp_path):
+async def test_post_turn_appends_one_line_per_record(tmp_path: Path):
     async with client_for(tmp_path) as client:
         for _ in range(2):
             response = await client.post(TURNS_ROUTE, content=sample_record().model_dump_json(), headers={"content-type": "application/json"})
@@ -45,7 +45,7 @@ async def test_post_turn_appends_one_line_per_record(tmp_path):
 
 
 @pytest.mark.asyncio
-async def test_post_turn_rejects_bad_json_and_wrong_shape(tmp_path):
+async def test_post_turn_rejects_bad_json_and_wrong_shape(tmp_path: Path):
     async with client_for(tmp_path) as client:
         assert (await client.post(TURNS_ROUTE, content=b"not json")).status_code == 400
         response = await client.post(TURNS_ROUTE, json={"hello": "world"})
@@ -62,7 +62,7 @@ async def test_post_turn_without_a_directory_is_503():
 
 
 @pytest.mark.asyncio
-async def test_healthz_lists_every_required_tool(tmp_path):
+async def test_healthz_lists_every_required_tool(tmp_path: Path):
     async with client_for(tmp_path) as client:
         response = await client.get("/healthz")
     body = response.json()
@@ -73,7 +73,7 @@ async def test_healthz_lists_every_required_tool(tmp_path):
     assert body["turns_dir"] == str(tmp_path)
 
 
-def test_turn_log_prunes_only_old_day_files(tmp_path):
+def test_turn_log_prunes_only_old_day_files(tmp_path: Path):
     log = TurnLog(tmp_path)
     today = date(2026, 9, 7)
     for days_ago in (0, 89, 90, 91, 400):
@@ -85,7 +85,7 @@ def test_turn_log_prunes_only_old_day_files(tmp_path):
     assert remaining == ["2026-06-09.jsonl", "2026-06-10.jsonl", "2026-09-07.jsonl", "notes.txt"]
 
 
-def test_turn_log_read_since_returns_records_in_day_order(tmp_path):
+def test_turn_log_read_since_returns_records_in_day_order(tmp_path: Path):
     log = TurnLog(tmp_path)
     record = sample_record()
     for day in (date(2026, 9, 1), date(2026, 9, 5)):

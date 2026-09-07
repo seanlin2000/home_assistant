@@ -1,5 +1,7 @@
 """Expose the calculator functions as MCP tools on an existing server, alongside web search, so the agent sees one tool list."""
 
+from collections.abc import Callable
+
 from mcp.server.mcpserver import MCPServer
 
 from calculator_mcp import functions
@@ -8,7 +10,7 @@ from calculator_mcp.functions import CalculatorError, Result
 CALCULATOR_TOOL_NAMES = ("calculate", "percent", "convert", "growth_schedule", "energy_cost", "loan_payment", "break_even", "date_math")
 
 
-def rendered(function, *args, **kwargs) -> str:
+def rendered(function: Callable[..., Result], *args: object, **kwargs: object) -> str:
     try:
         result: Result = function(*args, **kwargs)
     except CalculatorError as error:
