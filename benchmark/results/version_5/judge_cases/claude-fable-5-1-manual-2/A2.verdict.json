@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "All figures match the sketch exactly (44,100 for the one-year option; 43,260 and 44,557.80 giving 87,817.80 for the two-year) and it states the 840 saving is the first-year comparison.",
+  "judgment_reason": "It named the length mismatch and said the two-year total depends on an unknown renewal rate rather than presenting a single bare savings number.",
+  "spoken_fit_reason": "Numbers are spelled out for speech and the answer leads, with no lists or markup, though it is necessarily long because the question asked for both totals and the difference."
+}

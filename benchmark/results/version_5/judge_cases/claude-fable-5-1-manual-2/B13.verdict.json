@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Every concrete claim is traceable: the Rigi and Pilatus Golden Round Trip legs, the May-to-November Pilatus season and year-round lake boats, pier one for Vitznau and pier two for Alpnachstad from the SGV page, and the roughly two-hour Luzern-Interlaken Express, with the forecast drawn from the retrieved 27-degree and thundery-showers entries.",
+  "judgment_reason": "It labelled the forecasts as automated, admitted it could not pull a live departure list and told the user to check SBB, and asked about a Swiss Travel Pass because it changes which option is cheapest.",
+  "spoken_fit_reason": "Plain prose with no lists, URLs, or markup, though the opening sentence packs both full itineraries into one long breath."
+}

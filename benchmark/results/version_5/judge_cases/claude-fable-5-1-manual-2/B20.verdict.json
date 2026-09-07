@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The refusal and the overall build shape are sensible, but it says 'the sources put a ChatGPT-like local experience at twenty-four gigabytes' and quotes a $900 used 3090, $800 new 16 GB cards and $450 RX 9060 XT when none of those numbers or that claim appear in the four excerpts, and it ignores what was actually retrieved, the Whisper-Piper-Ollama stack, the Pi 5 and $150-200 mini-PC tiers, and the per-GPU response-time figures.",
+  "judgment_reason": "It did exactly what the user asked on the central point, saying plainly that the quality bar cannot be met at $1,000 and naming $1,500 or a cloud fallback rather than quietly inflating the budget, but it attributed invented prices to its sources.",
+  "spoken_fit_reason": "Leads with the refusal in one sentence and keeps to plain prose with no lists or URLs."
+}

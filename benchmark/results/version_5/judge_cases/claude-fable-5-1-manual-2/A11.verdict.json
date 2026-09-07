@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Gives 1989 and the ninth of November, which is exactly the reference sketch.",
+  "judgment_reason": "Recognized settled history and answered directly with zero tool calls instead of searching.",
+  "spoken_fit_reason": "A single sentence with the year spoken out, ideal for text to speech."
+}

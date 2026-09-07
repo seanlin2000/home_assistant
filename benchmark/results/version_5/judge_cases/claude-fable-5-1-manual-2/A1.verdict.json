@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It states memory is set by total parameters ('roughly fifteen to eighteen gigabytes at four-bit whether it is dense or a mixture of experts'), explains sparse activation buys compute and traffic savings, and explains the CPU-offload trick, covering every element of the sketch.",
+  "judgment_reason": "Correctly answered from general knowledge without searching and explicitly refused the tempting claim that MoE needs less VRAM by nature.",
+  "spoken_fit_reason": "Plain prose with the answer in the first clause, no lists or markup, and the length is what the requested explanation demands."
+}

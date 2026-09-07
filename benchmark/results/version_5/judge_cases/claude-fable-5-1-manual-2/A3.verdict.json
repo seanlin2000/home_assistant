@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Opens with 'No, that is not correct' and gives the sketch's reasoning that routing varies per token so all experts must be resident, with memory set by total parameters plus context cache rather than the 4B active.",
+  "judgment_reason": "It rejected the false premise outright and added the honest caveat that streaming experts makes the card a cache rather than the model's home.",
+  "spoken_fit_reason": "Short, direct, plain prose that puts the 'no' first with no formatting artifacts."
+}

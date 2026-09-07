@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Gives about 19,091 for end-of-month deposits, notes 18,000 is the deposits and 1,091 the interest, and adds the 19,154 start-of-month variant, matching every element of the sketch.",
+  "judgment_reason": "It stated the end-of-month timing assumption explicitly instead of leaving the annuity convention implicit.",
+  "spoken_fit_reason": "Two sentences that lead with the number, with figures written for speech."
+}

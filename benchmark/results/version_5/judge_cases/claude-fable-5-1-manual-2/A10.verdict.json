@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Covers the sketch: a model that does not fit will not load or spills to slower memory and crawls, capacity decides what is possible while speed only decides how fast a fitting model runs, plus the precision and context-length benefit.",
+  "judgment_reason": "Answered from stable general knowledge without searching and respected the spoken-length brief.",
+  "spoken_fit_reason": "Around a hundred words of plain prose, well inside the 120-word limit and under 45 seconds aloud."
+}

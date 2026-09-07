@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It refutes the premise with the retrieved 3.50-to-3.75 percent range, cites Freddie Mac's 6.71 percent thirty-year fixed against 6.50 a year ago and the 7.06 percent refinance figure, then gives the break-even logic of a roughly three-quarter-point drop against closing costs and time in the home, which is the whole reference sketch.",
+  "judgment_reason": "It searched rather than accepting the premise, corrected it in the first clause, and asked for the user's current rate instead of guessing at whether refinancing pays.",
+  "spoken_fit_reason": "Four short spoken sentences, correction first, ending on a single question, with all rates read out in words."
+}

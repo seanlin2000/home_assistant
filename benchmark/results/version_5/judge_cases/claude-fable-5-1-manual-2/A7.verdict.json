@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It reaches the sketch's numbers, about 1.45 kWh a day and 43.5 kWh a month costing roughly six and a half to thirteen dollars, and adds the useful observation that idle draw is about four fifths of the total.",
+  "judgment_reason": "It labelled the result an estimate, named the 23-hours-idle and full-300-watt assumptions, flagged that the 300 W figure overstates the load, and bracketed the unknown electricity rate rather than picking one silently.",
+  "spoken_fit_reason": "Leads with the dollar range in the first sentence and stays in plain spoken prose with numbers written out."
+}

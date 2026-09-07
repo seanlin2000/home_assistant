@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Its second search returned a used RTX 4060 Ti at about $331 from verified eBay sold listings through September 5, yet it told the user 'I could not read a current used price', discarding the one figure that directly answers the question, and it added a median 'around eight hundred in late August' and a '$499 list price' that appear in no excerpt.",
+  "judgment_reason": "It correctly refused to pretend a new 16 GB NVIDIA card exists under $500 and flagged the over-budget cards as over budget, but misreported its own tool output and attributed invented prices to unnamed sources.",
+  "spoken_fit_reason": "Opens with the honest headline in one sentence and stays in plain prose with no lists or URLs."
+}

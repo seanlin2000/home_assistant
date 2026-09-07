@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The current range of 3.50 to 3.75 percent and the 3.63 effective rate are traceable to the H.15 excerpt, but it says the next decision is 'the sixteenth and seventeenth of September' when both retrieved sources say the meeting is September 15-16 with the announcement on the 16th, and the claimed year-ago path of cuts in September, October, and December appears in no excerpt.",
+  "judgment_reason": "It rightly searched, attributed the rate to the Fed's own daily release, and flagged that the debate has shifted toward a hike, but presented an unretrieved meeting date and rate history as if verified.",
+  "spoken_fit_reason": "Three sentences of plain prose with numbers spelled out and no URLs or citation markers."
+}

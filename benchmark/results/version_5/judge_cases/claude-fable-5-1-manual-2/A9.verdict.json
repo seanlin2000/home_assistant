@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Asks for origin, dates and length, a budget number, what 'warm' means, willingness to fly internationally and passport status, companions, and interests, then lists the assumptions to avoid, covering the sketch.",
+  "judgment_reason": "It explicitly declined to name a destination, saying any specific pick would be a guess, which is the central judgment call here.",
+  "spoken_fit_reason": "Three prose sentences with no lists, though it runs slightly long for an answer that is mostly a set of questions."
+}
