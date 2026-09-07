@@ -1,10 +1,10 @@
 {
   "gates_hit": [],
   "search_decision_correct": true,
-  "answer_quality": 3,
+  "answer_quality": 4,
   "judgment": 2,
-  "spoken_fit": 2,
-  "answer_quality_reason": "The used RTX 3090 24 GB pick and the RTX 4060 Ti 16 GB fallback both trace to the excerpts and are the right VRAM-per-dollar calls, but the user asked for a whole computer on $1,000 and the answer only prices the graphics card, ignoring the rest of the build.",
-  "judgment_reason": "Searching was correct and it explicitly checked the card against the budget, but it did not flag that an $800 to $999 used card leaves nothing of a $1,000 total computer budget, nor that the excerpts call 2026 prices a volatile snapshot.",
-  "spoken_fit_reason": "Three sentences of plain prose with capacities spelled out and no lists, URLs or citation markers."
+  "spoken_fit": 1,
+  "answer_quality_reason": "It correctly names the used RTX 3090 at 24 GB as the best VRAM per dollar and the RTX 5060 Ti 16 GB new build as the safer path, all traceable to the excerpts, but misstates the build's retrieved ~$1,010 total as 'around one thousand and one dollar'.",
+  "judgment_reason": "Searching was the right call for current hardware prices and it flagged that the used-3090 route depends on the rest of the parts, but it never notes that the quoted new build lands slightly above the thousand-dollar budget.",
+  "spoken_fit_reason": "Three paragraphs long enough to be cut off by the word cap, and the model names come out as 'RTX thirty-nine-oh nine' and 'RTX fifty-six-oh ti', which would sound wrong aloud."
 }

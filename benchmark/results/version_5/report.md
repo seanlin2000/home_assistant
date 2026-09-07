@@ -12,8 +12,8 @@ Total counts a gated question as zero; ungated total ignores the gates and sums 
 | Claude Fable 5.1, answered by hand in the coding session (reference ceiling) | 217/280 | 245/280 | 109/110 | 48/110 | 60/60 | n/a | 5 | 4.1 | 2.6 | 2.0 | 0 |
 | Qwen 3.6 35B-A3B, UD-IQ3_XXS (3-bit preview) (preview) | 208/280 | 230/280 | 76/110 | 72/110 | 60/60 | n/a | 4 | 3.9 | 2.6 | 1.6 | 0 |
 | Gemma 4 26B-A4B, UD-IQ3_XXS (3-bit preview) (preview) | 199/280 | 225/280 | 84/110 | 56/110 | 59/60 | n/a | 5 | 3.6 | 2.6 | 1.8 | 0 |
+| Gemma 4 E4B, QAT int4 | 176/280 | 186/280 | 74/110 | 50/110 | 52/60 | n/a | 5 | 2.9 | 2.0 | 1.8 | 0 |
 | Qwen 3.5 4B, Q4_K_M | 157/280 | 187/280 | 72/110 | 33/110 | 52/60 | n/a | 7 | 3.0 | 2.1 | 1.6 | 0 |
-| Gemma 4 E4B, QAT int4 | 154/280 | 165/280 | 74/110 | 35/110 | 45/60 | n/a | 9 | 2.6 | 1.8 | 1.5 | 0 |
 | Qwen 3.5 9B, Q4_K_M | 154/280 | 185/280 | 80/110 | 28/110 | 46/60 | n/a | 7 | 2.9 | 2.0 | 1.7 | 0 |
 | gpt-oss 20B, MXFP4 | 145/280 | 186/280 | 63/110 | 25/110 | 57/60 | n/a | 9 | 3.2 | 2.0 | 1.6 | 1 |
 
@@ -26,7 +26,7 @@ Totals on the questions both passes share, so new questions do not inflate the s
 | Candidate | Shared questions | Previous | This pass | Change | Previous ungated | This pass ungated | Previous gated | This pass gated |
 |---|---|---|---|---|---|---|---|---|
 | Qwen 3.5 4B, Q4_K_M | 28 | 162/280 | 157/280 | -5 | 176/280 | 187/280 | 4 | 7 |
-| Gemma 4 E4B, QAT int4 | 28 | 162/280 | 154/280 | -8 | 174/280 | 165/280 | 5 | 9 |
+| Gemma 4 E4B, QAT int4 | 28 | 162/280 | 176/280 | +14 | 174/280 | 186/280 | 5 | 5 |
 | Qwen 3.5 9B, Q4_K_M | 28 | 125/280 | 154/280 | +29 | 171/280 | 185/280 | 9 | 7 |
 | Claude Fable 5.1, answered by hand in the coding session (reference ceiling) | 28 | 241/280 | 217/280 | -24 | 259/280 | 245/280 | 3 | 5 |
 
@@ -35,7 +35,7 @@ Totals on the questions both passes share, so new questions do not inflate the s
 | Candidate | agreed_with_false_premise | did_not_search_on_search_question | fabricated_current_fact | no_final_answer | presented_estimate_as_fact | run_error | searched_on_no_search_question | too_many_tool_calls | violated_explicit_constraint |
 |---|---|---|---|---|---|---|---|---|---|
 | Qwen 3.5 4B, Q4_K_M | 0 | 0 | 5 | 0 | 0 | 0 | 1 | 0 | 1 |
-| Gemma 4 E4B, QAT int4 | 2 | 5 | 0 | 4 | 0 | 0 | 0 | 0 | 1 |
+| Gemma 4 E4B, QAT int4 | 1 | 2 | 0 | 2 | 0 | 0 | 0 | 0 | 1 |
 | Qwen 3.5 9B, Q4_K_M | 0 | 3 | 6 | 0 | 1 | 0 | 0 | 0 | 0 |
 | gpt-oss 20B, MXFP4 | 1 | 0 | 6 | 0 | 0 | 1 | 1 | 0 | 2 |
 | Gemma 4 26B-A4B, UD-IQ3_XXS (3-bit preview) (preview) | 0 | 0 | 2 | 0 | 1 | 0 | 0 | 0 | 2 |
@@ -63,7 +63,7 @@ The rule layer is model-independent, so its row is the same for every candidate;
 | Candidate | Median time to first token | Median total | Mean answer words | Questions searched | Fully on GPU |
 |---|---|---|---|---|---|
 | Qwen 3.5 4B, Q4_K_M | 2.9 s | 8.9 s | 96 | 12/28 | yes |
-| Gemma 4 E4B, QAT int4 | 1.4 s | 4.8 s | 64 | 6/28 | yes |
+| Gemma 4 E4B, QAT int4 | 1.4 s | 4.7 s | 76 | 9/28 | yes |
 | Qwen 3.5 9B, Q4_K_M | 2.8 s | 10.5 s | 105 | 8/28 | yes |
 | gpt-oss 20B, MXFP4 | 16.6 s | 50.6 s | 126 | 11/28 | NO |
 | Gemma 4 26B-A4B, UD-IQ3_XXS (3-bit preview) (preview) | 28.4 s | 84.0 s | 104 | 11/28 | NO |
@@ -75,32 +75,32 @@ The rule layer is model-independent, so its row is the same for every candidate;
 
 | Question | qwen3.5-4b | gemma4-e4b | qwen3.5-9b | gpt-oss-20b | gemma4-26b-a4b-iq3 | gemma4-26b-a4b-iq4 | qwen3.6-35b-a3b-iq3 | claude-fable-5-1-manual |
 |---|---|---|---|---|---|---|---|---|
-| A1 | 4 | 5 | 5 | 5 | 8 | 9 | 7 | 10 |
+| A1 | 4 | 8 | 5 | 5 | 8 | 9 | 7 | 10 |
 | A2 | 2 | G (0) | 3 | 4 | G (6) | 8 | G (10) | 10 |
-| A3 | 9 | G (2) | 8 | G (8) | 9 | 9 | 8 | 10 |
+| A3 | 9 | 9 | 8 | G (8) | 9 | 9 | 8 | 10 |
 | A4 | 8 | 9 | 9 | 8 | 9 | 9 | 9 | 10 |
-| A5 | 8 | 8 | 6 | 5 | 8 | 8 | 8 | 10 |
-| A6 | G (4) | 9 | 6 | 7 | 7 | 7 | G (3) | 10 |
-| A7 | 8 | 8 | 9 | 9 | 9 | 9 | 9 | 9 |
+| A5 | 8 | 7 | 6 | 5 | 8 | 8 | 8 | 10 |
+| A6 | G (4) | 7 | 6 | 7 | 7 | 7 | G (3) | 10 |
+| A7 | 8 | G (0) | 9 | 9 | 9 | 9 | 9 | 9 |
 | A8 | 7 | 8 | 7 | 7 | 7 | 8 | 7 | 10 |
-| A9 | 8 | 8 | 8 | 8 | 8 | 9 | 9 | 10 |
+| A9 | 8 | 7 | 8 | 8 | 8 | 9 | 9 | 10 |
 | A10 | 8 | 9 | 9 | G (7) | 9 | 9 | 9 | 10 |
 | A11 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 |
-| B11 | G (5) | 7 | G (5) | 10 | 8 | 8 | 8 | 9 |
+| B11 | G (5) | 6 | G (5) | 10 | 8 | 8 | 8 | 9 |
 | B12 | 6 | 7 | 7 | - | G (4) | 8 | 8 | G (5) |
 | B13 | G (5) | G (2) | G (4) | G (3) | 9 | 8 | 9 | 9 |
 | B14 | 9 | 9 | G (3) | G (7) | 8 | 8 | 9 | G (6) |
-| B15 | G (4) | G (4) | 9 | G (6) | G (6) | 7 | G (1) | 5 |
-| B16 | G (4) | G (1) | G (6) | G (4) | 7 | 7 | 8 | G (6) |
-| B17 | 5 | G (0) | G (3) | 5 | 9 | 10 | 8 | 7 |
-| B18 | G (3) | 5 | 5 | 5 | 6 | 6 | 7 | G (5) |
-| B19 | 6 | G (0) | G (5) | 5 | G (6) | 9 | 7 | 8 |
-| B20 | G (5) | 7 | 7 | G (3) | G (4) | 7 | G (8) | G (6) |
-| B21 | 7 | G (2) | G (5) | G (3) | 9 | G (4) | 8 | 10 |
+| B15 | G (4) | G (5) | 9 | G (6) | G (6) | 7 | G (1) | 5 |
+| B16 | G (4) | 7 | G (6) | G (4) | 7 | 7 | 8 | G (6) |
+| B17 | 5 | 7 | G (3) | 5 | 9 | 10 | 8 | 7 |
+| B18 | G (3) | 4 | 5 | 5 | 6 | 6 | 7 | G (5) |
+| B19 | 6 | 7 | G (5) | 5 | G (6) | 9 | 7 | 8 |
+| B20 | G (5) | 3 | 7 | G (3) | G (4) | 7 | G (8) | G (6) |
+| B21 | 7 | G (3) | G (5) | G (3) | 9 | G (4) | 8 | 10 |
 | C23 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 |
-| C24 | 4 | 5 | 4 | 7 | 9 | 9 | 10 | 10 |
+| C24 | 4 | 2 | 4 | 7 | 9 | 9 | 10 | 10 |
 | C25 | 8 | 10 | 9 | 10 | 10 | 10 | 10 | 10 |
-| C26 | 10 | G (0) | 10 | 10 | 10 | 10 | 10 | 10 |
+| C26 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 |
 | C27 | 10 | 10 | 3 | 10 | 10 | 10 | 10 | 10 |
 | C28 | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 10 |
 

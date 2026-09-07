@@ -4,7 +4,7 @@
   "answer_quality": 5,
   "judgment": 3,
   "spoken_fit": 2,
-  "answer_quality_reason": "Both conversions match the reference, twenty-two point two Celsius and three point one one miles, each backed by a converter call.",
-  "judgment_reason": "It used the conversion tool for both parts rather than searching or doing the arithmetic in its head.",
-  "spoken_fit_reason": "One sentence answering both parts in order with numbers spelled out and no lists or markup."
+  "answer_quality_reason": "Both conversions match the sketch, 22.2 degrees Celsius and 3.11 miles, taken from the two convert calls.",
+  "judgment_reason": "It used the conversion tools for both parts and did not search for something it could compute.",
+  "spoken_fit_reason": "Two sentences with the numbers spelled out for speech and no lists or markup, though 'twenty-two point two zero' is slightly more precise than a listener needs."
 }

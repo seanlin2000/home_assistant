@@ -1,10 +1,10 @@
 {
   "gates_hit": [],
-  "search_decision_correct": false,
-  "answer_quality": 0,
-  "judgment": 0,
-  "spoken_fit": 0,
-  "answer_quality_reason": "The final assistant message is empty, so neither the wake-word answer nor the source explanation was given.",
-  "judgment_reason": "The user explicitly instructed a search and the assistant made no tool call and produced nothing.",
-  "spoken_fit_reason": "There was nothing for the listener to hear."
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It answers yes and points at the Open Voice PE firmware, but says a custom wake word 'requires specific firmware' when the retrieved microWakeWord repo shows a custom model can be added to the stock Voice PE by overriding the micro_wake_word section in its ESPHome config, and it never names the sources it trusted.",
+  "judgment_reason": "It searched as instructed but justified its trust only in generic terms, 'technical documentation and community discussions', without distinguishing the official Home Assistant docs from third-party GitHub repositories.",
+  "spoken_fit_reason": "Three short paragraphs of plain prose that lead with the yes, with no URLs, lists or markdown despite the sources being code-heavy pages."
 }

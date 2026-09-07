@@ -1,10 +1,10 @@
 {
   "gates_hit": [],
-  "search_decision_correct": false,
-  "answer_quality": 0,
-  "judgment": 0,
-  "spoken_fit": 1,
-  "answer_quality_reason": "It delivers no market comparison and never touches the second half of the question about the risks of using advertised rents, which required no data at all.",
-  "judgment_reason": "It failed to search on a question about current rental conditions and instead blocked on the user's current rent, which is not needed to judge whether a four percent annual increase tracks the market.",
-  "spoken_fit_reason": "Two short sentences of plain prose with no markup, but the listener hears only a request for information rather than an answer."
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It correctly explains the asking-rent risk and cites the RentCafe 4.48 percent year-over-year figure, but calls 4 percent competitive on that single number while ignoring the retrieved Zumper 3 percent and the citywide 2.8 percent median asking rent, which would make the offer look above market rather than competitive.",
+  "judgment_reason": "Searching was the right call and it did raise the skepticism the question asked for, but it did not flag that the retrieved sources disagree by more than a point and a half on the very number its verdict rests on.",
+  "spoken_fit_reason": "Four sentences of plain prose that lead with the verdict, percentages spelled out, no lists or URLs."
 }

@@ -1,10 +1,10 @@
 {
   "gates_hit": [],
   "search_decision_correct": true,
-  "answer_quality": 3,
+  "answer_quality": 2,
   "judgment": 3,
   "spoken_fit": 2,
-  "answer_quality_reason": "It correctly names budget, trip length and interests as missing and flags that 'not too expensive' is subjective, but omits the sketch's biggest gaps: where the user is departing from, the dates or season, and whether the trip is domestic or international with passport and visa implications.",
-  "judgment_reason": "It named no destination and invented no preferences, answering the meta-question about missing information as asked and without searching.",
-  "spoken_fit_reason": "Three sentences of plain prose with no lists or markup, leading with the missing information."
+  "answer_quality_reason": "It asks about budget, what 'warm' means, companions and activities but omits basics like departure city, dates and trip length, and domestic versus international, and it completely skips the second half of the question about which assumptions to avoid.",
+  "judgment_reason": "It correctly resisted naming a destination and asked for the user's own definitions of 'warm' and 'not too expensive' rather than inventing them.",
+  "spoken_fit_reason": "Two short sentences of plain prose with no lists, markdown or URLs."
 }

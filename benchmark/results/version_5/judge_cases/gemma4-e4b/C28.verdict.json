@@ -4,7 +4,7 @@
   "answer_quality": 5,
   "judgment": 3,
   "spoken_fit": 2,
-  "answer_quality_reason": "Both figures match the reference exactly, a 2,398.20 monthly payment and roughly 463,353 in total interest, taken from the loan calculator rather than estimated.",
-  "judgment_reason": "It used the amortization tool instead of searching or doing the math itself, which is the expected behavior for this arithmetic question.",
-  "spoken_fit_reason": "Two sentences with all figures spelled out for speech, no lists, markdown or citations."
+  "answer_quality_reason": "The payment of 2,398.20 and roughly 463,000 in total interest both match the reference sketch, taken straight from the loan_payment result.",
+  "judgment_reason": "It used the loan calculator rather than doing amortization in its head and correctly rounded the interest when saying 'roughly'.",
+  "spoken_fit_reason": "Two sentences with all figures spelled out for speech and no lists, markdown or citation markers."
 }

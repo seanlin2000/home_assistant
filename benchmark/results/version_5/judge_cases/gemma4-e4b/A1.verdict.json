@@ -1,10 +1,10 @@
 {
   "gates_hit": [],
   "search_decision_correct": true,
-  "answer_quality": 2,
-  "judgment": 2,
-  "spoken_fit": 1,
-  "answer_quality_reason": "It asserts the exact misleading claim the sketch warns against, saying the GPU 'might only need to actively load and process a few billion parameters... allowing it to fit within the sixteen gigabyte memory limit', and never mentions that all experts must still be stored, nor quantization or CPU offload.",
-  "judgment_reason": "Correctly answered from knowledge without searching, but stated a confidently wrong mechanism with no hedging or caveat.",
-  "spoken_fit_reason": "Plain prose with no markdown, but four paragraphs long enough that the word cap truncated the final sentence for the listener."
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It correctly separates active parameters from total stored weights and says all thirty billion must be loaded, but never explains the sketch's key point that the MoE fits 16 GB only via small enough quantization or expert offload to CPU RAM, and it muddies the point by saying active parameters reduce 'the memory required for the active forward pass'.",
+  "judgment_reason": "Correctly answered a conceptual question from general knowledge without searching and made no unstated assumptions.",
+  "spoken_fit_reason": "Plain prose with no lists, markdown or URLs, leading with the explanation, and the extra length is warranted by an explicitly requested explanation."
 }

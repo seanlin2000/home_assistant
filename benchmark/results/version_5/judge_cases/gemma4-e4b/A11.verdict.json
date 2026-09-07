@@ -4,7 +4,7 @@
   "answer_quality": 5,
   "judgment": 3,
   "spoken_fit": 2,
-  "answer_quality_reason": "It gives the correct year, nineteen eighty nine, which is exactly what the reference sketch requires.",
-  "judgment_reason": "It recognized this as settled history and answered directly with no search, which is the behavior the question was designed to test.",
-  "spoken_fit_reason": "A single sentence with the year spelled out for speech, though the 'I can tell you that' preamble is a slight throat-clear."
+  "answer_quality_reason": "It gives 1989, exactly what the sketch requires, with nothing missing or wrong.",
+  "judgment_reason": "It correctly recognized settled history and answered without searching.",
+  "spoken_fit_reason": "A single sentence that leads with the answer and spells the year out for speech."
 }

@@ -4,7 +4,7 @@
   "answer_quality": 5,
   "judgment": 3,
   "spoken_fit": 2,
-  "answer_quality_reason": "The $4.32 monthly figure matches the reference for a 30-day month and the answer restates the inputs it used, 120 watts for four hours a day at thirty cents per kilowatt hour.",
-  "judgment_reason": "It used the energy calculator rather than searching or estimating, and worked from the rate the user supplied instead of assuming one.",
-  "spoken_fit_reason": "Two short sentences that lead with the dollar figure, with numbers spelled out and no lists or markup."
+  "answer_quality_reason": "It gives about $4.32 per month, matching the sketch's 30-day figure from the energy_cost call that returned 0.48 kWh a day.",
+  "judgment_reason": "It used the calculator with the rate the user supplied, invented no assumptions, and did not search.",
+  "spoken_fit_reason": "A single sentence leading with the cost and noting it rests on the given usage and rate."
 }

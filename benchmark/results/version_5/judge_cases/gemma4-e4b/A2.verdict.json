@@ -4,7 +4,7 @@
   "answer_quality": 0,
   "judgment": 0,
   "spoken_fit": 0,
-  "answer_quality_reason": "The final assistant message is empty, so none of the reference figures (3,675/month, 44,100, 87,817.80, or the 840 year-one difference) were delivered.",
-  "judgment_reason": "No judgment was exercised at all; the assistant produced nothing and made no calculator calls despite an explicit arithmetic request.",
-  "spoken_fit_reason": "There was nothing for the listener to hear."
+  "answer_quality_reason": "The final ASSISTANT message is empty, so none of the reference sketch's figures (3,675 per month, 44,100 for one year, 87,817.80 over two years) appear at all.",
+  "judgment_reason": "No judgment call was made on the central question: the assistant produced nothing, neither the comparison nor a statement of what the two options cover.",
+  "spoken_fit_reason": "There is nothing to read aloud, so the listener would hear silence."
 }

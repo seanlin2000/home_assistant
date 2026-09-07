@@ -3,8 +3,8 @@
   "search_decision_correct": true,
   "answer_quality": 2,
   "judgment": 1,
-  "spoken_fit": 2,
-  "answer_quality_reason": "It recommends the Qwen 3.6 27B dense model for 16 GB even though the excerpt it drew from calls the 3.6 family what you run on a 24GB card, and the tradeoff discussion the user specifically asked for stays generic, with no quantization levels, memory figures or throughput numbers.",
-  "judgment_reason": "Searching was correct since the user instructed it, but it pushed a model past the user's stated 16 GB budget against its own source and never flagged the assumption about quantization level that would decide whether anything that large fits.",
-  "spoken_fit_reason": "Two paragraphs of plain prose with version numbers spelled out for speech, no lists, markdown or URLs."
+  "spoken_fit": 1,
+  "answer_quality_reason": "It makes the 18 GB q4_K_M Qwen3.8-27B its primary pick for a 16 GB card, calling 18 GB 'close to that limit' when it simply does not fit, and ignores the same excerpt's explicit smaller-GPU guidance to use the 17.1 GB Q4_K_M or 13.4 GB Q3 GGUF, as well as the cheap 4.25 GiB KV cache figure that bears directly on memory usage.",
+  "judgment_reason": "It searched as instructed but glossed over the very constraint the user set, presenting an over-capacity download as workable instead of naming the quantization that actually fits 16 GB.",
+  "spoken_fit_reason": "Three dense paragraphs long enough that the spoken output was cut by the word cap mid-explanation."
 }

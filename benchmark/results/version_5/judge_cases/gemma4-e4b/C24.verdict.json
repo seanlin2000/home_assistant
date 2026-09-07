@@ -1,10 +1,10 @@
 {
   "gates_hit": [],
   "search_decision_correct": true,
-  "answer_quality": 2,
-  "judgment": 1,
+  "answer_quality": 0,
+  "judgment": 0,
   "spoken_fit": 2,
-  "answer_quality_reason": "It reports 19,478.78 against the reference of about 19,091 end-of-month or 19,154 start-of-month, because the tool was called with 3 periods at 4 percent each rather than 36 monthly periods, and it never notes that 18,000 of the balance is the deposits themselves.",
-  "judgment_reason": "It correctly reached for the calculator instead of searching, but accepted a schedule that visibly shows only three annual periods for a thirty-six-month question and stated the result to the cent without flagging the end-of-month versus start-of-month assumption.",
-  "spoken_fit_reason": "A single sentence with the figure spelled out for speech and no lists or markup, though quoting cents on a projection is more precision than a listener needs."
+  "answer_quality_reason": "It states 1,623.23 against the sketch's roughly 19,091, because it called growth_schedule with three periods and a single 500 start instead of 36 monthly deposits, so the figure is not even as large as the 18,000 the user would have deposited.",
+  "judgment_reason": "It asserted the tool's output as the answer with no sanity check that 36 payments of 500 must exceed 18,000, and its restated assumptions contradict the three-period calculation it actually ran.",
+  "spoken_fit_reason": "Two short sentences of plain spoken prose that lead with the figure and name the assumptions, with no formatting problems."
 }

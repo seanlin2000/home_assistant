@@ -1,10 +1,10 @@
 {
   "gates_hit": [],
   "search_decision_correct": true,
-  "answer_quality": 3,
+  "answer_quality": 2,
   "judgment": 3,
   "spoken_fit": 2,
-  "answer_quality_reason": "It gets the central point of a far-field microphone array plus noise handling and signal processing, but announces 'placement' without ever saying where, and omits beamforming and echo cancellation, a local wake-word path, where the compute runs, speaker separation and always-on audio privacy.",
-  "judgment_reason": "It honoured the no-product-names constraint, kept to hardware considerations as asked, and correctly answered from knowledge without searching.",
-  "spoken_fit_reason": "Three sentences of plain prose with no lists, markdown or brand names."
+  "answer_quality_reason": "It covers only the microphone, beamforming array and signal-to-noise ratio, omitting nearly all the sketch's other considerations such as placement away from walls, echo cancellation, a local wake-word path, speaker separation, where the compute runs, and privacy of always-on audio.",
+  "judgment_reason": "It honored the explicit 'no specific products' constraint, naming only technologies, and correctly answered from general knowledge without searching.",
+  "spoken_fit_reason": "Three sentences of plain prose leading with the main consideration, with no lists, markdown or URLs."
 }
