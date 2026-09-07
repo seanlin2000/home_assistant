@@ -1,6 +1,6 @@
 #!/bin/bash
 # Start, stop, or check the local SearXNG container.
-# Usage: scripts/searxng.sh up|down|status|logs
+# Usage: scripts/searxng.sh up|down|restart|status|logs
 
 set -eu
 
@@ -25,6 +25,11 @@ up)
 down)
     docker compose --project-directory "${COMPOSE_DIR}" down
     ;;
+restart)
+    ensure_secret
+    docker compose --project-directory "${COMPOSE_DIR}" down
+    docker compose --project-directory "${COMPOSE_DIR}" up -d
+    ;;
 status)
     docker compose --project-directory "${COMPOSE_DIR}" ps
     curl -fsS 'http://127.0.0.1:8080/search?q=test&format=json' >/dev/null && echo "SearXNG JSON API: ok" || echo "SearXNG JSON API: not responding"
@@ -33,7 +38,7 @@ logs)
     docker compose --project-directory "${COMPOSE_DIR}" logs -f
     ;;
 *)
-    printf 'Usage: %s up|down|status|logs\n' "$(basename "$0")" >&2
+    printf 'Usage: %s up|down|restart|status|logs\n' "$(basename "$0")" >&2
     exit 1
     ;;
 esac

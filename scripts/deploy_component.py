@@ -75,9 +75,21 @@ def unmount(mount_point: Path) -> None:
 
 
 def sync(source: Path, target: Path) -> None:
+    """Replace the deployed tree, keeping the previous one aside until the copy has finished so a failure halfway leaves the old component in place."""
+    previous = target.with_name(target.name + ".prev")
+    if previous.exists():
+        shutil.rmtree(previous)
     if target.exists():
-        shutil.rmtree(target)
-    shutil.copytree(source, target)
+        target.rename(previous)
+    try:
+        shutil.copytree(source, target)
+    except Exception:
+        shutil.rmtree(target, ignore_errors=True)
+        if previous.exists():
+            previous.rename(target)
+        raise
+    if previous.exists():
+        shutil.rmtree(previous)
 
 
 def restart_home_assistant(host: str, token: str) -> None:
