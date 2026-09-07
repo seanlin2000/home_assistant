@@ -48,9 +48,9 @@ Upgrade dependencies deliberately with `scripts/dev_setup.sh --upgrade`, review 
 `main` is protected: every change goes through a branch and a pull request. The pre-commit hook in `.githooks/` refuses a commit unless `scripts/lint.sh -c`,
 `uv run deslop`, and `uv run pytest` pass; CI (`.github/workflows/checks.yml`) runs the same three checks on the pull request and must be green to merge.
 
-The PR description follows `.github/pull_request_template.md`: a summary, then one section per important change whose bullets explain the business logic and
-end with a line reference. References come from `uv run pr-refs resolve path:symbol` and are checked by `uv run pr-refs check body.md` and by CI, so they are
-never typed from memory. See `design_docs/v1/09_dev_environment.md`, section 12.
+The PR description follows `.github/pull_request_template.md`: a summary, then one section per important change. Each bullet opens with the line reference,
+then a short bold phrase naming the change, then the business logic. References come from `uv run pr-refs resolve path:symbol` and are checked by
+`uv run pr-refs check body.md` and by CI, so they are never typed from memory. See `design_docs/v1/09_dev_environment.md`, section 12.
 
 ## Operating the Mac that runs it
 
