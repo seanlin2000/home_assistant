@@ -5,8 +5,12 @@
 ## <Change 1>
 
 <!--
-One "## " section per important change. Each bullet states one piece of core business logic and ends with the
-lines a reviewer should read for it. References are produced by the tool, never typed by hand:
+One "## " section per important change. Each bullet has three parts in this order: the lines a reviewer should read,
+a short bold phrase naming the change, then one or two sentences of the business logic behind it:
+
+    - `deslop/checks.py:115-127` (`count_lines`) **Comments counted by the tokenizer.** A "#" inside a string never counts ...
+
+References are produced by the tool, never typed by hand:
 
     uv run pr-refs resolve deslop/checks.py:count_lines .githooks/pre-commit:"uv run deslop"
 
@@ -14,7 +18,7 @@ which prints, for example, `deslop/checks.py:115-127` (`count_lines`) and `.gith
 Before opening or editing the PR: uv run pr-refs check body.md. CI runs the same check on every push.
 -->
 
-- ...
+- `path:start-end` (`symbol`) **Short phrase.** Description.
 
 ## How to verify
 
