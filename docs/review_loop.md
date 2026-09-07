@@ -1,7 +1,7 @@
 # The automated review loop
 
-Claude opens a pull request, Codex reviews it, Claude fixes what the review found, Codex looks again, and the human's only step is one approving
-click before auto-merge. This page is the one-time setup, the round-by-round procedure the fixing agent follows, and how to stop it.
+Claude opens a pull request, Codex reviews it, Claude fixes what the review found, Codex looks again, and the human's only step is one click on
+Merge once everything is green. This page is the one-time setup, the round-by-round procedure the fixing agent follows, and how to stop it.
 
 ```
   PR opened ──▶ CI: checks + pr-description ──▶ Codex automatic review (bot chatgpt-codex-connector)
@@ -14,7 +14,7 @@ click before auto-merge. This page is the one-time setup, the round-by-round pro
                                                         │
                               round cap: 3 (counted from the "Review round" comments)
                                                         ▼
-  Codex has no new findings, CI green, threads resolved ──▶ human clicks Approve ──▶ auto-merge (squash)
+  Codex has no new findings, CI green, threads resolved ──▶ human reads the round summaries, clicks Merge (squash)
 ```
 
 ## One-time setup
@@ -26,8 +26,8 @@ click before auto-merge. This page is the one-time setup, the round-by-round pro
    Claude subscription token, so review rounds are billed to the subscription and not to the prepaid API balance. This stores the repository
    secret `CLAUDE_CODE_OAUTH_TOKEN`, which the workflow reads. If the command also offers to add its own `claude.yml` workflow, that is optional;
    the loop only needs the app installed and the secret present.
-3. **Branch protection** on `main` (set up with PR 1): pull request required, one approving review, `checks` and `pr-description` green,
-   conversations resolved. Auto-merge enabled in the repository settings.
+3. **Branch protection** on `main` (set up with PR 1): pull request required, `checks` and `pr-description` green, conversations resolved,
+   no bypass. No approving review is required, because GitHub does not let a PR's author approve their own PR and every PR here has the same author.
 
 ## One round, step by step
 
@@ -48,7 +48,7 @@ The workflow triggers on `pull_request_review: submitted` and runs only when the
 - A thread left open: Claude disagreed or the point was out of scope. Read the reply, then either resolve it yourself or reply with instructions
   and `@claude` to have the interactive workflow act on it.
 - The round cap comment: three rounds did not converge. Review the PR directly.
-- The approving review. GitHub does not count a bot's approval toward branch protection, so the merge waits for one human Approve.
+- The merge. Nothing merges on its own: when CI is green and every thread is resolved, the human reads the round summaries and clicks Merge.
 
 ## Stopping the loop
 
