@@ -50,7 +50,9 @@ Upgrade dependencies deliberately with `scripts/dev_setup.sh --upgrade`, review 
 
 The PR description follows `.github/pull_request_template.md`: a summary, then one section per important change. Each bullet opens with the line reference,
 then a short bold phrase naming the change, then the business logic. References come from `uv run pr-refs resolve path:symbol` and are checked by
-`uv run pr-refs check body.md` and by CI, so they are never typed from memory. See `design_docs/v1/09_dev_environment.md`, section 12.
+`uv run pr-refs check body.md`, the shape by `uv run pr-refs lint body.md`, and CI runs both, so references are never typed from memory and the
+template is followed rather than imitated. The `/create-pr` skill in `.claude/skills/create-pr/SKILL.md` runs the whole path: worktree from `origin/main`, commits
+through the hook, description, checks, push, PR, CI. See `design_docs/v1/09_dev_environment.md`, section 12.
 
 ## Operating the Mac that runs it
 

@@ -4,6 +4,7 @@ from pathlib import Path
 
 import pytest
 
+from pr_references.lint import lint
 from pr_references.references import SymbolAnchor, TextAnchor, find_references, mismatches, parse_anchor, resolve, sections_without_references
 
 MODULE = '''"""Doc."""
@@ -104,3 +105,48 @@ def test_off_by_one_range_wrong_symbol_missing_file_and_absent_text_are_reported
 def test_sections_without_references_ignores_summary_and_verification_sections() -> None:
     text = "## Summary\ntext\n## Hook\nno reference here\n## Checker\nsee `a.py:1-2` (`f`)\n## How to verify\nrun it\n## Review notes\nnone\n"
     assert sections_without_references(text) == ["Hook"]
+
+
+WELL_FORMED = """## Summary
+
+Why.
+
+## The change
+
+<!-- - `x.py:1-1` (`f`) **Inside a comment.** ignored
+-->
+- `a.py:14-15` (`fetch`) **One reference.** Then the description.
+- `a.py:2-2` (`LIMIT`), `b.sh:3-3` ("echo one") **Two references.** Then the description.
+
+## How to verify
+
+```
+uv run pytest -q
+```
+
+## Review notes
+
+- free-form bullets are fine here
+"""
+
+
+def test_lint_accepts_the_template_shape() -> None:
+    assert lint(WELL_FORMED) == []
+
+
+def test_lint_reports_each_malformed_bullet_with_its_line() -> None:
+    text = WELL_FORMED.replace(
+        "- `a.py:14-15` (`fetch`) **One reference.** Then the description.",
+        "- The description first. `a.py:14-15` (`fetch`)\n- `a.py:14-15` (`fetch`) No bold phrase.\n- `a.py:14-15` (`fetch`) **No period** then text.\n- `a.py:14-15` (`fetch`) **Nothing after the phrase.**",
+    )
+    assert [problem.line for problem in lint(text)] == [9, 10, 11, 12]
+    assert {problem.message for problem in lint(text)} == {"a bullet reads: one or more references, then **a short phrase ending in a period.**, then the description"}
+
+
+def test_lint_reports_missing_sections_and_change_sections_without_bullets() -> None:
+    text = "## Summary\n\nWhy.\n\n## Prose only\n\nA paragraph instead of bullets.\n"
+    assert [(problem.line, problem.message) for problem in lint(text)] == [
+        (1, "missing section '## How to verify'"),
+        (1, "missing section '## Review notes'"),
+        (5, "section 'Prose only' has no bullets"),
+    ]
