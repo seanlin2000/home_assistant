@@ -1,5 +1,5 @@
 ---
-name: pr
+name: create-pr
 description: Ship a change to main the repository's way. Branch from origin/main in its own worktree, commit through the pre-commit hook, write the PR description in the template's shape with tool-resolved line references, verify it with pr-refs, push, open or update the pull request, and wait for CI. Use for every change destined for main, whether starting from scratch or from a branch that already has commits.
 argument-hint: [branch-name] [one line on what the change is]
 ---

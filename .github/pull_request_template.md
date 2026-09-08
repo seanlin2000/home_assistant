@@ -16,7 +16,7 @@ References are produced by the tool, never typed by hand:
 
 which prints, for example, `deslop/checks.py:115-127` (`count_lines`) and `.githooks/pre-commit:20-20` ("uv run deslop").
 Before opening or editing the PR: uv run pr-refs check body.md && uv run pr-refs lint body.md (references, then shape).
-CI runs both on every push. The /pr skill (.claude/skills/pr/SKILL.md) walks the whole path from branch to open PR.
+CI runs both on every push. The /create-pr skill (.claude/skills/create-pr/SKILL.md) walks the whole path from branch to open PR.
 -->
 
 - `path:start-end` (`symbol`) **Short phrase.** Description.
