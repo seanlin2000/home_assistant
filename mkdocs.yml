@@ -1,0 +1,93 @@
+site_name: Studio Assistant, the Operator's Manual
+site_description: How the local-first voice assistant works, section by section, for readers new to its stack, and how to run each part.
+site_url: https://seanlin2000.github.io/home_assistant/
+repo_url: https://github.com/seanlin2000/home_assistant
+repo_name: seanlin2000/home_assistant
+edit_uri: edit/main/operator_manual/
+docs_dir: operator_manual
+site_dir: site
+
+theme:
+  name: material
+  features:
+    - navigation.sections
+    - navigation.top
+    - navigation.footer
+    - navigation.tracking
+    - toc.follow
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - attr_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+      toc_depth: 3
+  - pymdownx.highlight:
+      anchor_linenums: true
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets:
+      base_path:
+        - operator_manual
+        - .
+      check_paths: true
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+
+plugins:
+  - search
+
+validation:
+  nav:
+    omitted_files: warn
+    not_found: warn
+    absolute_links: warn
+  links:
+    not_found: warn
+    anchors: warn
+    unrecognized_links: warn
+
+nav:
+  - Introduction: index.md
+  - The system:
+      - 1. Choosing the model, the LLM benchmark: 01_llm_benchmark.md
+      - 2. Running a language model on a Mac: 02_local_llm.md
+      - 3. Web search as a tool, SearXNG and the MCP server: 03_web_search_mcp.md
+      - 4. The conversation agent: 04_conversation_agent.md
+      - 5. The voice pipeline: 05_voice_pipeline.md
+      - 6. Home Assistant, the orchestrator: 06_home_assistant_core.md
+      - 7. Music, Spotify to Sonos: 07_music_spotify.md
+      - 8. Hardware and deployment: 08_hardware_and_deployment.md
+      - 9. The development environment and code review: 09_dev_environment.md
+      - 10. Operating the headless Mac mini: 10_operations.md
+  - Current working changes: current_changes.md
+  - Appendix:
+      - Glossary: glossary.md
+      - Diagram legend: diagram_legend.md
+      - Versions of record: versions.md

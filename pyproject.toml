@@ -27,6 +27,7 @@ benchmark-manual = "benchmark.manual_run:main"
 deslop = "deslop.cli:main"
 pr-refs = "pr_references.cli:main"
 kokoro-server = "voice.kokoro_server:main"
+manual-check = "manual_checks.cli:main"
 
 [dependency-groups]
 deploy = [
@@ -38,6 +39,9 @@ dev = [
     "pytest>=8.2",
     "pytest-asyncio>=0.23",
 ]
+docs = [
+    "mkdocs-material>=9.7",
+]
 voice = [
     "wyoming-kokoro-torch>=3.2.0",
     "wyoming-mlx-whisper>=1.5.0",
@@ -48,11 +52,11 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
-packages = ["assistant_core", "web_search_mcp", "calculator_mcp", "benchmark", "voice", "ops", "utils", "deslop", "pr_references"]
+packages = ["assistant_core", "web_search_mcp", "calculator_mcp", "benchmark", "voice", "ops", "utils", "deslop", "pr_references", "manual_checks"]
 
 [tool.uv]
 required-version = ">=0.5"
-default-groups = ["dev", "voice", "deploy"]
+default-groups = ["dev", "voice", "deploy", "docs"]
 
 [tool.black]
 line-length = 200

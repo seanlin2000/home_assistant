@@ -49,3 +49,22 @@ jobs:
           printf '%s\n' "$PR_BODY" > "$RUNNER_TEMP/pr_body.md"
           uv run pr-refs check "$RUNNER_TEMP/pr_body.md"
           uv run pr-refs lint "$RUNNER_TEMP/pr_body.md"
+
+  docs:
+    name: docs
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+      - run: uv sync --frozen --no-group voice
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install mermaid-cli (Homebrew on the Mac, npm here; the version docs/VERSIONS.md records)
+        run: npm install -g @mermaid-js/mermaid-cli@11.17.0
+      - name: Build the operator manual with warnings as errors
+        run: uv run mkdocs build --strict
+      - name: Render every Mermaid block and check the section structure
+        run: uv run manual-check --no-sandbox

@@ -1,0 +1,115 @@
+# Glossary
+
+Every term the manual defines, in one place. A section's "Key definitions" repeats the terms it needs; the wording here is the reference.
+
+- **Acoustic echo cancellation.** Subtracting the sound a device is playing from what its microphones hear, so it can listen while it talks.
+- **Active parameters.** In a mixture-of-experts model, the subset of parameters used for one token. Total parameters set memory; active parameters set speed.
+- **Add-on.** A Docker container that Home Assistant OS installs and manages for you, such as Piper or Music Assistant. Only Home Assistant OS can run add-ons, which is why the system runs the OS image in a virtual machine.
+- **Agent loop.** The pattern "call the model; if it asks for a tool, run the tool and call again; otherwise return the answer." Everything called an agent is this loop plus policy around it.
+- **Append mode.** Opening a file so that every write lands at its current end. A log opened this way can be truncated underneath the writer safely, but not renamed.
+- **Assist pipeline.** Home Assistant's chain of stages for one spoken request: wake word, speech to text, intent matching or a conversation agent, and text to speech. Each stage is an entity you pick in the pipeline's settings, and the "Jarvis" pipeline is the one this project runs.
+- **Branch protection.** A GitHub setting that makes `main` accept only merges of pull requests whose required checks passed and whose review threads are all resolved.
+- **Bridged networking.** A virtual machine setting that gives the VM its own address on the Wi-Fi, like a separate computer. It is what lets devices discover Home Assistant.
+- **Candidate.** One model configuration the benchmark scores: an Ollama model tag, an API model, or a set of hand-written answers, named by a key in `benchmark/config.yaml`.
+- **Chat log.** Home Assistant's record of one conversation's turns. It is handed to the conversation entity on every call and grows with the reply the entity streams into it, so the entity itself keeps no state.
+- **Compute-bound.** Limited by arithmetic throughput. Reading a long prompt is compute-bound, which is where GPUs and neural accelerators help.
+- **Config flow.** The wizard Home Assistant shows when you add an integration or custom component. Ours asks for the Ollama address, the model, the tool server address, and the persona.
+- **Context window.** The maximum number of tokens the model can see at once: the system prompt, the conversation, and tool results together.
+- **Continue conversation.** A flag on the reply that tells Home Assistant to keep the microphone open for a follow-up without waiting for the wake word again. The agent sets it on every answer.
+- **Conversation agent.** The entity in an Assist pipeline that turns a transcript into a reply when no intent matches. Ours is `conversation.studio_assistant`, provided by the custom component.
+- **Conversation entity.** The kind of Home Assistant entity a conversation agent is. The Assist pipeline calls it with the user's text and the chat log and expects a reply it can speak.
+- **Conversation id.** The identifier Home Assistant uses to group turns into one conversation. It hands the agent the history each call, so the agent stores nothing between calls.
+- **Cooldown.** The minimum time between two automatic runs of the same action on the same target, so a broken service is restarted a few times a day rather than every five minutes.
+- **Custom component.** A Python package placed in Home Assistant's `custom_components/` folder and loaded at startup. It declares its dependencies in `manifest.json`.
+- **Deploy plan.** The list of restarts derived from the paths that changed between the running commit and the new one, in a fixed order, so a documentation change restarts nothing and a lock file change restarts every Python service.
+- **Detached checkout.** Checking out a specific commit hash rather than a branch, so what is running is unambiguous and rolling back means checking out an older hash.
+- **Deterministic versus model-driven behaviour.** Anything the product must do every time, such as the filler sentence, lives in code. Anything that needs judgement, such as whether to search, is left to the model with guidance in the prompt.
+- **DNS rebinding.** A hostile name server answers a safety check with a public address and the connection a moment later with a private one. The guard defeats it by connecting to the address it checked rather than resolving the name twice.
+- **Docker Desktop on macOS.** Runs Linux containers inside a hidden Linux VM. Containers there cannot see the GPU and cannot receive the network's discovery packets.
+- **Ducking.** Lowering music volume while speech plays.
+- **Entity.** A single thing with state in Home Assistant: a media player, a weather forecast, a speech-to-text engine, a conversation agent.
+- **ESPHome.** A firmware framework for small Wi-Fi microcontrollers, configured in YAML and integrated with Home Assistant. The puck runs it.
+- **Far-field microphones.** Microphones and processing built to hear a voice across a room, with echoes and background noise, rather than next to the mouth.
+- **FileVault.** macOS disk encryption. It asks for a password before the operating system starts, so a headless machine must have it off to reboot unattended.
+- **Filler sentence.** The short sentence the agent speaks the moment the model asks for its first tool, before the tool runs, so the listener hears something within a second or two. "Let me pull some sources on that." for a search, "Let me work that out." for arithmetic.
+- **Fuzzy matching.** Tolerant string comparison, so "Radio Head" resolves to Radiohead.
+- **Gate.** A pass-or-fail rule in the benchmark rubric. Failing a gate zeroes the question, so a fluent fabrication cannot score well.
+- **Git hook.** A program git runs at a fixed moment, such as just before a commit is recorded. A non-zero exit cancels the commit. This repository keeps its hooks in `.githooks/` so they are versioned with the code.
+- **Globally routable address.** An IP address that belongs on the public internet. Loopback, private-range, link-local, and multicast addresses are not, and the guard refuses all of them.
+- **Grounding.** Giving the model retrieved text to base its answer on, so it summarises evidence instead of recalling from training.
+- **Headless browser.** A browser run without a window, driven by a program. Mermaid is drawn by a browser, so the checker starts a headless Chrome to find out whether a diagram parses.
+- **Health snapshot.** One health check's result: the outcome of every probe, the memory figures, and the actions taken, written to `health.json` and appended to `health.jsonl`.
+- **Home Assistant.** An open-source home automation platform. Here it is the plumbing that already knows how to talk to the puck, run a speech pipeline, control music, and host our agent.
+- **Home Assistant OS.** The whole-operating-system image of Home Assistant: a minimal Linux that runs Home Assistant Core and the Supervisor as containers. It is the only install method that can run add-ons, which is why the system runs this image in a virtual machine rather than a bare container.
+- **Idempotent.** Safe to run again: every step checks whether it is already done before doing it, so a script that fails halfway is simply rerun. The bootstrap is written this way.
+- **Integration.** Home Assistant's word for a connector to a device or service: Spotify, Sonos, Wyoming, Met.no. Configured from the UI, it produces entities.
+- **Intent.** A structured meaning extracted from a sentence, such as `HassPlayMedia(artist="Radiohead")`. Home Assistant matches thousands of sentence patterns to intents without a language model.
+- **JSON Lines.** A text file with one JSON object per line. Appending a record is one write and reading a day is a loop over lines. The turn records, the health history, and the pipeline runs use it.
+- **JSON-RPC.** A convention for calling named methods over any transport: the caller sends a JSON object with a method, its params, and an id, and the reply carries the same id. MCP messages are JSON-RPC 2.0.
+- **Keep-alive.** How long Ollama keeps a model's weights in memory after the last request: zero unloads at once, a duration such as `10m` unloads after that idle time, and `-1` keeps the model resident until Ollama stops.
+- **KeepAlive and StartInterval.** Two launchd settings. `KeepAlive` means "this program should always be running; restart it if it exits", right for a server. `StartInterval` means "run this program every N seconds and let it exit", right for a check.
+- **Kickstart.** `launchctl kickstart -k` restarts one launchd agent by name: it kills the running program and launchd starts it again at once. It is how the health check and the deploy restart a service.
+- **KV cache.** The model's working memory for the current context. It costs memory in proportion to context length and saves recomputation.
+- **Large language model (LLM).** A neural network that predicts the next token given everything before it. Run in a loop, it writes answers. Its knowledge stops at its training date, which is why current facts need a search tool.
+- **Last good commit.** The commit hash that most recently passed the smoke test, written to the file `last_good_ref` on the mini. Rollback checks it out again.
+- **launchd.** macOS's service manager. A plist file describes a program to run at login and keep alive, or to run every N seconds. The equivalent of systemd on Linux.
+- **Line reference.** A citation in a pull request description of the form `` `path:start-end` (`symbol`) `` naming the exact lines a reviewer should open. `pr-refs` produces and verifies them, so none is typed from memory.
+- **LLM-as-judge.** Using a strong model to grade another model's answer against a written rubric.
+- **Lock file.** A record of the full resolved dependency graph with hashes, regenerated deterministically from the declared constraints. `uv.lock` is one.
+- **Login item.** An application macOS opens when a user logs in, listed under System Settings, General, Login Items. Docker Desktop and UTM are login items on the assistant's Mac so their virtual machines come back after a reboot.
+- **Long-lived access token.** A bearer token Home Assistant issues to one user for scripts, valid for years rather than minutes. `HA_TOKEN` in `.env` is one, minted by the setup script with a ten-year lifespan.
+- **Main-content extraction.** Turning a web page into the text a person came for, stripping navigation, ads, scripts, and legal text.
+- **Maintenance flag.** A file the deploy creates before it changes anything and removes when the smoke test passes. While it exists the health check records but takes no action.
+- **MCP (Model Context Protocol).** A standard for exposing tools to a language model application over a network. A server declares tools with a name, a description, and a JSON schema; a client lists them, shows them to the model, and calls them when the model asks.
+- **mDNS and zeroconf.** How devices on a home network announce themselves by name without a central server. The puck and the Sonos rely on it.
+- **Memory-bandwidth-bound.** Limited by how fast weights can be read from memory rather than by arithmetic. Generating tokens is memory-bandwidth-bound, which is why Apple's fast unified memory competes with discrete GPUs.
+- **MEMS microphone.** A microphone built on a silicon chip. Small, cheap, consistent; the standard in voice devices.
+- **Mermaid.** A text language for diagrams. A block such as `a["Ollama"] --> b["agent"]` becomes two boxes and an arrow when the page opens, so the diagram is reviewed and diffed as text.
+- **Metal and MLX.** Metal is Apple's GPU programming interface; MLX is Apple's machine learning framework on top of it. Only native macOS processes can reach the GPU through them.
+- **Metasearch.** A search engine that queries other search engines and merges their results rather than crawling the web itself. SearXNG is one.
+- **Mixture of experts (MoE).** A model whose layers are split into many "experts" with a small router picking a few per token. It must hold every expert in memory but computes with only the active ones, so it runs nearly as fast as a much smaller model.
+- **Model tag.** The name Ollama uses for one downloadable build of a model, such as `gemma4:e4b-it-qat`. The part after the colon names the size and quantization, and the same tag can point at a different build after a re-pull, so the build id is recorded too.
+- **Multicast.** Sending a packet to a group address that every interested device listens to. Device discovery uses it, and Docker on macOS does not forward it into containers.
+- **Neural accelerators.** Matrix-multiply units inside each GPU core on Apple's M5 and M6 chips, used by MLX for prompt processing.
+- **OAuth.** The login flow where you authorise an application to act on your account without giving it your password. The application receives tokens it refreshes on its own.
+- **Parameters.** The learned numbers inside a model. "26B" means 26 billion of them. More parameters means more capability and more memory.
+- **PCM audio.** Uncompressed sound as a sequence of integer samples, described by a sample rate, a sample width, and a channel count. Wyoming carries 16-bit mono PCM, at 16 kHz into Whisper and 24 kHz out of Kokoro.
+- **Phonemizer.** A program that turns written words into the sequence of speech sounds a text-to-speech model pronounces. Kokoro uses espeak-ng for this.
+- **Preview build.** A 3-bit build of a model whose 4-bit production build does not fit the prototype machine. A high preview score is strong evidence for the production build; a low one is only weak evidence against it.
+- **Prompt injection.** Text inside a tool result, here a web page, that is written like an instruction. The model cannot tell it apart from the user's words and may follow it, so the code bounds what an obeyed instruction can reach.
+- **Provider and player.** Music Assistant's two abstractions: a provider is where music comes from (Spotify), a player is where it goes (Sonos).
+- **Quantization.** Storing model weights at 4 or 3 bits instead of 16. Four-bit cuts memory by about four times with a small quality loss; three-bit cuts further with a noticeable loss.
+- **Question router.** The step before the first model call that decides whether a question needs the web, the calculator, or neither: fixed rules first, then one short structured-output call to the same model when no rule fires. The decision is appended to the system prompt as a directive.
+- **Reference sketch.** Two or three sentences in the benchmark saying what a correct answer must contain, so the judge checks against it instead of working the problem itself.
+- **rsync.** A copy tool that compares source and destination and sends only the differences. Over SSH it is the standard way to mirror a folder between two machines.
+- **SMB share.** A folder served over SMB, the network file-sharing protocol that macOS and Windows speak natively. Samba is the open-source server for it, and the Samba add-on serves the VM's `/config` folder so the laptop can mount it and copy files in.
+- **Smoke test.** The smallest end-to-end exercise that proves the system is alive: one question through the same path a spoken question takes.
+- **Speech to text (STT).** Audio in, text out. Whisper is the family of open models used here.
+- **Spotify Connect.** Spotify's mechanism for controlling playback on another device from any client.
+- **SSH key.** A secret file on the laptop and a matching public file on the Mac mini. The mini checks that the laptop holds the secret without the secret crossing the network.
+- **Static site generator.** A program that reads a folder of markdown files and writes plain HTML that any web server can host. MkDocs is one; there is no server-side code at all.
+- **Streamable HTTP.** MCP's current remote transport. Every message is a POST to one endpoint, and the server answers either with a JSON body or with a server-sent-events stream, a text response that arrives as a series of `data:` lines.
+- **Streaming.** Receiving the answer token by token as it is generated rather than waiting for the whole thing. For voice it means speech can start after the first sentence.
+- **Structured output.** Asking the model for a reply that must match a JSON schema. Ollama constrains generation so the reply is always valid JSON with one of the allowed values, which is how the router gets a one-word answer it can parse.
+- **Supervisor.** The service inside Home Assistant OS that installs, starts, updates, and watches add-ons and applies operating-system updates. The setup script talks to it through Home Assistant's websocket API.
+- **System prompt.** Instructions placed before the conversation that the model treats as standing orders: who it is, how long to answer, when to use tools.
+- **Temperature.** A sampling setting. Zero makes the model pick its most likely token every time; higher values add variety.
+- **Text to speech (TTS).** Text in, audio out. Piper and Kokoro are the two neural models used here.
+- **Thinking mode.** A setting on recent models that makes them write a hidden chain of reasoning before the answer. It helps hard problems and multiplies latency, so the assistant turns it off on every request.
+- **Time to first audio.** How long a text-to-speech server takes from receiving text to sending its first audio chunk. It is the delay before the filler sentence starts, and `scripts/voice_check.py` measures it.
+- **Time to first token.** How long the model takes to read the prompt before it starts writing. It grows with prompt length and is the wait you notice.
+- **Token.** The unit a language model reads and writes, roughly a word fragment.
+- **Tokens per second.** How fast the model writes once it has started. Speech plays at about three to four tokens per second, so any faster model keeps up.
+- **Tool calling.** Instead of answering, the model emits a structured request such as `web_search(query="current federal funds rate")`. Our code runs the tool, appends the result, and calls the model again.
+- **Tool round.** One cycle of the agent loop in which the model asks for tools, the loop runs them, and the model is called again with the results. A turn allows at most four.
+- **Tool schema.** The JSON description of a tool's parameters. The model reads the description to decide when to call the tool and the schema to produce valid arguments.
+- **Transcript.** The record the agent loop returns at the end of a turn: every message, every tool exchange with its timing, token counts, the route decision, and the failure flags. The benchmark judges it; the component logs it and posts a trimmed copy as a turn record.
+- **Turn record.** The trimmed copy of a transcript the component posts to the tool server's `/turns` route after each answer: the question, the answer, the route, the tool calls with their timings, and the failure flags, without the page text.
+- **Unified memory.** One pool of memory shared by the CPU and GPU on Apple Silicon. Its size decides which models fit.
+- **URL guard.** The rule that the tool server connects only to public web addresses: an allowed scheme, no local names, every resolved address globally routable, and every redirect hop checked again.
+- **UTM.** A free virtualisation app for macOS built on Apple's hypervisor. It runs the Home Assistant OS disk image as a virtual machine.
+- **Voice activity detection (VAD).** Deciding when speech starts and stops.
+- **Wake word.** A tiny always-on model that listens for one phrase and nothing else. It runs on the puck, so no audio leaves the device until you address it.
+- **Word budget.** The soft cap on spoken words, 200 by default. Once the answer passes it, speech stops at the end of the current sentence and the transcript is marked truncated.
+- **Worktree.** A second checkout of the same repository in its own folder. It shares the history but has its own branch and working files, so a change can start from `origin/main` while other edits stay in progress elsewhere.
+- **Wyoming.** A small line-based protocol Home Assistant uses to talk to speech services over the network. It lets a speech model run anywhere Home Assistant can reach by host and port.

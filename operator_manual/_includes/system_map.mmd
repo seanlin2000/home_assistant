@@ -1,0 +1,45 @@
+--8<-- "_includes/palette.mmd"
+subgraph studio["The studio: everything in here stays on the home network"]
+  puck[["Voice PE puck<br/>wake word runs on the device"]]
+  sonos[["Sonos speaker"]]
+  subgraph mac["Mac, always on"]
+    subgraph haos["Home Assistant OS, a UTM virtual machine"]
+      stt["speech to text stage"] --> intents{"intent matcher"} --> agent["studio_assistant<br/>conversation agent"] --> tts["text to speech stage"]
+      piper["Piper add-on"]
+      ma["Music Assistant add-on"]
+    end
+    subgraph native["native macOS processes, kept alive by launchd"]
+      whisper["Whisper, MLX on the GPU"]
+      ollama["Ollama + the chosen model"]
+      mcp["web_search_mcp<br/>search + calculator tools"]
+      kokoro["Kokoro text to speech"]
+      health["health check"]
+    end
+    subgraph docker["Docker Desktop"]
+      searxng["SearXNG"]
+    end
+  end
+end
+subgraph internet["Leaves the network"]
+  engines>"search engines"]
+  spotify>"Spotify API"]
+  metno>"Met.no weather"]
+end
+laptop[["laptop: benchmark, deploy, logs"]]
+puck -- "audio" --> stt
+tts -- "reply audio" --> puck
+stt --> whisper
+tts --> kokoro
+tts --> piper
+agent -- "chat + tool schemas" --> ollama
+agent -- "tool calls over MCP" --> mcp
+mcp --> searxng --> engines
+intents -- "play X" --> ma --> sonos
+ma --> spotify
+intents -- "weather" --> metno
+health -. "probes, restarts" .-> haos
+laptop -. "ssh, rsync, deploy" .-> mac
+class agent,mcp,health ours
+class stt,intents,tts,piper,ma,whisper,ollama,kokoro,searxng third
+class puck,sonos,laptop hw
+class engines,spotify,metno ext

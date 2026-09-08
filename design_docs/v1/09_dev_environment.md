@@ -146,3 +146,32 @@ Once the repository had five packages and forty commits pushed straight to `main
 **GitHub Actions and branch protection.** GitHub Actions runs the workflow in `.github/workflows/checks.yml` on a fresh Ubuntu machine for every pull request; it installs the locked environment with `uv sync --frozen` (without the `voice` group, whose MLX wheels exist only for Apple Silicon) and runs the same commands as the hook. Branch protection is a repository setting that makes `main` accept only merges of pull requests whose required jobs passed and whose review threads are all resolved. No approving review is required: GitHub never lets a pull request's author approve their own PR, and on a one-person repository the author is always the same person, so a required approval would block every merge. The human step is the Merge click itself, after reading the review rounds.
 
 Sources: [git hooks](https://git-scm.com/docs/githooks), [GitHub branch protection](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches), [Python `tokenize`](https://docs.python.org/3/library/tokenize.html), [Python `ast`](https://docs.python.org/3/library/ast.html).
+
+## 13. Operator's manual tooling, added 2026-09-07
+
+The design docs record intent and how the build departed from it, which is the wrong shape for someone who needs to learn the system as it stands. This section adds a second kind of document, the Operator's Manual in `operator_manual/`, and the tools that keep it honest.
+
+```
+  operator_manual/*.md                 one page per design doc, plus Introduction, Current changes, Glossary
+     │  Mermaid diagrams inline, every "Where this fits" map pulled from _includes/system_map.mmd
+     │
+     ├──▶ uv run manual-check          renders every diagram through mermaid-cli (mmdc) and Chrome,
+     │                                 checks the required headings, the complexity comment, the palette
+     │
+     ├──▶ uv run mkdocs build --strict Material for MkDocs turns the markdown into a site; any broken
+     │                                 link, missing nav entry, or missing include fails the build
+     │
+     └──▶ .github/workflows/checks.yml job "docs": the same two commands on every pull request
+          .github/workflows/pages.yml  on merge to main: build again and publish to GitHub Pages
+                                       https://seanlin2000.github.io/home_assistant/
+```
+
+**Material for MkDocs.** MkDocs is a static site generator: it reads a folder of markdown files and a `mkdocs.yml` and writes plain HTML that any web server, including GitHub Pages, can host. Material is the theme that gives it a sidebar table of contents, a page outline, search, and a light and dark scheme. It is a Python package, so it is pinned in `uv.lock` in the `docs` dependency group like everything else here; `uv run mkdocs serve` shows the book at `http://127.0.0.1:8000` and rebuilds on every save.
+
+**Mermaid.** A text language for diagrams: `a["Ollama"] --> b["agent"]` becomes two boxes and an arrow. The diagram lives in the markdown as a ```mermaid block, so it is reviewed and diffed as text, and the browser draws it when the page opens. Material renders those blocks without any plugin. One drawing of the whole system lives in `operator_manual/_includes/system_map.mmd` and is included into every page, where the page's own nodes are given a thick orange stroke.
+
+**mermaid-cli and the checker.** A browser draws Mermaid, so nothing in Python can tell whether a diagram parses. `mermaid-cli` (`mmdc`, installed with Homebrew) runs a headless Chrome to draw one diagram to a file. `manual_checks/` (`uv run manual-check`) finds every Mermaid block in the manual, expands the includes, renders each block in parallel, and reports a failure as `path:line: Parse error on line N` at the line in the markdown, the same shape as `deslop`. It also checks each page against its profile (the required headings in order, a complexity comment whose tier matches its score, a "Where this fits" block that includes the map and highlights something, `classDef` lines equal to the palette, every defined term present in the glossary). Rendering takes about three seconds a diagram, so the pre-commit hook runs only the structure check, through `pytest`; CI and the skill run the full render.
+
+**The skill.** `.claude/skills/operator-manual/` holds the procedure Claude follows to write or refresh a page, the page profiles, the diagram style, the system map with each page's highlights, a complexity rubric that sets each page's length, and the contract `create-pr` uses to add an entry to "Current working changes" for every pull request and to remove entries whose pull request has merged.
+
+Sources: [MkDocs](https://www.mkdocs.org/), [Material for MkDocs diagrams](https://squidfunk.github.io/mkdocs-material/reference/diagrams/), [Mermaid](https://mermaid.js.org/), [mermaid-cli](https://github.com/mermaid-js/mermaid-cli), [GitHub Pages with Actions](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site).

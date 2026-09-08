@@ -71,6 +71,10 @@ uv run pr-refs check body.md   # every cited range still matches the code
 uv run pr-refs lint body.md    # required sections present; every change bullet has the three parts in order
 ```
 
+## 4a. Offer an operator's manual entry
+
+Ask the user one question: does this pull request change behaviour a reader of the Operator's Manual should know about? If yes, run `/operator-manual pr-entry --body <body.md>`. It prunes entries whose PRs have merged, appends this branch's entry to `operator_manual/current_changes.md`, and runs `manual-check`. Commit through the hook, then re-run both `pr-refs` checks: the commit moved lines.
+
 ## 5. Push and open, or update
 
 ```
@@ -78,7 +82,7 @@ git push -u origin <branch>
 gh pr create --base main --head <branch> --title "<summary line>" --body-file body.md
 ```
 
-If a PR already exists: `gh pr edit <number> --body-file body.md`. Never push to `main`, never merge, never force-push over someone else's commits.
+Once the PR number exists and a manual entry was written, run `/operator-manual pr-entry --pr <number>` so the entry's heading carries the number, commit, and push. If a PR already exists: `gh pr edit <number> --body-file body.md`. Never push to `main`, never merge, never force-push over someone else's commits.
 
 ## 6. Wait for CI and report
 
@@ -86,6 +90,6 @@ If a PR already exists: `gh pr edit <number> --body-file body.md`. Never push to
 gh pr checks <number> --watch
 ```
 
-Both jobs must be green: `checks` (lint, deslop, tests) and `pr-description` (`pr-refs check` and `pr-refs lint` on the PR body). If a job fails, fix it on the branch, commit through the hook, push, re-resolve any moved references, and edit the PR body.
+All three jobs must be green: `checks` (lint, deslop, tests), `pr-description` (`pr-refs check` and `pr-refs lint` on the PR body), and `docs` (`mkdocs build --strict` and `manual-check`). If a job fails, fix it on the branch, commit through the hook, push, re-resolve any moved references, and edit the PR body.
 
 Report to the user: the PR URL, the CI result, and what was verified by hand. The Merge click is theirs. Mention that the worktree can be removed after the merge (`git worktree remove ../home_assistant_<branch>`).

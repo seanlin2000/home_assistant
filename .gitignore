@@ -23,3 +23,6 @@ vm/
 # Operations: log mirror pulled from the Mac mini, Homebrew lock
 logs/
 Brewfile.lock.json
+
+# MkDocs build output of the operator manual
+site/

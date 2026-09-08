@@ -7,6 +7,8 @@ Design documentation for the local-first voice assistant. The docs are versioned
 | `v0/` | Frozen. Written before any code. | Never edited after the initial commit, not even to fix a number that later proves wrong. |
 | `v1/` | Created when the build starts, by copying `v0/`. Living, as-built. | Updated as each component lands. `v1/DEVIATIONS.md` logs each departure from v0 with one line of reasoning. |
 
+These docs record intent and how the build departed from it. For the built system explained as prose for a newcomer, with diagrams and the commands to run each part, read the Operator's Manual in `operator_manual/` (`uv run mkdocs serve`).
+
 The point of keeping both is a retrospective at the end of the build: did the engineering choices hold up, and where did the build stray from the initial path into unnecessary complexity?
 
 ## Reading order
