@@ -2,8 +2,8 @@
 
 Pull requests that are open right now, one entry each, in the same shape as a section: where the change sits on the system map, the terms it introduces, the tools it touches, what changed, and how to try it. An entry is written when the pull request is opened and removed when the pull request merges or closes, so this page is always the difference between the manual and `main`.
 
-## Branch operator-manual: The Operator's Manual, its skill, the MkDocs site, and the diagram checker
-<!-- manual-entry branch="operator-manual" pr="pending" date="2026-09-08" -->
+## PR #6: The Operator's Manual, its skill, the MkDocs site, and the diagram checker
+<!-- manual-entry branch="operator-manual" pr="6" date="2026-09-08" -->
 
 ### Where this fits
 
