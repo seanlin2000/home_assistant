@@ -42,9 +42,10 @@ jobs:
         with:
           enable-cache: true
       - run: uv sync --frozen --no-group voice
-      - name: Check every line reference in the description against the PR head
+      - name: Check every line reference in the description against the PR head, and the description's shape
         env:
           PR_BODY: ${{ github.event.pull_request.body }}
         run: |
           printf '%s\n' "$PR_BODY" > "$RUNNER_TEMP/pr_body.md"
           uv run pr-refs check "$RUNNER_TEMP/pr_body.md"
+          uv run pr-refs lint "$RUNNER_TEMP/pr_body.md"

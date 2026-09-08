@@ -1,9 +1,11 @@
-"""`uv run pr-refs resolve path:symbol ...` prints references to paste into a PR description; `uv run pr-refs check body.md` verifies every reference in one."""
+"""`uv run pr-refs resolve path:symbol ...` prints references to paste into a PR description; `uv run pr-refs check body.md` verifies every reference in one;
+`uv run pr-refs lint body.md` verifies that the description has the template's shape."""
 
 import argparse
 import sys
 from pathlib import Path
 
+from pr_references.lint import lint
 from pr_references.references import find_references, mismatches, parse_anchor, resolve, sections_without_references
 
 
@@ -21,6 +23,9 @@ def parse_args() -> argparse.Namespace:
     check_parser = commands.add_parser("check", help="verify every reference in a markdown file against the working tree")
     check_parser.add_argument("body", type=Path, help="the PR description as a markdown file")
     check_parser.set_defaults(command=check_command)
+    lint_parser = commands.add_parser("lint", help="verify the description's shape: required sections, and every change bullet reads reference, bold phrase, description")
+    lint_parser.add_argument("body", type=Path, help="the PR description as a markdown file")
+    lint_parser.set_defaults(command=lint_command)
     return parser.parse_args()
 
 
@@ -45,4 +50,12 @@ def check_command(arguments: argparse.Namespace) -> None:
     for problem in problems:
         print(problem)
     print(f"{len(references)} references checked, {len(problems)} wrong")
+    sys.exit(1 if problems else 0)
+
+
+def lint_command(arguments: argparse.Namespace) -> None:
+    problems = lint(arguments.body.read_text(encoding="utf-8"))
+    for problem in problems:
+        print(problem.render(str(arguments.body)))
+    print(f"description shape: {len(problems)} problem{'' if len(problems) == 1 else 's'}")
     sys.exit(1 if problems else 0)
