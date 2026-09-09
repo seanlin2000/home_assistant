@@ -4,7 +4,7 @@ Fill every `{{placeholder}}`, then launch a `general-purpose` subagent with this
 
 ---
 
-Write `operator_manual/{{file}}` for the Operator's Manual of the repository at `{{repo_root}}`. Work only inside that repository. Write the one file named above and reply with its path plus a list of glossary terms you defined (term and one-sentence definition). Do not edit any other file.
+Write `operator_manual/{{file}}` for the Home Assistant Handbook of the repository at `{{repo_root}}`. Work only inside that repository. Write the one file named above and reply with its path plus a list of glossary terms you defined (term and one-sentence definition). Do not edit any other file.
 
 **What the manual is.** A book that teaches someone with a computer science degree, who has never used an LLM API, MCP, Home Assistant, the Wyoming protocol, Docker on macOS, or a UTM virtual machine, how this local-first voice assistant works and how to run each part. It describes the system as built today and never narrates history or departures from the design.
 
@@ -24,4 +24,4 @@ Write `operator_manual/{{file}}` for the Operator's Manual of the repository at 
 - "Run it yourself" uses real commands from the sources above and says what the reader will see and how to stop.
 - Links to other sections are relative (`04_conversation_agent.md`); links to design docs and source are absolute GitHub URLs under `https://github.com/seanlin2000/home_assistant/blob/main/`.
 - Short declarative sentences, second person allowed, no marketing words, no emoji, no bullet walls.
-- Before replying, run `uv run manual-check --no-render operator_manual/{{file}}` from the repository root and fix every finding. Then run `uv run manual-check operator_manual/{{file}}` (renders every diagram; needs `mmdc`) and fix every parse error.
+- Before replying, run `uv run manual-check --no-render operator_manual/{{file}}` from the repository root and fix every finding. Then run `uv run manual-check --png {{png_dir}} operator_manual/{{file}}` (renders every diagram; needs `mmdc`), fix every parse error, and open every PNG with the Read tool: each diagram must satisfy the four rules in `diagram_style.md` (layers with meaning, readable labels, nothing dark, tidy edges). Redraw and render again until they all do.

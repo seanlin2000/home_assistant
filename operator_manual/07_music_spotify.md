@@ -6,7 +6,7 @@
 ## Where this fits
 
 ```mermaid
-flowchart LR
+flowchart TB
 --8<-- "_includes/system_map.mmd"
 class ma,sonos,spotify current
 ```
@@ -41,7 +41,7 @@ The intent matcher inside Home Assistant sends "play X" straight to the Music As
 ```mermaid
 sequenceDiagram
     participant you as You
-    box rgb(229,231,235) Inside the Home Assistant VM
+    box rgb(241,245,249) Inside the Home Assistant VM
         participant pipe as Assist pipeline
         participant intents as Intent matcher
         participant ma as Music Assistant add-on

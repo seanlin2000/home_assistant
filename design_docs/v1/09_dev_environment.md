@@ -147,9 +147,9 @@ Once the repository had five packages and forty commits pushed straight to `main
 
 Sources: [git hooks](https://git-scm.com/docs/githooks), [GitHub branch protection](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches), [Python `tokenize`](https://docs.python.org/3/library/tokenize.html), [Python `ast`](https://docs.python.org/3/library/ast.html).
 
-## 13. Operator's manual tooling, added 2026-09-07
+## 13. Handbook tooling, added 2026-09-07
 
-The design docs record intent and how the build departed from it, which is the wrong shape for someone who needs to learn the system as it stands. This section adds a second kind of document, the Operator's Manual in `operator_manual/`, and the tools that keep it honest.
+The design docs record intent and how the build departed from it, which is the wrong shape for someone who needs to learn the system as it stands. This section adds a second kind of document, the Home Assistant Handbook in `operator_manual/`, and the tools that keep it honest.
 
 ```
   operator_manual/*.md                 one page per design doc, plus Introduction, Current changes, Glossary
@@ -158,8 +158,10 @@ The design docs record intent and how the build departed from it, which is the w
      ├──▶ uv run manual-check          renders every diagram through mermaid-cli (mmdc) and Chrome,
      │                                 checks the required headings, the complexity comment, the palette
      │
-     ├──▶ uv run mkdocs build --strict Material for MkDocs turns the markdown into a site; any broken
-     │                                 link, missing nav entry, or missing include fails the build
+     ├──▶ uv run mkdocs build --strict Material for MkDocs turns the markdown into a site; a hook renders
+     │                                 every diagram to SVG through the same mmdc, so the page carries the
+     │                                 finished picture; any broken link, missing nav entry, or missing
+     │                                 include fails the build
      │
      └──▶ .github/workflows/checks.yml job "docs": the same two commands on every pull request
           .github/workflows/pages.yml  on merge to main: build again and publish to GitHub Pages
@@ -168,9 +170,9 @@ The design docs record intent and how the build departed from it, which is the w
 
 **Material for MkDocs.** MkDocs is a static site generator: it reads a folder of markdown files and a `mkdocs.yml` and writes plain HTML that any web server, including GitHub Pages, can host. Material is the theme that gives it a sidebar table of contents, a page outline, search, and a light and dark scheme. It is a Python package, so it is pinned in `uv.lock` in the `docs` dependency group like everything else here; `uv run mkdocs serve` shows the book at `http://127.0.0.1:8000` and rebuilds on every save.
 
-**Mermaid.** A text language for diagrams: `a["Ollama"] --> b["agent"]` becomes two boxes and an arrow. The diagram lives in the markdown as a ```mermaid block, so it is reviewed and diffed as text, and the browser draws it when the page opens. Material renders those blocks without any plugin. One drawing of the whole system lives in `operator_manual/_includes/system_map.mmd` and is included into every page, where the page's own nodes are given a thick orange stroke.
+**Mermaid.** A text language for diagrams: `a["Ollama"] --> b["agent"]` becomes two boxes and an arrow. The diagram lives in the markdown as a ```mermaid block, so it is reviewed and diffed as text. Material can draw those blocks in the browser, but it re-themes them at page load (dark group fills, its own label colours), which made the first version of the manual unreadable in the dark scheme. So the site does not draw them in the browser: an MkDocs hook (`manual_checks/mkdocs_hook.py`) renders each block once at build time with a fixed light theme (`manual_checks/mermaid_config.json`), caches the SVG by content hash under `.cache/`, and inlines it on a white card that looks the same in both schemes. Flowcharts are laid out by ELK, the Eclipse Layout Kernel, because it keeps sibling groups in declaration order; that is what lets every architecture diagram be authored as rows or columns with meaning, which the style guide in the skill requires. One drawing of the whole system lives in `operator_manual/_includes/system_map.mmd` and is included into every section with that section's parts highlighted.
 
-**mermaid-cli and the checker.** A browser draws Mermaid, so nothing in Python can tell whether a diagram parses. `mermaid-cli` (`mmdc`, installed with Homebrew) runs a headless Chrome to draw one diagram to a file. `manual_checks/` (`uv run manual-check`) finds every Mermaid block in the manual, expands the includes, renders each block in parallel, and reports a failure as `path:line: Parse error on line N` at the line in the markdown, the same shape as `deslop`. It also checks each page against its profile (the required headings in order, a complexity comment whose tier matches its score, a "Where this fits" block that includes the map and highlights something, `classDef` lines equal to the palette, every defined term present in the glossary). Rendering takes about three seconds a diagram, so the pre-commit hook runs only the structure check, through `pytest`; CI and the skill run the full render.
+**mermaid-cli and the checker.** A browser draws Mermaid, so nothing in Python can tell whether a diagram parses. `mermaid-cli` (`mmdc`, installed with Homebrew; on the CI runners with npm) runs a headless Chrome to draw one diagram to a file. `manual_checks/` (`uv run manual-check`) finds every Mermaid block in the manual, expands the includes, renders each block in parallel with the site's configuration, and reports a failure as `path:line: Parse error on line N` at the markdown line; it also checks each page's required headings, the complexity comment, the palette, the system-map highlight, and glossary agreement. With `--png <dir>` it writes every diagram as a PNG, because the last check is a person looking at the drawing: the skill's style guide requires layers with meaning, readable labels, nothing dark, and tidy edges, and none of those can be tested by a program.
 
 **The skill.** `.claude/skills/operator-manual/` holds the procedure Claude follows to write or refresh a page, the page profiles, the diagram style, the system map with each page's highlights, a complexity rubric that sets each page's length, and the contract `create-pr` uses to add an entry to "Current working changes" for every pull request and to remove entries whose pull request has merged.
 

@@ -1,0 +1,22 @@
+/* Diagrams are rendered to SVG at build time with a fixed light palette, then shown on a light card so they read the same in both colour schemes.
+   The hook gives each SVG width: 100% and a min-width of 70% of its natural size, so a wide drawing scrolls sideways instead of shrinking its text. */
+.md-typeset figure.manual-diagram {
+  width: auto;
+  max-width: 100%;
+  margin: 1.2em 0;
+  padding: 0.8em;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  overflow-x: auto;
+  text-align: left;
+}
+.md-typeset figure.manual-diagram svg {
+  display: block;
+  height: auto;
+}
+
+/* Give the content column more room, since the diagrams are the widest thing on any page. */
+.md-grid {
+  max-width: 78rem;
+}

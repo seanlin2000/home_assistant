@@ -58,11 +58,11 @@ A short line under each section's title records a complexity score. It is the le
 ## The system map
 
 ```mermaid
-flowchart LR
+flowchart TB
 --8<-- "_includes/system_map.mmd"
 ```
 
-Blue boxes are code in this repository. Grey boxes are third-party software the project runs and configures. Green boxes are physical devices. Red flags are the only traffic that leaves the apartment. Every section repeats this map with its own parts drawn with a thick orange border.
+Read it top to bottom. Each row is one layer of the system, and a box sits in the row below whatever calls it: the devices that start a request are on top, then Home Assistant, then the services on the Mac that Home Assistant calls, with the Sonos beside them because Home Assistant calls it too, then Docker, and at the bottom the only traffic that leaves the apartment. Blue boxes are code in this repository. Grey boxes are third-party software the project runs and configures. Green boxes are physical devices. Red flags are external services. The four numbered stages in the Home Assistant row run in that order for every spoken question. Every section repeats this map with its own parts drawn with a thick orange border.
 
 Follow a question through it. You say "Hey Jarvis, who won the Ballon d'Or?" The puck's own chip recognises the wake word and only then starts streaming audio over Wi-Fi to Home Assistant, which runs in a virtual machine on the Mac. Home Assistant's speech-to-text stage forwards the audio to Whisper, a model running natively on the Mac's GPU, and gets text back. The intent matcher looks at the text first: "play Radiohead" and "what's the weather" match fixed sentence patterns and are handled without a language model. Anything else goes to our conversation agent, the `studio_assistant` component.
 

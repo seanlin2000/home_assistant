@@ -1,10 +1,10 @@
 ---
 name: operator-manual
-description: Write and maintain the Operator's Manual in operator_manual/ (MkDocs Material, Mermaid diagrams): the book that teaches a CS graduate who is new to LLMs, MCP, Home Assistant, Wyoming, and Apple Silicon inference how this system works and how to run each part. Use when asked to write, build, update, regenerate, or check the manual, a section, the introduction, the glossary, or a "where this fits" diagram, or to add a PR entry to "Current working changes" (the create-pr skill invokes pr-entry). Modes: build, introduction, section <NN>, pr-entry, check.
+description: Write and maintain the Home Assistant Handbook in operator_manual/ (MkDocs Material, Mermaid diagrams): the book that teaches a CS graduate who is new to LLMs, MCP, Home Assistant, Wyoming, and Apple Silicon inference how this system works and how to run each part. Use when asked to write, build, update, regenerate, or check the manual, a section, the introduction, the glossary, or a "where this fits" diagram, or to add a PR entry to "Current working changes" (the create-pr skill invokes pr-entry). Modes: build, introduction, section <NN>, pr-entry, check.
 argument-hint: build | introduction | section <NN> | pr-entry [--pr N] [--body path] | check
 ---
 
-# The Operator's Manual
+# The Home Assistant Handbook
 
 The manual lives in `operator_manual/` and is rendered by Material for MkDocs (`uv run mkdocs serve`, published to GitHub Pages on merge). It describes the system as it is built today, for a reader with a computer science degree who has never used an LLM API, MCP, Home Assistant, the Wyoming protocol, Docker on macOS, or a UTM virtual machine. It never narrates history or departures from the design; `design_docs/` does that.
 
@@ -30,7 +30,7 @@ Read before any mode: `references/section_template.md`, `references/diagram_styl
 7. Write the header of `operator_manual/current_changes.md` if the file does not exist, then run `pr-entry` for the current branch.
 8. Add every new file to `nav` in `mkdocs.yml`.
 9. Consistency pass: read only "Where this fits" and "Key definitions" of every section; make terms agree with the glossary and highlights agree with the table.
-10. `uv run manual-check` and `uv run mkdocs build --strict`; fix every finding; repeat until both are clean.
+10. `uv run manual-check --png <scratch dir>` and look at every PNG against the four rules in `references/diagram_style.md`; redraw what fails. Then `uv run manual-check` and `uv run mkdocs build --strict`; fix every finding; repeat until both are clean.
 
 ## Mode `introduction`
 
@@ -42,7 +42,7 @@ Steps 0, 5 (for one section, in-session or as one subagent), 6, 8, 9, 10. Rewrit
 
 ## Mode `pr-entry`
 
-Follow `references/pr_entry_contract.md` exactly: prune entries whose PR is merged or closed, append the entry for this branch, rename the pending heading when `--pr` is given, then `uv run manual-check operator_manual/current_changes.md` and `uv run mkdocs build --strict`.
+Follow `references/pr_entry_contract.md` exactly: prune entries whose PR is merged or closed, append the entry for this branch, rename the pending heading when `--pr` is given, then `uv run manual-check --png <scratch dir> operator_manual/current_changes.md`, look at the entry's diagrams, and `uv run mkdocs build --strict`.
 
 ## Mode `check`
 
@@ -54,7 +54,8 @@ Follow `references/pr_entry_contract.md` exactly: prune entries whose PR is merg
 - Prose in the style of huyenchip.com/ml-interviews-book: short declarative sentences, second person allowed, no marketing words, no emoji, no bullet walls. Bullets only in "Key definitions", tables, and numbered steps.
 - Length follows the complexity tier, never a fixed count. No filler for simple topics, no truncation for hard ones.
 - Every section has "Run it yourself" with real commands and what the reader should see. If nothing is human-run, say so in one sentence and why.
-- Diagrams are Mermaid only, per `references/diagram_style.md`. The "Where this fits" block is `flowchart LR`, the system-map include, and `class`/`style` highlight lines; nothing else. Every other diagram includes the palette and uses only its five class names. Every `###` part under "How it works" opens with a diagram or says in one sentence why none is needed.
+- Every diagram is looked at before it ships: render it with `uv run manual-check --png <dir> <page>` and check the four rules in `references/diagram_style.md` (layers with meaning, readable labels, nothing dark, tidy edges).
+- Diagrams are Mermaid only, per `references/diagram_style.md`. The "Where this fits" block is `flowchart TB`, the system-map include, and `class`/`style` highlight lines; nothing else. Every other diagram includes the palette and uses only its five class names. Every `###` part under "How it works" opens with a diagram or says in one sentence why none is needed.
 - Code samples are copied from the branch head, never invented, at most 25 lines, trimmed with `...`, with a caption line above the fence naming the file and symbol.
 - Facts (ports, versions, model tags, numbers) come from the code, `docs/VERSIONS.md`, and the as-built appendices. Describe what exists now, never what it used to be or why it changed.
 - Links to other sections are relative files (`04_conversation_agent.md#how-it-works`). Links to design docs and source files are absolute GitHub URLs (`https://github.com/seanlin2000/home_assistant/blob/main/...`); relative links outside `operator_manual/` fail the strict build.

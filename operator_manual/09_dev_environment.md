@@ -6,12 +6,12 @@ Nothing in this part answers a question. It is how the code that does gets built
 ## Where this fits
 
 ```mermaid
-flowchart LR
+flowchart TB
 --8<-- "_includes/system_map.mmd"
 class laptop current
 ```
 
-The laptop is the only node on the map that is not part of the running system. Code is edited and committed there, pushed to GitHub, checked, and merged; section [10](10_operations.md) then deploys it to the Mac over ssh and rsync, which is the dashed edge. Nothing on the map sends anything to the laptop. Everything in this section happens before that dashed edge is used.
+The laptop sits in the top row beside the puck, among the things that start a request, and it is the only node on the map that is not part of the running system. Code is edited and committed there, pushed to GitHub, checked, and merged; section [10](10_operations.md) then deploys it down to the Mac over ssh and rsync, which is the dashed edge from the laptop to the health check in the row of native macOS services. Nothing in the rows below, Home Assistant, the Mac's services with the speaker beside them, Docker, or the internet, sends anything back up to the laptop. Everything in this section happens before that dashed edge is used.
 
 ## Key definitions
 
@@ -43,22 +43,32 @@ The laptop is the only node on the map that is not part of the running system. C
 ```mermaid
 flowchart TB
 --8<-- "_includes/palette.mmd"
-setup["scripts/dev_setup.sh"]
-uv["uv 0.12.10<br/>from Homebrew"]
-pyver[(".python-version<br/>3.12")]
-interp["standalone Python 3.12.14<br/>in uv's own folder"]
-pyproject[("pyproject.toml<br/>direct dependencies, loose constraints<br/>console scripts, black and isort settings")]
-lock[("uv.lock<br/>every package, exact version and hash<br/>committed")]
-venv[(".venv/<br/>ignored by git, rebuilt anywhere")]
-run["uv run command<br/>always inside .venv"]
-setup -- "uv sync --frozen" --> uv
+subgraph commands["Commands you run on the laptop"]
+  setup["scripts/dev_setup.sh<br/>uv sync --frozen"]
+  run["uv run command<br/>always inside .venv"]
+end
+subgraph uvrow["uv 0.12.10, from Homebrew"]
+  uv["uv<br/>interpreters, resolution, lock file, .venv"]
+end
+subgraph declared["Declared, committed"]
+  pyver[(".python-version<br/>3.12")]
+  pyproject[("pyproject.toml<br/>direct dependencies, loose constraints<br/>console scripts, black and isort settings")]
+end
+subgraph resolved["Resolved by uv"]
+  interp["standalone Python 3.12.14<br/>in uv's own folder"]
+  lock[("uv.lock<br/>every package, exact version and hash<br/>committed")]
+end
+subgraph built["Built by uv, ignored by git"]
+  venv[(".venv/<br/>rebuilt anywhere")]
+end
+setup -- "sync" --> uv
+run -- "run" --> uv
 uv -- "reads" --> pyver
+uv -- "reads" --> pyproject
 pyver -- "selects" --> interp
-uv -- "uv lock resolves" --> pyproject
-pyproject -- "into" --> lock
+pyproject -- "uv lock resolves into" --> lock
+interp -- "interpreter" --> venv
 lock -- "uv sync installs exactly" --> venv
-interp --> venv
-run --> venv
 class setup,pyver,pyproject,lock ours
 class uv,interp,venv,run third
 ```
@@ -91,30 +101,46 @@ Not everything is Python. Ollama, Docker Desktop, UTM, Home Assistant OS and its
 ### Part 2: The path a change takes to main
 
 ```mermaid
-flowchart LR
+flowchart TB
 --8<-- "_includes/palette.mmd"
-edit(["edit in a worktree<br/>branched from origin/main"])
-commit(["git commit"])
-subgraph hook[".githooks/pre-commit, on the laptop"]
+subgraph laptop["On the laptop"]
+  edit(["edit, then git commit<br/>in a worktree branched from origin/main"])
+end
+subgraph hook[".githooks/pre-commit, run by git before the commit is recorded"]
   lint["1. scripts/lint.sh -c<br/>black, isort, shfmt, shellcheck"]
   deslopstep["2. uv run deslop"]
   tests["3. uv run pytest -q"]
 end
-push(["git push, gh pr create"])
+subgraph pr["The pull request"]
+  push(["git push, gh pr create"])
+end
 subgraph ci[".github/workflows/checks.yml, on GitHub's Ubuntu runners"]
   jchecks["job checks<br/>the same three steps"]
   jdesc["job pr-description<br/>pr-refs check, pr-refs lint"]
   jdocs["job docs<br/>mkdocs build --strict, manual-check"]
 end
-protect{"branch protection on main<br/>three jobs green,<br/>every review thread resolved"}
-merge(["Merge, squash"])
-pages["pages.yml<br/>mkdocs build --strict, deploy to GitHub Pages"]
-edit --> commit --> lint --> deslopstep --> tests --> push
+subgraph protection["Branch protection on main"]
+  protect{"three jobs green and<br/>every review thread resolved?"}
+end
+subgraph outcome["What happens next"]
+  fix(["fix on the branch and push again<br/>the three jobs run again"])
+  merge(["Merge click, squash"])
+end
+subgraph publish["Every push to main"]
+  pages["pages.yml<br/>mkdocs build --strict, deploy to GitHub Pages"]
+end
+edit -- "runs" --> lint
+edit -- "runs" --> deslopstep
+edit -- "runs" --> tests
+lint -- "ok" --> push
+deslopstep -- "ok" --> push
+tests -- "ok" --> push
 push --> jchecks --> protect
 push --> jdesc --> protect
 push --> jdocs --> protect
-protect -- "yes" --> merge --> pages
-protect -- "no: fix on the branch" --> edit
+protect -- "no" --> fix
+protect -- "yes" --> merge
+merge --> pages
 class lint,deslopstep,tests,jchecks,jdesc,jdocs,pages ours
 class protect ext
 ```
@@ -154,32 +180,34 @@ Branch protection on `main` requires a pull request, all three jobs green, and e
 ```mermaid
 flowchart TB
 --8<-- "_includes/palette.mmd"
-subgraph manualbox["manual-check: uv run manual-check"]
-  pages[("operator_manual/*.md<br/>and _includes/")]
-  struct["headings, complexity comment,<br/>map include, palette, glossary"]
+subgraph read["1. Read: what each checker takes in"]
+  pages[("manual-check reads<br/>operator_manual/*.md and _includes/")]
+  body[("pr-refs reads<br/>the PR body, body.md")]
+  code[("pr-refs reads<br/>the checked-out code")]
+  pyfiles[("deslop reads every .py file<br/>outside .venv, .git, vm, __pycache__")]
+end
+subgraph parse["2. Parse it, or check its structure directly"]
+  struct["structure: headings, complexity comment,<br/>map include, palette, glossary"]
   mmdc["mmdc, mermaid-cli 11.17.0"]
-  chrome["headless Google Chrome<br/>draws each diagram"]
-  pages --> struct
-  pages --> mmdc --> chrome
-end
-subgraph refsbox["pr-refs: uv run pr-refs check, lint"]
-  body[("the PR body, body.md")]
-  code[("the checked-out code")]
-  compare["each reference against the<br/>definition span or the quoted text"]
-  shape["required sections<br/>bullet shape"]
-  body --> compare
-  code --> compare
-  body --> shape
-end
-subgraph deslopbox["deslop: uv run deslop"]
-  pyfiles[("every .py file<br/>outside .venv, .git, vm, __pycache__")]
+  refs["find each reference by its pattern,<br/>re-resolve it in the code"]
+  shape["shape: required sections,<br/>bullet form"]
   astree["ast.parse<br/>functions, parameters, annotations"]
   tokens["tokenize<br/>comment lines, allow-comments markers"]
-  rules["typed parameters<br/>comments never outnumber code"]
-  pyfiles --> astree --> rules
-  pyfiles --> tokens --> rules
 end
-class pyfiles,astree,tokens,rules,body,code,compare,shape,pages,struct ours
+subgraph judge["3. Judge what the parse found"]
+  chrome["headless Google Chrome<br/>draws each diagram"]
+  compare["each reference matches the<br/>definition span or the quoted text"]
+  rules["typed parameters,<br/>comments never outnumber code"]
+end
+pages --> struct
+pages --> mmdc --> chrome
+body --> refs
+code --> refs
+refs --> compare
+body --> shape
+pyfiles --> astree --> rules
+pyfiles --> tokens --> rules
+class pyfiles,astree,tokens,rules,body,code,refs,compare,shape,pages,struct ours
 class mmdc,chrome third
 ```
 
@@ -214,14 +242,18 @@ sequenceDiagram
     box rgb(219,234,254) Our code
         participant skill as create-pr skill
         participant refs as pr-refs
+    end
+    box rgb(241,245,249) Third-party
+        participant git as git and gh
+    end
+    box rgb(219,234,254) Our code, run by git
         participant hook as pre-commit hook
     end
-    box rgb(229,231,235) Third-party
-        participant git as git and gh
+    box rgb(241,245,249) Third-party
         participant actions as GitHub Actions
     end
     skill->>git: git fetch origin, then git worktree add -b branch ../home_assistant_branch origin/main
-    skill->>skill: scripts/dev_setup.sh in the new worktree
+    skill->>skill: scripts/dev_setup.sh there
     loop each commit
         skill->>git: git commit
         git->>hook: run the three steps
@@ -250,26 +282,42 @@ The `/create-pr` skill is the procedure that puts these pieces in order. A Claud
 ```mermaid
 flowchart LR
 --8<-- "_includes/palette.mmd"
-md[("operator_manual/*.md<br/>Mermaid in fences, includes from _includes/")]
-cfg[("mkdocs.yml<br/>nav, snippets, superfences, strict validation")]
-mk["mkdocs build --strict<br/>Material 9.7.7"]
-site[("site/<br/>plain HTML, ignored by git")]
-serve["mkdocs serve<br/>127.0.0.1:8000, rebuilds on save"]
-pagesjob["pages.yml<br/>on every push to main"]
-ghp>"GitHub Pages<br/>seanlin2000.github.io/home_assistant"]
-browser["the reader's browser<br/>draws each Mermaid block"]
-md --> mk
+subgraph source["Source, committed"]
+  md[("operator_manual/*.md<br/>Mermaid in fences,<br/>includes from _includes/")]
+  cfg[("mkdocs.yml<br/>nav, snippets, superfences,<br/>strict validation")]
+end
+subgraph render["Rendering at build time"]
+  hook["manual_checks/mkdocs_hook.py<br/>draws each fence with mmdc<br/>to an SVG, cached in .cache/"]
+end
+subgraph build["MkDocs, Material 9.7.7"]
+  mk["mkdocs build --strict"]
+  serve["mkdocs serve<br/>127.0.0.1:8000,<br/>rebuilds on save"]
+end
+subgraph output["Output, ignored by git"]
+  site[("site/<br/>plain HTML")]
+end
+subgraph workflow["On every push to main"]
+  pagesjob["pages.yml"]
+end
+subgraph host["Leaves the apartment"]
+  ghp>"GitHub Pages<br/>seanlin2000.github.io/<br/>home_assistant"]
+end
+subgraph reader["The reader"]
+  browser["the reader's browser<br/>shows the finished SVG<br/>on a white card"]
+end
+md --> hook
+hook --> mk
+hook --> serve
 cfg --> mk
 mk --> site --> pagesjob --> ghp --> browser
-md --> serve
-class md,cfg,pagesjob ours
+class md,cfg,hook,pagesjob ours
 class mk,site,serve,browser third
 class ghp ext
 ```
 
-MkDocs is a static site generator: it reads a folder of markdown files and one `mkdocs.yml`, and writes plain HTML that any web server can host. Material is the theme that adds the sidebar, the page outline, search, and the light and dark schemes. Both are Python packages in the `docs` dependency group, so they are pinned in `uv.lock` like everything else. `mkdocs.yml` names `operator_manual/` as the source, lists every page in `nav`, and turns on two extensions this manual depends on. `pymdownx.snippets` expands a line such as `--8<-- "_includes/system_map.mmd"` into the file's contents, with `check_paths: true` so a missing include is an error. `pymdownx.superfences` turns a ```` ```mermaid ```` fence into a block that Material's bundled Mermaid draws in the reader's browser, so the diagram lives in the markdown as text and is reviewed and diffed as text. The `validation` block makes every broken link, missing anchor, and page absent from `nav` a warning, and `--strict` turns any warning into a failed build.
+MkDocs is a static site generator: it reads a folder of markdown files and one `mkdocs.yml`, and writes plain HTML that any web server can host. Material is the theme that adds the sidebar, the page outline, search, and the light and dark schemes. Both are Python packages in the `docs` dependency group, so they are pinned in `uv.lock` like everything else. `mkdocs.yml` names `operator_manual/` as the source, lists every page in `nav`, and turns on two extensions this manual depends on. `pymdownx.snippets` expands a line such as `--8<-- "_includes/system_map.mmd"` into the file's contents, with `check_paths: true` so a missing include is an error. `pymdownx.superfences` keeps a ```` ```mermaid ```` fence intact as a block, so the diagram lives in the markdown as text and is reviewed and diffed as text. The browser never draws it: an MkDocs hook, `manual_checks/mkdocs_hook.py`, renders every fence at build time through the same `mmdc` that `manual-check` uses, with the fixed light theme and ELK layout in `manual_checks/mermaid_config.json`, caches the SVG by content hash under `.cache/`, and inlines it on a white card that reads the same in both colour schemes. The `validation` block makes every broken link, missing anchor, and page absent from `nav` a warning, and `--strict` turns any warning into a failed build.
 
-A browser draws Mermaid, so nothing in Python can tell whether a diagram parses. `manual-check` closes that gap. It finds every Mermaid block in every page, expands the includes, and renders each block through `mmdc`, the command-line renderer from mermaid-cli, which starts a headless Google Chrome and draws the diagram to an SVG. Four render in parallel by default, about three seconds each. A failure is reported as `path:line: Parse error on line N` at the line in the markdown, mapped back through the include so an error inside `system_map.mmd` points at the include line. On this Mac it finds Chrome in `/Applications`; `PUPPETEER_EXECUTABLE_PATH` names another browser, and `--no-sandbox` is what GitHub's Ubuntu runners need.
+A browser draws Mermaid, so nothing in Python can tell whether a diagram parses. `manual-check` closes that gap. It finds every Mermaid block in every page, expands the includes, and renders each block through `mmdc`, the command-line renderer from mermaid-cli, which starts a headless Google Chrome and draws the diagram to an SVG. Four render in parallel by default, about three seconds each. A failure is reported as `path:line: Parse error on line N` at the line in the markdown, mapped back through the include so an error inside `system_map.mmd` points at the include line. `--png <dir>` also writes every diagram as a PNG, because the last check is a person looking at it against the four rules in the skill's style guide. On this Mac it finds Chrome in `/Applications`; `PUPPETEER_EXECUTABLE_PATH` names another browser, and `--no-sandbox` is what GitHub's Ubuntu runners need.
 
 The same command checks structure. Each page is matched to a profile by its filename: a numbered section must have the seven `##` headings in order, a complexity comment whose tier matches its score, and a "Where this fits" block that includes the system map and highlights something; the Introduction and the Current working changes page have profiles of their own. Every `classDef` must equal a line of the palette, every class name must be one of its five, and every term under "Key definitions" must exist in `glossary.md`. `--no-render` runs only these checks. The test suite includes `test_the_real_manual_structure_is_clean`, which runs the structure check on the real manual, so the pre-commit hook covers structure on every commit; the `docs` CI job renders everything. The `/operator-manual` skill holds the procedure for writing a page, the page profiles, the diagram style, the system map with each page's highlights, and the complexity rubric that sets a page's length.
 

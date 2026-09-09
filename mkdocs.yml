@@ -1,4 +1,4 @@
-site_name: Studio Assistant, the Operator's Manual
+site_name: Home Assistant Handbook
 site_description: How the local-first voice assistant works, section by section, for readers new to its stack, and how to run each part.
 site_url: https://seanlin2000.github.io/home_assistant/
 repo_url: https://github.com/seanlin2000/home_assistant
@@ -62,6 +62,12 @@ markdown_extensions:
 
 plugins:
   - search
+
+hooks:
+  - manual_checks/mkdocs_hook.py
+
+extra_css:
+  - stylesheets/diagrams.css
 
 validation:
   nav:

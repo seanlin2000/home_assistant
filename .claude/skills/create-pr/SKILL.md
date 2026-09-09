@@ -71,9 +71,9 @@ uv run pr-refs check body.md   # every cited range still matches the code
 uv run pr-refs lint body.md    # required sections present; every change bullet has the three parts in order
 ```
 
-## 4a. Offer an operator's manual entry
+## 4a. Offer a handbook entry
 
-Ask the user one question: does this pull request change behaviour a reader of the Operator's Manual should know about? If yes, run `/operator-manual pr-entry --body <body.md>`. It prunes entries whose PRs have merged, appends this branch's entry to `operator_manual/current_changes.md`, and runs `manual-check`. Commit through the hook, then re-run both `pr-refs` checks: the commit moved lines.
+Ask the user one question: does this pull request change behaviour a reader of the Home Assistant Handbook should know about? If yes, run `/operator-manual pr-entry --body <body.md>`. It prunes entries whose PRs have merged, appends this branch's entry to `operator_manual/current_changes.md`, and runs `manual-check`. Commit through the hook, then re-run both `pr-refs` checks: the commit moved lines.
 
 ## 5. Push and open, or update
 

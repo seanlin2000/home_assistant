@@ -6,15 +6,14 @@ This part is the computer in the room and the way the assistant's pieces are arr
 ## Where this fits
 
 ```mermaid
-flowchart LR
+flowchart TB
 --8<-- "_includes/system_map.mmd"
-style mac stroke:#f59e0b,stroke-width:4px
 style native stroke:#f59e0b,stroke-width:4px
 style haos stroke:#f59e0b,stroke-width:4px
 style docker stroke:#f59e0b,stroke-width:4px
 ```
 
-The highlighted boxes are the Mac and the three containers inside it. Audio from the puck enters the Home Assistant OS virtual machine, which has its own address on the Wi-Fi. From there, requests go sideways to the native processes on the Mac's own address: Whisper and Kokoro over Wyoming, Ollama over HTTP, the tool server over MCP. The tool server alone talks to Docker, where SearXNG listens on the Mac's loopback address and sends the only outbound traffic, the search query. The laptop reaches the Mac over SSH to deploy and to collect logs, and nothing else reaches it from outside the apartment.
+The three highlighted rows are the three places a process can run on the Mac. Audio from the puck, in the top row, enters the Home Assistant OS virtual machine, which has its own address on the Wi-Fi. From there, requests go down to the native processes on the Mac's own address: Whisper and Kokoro over Wyoming, Ollama over HTTP, the tool server over MCP. The tool server alone talks to the Docker row below, where SearXNG listens on the Mac's loopback address and sends the only outbound traffic, the search query, to the bottom row. The laptop reaches the Mac over SSH to deploy and to collect logs, and nothing else reaches it from outside the apartment.
 
 ## Key definitions
 
@@ -42,28 +41,29 @@ The highlighted boxes are the Mac and the three containers inside it. Audio from
 ```mermaid
 flowchart TB
 --8<-- "_includes/palette.mmd"
-subgraph mac["One Mac: macOS, Apple Silicon, one pool of unified memory"]
-  gpu[["the GPU, reached through Metal"]]
-  subgraph native["Native processes: launchd agents, listening on 0.0.0.0"]
-    ollama["Ollama :11434<br/>/opt/homebrew/bin/ollama"]
-    whisper["Whisper :10300<br/>.venv/bin/wyoming-mlx-whisper"]
-    kokoro["Kokoro :10210<br/>.venv/bin/kokoro-server, CPU"]
-    mcp["web_search_mcp :8765<br/>.venv/bin/web-search-mcp"]
-    health["health check<br/>every 300 s"]
-  end
-  subgraph haos["UTM virtual machine: Home Assistant OS, bridged, its own LAN address"]
-    core["Home Assistant :80"]
-    addons["add-ons: Piper, Samba,<br/>Music Assistant, ESPHome, openWakeWord"]
-  end
-  subgraph docker["Docker Desktop: a hidden Linux VM"]
-    searxng["SearXNG<br/>published on 127.0.0.1:8080 only"]
-  end
+subgraph haos["On the Mac, a UTM virtual machine: Home Assistant OS, bridged, its own LAN address"]
+  core["Home Assistant :80"]
+  addons["add-ons: Piper, Samba,<br/>Music Assistant, ESPHome, openWakeWord"]
 end
-ollama -- "MLX" --> gpu
-whisper -- "MLX" --> gpu
-core -- "Wyoming :10300 and :10210" --> whisper
+subgraph native["On the Mac, native processes: launchd agents, listening on 0.0.0.0"]
+  whisper["Whisper :10300<br/>.venv/bin/wyoming-mlx-whisper"]
+  kokoro["Kokoro :10210<br/>.venv/bin/kokoro-server, CPU"]
+  ollama["Ollama :11434<br/>/opt/homebrew/bin/ollama"]
+  mcp["web_search_mcp :8765<br/>.venv/bin/web-search-mcp"]
+  health["health check<br/>every 300 s"]
+end
+subgraph silicon["The Mac's GPU"]
+  gpu[["Apple Silicon GPU, reached through Metal,<br/>one pool of unified memory"]]
+end
+subgraph docker["Docker Desktop, a hidden Linux VM"]
+  searxng["SearXNG<br/>published on 127.0.0.1:8080 only"]
+end
+core -- "Wyoming :10300" --> whisper
+core -- "Wyoming :10210" --> kokoro
 core -- "HTTP :11434" --> ollama
 core -- "MCP :8765" --> mcp
+whisper -- "MLX" --> gpu
+ollama -- "MLX" --> gpu
 mcp -- "loopback" --> searxng
 class ollama,whisper,kokoro,core,addons,searxng third
 class mcp,health ours
@@ -106,24 +106,35 @@ install_agents() {
 ### Part 2: The memory budget, 16 GB against 32 GB
 
 ```mermaid
-flowchart TB
+flowchart LR
 --8<-- "_includes/palette.mmd"
-subgraph proto["Prototype: MacBook M1 Pro, 16 GB"]
-  p_os["macOS<br/>about 3 GB"]
-  p_vm["Home Assistant VM<br/>given 4,096 MB, about 7.5 GB resident with add-ons"]
+subgraph machine["Two machines, one row each"]
+  p_mac[["Prototype<br/>MacBook M1 Pro, 16 GB"]]
+  m_mac[["Mid tier<br/>Mac mini, 32 GB"]]
+end
+subgraph os["macOS"]
+  p_os["about 3 GB"]
+  m_os["about 3 GB"]
+end
+subgraph vm["Home Assistant VM"]
+  p_vm["given 4,096 MB<br/>about 7.5 GB resident with add-ons"]
+  m_vm["given 3,072 MB"]
+end
+subgraph speech["Speech services"]
   p_speech["Whisper 1.6 GB<br/>Kokoro under 1 GB"]
-  p_model[("gemma4:e4b-it-qat<br/>6.1 GB of weights + 1 to 2 GB of KV cache")]
-  p_note{"everything up at once is over 16 GB<br/>so one heavy workload at a time"}
-end
-subgraph mid["Mid tier: Mac mini, 32 GB"]
-  m_os["macOS<br/>about 3 GB"]
-  m_vm["Home Assistant VM<br/>given 3,072 MB"]
   m_speech["Whisper 1.6 GB<br/>Kokoro and Piper under 1 GB"]
-  m_model[("Gemma 4 26B-A4B, 4-bit<br/>about 16 GB of weights + 1 to 2 GB of KV cache")]
-  m_note{"25 to 27 GB in total<br/>leaves headroom"}
 end
-p_os --> p_vm --> p_speech --> p_model --> p_note
-m_os --> m_vm --> m_speech --> m_model --> m_note
+subgraph model["The language model"]
+  p_model[("gemma4:e4b-it-qat<br/>6.1 GB of weights<br/>+ 1 to 2 GB of KV cache")]
+  m_model[("Gemma 4 26B-A4B, 4-bit<br/>about 16 GB of weights<br/>+ 1 to 2 GB of KV cache")]
+end
+subgraph verdict["Does it all fit?"]
+  p_note["over 16 GB up at once,<br/>so one heavy workload at a time"]
+  m_note["25 to 27 GB in total,<br/>leaves headroom"]
+end
+p_mac --> p_os --> p_vm --> p_speech --> p_model --> p_note
+m_mac --> m_os --> m_vm --> m_speech --> m_model --> m_note
+class p_mac,m_mac hw
 class p_os,p_vm,p_speech,p_model,m_os,m_vm,m_speech,m_model third
 ```
 

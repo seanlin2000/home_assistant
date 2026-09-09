@@ -6,12 +6,12 @@ This part is the model itself: the program that turns a question, a persona, and
 ## Where this fits
 
 ```mermaid
-flowchart LR
+flowchart TB
 --8<-- "_includes/system_map.mmd"
 class ollama current
 ```
 
-Ollama sits among the native macOS processes that launchd keeps alive. The conversation agent inside the Home Assistant VM sends it the chat so far plus the schemas of the tools it may call, and gets back a stream of tokens or a structured tool call. The laptop's benchmark sends the same kind of request. Ollama talks to nothing else: it reads weights from disk once, then reads memory.
+Read the map top to bottom: your devices, then Home Assistant, then the Mac's native services with the speaker beside them, then Docker, then the internet. Ollama is the orange box in the row of native macOS services that launchd keeps alive. The conversation agent in the Home Assistant row above it sends it the chat so far plus the schemas of the tools it may call, and gets back a stream of tokens or a structured tool call. The laptop's benchmark sends the same kind of request. No edge leaves Ollama for a lower row because it talks to nothing else: it reads weights from disk once, then reads memory.
 
 ## Key definitions
 
@@ -43,19 +43,21 @@ Ollama sits among the native macOS processes that launchd keeps alive. The conve
 ```mermaid
 flowchart TB
 --8<-- "_includes/palette.mmd"
-subgraph mac["Prototype Mac: 16 GB of unified memory, shared by CPU and GPU"]
+subgraph tenants["Sharing the prototype Mac's 16 GB of unified memory, one pool for the CPU and the GPU"]
   macos["macOS<br/>about 3 GB"]
   haos["Home Assistant VM<br/>3 to 4 GB"]
+  ollama["Ollama<br/>about 7.5 GB"]
   whisper["Whisper<br/>1.6 GB"]
   kokoro["Kokoro<br/>under 1 GB"]
-  subgraph ollama["Ollama"]
-    weights[("model weights, quantized<br/>gemma4:e4b-it-qat: 6.1 GB")]
-    kv[("KV cache<br/>grows with context<br/>1 to 2 GB at 16k tokens")]
-  end
 end
-class macos,haos,whisper,kokoro third
-class weights,kv third
-style ollama stroke:#f59e0b,stroke-width:4px
+subgraph inside["What Ollama's share holds"]
+  weights[("model weights, quantized<br/>gemma4:e4b-it-qat: 6.1 GB")]
+  kv[("KV cache<br/>grows with context<br/>1 to 2 GB at 16k tokens")]
+end
+ollama -- "read from disk once" --> weights
+ollama -- "built per request" --> kv
+class macos,haos,ollama,whisper,kokoro,weights,kv third
+class ollama current
 ```
 
 A model is a large array of numbers, its parameters, and running it means reading all of them for every token it writes. On Apple Silicon there is one pool of memory for the CPU and the GPU, so the question "does this model fit" is the question "do the weights plus the working memory fit next to everything else the Mac is running."
@@ -81,19 +83,19 @@ sequenceDiagram
     box rgb(219,234,254) Our code
         participant agent as OllamaClient
     end
-    box rgb(229,231,235) Third-party
+    box rgb(241,245,249) Third-party
         participant ollama as Ollama :11434
         participant gpu as MLX on the GPU
     end
-    agent->>ollama: POST /api/chat: messages, tool schemas, stream true, num_ctx, temperature, think false
-    ollama->>gpu: prompt processing: read every prompt token in one pass
+    agent->>ollama: POST /api/chat<br/>messages, tool schemas, stream true<br/>num_ctx, temperature, think false
+    ollama->>gpu: prompt processing<br/>read every prompt token in one pass
     Note over ollama,gpu: compute-bound, and this wait is the time to first token
     loop one forward pass per token
         ollama->>gpu: read the active weights, produce one token
         ollama-->>agent: chunk: text delta, or a parsed tool_calls field
     end
     Note over ollama,gpu: memory-bandwidth-bound, and this rate is tokens per second
-    ollama-->>agent: final chunk: prompt_eval_count, eval_count, prompt_eval_duration, eval_duration, load_duration
+    ollama-->>agent: final chunk<br/>prompt_eval_count, eval_count<br/>prompt_eval_duration, eval_duration, load_duration
 ```
 
 Every question the assistant answers is one or more of these requests. The agent posts the message history, the tool schemas, and a few options, and asks for a stream. Ollama then does two jobs in sequence, limited by different parts of the chip.
@@ -138,14 +140,31 @@ Three options matter here. `num_ctx` is the context window, 16,384 tokens, and e
 ### Part 3: Keeping a model resident
 
 ```mermaid
-stateDiagram-v2
-    [*] --> absent: not on disk
-    absent --> on_disk: ollama pull, or ensure_model_present
-    on_disk --> loading: first request names the tag
-    loading --> resident: weights and KV cache in unified memory
-    resident --> resident: each request resets the keep-alive timer
-    resident --> on_disk: keep-alive expires, or unload sends keep_alive 0
-    on_disk --> absent: ollama rm, or delete_model
+flowchart LR
+--8<-- "_includes/palette.mmd"
+subgraph absent_stage["Not on the Mac"]
+  absent["absent<br/>not on disk"]
+end
+subgraph disk_stage["On disk"]
+  on_disk[("on disk<br/>weights in Ollama's model store")]
+end
+subgraph loading_stage["Loading"]
+  loading["loading<br/>reading gigabytes from disk"]
+end
+subgraph resident_stage["In unified memory"]
+  resident["resident<br/>weights + KV cache loaded<br/>requests reset keep-alive"]
+end
+subgraph after_stage["Afterwards"]
+  unloaded[("unloaded<br/>back on disk")]
+  deleted["deleted<br/>gone from disk"]
+end
+absent -- "ollama pull, or<br/>ensure_model_present" --> on_disk
+on_disk -- "first request<br/>names the tag" --> loading
+loading -- "weights and KV cache<br/>in unified memory" --> resident
+resident -- "keep-alive expires, or<br/>unload sends keep_alive 0" --> unloaded
+on_disk -- "ollama rm, or<br/>delete_model" --> deleted
+class absent,on_disk,loading,resident,unloaded,deleted third
+class resident current
 ```
 
 Loading a model means reading gigabytes from disk, so Ollama loads on the first request and keeps the model resident for the keep-alive period. `scripts/services.sh install` writes a launchd agent that runs `ollama serve` with three settings: `OLLAMA_HOST=0.0.0.0:11434`, so the Home Assistant VM can reach it across the LAN; `OLLAMA_KEEP_ALIVE=-1`, so the model never unloads on its own and the first question of the day is not slow; and `OLLAMA_MAX_LOADED_MODELS=1`, so a second model is never loaded beside the first. The Home Assistant component points at `http://192.168.1.152:11434` and defaults to `gemma4:e4b-it-qat` (`custom_components/studio_assistant/const.py`); the model the running system has picked is on the [Versions of record](versions.md) page.

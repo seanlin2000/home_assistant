@@ -27,6 +27,7 @@ Every term the manual defines, in one place. A section's "Key definitions" repea
 - **DNS rebinding.** A hostile name server answers a safety check with a public address and the connection a moment later with a private one. The guard defeats it by connecting to the address it checked rather than resolving the name twice.
 - **Docker Desktop on macOS.** Runs Linux containers inside a hidden Linux VM. Containers there cannot see the GPU and cannot receive the network's discovery packets.
 - **Ducking.** Lowering music volume while speech plays.
+- **ELK.** The Eclipse Layout Kernel, a layout engine Mermaid can use instead of its default. It keeps sibling groups in the order they are declared, which is what lets a diagram be authored as rows or columns that mean something.
 - **Entity.** A single thing with state in Home Assistant: a media player, a weather forecast, a speech-to-text engine, a conversation agent.
 - **ESPHome.** A firmware framework for small Wi-Fi microcontrollers, configured in YAML and integrated with Home Assistant. The puck runs it.
 - **Far-field microphones.** Microphones and processing built to hear a voice across a room, with echoes and background noise, rather than next to the mouth.

@@ -21,6 +21,8 @@ LAUNCH_FAILURE = re.compile(r"Could not find (chrome|Chrome)|Failed to launch|--
 MAC_CHROME = Path("/Applications/Google Chrome.app/Contents/MacOS/Google Chrome")
 LINUX_BROWSERS = ("google-chrome", "google-chrome-stable", "chromium", "chromium-browser")
 RENDER_TIMEOUT_SECONDS = 120
+MERMAID_CONFIG = Path(__file__).with_name("mermaid_config.json")
+PNG_WIDTH = "1600"
 
 
 class RenderResult(NamedTuple):
@@ -70,16 +72,34 @@ def mmdc_renderer(mmdc: Path, work_dir: Path, config: Path | None) -> Renderer:
 
 
 def render_source(mmdc: Path, source: str, work_dir: Path, config: Path | None) -> RenderResult:
-    name = uuid.uuid4().hex
-    input_path = work_dir / f"{name}.mmd"
-    input_path.write_text(source, encoding="utf-8")
-    command = [str(mmdc), "-i", str(input_path), "-o", str(work_dir / f"{name}.svg"), "-q"]
-    if config is not None:
-        command += ["-p", str(config)]
-    completed = subprocess.run(command, capture_output=True, text=True, timeout=RENDER_TIMEOUT_SECONDS)
+    completed = run_mmdc(mmdc, source, work_dir, config, uuid.uuid4().hex)
     if completed.returncode == 0:
         return RenderResult(True, "", None)
     return parse_failure(completed.stderr or completed.stdout)
+
+
+def render_svg(mmdc: Path, source: str, work_dir: Path, config: Path | None, svg_id: str) -> str:
+    completed = run_mmdc(mmdc, source, work_dir, config, svg_id)
+    if completed.returncode != 0:
+        raise RuntimeError(parse_failure(completed.stderr or completed.stdout).message)
+    return (work_dir / f"{svg_id}.svg").read_text(encoding="utf-8")
+
+
+def render_png(mmdc: Path, source: str, work_dir: Path, config: Path | None, out_path: Path) -> None:
+    run_mmdc(mmdc, source, work_dir, config, f"diagram-{out_path.stem}", out_path)
+    # The SVG id is also a CSS selector inside the file, so it must not start with a page's leading digit.
+
+
+def run_mmdc(mmdc: Path, source: str, work_dir: Path, config: Path | None, name: str, output: Path | None = None) -> subprocess.CompletedProcess[str]:
+    input_path = work_dir / f"{name}.mmd"
+    input_path.write_text(source, encoding="utf-8")
+    output = output or work_dir / f"{name}.svg"
+    command = [str(mmdc), "-i", str(input_path), "-o", str(output), "-q", "-c", str(MERMAID_CONFIG), "--svgId", name]
+    if output.suffix == ".png":
+        command += ["-w", PNG_WIDTH, "-b", "white"]
+    if config is not None:
+        command += ["-p", str(config)]
+    return subprocess.run(command, capture_output=True, text=True, timeout=RENDER_TIMEOUT_SECONDS)
 
 
 def parse_failure(stderr: str) -> RenderResult:

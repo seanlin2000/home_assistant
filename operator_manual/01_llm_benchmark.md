@@ -6,12 +6,12 @@ The benchmark is how the project decides which language model answers your quest
 ## Where this fits
 
 ```mermaid
-flowchart LR
+flowchart TB
 --8<-- "_includes/system_map.mmd"
 class ollama,mcp,laptop current
 ```
 
-Read the highlighted nodes from the bottom left. The laptop is where a benchmark pass is launched and where its results land, as files under `benchmark/results/`. Each question goes from the laptop into Ollama as a chat with tool schemas attached, exactly as the conversation agent sends it. When the model asks for a tool, the call goes over MCP to a copy of `web_search_mcp` that the benchmark starts for itself on port 8766, next to the product's server on 8765, so a run can cache search results without touching the live service. Excerpts and calculator results come back into the loop, the final answer comes back to the laptop, and nothing else in the map is involved: no Home Assistant, no speech, no puck.
+Three nodes are highlighted, in two rows. In the top row, with the devices, the laptop is where a benchmark pass is launched and where its results land, as files under `benchmark/results/`. Two rows down, among the Mac's native services, sit Ollama and `web_search_mcp`. Each question goes from the laptop into Ollama as a chat with tool schemas attached, exactly as the conversation agent in the Home Assistant row sends it. When the model asks for a tool, the call goes over MCP to a copy of `web_search_mcp` that the benchmark starts for itself on port 8766, next to the product's server on 8765, so a run can cache search results without touching the live service; that copy still reaches SearXNG in the Docker row and the search engines in the bottom row. Excerpts and calculator results come back into the loop, the final answer comes back to the laptop, and nothing else in the map is involved: the Home Assistant row, the speech services, and the puck all sit a pass out.
 
 ## Key definitions
 
@@ -40,15 +40,19 @@ Read the highlighted nodes from the bottom left. The laptop is where a benchmark
 ```mermaid
 flowchart LR
 --8<-- "_includes/palette.mmd"
-questions[("benchmark/questions.yaml<br/>28 questions, set 1.2")]
-rubric[("benchmark/rubric.md<br/>the judge's instructions")]
-config[("benchmark/config.yaml<br/>candidates, policy, judge")]
-harness["the harness<br/>run.py and gates.py"]
-judge["the judge<br/>Claude Opus 5"]
+subgraph files["Three files define the benchmark"]
+  questions[("benchmark/questions.yaml<br/>28 questions, set 1.2")]
+  rubric[("benchmark/rubric.md<br/>the judge's instructions")]
+  config[("benchmark/config.yaml<br/>candidates, policy, judge")]
+end
+subgraph readers["What reads them"]
+  harness["the harness<br/>run.py and gates.py"]
+  judge["the judge<br/>Claude Opus 5"]
+end
+config -- "candidate keys,<br/>temperature 0.7, 4 tool rounds,<br/>600 output tokens" --> harness
 questions -- "turns, expected_search,<br/>max_words, expected_route" --> harness
 questions -- "reference sketch,<br/>gates_for_judge" --> judge
 rubric -- "sent verbatim as<br/>the system prompt" --> judge
-config -- "candidate keys, temperature 0.7,<br/>4 tool rounds, 600 output tokens" --> harness
 class questions,rubric,config,harness ours
 class judge ext
 ```
@@ -67,12 +71,12 @@ Three files define the benchmark, and everything else is machinery that reads th
 sequenceDiagram
     box rgb(219,234,254) Our code
         participant run as benchmark-run
-        participant agent as assistant_core agent loop
-        participant mcp as web_search_mcp on port 8766
+        participant agent as assistant_core<br/>agent loop
+        participant mcp as web_search_mcp<br/>port 8766
     end
-    box rgb(229,231,235) Third-party
-        participant ollama as Ollama on port 11434
-        participant searxng as SearXNG on port 8080
+    box rgb(241,245,249) Third-party
+        participant ollama as Ollama<br/>port 11434
+        participant searxng as SearXNG<br/>port 8080
     end
     run->>mcp: start as a child process, cache in results/version_N/cache
     run->>ollama: pull if missing, warm up with the run's context length, read /api/ps
@@ -87,7 +91,7 @@ sequenceDiagram
         agent->>ollama: the conversation so far
         ollama-->>agent: final answer
         agent-->>run: Done with the full transcript
-        run->>run: append one line to results/version_N/key.jsonl
+        run->>run: append to version_N/key.jsonl
     end
     run->>ollama: unload the model
     run->>mcp: terminate
@@ -104,25 +108,28 @@ Each question then runs through `assistant_core.agent_loop.run`, the same functi
 ```mermaid
 flowchart TB
 --8<-- "_includes/palette.mmd"
-result[("one QuestionResult<br/>every turn's transcript")]
-failed{"did the model call fail?"}
-runerr["run_error<br/>the judge is skipped"]
-c1{"searched on a<br/>category A or C question?"}
-c2{"skipped the search on a<br/>category B question?"}
-c3{"a tool call the loop<br/>could not parse?"}
-c4{"more than 4 tool rounds<br/>in one turn?"}
-c5{"empty final answer?"}
-c6{"over the question's<br/>max_words?"}
-gates[("harness_gates<br/>a list, possibly empty")]
+subgraph input["One transcript"]
+  result[("one QuestionResult<br/>every turn's transcript")]
+end
+subgraph first["The first check decides whether the rest run"]
+  failed{"did the model<br/>call fail?"}
+end
+subgraph checks["Six independent checks on the transcript"]
+  c1{"searched on a<br/>category A or C question?"}
+  c2{"skipped the search on<br/>a category B question?"}
+  c3{"a tool call the loop<br/>could not parse?"}
+  c4{"more than 4 tool<br/>rounds in one turn?"}
+  c5{"empty final<br/>answer?"}
+  c6{"over the question's<br/>max_words?"}
+end
+subgraph output["What the judge sees"]
+  runerr["run_error<br/>the judge is skipped"]
+  gates[("harness_gates<br/>every check that failed,<br/>possibly none")]
+end
 result --> failed
 failed -- "yes" --> runerr
-failed -- "no" --> c1 & c2 & c3 & c4 & c5 & c6
-c1 -- "yes" --> gates
-c2 -- "yes" --> gates
-c3 -- "yes" --> gates
-c4 -- "yes" --> gates
-c5 -- "yes" --> gates
-c6 -- "yes" --> gates
+failed -- "no, run all six" --> checks
+checks -- "every yes" --> gates
 class result,failed,runerr,c1,c2,c3,c4,c5,c6,gates ours
 ```
 
@@ -176,20 +183,35 @@ The harness gates and the judge's gates meet in the `Score` record. Its `gates` 
 ### The judge: two paths to the same rubric
 
 ```mermaid
-flowchart LR
+flowchart TB
 --8<-- "_includes/palette.mmd"
-results[("version_N/key.jsonl")]
-case["render_case<br/>question, reference sketch,<br/>every turn, harness notes"]
-api>"Anthropic API<br/>messages.parse with the<br/>JudgeVerdict schema"]
-cases[("judge_cases/key/qid.md<br/>manifest.json, rubric.md")]
-sub>"benchmark-judge subagent<br/>Claude Code, Opus"]
-verdict[("judge_cases/key/qid.verdict.json")]
-imp["benchmark-judge --import<br/>checks gate names and ranges"]
-scores[("version_N/key.scores.jsonl")]
+subgraph transcripts["Transcripts of a pass"]
+  results[("version_N/key.jsonl")]
+end
+subgraph rendering["One case per unjudged question"]
+  case["render_case<br/>question, reference sketch,<br/>every turn, harness notes"]
+end
+subgraph handoff["Hand-off files, subagent path only"]
+  cases[("judge_cases/key/qid.md<br/>manifest.json, rubric.md")]
+end
+subgraph judges["The judge, Claude Opus 5 reading the rubric"]
+  api>"Anthropic API<br/>messages.parse with the<br/>JudgeVerdict schema"]
+  sub>"benchmark-judge subagent<br/>Claude Code, Opus"]
+end
+subgraph verdicts["Verdicts"]
+  verdict[("judge_cases/key/qid.verdict.json")]
+end
+subgraph scored["Scores"]
+  scores[("version_N/key.scores.jsonl")]
+end
 results --> case
-case -- "no flag: spends credit" --> api --> scores
-case -- "--export: free" --> cases --> sub --> verdict --> imp --> scores
-class results,case,cases,verdict,imp,scores ours
+case -- "no flag: spends credit" --> api
+case -- "--export: free" --> cases
+cases --> sub
+sub --> verdict
+api -- "a verdict that fits<br/>the schema" --> scores
+verdict -- "--import: checks gate<br/>names and ranges" --> scores
+class results,case,cases,verdict,scores ours
 class api,sub ext
 ```
 
@@ -220,14 +242,20 @@ async def ask_judge(client: anthropic.AsyncAnthropic, judge_config: JudgeConfig,
 ```mermaid
 flowchart LR
 --8<-- "_includes/palette.mmd"
-jsonl[("key.jsonl<br/>transcripts, timing, memory fit")]
-scores[("key.scores.jsonl<br/>harness gates plus verdict")]
-meta[("run_meta.json<br/>prompt version, policy, machine")]
-previous[("an earlier version_N<br/>with --compare")]
-human[("review_sheet.yaml<br/>your gates and scores")]
-report["benchmark-report"]
-md[("report.md<br/>scores, gates by type, router accuracy,<br/>latency, per-question matrix, spend")]
-sheet[("review_sheet.yaml and .md<br/>20 percent sample plus disagreements")]
+subgraph inputs["Read from version_N"]
+  jsonl[("key.jsonl<br/>transcripts, timing, memory fit")]
+  scores[("key.scores.jsonl<br/>harness gates plus verdict")]
+  meta[("run_meta.json<br/>prompt version, policy, machine")]
+  previous[("an earlier version_M<br/>with --compare")]
+  human[("review_sheet.yaml<br/>your gates and scores")]
+end
+subgraph command["One command"]
+  report["benchmark-report"]
+end
+subgraph outputs["Written next to them"]
+  md[("report.md<br/>scores, gates, router accuracy,<br/>latency, per-question matrix, spend")]
+  sheet[("review_sheet.yaml and .md<br/>20 percent sample plus disagreements")]
+end
 jsonl --> report
 scores --> report
 meta --> report

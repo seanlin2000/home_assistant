@@ -6,12 +6,12 @@ This part is everything between your voice and the agent's text, and back again.
 ## Where this fits
 
 ```mermaid
-flowchart LR
+flowchart TB
 --8<-- "_includes/system_map.mmd"
-class puck,stt,tts,whisper,kokoro,piper current
+class puck,stt,tts,whisper,kokoro current
 ```
 
-Audio enters on the left, from the puck or, today, from the Companion app on a phone. Home Assistant's speech-to-text stage forwards it over Wyoming to Whisper, a native process on the Mac that uses the GPU, and receives text. The text passes through the intent matcher and the conversation agent, which sections [6](06_home_assistant_core.md) and [4](04_conversation_agent.md) cover. The answer arrives at the text-to-speech stage, which hands it either to Kokoro on the Mac or to the Piper add-on inside the VM, and the resulting audio leaves the highlighted path back to the device that asked.
+The map reads top to bottom, and each row is one layer of the system. Audio starts in the top row, from the puck or, today, from the Companion app on a phone, and goes down into the Home Assistant row, where the speech-to-text stage forwards it over Wyoming to Whisper in the row below, a native process on the Mac that uses the GPU, and receives text back on the same edge. Inside the Home Assistant row the text passes through the intent matcher and the conversation agent, which sections [6](06_home_assistant_core.md) and [4](04_conversation_agent.md) cover. The answer arrives at the text-to-speech stage, which hands it either down to Kokoro, beside Whisper in the row of the Mac's services, or to the Piper add-on inside the VM, and the resulting audio travels back up the puck's edge to the device that asked. The Sonos speaker, the Docker row, and the internet row play no part in a spoken question.
 
 ## Key definitions
 
@@ -51,6 +51,8 @@ Audio enters on the left, from the puck or, today, from the Companion app on a p
 
 ### One utterance, end to end
 
+The first diagram is the half that hears you, from the microphone to the agent.
+
 ```mermaid
 sequenceDiagram
     box rgb(220,252,231) Device
@@ -59,50 +61,70 @@ sequenceDiagram
     box rgb(229,231,235) Home Assistant, in the VM
         participant stt as speech to text stage
         participant intents as intent matcher
-        participant tts as text to speech stage
-    end
-    box rgb(219,234,254) Our code
-        participant agent as studio_assistant agent
     end
     box rgb(229,231,235) Native on the Mac
         participant whisper as Whisper :10300
-        participant kokoro as Kokoro :10210
     end
-    mic->>stt: audio, 16 kHz 16-bit mono, until voice activity detection hears silence
-    stt->>whisper: transcribe (language en), audio-start, audio-chunk events, audio-stop
-    Note over whisper: buffers the whole utterance, then runs whisper-large-v3-turbo on the GPU
+    box rgb(219,234,254) Our code, in the VM
+        participant agent as studio_assistant agent
+    end
+    mic->>stt: audio, 16 kHz 16-bit mono,<br/>until voice activity detection hears silence
+    stt->>whisper: transcribe (language en), audio-start,<br/>audio-chunk events, audio-stop
+    Note over whisper: buffers the whole utterance, then runs<br/>whisper-large-v3-turbo on the GPU
     whisper-->>stt: transcript
     stt->>intents: text
-    intents->>agent: no fixed sentence matched, so the text goes to the agent
-    agent-->>tts: streamed text, the filler sentence first, then the answer
-    tts->>kokoro: synthesize-start, synthesize-chunk per piece of text, synthesize-stop
-    kokoro-->>tts: audio-start, audio-chunk events per sentence, audio-stop, synthesize-stopped
-    tts-->>mic: reply audio
-    Note over mic: continue_conversation is true, so the microphone reopens without the wake word
+    intents->>agent: no fixed sentence matched,<br/>so the text goes to the agent
 ```
 
-Every spoken question is one pass through this diagram, and the Assist pipeline named "Jarvis" is what runs it. `scripts/ha_setup.py` creates that pipeline over Home Assistant's websocket API with `stt.mlx_whisper` as the speech-to-text engine, `conversation.studio_assistant` as the conversation engine, `tts.piper` as the text-to-speech engine, language `en` for speech to text and `en_US` for text to speech, and `prefer_local_intents` on. It sets no wake word entity, because the puck detects the wake word itself, and marks the pipeline as preferred, so the Companion app and the browser use it without being told.
+The second diagram is the half that speaks, from the agent's text back to the device.
+
+```mermaid
+sequenceDiagram
+    box rgb(219,234,254) Our code, in the VM
+        participant agent as studio_assistant agent
+    end
+    box rgb(229,231,235) Home Assistant, in the VM
+        participant tts as text to speech stage
+    end
+    box rgb(229,231,235) Native on the Mac
+        participant kokoro as Kokoro :10210
+    end
+    box rgb(220,252,231) Device
+        participant mic as puck, or the Companion app
+    end
+    agent-->>tts: streamed text, the filler sentence first,<br/>then the answer
+    tts->>kokoro: synthesize-start, synthesize-chunk per piece of text,<br/>synthesize-stop
+    kokoro-->>tts: audio-start, audio-chunk events per sentence,<br/>audio-stop, synthesize-stopped
+    tts-->>mic: reply audio
+    Note over mic: continue_conversation is true, so the<br/>microphone reopens without the wake word
+```
+
+Every spoken question is one pass through these two diagrams, and the Assist pipeline named "Jarvis" is what runs it. `scripts/ha_setup.py` creates that pipeline over Home Assistant's websocket API with `stt.mlx_whisper` as the speech-to-text engine, `conversation.studio_assistant` as the conversation engine, `tts.piper` as the text-to-speech engine, language `en` for speech to text and `en_US` for text to speech, and `prefer_local_intents` on. It sets no wake word entity, because the puck detects the wake word itself, and marks the pipeline as preferred, so the Companion app and the browser use it without being told.
 
 The pipeline talks to both speech servers over Wyoming. A Wyoming exchange is a sequence of events on one TCP connection. Each event is a line of JSON naming a type, such as `transcribe` or `audio-chunk`, followed by an optional binary payload, which is how raw audio travels without being encoded into text. Home Assistant opens a fresh connection for each request and closes it when the exchange ends. It also opens one for a `describe` event whenever it wants to know what a server offers, and the `info` event that comes back lists the models, the voices, and whether the server can stream.
 
-Two facts about the text half of the diagram matter for what you hear. The agent streams its text, and the first thing it streams is a filler sentence such as "Let me pull some sources on that" whenever the model asks for a search tool, so the speaker starts before the search finishes. The agent also returns `continue_conversation`, which tells the device to listen again for a few seconds after the reply, so "and tomorrow?" works without the wake word. Both are the agent's decisions and are described in section [4](04_conversation_agent.md).
+Two facts about the second diagram matter for what you hear. The agent streams its text, and the first thing it streams is a filler sentence such as "Let me pull some sources on that" whenever the model asks for a search tool, so the speaker starts before the search finishes. The agent also returns `continue_conversation`, which tells the device to listen again for a few seconds after the reply, so "and tomorrow?" works without the wake word. Both are the agent's decisions and are described in section [4](04_conversation_agent.md).
 
 ### Speech to text: Whisper on the GPU
 
 ```mermaid
 flowchart LR
 --8<-- "_includes/palette.mmd"
-stt["speech to text stage,<br/>or voice_check.py stt"]
-server["wyoming-mlx-whisper<br/>port 10300"]
-model["mlx_whisper.transcribe<br/>whisper-large-v3-turbo on Metal"]
-stt -- "transcribe, language en" --> server
-stt -- "audio-start, then audio-chunk events" --> server
-stt -- "audio-stop" --> server
-server -- "the whole utterance as float32 samples" --> model
-model -- "text" --> server
-server -- "transcript" --> stt
+subgraph client["Wyoming client, in the VM or on the laptop"]
+  stt["speech to text stage,<br/>or voice_check.py stt"]
+end
+subgraph native["Native process on the Mac, kept alive by launchd"]
+  server["wyoming-mlx-whisper<br/>port 10300"]
+end
+subgraph gpu["The model, on the GPU through MLX and Metal"]
+  model["mlx_whisper.transcribe<br/>whisper-large-v3-turbo"]
+end
+stt <-- "transcribe with language en, audio-start,<br/>audio-chunk events, audio-stop<br/>then one transcript back" --> server
+server <-- "the whole utterance as float32 samples<br/>then text back" --> model
 class stt,server,model third
 ```
+
+The columns are where each piece runs: the caller, the server process on the Mac, and the model on the GPU. Each edge carries the request to the right and names the reply that comes back along it.
 
 Whisper is a model that reads a whole clip of audio and writes the words in it. The server around it is small. On `transcribe` it notes the language. On each `audio-chunk` it converts the samples to 16 kHz 16-bit mono if they are not already, and appends them to a buffer. On `audio-stop` it turns the buffer into floating-point samples, calls `mlx_whisper.transcribe` once, sends a single `transcript` event with the text, and closes the connection. Nothing is transcribed until you stop talking, which is why voice activity detection sits in front of it and why the whole clip's transcription time lands in the latency budget below.
 
@@ -121,21 +143,32 @@ Both servers bind `0.0.0.0`, so the VM can reach them across the LAN at the Mac'
 ### Text to speech: Kokoro, with streaming
 
 ```mermaid
-flowchart LR
---8<-- "_includes/palette.mmd"
-tts["text to speech stage,<br/>or voice_check.py tts"]
-server["kokoro-server<br/>port 10210, --streaming"]
-sbd["SentenceBoundaryDetector"]
-shared["voice/kokoro_server.py<br/>SharedKModel, SharedKPipeline"]
-model["KModel + af_heart voice<br/>24 kHz mono, on the CPU"]
-tts -- "synthesize-start, synthesize-chunk events, synthesize-stop" --> server
-server -- "text as it arrives" --> sbd
-sbd -- "one complete sentence" --> model
-shared -- "loaded once, reused by every connection" --> model
-model -- "int16 samples" --> server
-server -- "audio-start, audio-chunk events per sentence, audio-stop, synthesize-stopped" --> tts
-class tts,server,sbd,model third
-class shared ours
+sequenceDiagram
+    box rgb(229,231,235) Wyoming client, in the VM or on the laptop
+        participant tts as text to speech stage,<br/>or voice_check.py tts
+    end
+    box rgb(229,231,235) upstream kokoro-server on the Mac, port 10210, --streaming
+        participant server as event handler
+        participant sbd as SentenceBoundaryDetector
+        participant model as KModel + af_heart voice,<br/>24 kHz mono, on the CPU
+    end
+    box rgb(219,234,254) voice/kokoro_server.py
+        participant shared as SharedKModel, SharedKPipeline
+    end
+    server->>shared: KModel(), KPipeline() on each new connection
+    shared-->>server: the one instance, loaded once and reused
+    tts->>server: synthesize-start
+    tts->>server: synthesize-chunk, the first piece of text
+    server->>sbd: text as it arrives
+    sbd->>model: one complete sentence
+    model-->>server: float32 samples at 24 kHz
+    server-->>tts: audio-start, then audio-chunk events<br/>of 1,024 int16 samples
+    Note over tts: the first sentence plays while the rest is synthesized
+    tts->>server: synthesize-chunk, more text, then synthesize-stop
+    server->>sbd: the remaining text
+    sbd->>model: each later sentence
+    model-->>server: samples per sentence
+    server-->>tts: audio-chunk events, audio-stop, synthesize-stopped
 ```
 
 Text to speech has two shapes in Wyoming. The simple one is a single `synthesize` event carrying the whole text, answered by `audio-start`, a run of `audio-chunk` events, and `audio-stop`. The streaming one, which the pipeline uses when a server's `info` says `supports_synthesize_streaming`, sends `synthesize-start`, then a `synthesize-chunk` for each piece of text as the agent produces it, then `synthesize-stop`. The server answers with audio as soon as it can and finishes with `synthesize-stopped`. Kokoro advertises streaming because the launchd agent passes `--streaming`, and `scripts/voice_check.py info --port 10210` shows the flag.
@@ -174,12 +207,24 @@ Piper is the other text-to-speech engine and the pipeline's default. It runs as 
 ```mermaid
 flowchart LR
 --8<-- "_includes/palette.mmd"
-stop(["you stop talking"])
-vad["end of speech detected<br/>0.3 to 0.8 s"]
-whisper["Whisper transcribes the clip<br/>2.7 s for a 3.7 s clip on the M1 Pro"]
-agent["agent writes its first sentence<br/>2.3 s warm, 35 s after a model load"]
-tts["first sentence synthesized<br/>Piper 0.05 s, Kokoro 0.2 s"]
-hear(["you hear the first sentence"])
+subgraph you["You"]
+  stop(["you stop talking"])
+end
+subgraph device["On the phone or the puck"]
+  vad["end of speech detected<br/>0.3 to 0.8 s"]
+end
+subgraph gpu["Whisper, on the Mac's GPU"]
+  whisper["transcribes the clip<br/>2.7 s for a 3.7 s clip<br/>on the M1 Pro"]
+end
+subgraph llm["The agent and Ollama"]
+  agent["writes its first sentence<br/>2.3 s warm, 35 s after<br/>a model load"]
+end
+subgraph speech["Piper in the VM, or Kokoro"]
+  tts["first sentence synthesized<br/>Piper 0.05 s, Kokoro 0.2 s"]
+end
+subgraph ear["You again"]
+  hear(["you hear the first sentence"])
+end
 stop --> vad --> whisper --> agent --> tts --> hear
 class stop,hear hw
 class vad,whisper,tts third

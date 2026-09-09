@@ -22,6 +22,10 @@ jobs:
       - uses: astral-sh/setup-uv@v6
         with:
           enable-cache: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install -g @mermaid-js/mermaid-cli@11.17.0
       - run: uv sync --frozen --no-group voice
       - name: Build the operator manual with warnings as errors
         run: uv run mkdocs build --strict

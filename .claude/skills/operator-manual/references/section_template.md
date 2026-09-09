@@ -13,12 +13,12 @@ One paragraph: what this part does for the person talking to the assistant, in p
 ## Where this fits
 
 ```mermaid
-flowchart LR
+flowchart TB
 --8<-- "_includes/system_map.mmd"
 class agent,mcp current
 ```
 
-One paragraph that reads the highlighted nodes left to right and names what enters and leaves them.
+One paragraph that reads the highlighted nodes row by row, top to bottom, and names what enters and leaves them.
 
 ## Key definitions
 

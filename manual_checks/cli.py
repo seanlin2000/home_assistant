@@ -8,9 +8,9 @@ from pathlib import Path
 
 from deslop.checks import Finding
 from deslop.cli import format_finding
-from manual_checks.blocks import mermaid_blocks
+from manual_checks.blocks import MermaidBlock, mermaid_blocks
 from manual_checks.headings import GLOSSARY_FILE, PALETTE_FILE, Page, glossary_terms, headings, palette_lines, structure_findings
-from manual_checks.render import RendererUnavailable, find_browser, find_mmdc, mmdc_renderer, render_findings, write_puppeteer_config
+from manual_checks.render import RendererUnavailable, find_browser, find_mmdc, mmdc_renderer, render_findings, render_png, write_puppeteer_config
 
 DEFAULT_ROOT = Path("operator_manual")
 INCLUDES_DIR = "_includes"
@@ -20,6 +20,8 @@ def main() -> None:
     args = parse_args()
     try:
         findings = check(args.root, args.paths or [args.root], render=not args.no_render, sandbox=not args.no_sandbox, jobs=args.jobs)
+        if args.png is not None:
+            write_pngs(args.root, args.paths or [args.root], args.png, sandbox=not args.no_sandbox)
     except RendererUnavailable as error:
         sys.exit(f"manual-check: {error}")
     for finding in findings:
@@ -34,6 +36,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--no-render", action="store_true", help="skip mmdc; check structure only")
     parser.add_argument("--no-sandbox", action="store_true", help="start the browser without its sandbox (needed on GitHub's Ubuntu runners)")
     parser.add_argument("--jobs", type=int, default=4, help="diagrams rendered in parallel (default: 4)")
+    parser.add_argument("--png", type=Path, help="also write every diagram as <dir>/<page stem>_<line>.png, to look at")
     return parser.parse_args()
 
 
@@ -70,3 +73,17 @@ def rendered_findings(blocks: list, sandbox: bool, jobs: int) -> list[Finding]:
     with tempfile.TemporaryDirectory(prefix="manual-check-") as work_dir:
         config = write_puppeteer_config(Path(work_dir), find_browser(), sandbox)
         return render_findings(blocks, mmdc_renderer(mmdc, Path(work_dir), config), jobs)
+
+
+def write_pngs(root: Path, paths: list[Path], out_dir: Path, sandbox: bool) -> None:
+    blocks = [block for target in paths for path in markdown_files(target) for block in load_page(path, root).blocks]
+    out_dir.mkdir(parents=True, exist_ok=True)
+    mmdc = find_mmdc()
+    with tempfile.TemporaryDirectory(prefix="manual-check-") as work_dir:
+        config = write_puppeteer_config(Path(work_dir), find_browser(), sandbox)
+        for block in blocks:
+            render_png(mmdc, block.source, Path(work_dir), config, png_path(out_dir, block))
+
+
+def png_path(out_dir: Path, block: MermaidBlock) -> Path:
+    return out_dir / f"{block.path.stem}_{block.line}.png"

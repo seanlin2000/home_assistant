@@ -225,3 +225,28 @@ def test_check_without_rendering_reports_structure_only(manual_root: Path) -> No
 
 def test_the_real_manual_structure_is_clean() -> None:
     assert check(Path("operator_manual"), [Path("operator_manual")], render=False, sandbox=True, jobs=1) == []
+
+
+def test_run_mmdc_asks_for_a_white_png_of_fixed_width_when_the_output_is_png(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    calls: list[list[str]] = []
+    monkeypatch.setattr(render.subprocess, "run", lambda command, **kwargs: calls.append(command) or subprocess.CompletedProcess(command, 0, "", ""))
+    render.render_png(Path("/bin/mmdc"), "a --> b\n", tmp_path, None, tmp_path / "page_12.png")
+    assert calls[0][calls[0].index("-o") + 1] == str(tmp_path / "page_12.png")
+    assert calls[0][calls[0].index("-w") + 1] == render.PNG_WIDTH and "white" in calls[0] and "-p" not in calls[0]
+    assert calls[0][calls[0].index("-c") + 1] == str(render.MERMAID_CONFIG)
+
+
+def test_hook_sizes_the_svg_to_the_column_but_never_below_seventy_percent() -> None:
+    from manual_checks.mkdocs_hook import sized
+
+    svg = '<svg id="d" style="max-width: 1000px; background-color: white;" viewBox="0 0 1000 300"><g/></svg>'
+    assert sized(svg) == '<svg id="d" style="width: 100%; max-width: 1000px; min-width: 700px;" viewBox="0 0 1000 300"><g/></svg>'
+
+
+def test_hook_replaces_each_mermaid_fence_with_a_figure(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    from manual_checks import mkdocs_hook
+
+    monkeypatch.setattr(mkdocs_hook, "cached_svg", lambda source: f"<svg>{source.strip()}</svg>")
+    page = "# T\n\n```mermaid\nflowchart TB\na --> b\n```\n\ntext\n"
+    result = mkdocs_hook.on_page_markdown(page, None, {"docs_dir": str(tmp_path)}, None)
+    assert result == '# T\n\n<figure class="manual-diagram">\n<svg>flowchart TB\na --> b</svg>\n</figure>\n\ntext\n'

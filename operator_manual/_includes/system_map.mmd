@@ -1,45 +1,44 @@
 --8<-- "_includes/palette.mmd"
-subgraph studio["The studio: everything in here stays on the home network"]
-  puck[["Voice PE puck<br/>wake word runs on the device"]]
-  sonos[["Sonos speaker"]]
-  subgraph mac["Mac, always on"]
-    subgraph haos["Home Assistant OS, a UTM virtual machine"]
-      stt["speech to text stage"] --> intents{"intent matcher"} --> agent["studio_assistant<br/>conversation agent"] --> tts["text to speech stage"]
-      piper["Piper add-on"]
-      ma["Music Assistant add-on"]
-    end
-    subgraph native["native macOS processes, kept alive by launchd"]
-      whisper["Whisper, MLX on the GPU"]
-      ollama["Ollama + the chosen model"]
-      mcp["web_search_mcp<br/>search + calculator tools"]
-      kokoro["Kokoro text to speech"]
-      health["health check"]
-    end
-    subgraph docker["Docker Desktop"]
-      searxng["SearXNG"]
-    end
-  end
+subgraph people["You and your devices"]
+  puck[["Voice PE puck<br/>hears the wake word on its own chip"]]
+  laptop[["Laptop<br/>benchmark, deploy, logs"]]
 end
-subgraph internet["Leaves the network"]
+subgraph haos["Home Assistant OS, a virtual machine on the Mac"]
+  stt["1. speech to text stage"]
+  intents{"2. intent matcher"}
+  agent["3. studio_assistant<br/>conversation agent"]
+  tts["4. text to speech stage<br/>Piper add-on or Kokoro"]
+  ma["Music Assistant add-on"]
+end
+subgraph native["Native macOS services on the Mac, kept alive by launchd, with the GPU"]
+  whisper["Whisper<br/>speech to text"]
+  ollama["Ollama<br/>the language model"]
+  mcp["web_search_mcp<br/>search + calculator tools"]
+  kokoro["Kokoro<br/>text to speech"]
+  health["health check<br/>probes HA and every service"]
+end
+subgraph speakers["Speaker on the apartment Wi-Fi"]
+  sonos[["Sonos speaker"]]
+end
+subgraph docker["Docker Desktop on the Mac"]
+  searxng["SearXNG metasearch"]
+end
+subgraph internet["Leaves the apartment"]
+  metno>"Met.no weather"]
   engines>"search engines"]
   spotify>"Spotify API"]
-  metno>"Met.no weather"]
 end
-laptop[["laptop: benchmark, deploy, logs"]]
-puck -- "audio" --> stt
-tts -- "reply audio" --> puck
-stt --> whisper
-tts --> kokoro
-tts --> piper
+puck <-- "audio in, reply audio out" --> stt
+laptop -. "ssh, rsync, deploy" .-> health
+stt -- "audio" --> whisper
+intents -- "weather" --> metno
 agent -- "chat + tool schemas" --> ollama
 agent -- "tool calls over MCP" --> mcp
-mcp --> searxng --> engines
-intents -- "play X" --> ma --> sonos
+tts -- "sentences" --> kokoro
+ma -- "music" --> sonos
 ma --> spotify
-intents -- "weather" --> metno
-health -. "probes, restarts" .-> haos
-laptop -. "ssh, rsync, deploy" .-> mac
+mcp --> searxng --> engines
 class agent,mcp,health ours
-class stt,intents,tts,piper,ma,whisper,ollama,kokoro,searxng third
+class stt,intents,tts,ma,whisper,ollama,kokoro,searxng third
 class puck,sonos,laptop hw
 class engines,spotify,metno ext

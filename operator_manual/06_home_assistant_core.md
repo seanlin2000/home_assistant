@@ -6,13 +6,13 @@ This part is the switchboard between you and everything else. Home Assistant rec
 ## Where this fits
 
 ```mermaid
-flowchart LR
+flowchart TB
 --8<-- "_includes/system_map.mmd"
-class stt,intents,agent,tts,piper,ma current
+class stt,intents,agent,tts,ma current
 style haos stroke:#f59e0b,stroke-width:4px
 ```
 
-The highlighted box is the virtual machine. Audio from the puck enters the speech-to-text stage, which forwards it to Whisper on the Mac and gets a transcript back. The intent matcher reads the transcript first: a music request goes to the Music Assistant add-on and on to the Sonos, a weather question goes to the Met.no integration, and anything else goes to the `studio_assistant` conversation agent, which is our code running inside Home Assistant. The agent calls Ollama and the tool server on the Mac and streams its answer to the text-to-speech stage, which hands each sentence to Kokoro on the Mac or to the Piper add-on inside the VM. The reply audio leaves the box the way it came in. Two dotted lines touch the box from outside: the health check probes it and restarts it, and the laptop deploys code into it.
+The rows run top to bottom in the order a request travels: your devices, then the highlighted row, which is the virtual machine, then the Mac's native services with the Sonos beside them, then Docker, then the traffic that leaves the apartment. Audio from the puck in the top row enters the speech-to-text stage, which forwards it to Whisper in the row below and gets a transcript back. The intent matcher reads the transcript first: a music request goes to the Music Assistant add-on and on to the Sonos, a weather question goes straight down to Met.no in the bottom row, and anything else goes to the `studio_assistant` conversation agent, which is our code running inside Home Assistant. The agent calls Ollama and the tool server in the row below and streams its answer to the text-to-speech stage, which hands each sentence to Kokoro on the Mac or to the Piper add-on inside the VM. The reply audio travels back up the edge it came in on. The laptop's dotted line skips the highlighted row and lands on the health check, which probes the VM and restarts it, and the same deploy path is what copies code into the VM.
 
 ## Key definitions
 
@@ -53,39 +53,43 @@ The highlighted box is the virtual machine. Audio from the puck enters the speec
 ```mermaid
 flowchart TB
 --8<-- "_includes/palette.mmd"
-subgraph wifi["Studio Wi-Fi"]
-  subgraph mac["Mac, 192.168.1.152"]
-    utm["UTM 4.7.5<br/>QEMU on Apple's hypervisor"]
-    subgraph haos["Home Assistant OS 18.2, bridged: 192.168.1.156, homeassistant.local"]
-      core["Home Assistant Core 2026.9.1<br/>web UI, REST and websocket API on port 80"]
-      supervisor["Supervisor<br/>installs, starts, and watches add-ons"]
-      subgraph addons["Add-ons, one container each"]
-        samba["Samba 12.10.0<br/>/config as an SMB share"]
-        piper["Piper 2.3.4<br/>text to speech, Wyoming"]
-        ma["Music Assistant 2.10.2"]
-        others["openWakeWord 2.1.1<br/>ESPHome 2026.8.2"]
-      end
-      disk[("virtio disk image<br/>/config, custom_components, recorder")]
-    end
-    ollama["Ollama :11434"]
-    whisper["Whisper :10300"]
-    kokoro["Kokoro :10210"]
-    mcp["web_search_mcp :8765"]
-  end
-  laptop[["laptop"]]
+subgraph people["You and your devices on the studio Wi-Fi"]
+  laptop[["Laptop"]]
   puck[["Voice PE puck"]]
 end
-utm -- "4 GB memory, 2 cores, UEFI" --> haos
-core --> supervisor --> addons
-core --> disk
+subgraph utmrow["UTM 4.7.5 on the Mac, 192.168.1.152"]
+  utm["the VM named Home Assistant, QEMU on Apple's hypervisor<br/>4 GB memory, 2 cores, UEFI, virtio disk<br/>bridged onto the Wi-Fi as 192.168.1.156, homeassistant.local"]
+end
+subgraph haos["Home Assistant OS 18.2 inside the VM: the two doors and the add-on manager"]
+  core["Home Assistant Core 2026.9.1<br/>web UI, REST and websocket API on port 80<br/>/config, custom_components, recorder on the disk"]
+  samba["Samba add-on 12.10.0<br/>/config as an SMB share"]
+  supervisor["Supervisor<br/>installs, starts, and watches add-ons"]
+end
+subgraph addons["Add-ons run by the Supervisor, one container each"]
+  piper["Piper 2.3.4<br/>text to speech, Wyoming"]
+  ma["Music Assistant 2.10.2"]
+  others["openWakeWord 2.1.1<br/>ESPHome 2026.8.2"]
+end
+subgraph native["Native macOS services on the Mac, called by Core"]
+  whisper["Whisper :10300"]
+  kokoro["Kokoro :10210"]
+  ollama["Ollama :11434"]
+  mcp["web_search_mcp :8765"]
+end
+laptop -- "utmctl, AppleScript" --> utm
+laptop -- "HTTP :80" --> core
+laptop -- "SMB" --> samba
+puck -- "audio" --> core
+utm -- "boots" --> core
+utm -- "boots" --> supervisor
+supervisor --> piper
+supervisor --> ma
+supervisor --> others
 core -- "Wyoming" --> whisper
 core -- "Wyoming" --> kokoro
 core -- "HTTP" --> ollama
 core -- "MCP" --> mcp
-laptop -- "HTTP :80" --> core
-laptop -- "SMB" --> samba
-puck -- "audio" --> core
-class utm,core,supervisor,samba,piper,ma,others,disk,ollama,whisper,kokoro third
+class utm,core,supervisor,samba,piper,ma,others,ollama,whisper,kokoro third
 class mcp ours
 class laptop,puck hw
 style haos stroke:#f59e0b,stroke-width:4px
@@ -119,23 +123,27 @@ UTM exposes its virtual machine settings to AppleScript, so the script creates t
 ### Part 2: What the setup script puts in place
 
 ```mermaid
-flowchart TB
---8<-- "_includes/palette.mmd"
-script["scripts/ha_setup.py on the laptop<br/>each step skipped when already done"]
-client["ops/ha_client.py<br/>REST: onboarding, config flows, services<br/>websocket: token, Supervisor, registries, pipelines"]
-ha["Home Assistant API<br/>http://192.168.1.156, port 80"]
-onboarding["1. onboarding<br/>owner account, location Studio, ten-year token"]
-addons["2. add-ons<br/>Samba, Piper, openWakeWord, Music Assistant, ESPHome<br/>options set, boot auto, watchdog on"]
-integrations["3. integrations<br/>Wyoming entries for Whisper and Kokoro on the Mac<br/>discovered add-on flows confirmed<br/>Studio Assistant added with Ollama, model, MCP URL"]
-pipeline["4. pipeline<br/>Jarvis: stt.mlx_whisper, conversation.studio_assistant, tts.piper<br/>local intents preferred, set as preferred"]
-env[(".env<br/>HA_HOST, HA_BASE, HA_TOKEN, HA_SAMBA_PASSWORD,<br/>HA_WYOMING_WHISPER_ENTRY, HA_WYOMING_KOKORO_ENTRY")]
-script --> onboarding --> addons --> integrations --> pipeline
-script --> client --> ha
-onboarding -. "writes" .-> env
-addons -. "writes" .-> env
-integrations -. "writes" .-> env
-class script,client,onboarding,addons,integrations,pipeline,env ours
-class ha third
+sequenceDiagram
+    box rgb(219,234,254) Our code, on the laptop
+        participant env as .env
+        participant setup as scripts/ha_setup.py
+        participant client as ops/ha_client.py
+    end
+    box rgb(241,245,249) Third-party, inside the VM
+        participant ha as Home Assistant API, port 80
+    end
+    Note over setup: each step is skipped when its work is already done
+    setup->>client: 1. onboarding: owner account, location Studio
+    client->>ha: REST onboarding, then a ten-year token over websocket
+    setup->>env: HA_HOST, HA_BASE, HA_TOKEN
+    setup->>client: 2. add-ons: Samba, Piper, openWakeWord, Music Assistant, ESPHome
+    client->>ha: Supervisor proxy over websocket: install, options, start, boot auto, watchdog
+    setup->>env: HA_SAMBA_PASSWORD
+    setup->>client: 3. integrations: Wyoming for Whisper and Kokoro, add-on flows, Studio Assistant
+    client->>ha: config flows over REST, entry listing over websocket
+    setup->>env: HA_WYOMING_WHISPER_ENTRY, HA_WYOMING_KOKORO_ENTRY
+    setup->>client: 4. pipeline: Jarvis from stt.mlx_whisper, conversation.studio_assistant, tts.piper
+    client->>ha: registry, then create or update the pipeline and set it preferred, over websocket
 ```
 
 A fresh Home Assistant OS knows nothing about the Mac, the speech services, or our agent. `scripts/ha_setup.py` brings it from that state to the configured one without touching the web interface, in four steps that each check whether their work is already done, so the script can be rerun after a change and only the missing pieces are added.
@@ -151,16 +159,33 @@ Two APIs are involved, and `ops/ha_client.py` hides the split. Home Assistant an
 ```mermaid
 flowchart LR
 --8<-- "_includes/palette.mmd"
-say(["you speak to the puck or the app,<br/>or type in the Assist window"])
-stt["speech to text stage<br/>stt.mlx_whisper, Wyoming to the Mac"]
-intents{"intent matcher<br/>prefer_local_intents true"}
-builtin["built-in intent handler<br/>music, weather, volume"]
-agent["conversation.studio_assistant<br/>our agent loop"]
-tts["text to speech stage<br/>tts.piper, language en_US"]
-reply(["audio on the puck or in the browser"])
-say -- "audio, or text that skips this stage" --> stt -- "transcript" --> intents
-intents -- "matches a sentence template" --> builtin --> tts
-intents -- "no match" --> agent -- "sentences as they stream,<br/>continue_conversation true" --> tts --> reply
+subgraph you["You"]
+  say(["speak to the puck or the app,<br/>or type in the Assist window"])
+end
+subgraph stage1["1. speech to text stage"]
+  stt["stt.mlx_whisper<br/>Wyoming to the Mac"]
+end
+subgraph stage2["2. intent matcher"]
+  intents{"prefer_local_intents true<br/>does a sentence template match?"}
+end
+subgraph stage3["3. the answer"]
+  builtin["built-in intent handler<br/>music, weather, volume"]
+  agent["conversation.studio_assistant<br/>our agent loop"]
+end
+subgraph stage4["4. text to speech stage"]
+  tts["tts.piper<br/>language en_US"]
+end
+subgraph back["Back to you"]
+  reply(["audio on the puck<br/>or in the browser"])
+end
+say -- "audio, or text<br/>that skips this stage" --> stt
+stt -- "transcript" --> intents
+intents -- "yes" --> builtin
+intents -- "no" --> agent
+builtin -- "reply" --> tts
+agent -- "sentences as they stream,<br/>continue_conversation true" --> tts
+tts -- "speech" --> reply
+class say,reply hw
 class stt,intents,builtin,tts third
 class agent ours
 ```
@@ -202,14 +227,16 @@ sequenceDiagram
     box rgb(219,234,254) Our code, on the laptop or the mini
         participant deploy as scripts/deploy_component.py
     end
-    box rgb(229,231,235) Third-party, inside the VM
+    box rgb(241,245,249) Third-party, inside the VM
         participant samba as Samba add-on, //192.168.1.156/config
         participant core as Home Assistant Core, port 80
+    end
+    box rgb(219,234,254) Our code, loaded by Core
         participant flow as studio_assistant config flow
     end
     deploy->>deploy: stage studio_assistant plus assistant_core under vendor/
     deploy->>samba: mount_smbfs with HA_SAMBA_USER and HA_SAMBA_PASSWORD
-    deploy->>samba: rename custom_components/studio_assistant to .prev, copy the staged tree, delete .prev
+    deploy->>samba: rename the old folder to .prev, copy the staged tree, delete .prev
     deploy->>samba: umount
     deploy->>core: POST /api/services/homeassistant/restart, bearer HA_TOKEN
     core-->>deploy: connection dropped as Core shuts down
@@ -217,11 +244,11 @@ sequenceDiagram
         deploy->>core: GET /api/
         core-->>deploy: 200 once Core is back
     end
-    Note over core: on start Core imports the component, installs the manifest requirements, and sets up the saved entry
-    core->>flow: first time only, the user adds the integration and async_step_user runs
-    flow->>flow: GET ollama_url/api/tags and check the model tag is listed
+    Note over core: on start, imports the component and installs its requirements
+    core->>flow: first time only, when the user adds the integration: async_step_user
+    flow->>flow: GET ollama_url/api/tags, check the model tag is listed
     flow-->>core: create_entry with ollama_url, model, mcp_url
-    core->>core: async_setup_entry forwards to the conversation platform, conversation.studio_assistant appears
+    core->>core: async_setup_entry creates conversation.studio_assistant
 ```
 
 Home Assistant loads any Python package it finds under `/config/custom_components/` at startup, and that folder lives on the VM's disk, so getting our code into it means copying files across the network and restarting. `scripts/deploy_component.py` does exactly that. It first stages the tree that will land in the VM: the component itself, plus a copy of `assistant_core` under `vendor/`, because `assistant_core` is not published on PyPI and Home Assistant has no other way to import it. The component's `__init__.py` adds `vendor/` to the import path when the folder exists, so the same source runs from the repository in tests and from the vendored copy in the VM. It then mounts the Samba add-on's `config` share with `mount_smbfs`, swaps the deployed folder for the staged one, unmounts, and asks Home Assistant to restart.

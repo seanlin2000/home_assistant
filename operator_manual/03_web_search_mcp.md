@@ -6,13 +6,13 @@ When you ask something the language model cannot know from training, such as tod
 ## Where this fits
 
 ```mermaid
-flowchart LR
+flowchart TB
 --8<-- "_includes/system_map.mmd"
 class mcp,searxng,engines current
 style docker stroke:#f59e0b,stroke-width:4px
 ```
 
-Read the highlighted path from left to right. Tool calls enter `web_search_mcp` over MCP from the conversation agent in the virtual machine and, during a benchmark, from the laptop. The server is a native macOS process kept alive by launchd. It sends each search query to SearXNG, a container inside Docker Desktop that listens only on the Mac itself. SearXNG forwards the query to the public search engines, which is the first traffic that leaves the network. The server then fetches the pages the engines named, which is the second. What comes back to the agent is plain text: numbered sources with a title, a URL, and the main text of each page, or the exact result of a calculation with a sentence the model can read aloud.
+Read the map top to bottom: your devices, then Home Assistant, then the Mac's native services with the speaker beside them, then Docker Desktop, then the traffic that leaves the apartment. Tool calls enter `web_search_mcp`, in the row of native macOS services kept alive by launchd, over MCP from the conversation agent in the Home Assistant row above it and, during a benchmark, from the laptop. The server sends each search query down to SearXNG, a container in the Docker Desktop row that listens only on the Mac itself. SearXNG forwards the query to the public search engines in the bottom row, which is the first traffic that leaves the network. The server then fetches the pages the engines named, which is the second. What comes back up to the agent is plain text: numbered sources with a title, a URL, and the main text of each page, or the exact result of a calculation with a sentence the model can read aloud.
 
 ## Key definitions
 
@@ -52,7 +52,7 @@ sequenceDiagram
     participant agent as agent loop (HttpMcpToolBox)
     participant mcp as web_search_mcp, port 8765
     end
-    box rgb(229,231,235) Third-party, in Docker
+    box rgb(241,245,249) Third-party, in Docker
     participant searxng as SearXNG, 127.0.0.1:8080
     end
     box rgb(254,226,226) Leaves the network
@@ -98,25 +98,25 @@ The text the model gets back is built by `render_grounded_context`. It opens wit
 ### SearXNG in Docker
 
 ```mermaid
-flowchart LR
+flowchart TB
 --8<-- "_includes/palette.mmd"
-subgraph native["native macOS process on the Mac"]
-  cache[("diskcache<br/>on only when<br/>WEB_SEARCH_CACHE_DIR is set")]
-  client["SearxngClient<br/>at least 3 s between<br/>live requests"]
+subgraph native["web_search_mcp, a native macOS process on the Mac"]
+  client["SearxngClient<br/>at least 3 s between live requests"]
+end
+subgraph disk["Files on the Mac's disk"]
+  cache[("diskcache, search results by query<br/>on only when WEB_SEARCH_CACHE_DIR is set")]
+  settings[("docker/searxng/settings.yml<br/>the seven engines, json output, timeouts")]
 end
 subgraph docker["Docker Desktop on the Mac"]
-  settings[("settings.yml<br/>mounted read-only")]
-  searxng["SearXNG<br/>container studio-searxng<br/>127.0.0.1:8080"]
+  searxng["SearXNG, container studio-searxng<br/>127.0.0.1:8080"]
 end
 subgraph internet["Leaves the network"]
   engines>"google, bing, brave, duckduckgo,<br/>startpage, yahoo, wikipedia"]
 end
-cache <-- "search results by query" --> client
-client -- "GET /search?q=...&format=json&language=en" --> searxng
-searxng -- "JSON: title, url, snippet, engines, score" --> client
-settings --> searxng
-searxng -- "the same query, in parallel" --> engines
-engines -- "result pages" --> searxng
+client <-- "query, stored results" --> cache
+client <-- "GET /search?q=...&format=json&language=en<br/>JSON: title, url, snippet, engines, score" --> searxng
+settings -. "mounted read-only" .-> searxng
+searxng <-- "the same query in parallel, result pages" --> engines
 class client,cache ours
 class searxng,settings third
 class engines ext
@@ -129,11 +129,11 @@ SearXNG is the search engine the model never sees. It runs as one container defi
 ### Reading the pages
 
 ```mermaid
-flowchart LR
+flowchart TB
 --8<-- "_includes/palette.mmd"
-results["ranked results<br/>from SearXNG"] --> fetchable{"http or https, not a binary<br/>extension, not a blocked domain?"}
+results["ranked results from SearXNG"] --> fetchable{"http or https, not a binary extension,<br/>not a blocked domain?"}
 fetchable -- "no" --> dropped["skipped"]
-fetchable -- "yes, first 8" --> download["download concurrently<br/>6 s timeout, 2 MB cap"]
+fetchable -- "yes, the first 8" --> download["download concurrently<br/>6 s timeout, 2 MB cap"]
 download --> extract["trafilatura.extract<br/>tables kept, comments dropped"]
 extract --> clip["first 600 words of each page"]
 clip --> keep["first 4 pages that had text"]
@@ -163,12 +163,12 @@ public -- "yes" --> connect["connect to the first approved address<br/>real name
 connect --> peer{"socket peer address public?"}
 peer -- "no" --> refuse
 peer -- "yes" --> redirect{"3xx redirect?"}
-redirect -- "yes, at most 5 hops" --> scheme
+redirect -- "yes" --> hop["next hop, at most 5<br/>Location resolved against<br/>the current URL, checked again"]
 redirect -- "no" --> html{"content-type says html?"}
 html -- "no" --> empty["nothing extracted"]
 html -- "yes" --> body["stream the body,<br/>stop past 2 MB"]
 class url third
-class scheme,refuse,name,resolve,public,connect,peer,redirect,html,empty,body ours
+class scheme,refuse,name,resolve,public,connect,peer,redirect,hop,html,empty,body ours
 ```
 
 The model picks the URLs that `fetch_page` reads, and a web page can tell the model which URL to pick. That is prompt injection. It cannot be prevented at the model, so the code bounds what an obeyed instruction can reach: without a guard, an injected line could point the tool server at the router, the Home Assistant VM, Ollama's API on port 11434, or a cloud metadata address. `ensure_public_url` in `web_search_mcp/url_guard.py` runs before every connection. The scheme must be `http` or `https`. The host must not be `localhost`, `localhost.localdomain`, or `metadata.google.internal`, and must not end in `.local`, `.internal`, `.localhost`, `.lan`, `.home`, or `.arpa`. The name is resolved, and every address it resolves to must be globally routable, which `is_public_address` decides with Python's `ipaddress` module after unwrapping IPv4-mapped IPv6 addresses and refusing multicast. A name with one private address among several is refused whole.
@@ -202,7 +202,7 @@ A refused address raises `UnsafeUrl`. `fetch_page` turns it into the sentence `R
 ```mermaid
 flowchart TB
 --8<-- "_includes/palette.mmd"
-expr["expression, e.g. $3,500 * 1.05 * 12"] --> norm["normalize: drop commas and $,<br/>15% becomes (15/100), ^ becomes **"]
+expr["expression<br/>e.g. $3,500 * 1.05 * 12"] --> norm["normalize<br/>commas and $ dropped<br/>15% to (15/100), ^ to **"]
 norm --> parse["ast.parse in eval mode"]
 parse --> walk{"only numbers, + - * / // % **,<br/>pi, e, and the listed functions?"}
 walk -- "no" --> err["Calculator error: ...<br/>returned as text so the model can fix its call"]

@@ -21,7 +21,7 @@ Phase 2 (proof of concept) is running. Benchmark passes 1 to 5 are complete (`be
 
 ## Documents
 
-- `operator_manual/`: the Operator's Manual, the book that explains the built system and how to run each part. Read it at https://seanlin2000.github.io/home_assistant/ or with `uv run mkdocs serve`; maintained by the `operator-manual` skill.
+- `operator_manual/`: the Home Assistant Handbook, the book that explains the built system and how to run each part. Read it at https://seanlin2000.github.io/home_assistant/ or with `uv run mkdocs serve`; maintained by the `operator-manual` skill.
 - `docs/phase2_walkthrough.md`: a hands-on tour of the running proof of concept, component by component.
 - `docs/VERSIONS.md`: what the running system was built and measured with, and how to refresh it.
 - `design_docs/v1/10_operations.md`: running, updating, and debugging the headless Mac mini from the laptop.
@@ -41,6 +41,7 @@ uv run pytest
 scripts/lint.sh               # black, isort, shfmt, shellcheck
 uv run deslop                 # typed parameters and comment-to-code ratio, per claude_docs/CLEAN_CODE.md
 uv run manual-check           # every diagram in operator_manual/ renders, every page has its headings
+uv run manual-check --png out/ operator_manual/04_conversation_agent.md   # also write that page's diagrams as PNGs, to look at
 uv run mkdocs serve           # read the operator manual at http://127.0.0.1:8000/home_assistant/
 ```
 

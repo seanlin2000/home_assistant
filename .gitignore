@@ -26,3 +26,6 @@ Brewfile.lock.json
 
 # MkDocs build output of the operator manual
 site/
+
+# Rendered diagrams, keyed by content hash
+.cache/

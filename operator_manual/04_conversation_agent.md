@@ -6,12 +6,12 @@ This part is the code that answers you. Home Assistant hands it the words you sa
 ## Where this fits
 
 ```mermaid
-flowchart LR
+flowchart TB
 --8<-- "_includes/system_map.mmd"
 class agent,ollama,mcp current
 ```
 
-Read the three highlighted nodes from left to right. The agent lives inside the Home Assistant virtual machine, in the row of stages that make up the Assist pipeline. Text enters it from the intent matcher, which passes on every sentence that matched none of its fixed patterns, together with the chat log of the conversation so far. The agent sends the chat and the tool schemas to Ollama on the Mac and gets back a stream of tokens or a tool call. Tool calls go over MCP to `web_search_mcp`, also on the Mac, and come back as text. What leaves the agent is one streamed spoken reply to the text-to-speech stage, a flag that keeps the microphone open, and a record of the turn posted back to the tool server.
+Read the map top to bottom: your devices, then Home Assistant, then the Mac's services with the speaker beside them, then Docker, then what leaves the apartment. The agent is the highlighted stage in the Home Assistant row, where the four stages of the Assist pipeline sit side by side. Text enters it from the intent matcher, which passes on every sentence that matched none of its fixed patterns, together with the chat log of the conversation so far. The other two highlighted boxes are in the row below, the native services on the Mac: the agent sends the chat and the tool schemas down to Ollama and gets back a stream of tokens or a tool call, and tool calls go down over MCP to `web_search_mcp` and come back as text. What leaves the agent is one streamed spoken reply to the text-to-speech stage beside it, a flag that keeps the microphone open, and a record of the turn posted back to the tool server.
 
 ## Key definitions
 
@@ -50,30 +50,36 @@ The benchmark on the laptop adds two packages the component never loads: the off
 ### Two layers, one loop
 
 ```mermaid
-flowchart LR
+flowchart TB
 --8<-- "_includes/palette.mmd"
-subgraph core["assistant_core: plain Python, no Home Assistant import"]
-  loop["agent_loop.py<br/>run"]
-  router["router.py<br/>decide_route, apply_route"]
-  prompts["prompts.py<br/>system prompt 1.5"]
-  llm["llm_client.py<br/>OllamaClient"]
-  http["mcp_http.py<br/>HttpMcpToolBox"]
-  memory["memory.py<br/>NoMemory"]
-  record["turn_record.py<br/>TurnRecord"]
-end
-subgraph component["custom_components/studio_assistant: runs only inside Home Assistant"]
+subgraph drivers["Who drives the loop: the benchmark on the laptop, the entity in custom_components/studio_assistant"]
+  laptop[["Laptop<br/>benchmark harness"]]
   entity["conversation.py<br/>StudioAssistantEntity"]
+end
+subgraph component["The rest of custom_components/studio_assistant: runs only inside Home Assistant"]
   adapter["adapter.py<br/>chat log to Messages<br/>events to deltas"]
   flow["config_flow.py, const.py<br/>addresses, model, policy"]
 end
-laptop[["laptop: benchmark harness"]]
-ollama["Ollama :11434"]
-mcp["web_search_mcp :8765"]
+subgraph core["assistant_core, the loop: plain Python, no Home Assistant import"]
+  loop["agent_loop.py<br/>run"]
+  record["turn_record.py<br/>TurnRecord"]
+end
+subgraph helpers["assistant_core, what the loop calls"]
+  router["router.py<br/>decide_route, apply_route"]
+  prompts["prompts.py<br/>system prompt 1.5"]
+  memory["memory.py<br/>NoMemory"]
+  llm["llm_client.py<br/>OllamaClient"]
+  http["mcp_http.py<br/>HttpMcpToolBox"]
+end
+subgraph mac["Services on the Mac"]
+  ollama["Ollama :11434"]
+  mcp["web_search_mcp :8765"]
+end
 laptop --> loop
-entity --> adapter
+entity -- "chat log in, deltas out" --> adapter
+entity -- "reads settings" --> flow
 entity --> loop
-entity --> record
-flow --> entity
+adapter -- "posts after each answer" --> record
 loop --> router
 loop --> prompts
 loop --> memory
@@ -81,7 +87,7 @@ loop --> llm
 loop --> http
 llm -- "chat + tool schemas" --> ollama
 http -- "tool calls over MCP" --> mcp
-class loop,router,prompts,llm,http,memory,record,entity,adapter,flow,mcp ours
+class entity,adapter,flow,loop,record,router,prompts,memory,llm,http,mcp ours
 class ollama third
 class laptop hw
 ```
@@ -123,18 +129,18 @@ The settings come from two forms. Adding the integration asks for the Ollama add
 
 ```mermaid
 sequenceDiagram
-    box rgb(229,231,235) Home Assistant, in the VM
+    box rgb(241,245,249) Home Assistant, in the VM
         participant ha as Assist pipeline
     end
     box rgb(219,234,254) Our code, in the VM
         participant comp as studio_assistant entity and adapter
-        participant loop as agent_loop.run
-    end
-    box rgb(229,231,235) Third-party on the Mac
-        participant ollama as Ollama :11434
+        participant agent as agent_loop.run
     end
     box rgb(219,234,254) Our code on the Mac
         participant mcp as web_search_mcp :8765
+    end
+    box rgb(241,245,249) Third-party on the Mac
+        participant ollama as Ollama :11434
     end
     ha->>comp: _async_handle_message(user_input, chat_log)
     comp->>agent: run(history, llm, tools, policy)
@@ -149,6 +155,25 @@ sequenceDiagram
     agent-->>comp: FillerSpoken "Let me pull some sources on that."
     comp-->>ha: content delta
     Note over ha: text to speech starts on the filler while the search runs
+```
+
+The second half of the same turn, from the search to the spoken answer:
+
+```mermaid
+sequenceDiagram
+    box rgb(241,245,249) Home Assistant, in the VM
+        participant ha as Assist pipeline
+    end
+    box rgb(219,234,254) Our code, in the VM
+        participant comp as studio_assistant entity and adapter
+        participant agent as agent_loop.run
+    end
+    box rgb(219,234,254) Our code on the Mac
+        participant mcp as web_search_mcp :8765
+    end
+    box rgb(241,245,249) Third-party on the Mac
+        participant ollama as Ollama :11434
+    end
     agent->>mcp: tools/call search_and_read
     mcp-->>agent: numbered excerpts as text
     agent->>ollama: POST /api/chat, stream: the same messages plus the tool result
@@ -160,7 +185,7 @@ sequenceDiagram
     comp-->>ha: ConversationResult, continue_conversation true
 ```
 
-The loop is an async generator: the caller iterates it and receives events, and the answer is being spoken while the generator is still running. This is the whole path for a question that needs a search. A question that needs nothing skips the two tool exchanges, and a question that needs arithmetic goes to the calculator instead of the search tool with the other filler sentence.
+The loop is an async generator: the caller iterates it and receives events, and the answer is being spoken while the generator is still running. The two diagrams together are the whole path for a question that needs a search. A question that needs nothing skips the two tool exchanges, and a question that needs arithmetic goes to the calculator instead of the search tool with the other filler sentence.
 
 *From `assistant_core/agent_loop.py`, `run`:*
 
@@ -219,20 +244,16 @@ The component keeps nothing between calls. A follow-up arrives as a new `_async_
 ```mermaid
 flowchart TB
 --8<-- "_includes/palette.mmd"
-question(["the user's latest message"]) --> explicit{"an explicit request to search?<br/>search for, look up, find me the latest"}
-explicit -- "yes" --> search["route: search"]
-explicit -- "no" --> numbers{"two or more numbers<br/>and an arithmetic cue?<br/>percent, per month, watts, mortgage, times"}
-numbers -- "yes" --> calc["route: calculate"]
+question(["the user's latest message"]) --> explicit{"an explicit request to search?<br/>'search for', 'look up', 'find me the latest'"}
+explicit -- "no" --> numbers{"two or more numbers and an arithmetic cue?<br/>'percent', 'per month', 'mortgage', 'times'"}
 numbers -- "no" --> classify["one classify call to the same model<br/>JSON schema, temperature 0, 40 tokens<br/>with the two earlier user turns as context"]
-classify --> parsed{"reply"}
+classify --> parsed{"the model's reply"}
+explicit -- "yes" --> search["route: search<br/>SEARCH directive appended<br/>to the system prompt"]
+numbers -- "yes" --> calc["route: calculate<br/>CALCULATE directive appended<br/>to the system prompt"]
 parsed -- "search" --> search
 parsed -- "calculate" --> calc
-parsed -- "answer" --> answer["route: answer"]
-parsed -- "any error" --> answer
-search --> sdir["append the SEARCH directive<br/>to the system prompt for this turn"]
-calc --> cdir["append the CALCULATE directive<br/>to the system prompt for this turn"]
-answer --> nodir["messages unchanged"]
-class question,explicit,numbers,parsed,search,calc,answer,sdir,cdir,nodir ours
+parsed -- "answer, or any error" --> answer["route: answer<br/>messages unchanged"]
+class question,explicit,numbers,parsed,search,calc,answer ours
 class classify third
 ```
 

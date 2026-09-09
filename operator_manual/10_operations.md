@@ -6,13 +6,13 @@ This part keeps the assistant answering when nobody is sitting at the Mac. The l
 ## Where this fits
 
 ```mermaid
-flowchart LR
+flowchart TB
 --8<-- "_includes/system_map.mmd"
 class laptop,health current
-style mac stroke:#f59e0b,stroke-width:4px
+style native stroke:#f59e0b,stroke-width:4px
 ```
 
-Three things are lit up. The laptop, outside the studio box, is the only place an operation starts: it sends SSH commands, `rsync` copies, and deploys into the Mac. The Mac, the orange box, is the machine being operated: every process inside it is written to by one of the tools here or restarted by one of them. The health check, among the native macOS processes, is the one part of this section that runs on its own: launchd starts it every five minutes, it probes the VM and its neighbours, restarts what the policy allows, and writes a snapshot to disk. What leaves the Mac is a directory of log files, mirrored to the laptop when the laptop asks.
+Three things are lit up. The laptop, in the top row beside the puck, is the only place an operation starts: it sends SSH commands, `rsync` copies, and deploys down into the Mac. The orange row, the native macOS services that launchd keeps alive, is what is operated: every process in it, together with the Home Assistant VM in the row above and Docker in the row below, is written to by one of the tools here or restarted by one of them. The health check, inside that orange row, is the one part of this section that runs on its own: launchd starts it every five minutes, it probes the VM and its neighbours, restarts what the policy allows, and writes a snapshot to disk. What leaves the Mac is a directory of log files, mirrored up to the laptop when the laptop asks.
 
 ## Key definitions
 
@@ -55,26 +55,30 @@ Three things are lit up. The laptop, outside the studio box, is the only place a
 ### Part 1: Bootstrap, and the three things git cannot carry
 
 ```mermaid
-flowchart LR
+flowchart TB
 --8<-- "_includes/palette.mmd"
-subgraph laptop["laptop"]
-  minish["scripts/mini.sh<br/>bootstrap, push-env,<br/>push-models, push-vm"]
+subgraph laptop["On the laptop: what is sent"]
+  script["scripts/bootstrap_mac.sh<br/>and the Brewfile"]
   env[(".env<br/>addresses and secrets")]
   models[("~/.ollama/models<br/>blobs named by digest")]
   bundle[("Home Assistant.utm<br/>the whole configured VM")]
 end
-subgraph mac["Mac mini"]
-  bootstrap["scripts/bootstrap_mac.sh<br/>brew bundle, clone, .venv,<br/>services.sh install, searxng.sh up,<br/>pmset, firewall, sshd drop-in"]
-  checkout["MINI_PROJECT_DIR<br/>detached checkout of one commit"]
+subgraph commands["scripts/mini.sh, one command each, over SSH"]
+  cmdboot["bootstrap<br/>scp the script and the Brewfile,<br/>then run it over ssh -t"]
+  cmdenv["push-env<br/>scp, chmod 600"]
+  cmdmodels["push-models<br/>rsync exactly the blobs<br/>the manifest names"]
+  cmdvm["push-vm<br/>rsync, refused while<br/>the local VM runs"]
+end
+subgraph mac["On the Mac mini afterwards"]
+  checkout["MINI_PROJECT_DIR: detached checkout,<br/>.venv, five launchd agents, SearXNG up,<br/>pmset, firewall, sshd drop-in"]
   store[("~/.ollama/models")]
   utm["UTM: the VM with 3 GB,<br/>bridged, same MAC address"]
 end
-minish -- "scp the script and the Brewfile,<br/>then run it over ssh -t" --> bootstrap
-bootstrap --> checkout
-env -- "push-env: scp, chmod 600" --> checkout
-models -- "push-models: rsync exactly<br/>the blobs the manifest names" --> store
-bundle -- "push-vm: rsync,<br/>refused while the local VM runs" --> utm
-class minish,bootstrap,checkout,env ours
+script --> cmdboot --> checkout
+env --> cmdenv --> checkout
+models --> cmdmodels --> store
+bundle --> cmdvm --> utm
+class script,env,cmdboot,cmdenv,cmdmodels,cmdvm,checkout ours
 class models,bundle,store,utm third
 ```
 
@@ -98,7 +102,7 @@ sequenceDiagram
         participant deploy as ops.deploy
         participant files as maintenance flag, last_good_ref
     end
-    box rgb(229,231,235) Third-party
+    box rgb(241,245,249) Third-party
         participant git as git, uv, pytest, launchd
         participant ha as Home Assistant in the VM
     end
@@ -172,11 +176,12 @@ sx{"SearXNG failed 2 in a row,<br/>none in 30 min?"}
 sxup["scripts/searxng.sh up"]
 vm{"utmctl says the VM is stopped?"}
 vmstart["utmctl start,<br/>at most once per 30 min"]
-ha{"Home Assistant failed 5 in a row,<br/>no VM restart in 2 h?"}
+ha{"Home Assistant failed<br/>5 in a row, no VM<br/>restart in 2 h?"}
 vmrestart["utmctl stop, wait 10 s,<br/>utmctl start"]
+hold["record the snapshot,<br/>take no action"]
 snap[("health.json: the latest<br/>health.jsonl: every snapshot")]
 tick --> probe --> counts --> flag
-flag -- "yes: record, do nothing" --> snap
+flag -- "yes" --> hold
 flag -- "no" --> agent
 agent -- "yes" --> kick --> sx
 agent -- "no" --> sx
@@ -186,7 +191,7 @@ vm -- "yes" --> vmstart --> snap
 vm -- "no, it is started" --> ha
 ha -- "yes" --> vmrestart --> snap
 ha -- "no" --> snap
-class tick,probe,counts,kick,sxup,vmstart,vmrestart,snap ours
+class tick,probe,counts,kick,sxup,vmstart,vmrestart,hold,snap ours
 ```
 
 The fifth launchd agent runs `scripts/health_check.py` every 300 seconds. Each run probes every part of the stack the cheapest way that proves the part is really ours. Ollama answers `/api/version` on 11434. The tool server answers `/healthz` on 8765, and the check fails unless the reply lists every tool name in `REQUIRED_TOOL_NAMES`. Whisper on 10300 and Kokoro on 10210 are TCP connects. SearXNG on 8080 is a GET of its front page; the real query, which reaches upstream engines, runs only with `--full`, so the loop does not fire 288 searches a day. Home Assistant is a GET of `/api/`, where a 401 without a token still proves the server is up. The VM's state comes from `utmctl status`. The run also records free memory from `memory_pressure`, swap from `sysctl vm.swapusage`, and the model Ollama has resident from `/api/ps`, because memory creep is the failure this machine is most likely to have.
@@ -227,18 +232,33 @@ On the laptop the agent is installed with `HEALTH_CHECK_FLAGS=--no-remediate scr
 ### Part 4: One service under the check
 
 ```mermaid
-stateDiagram-v2
-    [*] --> answering: services.sh install or start, KeepAlive true
-    answering --> suspect: one probe fails, count 1
-    suspect --> answering: the next probe passes, count back to 0
-    suspect --> kicked: second failure in a row and no kick in the last 30 min
-    kicked --> answering: launchctl kickstart -k, the next probe passes
-    kicked --> cooling: the probe still fails
-    cooling --> kicked: 30 min since the last kick
-    cooling --> answering: it recovers on its own
-    answering --> unloaded: launchctl bootout, on purpose
-    note right of unloaded: reported as skip, never kicked. services.sh start loads it again
-    note left of answering: while the maintenance flag exists every state only records
+flowchart TB
+--8<-- "_includes/palette.mmd"
+subgraph count0["Count 0"]
+  answering["answering<br/>services.sh install or start,<br/>KeepAlive keeps the process up"]
+end
+subgraph count1["Count 1, after one failed probe"]
+  suspect["suspect<br/>nothing happens yet"]
+  unloaded["unloaded<br/>launchctl bootout, on purpose:<br/>reported as skip, never kicked"]
+end
+subgraph count2["Count 2, the policy acts, unless the maintenance flag exists"]
+  kicked["kicked<br/>launchctl kickstart -k, the time<br/>written to health_state.json"]
+end
+subgraph cooldown["Within 30 min of the kick"]
+  cooling["cooling<br/>keeps failing, no second kick"]
+end
+subgraph recovered["A probe passes"]
+  again["answering again<br/>count back to 0"]
+end
+answering -- "one probe fails" --> suspect
+answering -- "a person unloads it" --> unloaded
+suspect -- "second failure in a row,<br/>no kick in the last 30 min" --> kicked
+suspect -- "the next probe passes" --> again
+kicked -- "the next probe passes" --> again
+kicked <-- "still fails, then after 30 min<br/>a failure kicks it again" --> cooling
+cooling -- "it recovers on its own" --> again
+unloaded -- "services.sh start" --> again
+class answering,suspect,kicked,cooling,unloaded,again ours
 ```
 
 Read the diagram for the tool server. launchd started it at login with `KeepAlive`, so if the process itself crashes launchd restarts it within its ten-second throttle and the health check never notices. The check exists for the other case: the process is alive but not answering, or answering as something else. One failed probe moves the service to `suspect`, where the consecutive count is 1 and nothing happens. A second failed probe five minutes later is what the policy acts on, with `launchctl kickstart -k gui/UID/com.studio-assistant.mcp`. The kick's time is written to `health_state.json` under the key `kickstart:mcp`, and for the next 30 minutes the service can fail every probe without another kick. A recovery at any point resets the count to zero.
@@ -248,34 +268,41 @@ Read the diagram for the tool server. launchd started it at login with `KeepAliv
 ### Part 5: Where the logs are written, and how they reach the laptop
 
 ```mermaid
-flowchart LR
+flowchart TB
 --8<-- "_includes/palette.mmd"
-subgraph haos["Home Assistant OS VM"]
+subgraph haos["Home Assistant OS VM on the Mac mini"]
   agent["studio_assistant<br/>conversation agent"]
   debug["Assist debug store<br/>the last few runs, in memory"]
 end
-subgraph mac["Mac mini"]
+subgraph native["Native services on the Mac mini"]
   mcp["tool server :8765<br/>POST /turns"]
   launchd["launchd: stdout and stderr<br/>of each agent, append mode"]
   healthchk["health check"]
-  subgraph logdir["~/Library/Logs/studio-assistant"]
-    turns[("turns/YYYY-MM-DD.jsonl")]
-    svclogs[("ollama.log mcp.log whisper.log<br/>kokoro.log health.log, and .1 .2 .3")]
-    hfiles[("health.json health.jsonl<br/>health_state.json")]
-    marks[("last_good_ref, maintenance,<br/>deploy.lock")]
-  end
 end
-subgraph laptop["laptop"]
-  minilogs["scripts/mini.sh logs"]
-  mirror[("logs/mini/, git-ignored,<br/>plus pipeline_runs.jsonl")]
+subgraph logdir["~/Library/Logs/studio-assistant on the Mac mini"]
+  turns[("turns/YYYY-MM-DD.jsonl")]
+  svclogs[("ollama.log mcp.log whisper.log<br/>kokoro.log health.log, and .1 .2 .3")]
+  hfiles[("health.json health.jsonl<br/>health_state.json")]
+  marks[("last_good_ref, maintenance,<br/>deploy.lock")]
+end
+subgraph pull["On the laptop: the pull"]
+  minilogs["scripts/mini.sh logs<br/>rsync -az over ssh,<br/>then the pipeline runs"]
+end
+subgraph mirrored["On the laptop: the mirror, git-ignored"]
+  mirror[("logs/mini/<br/>plus pipeline_runs.jsonl")]
+end
+subgraph reader["On the laptop: the reader"]
   reportp["scripts/ops_report.py"]
 end
 agent -- "one trimmed record per turn" --> mcp --> turns
 launchd --> svclogs
 healthchk --> hfiles
-logdir -.-> minilogs
+turns -.-> minilogs
+svclogs -.-> minilogs
+hfiles -.-> minilogs
+marks -.-> minilogs
 debug -- "websocket" --> minilogs
-minilogs -- "rsync -az over ssh,<br/>then the pipeline runs" --> mirror --> reportp
+minilogs --> mirror --> reportp
 class agent,mcp,healthchk,minilogs,reportp,turns,svclogs,hfiles,marks,mirror ours
 class launchd,debug third
 ```
