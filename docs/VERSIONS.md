@@ -16,6 +16,8 @@ What the proof of concept was built and measured with, so a future upgrade can b
 | Home Assistant OS / Core | 18.2 / 2026.9.1 | | Settings → About, or `GET /api/config` (`version`) |
 | Add-ons | Samba 12.10.0, Piper 2.3.4, openWakeWord 2.1.1, Music Assistant 2.10.2, ESPHome 2026.8.2 | | Settings → Add-ons |
 | `studio_assistant` component | 0.2.0 (posts turn records) | | `custom_components/studio_assistant/manifest.json` |
+| mermaid-cli (Homebrew) | 11.17.0, rendering through the installed Google Chrome | | `mmdc --version` |
+| mkdocs-material (from `uv.lock`) | 9.7.7, mkdocs 1.6.1 | same lock | `uv run mkdocs --version` |
 | Key wheels (from `uv.lock`) | mcp 2.1.1, httpx 0.28.1, pydantic 2.13.5, ollama 0.6.2, trafilatura 2.2.0, wyoming-mlx-whisper 1.5.0, mlx-whisper 0.4.3, wyoming-kokoro-torch 3.2.0 | same lock | `grep -A1 '^name = "mcp"' uv.lock` |
 
 ## How to refresh this file

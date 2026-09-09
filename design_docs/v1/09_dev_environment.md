@@ -146,3 +146,37 @@ Once the repository had five packages and forty commits pushed straight to `main
 **GitHub Actions and branch protection.** GitHub Actions runs the workflow in `.github/workflows/checks.yml` on a fresh Ubuntu machine for every pull request; it installs the locked environment with `uv sync --frozen` (without the `voice` group, whose MLX wheels exist only for Apple Silicon) and runs the same commands as the hook. Branch protection is a repository setting that makes `main` accept only merges of pull requests whose required jobs passed and whose review threads are all resolved. No approving review is required: GitHub never lets a pull request's author approve their own PR, and on a one-person repository the author is always the same person, so a required approval would block every merge. The human step is the Merge click itself, after reading the review rounds.
 
 Sources: [git hooks](https://git-scm.com/docs/githooks), [GitHub branch protection](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches), [Python `tokenize`](https://docs.python.org/3/library/tokenize.html), [Python `ast`](https://docs.python.org/3/library/ast.html).
+
+## 13. Handbook tooling, added 2026-09-07
+
+The design docs record intent and how the build departed from it, which is the wrong shape for someone who needs to learn the system as it stands. This section adds a second kind of document, the Home Assistant Handbook in `operator_manual/`, and the tools that keep it honest.
+
+```
+  operator_manual/*.md                 one page per design doc, plus Introduction, Current changes, Glossary
+     │  Mermaid diagrams inline, every "Where this fits" map pulled from _includes/system_map.mmd
+     │
+     ├──▶ uv run manual-check          renders every diagram through diagrams/ (mermaid-cli, ELK, then the
+     │                                 band and corner post-processing) and checks the required headings,
+     │                                 the complexity comment, the palette; --png writes each as a picture
+     │
+     ├──▶ uv run mkdocs build --strict Material for MkDocs turns the markdown into a site; a hook renders
+     │                                 every diagram to SVG through the same diagrams/ package, so the page
+     │                                 carries the finished picture; any broken link, missing nav entry, or
+     │                                 missing include fails the build
+     │
+     └──▶ .github/workflows/checks.yml job "docs": the same two commands on every pull request
+          .github/workflows/pages.yml  on merge to main: build again and publish to GitHub Pages
+                                       https://seanlin2000.github.io/home_assistant/
+```
+
+**Material for MkDocs.** MkDocs is a static site generator: it reads a folder of markdown files and a `mkdocs.yml` and writes plain HTML that any web server, including GitHub Pages, can host. Material is the theme that gives it a sidebar table of contents, a page outline, search, and a light and dark scheme. It is a Python package, so it is pinned in `uv.lock` in the `docs` dependency group like everything else here; `uv run mkdocs serve` shows the book at `http://127.0.0.1:8000` and rebuilds on every save.
+
+**Mermaid.** A text language for diagrams: `a["Ollama"] --> b["agent"]` becomes two boxes and an arrow. The diagram lives in the markdown as a ```mermaid block, so it is reviewed and diffed as text. Material can draw those blocks in the browser, but it re-themes them at page load (dark group fills, its own label colours), which made the first version of the manual unreadable in the dark scheme. So the site does not draw them in the browser: an MkDocs hook (`manual_checks/mkdocs_hook.py`) renders each block once at build time through the `diagrams/` package, caches the SVG by content hash under `.cache/`, and inlines it on a white card that looks the same in both schemes. Flowcharts are laid out by ELK, the Eclipse Layout Kernel, because it keeps sibling groups in declaration order; that is what lets every architecture diagram be authored as rows or columns with meaning. One drawing of the whole system lives in `operator_manual/_includes/system_map.mmd` and is included into every section with that section's parts highlighted.
+
+**The diagrams package and the draw-diagram skill.** Mermaid and ELK can be configured for a theme and a layout strategy but not for the things that made the first drafts hard to read: containers of different widths that zig-zag across the page, titles sitting on arrows, sharp corners, opaque group fills, and cramped spacing. `diagrams/` fixes that in two steps. `diagrams/mmdc.py` runs `mmdc` with `diagrams/mermaid_config.json` (ELK with network-simplex placement, one light theme, wide node and rank spacing, faintly tinted containers). `diagrams/polish.py` then rewrites the SVG text: when the subgraphs are stacked it stretches each into a band spanning the whole drawing with its title at the left edge, when they are side by side it stretches each into a full-height column with its title at the top, and it rounds every node and container corner. `diagrams/screenshot.py` turns the finished SVG into a PNG with a headless Chrome at twice the pixel density, which is what `manual-check --png` and `uv run draw-diagram` write for a person to look at. The rules themselves, ten of them, with a vocabulary of four shapes and five colours, live in `.claude/skills/draw-diagram/`, and the `operator-manual` skill invokes that skill for every drawing.
+
+**mermaid-cli and the checker.** A browser draws Mermaid, so nothing in Python can tell whether a diagram parses. `mermaid-cli` (`mmdc`, installed with Homebrew; on the CI runners with npm) runs a headless Chrome to draw one diagram to a file. `manual_checks/` (`uv run manual-check`) finds every Mermaid block in the manual, expands the includes, renders each block in parallel with the site's configuration, and reports a failure as `path:line: Parse error on line N` at the markdown line; it also checks each page's required headings, the complexity comment, the palette, the system-map highlight, and glossary agreement. With `--png <dir>` it writes every diagram as a PNG, post-processed as the site shows it, because the last check is a person looking at the drawing against the `draw-diagram` rules, none of which a program can test.
+
+**The skill.** `.claude/skills/operator-manual/` holds the procedure Claude follows to write or refresh a page (with no mode given it asks whether to rewrite a section or append an entry), the page profiles, the system map with each page's highlights, a complexity rubric that sets each page's length, and the contract `create-pr` uses to add an entry to "Current working changes" for every pull request and to remove entries whose pull request has merged.
+
+Sources: [MkDocs](https://www.mkdocs.org/), [Material for MkDocs diagrams](https://squidfunk.github.io/mkdocs-material/reference/diagrams/), [Mermaid](https://mermaid.js.org/), [mermaid-cli](https://github.com/mermaid-js/mermaid-cli), [GitHub Pages with Actions](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site).

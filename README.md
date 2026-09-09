@@ -21,6 +21,7 @@ Phase 2 (proof of concept) is running. Benchmark passes 1 to 5 are complete (`be
 
 ## Documents
 
+- `operator_manual/`: the Home Assistant Handbook, the book that explains the built system and how to run each part. Read it at https://seanlin2000.github.io/home_assistant/ or with `uv run mkdocs serve`; maintained by the `operator-manual` skill; every diagram is drawn to the `draw-diagram` skill's rules by the `diagrams/` package.
 - `docs/phase2_walkthrough.md`: a hands-on tour of the running proof of concept, component by component.
 - `docs/VERSIONS.md`: what the running system was built and measured with, and how to refresh it.
 - `design_docs/v1/10_operations.md`: running, updating, and debugging the headless Mac mini from the laptop.
@@ -33,12 +34,16 @@ Phase 2 (proof of concept) is running. Benchmark passes 1 to 5 are complete (`be
 All Python runs from a `uv`-managed virtual environment in this folder. See `design_docs/v1/09_dev_environment.md`.
 
 ```
-brew install uv shfmt shellcheck gh
+brew install uv shfmt shellcheck gh mermaid-cli
 uv python install 3.12
 scripts/dev_setup.sh          # uv sync --frozen, clears the macOS hidden flag on .venv, installs the pre-commit hook
 uv run pytest
 scripts/lint.sh               # black, isort, shfmt, shellcheck
 uv run deslop                 # typed parameters and comment-to-code ratio, per claude_docs/CLEAN_CODE.md
+uv run manual-check           # every diagram in operator_manual/ renders, every page has its headings
+uv run manual-check --png out/ operator_manual/04_conversation_agent.md   # also write that page's diagrams as PNGs, to look at
+uv run draw-diagram diagram.mmd --png out/diagram.png                      # render one loose diagram the way the site does
+uv run mkdocs serve           # read the operator manual at http://127.0.0.1:8000/home_assistant/
 ```
 
 Upgrade dependencies deliberately with `scripts/dev_setup.sh --upgrade`, review the `uv.lock` diff, run the tests, commit.
