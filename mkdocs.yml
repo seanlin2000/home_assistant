@@ -67,7 +67,7 @@ hooks:
   - manual_checks/mkdocs_hook.py
 
 extra_css:
-  - stylesheets/diagrams.css
+  - stylesheets/handbook.css
 
 validation:
   nav:

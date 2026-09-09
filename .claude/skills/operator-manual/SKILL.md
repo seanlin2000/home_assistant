@@ -8,7 +8,9 @@ argument-hint: build | introduction | section <NN> | pr-entry [--pr N] [--body p
 
 The manual lives in `operator_manual/` and is rendered by Material for MkDocs (`uv run mkdocs serve`, published to GitHub Pages on merge). It describes the system as it is built today, for a reader with a computer science degree who has never used an LLM API, MCP, Home Assistant, the Wyoming protocol, Docker on macOS, or a UTM virtual machine. It never narrates history or departures from the design; `design_docs/` does that.
 
-Arguments: `$ARGUMENTS`. The first word is the mode. With no mode, run `check` if `operator_manual/index.md` exists, otherwise `build`.
+Arguments: `$ARGUMENTS`. The first word is the mode. With no mode and no `operator_manual/index.md`, run `build`. With no mode otherwise, never guess: ask the user one question with AskUserQuestion, "Rewrite a section completely" or "Append an entry for this branch to Current working changes". For a rewrite, ask a second question naming the section: offer the sections whose code the branch touches (the path-prefix table in `references/system_map.md` maps paths to highlights, and the highlight table maps those back to sections), and let "Other" take any number. Then run `section <NN>` or `pr-entry`.
+
+Every diagram goes through the `draw-diagram` skill: invoke it (`.claude/skills/draw-diagram/SKILL.md`) before drawing or fixing one, and hand its rules to every subagent that draws.
 
 Read before any mode: `references/section_template.md`, `references/diagram_style.md`, `references/system_map.md`, `references/complexity_rubric.md`. Read for the mode: `references/section_brief.md` (build, section), `references/pr_entry_contract.md` (pr-entry).
 
@@ -23,14 +25,14 @@ Read before any mode: `references/section_template.md`, `references/diagram_styl
 
 1. Read `00_system_overview.md`, `README.md`, `docs/phase2_walkthrough.md`, `docs/VERSIONS.md`.
 2. Seed `operator_manual/glossary.md`: one `- **Term.** sentence` bullet per concept from every "Concepts for newcomers" section, alphabetical, one entry per term.
-3. Confirm `operator_manual/_includes/palette.mmd` and `_includes/system_map.mmd` match `references/diagram_style.md` and `references/system_map.md`; if the system changed shape, update the map and the highlight table together.
+3. Confirm `operator_manual/_includes/palette.mmd` matches the palette in the `draw-diagram` skill and `_includes/system_map.mmd` matches `references/system_map.md`; if the system changed shape, update the map and the highlight table together.
 4. Write `operator_manual/index.md` on the Introduction profile in `references/section_template.md`.
 5. Score each section with `references/complexity_rubric.md`. Launch one subagent per section with `references/section_brief.md` filled in; at most three at a time; each returns its file plus proposed glossary terms.
 6. Merge proposed terms into the glossary: one entry per term, keep the shorter definition, alphabetical.
 7. Write the header of `operator_manual/current_changes.md` if the file does not exist, then run `pr-entry` for the current branch.
 8. Add every new file to `nav` in `mkdocs.yml`.
 9. Consistency pass: read only "Where this fits" and "Key definitions" of every section; make terms agree with the glossary and highlights agree with the table.
-10. `uv run manual-check --png <scratch dir>` and look at every PNG against the four rules in `references/diagram_style.md`; redraw what fails. Then `uv run manual-check` and `uv run mkdocs build --strict`; fix every finding; repeat until both are clean.
+10. `uv run manual-check --png <scratch dir>` and look at every PNG against the ten rules of the `draw-diagram` skill; redraw what fails. Then `uv run manual-check` and `uv run mkdocs build --strict`; fix every finding; repeat until both are clean.
 
 ## Mode `introduction`
 
@@ -54,8 +56,8 @@ Follow `references/pr_entry_contract.md` exactly: prune entries whose PR is merg
 - Prose in the style of huyenchip.com/ml-interviews-book: short declarative sentences, second person allowed, no marketing words, no emoji, no bullet walls. Bullets only in "Key definitions", tables, and numbered steps.
 - Length follows the complexity tier, never a fixed count. No filler for simple topics, no truncation for hard ones.
 - Every section has "Run it yourself" with real commands and what the reader should see. If nothing is human-run, say so in one sentence and why.
-- Every diagram is looked at before it ships: render it with `uv run manual-check --png <dir> <page>` and check the four rules in `references/diagram_style.md` (layers with meaning, readable labels, nothing dark, tidy edges).
-- Diagrams are Mermaid only, per `references/diagram_style.md`. The "Where this fits" block is `flowchart TB`, the system-map include, and `class`/`style` highlight lines; nothing else. Every other diagram includes the palette and uses only its five class names. Every `###` part under "How it works" opens with a diagram or says in one sentence why none is needed.
+- Every diagram is looked at before it ships: render it with `uv run manual-check --png <dir> <page>` and judge it against the ten rules of the `draw-diagram` skill, one image at a time.
+- Diagrams are Mermaid only, drawn with the `draw-diagram` skill; `references/diagram_style.md` holds what is specific to the handbook. The "Where this fits" block is `flowchart TB`, the system-map include, and `class`/`style` highlight lines; nothing else. Every other diagram includes the palette and uses only its five class names. Every `###` part under "How it works" opens with a diagram or says in one sentence why none is needed.
 - Code samples are copied from the branch head, never invented, at most 25 lines, trimmed with `...`, with a caption line above the fence naming the file and symbol.
 - Facts (ports, versions, model tags, numbers) come from the code, `docs/VERSIONS.md`, and the as-built appendices. Describe what exists now, never what it used to be or why it changed.
 - Links to other sections are relative files (`04_conversation_agent.md#how-it-works`). Links to design docs and source files are absolute GitHub URLs (`https://github.com/seanlin2000/home_assistant/blob/main/...`); relative links outside `operator_manual/` fail the strict build.

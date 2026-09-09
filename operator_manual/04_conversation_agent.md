@@ -53,27 +53,27 @@ The benchmark on the laptop adds two packages the component never loads: the off
 flowchart TB
 --8<-- "_includes/palette.mmd"
 subgraph drivers["Who drives the loop: the benchmark on the laptop, the entity in custom_components/studio_assistant"]
-  laptop[["Laptop<br/>benchmark harness"]]
-  entity["conversation.py<br/>StudioAssistantEntity"]
+  laptop("Laptop<br/>benchmark harness")
+  entity("conversation.py<br/>StudioAssistantEntity")
 end
 subgraph component["The rest of custom_components/studio_assistant: runs only inside Home Assistant"]
-  adapter["adapter.py<br/>chat log to Messages<br/>events to deltas"]
-  flow["config_flow.py, const.py<br/>addresses, model, policy"]
+  adapter("adapter.py<br/>chat log to Messages<br/>events to deltas")
+  flow("config_flow.py, const.py<br/>addresses, model, policy")
 end
 subgraph core["assistant_core, the loop: plain Python, no Home Assistant import"]
-  loop["agent_loop.py<br/>run"]
-  record["turn_record.py<br/>TurnRecord"]
+  loop("agent_loop.py<br/>run")
+  record("turn_record.py<br/>TurnRecord")
 end
 subgraph helpers["assistant_core, what the loop calls"]
-  router["router.py<br/>decide_route, apply_route"]
-  prompts["prompts.py<br/>system prompt 1.5"]
-  memory["memory.py<br/>NoMemory"]
-  llm["llm_client.py<br/>OllamaClient"]
-  http["mcp_http.py<br/>HttpMcpToolBox"]
+  router("router.py<br/>decide_route, apply_route")
+  prompts("prompts.py<br/>system prompt 1.5")
+  memory("memory.py<br/>NoMemory")
+  llm("llm_client.py<br/>OllamaClient")
+  http("mcp_http.py<br/>HttpMcpToolBox")
 end
 subgraph mac["Services on the Mac"]
-  ollama["Ollama :11434"]
-  mcp["web_search_mcp :8765"]
+  ollama("Ollama :11434")
+  mcp("web_search_mcp :8765")
 end
 laptop --> loop
 entity -- "chat log in, deltas out" --> adapter
@@ -246,13 +246,13 @@ flowchart TB
 --8<-- "_includes/palette.mmd"
 question(["the user's latest message"]) --> explicit{"an explicit request to search?<br/>'search for', 'look up', 'find me the latest'"}
 explicit -- "no" --> numbers{"two or more numbers and an arithmetic cue?<br/>'percent', 'per month', 'mortgage', 'times'"}
-numbers -- "no" --> classify["one classify call to the same model<br/>JSON schema, temperature 0, 40 tokens<br/>with the two earlier user turns as context"]
+numbers -- "no" --> classify("one classify call to the same model<br/>JSON schema, temperature 0, 40 tokens<br/>with the two earlier user turns as context")
 classify --> parsed{"the model's reply"}
-explicit -- "yes" --> search["route: search<br/>SEARCH directive appended<br/>to the system prompt"]
-numbers -- "yes" --> calc["route: calculate<br/>CALCULATE directive appended<br/>to the system prompt"]
+explicit -- "yes" --> search("route: search<br/>SEARCH directive appended<br/>to the system prompt")
+numbers -- "yes" --> calc("route: calculate<br/>CALCULATE directive appended<br/>to the system prompt")
 parsed -- "search" --> search
 parsed -- "calculate" --> calc
-parsed -- "answer, or any error" --> answer["route: answer<br/>messages unchanged"]
+parsed -- "answer, or any error" --> answer("route: answer<br/>messages unchanged")
 class question,explicit,numbers,parsed,search,calc,answer ours
 class classify third
 ```

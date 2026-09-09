@@ -6,11 +6,14 @@ from pathlib import Path
 import pytest
 
 from deslop.checks import Finding
+from diagrams import mmdc, screenshot
+from diagrams.mmdc import BROWSER_HINT, MMDC_HINT, RendererUnavailable, RenderResult, find_mmdc, parse_failure, write_puppeteer_config
+from diagrams.polish import band_layers, polish, round_corners
 from manual_checks import render
 from manual_checks.blocks import UNTERMINATED, MermaidBlock, expand_snippets, fenced_blocks, file_line, mermaid_blocks, outside_fences
 from manual_checks.cli import check, main, markdown_files
 from manual_checks.headings import Page, glossary_terms, headings, palette_lines, structure_findings
-from manual_checks.render import BROWSER_HINT, MMDC_HINT, RendererUnavailable, RenderResult, find_mmdc, mmdc_renderer, parse_failure, render_findings, write_puppeteer_config
+from manual_checks.render import mmdc_renderer, render_findings
 
 PALETTE = Path("operator_manual/_includes/palette.mmd").read_text(encoding="utf-8")
 MAP_BLOCK = '```mermaid\nflowchart LR\n--8<-- "_includes/system_map.mmd"\nclass agent current\n```\n'
@@ -117,7 +120,7 @@ def test_mmdc_renderer_invokes_mmdc_with_the_config_and_maps_failures(tmp_path: 
         calls.append(command)
         return subprocess.CompletedProcess(command, 1, "", "Error: Parse error on line 2:\n")
 
-    monkeypatch.setattr(render.subprocess, "run", fake_run)
+    monkeypatch.setattr(mmdc.subprocess, "run", fake_run)
     config = write_puppeteer_config(tmp_path, Path("/browser"), sandbox=False)
     result = mmdc_renderer(Path("/bin/mmdc"), tmp_path, config)("a --> b\n")
     assert result == RenderResult(False, "Parse error on line 2:", 2)
@@ -130,14 +133,14 @@ def test_puppeteer_config_is_omitted_when_there_is_nothing_to_set(tmp_path: Path
 
 
 def test_find_mmdc_raises_the_brew_hint_when_absent(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setattr(render.shutil, "which", lambda name: None)
+    monkeypatch.setattr(mmdc.shutil, "which", lambda name: None)
     with pytest.raises(RendererUnavailable, match="brew install mermaid-cli"):
         find_mmdc()
 
 
 def test_main_exits_with_the_hint_when_mmdc_is_missing(manual_root: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]) -> None:
     (manual_root / "01_x.md").write_text(section_text(), encoding="utf-8")
-    monkeypatch.setattr(render.shutil, "which", lambda name: None)
+    monkeypatch.setattr(mmdc.shutil, "which", lambda name: None)
     monkeypatch.setattr("sys.argv", ["manual-check", "--root", str(manual_root), str(manual_root)])
     with pytest.raises(SystemExit) as raised:
         main()
@@ -227,13 +230,56 @@ def test_the_real_manual_structure_is_clean() -> None:
     assert check(Path("operator_manual"), [Path("operator_manual")], render=False, sandbox=True, jobs=1) == []
 
 
-def test_run_mmdc_asks_for_a_white_png_of_fixed_width_when_the_output_is_png(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
-    calls: list[list[str]] = []
-    monkeypatch.setattr(render.subprocess, "run", lambda command, **kwargs: calls.append(command) or subprocess.CompletedProcess(command, 0, "", ""))
-    render.render_png(Path("/bin/mmdc"), "a --> b\n", tmp_path, None, tmp_path / "page_12.png")
-    assert calls[0][calls[0].index("-o") + 1] == str(tmp_path / "page_12.png")
-    assert calls[0][calls[0].index("-w") + 1] == render.PNG_WIDTH and "white" in calls[0] and "-p" not in calls[0]
-    assert calls[0][calls[0].index("-c") + 1] == str(render.MERMAID_CONFIG)
+def test_render_png_polishes_the_svg_and_screenshots_it(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    shots: list[tuple[Path, Path, bool]] = []
+    monkeypatch.setattr(render, "render_svg", lambda *args: '<svg><rect class="basic label-container" rx="5" ry="5"/></svg>')
+    monkeypatch.setattr(render, "screenshot", lambda svg_path, png_path, sandbox: shots.append((svg_path, png_path, sandbox)))
+    render.render_png(Path("/bin/mmdc"), "a --> b\n", tmp_path, None, tmp_path / "page_12.png", sandbox=False)
+    assert shots == [(tmp_path / "page_12.svg", tmp_path / "page_12.png", False)]
+    assert 'rx="8" ry="8"' in (tmp_path / "page_12.svg").read_text(encoding="utf-8")
+
+
+def cluster(name: str, x: float, y: float, width: float, height: float, label_x: float, label_y: float) -> str:
+    return (
+        f'<g class="cluster" id="{name}" data-look="classic"><rect style="" x="{x}" y="{y}" width="{width}" height="{height}"/>'
+        f'<g class="cluster-label" transform="translate({label_x}, {label_y})"><foreignObject width="80" height="24"><div>{name}</div></foreignObject></g></g>'
+    )
+
+
+def test_stacked_layers_become_full_width_bands_with_titles_at_the_left() -> None:
+    svg = cluster("top", 100, 0, 200, 80, 180, 8) + cluster("bottom", 20, 200, 500, 80, 250, 208)
+    banded = band_layers(svg)
+    assert 'x="20" y="0" width="500" height="80"' in banded and "translate(36, 8)" in banded
+    assert 'x="20" y="200" width="500" height="80"' in banded and "translate(36, 208)" in banded
+
+
+def test_side_by_side_layers_become_full_height_columns_with_titles_at_the_top() -> None:
+    svg = cluster("left", 0, 100, 150, 200, 60, 108) + cluster("right", 300, 20, 150, 500, 360, 28)
+    banded = band_layers(svg)
+    assert 'x="0" y="20" width="150" height="500"' in banded and "translate(16, 28)" in banded
+    assert 'x="300" y="20" width="150" height="500"' in banded and "translate(316, 28)" in banded
+
+
+def test_overlapping_or_single_layers_are_left_alone() -> None:
+    nested = cluster("outer", 0, 0, 400, 400, 200, 8) + cluster("inner", 50, 50, 100, 100, 100, 58)
+    assert band_layers(nested) == nested
+    single = cluster("only", 0, 0, 400, 400, 200, 8)
+    assert band_layers(single) == single
+
+
+def test_polish_rounds_node_and_container_corners() -> None:
+    svg = '<g class="cluster" id="c" data-look="classic"><rect style="" x="0" y="0" width="1" height="1"/></g><rect class="basic label-container" rx="5" ry="5"/>'
+    assert polish(svg) == round_corners(svg)
+    assert '<rect rx="12" ry="12" style="" x="0"' in polish(svg) and 'rx="8" ry="8"' in polish(svg)
+
+
+def test_screenshot_sizes_the_window_from_the_svg_and_passes_the_sandbox_flags(tmp_path: Path) -> None:
+    svg = '<svg id="d" style="max-width: 640.5px; background-color: white;" viewBox="0 0 640.5 300"><g/></svg>'
+    assert screenshot.natural_size(svg) == (642, 302)
+    command = screenshot.chrome_command(Path("/chrome"), tmp_path / "d.html", tmp_path / "d.png", 642, 302, sandbox=False)
+    assert command[0] == "/chrome" and "--window-size=642,302" in command and "--no-sandbox" in command and command[-1].startswith("file://")
+    with pytest.raises(ValueError):
+        screenshot.natural_size("<svg/>")
 
 
 def test_hook_sizes_the_svg_to_the_column_but_never_below_seventy_percent() -> None:

@@ -45,16 +45,16 @@ subgraph sources["What the skill reads"]
   walk[("docs/phase2_walkthrough.md")]
 end
 subgraph writer["What writes the pages"]
-  skill["operator-manual skill<br/>one subagent per section"]
+  skill("operator-manual skill<br/>one subagent per section")
 end
 subgraph written["What it writes"]
   manual[("operator_manual/<br/>Introduction, sections 1 to 10,<br/>glossary, current changes")]
 end
 subgraph builder["What turns them into a site"]
-  site["Material for MkDocs<br/>site/"]
+  site("Material for MkDocs<br/>site/")
 end
 subgraph hosting["Where the site is served"]
-  pages>"GitHub Pages"]
+  pages("GitHub Pages")
 end
 docs --> skill
 code --> skill
@@ -78,14 +78,14 @@ subgraph pages_in["The pages"]
   page[("operator_manual/*.md<br/>Mermaid fences inline")]
 end
 subgraph commands["Two commands read them"]
-  check["uv run manual-check<br/>blocks.py finds fences, headings.py checks profiles"]
-  build["uv run mkdocs build --strict<br/>mkdocs_hook.py hands every fence to the renderer"]
+  check("uv run manual-check<br/>blocks.py finds fences, headings.py checks profiles")
+  build("uv run mkdocs build --strict<br/>mkdocs_hook.py hands every fence to the renderer")
 end
 subgraph renderer["One renderer draws them"]
-  render["render.py<br/>mmdc, headless Chrome, ELK layout,<br/>the light theme in mermaid_config.json"]
+  render("diagrams/<br/>mmdc, ELK, the light theme,<br/>then bands and rounded corners")
 end
 subgraph outputs["What comes out"]
-  findings["path:line: message<br/>exit 1"]
+  findings("path:line: message<br/>exit 1")
   pngs[("PNGs to look at<br/>manual-check --png")]
   site[("site/<br/>with the SVG of every diagram")]
 end
@@ -103,9 +103,38 @@ class page,pngs,site third
 
 `uv run manual-check` renders every diagram in about twenty seconds and prints one finding per line, the same shape as `deslop`; with `--png <dir>` it also writes each diagram as a PNG so the author can look at it, which the skill requires before a diagram ships. The site does not draw diagrams in the browser: an MkDocs hook renders each fence with the same renderer and a fixed light theme at build time, caches the SVG by content hash under `.cache/`, and inlines it on a white card, so every diagram reads the same in the light and dark schemes. A `docs` CI job runs the checker after `uv run mkdocs build --strict`, whose strict mode fails on a broken link, a page missing from the navigation, or a missing include, and the `pages` workflow installs mermaid-cli for the same reason. The pre-commit hook does not render; it runs the fast structure check through `pytest`.
 
+#### The drawing standard
+
+```mermaid
+flowchart LR
+--8<-- "_includes/palette.mmd"
+subgraph author["The author"]
+  rules(["draw-diagram skill:<br/>ten rules, four shapes,<br/>five colours"])
+  text[("Mermaid text<br/>layers as sibling subgraphs")]
+end
+subgraph engine["mermaid-cli"]
+  mmdc("mmdc + ELK<br/>diagrams/mermaid_config.json<br/>light theme, wide spacing")
+end
+subgraph post["diagrams/polish.py"]
+  bands("every layer a full-width band,<br/>title at the left")
+  corners("rounded corners,<br/>translucent containers")
+end
+subgraph look["What people see"]
+  svg[("SVG on the page")]
+  png[("PNG to look at<br/>diagrams/screenshot.py")]
+end
+rules --> text --> mmdc --> bands --> corners
+corners --> svg
+corners --> png
+class rules,text,bands,corners,png ours
+class mmdc,svg third
+```
+
+Every diagram is judged against ten rules that came from reading the first drafts: position carries meaning, layers are in line, text is visible, nothing is dark, no text sits on an arrow, arrows are tidy, corners are soft, colour has a stated meaning, shapes are standard, and containers are translucent with generous spacing. The `draw-diagram` skill holds those rules with a vocabulary of four shapes (a rounded rectangle for anything that runs, a cylinder for a store, a diamond for a decision, a stadium for what a person says or does) and five colour classes whose meaning is ownership. The `diagrams/` package does the part a program can do: it runs `mmdc` with the ELK layout engine and one light theme, then rewrites the SVG so every subgraph becomes a band spanning the drawing with its title at the left edge, or a full-height column in a left-to-right drawing, and rounds every corner. The site's hook and `manual-check --png` both go through it, and `uv run draw-diagram file.mmd --png out.png` renders one loose diagram the same way. The system map was redrawn to this standard first and every other diagram then converted to the four shapes.
+
 #### The skills
 
-`.claude/skills/operator-manual/` holds the procedure, the page profiles, the diagram style, the system map with each section's highlights, the complexity rubric, the brief handed to each section subagent, and the contract for pull request entries. The `create-pr` skill gains one step: after drafting the description it asks whether the pull request deserves an entry here, runs the `pr-entry` mode, and after the number exists renames the entry's heading. `pr-entry` first removes any entry whose pull request has merged or closed, so this page only ever lists open work.
+`.claude/skills/operator-manual/` holds the procedure, the page profiles, the system map with each section's highlights, the complexity rubric, the brief handed to each section subagent, and the contract for pull request entries. With no mode given, the skill asks whether to rewrite one section completely or to append an entry for the branch here, and it invokes `draw-diagram` for every drawing. The `create-pr` skill gains one step: after drafting the description it asks whether the pull request deserves an entry here, runs the `pr-entry` mode, and after the number exists renames the entry's heading. `pr-entry` first removes any entry whose pull request has merged or closed, so this page only ever lists open work.
 
 ### Run it yourself
 
@@ -113,7 +142,8 @@ class page,pngs,site third
 uv run mkdocs serve             # read the manual at http://127.0.0.1:8000/home_assistant/
 uv run manual-check             # renders every diagram; needs brew install mermaid-cli and Google Chrome
 uv run manual-check --no-render # the structure checks only, under a second
-uv run manual-check --png out/ operator_manual/index.md   # write the page's diagrams as PNGs
+uv run manual-check --png out/ operator_manual/index.md   # write the page's diagrams as PNGs, as the site shows them
+uv run draw-diagram diagram.mmd --png out/diagram.png    # render one loose diagram the same way
 ```
 
 `manual-check` prints nothing and exits 0 when the manual is clean. Break a diagram on purpose, for example by deleting a closing bracket in any ```mermaid block, and it prints the file and line with `Parse error on line N`. `mkdocs serve` rebuilds on every save; Ctrl-C stops it.

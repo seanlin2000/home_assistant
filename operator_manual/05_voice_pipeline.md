@@ -111,13 +111,13 @@ Two facts about the second diagram matter for what you hear. The agent streams i
 flowchart LR
 --8<-- "_includes/palette.mmd"
 subgraph client["Wyoming client, in the VM or on the laptop"]
-  stt["speech to text stage,<br/>or voice_check.py stt"]
+  stt("speech to text stage,<br/>or voice_check.py stt")
 end
 subgraph native["Native process on the Mac, kept alive by launchd"]
-  server["wyoming-mlx-whisper<br/>port 10300"]
+  server("wyoming-mlx-whisper<br/>port 10300")
 end
 subgraph gpu["The model, on the GPU through MLX and Metal"]
-  model["mlx_whisper.transcribe<br/>whisper-large-v3-turbo"]
+  model("mlx_whisper.transcribe<br/>whisper-large-v3-turbo")
 end
 stt <-- "transcribe with language en, audio-start,<br/>audio-chunk events, audio-stop<br/>then one transcript back" --> server
 server <-- "the whole utterance as float32 samples<br/>then text back" --> model
@@ -211,16 +211,16 @@ subgraph you["You"]
   stop(["you stop talking"])
 end
 subgraph device["On the phone or the puck"]
-  vad["end of speech detected<br/>0.3 to 0.8 s"]
+  vad("end of speech detected<br/>0.3 to 0.8 s")
 end
 subgraph gpu["Whisper, on the Mac's GPU"]
-  whisper["transcribes the clip<br/>2.7 s for a 3.7 s clip<br/>on the M1 Pro"]
+  whisper("transcribes the clip<br/>2.7 s for a 3.7 s clip<br/>on the M1 Pro")
 end
 subgraph llm["The agent and Ollama"]
-  agent["writes its first sentence<br/>2.3 s warm, 35 s after<br/>a model load"]
+  agent("writes its first sentence<br/>2.3 s warm, 35 s after<br/>a model load")
 end
 subgraph speech["Piper in the VM, or Kokoro"]
-  tts["first sentence synthesized<br/>Piper 0.05 s, Kokoro 0.2 s"]
+  tts("first sentence synthesized<br/>Piper 0.05 s, Kokoro 0.2 s")
 end
 subgraph ear["You again"]
   hear(["you hear the first sentence"])

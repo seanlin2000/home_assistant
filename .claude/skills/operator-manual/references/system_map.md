@@ -1,6 +1,6 @@
 # The system map
 
-`operator_manual/_includes/system_map.mmd` is the one drawing of the whole system. Every section includes it under "Where this fits" and highlights its own nodes, so a reader always sees the same picture with a different part lit up. The map itself is the as-built version of `design_docs/v1/00_system_overview.md` §2 plus the calculator tools, the health check, and the laptop, drawn as the layered top-down flowchart that `diagram_style.md` prescribes: six sibling rows, every edge pointing down.
+`operator_manual/_includes/system_map.mmd` is the one drawing of the whole system. Every section includes it under "Where this fits" and highlights its own nodes, so a reader always sees the same picture with a different part lit up. The map itself is the as-built version of `design_docs/v1/00_system_overview.md` §2 plus the calculator tools, the health check, and the laptop, drawn as the layered top-down flowchart the `draw-diagram` skill prescribes: five sibling rows that the renderer stretches into full-width bands, every edge pointing down, every box a rounded rectangle whose colour says what it is.
 
 A "Where this fits" block is exactly:
 
@@ -8,7 +8,7 @@ A "Where this fits" block is exactly:
 flowchart TB
 --8<-- "_includes/system_map.mmd"
 class <ids> current
-style <row> stroke:#f59e0b,stroke-width:4px    (optional)
+style <row> stroke:#f59e0b,stroke-width:3px    (optional)
 ```
 
 ## Rows, top to bottom
@@ -16,32 +16,31 @@ style <row> stroke:#f59e0b,stroke-width:4px    (optional)
 | Row id | Title | What sits there |
 |---|---|---|
 | `people` | You and your devices | the things that start a request: the puck and the laptop |
-| `haos` | Home Assistant OS, a virtual machine on the Mac | the four numbered stages of the Assist pipeline and the Music Assistant add-on |
-| `native` | Native macOS services on the Mac, kept alive by launchd, with the GPU | what Home Assistant calls: Whisper, Ollama, the tool server, Kokoro, plus the health check |
-| `speakers` | Speaker on the apartment Wi-Fi | the Sonos, which Music Assistant calls |
+| `haos` | Home Assistant, a virtual machine on the Mac | the four numbered stages of the Assist pipeline and the Music Assistant add-on |
+| `native` | What Home Assistant calls: native macOS services on the Mac, and the speaker on the Wi-Fi | Whisper, Ollama, the tool server, Kokoro, the Sonos, and the health check |
 | `docker` | Docker Desktop on the Mac | SearXNG, which the tool server calls |
 | `internet` | Leaves the apartment | the only traffic that crosses the router |
 
-The Sonos sits in the row of things Home Assistant calls, beside the Mac's services, rather than with the puck: rows mean "who calls whom", and a box goes in the row below whatever calls it. There is no outer "Mac" container; the row titles say which rows run on the Mac.
+The Sonos sits in the row of things Home Assistant calls, beside the Mac's services, rather than with the puck: rows mean "who calls whom", and a box goes in the row below whatever calls it. There is no outer "Mac" container; the row titles say which rows run on the Mac. Row titles are one line at the drawing's width and are placed at the left edge of each band, so no title sits on an edge.
 
 ## Node ids
 
 | Id | Node | Class |
 |---|---|---|
-| `puck` | Voice PE puck | hw |
-| `laptop` | laptop: benchmark, deploy, logs | hw |
+| `puck` | Voice PE puck, hears the wake word on its own chip | hw |
+| `laptop` | Laptop: benchmark, deploy, logs | hw |
 | `stt` | 1. speech to text stage of the Assist pipeline | third |
 | `intents` | 2. intent matcher | third |
 | `agent` | 3. studio_assistant conversation agent | ours |
 | `tts` | 4. text to speech stage, Piper add-on or Kokoro | third |
 | `ma` | Music Assistant add-on | third |
-| `whisper` | Whisper on MLX | third |
-| `ollama` | Ollama and the chosen model | third |
+| `whisper` | Whisper, speech to text | third |
+| `ollama` | Ollama, the language model | third |
 | `mcp` | web_search_mcp, search and calculator tools | ours |
-| `kokoro` | Kokoro text to speech | third |
-| `health` | health check | ours |
+| `kokoro` | Kokoro, text to speech | third |
+| `health` | health check, probes HA and every service | ours |
 | `sonos` | Sonos speaker | hw |
-| `searxng` | SearXNG in Docker | third |
+| `searxng` | SearXNG metasearch | third |
 | `metno` | Met.no weather | ext |
 | `engines` | search engines | ext |
 | `spotify` | Spotify API | ext |

@@ -44,11 +44,11 @@ Read the map top to bottom: your devices, then Home Assistant, then the Mac's na
 flowchart TB
 --8<-- "_includes/palette.mmd"
 subgraph tenants["Sharing the prototype Mac's 16 GB of unified memory, one pool for the CPU and the GPU"]
-  macos["macOS<br/>about 3 GB"]
-  haos["Home Assistant VM<br/>3 to 4 GB"]
-  ollama["Ollama<br/>about 7.5 GB"]
-  whisper["Whisper<br/>1.6 GB"]
-  kokoro["Kokoro<br/>under 1 GB"]
+  macos("macOS<br/>about 3 GB")
+  haos("Home Assistant VM<br/>3 to 4 GB")
+  ollama("Ollama<br/>about 7.5 GB")
+  whisper("Whisper<br/>1.6 GB")
+  kokoro("Kokoro<br/>under 1 GB")
 end
 subgraph inside["What Ollama's share holds"]
   weights[("model weights, quantized<br/>gemma4:e4b-it-qat: 6.1 GB")]
@@ -143,20 +143,20 @@ Three options matter here. `num_ctx` is the context window, 16,384 tokens, and e
 flowchart LR
 --8<-- "_includes/palette.mmd"
 subgraph absent_stage["Not on the Mac"]
-  absent["absent<br/>not on disk"]
+  absent("absent<br/>not on disk")
 end
 subgraph disk_stage["On disk"]
   on_disk[("on disk<br/>weights in Ollama's model store")]
 end
 subgraph loading_stage["Loading"]
-  loading["loading<br/>reading gigabytes from disk"]
+  loading("loading<br/>reading gigabytes from disk")
 end
 subgraph resident_stage["In unified memory"]
-  resident["resident<br/>weights + KV cache loaded<br/>requests reset keep-alive"]
+  resident("resident<br/>weights + KV cache loaded<br/>requests reset keep-alive")
 end
 subgraph after_stage["Afterwards"]
   unloaded[("unloaded<br/>back on disk")]
-  deleted["deleted<br/>gone from disk"]
+  deleted("deleted<br/>gone from disk")
 end
 absent -- "ollama pull, or<br/>ensure_model_present" --> on_disk
 on_disk -- "first request<br/>names the tag" --> loading

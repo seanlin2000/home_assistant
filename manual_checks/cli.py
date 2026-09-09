@@ -8,9 +8,10 @@ from pathlib import Path
 
 from deslop.checks import Finding
 from deslop.cli import format_finding
+from diagrams.mmdc import RendererUnavailable, find_browser, find_mmdc, write_puppeteer_config
 from manual_checks.blocks import MermaidBlock, mermaid_blocks
 from manual_checks.headings import GLOSSARY_FILE, PALETTE_FILE, Page, glossary_terms, headings, palette_lines, structure_findings
-from manual_checks.render import RendererUnavailable, find_browser, find_mmdc, mmdc_renderer, render_findings, render_png, write_puppeteer_config
+from manual_checks.render import mmdc_renderer, render_findings, render_png
 
 DEFAULT_ROOT = Path("operator_manual")
 INCLUDES_DIR = "_includes"
@@ -36,7 +37,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--no-render", action="store_true", help="skip mmdc; check structure only")
     parser.add_argument("--no-sandbox", action="store_true", help="start the browser without its sandbox (needed on GitHub's Ubuntu runners)")
     parser.add_argument("--jobs", type=int, default=4, help="diagrams rendered in parallel (default: 4)")
-    parser.add_argument("--png", type=Path, help="also write every diagram as <dir>/<page stem>_<line>.png, to look at")
+    parser.add_argument("--png", type=Path, help="also write every diagram, post-processed as the site shows it, to <dir>/<page stem>_<line>.png, to look at")
     return parser.parse_args()
 
 
@@ -82,7 +83,15 @@ def write_pngs(root: Path, paths: list[Path], out_dir: Path, sandbox: bool) -> N
     with tempfile.TemporaryDirectory(prefix="manual-check-") as work_dir:
         config = write_puppeteer_config(Path(work_dir), find_browser(), sandbox)
         for block in blocks:
-            render_png(mmdc, block.source, Path(work_dir), config, png_path(out_dir, block))
+            write_png_if_it_renders(mmdc, block, Path(work_dir), config, png_path(out_dir, block), sandbox)
+
+
+def write_png_if_it_renders(mmdc: Path, block: MermaidBlock, work_dir: Path, config: Path | None, out_path: Path, sandbox: bool) -> None:
+    try:
+        render_png(mmdc, block.source, work_dir, config, out_path, sandbox)
+    except RuntimeError:
+        return
+    # A diagram that does not parse is already a finding from the check; there is nothing to look at for it.
 
 
 def png_path(out_dir: Path, block: MermaidBlock) -> Path:

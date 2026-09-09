@@ -44,18 +44,18 @@ The laptop sits in the top row beside the puck, among the things that start a re
 flowchart TB
 --8<-- "_includes/palette.mmd"
 subgraph commands["Commands you run on the laptop"]
-  setup["scripts/dev_setup.sh<br/>uv sync --frozen"]
-  run["uv run command<br/>always inside .venv"]
+  setup("scripts/dev_setup.sh<br/>uv sync --frozen")
+  run("uv run command<br/>always inside .venv")
 end
 subgraph uvrow["uv 0.12.10, from Homebrew"]
-  uv["uv<br/>interpreters, resolution, lock file, .venv"]
+  uv("uv<br/>interpreters, resolution, lock file, .venv")
 end
 subgraph declared["Declared, committed"]
   pyver[(".python-version<br/>3.12")]
   pyproject[("pyproject.toml<br/>direct dependencies, loose constraints<br/>console scripts, black and isort settings")]
 end
 subgraph resolved["Resolved by uv"]
-  interp["standalone Python 3.12.14<br/>in uv's own folder"]
+  interp("standalone Python 3.12.14<br/>in uv's own folder")
   lock[("uv.lock<br/>every package, exact version and hash<br/>committed")]
 end
 subgraph built["Built by uv, ignored by git"]
@@ -107,17 +107,17 @@ subgraph laptop["On the laptop"]
   edit(["edit, then git commit<br/>in a worktree branched from origin/main"])
 end
 subgraph hook[".githooks/pre-commit, run by git before the commit is recorded"]
-  lint["1. scripts/lint.sh -c<br/>black, isort, shfmt, shellcheck"]
-  deslopstep["2. uv run deslop"]
-  tests["3. uv run pytest -q"]
+  lint("1. scripts/lint.sh -c<br/>black, isort, shfmt, shellcheck")
+  deslopstep("2. uv run deslop")
+  tests("3. uv run pytest -q")
 end
 subgraph pr["The pull request"]
   push(["git push, gh pr create"])
 end
 subgraph ci[".github/workflows/checks.yml, on GitHub's Ubuntu runners"]
-  jchecks["job checks<br/>the same three steps"]
-  jdesc["job pr-description<br/>pr-refs check, pr-refs lint"]
-  jdocs["job docs<br/>mkdocs build --strict, manual-check"]
+  jchecks("job checks<br/>the same three steps")
+  jdesc("job pr-description<br/>pr-refs check, pr-refs lint")
+  jdocs("job docs<br/>mkdocs build --strict, manual-check")
 end
 subgraph protection["Branch protection on main"]
   protect{"three jobs green and<br/>every review thread resolved?"}
@@ -127,7 +127,7 @@ subgraph outcome["What happens next"]
   merge(["Merge click, squash"])
 end
 subgraph publish["Every push to main"]
-  pages["pages.yml<br/>mkdocs build --strict, deploy to GitHub Pages"]
+  pages("pages.yml<br/>mkdocs build --strict, deploy to GitHub Pages")
 end
 edit -- "runs" --> lint
 edit -- "runs" --> deslopstep
@@ -187,17 +187,17 @@ subgraph read["1. Read: what each checker takes in"]
   pyfiles[("deslop reads every .py file<br/>outside .venv, .git, vm, __pycache__")]
 end
 subgraph parse["2. Parse it, or check its structure directly"]
-  struct["structure: headings, complexity comment,<br/>map include, palette, glossary"]
-  mmdc["mmdc, mermaid-cli 11.17.0"]
-  refs["find each reference by its pattern,<br/>re-resolve it in the code"]
-  shape["shape: required sections,<br/>bullet form"]
-  astree["ast.parse<br/>functions, parameters, annotations"]
-  tokens["tokenize<br/>comment lines, allow-comments markers"]
+  struct("structure: headings, complexity comment,<br/>map include, palette, glossary")
+  mmdc("mmdc, mermaid-cli 11.17.0")
+  refs("find each reference by its pattern,<br/>re-resolve it in the code")
+  shape("shape: required sections,<br/>bullet form")
+  astree("ast.parse<br/>functions, parameters, annotations")
+  tokens("tokenize<br/>comment lines, allow-comments markers")
 end
 subgraph judge["3. Judge what the parse found"]
-  chrome["headless Google Chrome<br/>draws each diagram"]
-  compare["each reference matches the<br/>definition span or the quoted text"]
-  rules["typed parameters,<br/>comments never outnumber code"]
+  chrome("headless Google Chrome<br/>draws each diagram")
+  compare("each reference matches the<br/>definition span or the quoted text")
+  rules("typed parameters,<br/>comments never outnumber code")
 end
 pages --> struct
 pages --> mmdc --> chrome
@@ -287,23 +287,23 @@ subgraph source["Source, committed"]
   cfg[("mkdocs.yml<br/>nav, snippets, superfences,<br/>strict validation")]
 end
 subgraph render["Rendering at build time"]
-  hook["manual_checks/mkdocs_hook.py<br/>draws each fence with mmdc<br/>to an SVG, cached in .cache/"]
+  hook("manual_checks/mkdocs_hook.py<br/>hands each fence to diagrams/,<br/>which draws the SVG, cached in .cache/")
 end
 subgraph build["MkDocs, Material 9.7.7"]
-  mk["mkdocs build --strict"]
-  serve["mkdocs serve<br/>127.0.0.1:8000,<br/>rebuilds on save"]
+  mk("mkdocs build --strict")
+  serve("mkdocs serve<br/>127.0.0.1:8000,<br/>rebuilds on save")
 end
 subgraph output["Output, ignored by git"]
   site[("site/<br/>plain HTML")]
 end
 subgraph workflow["On every push to main"]
-  pagesjob["pages.yml"]
+  pagesjob("pages.yml")
 end
 subgraph host["Leaves the apartment"]
-  ghp>"GitHub Pages<br/>seanlin2000.github.io/<br/>home_assistant"]
+  ghp("GitHub Pages<br/>seanlin2000.github.io/<br/>home_assistant")
 end
 subgraph reader["The reader"]
-  browser["the reader's browser<br/>shows the finished SVG<br/>on a white card"]
+  browser("the reader's browser<br/>shows the finished SVG<br/>on a white card")
 end
 md --> hook
 hook --> mk
@@ -315,11 +315,11 @@ class mk,site,serve,browser third
 class ghp ext
 ```
 
-MkDocs is a static site generator: it reads a folder of markdown files and one `mkdocs.yml`, and writes plain HTML that any web server can host. Material is the theme that adds the sidebar, the page outline, search, and the light and dark schemes. Both are Python packages in the `docs` dependency group, so they are pinned in `uv.lock` like everything else. `mkdocs.yml` names `operator_manual/` as the source, lists every page in `nav`, and turns on two extensions this manual depends on. `pymdownx.snippets` expands a line such as `--8<-- "_includes/system_map.mmd"` into the file's contents, with `check_paths: true` so a missing include is an error. `pymdownx.superfences` keeps a ```` ```mermaid ```` fence intact as a block, so the diagram lives in the markdown as text and is reviewed and diffed as text. The browser never draws it: an MkDocs hook, `manual_checks/mkdocs_hook.py`, renders every fence at build time through the same `mmdc` that `manual-check` uses, with the fixed light theme and ELK layout in `manual_checks/mermaid_config.json`, caches the SVG by content hash under `.cache/`, and inlines it on a white card that reads the same in both colour schemes. The `validation` block makes every broken link, missing anchor, and page absent from `nav` a warning, and `--strict` turns any warning into a failed build.
+MkDocs is a static site generator: it reads a folder of markdown files and one `mkdocs.yml`, and writes plain HTML that any web server can host. Material is the theme that adds the sidebar, the page outline, search, and the light and dark schemes. Both are Python packages in the `docs` dependency group, so they are pinned in `uv.lock` like everything else. `mkdocs.yml` names `operator_manual/` as the source, lists every page in `nav`, and turns on two extensions this manual depends on. `pymdownx.snippets` expands a line such as `--8<-- "_includes/system_map.mmd"` into the file's contents, with `check_paths: true` so a missing include is an error. `pymdownx.superfences` keeps a ```` ```mermaid ```` fence intact as a block, so the diagram lives in the markdown as text and is reviewed and diffed as text. The browser never draws it: an MkDocs hook, `manual_checks/mkdocs_hook.py`, renders every fence at build time through the `diagrams/` package, the same path `manual-check` uses: `mmdc` with the fixed light theme and ELK layout in `diagrams/mermaid_config.json`, then `diagrams/polish.py`, which stretches every layer into a full-width band with its title at the left and rounds every corner. The hook caches the finished SVG by content hash under `.cache/` and inlines it on a white card that reads the same in both colour schemes. The `validation` block makes every broken link, missing anchor, and page absent from `nav` a warning, and `--strict` turns any warning into a failed build.
 
-A browser draws Mermaid, so nothing in Python can tell whether a diagram parses. `manual-check` closes that gap. It finds every Mermaid block in every page, expands the includes, and renders each block through `mmdc`, the command-line renderer from mermaid-cli, which starts a headless Google Chrome and draws the diagram to an SVG. Four render in parallel by default, about three seconds each. A failure is reported as `path:line: Parse error on line N` at the line in the markdown, mapped back through the include so an error inside `system_map.mmd` points at the include line. `--png <dir>` also writes every diagram as a PNG, because the last check is a person looking at it against the four rules in the skill's style guide. On this Mac it finds Chrome in `/Applications`; `PUPPETEER_EXECUTABLE_PATH` names another browser, and `--no-sandbox` is what GitHub's Ubuntu runners need.
+A browser draws Mermaid, so nothing in Python can tell whether a diagram parses. `manual-check` closes that gap. It finds every Mermaid block in every page, expands the includes, and renders each block through `mmdc`, the command-line renderer from mermaid-cli, which starts a headless Google Chrome and draws the diagram to an SVG. Four render in parallel by default, about three seconds each. A failure is reported as `path:line: Parse error on line N` at the line in the markdown, mapped back through the include so an error inside `system_map.mmd` points at the include line. `--png <dir>` also writes every diagram as a PNG, post-processed exactly as the site shows it and screenshotted by Chrome at twice the pixel density, because the last check is a person looking at it against the ten rules of the `draw-diagram` skill; `uv run draw-diagram file.mmd --png out.png` does the same for one loose diagram. On this Mac it finds Chrome in `/Applications`; `PUPPETEER_EXECUTABLE_PATH` names another browser, and `--no-sandbox` is what GitHub's Ubuntu runners need.
 
-The same command checks structure. Each page is matched to a profile by its filename: a numbered section must have the seven `##` headings in order, a complexity comment whose tier matches its score, and a "Where this fits" block that includes the system map and highlights something; the Introduction and the Current working changes page have profiles of their own. Every `classDef` must equal a line of the palette, every class name must be one of its five, and every term under "Key definitions" must exist in `glossary.md`. `--no-render` runs only these checks. The test suite includes `test_the_real_manual_structure_is_clean`, which runs the structure check on the real manual, so the pre-commit hook covers structure on every commit; the `docs` CI job renders everything. The `/operator-manual` skill holds the procedure for writing a page, the page profiles, the diagram style, the system map with each page's highlights, and the complexity rubric that sets a page's length.
+The same command checks structure. Each page is matched to a profile by its filename: a numbered section must have the seven `##` headings in order, a complexity comment whose tier matches its score, and a "Where this fits" block that includes the system map and highlights something; the Introduction and the Current working changes page have profiles of their own. Every `classDef` must equal a line of the palette, every class name must be one of its five, and every term under "Key definitions" must exist in `glossary.md`. `--no-render` runs only these checks. The test suite includes `test_the_real_manual_structure_is_clean`, which runs the structure check on the real manual, so the pre-commit hook covers structure on every commit; the `docs` CI job renders everything. The `/operator-manual` skill holds the procedure for writing a page, the page profiles, the system map with each page's highlights, and the complexity rubric that sets a page's length; the `/draw-diagram` skill holds the rules every diagram is judged by, the four shapes and five colours, and the render-and-look loop, and the manual skill invokes it for every drawing.
 
 ## Run it yourself
 

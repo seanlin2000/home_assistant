@@ -42,21 +42,21 @@ The three highlighted rows are the three places a process can run on the Mac. Au
 flowchart TB
 --8<-- "_includes/palette.mmd"
 subgraph haos["On the Mac, a UTM virtual machine: Home Assistant OS, bridged, its own LAN address"]
-  core["Home Assistant :80"]
-  addons["add-ons: Piper, Samba,<br/>Music Assistant, ESPHome, openWakeWord"]
+  core("Home Assistant :80")
+  addons("add-ons: Piper, Samba,<br/>Music Assistant, ESPHome, openWakeWord")
 end
 subgraph native["On the Mac, native processes: launchd agents, listening on 0.0.0.0"]
-  whisper["Whisper :10300<br/>.venv/bin/wyoming-mlx-whisper"]
-  kokoro["Kokoro :10210<br/>.venv/bin/kokoro-server, CPU"]
-  ollama["Ollama :11434<br/>/opt/homebrew/bin/ollama"]
-  mcp["web_search_mcp :8765<br/>.venv/bin/web-search-mcp"]
-  health["health check<br/>every 300 s"]
+  whisper("Whisper :10300<br/>.venv/bin/wyoming-mlx-whisper")
+  kokoro("Kokoro :10210<br/>.venv/bin/kokoro-server, CPU")
+  ollama("Ollama :11434<br/>/opt/homebrew/bin/ollama")
+  mcp("web_search_mcp :8765<br/>.venv/bin/web-search-mcp")
+  health("health check<br/>every 300 s")
 end
 subgraph silicon["The Mac's GPU"]
-  gpu[["Apple Silicon GPU, reached through Metal,<br/>one pool of unified memory"]]
+  gpu("Apple Silicon GPU, reached through Metal,<br/>one pool of unified memory")
 end
 subgraph docker["Docker Desktop, a hidden Linux VM"]
-  searxng["SearXNG<br/>published on 127.0.0.1:8080 only"]
+  searxng("SearXNG<br/>published on 127.0.0.1:8080 only")
 end
 core -- "Wyoming :10300" --> whisper
 core -- "Wyoming :10210" --> kokoro
@@ -109,28 +109,28 @@ install_agents() {
 flowchart LR
 --8<-- "_includes/palette.mmd"
 subgraph machine["Two machines, one row each"]
-  p_mac[["Prototype<br/>MacBook M1 Pro, 16 GB"]]
-  m_mac[["Mid tier<br/>Mac mini, 32 GB"]]
+  p_mac("Prototype<br/>MacBook M1 Pro, 16 GB")
+  m_mac("Mid tier<br/>Mac mini, 32 GB")
 end
 subgraph os["macOS"]
-  p_os["about 3 GB"]
-  m_os["about 3 GB"]
+  p_os("about 3 GB")
+  m_os("about 3 GB")
 end
 subgraph vm["Home Assistant VM"]
-  p_vm["given 4,096 MB<br/>about 7.5 GB resident with add-ons"]
-  m_vm["given 3,072 MB"]
+  p_vm("given 4,096 MB<br/>about 7.5 GB resident with add-ons")
+  m_vm("given 3,072 MB")
 end
 subgraph speech["Speech services"]
-  p_speech["Whisper 1.6 GB<br/>Kokoro under 1 GB"]
-  m_speech["Whisper 1.6 GB<br/>Kokoro and Piper under 1 GB"]
+  p_speech("Whisper 1.6 GB<br/>Kokoro under 1 GB")
+  m_speech("Whisper 1.6 GB<br/>Kokoro and Piper under 1 GB")
 end
 subgraph model["The language model"]
   p_model[("gemma4:e4b-it-qat<br/>6.1 GB of weights<br/>+ 1 to 2 GB of KV cache")]
   m_model[("Gemma 4 26B-A4B, 4-bit<br/>about 16 GB of weights<br/>+ 1 to 2 GB of KV cache")]
 end
 subgraph verdict["Does it all fit?"]
-  p_note["over 16 GB up at once,<br/>so one heavy workload at a time"]
-  m_note["25 to 27 GB in total,<br/>leaves headroom"]
+  p_note("over 16 GB up at once,<br/>so one heavy workload at a time")
+  m_note("25 to 27 GB in total,<br/>leaves headroom")
 end
 p_mac --> p_os --> p_vm --> p_speech --> p_model --> p_note
 m_mac --> m_os --> m_vm --> m_speech --> m_model --> m_note
@@ -202,11 +202,11 @@ Software updates are part of the same discipline. Automatic macOS updates are sw
 ```mermaid
 flowchart TB
 --8<-- "_includes/palette.mmd"
-laptop[["laptop: scripts/mini.sh bootstrap, over SSH"]] --> tools
-tools["1. tools<br/>Xcode command line tools, Homebrew, brew bundle, uv python install 3.12"]
-tools --> checkout["2. the checkout<br/>git clone, detached at origin/main, uv sync --frozen, log directory"]
-checkout --> services["3. services<br/>Docker Desktop and SearXNG up, services.sh install, Docker and UTM as login items, VM present or not"]
-services --> system["4. system settings, with sudo<br/>pmset, application firewall allow-list, SSH by key only for one user"]
+laptop("laptop: scripts/mini.sh bootstrap, over SSH") --> tools
+tools("1. tools<br/>Xcode command line tools, Homebrew, brew bundle, uv python install 3.12")
+tools --> checkout("2. the checkout<br/>git clone, detached at origin/main, uv sync --frozen, log directory")
+checkout --> services("3. services<br/>Docker Desktop and SearXNG up, services.sh install, Docker and UTM as login items, VM present or not")
+services --> system("4. system settings, with sudo<br/>pmset, application firewall allow-list, SSH by key only for one user")
 system --> person(["5. left for a person<br/>automatic login, automatic updates off, router reservations, HDMI dummy plug"])
 class tools,checkout,services,system,person ours
 class laptop hw

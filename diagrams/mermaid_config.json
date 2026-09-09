@@ -6,41 +6,42 @@
   },
   "theme": "base",
   "themeVariables": {
-    "fontFamily": "Roboto, Helvetica, Arial, sans-serif",
+    "fontFamily": "Roboto, Helvetica Neue, Helvetica, Arial, sans-serif",
     "fontSize": "14px",
     "primaryColor": "#ffffff",
     "primaryTextColor": "#0f172a",
     "primaryBorderColor": "#94a3b8",
-    "lineColor": "#475569",
+    "lineColor": "#64748b",
     "textColor": "#0f172a",
-    "clusterBkg": "#f8fafc",
-    "clusterBorder": "#94a3b8",
+    "clusterBkg": "rgba(148, 163, 184, 0.07)",
+    "clusterBorder": "#cbd5e1",
     "edgeLabelBackground": "#ffffff",
     "actorBkg": "#f1f5f9",
-    "actorBorder": "#64748b",
+    "actorBorder": "#94a3b8",
     "actorTextColor": "#0f172a",
-    "signalColor": "#475569",
+    "signalColor": "#64748b",
     "signalTextColor": "#0f172a",
     "labelBoxBkgColor": "#ffffff",
-    "labelBoxBorderColor": "#94a3b8",
+    "labelBoxBorderColor": "#cbd5e1",
     "labelTextColor": "#0f172a",
     "loopTextColor": "#0f172a",
     "noteBkgColor": "#fef9c3",
-    "noteBorderColor": "#ca8a04",
+    "noteBorderColor": "#facc15",
     "noteTextColor": "#0f172a",
     "activationBkgColor": "#e2e8f0",
-    "activationBorderColor": "#64748b"
+    "activationBorderColor": "#94a3b8"
   },
   "flowchart": {
     "htmlLabels": true,
     "curve": "linear",
-    "padding": 12,
-    "nodeSpacing": 40,
-    "rankSpacing": 60
+    "padding": 20,
+    "nodeSpacing": 60,
+    "rankSpacing": 90,
+    "subGraphTitleMargin": {"top": 8, "bottom": 8}
   },
   "sequence": {
     "mirrorActors": false,
-    "actorMargin": 40,
-    "messageMargin": 30
+    "actorMargin": 50,
+    "messageMargin": 35
   }
 }

@@ -20,3 +20,15 @@
 .md-grid {
   max-width: 78rem;
 }
+
+/* The header always reads "Home Assistant Handbook". Material swaps in the page title once the reader scrolls, which every
+   table-of-contents click does; keeping the first topic visible and hiding the second pins the site name. */
+.md-header__title--active .md-header__topic:first-child {
+  opacity: 1;
+  pointer-events: auto;
+  transform: none;
+  z-index: 0;
+}
+.md-header__topic + .md-header__topic {
+  display: none;
+}

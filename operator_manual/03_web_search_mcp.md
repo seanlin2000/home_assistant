@@ -101,17 +101,17 @@ The text the model gets back is built by `render_grounded_context`. It opens wit
 flowchart TB
 --8<-- "_includes/palette.mmd"
 subgraph native["web_search_mcp, a native macOS process on the Mac"]
-  client["SearxngClient<br/>at least 3 s between live requests"]
+  client("SearxngClient<br/>at least 3 s between live requests")
 end
 subgraph disk["Files on the Mac's disk"]
   cache[("diskcache, search results by query<br/>on only when WEB_SEARCH_CACHE_DIR is set")]
   settings[("docker/searxng/settings.yml<br/>the seven engines, json output, timeouts")]
 end
 subgraph docker["Docker Desktop on the Mac"]
-  searxng["SearXNG, container studio-searxng<br/>127.0.0.1:8080"]
+  searxng("SearXNG, container studio-searxng<br/>127.0.0.1:8080")
 end
 subgraph internet["Leaves the network"]
-  engines>"google, bing, brave, duckduckgo,<br/>startpage, yahoo, wikipedia"]
+  engines("google, bing, brave, duckduckgo,<br/>startpage, yahoo, wikipedia")
 end
 client <-- "query, stored results" --> cache
 client <-- "GET /search?q=...&format=json&language=en<br/>JSON: title, url, snippet, engines, score" --> searxng
@@ -131,14 +131,14 @@ SearXNG is the search engine the model never sees. It runs as one container defi
 ```mermaid
 flowchart TB
 --8<-- "_includes/palette.mmd"
-results["ranked results from SearXNG"] --> fetchable{"http or https, not a binary extension,<br/>not a blocked domain?"}
-fetchable -- "no" --> dropped["skipped"]
-fetchable -- "yes, the first 8" --> download["download concurrently<br/>6 s timeout, 2 MB cap"]
-download --> extract["trafilatura.extract<br/>tables kept, comments dropped"]
-extract --> clip["first 600 words of each page"]
-clip --> keep["first 4 pages that had text"]
-keep --> budget["2,000 words in total"]
-budget --> block["numbered sources block"]
+results("ranked results from SearXNG") --> fetchable{"http or https, not a binary extension,<br/>not a blocked domain?"}
+fetchable -- "no" --> dropped("skipped")
+fetchable -- "yes, the first 8" --> download("download concurrently<br/>6 s timeout, 2 MB cap")
+download --> extract("trafilatura.extract<br/>tables kept, comments dropped")
+extract --> clip("first 600 words of each page")
+clip --> keep("first 4 pages that had text")
+keep --> budget("2,000 words in total")
+budget --> block("numbered sources block")
 class results third
 class fetchable,dropped,download,extract,clip,keep,budget,block ours
 ```
@@ -152,21 +152,21 @@ Each downloaded page goes through `trafilatura.extract` with comments dropped, t
 ```mermaid
 flowchart TB
 --8<-- "_includes/palette.mmd"
-url["URL from the model<br/>or from a search result"] --> scheme{"scheme http or https?"}
-scheme -- "no" --> refuse["UnsafeUrl: refused"]
+url("URL from the model<br/>or from a search result") --> scheme{"scheme http or https?"}
+scheme -- "no" --> refuse("UnsafeUrl: refused")
 scheme -- "yes" --> name{"host is localhost or ends in<br/>.local .internal .lan .home .arpa?"}
 name -- "yes" --> refuse
-name -- "no" --> resolve["resolve the name once"]
+name -- "no" --> resolve("resolve the name once")
 resolve --> public{"every address<br/>globally routable?"}
 public -- "no" --> refuse
-public -- "yes" --> connect["connect to the first approved address<br/>real name in the Host header and in TLS"]
+public -- "yes" --> connect("connect to the first approved address<br/>real name in the Host header and in TLS")
 connect --> peer{"socket peer address public?"}
 peer -- "no" --> refuse
 peer -- "yes" --> redirect{"3xx redirect?"}
-redirect -- "yes" --> hop["next hop, at most 5<br/>Location resolved against<br/>the current URL, checked again"]
+redirect -- "yes" --> hop("next hop, at most 5<br/>Location resolved against<br/>the current URL, checked again")
 redirect -- "no" --> html{"content-type says html?"}
-html -- "no" --> empty["nothing extracted"]
-html -- "yes" --> body["stream the body,<br/>stop past 2 MB"]
+html -- "no" --> empty("nothing extracted")
+html -- "yes" --> body("stream the body,<br/>stop past 2 MB")
 class url third
 class scheme,refuse,name,resolve,public,connect,peer,redirect,hop,html,empty,body ours
 ```
@@ -202,13 +202,13 @@ A refused address raises `UnsafeUrl`. `fetch_page` turns it into the sentence `R
 ```mermaid
 flowchart TB
 --8<-- "_includes/palette.mmd"
-expr["expression<br/>e.g. $3,500 * 1.05 * 12"] --> norm["normalize<br/>commas and $ dropped<br/>15% to (15/100), ^ to **"]
-norm --> parse["ast.parse in eval mode"]
+expr("expression<br/>e.g. $3,500 * 1.05 * 12") --> norm("normalize<br/>commas and $ dropped<br/>15% to (15/100), ^ to **")
+norm --> parse("ast.parse in eval mode")
 parse --> walk{"only numbers, + - * / // % **,<br/>pi, e, and the listed functions?"}
-walk -- "no" --> err["Calculator error: ...<br/>returned as text so the model can fix its call"]
+walk -- "no" --> err("Calculator error: ...<br/>returned as text so the model can fix its call")
 walk -- "yes" --> guard{"exponent at most 1000,<br/>no division by zero,<br/>result under 1e30?"}
 guard -- "no" --> err
-guard -- "yes" --> result["result: 44,100<br/>spoken: 3500 * 1.05 * 12 equals 44,100"]
+guard -- "yes" --> result("result: 44,100<br/>spoken: 3500 * 1.05 * 12 equals 44,100")
 class expr third
 class norm,parse,walk,err,guard,result ours
 ```

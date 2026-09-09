@@ -46,8 +46,8 @@ subgraph files["Three files define the benchmark"]
   config[("benchmark/config.yaml<br/>candidates, policy, judge")]
 end
 subgraph readers["What reads them"]
-  harness["the harness<br/>run.py and gates.py"]
-  judge["the judge<br/>Claude Opus 5"]
+  harness("the harness<br/>run.py and gates.py")
+  judge("the judge<br/>Claude Opus 5")
 end
 config -- "candidate keys,<br/>temperature 0.7, 4 tool rounds,<br/>600 output tokens" --> harness
 questions -- "turns, expected_search,<br/>max_words, expected_route" --> harness
@@ -123,7 +123,7 @@ subgraph checks["Six independent checks on the transcript"]
   c6{"over the question's<br/>max_words?"}
 end
 subgraph output["What the judge sees"]
-  runerr["run_error<br/>the judge is skipped"]
+  runerr("run_error<br/>the judge is skipped")
   gates[("harness_gates<br/>every check that failed,<br/>possibly none")]
 end
 result --> failed
@@ -189,14 +189,14 @@ subgraph transcripts["Transcripts of a pass"]
   results[("version_N/key.jsonl")]
 end
 subgraph rendering["One case per unjudged question"]
-  case["render_case<br/>question, reference sketch,<br/>every turn, harness notes"]
+  case("render_case<br/>question, reference sketch,<br/>every turn, harness notes")
 end
 subgraph handoff["Hand-off files, subagent path only"]
   cases[("judge_cases/key/qid.md<br/>manifest.json, rubric.md")]
 end
 subgraph judges["The judge, Claude Opus 5 reading the rubric"]
-  api>"Anthropic API<br/>messages.parse with the<br/>JudgeVerdict schema"]
-  sub>"benchmark-judge subagent<br/>Claude Code, Opus"]
+  api("Anthropic API<br/>messages.parse with the<br/>JudgeVerdict schema")
+  sub("benchmark-judge subagent<br/>Claude Code, Opus")
 end
 subgraph verdicts["Verdicts"]
   verdict[("judge_cases/key/qid.verdict.json")]
@@ -250,7 +250,7 @@ subgraph inputs["Read from version_N"]
   human[("review_sheet.yaml<br/>your gates and scores")]
 end
 subgraph command["One command"]
-  report["benchmark-report"]
+  report("benchmark-report")
 end
 subgraph outputs["Written next to them"]
   md[("report.md<br/>scores, gates, router accuracy,<br/>latency, per-question matrix, spend")]

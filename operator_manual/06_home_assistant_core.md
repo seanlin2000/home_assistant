@@ -54,27 +54,27 @@ The rows run top to bottom in the order a request travels: your devices, then th
 flowchart TB
 --8<-- "_includes/palette.mmd"
 subgraph people["You and your devices on the studio Wi-Fi"]
-  laptop[["Laptop"]]
-  puck[["Voice PE puck"]]
+  laptop("Laptop")
+  puck("Voice PE puck")
 end
 subgraph utmrow["UTM 4.7.5 on the Mac, 192.168.1.152"]
-  utm["the VM named Home Assistant, QEMU on Apple's hypervisor<br/>4 GB memory, 2 cores, UEFI, virtio disk<br/>bridged onto the Wi-Fi as 192.168.1.156, homeassistant.local"]
+  utm("the VM named Home Assistant, QEMU on Apple's hypervisor<br/>4 GB memory, 2 cores, UEFI, virtio disk<br/>bridged onto the Wi-Fi as 192.168.1.156, homeassistant.local")
 end
 subgraph haos["Home Assistant OS 18.2 inside the VM: the two doors and the add-on manager"]
-  core["Home Assistant Core 2026.9.1<br/>web UI, REST and websocket API on port 80<br/>/config, custom_components, recorder on the disk"]
-  samba["Samba add-on 12.10.0<br/>/config as an SMB share"]
-  supervisor["Supervisor<br/>installs, starts, and watches add-ons"]
+  core("Home Assistant Core 2026.9.1<br/>web UI, REST and websocket API on port 80<br/>/config, custom_components, recorder on the disk")
+  samba("Samba add-on 12.10.0<br/>/config as an SMB share")
+  supervisor("Supervisor<br/>installs, starts, and watches add-ons")
 end
 subgraph addons["Add-ons run by the Supervisor, one container each"]
-  piper["Piper 2.3.4<br/>text to speech, Wyoming"]
-  ma["Music Assistant 2.10.2"]
-  others["openWakeWord 2.1.1<br/>ESPHome 2026.8.2"]
+  piper("Piper 2.3.4<br/>text to speech, Wyoming")
+  ma("Music Assistant 2.10.2")
+  others("openWakeWord 2.1.1<br/>ESPHome 2026.8.2")
 end
 subgraph native["Native macOS services on the Mac, called by Core"]
-  whisper["Whisper :10300"]
-  kokoro["Kokoro :10210"]
-  ollama["Ollama :11434"]
-  mcp["web_search_mcp :8765"]
+  whisper("Whisper :10300")
+  kokoro("Kokoro :10210")
+  ollama("Ollama :11434")
+  mcp("web_search_mcp :8765")
 end
 laptop -- "utmctl, AppleScript" --> utm
 laptop -- "HTTP :80" --> core
@@ -163,17 +163,17 @@ subgraph you["You"]
   say(["speak to the puck or the app,<br/>or type in the Assist window"])
 end
 subgraph stage1["1. speech to text stage"]
-  stt["stt.mlx_whisper<br/>Wyoming to the Mac"]
+  stt("stt.mlx_whisper<br/>Wyoming to the Mac")
 end
 subgraph stage2["2. intent matcher"]
   intents{"prefer_local_intents true<br/>does a sentence template match?"}
 end
 subgraph stage3["3. the answer"]
-  builtin["built-in intent handler<br/>music, weather, volume"]
-  agent["conversation.studio_assistant<br/>our agent loop"]
+  builtin("built-in intent handler<br/>music, weather, volume")
+  agent("conversation.studio_assistant<br/>our agent loop")
 end
 subgraph stage4["4. text to speech stage"]
-  tts["tts.piper<br/>language en_US"]
+  tts("tts.piper<br/>language en_US")
 end
 subgraph back["Back to you"]
   reply(["audio on the puck<br/>or in the browser"])

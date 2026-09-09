@@ -1,32 +1,30 @@
 --8<-- "_includes/palette.mmd"
 subgraph people["You and your devices"]
-  puck[["Voice PE puck<br/>hears the wake word on its own chip"]]
-  laptop[["Laptop<br/>benchmark, deploy, logs"]]
+  puck("Voice PE puck<br/>hears the wake word on its own chip")
+  laptop("Laptop<br/>benchmark, deploy, logs")
 end
-subgraph haos["Home Assistant OS, a virtual machine on the Mac"]
-  stt["1. speech to text stage"]
-  intents{"2. intent matcher"}
-  agent["3. studio_assistant<br/>conversation agent"]
-  tts["4. text to speech stage<br/>Piper add-on or Kokoro"]
-  ma["Music Assistant add-on"]
+subgraph haos["Home Assistant, a virtual machine on the Mac"]
+  stt("1. speech to text stage")
+  intents("2. intent matcher")
+  agent("3. studio_assistant<br/>conversation agent")
+  tts("4. text to speech stage<br/>Piper add-on or Kokoro")
+  ma("Music Assistant add-on")
 end
-subgraph native["Native macOS services on the Mac, kept alive by launchd, with the GPU"]
-  whisper["Whisper<br/>speech to text"]
-  ollama["Ollama<br/>the language model"]
-  mcp["web_search_mcp<br/>search + calculator tools"]
-  kokoro["Kokoro<br/>text to speech"]
-  health["health check<br/>probes HA and every service"]
-end
-subgraph speakers["Speaker on the apartment Wi-Fi"]
-  sonos[["Sonos speaker"]]
+subgraph native["What Home Assistant calls: native macOS services on the Mac, and the speaker on the Wi-Fi"]
+  whisper("Whisper<br/>speech to text")
+  ollama("Ollama<br/>the language model")
+  mcp("web_search_mcp<br/>search + calculator tools")
+  kokoro("Kokoro<br/>text to speech")
+  sonos("Sonos speaker")
+  health("health check<br/>probes HA and every service")
 end
 subgraph docker["Docker Desktop on the Mac"]
-  searxng["SearXNG metasearch"]
+  searxng("SearXNG metasearch")
 end
 subgraph internet["Leaves the apartment"]
-  metno>"Met.no weather"]
-  engines>"search engines"]
-  spotify>"Spotify API"]
+  metno("Met.no weather")
+  engines("search engines")
+  spotify("Spotify API")
 end
 puck <-- "audio in, reply audio out" --> stt
 laptop -. "ssh, rsync, deploy" .-> health

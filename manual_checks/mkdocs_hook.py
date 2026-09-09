@@ -1,4 +1,4 @@
-"""MkDocs hook: every ```mermaid block becomes the SVG mermaid-cli draws for it, so the site shows exactly what manual-check rendered.
+"""MkDocs hook: every ```mermaid block becomes the SVG the diagrams package draws for it, so the site shows exactly what manual-check rendered.
 
 Rendered SVGs are cached by content hash under .cache/manual_diagrams so `mkdocs serve` only renders what changed."""
 
@@ -8,10 +8,13 @@ import tempfile
 from pathlib import Path
 from typing import Any
 
+from diagrams import polish as polish_module
+from diagrams.mmdc import MERMAID_CONFIG, RendererUnavailable, find_browser, find_mmdc, render_svg, write_puppeteer_config
+from diagrams.polish import polish
 from manual_checks.blocks import expand_snippets, fenced_blocks
-from manual_checks.render import MERMAID_CONFIG, RendererUnavailable, find_browser, find_mmdc, render_svg, write_puppeteer_config
 
 CACHE_DIR = Path(".cache/manual_diagrams")
+RENDER_INPUTS = (MERMAID_CONFIG, Path(polish_module.__file__))
 FIGURE = '<figure class="manual-diagram">\n{svg}\n</figure>'
 NATURAL_WIDTH = re.compile(r'style="max-width: (\d+(?:\.\d+)?)px; background-color: white;"')
 MIN_SCALE = 0.7
@@ -40,7 +43,8 @@ def rendered_blocks(markdown: str, docs_dir: Path) -> list[tuple[int, int, str]]
 
 
 def cached_svg(source: str) -> str:
-    key = hashlib.sha256(source.encode("utf-8") + MERMAID_CONFIG.read_bytes()).hexdigest()
+    key = hashlib.sha256(source.encode("utf-8") + b"".join(path.read_bytes() for path in RENDER_INPUTS)).hexdigest()
+    # The config and the post-processing shape the SVG as much as the source does, so a change to either renders afresh.
     cached = CACHE_DIR / f"{key}.svg"
     if cached.is_file():
         return cached.read_text(encoding="utf-8")
@@ -57,7 +61,7 @@ def render_fresh(source: str, svg_id: str) -> str:
         raise RuntimeError(f"manual diagrams: {error}") from error
     with tempfile.TemporaryDirectory(prefix="manual-diagram-") as work_dir:
         config = write_puppeteer_config(Path(work_dir), find_browser(), sandbox=False)
-        return sized(render_svg(mmdc, source, Path(work_dir), config, f"diagram-{svg_id}"))
+        return sized(polish(render_svg(mmdc, source, Path(work_dir), config, f"diagram-{svg_id}")))
 
 
 def sized(svg: str) -> str:

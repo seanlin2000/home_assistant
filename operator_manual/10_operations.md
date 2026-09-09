@@ -58,21 +58,21 @@ Three things are lit up. The laptop, in the top row beside the puck, is the only
 flowchart TB
 --8<-- "_includes/palette.mmd"
 subgraph laptop["On the laptop: what is sent"]
-  script["scripts/bootstrap_mac.sh<br/>and the Brewfile"]
+  script("scripts/bootstrap_mac.sh<br/>and the Brewfile")
   env[(".env<br/>addresses and secrets")]
   models[("~/.ollama/models<br/>blobs named by digest")]
   bundle[("Home Assistant.utm<br/>the whole configured VM")]
 end
 subgraph commands["scripts/mini.sh, one command each, over SSH"]
-  cmdboot["bootstrap<br/>scp the script and the Brewfile,<br/>then run it over ssh -t"]
-  cmdenv["push-env<br/>scp, chmod 600"]
-  cmdmodels["push-models<br/>rsync exactly the blobs<br/>the manifest names"]
-  cmdvm["push-vm<br/>rsync, refused while<br/>the local VM runs"]
+  cmdboot("bootstrap<br/>scp the script and the Brewfile,<br/>then run it over ssh -t")
+  cmdenv("push-env<br/>scp, chmod 600")
+  cmdmodels("push-models<br/>rsync exactly the blobs<br/>the manifest names")
+  cmdvm("push-vm<br/>rsync, refused while<br/>the local VM runs")
 end
 subgraph mac["On the Mac mini afterwards"]
-  checkout["MINI_PROJECT_DIR: detached checkout,<br/>.venv, five launchd agents, SearXNG up,<br/>pmset, firewall, sshd drop-in"]
+  checkout("MINI_PROJECT_DIR: detached checkout,<br/>.venv, five launchd agents, SearXNG up,<br/>pmset, firewall, sshd drop-in")
   store[("~/.ollama/models")]
-  utm["UTM: the VM with 3 GB,<br/>bridged, same MAC address"]
+  utm("UTM: the VM with 3 GB,<br/>bridged, same MAC address")
 end
 script --> cmdboot --> checkout
 env --> cmdenv --> checkout
@@ -167,18 +167,18 @@ Back on the laptop, `python -m ops.smoke` waits up to 300 seconds for Home Assis
 flowchart TB
 --8<-- "_includes/palette.mmd"
 tick(["launchd runs scripts/health_check.py<br/>every 300 s"])
-probe["probe every service in parallel,<br/>5 s timeout each"]
-counts["count consecutive failures,<br/>carried in health_state.json"]
+probe("probe every service in parallel,<br/>5 s timeout each")
+counts("count consecutive failures,<br/>carried in health_state.json")
 flag{"maintenance flag present?"}
 agent{"a service failed 2 in a row,<br/>no kick of it in 30 min?"}
-kick["launchctl kickstart -k that agent"]
+kick("launchctl kickstart -k that agent")
 sx{"SearXNG failed 2 in a row,<br/>none in 30 min?"}
-sxup["scripts/searxng.sh up"]
+sxup("scripts/searxng.sh up")
 vm{"utmctl says the VM is stopped?"}
-vmstart["utmctl start,<br/>at most once per 30 min"]
+vmstart("utmctl start,<br/>at most once per 30 min")
 ha{"Home Assistant failed<br/>5 in a row, no VM<br/>restart in 2 h?"}
-vmrestart["utmctl stop, wait 10 s,<br/>utmctl start"]
-hold["record the snapshot,<br/>take no action"]
+vmrestart("utmctl stop, wait 10 s,<br/>utmctl start")
+hold("record the snapshot,<br/>take no action")
 snap[("health.json: the latest<br/>health.jsonl: every snapshot")]
 tick --> probe --> counts --> flag
 flag -- "yes" --> hold
@@ -235,20 +235,20 @@ On the laptop the agent is installed with `HEALTH_CHECK_FLAGS=--no-remediate scr
 flowchart TB
 --8<-- "_includes/palette.mmd"
 subgraph count0["Count 0"]
-  answering["answering<br/>services.sh install or start,<br/>KeepAlive keeps the process up"]
+  answering("answering<br/>services.sh install or start,<br/>KeepAlive keeps the process up")
 end
 subgraph count1["Count 1, after one failed probe"]
-  suspect["suspect<br/>nothing happens yet"]
-  unloaded["unloaded<br/>launchctl bootout, on purpose:<br/>reported as skip, never kicked"]
+  suspect("suspect<br/>nothing happens yet")
+  unloaded("unloaded<br/>launchctl bootout, on purpose:<br/>reported as skip, never kicked")
 end
 subgraph count2["Count 2, the policy acts, unless the maintenance flag exists"]
-  kicked["kicked<br/>launchctl kickstart -k, the time<br/>written to health_state.json"]
+  kicked("kicked<br/>launchctl kickstart -k, the time<br/>written to health_state.json")
 end
 subgraph cooldown["Within 30 min of the kick"]
-  cooling["cooling<br/>keeps failing, no second kick"]
+  cooling("cooling<br/>keeps failing, no second kick")
 end
 subgraph recovered["A probe passes"]
-  again["answering again<br/>count back to 0"]
+  again("answering again<br/>count back to 0")
 end
 answering -- "one probe fails" --> suspect
 answering -- "a person unloads it" --> unloaded
@@ -271,13 +271,13 @@ Read the diagram for the tool server. launchd started it at login with `KeepAliv
 flowchart TB
 --8<-- "_includes/palette.mmd"
 subgraph haos["Home Assistant OS VM on the Mac mini"]
-  agent["studio_assistant<br/>conversation agent"]
-  debug["Assist debug store<br/>the last few runs, in memory"]
+  agent("studio_assistant<br/>conversation agent")
+  debug("Assist debug store<br/>the last few runs, in memory")
 end
 subgraph native["Native services on the Mac mini"]
-  mcp["tool server :8765<br/>POST /turns"]
-  launchd["launchd: stdout and stderr<br/>of each agent, append mode"]
-  healthchk["health check"]
+  mcp("tool server :8765<br/>POST /turns")
+  launchd("launchd: stdout and stderr<br/>of each agent, append mode")
+  healthchk("health check")
 end
 subgraph logdir["~/Library/Logs/studio-assistant on the Mac mini"]
   turns[("turns/YYYY-MM-DD.jsonl")]
@@ -286,13 +286,13 @@ subgraph logdir["~/Library/Logs/studio-assistant on the Mac mini"]
   marks[("last_good_ref, maintenance,<br/>deploy.lock")]
 end
 subgraph pull["On the laptop: the pull"]
-  minilogs["scripts/mini.sh logs<br/>rsync -az over ssh,<br/>then the pipeline runs"]
+  minilogs("scripts/mini.sh logs<br/>rsync -az over ssh,<br/>then the pipeline runs")
 end
 subgraph mirrored["On the laptop: the mirror, git-ignored"]
   mirror[("logs/mini/<br/>plus pipeline_runs.jsonl")]
 end
 subgraph reader["On the laptop: the reader"]
-  reportp["scripts/ops_report.py"]
+  reportp("scripts/ops_report.py")
 end
 agent -- "one trimmed record per turn" --> mcp --> turns
 launchd --> svclogs
