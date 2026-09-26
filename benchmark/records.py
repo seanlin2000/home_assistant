@@ -101,8 +101,6 @@ class Services(BaseModel):
 
 
 class JudgeConfig(BaseModel):
-    model: str
-    concurrency: int = 4
     review_sample_fraction: float = 0.2
     review_seed: int = 0
 
@@ -175,8 +173,6 @@ class Score(BaseModel):
     judge: JudgeVerdict | None
     judge_model: str | None = None
     judge_error: str | None = None
-    judge_input_tokens: int = 0
-    judge_output_tokens: int = 0
 
     @property
     def gates(self) -> list[Gate]:

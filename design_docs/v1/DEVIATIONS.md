@@ -4,7 +4,7 @@ Every place the build departed from the frozen design in `design_docs/v0/`, with
 
 | Section | Entries |
 |---|---|
-| [01 LLM benchmark](#01-llm-benchmark) | 14 |
+| [01 LLM benchmark](#01-llm-benchmark) | 15 |
 | [02 Local LLM](#02-local-llm) | 1 |
 | [03 Web search MCP](#03-web-search-mcp) | 8 |
 | [04 Conversation agent](#04-conversation-agent) | 9 |
@@ -32,6 +32,7 @@ Every place the build departed from the frozen design in `design_docs/v0/`, with
 | 2026-09-06 | Benchmark MCP server | 03 | The benchmark's MCP server runs on port 8766, refuses to start if the port is taken, and checks the tool list it reaches is its own. | A leftover pass-1 server on 8765 answered the readiness check and served the first pass-2 runs without the calculator tools; those results and $4.87 of judging were discarded. |
 | 2026-09-06 | Results folders | 09 | Results folders are named by pass (`version_1`, `version_2`, ...; a subset rerun gets a suffix such as `version_2_recheck_qwen3.5-9b`) and every benchmark command takes that name (`--run`), replacing the dated folders of v0. | A date does not say which agent version produced the numbers, and two passes can land on the same day; the user asked for pass names. |
 | 2026-09-07 | Manual reference candidate | | The reference ceiling is a second hand-written pass (`claude-fable-5-1-manual-2`) authored closed book by a fresh Claude Fable 5.1 subagent with the live tools and no access to earlier answers, results, docs, or memory; the first pass stays in the results as a superseded candidate. | The first reference had been written against another pass's excerpts and inside the session that had seen every result, so its category B score was unfair to it and its independence was doubtful. The user asked for the closed-book pass to become the reference: 226 against 217, with the two passes bounding the ceiling at roughly 220. |
+| 2026-09-26 | Judge | | The Anthropic API judging path is removed. `benchmark-judge` requires `--export` or `--import` and fails with a usage error without one; the `judge.model` and `judge.concurrency` settings, the per-score judge token counts, and the judge's share of the report's spend are gone, so spend covers only the frontier baseline. The 2026-09-05 judge and cost-tracking rows and the 2026-09-06 note that the API path is kept describe pass 1 only. | The user decided the benchmark is judged only through the free Claude Code subagent path and that judging must never spend API credit again. |
 
 ## 02 Local LLM
 

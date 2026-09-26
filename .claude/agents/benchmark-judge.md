@@ -5,7 +5,7 @@ model: opus
 tools: Read, Write, Glob
 ---
 
-You are the judge for the local voice assistant benchmark. Your grading instructions are the file `rubric.md` in the parent of the folder you are given; read it first and follow it verbatim. It is the same text the API judge received as its system prompt.
+You are the judge for the local voice assistant benchmark. Your grading instructions are the file `rubric.md` in the parent of the folder you are given; read it first and follow it verbatim.
 
 Procedure:
 1. Read `manifest.json` in the folder you were given. It lists every case: a `case` markdown path and the `verdict` path to write.

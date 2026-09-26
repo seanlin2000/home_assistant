@@ -24,7 +24,7 @@ Choose the language model, and therefore the hardware, from evidence instead of 
                                                   │
                         ┌─────────────────────────┼──────────────────────────────┐
                         ▼                         ▼                              ▼
-              harness gate checks        frontier judge (temp 0)         your review sheet
+              harness gate checks        Opus subagent judge             your review sheet
               searched when it should    reads transcript + rubric       fixed 20% sample plus
               not, did not search when   → JSON: gates, 3 scores,        every judge/harness
               it should, word limits,    justifications                  disagreement
@@ -42,9 +42,9 @@ Choose the language model, and therefore the hardware, from evidence instead of 
 
 1. `run.py` loads the questions and, for each candidate model, runs every question through `assistant_core.agent_loop` with the shared system prompt and the two search tools. The two-turn question is run as a real two-turn conversation. Each run writes one JSONL line per question with the full transcript and timing.
 2. The harness applies the gates it can detect mechanically: whether a tool was called, how many times, whether the final answer exists, and word counts against explicit limits.
-3. `judge.py` sends each transcript to a frontier model at temperature 0 together with the rubric, the question's metadata, and (for reasoning questions) a short reference sketch. The judge returns strict JSON: which gates it believes were hit, three dimension scores, and a one-sentence justification per score.
+3. `judge.py --export` writes each transcript to a case file together with the question's metadata and (for reasoning questions) a short reference sketch. The `benchmark-judge` Claude Code subagent grades every case against the rubric and writes strict JSON: which gates it believes were hit, three dimension scores, and a one-sentence justification per score.
 4. `report.py` merges harness gates and judge output. Any gate failure zeroes that question. It renders a markdown report and a review sheet containing a fixed random 20% of answers plus every case where the judge and the harness disagree on a gate.
-5. You score the review sheet by hand. The report prints your agreement rate with the judge. Below 90% on gates, we tighten the rubric wording and re-judge, which costs cents and needs no re-run.
+5. You score the review sheet by hand. The report prints your agreement rate with the judge. Below 90% on gates, we tighten the rubric wording and re-judge, which needs no re-run and no paid API calls.
 6. The decision gate reads the report: which local models reach your bar, expressed as a fraction of the frontier baseline's score and by gate-failure count.
 
 ## 4. Question set, version 1
@@ -171,9 +171,9 @@ How to read a 3-bit preview: if it scores near the frontier baseline, that is st
 | Package | Role in the business logic |
 |---|---|
 | `ollama` (Python client) | Talks to the local Ollama server: sends the conversation and tool schemas, streams tokens back, reports timing. Every local candidate goes through it, so timing is measured the same way. |
-| `anthropic` | Two jobs: runs the frontier baseline through the same loop, and acts as the judge. Usage follows the `claude-api` reference loaded at implementation time. |
+| `anthropic` | Runs the frontier baseline through the same loop. Usage follows the `claude-api` reference loaded at implementation time. Judging never goes through it; the `benchmark-judge` Claude Code subagent grades on the user's subscription. |
 | `mcp` (client side) | Connects the agent loop to `web_search_mcp` over streamable HTTP and converts the server's tool schemas into the format each model provider expects. |
-| `pydantic` | Typed records for questions, transcripts, gate results, and judge output. The judge is forced to return JSON that validates against the score model, which turns a free-text opinion into data. |
+| `pydantic` | Typed records for questions, transcripts, gate results, and judge output. Every verdict the judge writes must validate against the verdict model on import, which turns a free-text opinion into data. |
 | `pyyaml` | Reads `questions.yaml`. |
 | `httpx` | HTTP client under the MCP client and the SearXNG cache. |
 | `rich` | Progress display while a run walks 20 questions times 8 models. |
@@ -183,7 +183,7 @@ How to read a 3-bit preview: if it scores near the frontier baseline, that is st
 
 - `benchmark/questions.yaml`: the set, its metadata, reference sketches.
 - `benchmark/rubric.md`: the exact text the judge receives.
-- `benchmark/config.yaml`: candidate list with Ollama tags, temperature, token limits, tool-call cap, judge model, sample fraction for review.
+- `benchmark/config.yaml`: candidate list with Ollama tags, temperature, token limits, tool-call cap, sample fraction for review.
 - `assistant_core/prompts.py`: the shared system prompt.
 - `docker/searxng/settings.yml`: which engines feed search results.
 
@@ -197,7 +197,7 @@ How to read a 3-bit preview: if it scores near the frontier baseline, that is st
 
 ## 11. Concepts for newcomers
 
-**LLM-as-judge.** Using a strong model to grade another model's answer against a rubric. It is consistent and cheap but has biases (it tends to reward verbosity and its own style). The mitigations here are a fixed low temperature, forced JSON output, a written rubric, reference sketches, and a human review of a sample with the agreement rate printed in the report.
+**LLM-as-judge.** Using a strong model to grade another model's answer against a rubric. It is consistent and cheap but has biases (it tends to reward verbosity and its own style). The mitigations here are a fixed verdict schema checked on import, a written rubric, reference sketches, and a human review of a sample with the agreement rate printed in the report.
 
 **Gates versus scores.** A score says how good an answer is. A gate says whether the answer is acceptable at all. Zeroing a question on a gate failure prevents a fluent, well-structured hallucination from scoring 7 out of 10.
 
@@ -205,7 +205,7 @@ How to read a 3-bit preview: if it scores near the frontier baseline, that is st
 
 **Reference sketch.** Two or three sentences describing what a correct answer must contain, for example the two lease totals in A2. The judge checks the answer against it rather than working the problem itself.
 
-**Temperature.** A sampling setting. Zero makes the model pick its most likely token every time, which makes the judge nearly deterministic. Candidates run at a moderate fixed value because that is how the product will run.
+**Temperature.** A sampling setting. Zero makes the model pick its most likely token every time, which makes its output nearly deterministic. Candidates run at a moderate fixed value because that is how the product will run.
 
 **Quantization labels (Q4_K_M, IQ3_XXS, MXFP4).** Names of weight-compression schemes and their bit widths. Lower numbers mean smaller files and lower quality. "UD" prefixes denote Unsloth's dynamic quantizations, which keep sensitive layers at higher precision.
 
@@ -221,10 +221,10 @@ How to read a 3-bit preview: if it scores near the frontier baseline, that is st
 ## 13. As built, 2026-09-05
 
 - Question set v1.1: 22 questions (A1 to A11, B11 to B21). Maximum 220 per model, 110 per category. See `benchmark/questions.yaml`; every question carries `expected_search`, optional `constraints` (`max_words`, `budget_usd`, `no_product_names`), the gates the judge should watch for, and a reference sketch for reasoning questions.
-- Commands: `uv run benchmark-run [--candidate KEY]... [--question ID]... [--date D] [--force] [--delete-models]`, `uv run benchmark-judge D`, `uv run benchmark-report D`, `uv run benchmark-manual KEY [--date D]` (replays hand-written answers from `benchmark/manual/KEY.yaml` through the same loop and tool server), `uv run python scripts/benchmark_llm.py`. Runs resume: questions already in `results/D/<key>.jsonl` are skipped unless `--force`.
+- Commands: `uv run benchmark-run [--candidate KEY]... [--question ID]... [--date D] [--force] [--delete-models]`, `uv run benchmark-judge D --export`, then the `benchmark-judge` subagent on each `judge_cases/<candidate>` folder, then `uv run benchmark-judge D --import`, `uv run benchmark-report D`, `uv run benchmark-manual KEY [--date D]` (replays hand-written answers from `benchmark/manual/KEY.yaml` through the same loop and tool server), `uv run python scripts/benchmark_llm.py`. Runs resume: questions already in `results/D/<key>.jsonl` are skipped unless `--force`.
 - Harness gates (`benchmark/gates.py`): searched on a no-search question, did not search on a search question, malformed tool call, more than the tool-round cap, no final answer, word limit exceeded, and `run_error` when the model call itself failed.
-- Judge (`benchmark/judge.py`): `messages.parse` with the `JudgeVerdict` pydantic model as the required output shape; `benchmark/rubric.md` is the system prompt verbatim. Each score records the judge's model id and token usage. Sampling temperature cannot be set on Claude Opus 5, so determinism comes from the structured schema and the fixed rubric rather than temperature 0.
-- Report (`benchmark/report.py`): scores table with the fraction of the baseline, gate counts by type, latency and word counts (logged, not scored), per-question matrix, judge agreement once `review_sheet.yaml` is filled in, and the paid API spend for the run.
+- Judge (`benchmark/judge.py`): a Claude Code subagent, described in the subsection below; `benchmark/rubric.md` is its grading instructions verbatim and the `JudgeVerdict` pydantic model is the shape every verdict must validate against. Each score records the judge's label. Running `benchmark-judge` without `--export` or `--import` is a usage error.
+- Report (`benchmark/report.py`): scores table with the fraction of the baseline, gate counts by type, latency and word counts (logged, not scored), per-question matrix, judge agreement once `review_sheet.yaml` is filled in, and the paid API spend of the frontier baseline run.
 - Review sheet: a seeded 20% sample per candidate plus every case where the judge's view of the search decision disagrees with the harness. Human fields are preserved across re-renders.
 - The harness starts `web_search_mcp` as a subprocess with `WEB_SEARCH_CACHE_DIR=results/D/cache`, so every candidate in a run sees identical search results.
 - Memory fit is read from Ollama's `/api/ps` after a warm-up call that uses the run's context length, so the first question does not pay a model reload.
@@ -255,10 +255,10 @@ The Q3_K_S preview (12.4 GB on disk, 13.7 GB loaded with context) kept only 8.3 
           │
           ▼
   benchmark-judge <date> --import        validates each verdict (gate names, score ranges) and writes <candidate>.scores.jsonl
-                                         with judge_model "claude-opus-5 (Claude Code subagent)" and zero API tokens
+                                         with judge_model "claude-opus-5 (Claude Code subagent)"
 ```
 
-The rubric the subagent reads is the same file the API judge received as its system prompt, and the case text is rendered by the same function. What differs: the API path enforced the verdict schema at decode time and ran at the API's default settings, while the subagent writes the JSON itself (malformed files are rejected on import and re-run) and grades with its own thinking budget. The comparison with pass 1 is therefore Opus against Opus, under close but not identical conditions.
+Pass 1 was graded through the Anthropic API with the same rubric as its system prompt and case text rendered by the same function. That path enforced the verdict schema at decode time and ran at the API's default settings, while the subagent writes the JSON itself (malformed files are rejected on import and re-run) and grades with its own thinking budget. The comparison with pass 1 is therefore Opus against Opus, under close but not identical conditions. The API path was removed on 2026-09-26; every pass since is judged only by the subagent.
 
 
 ### Passes 3 and 4: where the router's directive lives, 2026-09-06

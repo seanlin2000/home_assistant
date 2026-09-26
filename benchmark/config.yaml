@@ -80,7 +80,5 @@ candidates:
     baseline: false
 
 judge:
-  model: claude-opus-5
-  concurrency: 4
   review_sample_fraction: 0.2
   review_seed: 20260905
