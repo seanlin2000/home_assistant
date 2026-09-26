@@ -1,4 +1,4 @@
-"""Model clients behind one streaming interface. OllamaClient serves every local candidate and the product; the frontier baseline client lives in anthropic_client.py so production code never imports the anthropic package."""
+"""Model clients behind one streaming interface. OllamaClient serves every benchmark candidate that runs a model, and the product."""
 
 import json
 import time

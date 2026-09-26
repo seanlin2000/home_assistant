@@ -9,19 +9,16 @@ import subprocess
 import sys
 from pathlib import Path
 
-import anthropic
 import httpx
 import ollama
 from dotenv import load_dotenv
 from rich.console import Console
 
 from assistant_core import agent_loop
-from assistant_core.anthropic_client import AnthropicClient
 from assistant_core.llm_client import LLMClient, OllamaClient
 from assistant_core.models import AgentPolicy, Done, Message, Role, Transcript
 from assistant_core.prompts import PROMPT_VERSION
 from assistant_core.tools import McpToolBox
-from benchmark.costs import estimate_cost_usd
 from benchmark.mcp_process import McpServerProcess
 from benchmark.ollama_utils import delete_model, ensure_model_present, unload, warm_up
 from benchmark.records import BenchmarkConfig, Candidate, MemoryFit, Question, QuestionResult, QuestionSet, append_jsonl, load_config, load_questions, read_jsonl
@@ -104,22 +101,13 @@ async def run_candidate(candidate: Candidate, questions: list[Question], config:
     if llm is None:
         return
     memory_fit = await prepare_model(candidate, config)
-    policy = config.policy.model_copy(update={"think": candidate.think, "effort": candidate.effort})
+    policy = config.policy.model_copy(update={"think": candidate.think})
     async with McpToolBox(mcp_url) as toolbox:
         for question in pending:
             result = await run_question(question, candidate, llm, toolbox, policy, memory_fit)
             append_jsonl(output_path, result)
             print_result_line(question, result)
     await release_model(candidate, config, args.delete_models)
-    if candidate.provider == "anthropic":
-        print_api_spend(read_jsonl(output_path, QuestionResult))
-
-
-def print_api_spend(results: list[QuestionResult]) -> None:
-    calls = [stats for result in results for transcript in result.turns for stats in transcript.model_calls]
-    input_tokens = sum(stats.prompt_tokens or 0 for stats in calls)
-    output_tokens = sum(stats.output_tokens or 0 for stats in calls)
-    console.print(f"  API usage: {input_tokens} in / {output_tokens} out, about ${estimate_cost_usd(input_tokens, output_tokens):.2f}")
 
 
 def pending_questions(questions: list[Question], output_path: Path, force: bool) -> list[Question]:
@@ -131,22 +119,10 @@ def pending_questions(questions: list[Question], output_path: Path, force: bool)
 
 
 def build_llm(candidate: Candidate, config: BenchmarkConfig) -> LLMClient | None:
-    if candidate.provider == "ollama":
-        return OllamaClient(candidate.model, host=config.services.ollama_host)
-    if candidate.provider == "anthropic":
-        return build_anthropic_client(candidate)
     if candidate.provider == "manual":
         console.print(f"[dim]Skipping {candidate.key}: manual candidates are produced by benchmark-manual, not run.[/dim]")
         return None
-    raise ValueError(f"unknown provider {candidate.provider}")
-
-
-def build_anthropic_client(candidate: Candidate) -> LLMClient | None:
-    try:
-        return AnthropicClient(candidate.model, client=anthropic.AsyncAnthropic())
-    except anthropic.AnthropicError as error:
-        console.print(f"[yellow]Skipping {candidate.key}: {error}. Put ANTHROPIC_API_KEY in .env to run the frontier baseline.[/yellow]")
-        return None
+    return OllamaClient(candidate.model, host=config.services.ollama_host)
 
 
 async def prepare_model(candidate: Candidate, config: BenchmarkConfig) -> MemoryFit:

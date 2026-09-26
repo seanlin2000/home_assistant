@@ -2,7 +2,7 @@
 
 from enum import StrEnum
 from pathlib import Path
-from typing import Any
+from typing import Any, Literal
 
 import yaml
 from pydantic import BaseModel, Field
@@ -80,12 +80,10 @@ def load_questions(path: Path) -> QuestionSet:
 class Candidate(BaseModel):
     key: str
     label: str
-    provider: str
+    provider: Literal["ollama", "manual"]
     model: str
     think: bool | str | None = None
-    effort: str | None = None
     preview: bool = False
-    baseline: bool = False
 
 
 class Services(BaseModel):

@@ -60,7 +60,7 @@ Priorities, in order: (1) answering questions well, including with web search, (
 
 | Subsystem | Doc | Stack | Custom code? |
 |---|---|---|---|
-| Benchmark | 01 | Python harness, Ollama, frontier API as baseline, Claude Code subagent as judge | Yes |
+| Benchmark | 01 | Python harness, Ollama, hand-written reference answers as the ceiling, Claude Code subagent as judge | Yes |
 | Local LLM | 02 | Ollama on Apple Silicon, model chosen by benchmark | Config |
 | Web search | 03 | SearXNG in Docker + our Python MCP server | Yes |
 | Conversation agent | 04 | `assistant_core` package + Home Assistant custom component | Yes |
@@ -74,7 +74,7 @@ Priorities, in order: (1) answering questions well, including with web search, (
 
 Two decisions are deliberately left open until the benchmark runs.
 
-**Which model.** Candidates that fit the 16 GB MacBook used for the prototype: Gemma 4 E4B, Qwen 3.5-4B, Qwen 3.5-9B, gpt-oss-20b, and reduced-precision previews of Gemma 4 26B-A4B and Qwen 3.6-35B-A3B. A frontier model runs through the same harness as the quality ceiling. The benchmark (doc 01) scores them on twenty questions drawn from how you actually use an assistant.
+**Which model.** Candidates that fit the 16 GB MacBook used for the prototype: Gemma 4 E4B, Qwen 3.5-4B, Qwen 3.5-9B, gpt-oss-20b, and reduced-precision previews of Gemma 4 26B-A4B and Qwen 3.6-35B-A3B. Hand-written answers replayed through the same harness set the quality ceiling. The benchmark (doc 01) scores them on twenty questions drawn from how you actually use an assistant.
 
 **Which Mac.** The benchmark result picks the tier. If a small full-precision model is good enough, the 24 GB Mac mini M6 suffices. If only the 26B or 35B mixture-of-experts models are good enough, their production versions need about 16 to 20 GB by themselves, and with the speech models and the Home Assistant VM the total is 25 to 27 GB, which means the 32 GB M6. If nothing local is close enough, we say so before spending.
 
@@ -94,8 +94,7 @@ Prices are Apple's list prices for the Mac minis announced August 25, 2026. The 
 | Home Assistant Voice Preview Edition | $69 |
 | Sonos Era 100 SL, or the existing JBL Flip 5 over Bluetooth | $189 or $0 |
 | All software and models | $0 |
-| Benchmark API usage, per full run | $3 to $8 |
-| **Total** | **$1,360 to $1,570** |
+| **Total** | **$1,360 to $1,560** |
 
 Running cost is about $2.50 a month in electricity. Spotify Premium is already paid. Search, weather, and models are free. Maintenance is one to two hours a month for the Home Assistant monthly release, plus occasional dependency and model updates that are each a single command.
 
@@ -109,7 +108,7 @@ Running cost is about $2.50 a month in electricity. Spotify Premium is already p
 | Search queries | SearXNG on the Mac forwards them to Google, Bing, Brave, and DuckDuckGo with no account and no cookies. The engines see the query text and the apartment's IP address. |
 | Spotify commands | Spotify's API, tied to your Premium account, as with any Spotify client. |
 | Weather | Latitude and longitude to Met.no. |
-| Benchmark only | The twenty benchmark questions and the candidate models' answers go to a frontier API for the baseline run and to a Claude Code subagent for judging. They contain no personal data. |
+| Benchmark only | The twenty benchmark questions and the candidate models' answers go to a Claude Code subagent for judging. They contain no personal data. |
 
 ## 8. Phase plan
 
