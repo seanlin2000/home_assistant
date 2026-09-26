@@ -1,4 +1,4 @@
-"""Dollar estimates for paid API calls. Prices are Claude Opus 5 list prices per million tokens; update if the judge or baseline model changes."""
+"""Dollar estimates for the frontier baseline's paid API calls. Prices are Claude Opus 5 list prices per million tokens; update if the baseline model changes."""
 
 INPUT_USD_PER_MILLION = 5.0
 OUTPUT_USD_PER_MILLION = 25.0

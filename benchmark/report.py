@@ -80,10 +80,10 @@ class CandidateReport:
         return next((score for score in self.scores if score.question_id == question_id), None)
 
     def api_cost_usd(self) -> float:
+        if self.candidate.provider != "anthropic":
+            return 0.0
         calls = [stats for result in self.results for transcript in result.turns for stats in transcript.model_calls]
-        baseline = estimate_cost_usd(sum(stats.prompt_tokens or 0 for stats in calls), sum(stats.output_tokens or 0 for stats in calls)) if self.candidate.provider == "anthropic" else 0.0
-        judge = estimate_cost_usd(sum(score.judge_input_tokens for score in self.scores), sum(score.judge_output_tokens for score in self.scores))
-        return baseline + judge
+        return estimate_cost_usd(sum(stats.prompt_tokens or 0 for stats in calls), sum(stats.output_tokens or 0 for stats in calls))
 
 
 def parse_args() -> argparse.Namespace:
@@ -289,21 +289,21 @@ def human_total(entry: dict) -> int | None:
 
 
 def render_judge(reports: list[CandidateReport]) -> str:
-    """Name the judge that produced the scores. Passes judged through the API and passes judged by a Claude Code subagent used the same rubric, but they
-    are different sessions of the model, so cross-pass score comparisons carry that caveat."""
+    """Name the judge that produced the scores. Every pass uses the same rubric, but each is graded in a separate session of the judge, so cross-pass
+    score comparisons carry that caveat."""
     labels = sorted({score.judge_model for report in reports for score in report.scores if score.judge_model})
     if not labels:
         return "## Judge\n\nNo judged scores yet."
     return (
         "## Judge\n\nScores in this pass were produced by: "
         + ", ".join(labels)
-        + ". Same rubric and output schema as every other pass; a subagent judge costs nothing but is a different session of the model than an API judge, so compare totals across passes with that in mind."
+        + ". Same rubric and output schema as every other pass, but each pass is graded in a separate session of the judge, so compare totals across passes with that in mind."
     )
 
 
 def render_spend(reports: list[CandidateReport]) -> str:
     total = sum(report.api_cost_usd() for report in reports)
-    return f"## Paid API spend for this run\n\nAbout ${total:.2f} (baseline run plus judging, at Claude Opus 5 list prices)."
+    return f"## Paid API spend for this run\n\nAbout ${total:.2f} for the frontier baseline run, at Claude Opus 5 list prices."
 
 
 def write_review_sheet(run_dir: Path, question_set: QuestionSet, reports: list[CandidateReport], sample_fraction: float, seed: int) -> None:

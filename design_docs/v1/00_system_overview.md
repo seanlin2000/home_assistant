@@ -60,7 +60,7 @@ Priorities, in order: (1) answering questions well, including with web search, (
 
 | Subsystem | Doc | Stack | Custom code? |
 |---|---|---|---|
-| Benchmark | 01 | Python harness, Ollama, frontier API as baseline and judge | Yes |
+| Benchmark | 01 | Python harness, Ollama, frontier API as baseline, Claude Code subagent as judge | Yes |
 | Local LLM | 02 | Ollama on Apple Silicon, model chosen by benchmark | Config |
 | Web search | 03 | SearXNG in Docker + our Python MCP server | Yes |
 | Conversation agent | 04 | `assistant_core` package + Home Assistant custom component | Yes |
@@ -109,7 +109,7 @@ Running cost is about $2.50 a month in electricity. Spotify Premium is already p
 | Search queries | SearXNG on the Mac forwards them to Google, Bing, Brave, and DuckDuckGo with no account and no cookies. The engines see the query text and the apartment's IP address. |
 | Spotify commands | Spotify's API, tied to your Premium account, as with any Spotify client. |
 | Weather | Latitude and longitude to Met.no. |
-| Benchmark only | The twenty benchmark questions and the candidate models' answers go to a frontier API for the baseline run and for judging. They contain no personal data. |
+| Benchmark only | The twenty benchmark questions and the candidate models' answers go to a frontier API for the baseline run and to a Claude Code subagent for judging. They contain no personal data. |
 
 ## 8. Phase plan
 
