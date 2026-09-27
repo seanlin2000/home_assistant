@@ -10,8 +10,8 @@ from typing import Any, Protocol
 
 import httpx
 
+from assistant_core.exchange_record import ExchangeRecord
 from assistant_core.models import AgentEvent, AgentPolicy, AnswerDelta, Done, FillerSpoken, Message, Role, Transcript
-from assistant_core.turn_record import TurnRecord
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -26,7 +26,7 @@ class ChatContent(Protocol):
 
 
 def chat_log_to_conversation(contents: list[Any]) -> list[Message]:
-    """Keep the spoken turns of the conversation. System prompts are ours, not Home Assistant's, and tool bodies from earlier turns are not replayed."""
+    """Keep the spoken messages of the conversation. System prompts are ours, not Home Assistant's, and tool bodies from earlier exchanges are not replayed."""
     conversation: list[Message] = []
     for content in contents:
         text = (getattr(content, "content", None) or "").strip()
@@ -58,30 +58,30 @@ async def agent_events_to_deltas(events: AsyncIterator[AgentEvent], on_done: Cal
 
 def log_transcript(transcript: Transcript) -> None:
     _LOGGER.debug(
-        "studio_assistant turn: %.1fs total, first spoken at %s, %d tool calls, truncated=%s, error=%s",
+        "studio_assistant exchange: %.1fs total, first spoken at %s, %d tool calls, truncated=%s, error=%s",
         transcript.total_seconds,
         f"{transcript.time_to_first_spoken_seconds:.1f}s" if transcript.time_to_first_spoken_seconds is not None else "n/a",
         transcript.tool_call_count,
         transcript.truncated,
         transcript.error,
     )
-    for exchange in transcript.tool_exchanges:
-        _LOGGER.debug("  tool %s(%s) in %.1fs%s", exchange.call.name, exchange.call.arguments, exchange.seconds, f" error={exchange.error}" if exchange.error else "")
+    for tool_exchange in transcript.tool_exchanges:
+        _LOGGER.debug("  tool %s(%s) in %.1fs%s", tool_exchange.call.name, tool_exchange.call.arguments, tool_exchange.seconds, f" error={tool_exchange.error}" if tool_exchange.error else "")
 
 
-TURN_RECORD_TIMEOUT_SECONDS = 3.0
+EXCHANGE_RECORD_TIMEOUT_SECONDS = 3.0
 
 
-async def post_turn_record(client: httpx.AsyncClient, url: str, record: TurnRecord, timeout: float = TURN_RECORD_TIMEOUT_SECONDS) -> bool:
-    """Send one turn's record to the tool server's /turns route (design doc 10 §3.4). Best effort: every failure is logged at debug level and swallowed,
+async def post_exchange_record(client: httpx.AsyncClient, url: str, record: ExchangeRecord, timeout: float = EXCHANGE_RECORD_TIMEOUT_SECONDS) -> bool:
+    """Send one exchange's record to the tool server's /turns route (design doc 10 §3.4). Best effort: every failure is logged at debug level and swallowed,
     because a missing log line must never cost the user an answer or a warning in Home Assistant's log."""
     try:
         response = await client.post(url, content=record.model_dump_json(), headers={"content-type": "application/json"}, timeout=timeout)
     except Exception as error:  # noqa: BLE001 - anything from a refused connection to a cancelled loop
-        _LOGGER.debug("studio_assistant: turn record not posted to %s (%s)", url, error)
+        _LOGGER.debug("studio_assistant: exchange record not posted to %s (%s)", url, error)
         return False
     if response.status_code != 204:
-        _LOGGER.debug("studio_assistant: turn record rejected by %s with %s: %s", url, response.status_code, response.text[:200])
+        _LOGGER.debug("studio_assistant: exchange record rejected by %s with %s: %s", url, response.status_code, response.text[:200])
         return False
     return True
 

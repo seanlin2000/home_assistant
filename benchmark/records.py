@@ -59,7 +59,7 @@ class Question(BaseModel):
 
     @property
     def route(self) -> Route:
-        """What the router should decide for the final turn: search when the question should search, else the declared route, else answer."""
+        """What the router should decide for the final exchange: search when the question should search, else the declared route, else answer."""
         if self.should_search:
             return Route.SEARCH
         return self.expected_route or Route.ANSWER
@@ -137,7 +137,7 @@ class QuestionResult(BaseModel):
 
     @property
     def searched(self) -> bool:
-        return any(exchange.call.name in SEARCH_TOOL_NAMES for transcript in self.turns for exchange in transcript.tool_exchanges)
+        return any(tool_exchange.call.name in SEARCH_TOOL_NAMES for transcript in self.turns for tool_exchange in transcript.tool_exchanges)
 
     @property
     def route(self) -> RouteDecision | None:
@@ -145,7 +145,7 @@ class QuestionResult(BaseModel):
 
     @property
     def calculator_call_count(self) -> int:
-        return sum(1 for transcript in self.turns for exchange in transcript.tool_exchanges if exchange.call.name not in SEARCH_TOOL_NAMES)
+        return sum(1 for transcript in self.turns for tool_exchange in transcript.tool_exchanges if tool_exchange.call.name not in SEARCH_TOOL_NAMES)
 
     @property
     def tool_call_count(self) -> int:

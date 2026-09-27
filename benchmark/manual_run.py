@@ -1,6 +1,6 @@
 """Replay hand-written answers through the real agent loop and tool server, so a human (or a model driven by hand) can be scored on the same footing as the candidates.
 
-The scripted answers live in benchmark/manual/<candidate_key>.yaml. Each turn lists the search queries to issue and the final spoken answer; the queries are executed for real
+The scripted answers live in benchmark/manual/<candidate_key>.yaml. Each exchange lists the search queries to issue and the final spoken answer; the queries are executed for real
 through web_search_mcp, so the transcript carries genuine tool results, and the gates, word cap, and judge treat the record exactly like a model run.
 """
 
@@ -32,7 +32,7 @@ class ScriptedCall(BaseModel):
     arguments: dict = Field(default_factory=dict)
 
 
-class ScriptedTurn(BaseModel):
+class ScriptedExchange(BaseModel):
     queries: list[str] = Field(default_factory=list)  # shorthand for search_and_read calls
     calls: list[ScriptedCall] = Field(default_factory=list)  # any other tool calls, e.g. the calculator
     answer: str
@@ -50,7 +50,7 @@ class ScriptedTurn(BaseModel):
 
 class ScriptedQuestion(BaseModel):
     question_id: str
-    turns: list[ScriptedTurn]
+    turns: list[ScriptedExchange]
 
 
 class ScriptedAnswers(BaseModel):
@@ -63,38 +63,38 @@ class ScriptedAnswers(BaseModel):
 
 
 class ScriptedAnswerClient:
-    """Plays one scripted turn as if it were a model: first the search calls, then the spoken answer."""
+    """Plays one scripted exchange as if it were a model: first the search calls, then the spoken answer."""
 
     def __init__(self, model_name: str) -> None:
         self._model_name = model_name
-        self._turn: ScriptedTurn | None = None
+        self._exchange: ScriptedExchange | None = None
         self._searched = False
 
     @property
     def model_name(self) -> str:
         return self._model_name
 
-    def load_turn(self, turn: ScriptedTurn) -> None:
-        self._turn = turn
+    def load_exchange(self, exchange: ScriptedExchange) -> None:
+        self._exchange = exchange
         self._searched = False
 
     async def chat(self, messages: list[Message], tools: list[ToolSpec], policy: AgentPolicy) -> AsyncIterator[LLMEvent]:
-        if self._turn is None:
-            raise RuntimeError("load_turn must be called before chat")
-        calls = self._turn.tool_calls()
+        if self._exchange is None:
+            raise RuntimeError("load_exchange must be called before chat")
+        calls = self._exchange.tool_calls()
         if calls and not self._searched:
             self._searched = True
             async for event in self._tool_events(calls):
                 yield event
             return
-        yield TextDelta(text=self._turn.answer)
-        yield Completion(message=Message(role=Role.ASSISTANT, content=self._turn.answer), stats=self._stats())
+        yield TextDelta(text=self._exchange.answer)
+        yield Completion(message=Message(role=Role.ASSISTANT, content=self._exchange.answer), stats=self._stats())
 
     async def classify(self, system_prompt: str, user_text: str, schema: dict, policy: AgentPolicy) -> dict:
-        """The hand-written script is its own router: the route is whatever tools the scripted turn uses."""
-        if self._turn is None:
-            raise RuntimeError("load_turn must be called before classify")
-        return {"route": self._turn.implied_route()}
+        """The hand-written script is its own router: the route is whatever tools the scripted exchange uses."""
+        if self._exchange is None:
+            raise RuntimeError("load_exchange must be called before classify")
+        return {"route": self._exchange.implied_route()}
 
     async def _tool_events(self, calls: list[ToolCall]) -> AsyncIterator[LLMEvent]:
         for call in calls:
@@ -137,21 +137,21 @@ def load_answers(path: Path) -> ScriptedAnswers:
 
 async def replay_question(question: Question, scripted: ScriptedQuestion, candidate: Candidate, toolbox: McpToolBox, policy: AgentPolicy) -> QuestionResult:
     if len(scripted.turns) != len(question.turns):
-        raise ValueError(f"{question.id}: scripted {len(scripted.turns)} turns, question has {len(question.turns)}")
+        raise ValueError(f"{question.id}: scripted {len(scripted.turns)} exchanges, question has {len(question.turns)}")
     client = ScriptedAnswerClient(candidate.model)
     transcripts: list[Transcript] = []
     conversation: list[Message] = []
-    for turn_text, scripted_turn in zip(question.turns, scripted.turns):
-        client.load_turn(scripted_turn)
-        conversation.append(Message(role=Role.USER, content=turn_text))
-        transcript = await replay_turn(conversation, client, toolbox, policy)
+    for user_text, scripted_exchange in zip(question.turns, scripted.turns):
+        client.load_exchange(scripted_exchange)
+        conversation.append(Message(role=Role.USER, content=user_text))
+        transcript = await replay_exchange(conversation, client, toolbox, policy)
         transcripts.append(transcript)
         conversation = list(transcript.conversation)
     print_result_line(question, transcripts[-1])
     return QuestionResult(question_id=question.id, candidate_key=candidate.key, model=candidate.model, turns=transcripts)
 
 
-async def replay_turn(conversation: list[Message], client: ScriptedAnswerClient, toolbox: McpToolBox, policy: AgentPolicy) -> Transcript:
+async def replay_exchange(conversation: list[Message], client: ScriptedAnswerClient, toolbox: McpToolBox, policy: AgentPolicy) -> Transcript:
     async for event in agent_loop.run(conversation, client, toolbox, policy):
         if isinstance(event, Done):
             return event.transcript
@@ -159,7 +159,7 @@ async def replay_turn(conversation: list[Message], client: ScriptedAnswerClient,
 
 
 def print_result_line(question: Question, transcript: Transcript) -> None:
-    searched = "search" if any(exchange.call.name == "search_and_read" for exchange in transcript.tool_exchanges) else "no search"
+    searched = "search" if any(tool_exchange.call.name == "search_and_read" for tool_exchange in transcript.tool_exchanges) else "no search"
     truncated = " [cut by word cap]" if transcript.truncated else ""
     console.print(f"  {question.id:<4} {searched:<9} calls={transcript.tool_call_count} words={len(transcript.final_answer.split())}{truncated}")
 

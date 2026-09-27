@@ -51,7 +51,7 @@ async def test_model_layer_runs_only_when_no_rule_fires_and_defaults_on_failure(
 
 
 @pytest.mark.asyncio
-async def test_follow_up_turns_pass_earlier_user_turns_as_context() -> None:
+async def test_follow_up_exchanges_pass_earlier_user_messages_as_context() -> None:
     classifier = FakeClassifier("answer")
     conversation = [
         Message(role=Role.USER, content="I am choosing between 16 and 24 GB."),

@@ -121,7 +121,7 @@ def import_verdicts(results_path: Path, question_lookup: Callable[[str], Questio
 
 
 def render_case(question: Question, result: QuestionResult, gates: list[Gate]) -> str:
-    sections = [render_question(question), *(render_turn(index, transcript) for index, transcript in enumerate(result.turns, start=1)), render_harness_notes(result, gates)]
+    sections = [render_question(question), *(render_exchange(index, transcript) for index, transcript in enumerate(result.turns, start=1)), render_harness_notes(result, gates)]
     return "\n\n".join(sections)
 
 
@@ -138,7 +138,7 @@ def render_question(question: Question) -> str:
     return "\n".join(lines)
 
 
-def render_turn(index: int, transcript: Transcript) -> str:
+def render_exchange(index: int, transcript: Transcript) -> str:
     parts = [f"# Turn {index}"]
     for message in transcript.conversation:
         parts.append(render_message(message))

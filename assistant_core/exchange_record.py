@@ -1,4 +1,4 @@
-"""The trimmed record of one assistant turn that production keeps for debugging (design doc 10 §3.4).
+"""The trimmed record of one exchange (a question and the assistant's answer) that production keeps for debugging (design doc 10 §3.4).
 
 A Transcript carries everything the agent loop saw, including the full text of every fetched web page. The record keeps what a debugging session
 needs (what was asked, what was answered, which tools ran with which arguments and how long they took, token counts and timings, the failure
@@ -24,7 +24,7 @@ class ToolCallSummary(BaseModel):
     error: str | None = None
 
 
-class TurnRecord(BaseModel):
+class ExchangeRecord(BaseModel):
     recorded_at: str  # ISO 8601, UTC
     source: str  # "home_assistant", "benchmark", "smoke"
     model: str
@@ -47,20 +47,25 @@ class TurnRecord(BaseModel):
 
     @property
     def failed(self) -> bool:
-        """True when the turn shows any of the failure signs the benchmark gates on."""
+        """True when the exchange shows any of the failure signs the benchmark gates on."""
         return bool(self.error) or self.truncated or self.hit_tool_round_cap or self.malformed_tool_call_count > 0 or not self.final_answer.strip()
 
 
-def summarize_tool_call(exchange: ToolExchange) -> ToolCallSummary:
+def summarize_tool_call(tool_exchange: ToolExchange) -> ToolCallSummary:
     return ToolCallSummary(
-        round_index=exchange.round_index, name=exchange.call.name, arguments=exchange.call.arguments, seconds=exchange.seconds, result_chars=len(exchange.result), error=exchange.error
+        round_index=tool_exchange.round_index,
+        name=tool_exchange.call.name,
+        arguments=tool_exchange.call.arguments,
+        seconds=tool_exchange.seconds,
+        result_chars=len(tool_exchange.result),
+        error=tool_exchange.error,
     )
 
 
-def turn_record_from_transcript(transcript: Transcript, source: str = "home_assistant", recorded_at: datetime | None = None) -> TurnRecord:
+def exchange_record_from_transcript(transcript: Transcript, source: str = "home_assistant", recorded_at: datetime | None = None) -> ExchangeRecord:
     user_messages = [message for message in transcript.conversation if message.role == Role.USER]
     user_indexes = [index for index, message in enumerate(transcript.conversation) if message.role == Role.USER]
-    return TurnRecord(
+    return ExchangeRecord(
         recorded_at=(recorded_at or datetime.now(UTC)).isoformat(timespec="seconds"),
         source=source,
         model=transcript.model,
@@ -70,7 +75,7 @@ def turn_record_from_transcript(transcript: Transcript, source: str = "home_assi
         spoken_chars=len(transcript.spoken_text),
         route=transcript.route,
         model_calls=list(transcript.model_calls),
-        tool_calls=[summarize_tool_call(exchange) for exchange in transcript.tool_exchanges],
+        tool_calls=[summarize_tool_call(tool_exchange) for tool_exchange in transcript.tool_exchanges],
         tool_call_count=transcript.tool_call_count,
         total_seconds=transcript.total_seconds,
         time_to_first_token_seconds=transcript.time_to_first_token_seconds,

@@ -100,7 +100,7 @@ async def test_word_cap_stops_speech_at_sentence_end() -> None:
     assert cap.spoken_text == "One two three. Four five six seven."
 
 
-async def test_multi_turn_conversation_carries_history() -> None:
+async def test_multi_exchange_conversation_carries_history() -> None:
     llm = ScriptedLLM([text_reply("Pick 24 GB."), text_reply("Still 24 GB.")])
     tools = FakeToolBox()
     first = [event async for event in agent_loop.run([Message(role=Role.USER, content="16 or 24 GB?")], llm, tools, AgentPolicy())]

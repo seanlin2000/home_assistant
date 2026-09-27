@@ -1,7 +1,7 @@
 from datetime import UTC, datetime
 
+from assistant_core.exchange_record import ExchangeRecord, exchange_record_from_transcript, turns_url_from_mcp_url
 from assistant_core.models import GenerationStats, Message, Role, Route, RouteDecision, ToolCall, ToolExchange, Transcript
-from assistant_core.turn_record import TurnRecord, turn_record_from_transcript, turns_url_from_mcp_url
 
 
 def searched_transcript() -> Transcript:
@@ -32,7 +32,7 @@ def searched_transcript() -> Transcript:
 
 
 def test_record_keeps_the_debugging_fields_and_drops_page_text() -> None:
-    record = turn_record_from_transcript(searched_transcript(), recorded_at=datetime(2026, 9, 7, 3, 0, tzinfo=UTC))
+    record = exchange_record_from_transcript(searched_transcript(), recorded_at=datetime(2026, 9, 7, 3, 0, tzinfo=UTC))
     assert record.recorded_at == "2026-09-07T03:00:00+00:00"
     assert record.user_text == "What is the Fed rate today?"
     assert record.history_turns == 2  # the earlier question and answer
@@ -49,7 +49,7 @@ def test_record_keeps_the_debugging_fields_and_drops_page_text() -> None:
 
 
 def test_failed_flag_covers_the_benchmark_gate_signals() -> None:
-    healthy = turn_record_from_transcript(searched_transcript())
+    healthy = exchange_record_from_transcript(searched_transcript())
     assert healthy.failed  # one malformed call in the fixture
     clean = healthy.model_copy(update={"malformed_tool_call_count": 0})
     assert not clean.failed
@@ -59,13 +59,13 @@ def test_failed_flag_covers_the_benchmark_gate_signals() -> None:
 
 
 def test_empty_conversation_produces_a_record_without_crashing() -> None:
-    record = turn_record_from_transcript(Transcript(model="m", system_prompt="", conversation=[]))
+    record = exchange_record_from_transcript(Transcript(model="m", system_prompt="", conversation=[]))
     assert record.user_text == "" and record.history_turns == 0 and record.failed
 
 
 def test_record_round_trips_through_json() -> None:
-    record = turn_record_from_transcript(searched_transcript())
-    assert TurnRecord.model_validate_json(record.model_dump_json()) == record
+    record = exchange_record_from_transcript(searched_transcript())
+    assert ExchangeRecord.model_validate_json(record.model_dump_json()) == record
 
 
 def test_turns_url_sits_beside_the_mcp_endpoint() -> None:

@@ -8,14 +8,14 @@ from pydantic import ValidationError
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
 
+from assistant_core.exchange_record import TURNS_ROUTE, ExchangeRecord
 from assistant_core.models import REQUIRED_TOOL_NAMES
-from assistant_core.turn_record import TURNS_ROUTE, TurnRecord
 from calculator_mcp.register import register_calculator_tools
+from web_search_mcp.exchange_log import ExchangeLog
 from web_search_mcp.page_extractor import PageExcerpt, PageExtractor
 from web_search_mcp.query_cache import QueryCache
 from web_search_mcp.searxng_client import SearchResult, SearxngClient
 from web_search_mcp.settings import SearchSettings, allowed_host_list, settings_from_environment
-from web_search_mcp.turn_log import TurnLog
 from web_search_mcp.url_guard import UnsafeUrl
 
 
@@ -53,7 +53,7 @@ def build_server(settings: SearchSettings, searxng: SearxngClient | None = None,
         return " ".join(text.split()[: settings.words_per_page * 2])
 
     register_calculator_tools(server)
-    register_operations_routes(server, TurnLog(Path(settings.turns_dir)) if settings.turns_dir else None, allowed_host_list(settings))
+    register_operations_routes(server, ExchangeLog(Path(settings.turns_dir)) if settings.turns_dir else None, allowed_host_list(settings))
     return server
 
 
@@ -76,8 +76,8 @@ def host_allowed(request: Request, allowed_hosts: list[str]) -> bool:
     return host in allowed_hosts or any(pattern.endswith(":*") and host.startswith(pattern[:-1]) for pattern in allowed_hosts)
 
 
-def register_operations_routes(server: MCPServer, turn_log: TurnLog | None, allowed_hosts: list[str]) -> None:  # deslop: allow-comments
-    """Two plain HTTP routes beside the MCP endpoint (design doc 10): the health check proves this server is ours, and the component posts its turn records.
+def register_operations_routes(server: MCPServer, exchange_log: ExchangeLog | None, allowed_hosts: list[str]) -> None:  # deslop: allow-comments
+    """Two plain HTTP routes beside the MCP endpoint (design doc 10): the health check proves this server is ours, and the component posts its exchange records.
 
     Custom routes bypass MCP's session handling; like the rest of the server they are reachable only on the LAN."""
 
@@ -87,19 +87,19 @@ def register_operations_routes(server: MCPServer, turn_log: TurnLog | None, allo
             return misdirected(request)
         names = sorted(tool.name for tool in await server.list_tools())
         missing = sorted(REQUIRED_TOOL_NAMES - set(names))
-        return JSONResponse({"status": "ok" if not missing else "degraded", "tools": names, "missing": missing, "turns_dir": str(turn_log.directory) if turn_log else None})
+        return JSONResponse({"status": "ok" if not missing else "degraded", "tools": names, "missing": missing, "turns_dir": str(exchange_log.directory) if exchange_log else None})
 
     @server.custom_route(TURNS_ROUTE, ["POST"])
     async def turns(request: Request) -> Response:
         if not host_allowed(request, allowed_hosts):
             return misdirected(request)
-        if turn_log is None:
+        if exchange_log is None:
             return JSONResponse({"error": "turn logging is not configured (WEB_SEARCH_TURNS_DIR unset)"}, status_code=503)
         try:
-            record = TurnRecord.model_validate_json(await request.body())
+            record = ExchangeRecord.model_validate_json(await request.body())
         except ValidationError as error:
-            return JSONResponse({"error": "not a TurnRecord", "detail": error.errors(include_input=False, include_url=False)[:3]}, status_code=400)
-        turn_log.append(record)
+            return JSONResponse({"error": "not an ExchangeRecord", "detail": error.errors(include_input=False, include_url=False)[:3]}, status_code=400)
+        exchange_log.append(record)
         return Response(status_code=204)
 
 

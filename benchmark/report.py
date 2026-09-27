@@ -68,7 +68,7 @@ class CandidateReport:
         return "n/a" if flags == {None} else ("yes" if flags == {True} else "NO")
 
     def route_outcomes(self, question_set: QuestionSet) -> list[tuple[Question, object]]:
-        """(question, decision) for every result whose final turn was routed."""
+        """(question, decision) for every result whose final exchange was routed."""
         outcomes = []
         for result in self.results:
             if result.route is not None:

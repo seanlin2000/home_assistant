@@ -19,7 +19,7 @@ calculate: the correct answer requires arithmetic on numbers in the question: pe
 answer: everything else: explanations of how things work, reasoning, advice from what the user said, comparisons of ideas, opinions, clarifying questions, and settled history even when it sounds topical.
 Examples: "What hardware gives the most memory for a thousand dollars today?" -> search. "Is a four percent rent increase competitive in my neighborhood?" -> search. "Since the central bank cut rates last month, should I refinance?" -> search. "What year did the Berlin Wall fall?" -> answer. "Why can a sparse model run on a smaller GPU?" -> answer. "What is fifteen percent of eighty dollars?" -> calculate."""
 
-# Since prompt version 1.3 the directive is appended to the system prompt for the turn, not to the user's message: models weight operator
+# Since prompt version 1.3 the directive is appended to the system prompt for the exchange, not to the user's message: models weight operator
 # instructions above trailing notes in the request, and one worked example shows the exact call shape. The wording stays a plain instruction;
 # nothing in the harness enforces it, so it makes no threats about what happens to an answer that ignores it.
 # Prompt 1.4 trimmed both blocks after pass 3: the search example had shown a finished spoken answer, and the smaller models imitated the answer
@@ -57,9 +57,9 @@ def rule_route(text: str) -> RouteDecision | None:
     return None
 
 
-async def model_route(llm: LLMClient, text: str, earlier_user_turns: list[str], policy: AgentPolicy) -> RouteDecision:
+async def model_route(llm: LLMClient, text: str, earlier_user_messages: list[str], policy: AgentPolicy) -> RouteDecision:
     started = time.perf_counter()
-    context = "".join(f"Earlier the user said: {turn}\n" for turn in earlier_user_turns[-2:])
+    context = "".join(f"Earlier the user said: {message}\n" for message in earlier_user_messages[-2:])
     try:
         raw = await llm.classify(ROUTER_SYSTEM_PROMPT, f"{context}Question: {text}", ROUTE_SCHEMA, policy)
         route = Route(raw["route"])
@@ -70,13 +70,13 @@ async def model_route(llm: LLMClient, text: str, earlier_user_turns: list[str], 
 
 
 async def decide_route(llm: LLMClient, conversation: list[Message], policy: AgentPolicy) -> RouteDecision:
-    user_turns = [message.content for message in conversation if message.role == Role.USER]
-    if not user_turns:
+    user_messages = [message.content for message in conversation if message.role == Role.USER]
+    if not user_messages:
         return RouteDecision(route=Route.ANSWER, source="none", detail="no user message")
-    decision = rule_route(user_turns[-1])
+    decision = rule_route(user_messages[-1])
     if decision is not None:
         return decision
-    return await model_route(llm, user_turns[-1], user_turns[:-1], policy)
+    return await model_route(llm, user_messages[-1], user_messages[:-1], policy)
 
 
 def apply_route(messages: list[Message], decision: RouteDecision) -> list[Message]:

@@ -23,7 +23,7 @@ from pydantic import BaseModel, Field
 from assistant_core.models import REQUIRED_TOOL_NAMES
 from ops import paths
 from utils.jsonl_utils import append_jsonl
-from web_search_mcp.turn_log import TurnLog
+from web_search_mcp.exchange_log import ExchangeLog
 
 LAUNCHD_PREFIX = "com.studio-assistant"
 LAUNCHD_SERVICES = ("ollama", "mcp", "whisper", "kokoro")
@@ -342,7 +342,7 @@ def housekeeping(today: date | None = None) -> list[str]:
     removed = prune_history(paths.health_jsonl(), today=today)
     if removed:
         notes.append(f"pruned {removed} health snapshots")
-    for deleted in TurnLog(paths.turns_dir()).prune(today=today):
+    for deleted in ExchangeLog(paths.turns_dir()).prune(today=today):
         notes.append(f"deleted {deleted.name}")
     return notes
 

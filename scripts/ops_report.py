@@ -15,7 +15,7 @@ from ops.report import render  # noqa: E402
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Summarise turn records, health history, pipeline runs, and Ollama speeds.")
+    parser = argparse.ArgumentParser(description="Summarise exchange records, health history, pipeline runs, and Ollama speeds.")
     parser.add_argument("log_dir", type=Path, nargs="?", default=PROJECT / "logs" / "mini")
     parser.add_argument("--days", type=int, default=7)
     args = parser.parse_args()

@@ -60,7 +60,7 @@ class AgentPolicy(BaseModel):
     tool_timeout_seconds: float = 30.0
 
 
-# Spoken while the first tool call of a turn runs, so the user hears something within a second or two. Search and calculation get different
+# Spoken while the first tool call of an exchange runs, so the user hears something within a second or two. Search and calculation get different
 # lines because "checking the web" is wrong, and mildly alarming, when the assistant is only doing arithmetic locally.
 DEFAULT_FILLER_PHRASES = (
     "Let me pull some sources on that.",
