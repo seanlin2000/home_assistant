@@ -52,7 +52,7 @@ The loop that turns a transcribed question into a spoken answer. It holds the pe
 
 | Layer | Depends on | Tested with | Used by |
 |---|---|---|---|
-| `assistant_core` | `ollama`, `anthropic`, `mcp`, `pydantic` | plain pytest, mocked model and tools | benchmark harness, `studio_assistant` |
+| `assistant_core` | `ollama`, `mcp`, `pydantic` | plain pytest, mocked model and tools | benchmark harness, `studio_assistant` |
 | `studio_assistant` | Home Assistant | `pytest-homeassistant-custom-component` | Home Assistant at runtime |
 
 The benchmark must exercise exactly the code the product runs, or it measures the wrong thing. Keeping the loop free of Home Assistant imports makes that possible and keeps the fast unit tests fast.
@@ -70,7 +70,6 @@ The benchmark must exercise exactly the code the product runs, or it measures th
 | Package | Role in the business logic |
 |---|---|
 | `ollama` | `OllamaClient` streams chat completions with tool schemas from the local model. |
-| `anthropic` | `AnthropicClient` runs the same loop against a frontier model for the benchmark baseline. Not used in production. |
 | `mcp` (client) | Connects to `web_search_mcp`, lists tools, converts their schemas into the shape each provider expects, executes calls. |
 | `pydantic` | Typed `Turn`, `ToolCall`, `Transcript`, and `AgentPolicy` (temperature, max tool rounds, word budget, filler phrases). |
 | Home Assistant `conversation` platform | `ConversationEntity`, `ChatLog`, `ConversationResult`, streaming content deltas, `continue_conversation`. The adapter is written against these. |
@@ -114,10 +113,10 @@ Set through the component's UI config flow and stored by Home Assistant: Ollama 
 
 ## 11. As built, 2026-09-05
 
-- `assistant_core/models.py` holds the typed vocabulary: `Message` (with `provider_payload` so Anthropic thinking and tool-use blocks can be echoed back unchanged), `ToolCall`, `ToolSpec`, `AgentPolicy`, the model-client events (`TextDelta`, `ToolCallRequest`, `MalformedToolCall`, `Completion`), the agent events (`FillerSpoken`, `ToolStarted`, `ToolFinished`, `AnswerDelta`, `Done`), and `Transcript`.
+- `assistant_core/models.py` holds the typed vocabulary: `Message`, `ToolCall`, `ToolSpec`, `AgentPolicy`, the model-client events (`TextDelta`, `ToolCallRequest`, `MalformedToolCall`, `Completion`), the agent events (`FillerSpoken`, `ToolStarted`, `ToolFinished`, `AnswerDelta`, `Done`), and `Transcript`.
 - `agent_loop.run(conversation, llm, tools, policy, memory)` is an async generator. The filler sentence is yielded the moment the first tool call arrives, before the tool runs. Tool failures are turned into a notice the model sees rather than an exception. At the tool-round cap the pending calls get a "tool limit reached" notice and the model is asked once more to answer.
 - The spoken word cap is applied to the stream: past the budget, speech stops at the end of the current sentence and `Transcript.truncated` is set. `spoken_text` is what the listener heard across the whole turn; `final_answer` is the model's last message in full.
-- `llm_client.OllamaClient` streams through the `ollama` package with `think` passed only when the candidate config sets it, and retries once without it for model families that reject the switch. `llm_client.AnthropicClient` uses `beta.messages.stream` with adaptive thinking and the server-side refusal fallback, and records the model that actually answered.
+- `llm_client.OllamaClient` streams through the `ollama` package with `think` passed only when the candidate config sets it, and retries once without it for model families that reject the switch.
 - `tools.McpToolBox` wraps the MCP client; `memory.NoMemory` is the v1 memory implementation.
 - The Home Assistant adapter (`custom_components/studio_assistant`) is not built yet; it belongs to Phase 2.
 
@@ -132,7 +131,7 @@ Pass 1 of the benchmark showed two failure patterns the model alone did not fix:
                │  nothing matched
                ▼
              model layer (one structured-output call, temperature 0, JSON {"route": ...})
-               │  Ollama: chat(format=<json schema>, think=False)   Anthropic: forced tool_choice
+               │  Ollama: chat(format=<json schema>, think=False)
                ▼
              RouteDecision(route, source="rule"|"model", detail, seconds)  ── recorded on the Transcript
                │
@@ -150,7 +149,7 @@ Design rules:
 - **A broken router never blocks an answer.** Any exception in the model layer yields the answer route with the error in `detail`.
 - **The directive is visible in the transcript.** It is appended to the user message, so the judge sees it; the rubric tells the judge it came from the harness. The `route_questions` policy flag turns the whole layer off.
 
-Packages: `re` for the rule layer; `ollama`'s `format` argument (a JSON schema the server constrains decoding to) for the local model layer; the Anthropic SDK's `tool_choice={"type": "tool"}` for the baseline. Code: `assistant_core/router.py`, the `classify` method on each client, and four lines in `agent_loop.run`.
+Packages: `re` for the rule layer; `ollama`'s `format` argument (a JSON schema the server constrains decoding to) for the model layer. Code: `assistant_core/router.py`, the `classify` method on the client, and four lines in `agent_loop.run`.
 
 ## 13. As built, 2026-09-06: the component running inside Home Assistant
 
@@ -173,7 +172,7 @@ Three things had to change once the code ran inside Home Assistant's own Python 
 - **The Ollama client is built off the event loop.** Creating `ollama.AsyncClient` creates an `httpx.AsyncClient`, which loads the CA bundle from disk; Home Assistant flags that as a blocking call in the event loop. `conversation.py` constructs it with `hass.async_add_executor_job`.
 - **The filler sentence depends on the tool.** A calculator call used to say "Let me pull some sources on that." `AgentPolicy` now has `calculate_filler_phrases` ("Let me work that out.", "One second, doing the math.") and `agent_loop.filler_for` picks the list by whether the first tool of the turn is in `SEARCH_TOOL_NAMES`, which moved to `assistant_core.models` so the benchmark and the loop share one definition.
 
-Deployment is `scripts/deploy_component.py`: it stages the component with `assistant_core` vendored under `vendor/` (minus `anthropic_client.py`), mounts the VM's `config` share over SMB (the Samba add-on), copies the tree into `custom_components/studio_assistant`, unmounts, and calls the restart service. Home Assistant 2026.9 usually drops that HTTP connection as it shuts down instead of answering, so the script treats a dropped connection as accepted and polls `/api/` until the API is back (about 30 s).
+Deployment is `scripts/deploy_component.py`: it stages the component with `assistant_core` vendored under `vendor/`, mounts the VM's `config` share over SMB (the Samba add-on), copies the tree into `custom_components/studio_assistant`, unmounts, and calls the restart service. Home Assistant 2026.9 usually drops that HTTP connection as it shuts down instead of answering, so the script treats a dropped connection as accepted and polls `/api/` until the API is back (about 30 s).
 
 ## 14. As built, 2026-09-06: the directive moves into the system prompt (prompt 1.3)
 

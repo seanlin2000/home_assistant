@@ -39,9 +39,6 @@ class Message(BaseModel):
     tool_calls: list[ToolCall] = Field(default_factory=list)
     tool_call_id: str | None = None
     tool_name: str | None = None
-    # Raw provider content blocks for assistant turns. Anthropic requires thinking and tool_use blocks
-    # to be echoed back unchanged on the next request, which a plain text field cannot carry.
-    provider_payload: Any | None = None
 
 
 class ToolSpec(BaseModel):
@@ -57,7 +54,6 @@ class AgentPolicy(BaseModel):
     word_budget: int = 200
     context_tokens: int = 16384
     think: bool | str | None = None
-    effort: str | None = None
     route_questions: bool = True
     filler_phrases: list[str] = Field(default_factory=lambda: list(DEFAULT_FILLER_PHRASES))
     calculate_filler_phrases: list[str] = Field(default_factory=lambda: list(DEFAULT_CALCULATE_FILLER_PHRASES))

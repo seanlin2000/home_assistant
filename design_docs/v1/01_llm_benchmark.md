@@ -2,7 +2,7 @@
 
 ## 1. Purpose
 
-Choose the language model, and therefore the hardware, from evidence instead of leaderboards. The benchmark runs twenty questions shaped like the ones you actually ask an assistant through the exact agent loop the product will use, against every candidate model that fits the 16 GB MacBook, plus a frontier model as the quality ceiling. It scores not only whether an answer is good but whether the model made the right call about searching the web.
+Choose the language model, and therefore the hardware, from evidence instead of leaderboards. The benchmark runs twenty questions shaped like the ones you actually ask an assistant through the exact agent loop the product will use, against every candidate model that fits the 16 GB MacBook, plus a set of hand-written answers replayed through the same loop as the quality ceiling. It scores not only whether an answer is good but whether the model made the right call about searching the web.
 
 ## 2. Diagram
 
@@ -12,8 +12,8 @@ Choose the language model, and therefore the hardware, from evidence instead of 
  │ 20 questions          │   for each     │  system prompt (identical for every model)          │
  │  id, category,        │───question────▶│  ┌─────────┐  tool call?  ┌────────────────────┐   │
  │  expected_search,     │   × each       │  │  model  │─────────────▶│ web_search_mcp     │   │
- │  constraints,         │   candidate    │  │ (Ollama │◀─────────────│  → SearXNG (local) │   │
- │  reference sketch     │                │  │  or API)│  excerpts    └────────────────────┘   │
+ │  constraints,         │   candidate    │  │ (Ollama)│◀─────────────│  → SearXNG (local) │   │
+ │  reference sketch     │                │  │         │  excerpts    └────────────────────┘   │
  └──────────────────────┘                 │  └────┬────┘                                        │
                                           │       │ final answer + full transcript              │
                                           └───────┼────────────────────────────────────────────┘
@@ -45,7 +45,7 @@ Choose the language model, and therefore the hardware, from evidence instead of 
 3. `judge.py --export` writes each transcript to a case file together with the question's metadata and (for reasoning questions) a short reference sketch. The `benchmark-judge` Claude Code subagent grades every case against the rubric and writes strict JSON: which gates it believes were hit, three dimension scores, and a one-sentence justification per score.
 4. `report.py` merges harness gates and judge output. Any gate failure zeroes that question. It renders a markdown report and a review sheet containing a fixed random 20% of answers plus every case where the judge and the harness disagree on a gate.
 5. You score the review sheet by hand. The report prints your agreement rate with the judge. Below 90% on gates, we tighten the rubric wording and re-judge, which needs no re-run and no paid API calls.
-6. The decision gate reads the report: which local models reach your bar, expressed as a fraction of the frontier baseline's score and by gate-failure count.
+6. The decision gate reads the report: which local models reach your bar, measured against the hand-written reference's score and by gate-failure count.
 
 ## 4. Question set, version 1
 
@@ -159,19 +159,17 @@ Ollama's default GPU memory ceiling on a 16 GB Mac is about 12 GB and can be rai
 | Gemma 4 26B-A4B, UD-IQ4_XS | 13.6 GB | tight, after raising the ceiling | closer to production precision |
 | Qwen 3.6-35B-A3B, UD-IQ3_XXS | 13.2 GB | tight | reduced-precision preview of the other production candidate |
 | Qwen 3.6-27B dense, Q3_K_S (added 2026-09-06) | 12.4 GB | spills to CPU under the default 12 GB ceiling; latency flagged, quality still scored | reduced-precision preview of the dense production candidate |
-| Frontier model via API | n/a | n/a | quality ceiling on the same harness |
 | Hand-written answers by Claude Fable 5.1 (`benchmark-manual`) | n/a | n/a | reference ceiling for the question set itself, not a purchasable candidate. Since pass 5 it is authored closed book by a fresh subagent that runs the real search and calculator tools and sees nothing but the questions and the system prompt (`claude-fable-5-1-manual-2`); the first pass, written inside the coding session, is kept as `claude-fable-5-1-manual` |
 
 Not testable on this machine at production precision: Qwen 3.5/3.6-27B dense at Q4 (17 GB), Qwen 3.6-35B-A3B at Q4 (~20 GB), Gemma 4 31B dense, gpt-oss-120b. The user chose to add only the Qwen 3.6-27B 3-bit preview from the larger-model candidates researched on 2026-09-05, judging Gemma 4 31B unlikely to differ enough from the 26B MoE to change the decision and declining NVIDIA Nemotron.
 
-How to read a 3-bit preview: if it scores near the frontier baseline, that is strong evidence its 4-bit production version will too. If it scores poorly, that is only weak evidence against the production version, because 3-bit quantization measurably hurts reasoning. The report labels previews and states this caveat next to their scores.
+How to read a 3-bit preview: if it scores near the hand-written reference, that is strong evidence its 4-bit production version will too. If it scores poorly, that is only weak evidence against the production version, because 3-bit quantization measurably hurts reasoning. The report labels previews and states this caveat next to their scores.
 
 ## 8. Packages and what they do for us
 
 | Package | Role in the business logic |
 |---|---|
 | `ollama` (Python client) | Talks to the local Ollama server: sends the conversation and tool schemas, streams tokens back, reports timing. Every local candidate goes through it, so timing is measured the same way. |
-| `anthropic` | Runs the frontier baseline through the same loop. Usage follows the `claude-api` reference loaded at implementation time. Judging never goes through it; the `benchmark-judge` Claude Code subagent grades on the user's subscription. |
 | `mcp` (client side) | Connects the agent loop to `web_search_mcp` over streamable HTTP and converts the server's tool schemas into the format each model provider expects. |
 | `pydantic` | Typed records for questions, transcripts, gate results, and judge output. Every verdict the judge writes must validate against the verdict model on import, which turns a free-text opinion into data. |
 | `pyyaml` | Reads `questions.yaml`. |
@@ -224,7 +222,7 @@ How to read a 3-bit preview: if it scores near the frontier baseline, that is st
 - Commands: `uv run benchmark-run [--candidate KEY]... [--question ID]... [--date D] [--force] [--delete-models]`, `uv run benchmark-judge D --export`, then the `benchmark-judge` subagent on each `judge_cases/<candidate>` folder, then `uv run benchmark-judge D --import`, `uv run benchmark-report D`, `uv run benchmark-manual KEY [--date D]` (replays hand-written answers from `benchmark/manual/KEY.yaml` through the same loop and tool server), `uv run python scripts/benchmark_llm.py`. Runs resume: questions already in `results/D/<key>.jsonl` are skipped unless `--force`.
 - Harness gates (`benchmark/gates.py`): searched on a no-search question, did not search on a search question, malformed tool call, more than the tool-round cap, no final answer, word limit exceeded, and `run_error` when the model call itself failed.
 - Judge (`benchmark/judge.py`): a Claude Code subagent, described in the subsection below; `benchmark/rubric.md` is its grading instructions verbatim and the `JudgeVerdict` pydantic model is the shape every verdict must validate against. Each score records the judge's label. Running `benchmark-judge` without `--export` or `--import` is a usage error.
-- Report (`benchmark/report.py`): scores table with the fraction of the baseline, gate counts by type, latency and word counts (logged, not scored), per-question matrix, judge agreement once `review_sheet.yaml` is filled in, and the paid API spend of the frontier baseline run.
+- Report (`benchmark/report.py`): scores table, gate counts by type, latency and word counts (logged, not scored), per-question matrix, and judge agreement once `review_sheet.yaml` is filled in. No benchmark step makes a paid API call, so the report has no spend section.
 - Review sheet: a seeded 20% sample per candidate plus every case where the judge's view of the search decision disagrees with the harness. Human fields are preserved across re-renders.
 - The harness starts `web_search_mcp` as a subprocess with `WEB_SEARCH_CACHE_DIR=results/D/cache`, so every candidate in a run sees identical search results.
 - Memory fit is read from Ollama's `/api/ps` after a warm-up call that uses the run's context length, so the first question does not pay a model reload.

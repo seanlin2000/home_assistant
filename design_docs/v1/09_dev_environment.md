@@ -73,7 +73,7 @@ Every piece of Python in this repository runs from a virtual environment inside 
 
 - Packages: `assistant_core`, `web_search_mcp`, `benchmark`, `custom_components/studio_assistant`. Shared helpers only when two packages need the same function, and then in `utils/{util_type}_utils.py` per CLAUDE.md.
 - Every function parameter typed. Functions small. No flag arguments. Exceptions, not error codes. Comments explain why, not what. See `claude_docs/CLEAN_CODE.md`.
-- Secrets (Spotify client secret, the frontier API key for the benchmark) live in `secrets/` or `.env`, both ignored by git, and are read through one small settings module.
+- Secrets (Spotify client secret, Home Assistant tokens) live in `secrets/` or `.env`, both ignored by git, and are read through one small settings module.
 - Benchmark results are committed under `benchmark/results/<date>/` so runs can be compared over time; only the SearXNG response cache inside a run is ignored.
 
 ## 8. Failure modes
@@ -106,7 +106,7 @@ Most of this will be familiar from data work; two things are worth stating plain
 - `scripts/lint.sh` runs black and isort through `uv run`, then shfmt and shellcheck on the shell scripts, skipping `.venv`.
 - Docker Desktop 29.7 provides the daemon; its CLI is used from the application bundle because the `/usr/local/bin` link was not created. `scripts/searxng.sh` adds that path itself.
 - Ollama 0.33.3 from Homebrew, started with `brew services start ollama`.
-- Pinned versions of the third-party packages are in `uv.lock`; the notable ones on the first day were `anthropic 1.4.0`, `mcp 2.1.1`, `ollama 0.6.2`, `trafilatura 2.2.0`, `pydantic 2.13.5`.
+- Pinned versions of the third-party packages are in `uv.lock`; the notable ones on the first day were `mcp 2.1.1`, `ollama 0.6.2`, `trafilatura 2.2.0`, `pydantic 2.13.5`.
 
 ## 12. Code review process, added 2026-09-07
 

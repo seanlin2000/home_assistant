@@ -26,7 +26,7 @@ PROJECT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT))  # scripts/ is not a package; make `ops` importable when run as a file
 COMPONENT = PROJECT / "custom_components" / "studio_assistant"
 CORE = PROJECT / "assistant_core"
-VENDOR_EXCLUDE = {"anthropic_client.py", "__pycache__"}
+VENDOR_EXCLUDE = {"__pycache__"}
 
 
 def main() -> None:

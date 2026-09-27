@@ -1,8 +1,11 @@
 from pathlib import Path
 
+import pytest
+from pydantic import ValidationError
+
 from assistant_core.models import Transcript
 from benchmark.gates import harness_gates
-from benchmark.records import Gate, JudgeVerdict, QuestionResult, Score, load_config, load_questions
+from benchmark.records import Candidate, Gate, JudgeVerdict, QuestionResult, Score, load_config, load_questions
 
 
 def transcript(answer: str, tool_calls: int = 0, malformed: int = 0) -> Transcript:
@@ -30,10 +33,12 @@ def test_question_set_shape() -> None:
     assert QUESTIONS.by_id("B21").should_search is True
 
 
-def test_config_loads_every_candidate_with_a_provider() -> None:
+def test_config_candidates_run_locally_or_by_hand_so_no_run_spends_paid_api_credit() -> None:
     config = load_config(Path("benchmark/config.yaml"))
-    assert {candidate.provider for candidate in config.candidates} == {"ollama", "anthropic", "manual"}
+    assert {candidate.provider for candidate in config.candidates} <= {"ollama", "manual"}
     assert config.policy.max_tool_rounds == 4
+    with pytest.raises(ValidationError):
+        Candidate(key="api", label="API model", provider="anthropic", model="any")
 
 
 def test_harness_gates_for_search_decisions() -> None:
