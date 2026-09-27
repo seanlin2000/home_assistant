@@ -342,7 +342,7 @@ def housekeeping(today: date | None = None) -> list[str]:
     removed = prune_history(paths.health_jsonl(), today=today)
     if removed:
         notes.append(f"pruned {removed} health snapshots")
-    for deleted in ExchangeLog(paths.turns_dir()).prune(today=today):
+    for deleted in ExchangeLog(paths.exchanges_dir()).prune(today=today):
         notes.append(f"deleted {deleted.name}")
     return notes
 

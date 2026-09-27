@@ -13,7 +13,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.httpx_client import get_async_client
 
 from assistant_core import agent_loop
-from assistant_core.exchange_record import exchange_record_from_transcript, turns_url_from_mcp_url
+from assistant_core.exchange_record import exchange_record_from_transcript, exchanges_url_from_mcp_url
 from assistant_core.llm_client import OllamaClient
 from assistant_core.mcp_http import HttpMcpToolBox
 from assistant_core.models import ToolCall, Transcript
@@ -82,7 +82,7 @@ class StudioAssistantEntity(conversation.ConversationEntity):
     def _record_exchange(self, transcript: Transcript) -> None:
         """Called when the agent loop finishes an exchange. The post runs as a background task so the spoken answer is never held up by logging."""
         settings = {**self.entry.data, **self.entry.options}
-        url = turns_url_from_mcp_url(settings[CONF_MCP_URL])
+        url = exchanges_url_from_mcp_url(settings[CONF_MCP_URL])
         record = exchange_record_from_transcript(transcript, source="home_assistant")
         self.hass.async_create_background_task(adapter.post_exchange_record(get_async_client(self.hass), url, record), name="studio_assistant exchange record")
 

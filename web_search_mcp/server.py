@@ -8,7 +8,7 @@ from pydantic import ValidationError
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
 
-from assistant_core.exchange_record import TURNS_ROUTE, ExchangeRecord
+from assistant_core.exchange_record import EXCHANGES_ROUTE, ExchangeRecord
 from assistant_core.models import REQUIRED_TOOL_NAMES
 from calculator_mcp.register import register_calculator_tools
 from web_search_mcp.exchange_log import ExchangeLog
@@ -53,7 +53,7 @@ def build_server(settings: SearchSettings, searxng: SearxngClient | None = None,
         return " ".join(text.split()[: settings.words_per_page * 2])
 
     register_calculator_tools(server)
-    register_operations_routes(server, ExchangeLog(Path(settings.turns_dir)) if settings.turns_dir else None, allowed_host_list(settings))
+    register_operations_routes(server, ExchangeLog(Path(settings.exchanges_dir)) if settings.exchanges_dir else None, allowed_host_list(settings))
     return server
 
 
@@ -87,14 +87,14 @@ def register_operations_routes(server: MCPServer, exchange_log: ExchangeLog | No
             return misdirected(request)
         names = sorted(tool.name for tool in await server.list_tools())
         missing = sorted(REQUIRED_TOOL_NAMES - set(names))
-        return JSONResponse({"status": "ok" if not missing else "degraded", "tools": names, "missing": missing, "turns_dir": str(exchange_log.directory) if exchange_log else None})
+        return JSONResponse({"status": "ok" if not missing else "degraded", "tools": names, "missing": missing, "exchanges_dir": str(exchange_log.directory) if exchange_log else None})
 
-    @server.custom_route(TURNS_ROUTE, ["POST"])
-    async def turns(request: Request) -> Response:
+    @server.custom_route(EXCHANGES_ROUTE, ["POST"])
+    async def exchanges(request: Request) -> Response:
         if not host_allowed(request, allowed_hosts):
             return misdirected(request)
         if exchange_log is None:
-            return JSONResponse({"error": "turn logging is not configured (WEB_SEARCH_TURNS_DIR unset)"}, status_code=503)
+            return JSONResponse({"error": "exchange logging is not configured (WEB_SEARCH_EXCHANGES_DIR unset)"}, status_code=503)
         try:
             record = ExchangeRecord.model_validate_json(await request.body())
         except ValidationError as error:

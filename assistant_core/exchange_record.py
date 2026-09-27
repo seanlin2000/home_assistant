@@ -12,7 +12,7 @@ from pydantic import BaseModel, Field
 
 from assistant_core.models import GenerationStats, Role, RouteDecision, ToolCallRecord, Transcript
 
-TURNS_ROUTE = "/turns"
+EXCHANGES_ROUTE = "/exchanges"
 
 
 class ToolCallSummary(BaseModel):
@@ -29,7 +29,7 @@ class ExchangeRecord(BaseModel):
     source: str  # "home_assistant", "benchmark", "smoke"
     model: str
     user_text: str
-    history_turns: int  # messages in the conversation before this turn's question (0 for a fresh conversation)
+    history_messages: int  # messages in the conversation before this exchange's question (0 for a fresh conversation)
     final_answer: str
     spoken_chars: int
     route: RouteDecision | None = None
@@ -70,7 +70,7 @@ def exchange_record_from_transcript(transcript: Transcript, source: str = "home_
         source=source,
         model=transcript.model,
         user_text=user_messages[-1].content if user_messages else "",
-        history_turns=user_indexes[-1] if user_indexes else 0,
+        history_messages=user_indexes[-1] if user_indexes else 0,
         final_answer=transcript.final_answer,
         spoken_chars=len(transcript.spoken_text),
         route=transcript.route,
@@ -88,9 +88,9 @@ def exchange_record_from_transcript(transcript: Transcript, source: str = "home_
     )
 
 
-def turns_url_from_mcp_url(mcp_url: str) -> str:
-    """The tool server's record route lives beside its MCP endpoint: http://host:8765/mcp -> http://host:8765/turns."""
+def exchanges_url_from_mcp_url(mcp_url: str) -> str:
+    """The tool server's record route lives beside its MCP endpoint: http://host:8765/mcp -> http://host:8765/exchanges."""
     base = mcp_url.rstrip("/")
     if base.endswith("/mcp"):
         base = base[: -len("/mcp")]
-    return base + TURNS_ROUTE
+    return base + EXCHANGES_ROUTE

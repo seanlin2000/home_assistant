@@ -63,11 +63,11 @@ def pipeline_events() -> list[dict]:
 
 def fixture_dir(tmp_path: Path) -> Path:
     write_lines(
-        tmp_path / "turns" / "2026-09-06.jsonl",
+        tmp_path / "exchanges" / "2026-09-06.jsonl",
         [exchange_line("2026-09-06", "What is 12 percent of 250?", 4.0), exchange_line("2026-09-06", "Search the web for the Fed rate", 20.0, route="search", error="timeout")],
     )
-    write_lines(tmp_path / "turns" / "2026-09-07.jsonl", [exchange_line("2026-09-07", "Why does bread rise?", 3.0, route="answer")])
-    write_lines(tmp_path / "turns" / "2026-06-01.jsonl", [exchange_line("2026-06-01", "old", 99.0)])
+    write_lines(tmp_path / "exchanges" / "2026-09-07.jsonl", [exchange_line("2026-09-07", "Why does bread rise?", 3.0, route="answer")])
+    write_lines(tmp_path / "exchanges" / "2026-06-01.jsonl", [exchange_line("2026-06-01", "old", 99.0)])
     write_lines(
         tmp_path / "health.jsonl",
         [

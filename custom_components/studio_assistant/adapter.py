@@ -75,7 +75,7 @@ EXCHANGE_RECORD_TIMEOUT_SECONDS = 3.0
 
 
 async def post_exchange_record(client: httpx.AsyncClient, url: str, record: ExchangeRecord, timeout: float = EXCHANGE_RECORD_TIMEOUT_SECONDS) -> bool:
-    """Send one exchange's record to the tool server's /turns route (design doc 10 §3.4). Best effort: every failure is logged at debug level and swallowed,
+    """Send one exchange's record to the tool server's /exchanges route (design doc 10 §3.4). Best effort: every failure is logged at debug level and swallowed,
     because a missing log line must never cost the user an answer or a warning in Home Assistant's log."""
     try:
         response = await client.post(url, content=record.model_dump_json(), headers={"content-type": "application/json"}, timeout=timeout)

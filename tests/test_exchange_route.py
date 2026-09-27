@@ -1,4 +1,4 @@
-"""The two plain HTTP routes the tool server exposes beside /mcp: POST /turns appends an ExchangeRecord, GET /healthz names the tools."""
+"""The two plain HTTP routes the tool server exposes beside /mcp: POST /exchanges appends an ExchangeRecord, GET /healthz names the tools."""
 
 import json
 from datetime import UTC, date, datetime, timedelta
@@ -7,7 +7,7 @@ from pathlib import Path
 import httpx
 import pytest
 
-from assistant_core.exchange_record import TURNS_ROUTE, exchange_record_from_transcript
+from assistant_core.exchange_record import EXCHANGES_ROUTE, exchange_record_from_transcript
 from assistant_core.models import GenerationStats, Message, Role, Transcript
 from web_search_mcp.exchange_log import ExchangeLog
 from web_search_mcp.server import build_server, transport_security_for
@@ -27,7 +27,7 @@ def sample_record():
 
 
 def client_for(tmp_path: Path | None, allowed_hosts: str = "") -> httpx.AsyncClient:
-    settings = SearchSettings(searxng_url="http://127.0.0.1:1", turns_dir=str(tmp_path) if tmp_path else None, allowed_hosts=allowed_hosts)
+    settings = SearchSettings(searxng_url="http://127.0.0.1:1", exchanges_dir=str(tmp_path) if tmp_path else None, allowed_hosts=allowed_hosts)
     server = build_server(settings)
     return httpx.AsyncClient(transport=httpx.ASGITransport(app=server.streamable_http_app(transport_security=transport_security_for(settings))), base_url="http://testserver")
 
@@ -36,7 +36,7 @@ def client_for(tmp_path: Path | None, allowed_hosts: str = "") -> httpx.AsyncCli
 async def test_post_exchange_appends_one_line_per_record(tmp_path: Path):
     async with client_for(tmp_path) as client:
         for _ in range(2):
-            response = await client.post(TURNS_ROUTE, content=sample_record().model_dump_json(), headers={"content-type": "application/json"})
+            response = await client.post(EXCHANGES_ROUTE, content=sample_record().model_dump_json(), headers={"content-type": "application/json"})
             assert response.status_code == 204
     today = ExchangeLog(tmp_path).path_for(datetime.now(UTC).date())
     lines = today.read_text().splitlines()
@@ -47,8 +47,8 @@ async def test_post_exchange_appends_one_line_per_record(tmp_path: Path):
 @pytest.mark.asyncio
 async def test_post_exchange_rejects_bad_json_and_wrong_shape(tmp_path: Path):
     async with client_for(tmp_path) as client:
-        assert (await client.post(TURNS_ROUTE, content=b"not json")).status_code == 400
-        response = await client.post(TURNS_ROUTE, json={"hello": "world"})
+        assert (await client.post(EXCHANGES_ROUTE, content=b"not json")).status_code == 400
+        response = await client.post(EXCHANGES_ROUTE, json={"hello": "world"})
     assert response.status_code == 400
     assert "ExchangeRecord" in response.json()["error"]
     assert not list(tmp_path.iterdir())
@@ -57,7 +57,7 @@ async def test_post_exchange_rejects_bad_json_and_wrong_shape(tmp_path: Path):
 @pytest.mark.asyncio
 async def test_post_turn_without_a_directory_is_503():
     async with client_for(None) as client:
-        response = await client.post(TURNS_ROUTE, content=sample_record().model_dump_json())
+        response = await client.post(EXCHANGES_ROUTE, content=sample_record().model_dump_json())
     assert response.status_code == 503
 
 
@@ -70,7 +70,7 @@ async def test_healthz_lists_every_required_tool(tmp_path: Path):
     assert body["status"] == "ok"
     assert body["missing"] == []
     assert {"search_and_read", "calculate", "percent"} <= set(body["tools"])
-    assert body["turns_dir"] == str(tmp_path)
+    assert body["exchanges_dir"] == str(tmp_path)
 
 
 def test_exchange_log_prunes_only_old_day_files(tmp_path: Path):
@@ -98,17 +98,17 @@ def test_exchange_log_read_since_returns_records_in_day_order(tmp_path: Path):
 async def test_host_allow_list_turns_away_other_names_and_browser_origins(tmp_path: Path) -> None:
     async with client_for(tmp_path, allowed_hosts="mac.lan:8765, 127.0.0.1:8765") as client:
         body = sample_record().model_dump_json()
-        assert (await client.post(TURNS_ROUTE, content=body, headers={"host": "testserver"})).status_code == 421
+        assert (await client.post(EXCHANGES_ROUTE, content=body, headers={"host": "testserver"})).status_code == 421
         assert (await client.get("/healthz", headers={"host": "evil.example:8765"})).status_code == 421
-        assert (await client.post(TURNS_ROUTE, content=body, headers={"host": "mac.lan:8765", "origin": "http://mac.lan:8765"})).status_code == 421
-        assert (await client.post(TURNS_ROUTE, content=body, headers={"host": "mac.lan:8765"})).status_code == 204
+        assert (await client.post(EXCHANGES_ROUTE, content=body, headers={"host": "mac.lan:8765", "origin": "http://mac.lan:8765"})).status_code == 421
+        assert (await client.post(EXCHANGES_ROUTE, content=body, headers={"host": "mac.lan:8765"})).status_code == 204
         assert (await client.get("/healthz", headers={"host": "127.0.0.1:8765"})).status_code == 200
     assert sum(len(day.read_text().splitlines()) for day in tmp_path.iterdir()) == 1
 
 
 @pytest.mark.asyncio
 async def test_host_allow_list_also_guards_the_mcp_endpoint(tmp_path: Path) -> None:
-    settings = SearchSettings(searxng_url="http://127.0.0.1:1", turns_dir=str(tmp_path), allowed_hosts="mac.lan:8765")
+    settings = SearchSettings(searxng_url="http://127.0.0.1:1", exchanges_dir=str(tmp_path), allowed_hosts="mac.lan:8765")
     app = build_server(settings).streamable_http_app(transport_security=transport_security_for(settings))
     mcp_headers = {"content-type": "application/json", "accept": "application/json, text/event-stream"}
     async with app.router.lifespan_context(app), httpx.AsyncClient(transport=httpx.ASGITransport(app=app), base_url="http://testserver") as client:

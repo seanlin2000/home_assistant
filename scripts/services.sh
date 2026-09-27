@@ -85,6 +85,11 @@ prepare_kokoro() {
 install_agents() {
     mkdir -p "$AGENTS_DIR" "$LOG_DIR"
     prepare_kokoro
+    # launchd keeps running the definition it loaded, so every agent is unloaded before its plist is rewritten; start_agents then loads the new ones.
+    stop_agents
+    # With the tool server stopped, nothing appends to the old turns/ folder while the exchange logs move out of it (a no-op once moved).
+    # A failed move leaves the files where they were, so it must not stop the agents from coming back.
+    "$PROJECT_DIR/.venv/bin/python" -m ops.legacy_exchange_logs "$LOG_DIR" || echo "warning: exchange logs not moved out of $LOG_DIR/turns; rerun: .venv/bin/python -m ops.legacy_exchange_logs" >&2
     # Ollama: Homebrew's service binds to localhost only; ours binds the LAN and keeps the model loaded.
     brew services stop ollama >/dev/null 2>&1 || true
     ENV_KEYS=(OLLAMA_HOST OLLAMA_KEEP_ALIVE OLLAMA_MAX_LOADED_MODELS) ENV_VALUES=(0.0.0.0:11434 -1 1)
@@ -93,8 +98,8 @@ install_agents() {
     # WEB_SEARCH_ALLOWED_HOSTS in the environment overrides the derived list (the mini's interface may not be en0). Rerun install after an address change.
     local lan_address
     lan_address="$(ipconfig getifaddr en0 2>/dev/null || true)"
-    ENV_KEYS=(WEB_SEARCH_HOST WEB_SEARCH_PORT WEB_SEARCH_TURNS_DIR WEB_SEARCH_ALLOWED_HOSTS)
-    ENV_VALUES=(0.0.0.0 8765 "$LOG_DIR/turns" "${WEB_SEARCH_ALLOWED_HOSTS:-${lan_address:+$lan_address:8765,}localhost:8765,127.0.0.1:8765}")
+    ENV_KEYS=(WEB_SEARCH_HOST WEB_SEARCH_PORT WEB_SEARCH_EXCHANGES_DIR WEB_SEARCH_ALLOWED_HOSTS)
+    ENV_VALUES=(0.0.0.0 8765 "$LOG_DIR/exchanges" "${WEB_SEARCH_ALLOWED_HOSTS:-${lan_address:+$lan_address:8765,}localhost:8765,127.0.0.1:8765}")
     write_plist mcp "$PROJECT_DIR/.venv/bin/web-search-mcp"
     ENV_KEYS=() ENV_VALUES=()
     write_plist whisper "$PROJECT_DIR/.venv/bin/wyoming-mlx-whisper" --uri tcp://0.0.0.0:10300 --model mlx-community/whisper-large-v3-turbo --language en

@@ -102,8 +102,8 @@ async def test_post_exchange_record_sends_json_and_reports_success() -> None:
         return httpx.Response(204)
 
     async with httpx.AsyncClient(transport=httpx.MockTransport(handler)) as client:
-        assert await adapter.post_exchange_record(client, "http://mac:8765/turns", record_for_test()) is True
-    assert received["url"] == "http://mac:8765/turns"
+        assert await adapter.post_exchange_record(client, "http://mac:8765/exchanges", record_for_test()) is True
+    assert received["url"] == "http://mac:8765/exchanges"
     assert ExchangeRecord.model_validate_json(received["body"]).final_answer == "It is 30."
 
 
@@ -116,4 +116,4 @@ async def test_post_exchange_record_swallows_every_failure() -> None:
 
     for transport in (httpx.MockTransport(refuse), httpx.MockTransport(reject)):
         async with httpx.AsyncClient(transport=transport) as client:
-            assert await adapter.post_exchange_record(client, "http://mac:8765/turns", record_for_test()) is False
+            assert await adapter.post_exchange_record(client, "http://mac:8765/exchanges", record_for_test()) is False

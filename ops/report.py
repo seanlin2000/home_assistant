@@ -1,6 +1,6 @@
 """Summarise the mirrored logs from the mini (design doc 10 §3.7): what the assistant did, how fast, what failed, what the machine did to itself.
 
-Reads only the local copy in logs/mini/ (turns/*.jsonl, health.jsonl, pipeline_runs.jsonl, ollama.log); it never talks to the mini.
+Reads only the local copy in logs/mini/ (exchanges/*.jsonl, health.jsonl, pipeline_runs.jsonl, ollama.log); it never talks to the mini.
 """
 
 import re
@@ -10,6 +10,7 @@ from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
 
 from assistant_core.exchange_record import ExchangeRecord
+from ops import paths
 from ops.health import Snapshot
 from ops.pipeline_runs import PipelineRun
 from utils.jsonl_utils import read_jsonl
@@ -32,7 +33,7 @@ def fmt(value: float | None, unit: str = "s", digits: int = 1) -> str:
 
 
 def load_exchanges(log_dir: Path, since: date) -> list[ExchangeRecord]:
-    return ExchangeLog(log_dir / "turns").read_since(since)
+    return ExchangeLog(log_dir / paths.EXCHANGES_FOLDER).read_since(since)
 
 
 def load_snapshots(log_dir: Path, since: date) -> list[Snapshot]:

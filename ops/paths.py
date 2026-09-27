@@ -12,8 +12,11 @@ def log_dir() -> Path:
     return Path(override) if override else Path.home() / "Library" / "Logs" / "studio-assistant"
 
 
-def turns_dir() -> Path:
-    return log_dir() / "turns"
+EXCHANGES_FOLDER = "exchanges"
+
+
+def exchanges_dir() -> Path:
+    return log_dir() / EXCHANGES_FOLDER
 
 
 def health_json() -> Path:
