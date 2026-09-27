@@ -65,8 +65,10 @@ def log_transcript(transcript: Transcript) -> None:
         transcript.truncated,
         transcript.error,
     )
-    for tool_exchange in transcript.tool_exchanges:
-        _LOGGER.debug("  tool %s(%s) in %.1fs%s", tool_exchange.call.name, tool_exchange.call.arguments, tool_exchange.seconds, f" error={tool_exchange.error}" if tool_exchange.error else "")
+    for tool_call_record in transcript.tool_call_records:
+        _LOGGER.debug(
+            "  tool %s(%s) in %.1fs%s", tool_call_record.call.name, tool_call_record.call.arguments, tool_call_record.seconds, f" error={tool_call_record.error}" if tool_call_record.error else ""
+        )
 
 
 EXCHANGE_RECORD_TIMEOUT_SECONDS = 3.0

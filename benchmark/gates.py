@@ -9,8 +9,8 @@ def harness_gates(question: Question, result: QuestionResult, max_tool_rounds: i
     checks = (
         (Gate.SEARCHED_ON_NO_SEARCH_QUESTION, result.searched and not question.should_search),
         (Gate.DID_NOT_SEARCH_ON_SEARCH_QUESTION, question.should_search and not result.searched),
-        (Gate.MALFORMED_TOOL_CALL, any(transcript.malformed_tool_calls for transcript in result.turns)),
-        (Gate.TOO_MANY_TOOL_CALLS, any(transcript.tool_call_count > max_tool_rounds for transcript in result.turns)),
+        (Gate.MALFORMED_TOOL_CALL, any(transcript.malformed_tool_calls for transcript in result.exchanges)),
+        (Gate.TOO_MANY_TOOL_CALLS, any(transcript.tool_call_count > max_tool_rounds for transcript in result.exchanges)),
         (Gate.NO_FINAL_ANSWER, not result.final.final_answer.strip()),
         (Gate.VIOLATED_EXPLICIT_CONSTRAINT, exceeds_word_limit(question, result)),
     )

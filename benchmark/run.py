@@ -149,7 +149,7 @@ async def run_question(question: Question, candidate: Candidate, llm: LLMClient,
     transcripts: list[Transcript] = []
     conversation: list[Message] = []
     try:
-        for user_text in question.turns:
+        for user_text in question.exchanges:
             conversation.append(Message(role=Role.USER, content=user_text))
             transcript = await run_exchange(conversation, llm, toolbox, policy)
             transcripts.append(transcript)
@@ -159,11 +159,11 @@ async def run_question(question: Question, candidate: Candidate, llm: LLMClient,
             question_id=question.id,
             candidate_key=candidate.key,
             model=llm.model_name,
-            turns=transcripts or [Transcript(model=llm.model_name, system_prompt="", conversation=conversation)],
+            exchanges=transcripts or [Transcript(model=llm.model_name, system_prompt="", conversation=conversation)],
             memory_fit=memory_fit,
             error=f"{type(error).__name__}: {error}",
         )
-    return QuestionResult(question_id=question.id, candidate_key=candidate.key, model=llm.model_name, turns=transcripts, memory_fit=memory_fit)
+    return QuestionResult(question_id=question.id, candidate_key=candidate.key, model=llm.model_name, exchanges=transcripts, memory_fit=memory_fit)
 
 
 async def run_exchange(conversation: list[Message], llm: LLMClient, toolbox: McpToolBox, policy: AgentPolicy) -> Transcript:

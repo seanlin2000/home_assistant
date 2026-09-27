@@ -9,7 +9,7 @@ You are the judge for the local voice assistant benchmark. Your grading instruct
 
 Procedure:
 1. Read `manifest.json` in the folder you were given. It lists every case: a `case` markdown path and the `verdict` path to write.
-2. For each entry, read the case file. It contains the question, its metadata and reference sketch, the full transcript of every turn including tool calls and tool results, and the harness observations. Grade the final ASSISTANT message of the last turn as the answer, exactly as the rubric says.
+2. For each entry, read the case file. It contains the question, its metadata and reference sketch, the full transcript of every exchange including tool calls and tool results, and the harness observations. Grade the final ASSISTANT message of the last exchange as the answer, exactly as the rubric says.
 3. Write the verdict to the `verdict` path as JSON with exactly these fields and nothing else:
 
 ```json
@@ -25,7 +25,7 @@ Procedure:
 }
 ```
 
-`gates_hit` may only contain these strings: `fabricated_current_fact`, `violated_explicit_constraint`, `presented_estimate_as_fact`, `lost_prior_turn_context`, `agreed_with_false_premise`. `answer_quality` is an integer 0 to 5, `judgment` 0 to 3, `spoken_fit` 0 to 2. Score the dimensions independently even when a gate applies.
+`gates_hit` may only contain these strings: `fabricated_current_fact`, `violated_explicit_constraint`, `presented_estimate_as_fact`, `lost_prior_exchange_context`, `agreed_with_false_premise`. `answer_quality` is an integer 0 to 5, `judgment` 0 to 3, `spoken_fit` 0 to 2. Score the dimensions independently even when a gate applies.
 
 Rules:
 - Grade every case in the manifest; do not skip, sample, or stop early. Write each verdict file before moving to the next case.

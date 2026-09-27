@@ -126,7 +126,7 @@ class AnswerDelta(BaseModel):
     text: str
 
 
-class ToolExchange(BaseModel):
+class ToolCallRecord(BaseModel):
     round_index: int
     call: ToolCall
     result: str
@@ -138,7 +138,7 @@ class Transcript(BaseModel):
     model: str
     system_prompt: str
     conversation: list[Message]
-    tool_exchanges: list[ToolExchange] = Field(default_factory=list)
+    tool_call_records: list[ToolCallRecord] = Field(default_factory=list)
     model_calls: list[GenerationStats] = Field(default_factory=list)
     malformed_tool_calls: list[str] = Field(default_factory=list)
     spoken_text: str = ""

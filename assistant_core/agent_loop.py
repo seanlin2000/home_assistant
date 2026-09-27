@@ -22,8 +22,8 @@ from assistant_core.models import (
     Role,
     TextDelta,
     ToolCall,
+    ToolCallRecord,
     ToolCallRequest,
-    ToolExchange,
     ToolFinished,
     ToolStarted,
     Transcript,
@@ -184,19 +184,19 @@ def record_model_reply(transcript: Transcript, reply: ModelReply, messages: list
 async def execute_tool_calls(tools: ToolBox, calls: list[ToolCall], round_index: int, policy: AgentPolicy, messages: list[Message], transcript: Transcript) -> AsyncIterator[AgentEvent]:
     for call in calls:
         yield ToolStarted(call=call)
-        tool_exchange = await execute_one_call(tools, call, round_index, policy)
-        transcript.tool_exchanges.append(tool_exchange)
-        messages.append(Message(role=Role.TOOL, content=tool_exchange.result, tool_call_id=call.id, tool_name=call.name))
-        yield ToolFinished(call=call, seconds=tool_exchange.seconds, error=tool_exchange.error)
+        tool_call_record = await execute_one_call(tools, call, round_index, policy)
+        transcript.tool_call_records.append(tool_call_record)
+        messages.append(Message(role=Role.TOOL, content=tool_call_record.result, tool_call_id=call.id, tool_name=call.name))
+        yield ToolFinished(call=call, seconds=tool_call_record.seconds, error=tool_call_record.error)
 
 
-async def execute_one_call(tools: ToolBox, call: ToolCall, round_index: int, policy: AgentPolicy) -> ToolExchange:
+async def execute_one_call(tools: ToolBox, call: ToolCall, round_index: int, policy: AgentPolicy) -> ToolCallRecord:
     call_started = time.perf_counter()
     try:
         result = await asyncio.wait_for(tools.call(call), timeout=policy.tool_timeout_seconds)
-        return ToolExchange(round_index=round_index, call=call, result=result, seconds=time.perf_counter() - call_started)
+        return ToolCallRecord(round_index=round_index, call=call, result=result, seconds=time.perf_counter() - call_started)
     except Exception as error:
-        return ToolExchange(round_index=round_index, call=call, result=TOOL_UNREACHABLE_NOTICE, seconds=time.perf_counter() - call_started, error=f"{type(error).__name__}: {error}")
+        return ToolCallRecord(round_index=round_index, call=call, result=TOOL_UNREACHABLE_NOTICE, seconds=time.perf_counter() - call_started, error=f"{type(error).__name__}: {error}")
 
 
 def limit_notices(calls: list[ToolCall]) -> list[Message]:

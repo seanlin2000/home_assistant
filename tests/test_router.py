@@ -26,12 +26,12 @@ class FakeClassifier:
 
 
 def test_rules_never_fire_wrongly_on_the_question_set() -> None:
-    wrong = [(question.id, decision.route.value) for question in QUESTIONS.questions if (decision := rule_route(question.turns[-1])) and decision.route != question.route]
+    wrong = [(question.id, decision.route.value) for question in QUESTIONS.questions if (decision := rule_route(question.exchanges[-1])) and decision.route != question.route]
     assert wrong == []
 
 
 def test_rules_catch_explicit_searches_and_plain_arithmetic() -> None:
-    fired = {question.id: decision.route for question in QUESTIONS.questions if (decision := rule_route(question.turns[-1]))}
+    fired = {question.id: decision.route for question in QUESTIONS.questions if (decision := rule_route(question.exchanges[-1]))}
     assert {"B17", "B18", "B19"} <= {qid for qid, route in fired.items() if route == Route.SEARCH}
     assert {"A2", "C23", "C26", "C27", "C28"} <= {qid for qid, route in fired.items() if route == Route.CALCULATE}
     assert rule_route("Can you look up whether the pharmacy on 5th is open on Sundays?").route == Route.SEARCH

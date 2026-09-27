@@ -50,7 +50,7 @@ class ScriptedExchange(BaseModel):
 
 class ScriptedQuestion(BaseModel):
     question_id: str
-    turns: list[ScriptedExchange]
+    exchanges: list[ScriptedExchange]
 
 
 class ScriptedAnswers(BaseModel):
@@ -136,19 +136,19 @@ def load_answers(path: Path) -> ScriptedAnswers:
 
 
 async def replay_question(question: Question, scripted: ScriptedQuestion, candidate: Candidate, toolbox: McpToolBox, policy: AgentPolicy) -> QuestionResult:
-    if len(scripted.turns) != len(question.turns):
-        raise ValueError(f"{question.id}: scripted {len(scripted.turns)} exchanges, question has {len(question.turns)}")
+    if len(scripted.exchanges) != len(question.exchanges):
+        raise ValueError(f"{question.id}: scripted {len(scripted.exchanges)} exchanges, question has {len(question.exchanges)}")
     client = ScriptedAnswerClient(candidate.model)
     transcripts: list[Transcript] = []
     conversation: list[Message] = []
-    for user_text, scripted_exchange in zip(question.turns, scripted.turns):
+    for user_text, scripted_exchange in zip(question.exchanges, scripted.exchanges):
         client.load_exchange(scripted_exchange)
         conversation.append(Message(role=Role.USER, content=user_text))
         transcript = await replay_exchange(conversation, client, toolbox, policy)
         transcripts.append(transcript)
         conversation = list(transcript.conversation)
     print_result_line(question, transcripts[-1])
-    return QuestionResult(question_id=question.id, candidate_key=candidate.key, model=candidate.model, turns=transcripts)
+    return QuestionResult(question_id=question.id, candidate_key=candidate.key, model=candidate.model, exchanges=transcripts)
 
 
 async def replay_exchange(conversation: list[Message], client: ScriptedAnswerClient, toolbox: McpToolBox, policy: AgentPolicy) -> Transcript:
@@ -159,7 +159,7 @@ async def replay_exchange(conversation: list[Message], client: ScriptedAnswerCli
 
 
 def print_result_line(question: Question, transcript: Transcript) -> None:
-    searched = "search" if any(tool_exchange.call.name == "search_and_read" for tool_exchange in transcript.tool_exchanges) else "no search"
+    searched = "search" if any(tool_call_record.call.name == "search_and_read" for tool_call_record in transcript.tool_call_records) else "no search"
     truncated = " [cut by word cap]" if transcript.truncated else ""
     console.print(f"  {question.id:<4} {searched:<9} calls={transcript.tool_call_count} words={len(transcript.final_answer.split())}{truncated}")
 

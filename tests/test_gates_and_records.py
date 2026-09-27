@@ -3,23 +3,20 @@ from pathlib import Path
 import pytest
 from pydantic import ValidationError
 
-from assistant_core.models import Transcript
+from assistant_core.models import ToolCall, ToolCallRecord, Transcript
 from benchmark.gates import harness_gates
 from benchmark.records import Candidate, Gate, JudgeVerdict, QuestionResult, Score, load_config, load_questions
 
 
 def transcript(answer: str, tool_calls: int = 0, malformed: int = 0) -> Transcript:
-    exchanges = []
-    return Transcript(model="m", system_prompt="", conversation=[], final_answer=answer, tool_call_count=tool_calls, malformed_tool_calls=["x"] * malformed, tool_exchanges=exchanges)
+    return Transcript(model="m", system_prompt="", conversation=[], final_answer=answer, tool_call_count=tool_calls, malformed_tool_calls=["x"] * malformed)
 
 
 def result(question_id: str, answer: str, searched: bool, tool_calls: int = 0, malformed: int = 0) -> QuestionResult:
     record = transcript(answer, tool_calls, malformed)
     if searched:
-        from assistant_core.models import ToolCall, ToolExchange
-
-        record.tool_exchanges.append(ToolExchange(round_index=0, call=ToolCall(id="1", name="search_and_read"), result="r", seconds=0.1))
-    return QuestionResult(question_id=question_id, candidate_key="c", model="m", turns=[record])
+        record.tool_call_records.append(ToolCallRecord(round_index=0, call=ToolCall(id="1", name="search_and_read"), result="r", seconds=0.1))
+    return QuestionResult(question_id=question_id, candidate_key="c", model="m", exchanges=[record])
 
 
 QUESTIONS = load_questions(Path("benchmark/questions.yaml"))
@@ -28,7 +25,7 @@ QUESTIONS = load_questions(Path("benchmark/questions.yaml"))
 def test_question_set_shape() -> None:
     assert len(QUESTIONS.questions) == 28
     assert QUESTIONS.by_id("C23").route.value == "calculate" and QUESTIONS.by_id("B11").route.value == "search" and QUESTIONS.by_id("A1").route.value == "answer"
-    assert QUESTIONS.by_id("A6").turns[1].startswith("Suppose")
+    assert QUESTIONS.by_id("A6").exchanges[1].startswith("Suppose")
     assert QUESTIONS.by_id("A10").constraints.max_words == 120
     assert QUESTIONS.by_id("B21").should_search is True
 

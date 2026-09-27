@@ -3,7 +3,7 @@ candidate_key: claude-fable-5-1-manual-2
 answered_by: Claude Fable 5.1, fresh subagent, closed book
 questions:
   - question_id: A1
-    turns:
+    exchanges:
       - answer: >-
           Because memory is set by total parameters, not active ones. A thirty billion parameter model needs roughly fifteen to eighteen
           gigabytes at four-bit whether it is dense or a mixture of experts, so the MoE does not fit sixteen gigabytes by nature. What changes
@@ -13,7 +13,7 @@ questions:
           whole model has to sit in VRAM, both have the same problem and you would need a smaller quantization either way. Active parameters
           buy you speed, total parameters cost you memory.
   - question_id: A2
-    turns:
+    exchanges:
       - calls:
           - {name: calculate, arguments: {expression: "3500 * 1.05 * 12"}}
           - {name: calculate, arguments: {expression: "3500 * 1.03 * 12"}}
@@ -29,7 +29,7 @@ questions:
           lease saves you eight hundred forty dollars. Over two years it depends on what your rent would be after the one-year lease ends, which
           we do not know; the two-year deal wins unless you expect that renewal to come in under about three percent, or you might want to move.
   - question_id: A3
-    turns:
+    exchanges:
       - answer: >-
           No, that is not correct. Which experts fire changes from token to token, so every expert has to be loaded and ready, which means memory
           is set by the total parameter count plus the context cache, not by the four billion that are active. The four billion active is what
@@ -38,7 +38,7 @@ questions:
           stream experts in from system memory, but then the card is a cache, not the home of the model, and the four gigabytes is not what is
           running it.
   - question_id: A4
-    turns:
+    exchanges:
       - answer: >-
           The most common explanation is normal aging: the plant is putting its energy into new growth and retiring its oldest leaves, and a few
           yellow bottom leaves on a healthy, actively growing plant is usually fine. The main problem to rule out is nitrogen deficiency, since
@@ -47,7 +47,7 @@ questions:
           how many leaves are going and how fast, how often you water and whether the pot drains, when it was last fed or repotted, and whether
           the yellowing is uniform or blotchy with brown edges or spots. What is the plant, and how often are you watering it?
   - question_id: A5
-    turns:
+    exchanges:
       - answer: >-
           The core is the microphone: for a room that size you want a far-field microphone array, several capsules with beamforming and acoustic
           echo cancellation, so it can pick your voice out across the room and still hear you while it is playing sound itself; that matters
@@ -58,7 +58,7 @@ questions:
           natural. Give it a decent speaker physically separated from the mics, and plan for privacy with a hardware mute switch and local
           processing wherever you can.
   - question_id: A6
-    turns:
+    exchanges:
       - answer: >-
           For local LLMs, go with the twenty-four gigabyte machine. Memory is the hard ceiling on what you can run: sixteen gigabytes comfortably
           fits models in the eight to fourteen billion parameter range at four-bit, while twenty-four gigabytes lets you run twenty-seven to
@@ -72,7 +72,7 @@ questions:
           sixteen gigabyte machine if the extra four hundred genuinely strains your budget, or if you have already tested the specific models
           you want and they fit in sixteen with headroom.
   - question_id: A7
-    turns:
+    exchanges:
       - calls:
           - {name: energy_cost, arguments: {watts: 300, hours_per_day: 1, price_per_kwh: 0.15, days: 30, idle_watts: 50}}
           - {name: energy_cost, arguments: {watts: 300, hours_per_day: 1, price_per_kwh: 0.30, days: 30, idle_watts: 50}}
@@ -84,7 +84,7 @@ questions:
           cents about thirteen dollars and five cents. Notice the idle draw is about four fifths of the total, so the bill depends far more on
           whether the machine stays on all day than on how hard you use it.
   - question_id: A8
-    turns:
+    exchanges:
       - answer: >-
           I would recommend the router design for a personal assistant. Most of what you say to it all day is simple, timers, lights, music,
           quick facts, and for those a deterministic path is faster, cheaper, and predictable, while a small model or intent classifier decides
@@ -94,7 +94,7 @@ questions:
           mostly open-ended conversation rather than commands, or you are still prototyping, the single model is fine to start and you can add
           routing later.
   - question_id: A9
-    turns:
+    exchanges:
       - answer: >-
           Before recommending anything I would need to know where you are starting from, when and for how long you are going, and what not too
           expensive means as a number, since a budget trip from New York and one from Lisbon are different lists. I would also want to know what
@@ -103,7 +103,7 @@ questions:
           a beach, assuming you want a big city because you mentioned transit, or picking a season for you; and I should not name a destination
           as if I already knew, because with what you have said any specific pick would be a guess.
   - question_id: A10
-    turns:
+    exchanges:
       - answer: >-
           Because a model that does not fit in memory either will not load or spills into slower system memory and slows to a crawl, so capacity
           decides which models you can run at all, while GPU speed only decides how fast a model that already fits will go. A slower card with
@@ -111,11 +111,11 @@ questions:
           card with less memory simply cannot. For a local assistant, running the right model matters more than shaving fractions of a second
           off a model that is too small.
   - question_id: A11
-    turns:
+    exchanges:
       - answer: >-
           The Berlin Wall fell in nineteen eighty-nine, on the ninth of November.
   - question_id: B11
-    turns:
+    exchanges:
       - queries:
           - "federal funds rate September 2026"
         answer: >-
@@ -126,7 +126,7 @@ questions:
           actually shifted toward a possible hike because of energy-driven inflation, with three officials dissenting in favor of a hike in
           July, so the direction from here is genuinely uncertain.
   - question_id: B12
-    turns:
+    exchanges:
       - queries:
           - "best GPU under $1000 local LLM VRAM 2026"
         answer: >-
@@ -139,7 +139,7 @@ questions:
           hundred or so, and check that its power supply can feed the card. Prices are rising fast because of a memory shortage, so treat any
           figure more than a couple of weeks old as stale.
   - question_id: B13
-    turns:
+    exchanges:
       - queries:
           - "Lucerne scenic day trips by train and boat"
           - "Lucerne weather forecast Monday September 7 2026"
@@ -154,7 +154,7 @@ questions:
           alternative. I could not pull a live departure list, so check exact times in the SBB app before you leave. Do you have a Swiss Travel
           Pass, since that changes which option is cheapest?
   - question_id: B14
-    turns:
+    exchanges:
       - queries:
           - "why NVIDIA GPU prices rising 2026 supply"
         answer: >-
@@ -168,7 +168,7 @@ questions:
           sixteen gigabyte cards hit hardest because they carry the most memory for their price. The sources agree this is structural, with
           forecasts of further memory price rises through next year.
   - question_id: B15
-    turns:
+    exchanges:
       - queries:
           - "16GB NVIDIA GPU under $500 price September 2026"
           - "used RTX 4060 Ti 16GB price eBay September 2026"
@@ -182,7 +182,7 @@ questions:
           AMD's RX ninety sixty XT sixteen gigabyte at around four hundred fifty is the one mainstream sixteen gigabyte card the sources say
           still sits under five hundred new.
   - question_id: B16
-    turns:
+    exchanges:
       - queries:
           - "Long Island City average rent September 2026"
         answer: >-
@@ -196,7 +196,7 @@ questions:
           as a ceiling, not a benchmark, and judge the four percent against what it would actually cost you to move. What is the starting rent
           on the offer?
   - question_id: B17
-    turns:
+    exchanges:
       - queries:
           - "Home Assistant Voice Preview Edition custom wake word"
         answer: >-
@@ -207,7 +207,7 @@ questions:
           they come from the company that makes the device and reflect its current firmware, whereas the community project is one developer's
           repository that may lag behind. Note that openWakeWord currently only handles English wake words.
   - question_id: B18
-    turns:
+    exchanges:
       - queries:
           - "Qwen latest open-source models 2026 16GB GPU"
         answer: >-
@@ -221,7 +221,7 @@ questions:
           to two or three bits fits but degrades, and a mixture of experts gives big-model knowledge at small-model speed as long as every
           expert lives somewhere. Also cap the thinking mode, which defaults to maximum effort.
   - question_id: B19
-    turns:
+    exchanges:
       - queries:
           - "RTX 4060 Ti 16GB Qwen3.8 local"
         answer: >-
@@ -233,7 +233,7 @@ questions:
           second, the model thinks at maximum effort by default and can burn thousands of tokens before it speaks, and the same GPU also has to
           run speech recognition and text to speech. A nine B or fourteen B model on this card would feel far more responsive.
   - question_id: B20
-    turns:
+    exchanges:
       - queries:
           - "local voice assistant hardware under $1000 2026 LLM"
         answer: >-
@@ -246,7 +246,7 @@ questions:
           That answers everyday questions well and does web searches, but it is clearly a step below ChatGPT on hard reasoning. If the quality
           bar is firm, the budget needs to be closer to fifteen hundred, or the general-knowledge part has to go to a cloud model.
   - question_id: B21
-    turns:
+    exchanges:
       - queries:
           - "federal funds rate September 2026"
           - "current 30-year mortgage rates September 2026"
@@ -258,7 +258,7 @@ questions:
           if you can drop the rate by something like three quarters of a point or more and you will stay in the home long enough for the
           monthly savings to cover the closing costs. What rate are you paying now?
   - question_id: C23
-    turns:
+    exchanges:
       - calls:
           - {name: percent, arguments: {kind: of, a: 18, b: 64.50}}
           - {name: calculate, arguments: {expression: "64.50 * 1.18"}}
@@ -266,7 +266,7 @@ questions:
           An eighteen percent tip on sixty-four fifty is eleven dollars and sixty-one cents, making the total seventy-six dollars and eleven
           cents.
   - question_id: C24
-    turns:
+    exchanges:
       - calls:
           - {name: calculate, arguments: {expression: "500 * ((1 + 0.04/12)**36 - 1) / (0.04/12)"}}
           - {name: calculate, arguments: {expression: "19090.78 - 18000"}}
@@ -276,14 +276,14 @@ questions:
           deposits, so the interest earned is about one thousand ninety-one dollars; if you deposit at the start of each month instead it comes
           to about nineteen thousand one hundred fifty-four.
   - question_id: C25
-    turns:
+    exchanges:
       - calls:
           - {name: convert, arguments: {value: 72, from_unit: F, to_unit: C}}
           - {name: convert, arguments: {value: 5, from_unit: km, to_unit: mi}}
         answer: >-
           Seventy-two Fahrenheit is about twenty-two degrees Celsius, and five kilometers is about three point one miles.
   - question_id: C26
-    turns:
+    exchanges:
       - calls:
           - {name: percent, arguments: {kind: is_what_percent, a: 2850, b: 7400}}
           - {name: percent, arguments: {kind: increase_by, a: 4, b: 2850}}
@@ -291,14 +291,14 @@ questions:
           Rent takes about thirty-eight and a half percent of your take-home pay, and after a four percent increase it would be two thousand
           nine hundred sixty-four dollars a month.
   - question_id: C27
-    turns:
+    exchanges:
       - calls:
           - {name: energy_cost, arguments: {watts: 120, hours_per_day: 4, price_per_kwh: 0.30, days: 30}}
         answer: >-
           About four dollars and thirty-two cents a month: four hours at a hundred twenty watts is about half a kilowatt hour a day, fourteen
           point four over a thirty-day month, at thirty cents each. That ignores whatever the TV draws in standby.
   - question_id: C28
-    turns:
+    exchanges:
       - calls:
           - {name: loan_payment, arguments: {principal: 400000, annual_rate_percent: 6, years: 30}}
           - {name: calculate, arguments: {expression: "2398.20 * 360"}}

@@ -10,7 +10,7 @@ from datetime import UTC, datetime
 
 from pydantic import BaseModel, Field
 
-from assistant_core.models import GenerationStats, Role, RouteDecision, ToolExchange, Transcript
+from assistant_core.models import GenerationStats, Role, RouteDecision, ToolCallRecord, Transcript
 
 TURNS_ROUTE = "/turns"
 
@@ -51,14 +51,14 @@ class ExchangeRecord(BaseModel):
         return bool(self.error) or self.truncated or self.hit_tool_round_cap or self.malformed_tool_call_count > 0 or not self.final_answer.strip()
 
 
-def summarize_tool_call(tool_exchange: ToolExchange) -> ToolCallSummary:
+def summarize_tool_call(tool_call_record: ToolCallRecord) -> ToolCallSummary:
     return ToolCallSummary(
-        round_index=tool_exchange.round_index,
-        name=tool_exchange.call.name,
-        arguments=tool_exchange.call.arguments,
-        seconds=tool_exchange.seconds,
-        result_chars=len(tool_exchange.result),
-        error=tool_exchange.error,
+        round_index=tool_call_record.round_index,
+        name=tool_call_record.call.name,
+        arguments=tool_call_record.call.arguments,
+        seconds=tool_call_record.seconds,
+        result_chars=len(tool_call_record.result),
+        error=tool_call_record.error,
     )
 
 
@@ -75,7 +75,7 @@ def exchange_record_from_transcript(transcript: Transcript, source: str = "home_
         spoken_chars=len(transcript.spoken_text),
         route=transcript.route,
         model_calls=list(transcript.model_calls),
-        tool_calls=[summarize_tool_call(tool_exchange) for tool_exchange in transcript.tool_exchanges],
+        tool_calls=[summarize_tool_call(tool_call_record) for tool_call_record in transcript.tool_call_records],
         tool_call_count=transcript.tool_call_count,
         total_seconds=transcript.total_seconds,
         time_to_first_token_seconds=transcript.time_to_first_token_seconds,

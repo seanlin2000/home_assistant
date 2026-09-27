@@ -31,7 +31,7 @@ async def test_tool_call_speaks_filler_before_running_tool_then_answers() -> Non
     assert tools.calls[0].arguments == {"query": "fed funds rate"}
     transcript = events[-1].transcript
     assert transcript.tool_call_count == 1
-    assert transcript.tool_exchanges[0].result.startswith("[1] Source")
+    assert transcript.tool_call_records[0].result.startswith("[1] Source")
     second_call_messages = llm.seen_messages[1]
     assert second_call_messages[-1].role == Role.TOOL
     assert second_call_messages[-1].tool_call_id == "call_0"
@@ -77,7 +77,7 @@ async def test_tool_failure_is_reported_to_model_not_raised() -> None:
     events = await collect(llm, FakeToolBox(fail=True))
     finished = next(event for event in events if isinstance(event, ToolFinished))
     assert finished.error is not None and "ConnectionError" in finished.error
-    assert events[-1].transcript.tool_exchanges[0].result == agent_loop.TOOL_UNREACHABLE_NOTICE
+    assert events[-1].transcript.tool_call_records[0].result == agent_loop.TOOL_UNREACHABLE_NOTICE
 
 
 async def test_tool_server_unavailable_still_answers() -> None:

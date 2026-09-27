@@ -23,7 +23,7 @@ class Gate(StrEnum):
     DID_NOT_SEARCH_ON_SEARCH_QUESTION = "did_not_search_on_search_question"
     VIOLATED_EXPLICIT_CONSTRAINT = "violated_explicit_constraint"
     PRESENTED_ESTIMATE_AS_FACT = "presented_estimate_as_fact"
-    LOST_PRIOR_TURN_CONTEXT = "lost_prior_turn_context"
+    LOST_PRIOR_EXCHANGE_CONTEXT = "lost_prior_exchange_context"
     AGREED_WITH_FALSE_PREMISE = "agreed_with_false_premise"
     MALFORMED_TOOL_CALL = "malformed_tool_call"
     TOO_MANY_TOOL_CALLS = "too_many_tool_calls"
@@ -33,7 +33,7 @@ class Gate(StrEnum):
 
 from assistant_core.models import SEARCH_TOOL_NAMES  # noqa: E402 - shared with the agent loop so both agree on what counts as a search
 
-JUDGE_GATES = (Gate.FABRICATED_CURRENT_FACT, Gate.VIOLATED_EXPLICIT_CONSTRAINT, Gate.PRESENTED_ESTIMATE_AS_FACT, Gate.LOST_PRIOR_TURN_CONTEXT, Gate.AGREED_WITH_FALSE_PREMISE)
+JUDGE_GATES = (Gate.FABRICATED_CURRENT_FACT, Gate.VIOLATED_EXPLICIT_CONSTRAINT, Gate.PRESENTED_ESTIMATE_AS_FACT, Gate.LOST_PRIOR_EXCHANGE_CONTEXT, Gate.AGREED_WITH_FALSE_PREMISE)
 
 
 class Constraints(BaseModel):
@@ -47,7 +47,7 @@ class Question(BaseModel):
     category: Category
     tests: str
     expected_search: str
-    turns: list[str]
+    exchanges: list[str]
     constraints: Constraints = Field(default_factory=Constraints)
     gates_for_judge: list[Gate] = Field(default_factory=list)
     reference_sketch: str | None = None
@@ -127,17 +127,17 @@ class QuestionResult(BaseModel):
     question_id: str
     candidate_key: str
     model: str
-    turns: list[Transcript]
+    exchanges: list[Transcript]
     memory_fit: MemoryFit = Field(default_factory=MemoryFit)
     error: str | None = None
 
     @property
     def final(self) -> Transcript:
-        return self.turns[-1]
+        return self.exchanges[-1]
 
     @property
     def searched(self) -> bool:
-        return any(tool_exchange.call.name in SEARCH_TOOL_NAMES for transcript in self.turns for tool_exchange in transcript.tool_exchanges)
+        return any(tool_call_record.call.name in SEARCH_TOOL_NAMES for transcript in self.exchanges for tool_call_record in transcript.tool_call_records)
 
     @property
     def route(self) -> RouteDecision | None:
@@ -145,11 +145,11 @@ class QuestionResult(BaseModel):
 
     @property
     def calculator_call_count(self) -> int:
-        return sum(1 for transcript in self.turns for tool_exchange in transcript.tool_exchanges if tool_exchange.call.name not in SEARCH_TOOL_NAMES)
+        return sum(1 for transcript in self.exchanges for tool_call_record in transcript.tool_call_records if tool_call_record.call.name not in SEARCH_TOOL_NAMES)
 
     @property
     def tool_call_count(self) -> int:
-        return sum(transcript.tool_call_count for transcript in self.turns)
+        return sum(transcript.tool_call_count for transcript in self.exchanges)
 
 
 class JudgeVerdict(BaseModel):

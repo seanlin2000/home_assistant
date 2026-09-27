@@ -121,7 +121,7 @@ def import_verdicts(results_path: Path, question_lookup: Callable[[str], Questio
 
 
 def render_case(question: Question, result: QuestionResult, gates: list[Gate]) -> str:
-    sections = [render_question(question), *(render_exchange(index, transcript) for index, transcript in enumerate(result.turns, start=1)), render_harness_notes(result, gates)]
+    sections = [render_question(question), *(render_exchange(index, transcript) for index, transcript in enumerate(result.exchanges, start=1)), render_harness_notes(result, gates)]
     return "\n\n".join(sections)
 
 
@@ -139,7 +139,7 @@ def render_question(question: Question) -> str:
 
 
 def render_exchange(index: int, transcript: Transcript) -> str:
-    parts = [f"# Turn {index}"]
+    parts = [f"# Exchange {index}"]
     for message in transcript.conversation:
         parts.append(render_message(message))
     if transcript.truncated:
@@ -163,7 +163,7 @@ def render_harness_notes(result: QuestionResult, gates: list[Gate]) -> str:
             f"Searched: {'yes' if result.searched else 'no'}; tool calls: {result.tool_call_count}; calculator calls: {result.calculator_call_count}",
             render_route_note(result),
             f"Harness gates already applied: {', '.join(gate.value for gate in gates) or 'none'}",
-            "Grade the final ASSISTANT message of the last turn as the answer. Return the structured verdict.",
+            "Grade the final ASSISTANT message of the last exchange as the answer. Return the structured verdict.",
         ]
     )
 

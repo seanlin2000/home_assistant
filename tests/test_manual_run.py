@@ -20,7 +20,7 @@ async def test_scripted_exchange_with_queries_searches_then_answers() -> None:
     transcript = await replay(ScriptedExchange(queries=["fed funds rate", "fed funds history"], answer="It is 4.25 percent."), toolbox)
     assert [call.arguments["query"] for call in toolbox.calls] == ["fed funds rate", "fed funds history"]
     assert transcript.tool_call_count == 2
-    assert len(transcript.tool_exchanges) == 2
+    assert len(transcript.tool_call_records) == 2
     assert transcript.final_answer == "It is 4.25 percent."
     assert [message.role for message in transcript.conversation] == [Role.USER, Role.ASSISTANT, Role.TOOL, Role.TOOL, Role.ASSISTANT]
 
@@ -29,5 +29,5 @@ async def test_scripted_exchange_without_queries_never_touches_tools() -> None:
     toolbox = FakeToolBox()
     transcript = await replay(ScriptedExchange(answer="Nineteen eighty nine."), toolbox)
     assert toolbox.calls == []
-    assert transcript.tool_exchanges == []
+    assert transcript.tool_call_records == []
     assert transcript.final_answer == "Nineteen eighty nine."

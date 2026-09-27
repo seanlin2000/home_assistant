@@ -1,7 +1,7 @@
 from datetime import UTC, datetime
 
 from assistant_core.exchange_record import ExchangeRecord, exchange_record_from_transcript, turns_url_from_mcp_url
-from assistant_core.models import GenerationStats, Message, Role, Route, RouteDecision, ToolCall, ToolExchange, Transcript
+from assistant_core.models import GenerationStats, Message, Role, Route, RouteDecision, ToolCall, ToolCallRecord, Transcript
 
 
 def searched_transcript() -> Transcript:
@@ -15,7 +15,7 @@ def searched_transcript() -> Transcript:
             Message(role=Role.USER, content="What is the Fed rate today?"),
             Message(role=Role.ASSISTANT, content="It is three and a half to three and three quarters percent."),
         ],
-        tool_exchanges=[ToolExchange(round_index=0, call=call, result="x" * 5000, seconds=4.2)],
+        tool_call_records=[ToolCallRecord(round_index=0, call=call, result="x" * 5000, seconds=4.2)],
         model_calls=[
             GenerationStats(model="gemma4:12b", prompt_tokens=1800, output_tokens=40, total_seconds=3.0),
             GenerationStats(model="gemma4:12b", prompt_tokens=6200, output_tokens=90, total_seconds=7.5),

@@ -5,7 +5,7 @@ from datetime import date
 from pathlib import Path
 
 from assistant_core.exchange_record import exchange_record_from_transcript
-from assistant_core.models import GenerationStats, Message, Role, RouteDecision, ToolCall, ToolExchange, Transcript
+from assistant_core.models import GenerationStats, Message, Role, RouteDecision, ToolCall, ToolCallRecord, Transcript
 from ops import report
 from ops.pipeline_runs import summarize
 
@@ -21,7 +21,7 @@ def exchange_line(day: str, text: str, seconds: float, route: str = "calculate",
         model="gemma4:26b",
         system_prompt="",
         conversation=[Message(role=Role.USER, content=text), Message(role=Role.ASSISTANT, content="30")],
-        tool_exchanges=[ToolExchange(round_index=0, call=call, result="30", seconds=0.5, error=error)],
+        tool_call_records=[ToolCallRecord(round_index=0, call=call, result="30", seconds=0.5, error=error)],
         model_calls=[GenerationStats(model="gemma4:26b", prompt_tokens=1800, output_tokens=20, total_seconds=seconds / 2)],
         final_answer="It is 30.",
         total_seconds=seconds,
