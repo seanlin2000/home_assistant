@@ -10,16 +10,16 @@ How the assistant is installed on, updated on, watched, and debugged from a head
  laptop  ~/code/home_assistant                          Mac mini  MINI_PROJECT_DIR
  ┌───────────────────────────────────┐    ssh / rsync   ┌────────────────────────────────────────────────┐
  │ scripts/mini.sh                   │ ───────────────▶ │ scripts/bootstrap_mac.sh   (once, idempotent)  │
- │  bootstrap deploy rollback status │                  │ python -m ops.deploy apply|rollback             │
- │  logs report push-env push-models │                  │   git checkout SHA, uv sync, pytest, restart    │
- │  push-vm ssh                      │                  │   changed agents, deploy_component, last_good   │
- │ python -m ops.smoke  (asks HA one │ ── HA API ──┐    │ launchd: ollama mcp whisper kokoro  + health    │
- │   calculator question)            │             │    │   health_check.py every 300 s → health.json,    │
- │ scripts/ops_report.py             │             │    │   health.jsonl, kickstart / VM restart,         │
- │ logs/mini/   (rsync mirror,       │             │    │   log rotation, 90-day prune                    │
- │   gitignored)                     │             ▼    │ web_search_mcp :8765   POST /turns  GET /healthz │
- └───────────────────────────────────┘   HAOS VM (UTM)  │   → ~/Library/Logs/studio-assistant/turns/*.jsonl│
-                              studio_assistant component ── POST /turns (trimmed record) ──▶             │
+ │  bootstrap deploy rollback status │                  │ python -m ops.deploy apply|rollback            │
+ │  logs report push-env push-models │                  │   git checkout SHA, uv sync, pytest, restart   │
+ │  push-vm ssh                      │                  │   changed agents, deploy_component, last_good  │
+ │ python -m ops.smoke  (asks HA one │ ── HA API ──┐    │ launchd: ollama mcp whisper kokoro  + health   │
+ │   calculator question)            │             │    │   health_check.py every 300 s → health.json,   │
+ │ scripts/ops_report.py             │             │    │   health.jsonl, kickstart / VM restart,        │
+ │ logs/mini/   (rsync mirror,       │             │    │   log rotation, 90-day prune                   │
+ │   gitignored)                     │             ▼    │ web_search_mcp :8765 /healthz  POST /exchanges │
+ └───────────────────────────────────┘   HAOS VM (UTM)  │   → ~/Library/Logs/studio-assistant/exchanges/ │
+                              studio_assistant component ── POST /exchanges (trimmed record) ──▶         │
                                                         └────────────────────────────────────────────────┘
 ```
 
@@ -75,24 +75,25 @@ Three things are deliberately not in the repository. Secrets live in `.env` and 
 
 As built: `push-models` reads the model's manifest under `~/.ollama/models/manifests/` and copies exactly the blobs it names (`MINI_MODEL` in `.env`, default `gemma4:e4b-it-qat`); `push-models --pull` has the mini pull the tag instead when a fresh build is wanted. `push-vm` copies `~/Library/Containers/com.utmapp.UTM/Data/Documents/<VM name>.utm`; that folder is inside an app sandbox, so the terminal running `mini.sh` needs Full Disk Access (System Settings → Privacy & Security) or the copy fails with "Operation not permitted".
 
-### 3.4 Every assistant turn writes one record
+### 3.4 Every exchange writes one record
 
 ```
  puck / app ──▶ HA VM (192.168.1.x)                       Mac mini (same box, LAN address)
               ┌──────────────────────────────┐            ┌──────────────────────────────────────────┐
               │ Assist pipeline              │  Ollama    │ Ollama :11434                            │
               │  ▶ studio_assistant component│◀──────────▶│ tool server :8765  /mcp  (search, calc)  │
-              │     answer streams to TTS    │  MCP       │                    /turns  POST ─┐       │
-              │     on Done: build TurnRecord│───────────▶│                                   ▼       │
-              │     (user text, answer, route│  POST      │ ~/Library/Logs/studio-assistant/turns/    │
-              │      tool names+args+seconds,│  fire-and- │   2026-09-07.jsonl   (append one line)    │
-              │      token stats, timings;   │  forget    │   pruned after 90 days                    │
+              │     answer streams to TTS    │  MCP       │                /exchanges  POST ─┐       │
+              │     on Done: build           │───────────▶│                                  ▼       │
+              │     ExchangeRecord (user     │  POST      │ ~/Library/Logs/studio-assistant/         │
+              │      text, answer, route,    │  fire-and- │   exchanges/2026-09-07.jsonl             │
+              │      tool names+args+seconds,│  forget    │   append one line; pruned after 90 days  │
+              │      token stats, timings;   │            │                                          │
               │      no page text)           │            └──────────────────────────────────────────┘
               └──────────────────────────────┘
                 A failed post is logged and ignored; the spoken answer is never delayed.
 ```
 
-The agent loop already produces a `Transcript` for every turn (doc 04); the benchmark scores those objects. In production the component turns the transcript into a `TurnRecord`, a trimmed copy that keeps what a debugging session needs and drops what it does not: the user's words, the final answer, the route decision, every tool call's name, arguments, duration, error, and the size of its result, every model call's token counts and timings, and the flags the benchmark gates on (truncated, round cap hit, empty retries, malformed calls, error). The full text of fetched web pages is dropped; it is thousands of words per search and can be re-fetched. The record is posted to a plain HTTP route on the tool server, which the component already talks to for every search, and the server appends it as one line to a file named by the day. The post runs as a background task after the answer has been spoken, with a short timeout, and any failure is logged and swallowed: logging must never make the assistant slower or quieter.
+The agent loop already produces a `Transcript` for every exchange (doc 04); the benchmark scores those objects. In production the component turns the transcript into an `ExchangeRecord`, a trimmed copy that keeps what a debugging session needs and drops what it does not: the user's words, the final answer, the route decision, every tool call's name, arguments, duration, error, and the size of its result, every model call's token counts and timings, and the flags the benchmark gates on (truncated, round cap hit, empty retries, malformed calls, error). The full text of fetched web pages is dropped; it is thousands of words per search and can be re-fetched. The record is posted to a plain HTTP route on the tool server, which the component already talks to for every search, and the server appends it as one line to a file named by the day. The post runs as a background task after the answer has been spoken, with a short timeout, and any failure is logged and swallowed: logging must never make the assistant slower or quieter.
 
 Why the tool server rather than a file inside the VM: it puts every log on the Mac's disk under one directory, so a single copy operation retrieves them all, and it avoids reaching into the VM over the SMB share that once hung (doc 08 §11).
 
@@ -114,7 +115,7 @@ Why the tool server rather than a file inside the VM: it puts every log on the M
     ├─ VM stopped ────────────────────▶ utmctl start
     ├─ HA down 5 checks (25 min) ─────▶ VM stop + start        (2 h cooldown)
     ├─ maintenance flag present ──────▶ do nothing (a deploy is running)
-    └─ once a day ────────────────────▶ rotate logs > 20 MB, prune turns and history > 90 days
+    └─ once a day ────────────────────▶ rotate logs > 20 MB, prune exchanges and history > 90 days
 ```
 
 A fifth launchd agent runs `scripts/health_check.py` every five minutes. It probes each part of the stack the cheapest way that proves the part is really ours: Ollama's version endpoint, the tool server's `/healthz` route (which must list the tool names the agent depends on, the same identity check the benchmark makes before a run), a TCP connect to Whisper and Kokoro, SearXNG's HTTP port (the query probe that hits upstream engines is reserved for `--full`, so the loop does not fire 288 searches a day), Home Assistant's `/api/` (a 401 without a token is a healthy answer), and the VM's state from `utmctl`. Each snapshot also records the machine's free memory percentage, swap in use, and the size of the model Ollama has resident, because memory creep is the failure this machine is most likely to have.
@@ -135,7 +136,7 @@ Home Assistant legitimately disappears for minutes during its own updates and ad
 
 ### 3.6 Log rotation and retention
 
-launchd opens each service's log file in append mode and never closes it. The health check, once per calendar day, copies any log over 20 MB to a numbered generation, keeps three generations, and truncates the live file in place. Because the file is open in append mode, the service keeps writing at the new end without noticing; this is why in-place truncation was chosen over macOS's own `newsyslog`, whose rename-based rotation would leave a running Ollama writing to the renamed file until it restarted, and restarting Ollama means reloading the model. The same daily pass deletes turn files older than 90 days and trims the health history to 90 days. The retention period is a decision, not a default: turn records contain what was said in the apartment, and the user chose to keep a quarter's worth for debugging.
+launchd opens each service's log file in append mode and never closes it. The health check, once per calendar day, copies any log over 20 MB to a numbered generation, keeps three generations, and truncates the live file in place. Because the file is open in append mode, the service keeps writing at the new end without noticing; this is why in-place truncation was chosen over macOS's own `newsyslog`, whose rename-based rotation would leave a running Ollama writing to the renamed file until it restarted, and restarting Ollama means reloading the model. The same daily pass deletes exchange files older than 90 days and trims the health history to 90 days. The retention period is a decision, not a default: exchange records contain what was said in the apartment, and the user chose to keep a quarter's worth for debugging.
 
 ### 3.7 Retrieving the logs and reading them on the laptop
 
@@ -144,13 +145,13 @@ launchd opens each service's log file in append mode and never closes it. The he
  ┌───────────────────────────────┐    ssh + rsync -az       ┌──────────────────────────────────────┐
  │ mini.sh logs                  │ ───── pull ────────────▶ │ ~/Library/Logs/studio-assistant/     │
  │   logs/mini/   (gitignored)   │ ◀──── only changed ───── │   ollama.log mcp.log whisper.log     │
- │     ollama.log ... turns/ ... │       bytes come back    │   kokoro.log  turns/*.jsonl          │
+ │     ollama.log ... exchanges/ │       bytes come back    │   kokoro.log  exchanges/*.jsonl      │
  │     health.json health.jsonl  │                          │   health.json health.jsonl           │
  │                               │    HA API (token)        │   last_good_ref                      │
  │   + pipeline_runs.jsonl       │ ◀──── recent runs ────── │ HA VM: assist pipeline debug store   │
  │                               │                          └──────────────────────────────────────┘
  │ mini.sh report --days 7       │
- │   ops_report.py reads         │   turns/day, median time to first word, p90 total, route mix,
+ │   ops_report.py reads         │   exchanges/day, median time to first word, p90 total, route mix,
  │   logs/mini/ and prints ───▶  │   tool errors, health incidents, memory trend, Ollama tok/s
  └───────────────────────────────┘
    Nothing is deleted on the laptop; debugging happens from these files, not on the mini.
@@ -158,7 +159,7 @@ launchd opens each service's log file in append mode and never closes it. The he
 
 `scripts/mini.sh logs` mirrors the mini's log directory into `logs/mini/` on the laptop with rsync over SSH, which transfers only the bytes that changed since the last pull, so after the first run it takes a second. It also asks Home Assistant's API for its recent pipeline runs (the per-stage timings and transcripts that Home Assistant keeps only in memory and only for a handful of runs) and appends them to a file, which is what makes that view durable. The laptop copy is never pruned automatically, so the laptop can hold more history than the mini. The folder is git-ignored.
 
-`scripts/mini.sh report --days N` pulls and then renders a summary from the local copy: turns per day, median time to first spoken word, the slowest answers, the mix of routes, tool calls and failures by tool, the benchmark-style failure flags, health incidents with their durations and the actions taken, the memory trend, and Ollama's prompt-reading and generation speeds parsed both from the turn records (assistant traffic only) and from Ollama's own log (all traffic). When the summary points at something, the raw lines are in `logs/mini/` for a person or a Claude session to read. No session on the mini is needed for any of this.
+`scripts/mini.sh report --days N` pulls and then renders a summary from the local copy: exchanges per day, median time to first spoken word, the slowest answers, the mix of routes, tool calls and failures by tool, the benchmark-style failure flags, health incidents with their durations and the actions taken, the memory trend, and Ollama's prompt-reading and generation speeds parsed both from the exchange records (assistant traffic only) and from Ollama's own log (all traffic). When the summary points at something, the raw lines are in `logs/mini/` for a person or a Claude session to read. No session on the mini is needed for any of this.
 
 ### 3.8 Deploy and rollback
 
@@ -210,7 +211,7 @@ The mini is reachable only on the home network. No router port is forwarded, and
 - Remote Login is restricted to the one account through the `com.apple.access_ssh` group, which is what the Sharing pane's "only these users" setting edits.
 - The application firewall is on. The processes that must accept LAN connections (Ollama, the virtual environment's interpreter for the Wyoming and tool servers, Docker, UTM) are allowed explicitly, because a headless machine cannot answer the per-application dialog macOS would otherwise show.
 - Screen Sharing is turned off after bootstrap and reached, when needed, through an SSH tunnel rather than left open.
-- FileVault stays off. This is a trade: a headless machine must log in by itself after a power cut for the user agents to start, and FileVault would wait at a password prompt with no one to type it. The data at stake is the assistant's configuration and its turn logs, in an apartment.
+- FileVault stays off. This is a trade: a headless machine must log in by itself after a power cut for the user agents to start, and FileVault would wait at a password prompt with no one to type it. The data at stake is the assistant's configuration and its exchange logs, in an apartment.
 - macOS automatic updates are off; updates are applied deliberately, as doc 08 §6 says, after the monthly Home Assistant update.
 
 ## 4. Packages and tools, and what each does for the business logic
@@ -219,8 +220,8 @@ The mini is reachable only on the home network. No router port is forwarded, and
 |---|---|
 | `ops` (ours) | The Python behind every operation: `ha_client` (the Home Assistant REST and websocket helper, moved out of the setup script so the health check, smoke test, and deploy share it), `health` (probes, policy, housekeeping), `deploy` (plan from a diff, apply, rollback, last-good bookkeeping, manifest-versus-lock preflight), `smoke` (one question through the conversation API), `pipeline_runs` (pulls Home Assistant's in-memory Assist debug runs into a file), `report` (renders `logs/mini/` into a summary), `paths` (the one place that knows where files live). |
 | `packaging`, `tomllib` | Parse the component manifest's requirement specifiers and `uv.lock` for the preflight. `packaging` arrives with the dev tools; `tomllib` is in the standard library. |
-| `assistant_core.turn_record` (ours) | The trimmed per-turn record and the function that builds it from a `Transcript`. Pure pydantic so it imports inside Home Assistant's own Python, where the component runs. |
-| `web_search_mcp` routes | Two plain HTTP routes added to the MCP server: `POST /turns` appends a record, `GET /healthz` proves the server is ours by listing its tools. The MCP library exposes custom routes for exactly this kind of health and admin endpoint. |
+| `assistant_core.exchange_record` (ours) | The trimmed per-exchange record and the function that builds it from a `Transcript`. Pure pydantic so it imports inside Home Assistant's own Python, where the component runs. |
+| `web_search_mcp` routes | Two plain HTTP routes added to the MCP server: `POST /exchanges` appends a record, `GET /healthz` proves the server is ours by listing its tools. The MCP library exposes custom routes for exactly this kind of health and admin endpoint. |
 | `httpx`, `pydantic` | Already project dependencies: HTTP probes and posts, typed records that serialise to JSON lines. |
 | launchd | macOS's service manager. The four services use `KeepAlive` so a crash restarts them; the health check uses `StartInterval` so it runs on a schedule and exits. `launchctl kickstart -k` is how one agent is restarted by name. |
 | `utmctl` | UTM's command line: start, stop, and query the VM. The only thing that touches the VM besides the SMB copy. |
@@ -235,16 +236,16 @@ The mini is reachable only on the home network. No router port is forwarded, and
 |---|---|---|
 | `MINI_HOST`, `MINI_USER`, `MINI_PROJECT_DIR`, `MINI_MODEL` | `.env` on the laptop | The mini's address (a DHCP reservation), the login user, the clone path on the mini (relative to its home), the model `push-models` copies. During laptop testing: `localhost`, the laptop user, a second clone. |
 | `HEALTH_INTERVAL_SECONDS`, `HEALTH_CHECK_FLAGS` | environment of `services.sh install` | 300; empty on the mini, `--no-remediate` on the laptop |
-| `WEB_SEARCH_TURNS_DIR` | mcp launchd plist, written by `services.sh` | `~/Library/Logs/studio-assistant/turns` |
+| `WEB_SEARCH_EXCHANGES_DIR` | mcp launchd plist, written by `services.sh` | `~/Library/Logs/studio-assistant/exchanges` |
 | `WEB_SEARCH_ALLOWED_HOSTS` | mcp launchd plist, written by `services.sh`; the environment of `services.sh install` overrides it | `<LAN address>:8765,localhost:8765,127.0.0.1:8765`. The LAN address comes from `ipconfig getifaddr en0`; rerun `services.sh install` after an address change (the DHCP reservation makes that rare), and set the variable by hand on a Mac whose LAN interface is not `en0`. |
 | `STUDIO_LOG_DIR` | environment, optional | Overrides the log directory, for tests |
 | Health interval | `services.sh` | 300 s |
 | Health thresholds and cooldowns | `ops/health.py` policy | The table in §3.5 |
 | Log rotation | `ops/health.py` | 20 MB, 3 generations |
-| Retention | `ops/health.py` | 90 days for turns and health history |
+| Retention | `ops/health.py` | 90 days for exchanges and health history |
 | Smoke question | `ops/smoke.py` | "What is 12 percent of 250?" expecting "30", 60 s |
 | VM memory on the mini | `HAOS_VM_MEMORY_MB` / UTM config | 3072 MB |
-| Log directory layout on the mini | | `ollama.log mcp.log whisper.log kokoro.log health.log` (rotated copies `.1 .2 .3`), `turns/YYYY-MM-DD.jsonl`, `health.json`, `health.jsonl`, `health_state.json`, `last_good_ref`, `maintenance` (flag), `deploy.lock` |
+| Log directory layout on the mini | | `ollama.log mcp.log whisper.log kokoro.log health.log` (rotated copies `.1 .2 .3`), `exchanges/YYYY-MM-DD.jsonl`, `health.json`, `health.jsonl`, `health_state.json`, `last_good_ref`, `maintenance` (flag), `deploy.lock` |
 | Non-Python software | `Brewfile` | installed by `brew bundle` in the bootstrap; what was actually installed is recorded in `docs/VERSIONS.md` |
 | Mirror on the laptop | | `logs/mini/` with the same layout plus `pipeline_runs.jsonl`; git-ignored |
 
@@ -278,7 +279,7 @@ The mini is reachable only on the home network. No router port is forwarded, and
 
 Everything above exists in the repository. What was exercised on the laptop before the mini exists:
 
-- `POST /turns` end to end: the component (0.2.0) was deployed to the VM, one calculator question was asked through the conversation API, and one line appeared in `~/Library/Logs/studio-assistant/turns/2026-09-07.jsonl` with the tool call, both model calls' token counts, and no page text. The turn took 57 s on the laptop because Home Assistant's config entry still points at `gemma4:12b`, which had to load under memory pressure; the record shows exactly that (`time_to_first_spoken_seconds` 44 s, first model call 44.6 s, second 9.6 s).
+- `POST /exchanges` end to end (then called `POST /turns`): the component (0.2.0) was deployed to the VM, one calculator question was asked through the conversation API, and one line appeared in `~/Library/Logs/studio-assistant/turns/2026-09-07.jsonl` (the folder's name before it became `exchanges/`) with the tool call, both model calls' token counts, and no page text. The exchange took 57 s on the laptop because Home Assistant's config entry still points at `gemma4:12b`, which had to load under memory pressure; the record shows exactly that (`time_to_first_spoken_seconds` 44 s, first model call 44.6 s, second 9.6 s).
 - The health agent is installed on the laptop (`StartInterval 300`, `--no-remediate`) and writes `health.json`, `health.jsonl`, and `health_state.json`; `--dry-run` correctly proposed `vm_start` with the VM stopped and reported Whisper and Kokoro as skipped.
 - `ops.deploy apply --dry-run` against an older commit produced the expected plan (`reinstall_agents` for the services script, `deploy_component` for the changed core); the real `apply`, `rollback`, and the laptop-to-itself SSH drill still need Remote Login on the laptop, which requires the administrator password and is left to the user (the steps are in the plan and in `mini.sh`'s header).
 - `scripts/ops_report.py` renders from the laptop's own log directory; `bootstrap_mac.sh --dry-run` prints every step without changing anything.

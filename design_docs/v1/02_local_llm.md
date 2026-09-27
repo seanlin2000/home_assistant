@@ -94,7 +94,7 @@ Several 2026 models can "think" before answering: they generate a hidden chain o
 - Which model tag is loaded: decided by the benchmark, set in `assistant_core` config.
 - `OLLAMA_KEEP_ALIVE`: how long the model stays resident after a request. Set to `-1` (forever) on the production Mac so the first question of the day is not slow.
 - `OLLAMA_NUM_PARALLEL`: 1. One user, one conversation at a time.
-- Context length (`num_ctx`): 16k in production, enough for a system prompt, a few turns, and two fetched pages.
+- Context length (`num_ctx`): 16k in production, enough for a system prompt, a few exchanges, and two fetched pages.
 - Temperature and `think` per request, fixed in `assistant_core.prompts`.
 - `iogpu.wired_limit_mb` on the prototype machine only.
 

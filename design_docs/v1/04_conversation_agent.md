@@ -17,7 +17,7 @@ The loop that turns a transcribed question into a spoken answer. It holds the pe
  │              (music, weather)               ▼                   │
  │                                   ┌───────────────────────┐    │
  │                                   │ HA adapter             │    │
- │                                   │  chat_log ⇄ core turns │    │
+ │                                   │  chat_log ⇄ messages   │    │
  │                                   │  stream deltas to TTS  │    │
  │                                   │  continue_conversation │    │
  │                                   └──────────┬────────────┘    │
@@ -26,7 +26,7 @@ The loop that turns a transcribed question into a spoken answer. It holds the pe
                                                 ▼
         assistant_core.agent_loop.run(conversation, llm, tools, policy)
         ┌───────────────────────────────────────────────────────────────────────────────────┐
-        │ 1. messages = [system prompt] + this conversation's turns (+ memory.get_context()) │
+        │ 1. messages = [system prompt] + the conversation so far (+ memory.get_context())   │
         │ 2. stream = llm.chat(messages, tools, temperature, think=False)                    │──▶ Ollama
         │ 3. for each delta:                                                                 │
         │      text        → yield to caller (HA speaks it as it arrives)                    │
@@ -34,15 +34,15 @@ The loop that turns a transcribed question into a spoken answer. It holds the pe
         │                    result = tools.call(name, args)   ────────────────────────────────▶ web_search_mcp
         │                    append tool result; go to 2 (max 4 rounds)                      │
         │ 4. final answer complete → policy: continue_conversation = True                    │
-        │ 5. transcript (turns, tool calls, excerpts, timings) returned for logging/benchmark │
+        │ 5. transcript (messages, tool calls, excerpts, timings) returned for logs/benchmark │
         └───────────────────────────────────────────────────────────────────────────────────┘
 ```
 
 ## 3. How it works, step by step
 
-1. Home Assistant's pipeline has already turned speech into text and tried its built-in intents. Music and weather never reach us. Everything else arrives as `ConversationInput` with the text, a conversation id, and a `ChatLog` holding the earlier turns of this conversation.
-2. The adapter converts the chat log into the core's plain turn list and calls `agent_loop.run`.
-3. The core builds the message list: the shared system prompt (persona "Jarvis", English, one to three sentences, lead with the answer, no lists or URLs aloud, when to search), then the turns. `memory.get_context()` is called and, in v1, returns nothing; this is the seam for persistent memory later.
+1. Home Assistant's pipeline has already turned speech into text and tried its built-in intents. Music and weather never reach us. Everything else arrives as `ConversationInput` with the text, a conversation id, and a `ChatLog` holding the earlier messages of this conversation.
+2. The adapter converts the chat log into the core's plain message list and calls `agent_loop.run`.
+3. The core builds the message list: the shared system prompt (persona "Jarvis", English, one to three sentences, lead with the answer, no lists or URLs aloud, when to search), then the conversation's messages. `memory.get_context()` is called and, in v1, returns nothing; this is the seam for persistent memory later.
 4. The core streams from the model. Text deltas are yielded upward immediately; the adapter writes them into the chat log as streaming content, and Home Assistant's text-to-speech starts on the first complete sentence.
 5. If the model emits a tool call instead, the core first yields a filler sentence chosen from a short list ("Let me pull some sources on that.", "One moment, checking the web."). Because it is yielded before the tool runs, the listener hears it within a second of finishing their question. Then the tool is executed through the MCP client, its result appended as a tool message, and the model is called again. At most four tool rounds.
 6. When the final answer finishes, the adapter returns a `ConversationResult` with `continue_conversation=True`, which tells the puck to reopen the microphone for a few seconds without the wake word.
@@ -61,7 +61,7 @@ The benchmark must exercise exactly the code the product runs, or it measures th
 
 - **Brevity.** The system prompt asks for one to three sentences and the answer first. The agent also enforces a soft cap: if a response runs past a word budget, the remainder is dropped after the current sentence, and the model is told in the system prompt that it can offer more detail if asked.
 - **Filler before tools.** Deterministic, in code, not left to the model.
-- **Follow-up.** `continue_conversation=True` after every answer. A follow-up arrives as a new `async_process` call with the same conversation id and the chat log already holding the prior turns, which is how the two-turn benchmark question works too.
+- **Follow-up.** `continue_conversation=True` after every answer. A follow-up arrives as a new `async_process` call with the same conversation id and the chat log already holding the prior exchanges, which is how the two-exchange benchmark question works too.
 - **Search restraint.** The system prompt tells the model when to search (current facts, prices, schedules, anything after its training cutoff, anything it is unsure about) and when not to (arithmetic, explanations, opinions).
 - **Memory seam.** `memory.py` defines `get_context(conversation) -> str` and `remember(conversation) -> None` with a no-op implementation. Persistent memory later means swapping the implementation, not rewriting the loop.
 
@@ -71,7 +71,7 @@ The benchmark must exercise exactly the code the product runs, or it measures th
 |---|---|
 | `ollama` | `OllamaClient` streams chat completions with tool schemas from the local model. |
 | `mcp` (client) | Connects to `web_search_mcp`, lists tools, converts their schemas into the shape each provider expects, executes calls. |
-| `pydantic` | Typed `Turn`, `ToolCall`, `Transcript`, and `AgentPolicy` (temperature, max tool rounds, word budget, filler phrases). |
+| `pydantic` | Typed `Message`, `ToolCall`, `Transcript`, and `AgentPolicy` (temperature, max tool rounds, word budget, filler phrases). |
 | Home Assistant `conversation` platform | `ConversationEntity`, `ChatLog`, `ConversationResult`, streaming content deltas, `continue_conversation`. The adapter is written against these. |
 | `pytest-homeassistant-custom-component` | Boots a minimal Home Assistant in tests so the adapter can be exercised without the VM. |
 
@@ -82,7 +82,7 @@ Set through the component's UI config flow and stored by Home Assistant: Ollama 
 ## 8. Failure modes
 
 - **Model returns a tool call in plain text instead of the structured field.** Treated as no tool call. Logged. Small models do this; the benchmark surfaces which ones.
-- **Tool server down.** The core yields "I can't reach the web right now" and answers from knowledge with an explicit caveat rather than failing the turn.
+- **Tool server down.** The core yields "I can't reach the web right now" and answers from knowledge with an explicit caveat rather than failing the exchange.
 - **Model loops on tools.** Hard cap of four rounds, then the model is asked to answer with what it has.
 - **Answer too long for a spoken reply.** Soft cap after the current sentence.
 - **Home Assistant API change.** The conversation platform has evolved monthly through 2025 and 2026. The component pins the Home Assistant version it is tested against; bumps go through the test suite first.
@@ -96,7 +96,7 @@ Set through the component's UI config flow and stored by Home Assistant: Ollama 
 
 **Streaming.** Receiving the answer token by token as it is generated rather than waiting for the whole thing. For voice it means speech can start after the first sentence.
 
-**Conversation id and chat log.** Home Assistant groups turns into a conversation and hands the agent the history each time, so the agent itself stores nothing between calls. Statelessness makes the component simple and the benchmark reproducible.
+**Conversation id and chat log.** Home Assistant groups exchanges into a conversation and hands the agent the history each time, so the agent itself stores nothing between calls. Statelessness makes the component simple and the benchmark reproducible.
 
 **Custom component.** A Python package dropped into Home Assistant's `custom_components/` folder that Home Assistant loads at startup. It declares its Python dependencies in `manifest.json`, and Home Assistant installs them into its own environment inside the VM.
 
@@ -115,7 +115,7 @@ Set through the component's UI config flow and stored by Home Assistant: Ollama 
 
 - `assistant_core/models.py` holds the typed vocabulary: `Message`, `ToolCall`, `ToolSpec`, `AgentPolicy`, the model-client events (`TextDelta`, `ToolCallRequest`, `MalformedToolCall`, `Completion`), the agent events (`FillerSpoken`, `ToolStarted`, `ToolFinished`, `AnswerDelta`, `Done`), and `Transcript`.
 - `agent_loop.run(conversation, llm, tools, policy, memory)` is an async generator. The filler sentence is yielded the moment the first tool call arrives, before the tool runs. Tool failures are turned into a notice the model sees rather than an exception. At the tool-round cap the pending calls get a "tool limit reached" notice and the model is asked once more to answer; that answer streams to the listener through the same word cap as any other.
-- The spoken word cap is applied to the stream: past the budget, speech stops at the end of the current sentence and `Transcript.truncated` is set. `spoken_text` is what the listener heard across the whole turn; `final_answer` is the model's last message in full.
+- The spoken word cap is applied to the stream: past the budget, speech stops at the end of the current sentence and `Transcript.truncated` is set. `spoken_text` is what the listener heard across the whole exchange; `final_answer` is the model's last message in full.
 - `llm_client.OllamaClient` streams through the `ollama` package with `think` passed only when the candidate config sets it, and retries once without it for model families that reject the switch.
 - `tools.McpToolBox` wraps the MCP client; `memory.NoMemory` is the v1 memory implementation.
 - The Home Assistant adapter (`custom_components/studio_assistant`) is not built yet; it belongs to Phase 2.
@@ -170,13 +170,13 @@ Three things had to change once the code ran inside Home Assistant's own Python 
 
 - **`tools.py` imports `mcp` lazily.** Home Assistant ships `mcp==1.26.0` for its built-in MCP integration; our venv has `mcp` 2.1.1, whose `mcp.client.client.Client` does not exist in 1.x. The component never uses `McpToolBox` (it uses the httpx-only `HttpMcpToolBox`), but `agent_loop` imports `tools` for the `ToolBox` protocol, so the module-level import made the whole component fail to load with `ModuleNotFoundError: No module named 'mcp.client.client'`. The import now happens inside `McpToolBox.__aenter__`, and `render_tool_result` duck-types the result instead of importing the `mcp` types.
 - **The Ollama client is built off the event loop.** Creating `ollama.AsyncClient` creates an `httpx.AsyncClient`, which loads the CA bundle from disk; Home Assistant flags that as a blocking call in the event loop. `conversation.py` constructs it with `hass.async_add_executor_job`.
-- **The filler sentence depends on the tool.** A calculator call used to say "Let me pull some sources on that." `AgentPolicy` now has `calculate_filler_phrases` ("Let me work that out.", "One second, doing the math.") and `agent_loop.filler_for` picks the list by whether the first tool of the turn is in `SEARCH_TOOL_NAMES`, which moved to `assistant_core.models` so the benchmark and the loop share one definition.
+- **The filler sentence depends on the tool.** A calculator call used to say "Let me pull some sources on that." `AgentPolicy` now has `calculate_filler_phrases` ("Let me work that out.", "One second, doing the math.") and `agent_loop.filler_for` picks the list by whether the first tool of the exchange is in `SEARCH_TOOL_NAMES`, which moved to `assistant_core.models` so the benchmark and the loop share one definition.
 
 Deployment is `scripts/deploy_component.py`: it stages the component with `assistant_core` vendored under `vendor/`, mounts the VM's `config` share over SMB (the Samba add-on), copies the tree into `custom_components/studio_assistant`, unmounts, and calls the restart service. Home Assistant 2026.9 usually drops that HTTP connection as it shuts down instead of answering, so the script treats a dropped connection as accepted and polls `/api/` until the API is back (about 30 s).
 
 ## 14. As built, 2026-09-06: the directive moves into the system prompt (prompt 1.3)
 
-Pass 2 showed the router choosing "calculate" correctly for Qwen 3.5 9B on every arithmetic question while the model made zero calculator calls; a rerun of the eight arithmetic questions reproduced it exactly. The directive was a bracketed "[Assistant note: ...]" appended to the user's message, which models read as part of the request rather than as an operator rule. From prompt version 1.3, `apply_route` appends the directive to the system prompt for that turn and leaves the user's message untouched:
+Pass 2 showed the router choosing "calculate" correctly for Qwen 3.5 9B on every arithmetic question while the model made zero calculator calls; a rerun of the eight arithmetic questions reproduced it exactly. The directive was a bracketed "[Assistant note: ...]" appended to the user's message, which models read as part of the request rather than as an operator rule. From prompt version 1.3, `apply_route` appends the directive to the system prompt for that exchange and leaves the user's message untouched:
 
 ```
  SYSTEM  base prompt (unchanged)

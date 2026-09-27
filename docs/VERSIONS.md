@@ -15,7 +15,7 @@ What the proof of concept was built and measured with, so a future upgrade can b
 | UTM | 4.7.5 | | `defaults read /Applications/UTM.app/Contents/Info CFBundleShortVersionString` |
 | Home Assistant OS / Core | 18.2 / 2026.9.1 | | Settings → About, or `GET /api/config` (`version`) |
 | Add-ons | Samba 12.10.0, Piper 2.3.4, openWakeWord 2.1.1, Music Assistant 2.10.2, ESPHome 2026.8.2 | | Settings → Add-ons |
-| `studio_assistant` component | 0.2.0 (posts turn records) | | `custom_components/studio_assistant/manifest.json` |
+| `studio_assistant` component | 0.2.0 (posts exchange records) | | `custom_components/studio_assistant/manifest.json` |
 | Key wheels (from `uv.lock`) | mcp 2.1.1, httpx 0.28.1, pydantic 2.13.5, ollama 0.6.2, trafilatura 2.2.0, wyoming-mlx-whisper 1.5.0, mlx-whisper 0.4.3, wyoming-kokoro-torch 3.2.0 | same lock | `grep -A1 '^name = "mcp"' uv.lock` |
 
 ## How to refresh this file

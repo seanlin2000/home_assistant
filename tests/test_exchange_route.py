@@ -55,7 +55,7 @@ async def test_post_exchange_rejects_bad_json_and_wrong_shape(tmp_path: Path):
 
 
 @pytest.mark.asyncio
-async def test_post_turn_without_a_directory_is_503():
+async def test_post_exchange_without_a_directory_is_503():
     async with client_for(None) as client:
         response = await client.post(EXCHANGES_ROUTE, content=sample_record().model_dump_json())
     assert response.status_code == 503
