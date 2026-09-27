@@ -19,6 +19,11 @@ def tool_turn(query: str, call_id: str = "call_0", tool_name: str = "search_and_
     return [ToolCallRequest(call=call), Completion(message=Message(role=Role.ASSISTANT, content="", tool_calls=[call]), stats=GenerationStats(model="fake", total_seconds=0.1))]
 
 
+def tool_turns_past_the_cap(policy: AgentPolicy) -> list[list[LLMEvent]]:
+    """One tool request per allowed round plus the one that trips the round cap."""
+    return [tool_turn(f"q{round_index}", f"call_{round_index}") for round_index in range(policy.max_tool_rounds + 1)]
+
+
 def empty_turn() -> list[LLMEvent]:
     """What Ollama hands back when it swallowed the model's output: a completion with no text and no tool calls."""
     return [Completion(message=Message(role=Role.ASSISTANT, content=""), stats=GenerationStats(model="fake", total_seconds=0.1))]

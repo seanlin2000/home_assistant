@@ -104,7 +104,10 @@ async def run(conversation: list[Message], llm: LLMClient, tools: ToolBox, polic
         if round_index == policy.max_tool_rounds:
             transcript.hit_tool_round_cap = True
             messages.extend(limit_notices(turn.tool_calls))
-            turn = await answer_without_tools(llm, messages, tool_specs, policy, transcript, cap)
+            turn = ModelTurn()
+            async for event in stream_model_turn(llm, messages, tool_specs, policy, turn, cap, transcript, started):
+                yield event
+            record_turn(transcript, turn, messages)
             break
         async for event in execute_tool_calls(tools, turn.tool_calls, round_index, policy, messages, transcript):
             yield event
@@ -198,20 +201,6 @@ async def execute_one_call(tools: ToolBox, call: ToolCall, round_index: int, pol
 
 def limit_notices(calls: list[ToolCall]) -> list[Message]:
     return [Message(role=Role.TOOL, content=TOOL_LIMIT_NOTICE, tool_call_id=call.id, tool_name=call.name) for call in calls]
-
-
-async def answer_without_tools(llm: LLMClient, messages: list[Message], tool_specs: list, policy: AgentPolicy, transcript: Transcript, cap: SpokenAnswerCap) -> ModelTurn:
-    turn = ModelTurn()
-    async for event in llm.chat(messages, tool_specs, policy):
-        if isinstance(event, TextDelta):
-            turn.text_parts.append(event.text)
-            cap.admit(event.text)
-        elif isinstance(event, ToolCallRequest):
-            turn.tool_calls.append(event.call)
-        elif isinstance(event, Completion):
-            turn.completion = event
-    record_turn(transcript, turn, messages)
-    return turn
 
 
 def finish_transcript(transcript: Transcript, turn: ModelTurn, cap: SpokenAnswerCap, messages: list[Message], started: float) -> None:
