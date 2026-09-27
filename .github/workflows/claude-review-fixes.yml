@@ -1,0 +1,63 @@
+name: claude-review-fixes
+
+# One round of the review loop: when the Codex reviewer submits a review, Claude fixes what it can, pushes, replies in each
+# thread, and asks Codex to look again. Setup and the round cap are described in docs/review_loop.md.
+
+on:
+  pull_request_review:
+    types: [submitted]
+
+concurrency:
+  group: review-fixes-${{ github.event.pull_request.number }}
+  cancel-in-progress: false
+
+jobs:
+  fix:
+    if: github.event.review.user.login == 'chatgpt-codex-connector[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+      id-token: write
+      actions: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          fetch-depth: 0
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+      - run: uv sync --frozen --no-group voice
+      - name: Install shfmt and shellcheck
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq shellcheck
+          sudo curl -sSL -o /usr/local/bin/shfmt https://github.com/mvdan/sh/releases/download/v3.14.0/shfmt_v3.14.0_linux_amd64
+          sudo chmod +x /usr/local/bin/shfmt
+      - uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          allowed_bots: chatgpt-codex-connector
+          track_progress: true
+          prompt: |
+            You are answering a code review on pull request #${{ github.event.pull_request.number }} in ${{ github.repository }}.
+            The reviewer is the Codex bot. Follow docs/review_loop.md exactly. In short:
+
+            1. Count the existing "Review round" comments on the PR with `gh pr view --comments`. If there are already 3, post a
+               comment saying the round cap is reached and that a human must take over, and stop.
+            2. List every unresolved review thread with the GitHub API (`gh api graphql`, reviewThreads with isResolved=false).
+            3. For each thread: if the point is right, fix it in the code. If it is wrong or out of scope, reply explaining why
+               and leave the thread unresolved. Never resolve a thread you did not act on.
+            4. Run `scripts/lint.sh`, `uv run deslop`, and `uv run pytest -q`. All three must pass before you push.
+            5. Commit with a message that names the threads addressed, then `git push`. Never force-push. Never edit files under
+               .github/workflows.
+            6. If any fixed code is cited in the PR description, re-run `uv run pr-refs resolve` for those symbols and update
+               the description with `gh pr edit --body-file` so `uv run pr-refs check` passes on it.
+            7. Reply in each fixed thread with one sentence on what changed, and resolve it (resolveReviewThread mutation).
+            8. Post one PR comment titled "Review round N" summarising fixed threads, declined threads, and the commit hash.
+            9. If you fixed anything, post the comment "@codex review" so the reviewer looks again. If you fixed nothing, do not.
+          claude_args: |
+            --max-turns 40
+            --allowedTools "Bash(uv run *),Bash(scripts/lint.sh*),Bash(git *),Bash(gh *),Read,Edit,Write,Glob,Grep"
