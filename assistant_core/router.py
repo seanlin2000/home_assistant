@@ -1,8 +1,9 @@
-"""Decide, before the model speaks, whether a question needs the web, the calculator, or neither, and say so in the message the model sees.
+"""Decide, before the model speaks, whether a question needs the web, the calculator, or neither, and say so in the system prompt the model sees.
 
 Two layers. Rules fire on unmistakable wording (an explicit request to search, or several numbers with an arithmetic cue) at no cost. When no rule fires,
-one short structured-output call asks the same model to classify the question. Either way the decision is appended to the user message as a bracketed
-note, because Ollama offers no way to force a tool call. The decision is recorded on the transcript so the benchmark can score the router on its own.
+one short structured-output call asks the same model to classify the question. For search and calculate a directive naming the tool to call is appended to
+the system prompt, because Ollama offers no way to force a tool call; answer adds nothing, and the user's message is left exactly as spoken. The decision
+is recorded on the transcript so the benchmark can score the router on its own.
 """
 
 import re
