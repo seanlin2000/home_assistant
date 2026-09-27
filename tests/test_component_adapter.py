@@ -8,8 +8,10 @@ from typing import Any
 
 import httpx
 
-from assistant_core.models import AgentEvent, AgentPolicy, AnswerDelta, Done, FillerSpoken, Role, ToolCall, ToolStarted, Transcript
+from assistant_core import agent_loop
+from assistant_core.models import AgentEvent, AgentPolicy, AnswerDelta, Done, FillerSpoken, Message, Role, ToolCall, ToolStarted, Transcript
 from assistant_core.turn_record import TurnRecord, turn_record_from_transcript
+from tests.fakes import FakeToolBox, ScriptedLLM, text_turn, tool_turns_past_the_cap
 
 ADAPTER_PATH = Path("custom_components/studio_assistant/adapter.py")
 spec = importlib.util.spec_from_file_location("studio_assistant_adapter", ADAPTER_PATH)
@@ -56,6 +58,14 @@ async def test_filler_and_answer_become_one_streamed_assistant_message() -> None
     assert deltas[0] == {"role": "assistant"}
     assert "".join(delta.get("content", "") for delta in deltas[1:]) == "Let me check. It is 3.63 percent."
     assert all("tool_calls" not in delta for delta in deltas)
+
+
+async def test_answer_after_the_tool_round_cap_follows_the_filler() -> None:
+    policy = AgentPolicy(filler_phrases=["Let me check."])
+    llm = ScriptedLLM([*tool_turns_past_the_cap(policy), text_turn("It is ", "3.63 percent.")])
+    conversation = [Message(role=Role.USER, content="What is the fed funds rate?")]
+    deltas = await collect(agent_loop.run(conversation, llm, FakeToolBox(), policy))
+    assert [delta.get("content") for delta in deltas[1:]] == ["Let me check. ", "It is ", "3.63 percent."]
 
 
 async def test_empty_answer_gets_a_spoken_fallback() -> None:

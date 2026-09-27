@@ -1,7 +1,7 @@
 from assistant_core import agent_loop
 from assistant_core.agent_loop import SpokenAnswerCap
 from assistant_core.models import AgentEvent, AgentPolicy, AnswerDelta, Done, FillerSpoken, Message, Role, ToolFinished, ToolStarted
-from tests.fakes import FakeToolBox, ScriptedLLM, empty_turn, text_turn, tool_turn
+from tests.fakes import FakeToolBox, ScriptedLLM, empty_turn, text_turn, tool_turn, tool_turns_past_the_cap
 
 
 async def collect(llm: ScriptedLLM, tools: FakeToolBox, policy: AgentPolicy | None = None) -> list[AgentEvent]:
@@ -46,6 +46,30 @@ async def test_tool_round_cap_forces_a_final_answer() -> None:
     assert transcript.tool_call_count == 3
     assert transcript.final_answer == "Here is what I have."
     assert agent_loop.TOOL_LIMIT_NOTICE in [message.content for message in llm.seen_messages[-1]]
+
+
+async def test_answer_after_the_tool_round_cap_is_spoken() -> None:
+    policy = AgentPolicy(filler_phrases=["Checking."])
+    llm = ScriptedLLM([*tool_turns_past_the_cap(policy), text_turn("Here is ", "what I found.")])
+    events = await collect(llm, FakeToolBox(), policy)
+    spoken = [event.text for event in events if isinstance(event, AnswerDelta)]
+    transcript = events[-1].transcript
+    assert spoken == ["Here is ", "what I found."]
+    assert transcript.spoken_text == "".join(spoken).strip()
+    assert transcript.hit_tool_round_cap is True
+    assert transcript.final_answer == "Here is what I found."
+    assert len(transcript.model_calls) == policy.max_tool_rounds + 2
+
+
+async def test_answer_after_the_tool_round_cap_is_cut_by_the_word_budget() -> None:
+    policy = AgentPolicy(word_budget=3, filler_phrases=["Checking."])
+    llm = ScriptedLLM([*tool_turns_past_the_cap(policy), text_turn("One two three four. ", "Five six.")])
+    events = await collect(llm, FakeToolBox(), policy)
+    transcript = events[-1].transcript
+    assert [event.text for event in events if isinstance(event, AnswerDelta)] == ["One two three four. "]
+    assert transcript.spoken_text == "One two three four."
+    assert transcript.truncated is True
+    assert transcript.final_answer == "One two three four. Five six."
 
 
 async def test_tool_failure_is_reported_to_model_not_raised() -> None:
