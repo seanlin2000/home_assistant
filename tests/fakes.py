@@ -7,31 +7,31 @@ from assistant_core.models import AgentPolicy, Completion, GenerationStats, LLME
 SEARCH_TOOL = ToolSpec(name="search_and_read", description="search", input_schema={"type": "object", "properties": {"query": {"type": "string"}}, "required": ["query"]})
 
 
-def text_turn(*chunks: str) -> list[LLMEvent]:
+def text_reply(*chunks: str) -> list[LLMEvent]:
     return [
         *(TextDelta(text=chunk) for chunk in chunks),
         Completion(message=Message(role=Role.ASSISTANT, content="".join(chunks)), stats=GenerationStats(model="fake", total_seconds=0.1, time_to_first_token_seconds=0.05)),
     ]
 
 
-def tool_turn(query: str, call_id: str = "call_0", tool_name: str = "search_and_read") -> list[LLMEvent]:
+def tool_reply(query: str, call_id: str = "call_0", tool_name: str = "search_and_read") -> list[LLMEvent]:
     call = ToolCall(id=call_id, name=tool_name, arguments={"query": query})
     return [ToolCallRequest(call=call), Completion(message=Message(role=Role.ASSISTANT, content="", tool_calls=[call]), stats=GenerationStats(model="fake", total_seconds=0.1))]
 
 
-def tool_turns_past_the_cap(policy: AgentPolicy) -> list[list[LLMEvent]]:
+def tool_replies_past_the_cap(policy: AgentPolicy) -> list[list[LLMEvent]]:
     """One tool request per allowed round plus the one that trips the round cap."""
-    return [tool_turn(f"q{round_index}", f"call_{round_index}") for round_index in range(policy.max_tool_rounds + 1)]
+    return [tool_reply(f"q{round_index}", f"call_{round_index}") for round_index in range(policy.max_tool_rounds + 1)]
 
 
-def empty_turn() -> list[LLMEvent]:
+def empty_reply() -> list[LLMEvent]:
     """What Ollama hands back when it swallowed the model's output: a completion with no text and no tool calls."""
     return [Completion(message=Message(role=Role.ASSISTANT, content=""), stats=GenerationStats(model="fake", total_seconds=0.1))]
 
 
 class ScriptedLLM:
-    def __init__(self, turns: list[list[LLMEvent]]) -> None:
-        self._turns = list(turns)
+    def __init__(self, replies: list[list[LLMEvent]]) -> None:
+        self._replies = list(replies)
         self.seen_messages: list[list[Message]] = []
 
     @property
@@ -40,9 +40,9 @@ class ScriptedLLM:
 
     async def chat(self, messages: list[Message], tools: list[ToolSpec], policy: AgentPolicy) -> AsyncIterator[LLMEvent]:
         self.seen_messages.append(list(messages))
-        if not self._turns:
+        if not self._replies:
             raise AssertionError("model called more times than scripted")
-        for event in self._turns.pop(0):
+        for event in self._replies.pop(0):
             yield event
 
 

@@ -60,7 +60,7 @@ class AgentPolicy(BaseModel):
     tool_timeout_seconds: float = 30.0
 
 
-# Spoken while the first tool call of a turn runs, so the user hears something within a second or two. Search and calculation get different
+# Spoken while the first tool call of an exchange runs, so the user hears something within a second or two. Search and calculation get different
 # lines because "checking the web" is wrong, and mildly alarming, when the assistant is only doing arithmetic locally.
 DEFAULT_FILLER_PHRASES = (
     "Let me pull some sources on that.",
@@ -126,7 +126,7 @@ class AnswerDelta(BaseModel):
     text: str
 
 
-class ToolExchange(BaseModel):
+class ToolCallRecord(BaseModel):
     round_index: int
     call: ToolCall
     result: str
@@ -138,7 +138,7 @@ class Transcript(BaseModel):
     model: str
     system_prompt: str
     conversation: list[Message]
-    tool_exchanges: list[ToolExchange] = Field(default_factory=list)
+    tool_call_records: list[ToolCallRecord] = Field(default_factory=list)
     model_calls: list[GenerationStats] = Field(default_factory=list)
     malformed_tool_calls: list[str] = Field(default_factory=list)
     spoken_text: str = ""

@@ -90,7 +90,7 @@ step "virtual environment (uv sync --frozen)"
 run "$TARGET_DIR/scripts/dev_setup.sh"
 
 step "log directory"
-run mkdir -p "$HOME/Library/Logs/studio-assistant/turns"
+run mkdir -p "$HOME/Library/Logs/studio-assistant/exchanges"
 
 # ---------------------------------------------------------------- 3. services
 step "Docker Desktop and SearXNG"

@@ -9,9 +9,9 @@ from typing import Any
 import httpx
 
 from assistant_core import agent_loop
+from assistant_core.exchange_record import ExchangeRecord, exchange_record_from_transcript
 from assistant_core.models import AgentEvent, AgentPolicy, AnswerDelta, Done, FillerSpoken, Message, Role, ToolCall, ToolStarted, Transcript
-from assistant_core.turn_record import TurnRecord, turn_record_from_transcript
-from tests.fakes import FakeToolBox, ScriptedLLM, text_turn, tool_turns_past_the_cap
+from tests.fakes import FakeToolBox, ScriptedLLM, text_reply, tool_replies_past_the_cap
 
 ADAPTER_PATH = Path("custom_components/studio_assistant/adapter.py")
 spec = importlib.util.spec_from_file_location("studio_assistant_adapter", ADAPTER_PATH)
@@ -25,7 +25,7 @@ class FakeContent:
     content: str | None = None
 
 
-def test_chat_log_keeps_spoken_turns_only() -> None:
+def test_chat_log_keeps_spoken_messages_only() -> None:
     contents = [
         FakeContent("system", "HA's own prompt"),
         FakeContent("user", "I'm deciding between 16 and 24 GB."),
@@ -62,7 +62,7 @@ async def test_filler_and_answer_become_one_streamed_assistant_message() -> None
 
 async def test_answer_after_the_tool_round_cap_follows_the_filler() -> None:
     policy = AgentPolicy(filler_phrases=["Let me check."])
-    llm = ScriptedLLM([*tool_turns_past_the_cap(policy), text_turn("It is ", "3.63 percent.")])
+    llm = ScriptedLLM([*tool_replies_past_the_cap(policy), text_reply("It is ", "3.63 percent.")])
     conversation = [Message(role=Role.USER, content="What is the fed funds rate?")]
     deltas = await collect(agent_loop.run(conversation, llm, FakeToolBox(), policy))
     assert [delta.get("content") for delta in deltas[1:]] == ["Let me check. ", "It is ", "3.63 percent."]
@@ -89,11 +89,11 @@ async def test_on_done_receives_the_transcript_before_the_stream_ends() -> None:
     assert deltas[-1] == {"content": "Done."}
 
 
-def record_for_test() -> TurnRecord:
-    return turn_record_from_transcript(Transcript(model="m", system_prompt="", conversation=[], final_answer="It is 30."))
+def record_for_test() -> ExchangeRecord:
+    return exchange_record_from_transcript(Transcript(model="m", system_prompt="", conversation=[], final_answer="It is 30."))
 
 
-async def test_post_turn_record_sends_json_and_reports_success() -> None:
+async def test_post_exchange_record_sends_json_and_reports_success() -> None:
     received = {}
 
     def handler(request: httpx.Request) -> httpx.Response:
@@ -102,12 +102,12 @@ async def test_post_turn_record_sends_json_and_reports_success() -> None:
         return httpx.Response(204)
 
     async with httpx.AsyncClient(transport=httpx.MockTransport(handler)) as client:
-        assert await adapter.post_turn_record(client, "http://mac:8765/turns", record_for_test()) is True
-    assert received["url"] == "http://mac:8765/turns"
-    assert TurnRecord.model_validate_json(received["body"]).final_answer == "It is 30."
+        assert await adapter.post_exchange_record(client, "http://mac:8765/exchanges", record_for_test()) is True
+    assert received["url"] == "http://mac:8765/exchanges"
+    assert ExchangeRecord.model_validate_json(received["body"]).final_answer == "It is 30."
 
 
-async def test_post_turn_record_swallows_every_failure() -> None:
+async def test_post_exchange_record_swallows_every_failure() -> None:
     def refuse(request: httpx.Request) -> httpx.Response:
         raise httpx.ConnectError("connection refused")
 
@@ -116,4 +116,4 @@ async def test_post_turn_record_swallows_every_failure() -> None:
 
     for transport in (httpx.MockTransport(refuse), httpx.MockTransport(reject)):
         async with httpx.AsyncClient(transport=transport) as client:
-            assert await adapter.post_turn_record(client, "http://mac:8765/turns", record_for_test()) is False
+            assert await adapter.post_exchange_record(client, "http://mac:8765/exchanges", record_for_test()) is False

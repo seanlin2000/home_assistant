@@ -163,6 +163,8 @@ cmd_logs() {
         exec ssh -t "${SSH_OPTS[@]}" "$REMOTE" "tail -n 100 -f '$REMOTE_LOG_DIR/$1.log'"
     fi
     mkdir -p "$LOCAL_LOGS"
+    # Before the pull, so the mini's exchanges/ lands on top of the mirror's moved copy and the history the mini has pruned moves with it.
+    "$PYTHON" -m ops.legacy_exchange_logs "$LOCAL_LOGS"
     # No --delete: the laptop keeps history the mini has pruned.
     rsync -az --exclude 'deploy.lock' "$REMOTE:$REMOTE_LOG_DIR/" "$LOCAL_LOGS/"
     "$PYTHON" -m ops.pipeline_runs "$LOCAL_LOGS/pipeline_runs.jsonl"

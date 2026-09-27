@@ -123,10 +123,10 @@ def test_prune_history_drops_old_snapshots(tmp_path: Path) -> None:
 
 def test_housekeeping_touches_every_file_under_the_log_dir(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv("STUDIO_LOG_DIR", str(tmp_path))
-    paths.turns_dir().mkdir()
-    (paths.turns_dir() / "2025-01-01.jsonl").write_text("{}\n")
-    (paths.turns_dir() / "2026-09-01.jsonl").write_text("{}\n")
+    paths.exchanges_dir().mkdir()
+    (paths.exchanges_dir() / "2025-01-01.jsonl").write_text("{}\n")
+    (paths.exchanges_dir() / "2026-09-01.jsonl").write_text("{}\n")
     paths.service_log("mcp").write_bytes(b"x" * (health.ROTATE_OVER_BYTES + 1))
     notes = health.housekeeping(today=date(2026, 9, 7))
     assert notes == ["rotated mcp.log", "deleted 2025-01-01.jsonl"]
-    assert (paths.turns_dir() / "2026-09-01.jsonl").exists()
+    assert (paths.exchanges_dir() / "2026-09-01.jsonl").exists()

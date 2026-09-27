@@ -19,7 +19,7 @@ Choose the language model, and therefore the hardware, from evidence instead of 
                                           └───────┼────────────────────────────────────────────┘
                                                   ▼
                                     results/<date>/<model>.jsonl
-                                    (question, turns, tool calls, retrieved excerpts, answer,
+                                    (question, exchanges, tool calls, retrieved excerpts, answer,
                                      time to first token, total latency, tokens, word count)
                                                   │
                         ┌─────────────────────────┼──────────────────────────────┐
@@ -40,7 +40,7 @@ Choose the language model, and therefore the hardware, from evidence instead of 
 
 ## 3. How it works, step by step
 
-1. `run.py` loads the questions and, for each candidate model, runs every question through `assistant_core.agent_loop` with the shared system prompt and the two search tools. The two-turn question is run as a real two-turn conversation. Each run writes one JSONL line per question with the full transcript and timing.
+1. `run.py` loads the questions and, for each candidate model, runs every question through `assistant_core.agent_loop` with the shared system prompt and the two search tools. The two-exchange question is run as a real two-exchange conversation. Each run writes one JSONL line per question with the full transcript and timing.
 2. The harness applies the gates it can detect mechanically: whether a tool was called, how many times, whether the final answer exists, and word counts against explicit limits.
 3. `judge.py --export` writes each transcript to a case file together with the question's metadata and (for reasoning questions) a short reference sketch. The `benchmark-judge` Claude Code subagent grades every case against the rubric and writes strict JSON: which gates it believes were hit, three dimension scores, and a one-sentence justification per score.
 4. `report.py` merges harness gates and judge output. Any gate failure zeroes that question. It renders a markdown report and a review sheet containing a fixed random 20% of answers plus every case where the judge and the harness disagree on a gate.
@@ -60,7 +60,7 @@ Stored verbatim in `benchmark/questions.yaml`. Category A should be answered wit
 | A3 | Challenging a false premise | Someone says that because an MoE model only activates 4 billion parameters per token, a 4 GB GPU should be enough to run it. Is that correct? Explain exactly why or why not. |
 | A4 | Diagnosis under uncertainty, asking for missing information | My plant is growing new leaves quickly near the top, but its older lower leaves are gradually yellowing and dying. The plant is otherwise healthy. What are the most likely explanations, and what information would you want before deciding whether this is normal or a problem? |
 | A5 | Planning under constraints, no product names | I live in a 500-square-foot studio and want a voice assistant that can hear me from across the room. I care more about microphone quality and natural conversation than smart-home automation. Give me the main hardware design considerations without recommending specific products. |
-| A6 | Two-turn context. Turn 1 then turn 2 | Turn 1: I'm deciding between a computer with 16 GB of VRAM and one with 24 GB. I primarily care about running a local LLM. Turn 2: Suppose the 24 GB machine costs $400 more. Does that change your recommendation? |
+| A6 | Two-exchange context. Exchange 1 then exchange 2 | Exchange 1: I'm deciding between a computer with 16 GB of VRAM and one with 24 GB. I primarily care about running a local LLM. Exchange 2: Suppose the 24 GB machine costs $400 more. Does that change your recommendation? |
 | A7 | Estimation with explicit assumptions | I have a computer that consumes 50 watts when idle and 300 watts during active inference. If I interact with it for roughly one hour per day, estimate the monthly electricity cost. State your assumptions instead of pretending you know exactly how much time it spends under load. |
 | A8 | Systems thinking, comparing designs | For a personal AI assistant, compare these two designs: one large LLM handles every request, versus a smaller router that sends simple commands to deterministic tools and only uses a larger LLM for complex questions. Which would you recommend and why? |
 | A9 | Recognizing ambiguity instead of inventing preferences | I say: "I want to go somewhere warm but not too expensive, preferably with good public transportation." What information is missing before you can make a good recommendation, and what assumptions should you avoid making? |
@@ -115,7 +115,7 @@ Any gate failure sets the question's score to 0 and is listed by name in the rep
 | Did not search on a Category B question | Harness: no tool call |
 | Violated an explicit constraint (budget, no product names, word limit) | Harness for word limits, judge for the rest |
 | Presented an estimate or assumption as a measured fact | Judge |
-| Lost prior-turn context on A6, or asked the user to repeat it | Judge |
+| Lost prior-exchange context on A6, or asked the user to repeat it | Judge |
 | Agreed with the false premise in A3 | Judge |
 | Malformed tool calls, more than 4 tool calls, or no final answer | Harness |
 
@@ -261,7 +261,7 @@ Pass 1 was graded through the Anthropic API with the same rubric as its system p
 
 ### Passes 3 and 4: where the router's directive lives, 2026-09-06
 
-Pass 2 showed Qwen 3.5 9B ignoring the calculator on every arithmetic question even though the router had appended the instruction to the user's message. Pass 3 (prompt 1.3) moved that directive into the system prompt for the turn and added a worked example, including a finished spoken answer. Pass 4 (prompt 1.4) kept the placement but trimmed each directive to the instruction and one example call, because in pass 3 the smaller models had started imitating the example's answer instead of making the call. Only the three small models ran under 1.3 and 1.4; the large models still wait for a prompt decision. Results folders were renamed from dates to `version_N` at the same time, and from pass 4 on the search backend is Startpage and Yahoo rather than Google, Bing, Brave, and DuckDuckGo (doc 03, section 13).
+Pass 2 showed Qwen 3.5 9B ignoring the calculator on every arithmetic question even though the router had appended the instruction to the user's message. Pass 3 (prompt 1.3) moved that directive into the system prompt for the exchange and added a worked example, including a finished spoken answer. Pass 4 (prompt 1.4) kept the placement but trimmed each directive to the instruction and one example call, because in pass 3 the smaller models had started imitating the example's answer instead of making the call. Only the three small models ran under 1.3 and 1.4; the large models still wait for a prompt decision. Results folders were renamed from dates to `version_N` at the same time, and from pass 4 on the search backend is Startpage and Yahoo rather than Google, Bing, Brave, and DuckDuckGo (doc 03, section 13).
 
 | Candidate | Pass 2 (1.2, user-message note) | Pass 3 (1.3, system prompt with worked example) | Pass 4 (1.4, system prompt with example call) |
 |---|---|---|---|

@@ -68,7 +68,7 @@ class CandidateReport:
         return "n/a" if flags == {None} else ("yes" if flags == {True} else "NO")
 
     def route_outcomes(self, question_set: QuestionSet) -> list[tuple[Question, object]]:
-        """(question, decision) for every result whose final turn was routed."""
+        """(question, decision) for every result whose final exchange was routed."""
         outcomes = []
         for result in self.results:
             if result.route is not None:
@@ -319,7 +319,7 @@ def review_entry(report: CandidateReport, score: Score, question_set: QuestionSe
         "candidate": report.candidate.key,
         "question_id": score.question_id,
         "why_selected": "harness and judge disagree on the search decision" if score.harness_and_judge_disagree else "random sample",
-        "question": question_set.by_id(score.question_id).turns,
+        "question": question_set.by_id(score.question_id).exchanges,
         "searched": result.searched,
         "spoken_answer": result.final.spoken_text or result.final.final_answer,
         "judge": {

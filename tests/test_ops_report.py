@@ -4,8 +4,8 @@ import json
 from datetime import date
 from pathlib import Path
 
-from assistant_core.models import GenerationStats, Message, Role, RouteDecision, ToolCall, ToolExchange, Transcript
-from assistant_core.turn_record import turn_record_from_transcript
+from assistant_core.exchange_record import exchange_record_from_transcript
+from assistant_core.models import GenerationStats, Message, Role, RouteDecision, ToolCall, ToolCallRecord, Transcript
 from ops import report
 from ops.pipeline_runs import summarize
 
@@ -15,13 +15,13 @@ def write_lines(path: Path, records: list[dict]) -> None:
     path.write_text("".join(json.dumps(record) + "\n" for record in records))
 
 
-def turn(day: str, text: str, seconds: float, route: str = "calculate", error: str | None = None) -> dict:
+def exchange_line(day: str, text: str, seconds: float, route: str = "calculate", error: str | None = None) -> dict:
     call = ToolCall(id="c", name="percent", arguments={"a": 12, "b": 250, "kind": "of"})
     transcript = Transcript(
         model="gemma4:26b",
         system_prompt="",
         conversation=[Message(role=Role.USER, content=text), Message(role=Role.ASSISTANT, content="30")],
-        tool_exchanges=[ToolExchange(round_index=0, call=call, result="30", seconds=0.5, error=error)],
+        tool_call_records=[ToolCallRecord(round_index=0, call=call, result="30", seconds=0.5, error=error)],
         model_calls=[GenerationStats(model="gemma4:26b", prompt_tokens=1800, output_tokens=20, total_seconds=seconds / 2)],
         final_answer="It is 30.",
         total_seconds=seconds,
@@ -29,7 +29,7 @@ def turn(day: str, text: str, seconds: float, route: str = "calculate", error: s
         route=RouteDecision(route=route, source="rule"),
         tool_call_count=1,
     )
-    record = turn_record_from_transcript(transcript)
+    record = exchange_record_from_transcript(transcript)
     return json.loads(record.model_dump_json()) | {"recorded_at": f"{day}T12:00:00+00:00"}
 
 
@@ -63,10 +63,11 @@ def pipeline_events() -> list[dict]:
 
 def fixture_dir(tmp_path: Path) -> Path:
     write_lines(
-        tmp_path / "turns" / "2026-09-06.jsonl", [turn("2026-09-06", "What is 12 percent of 250?", 4.0), turn("2026-09-06", "Search the web for the Fed rate", 20.0, route="search", error="timeout")]
+        tmp_path / "exchanges" / "2026-09-06.jsonl",
+        [exchange_line("2026-09-06", "What is 12 percent of 250?", 4.0), exchange_line("2026-09-06", "Search the web for the Fed rate", 20.0, route="search", error="timeout")],
     )
-    write_lines(tmp_path / "turns" / "2026-09-07.jsonl", [turn("2026-09-07", "Why does bread rise?", 3.0, route="answer")])
-    write_lines(tmp_path / "turns" / "2026-06-01.jsonl", [turn("2026-06-01", "old", 99.0)])
+    write_lines(tmp_path / "exchanges" / "2026-09-07.jsonl", [exchange_line("2026-09-07", "Why does bread rise?", 3.0, route="answer")])
+    write_lines(tmp_path / "exchanges" / "2026-06-01.jsonl", [exchange_line("2026-06-01", "old", 99.0)])
     write_lines(
         tmp_path / "health.jsonl",
         [
@@ -88,9 +89,9 @@ def fixture_dir(tmp_path: Path) -> Path:
     return tmp_path
 
 
-def test_report_covers_turns_health_pipeline_and_ollama(tmp_path: Path) -> None:
+def test_report_covers_exchanges_health_pipeline_and_ollama(tmp_path: Path) -> None:
     text = report.render(fixture_dir(tmp_path), days=7, today=date(2026, 9, 7))
-    assert "Turns: 3" in text  # the June turn is outside the window
+    assert "Exchanges: 3" in text  # the June exchange is outside the window
     assert "2026-09-06 2, 2026-09-07 1" in text
     assert "routes: calculate 1, search 1, answer 1" in text or "routes: " in text
     assert "percent 3 (1 failed)" in text
@@ -105,7 +106,7 @@ def test_report_covers_turns_health_pipeline_and_ollama(tmp_path: Path) -> None:
 
 def test_report_on_an_empty_directory_does_not_crash(tmp_path: Path) -> None:
     text = report.render(tmp_path, days=1, today=date(2026, 9, 7))
-    assert "Turns: 0" in text and "Health checks: 0" in text and "no print_timing" in text
+    assert "Exchanges: 0" in text and "Health checks: 0" in text and "no print_timing" in text
 
 
 def test_pipeline_summary_reads_stage_timings_and_errors() -> None:

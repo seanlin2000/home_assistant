@@ -149,9 +149,9 @@ async def run_question(question: Question, candidate: Candidate, llm: LLMClient,
     transcripts: list[Transcript] = []
     conversation: list[Message] = []
     try:
-        for turn_text in question.turns:
-            conversation.append(Message(role=Role.USER, content=turn_text))
-            transcript = await run_turn(conversation, llm, toolbox, policy)
+        for user_text in question.exchanges:
+            conversation.append(Message(role=Role.USER, content=user_text))
+            transcript = await run_exchange(conversation, llm, toolbox, policy)
             transcripts.append(transcript)
             conversation = list(transcript.conversation)
     except Exception as error:
@@ -159,14 +159,14 @@ async def run_question(question: Question, candidate: Candidate, llm: LLMClient,
             question_id=question.id,
             candidate_key=candidate.key,
             model=llm.model_name,
-            turns=transcripts or [Transcript(model=llm.model_name, system_prompt="", conversation=conversation)],
+            exchanges=transcripts or [Transcript(model=llm.model_name, system_prompt="", conversation=conversation)],
             memory_fit=memory_fit,
             error=f"{type(error).__name__}: {error}",
         )
-    return QuestionResult(question_id=question.id, candidate_key=candidate.key, model=llm.model_name, turns=transcripts, memory_fit=memory_fit)
+    return QuestionResult(question_id=question.id, candidate_key=candidate.key, model=llm.model_name, exchanges=transcripts, memory_fit=memory_fit)
 
 
-async def run_turn(conversation: list[Message], llm: LLMClient, toolbox: McpToolBox, policy: AgentPolicy) -> Transcript:
+async def run_exchange(conversation: list[Message], llm: LLMClient, toolbox: McpToolBox, policy: AgentPolicy) -> Transcript:
     async for event in agent_loop.run(conversation, llm, toolbox, policy):
         if isinstance(event, Done):
             return event.transcript

@@ -1,17 +1,17 @@
-"""Append-only store of TurnRecords on the Mac's disk, one JSON Lines file per day, pruned after a retention period (design doc 10 §3.4, §3.6)."""
+"""Append-only store of ExchangeRecords on the Mac's disk, one JSON Lines file per day, pruned after a retention period (design doc 10 §3.4, §3.6)."""
 
 import re
 from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
 
-from assistant_core.turn_record import TurnRecord
+from assistant_core.exchange_record import ExchangeRecord
 from utils.jsonl_utils import append_jsonl, read_jsonl
 
 DAY_FILE = re.compile(r"^(\d{4}-\d{2}-\d{2})\.jsonl$")
 DEFAULT_RETENTION_DAYS = 90
 
 
-class TurnLog:
+class ExchangeLog:
     def __init__(self, directory: Path) -> None:
         self._directory = directory
 
@@ -22,7 +22,7 @@ class TurnLog:
     def path_for(self, day: date) -> Path:
         return self._directory / f"{day.isoformat()}.jsonl"
 
-    def append(self, record: TurnRecord) -> Path:
+    def append(self, record: ExchangeRecord) -> Path:
         path = self.path_for(datetime.now(UTC).date())
         append_jsonl(path, record)
         return path
@@ -38,11 +38,11 @@ class TurnLog:
                 found.append((date.fromisoformat(match.group(1)), path))
         return sorted(found)
 
-    def read_since(self, since: date) -> list[TurnRecord]:
-        records: list[TurnRecord] = []
+    def read_since(self, since: date) -> list[ExchangeRecord]:
+        records: list[ExchangeRecord] = []
         for day, path in self.day_files():
             if day >= since:
-                records.extend(read_jsonl(path, TurnRecord))
+                records.extend(read_jsonl(path, ExchangeRecord))
         return records
 
     def prune(self, retention_days: int = DEFAULT_RETENTION_DAYS, today: date | None = None) -> list[Path]:

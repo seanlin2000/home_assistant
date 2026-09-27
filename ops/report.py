@@ -1,6 +1,6 @@
 """Summarise the mirrored logs from the mini (design doc 10 §3.7): what the assistant did, how fast, what failed, what the machine did to itself.
 
-Reads only the local copy in logs/mini/ (turns/*.jsonl, health.jsonl, pipeline_runs.jsonl, ollama.log); it never talks to the mini.
+Reads only the local copy in logs/mini/ (exchanges/*.jsonl, health.jsonl, pipeline_runs.jsonl, ollama.log); it never talks to the mini.
 """
 
 import re
@@ -9,11 +9,12 @@ from collections import Counter
 from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
 
-from assistant_core.turn_record import TurnRecord
+from assistant_core.exchange_record import ExchangeRecord
+from ops import paths
 from ops.health import Snapshot
 from ops.pipeline_runs import PipelineRun
 from utils.jsonl_utils import read_jsonl
-from web_search_mcp.turn_log import TurnLog
+from web_search_mcp.exchange_log import ExchangeLog
 
 PRINT_TIMING = re.compile(r"print_timing:.*\|\s+(prompt eval time|eval time)\s+=\s+([\d.]+) ms /\s+(\d+) tokens")
 OLLAMA_TIMESTAMP = re.compile(r"time=(\d{4}-\d{2}-\d{2})")
@@ -31,8 +32,8 @@ def fmt(value: float | None, unit: str = "s", digits: int = 1) -> str:
     return "n/a" if value is None else f"{value:.{digits}f}{unit}"
 
 
-def load_turns(log_dir: Path, since: date) -> list[TurnRecord]:
-    return TurnLog(log_dir / "turns").read_since(since)
+def load_exchanges(log_dir: Path, since: date) -> list[ExchangeRecord]:
+    return ExchangeLog(log_dir / paths.EXCHANGES_FOLDER).read_since(since)
 
 
 def load_snapshots(log_dir: Path, since: date) -> list[Snapshot]:
@@ -74,37 +75,37 @@ def ollama_speeds(log_dir: Path, since: date) -> dict[str, list[float]]:
 # ---------------------------------------------------------------- sections
 
 
-def turns_section(turns: list[TurnRecord]) -> list[str]:
-    lines = [f"Turns: {len(turns)}"]
-    if not turns:
-        return lines + ["  (no turn records in this window)"]
-    per_day = Counter(turn.recorded_at[:10] for turn in turns)
+def exchanges_section(exchanges: list[ExchangeRecord]) -> list[str]:
+    lines = [f"Exchanges: {len(exchanges)}"]
+    if not exchanges:
+        return lines + ["  (no exchange records in this window)"]
+    per_day = Counter(exchange.recorded_at[:10] for exchange in exchanges)
     lines.append("  per day: " + ", ".join(f"{day} {count}" for day, count in sorted(per_day.items())))
-    first_word = [turn.time_to_first_spoken_seconds for turn in turns if turn.time_to_first_spoken_seconds is not None]
-    totals = [turn.total_seconds for turn in turns]
+    first_word = [exchange.time_to_first_spoken_seconds for exchange in exchanges if exchange.time_to_first_spoken_seconds is not None]
+    totals = [exchange.total_seconds for exchange in exchanges]
     lines.append(f"  time to first spoken word: median {fmt(statistics.median(first_word) if first_word else None)}, p90 {fmt(percentile(first_word, 0.9))}")
-    lines.append(f"  total per turn: median {fmt(statistics.median(totals))}, p90 {fmt(percentile(totals, 0.9))}, max {fmt(max(totals))}")
-    routes = Counter((turn.route.route.value if turn.route else "none") for turn in turns)
+    lines.append(f"  total per exchange: median {fmt(statistics.median(totals))}, p90 {fmt(percentile(totals, 0.9))}, max {fmt(max(totals))}")
+    routes = Counter((exchange.route.route.value if exchange.route else "none") for exchange in exchanges)
     lines.append("  routes: " + ", ".join(f"{route} {count}" for route, count in routes.most_common()))
-    tools = Counter(call.name for turn in turns for call in turn.tool_calls)
-    errors = Counter(call.name for turn in turns for call in turn.tool_calls if call.error)
+    tools = Counter(call.name for exchange in exchanges for call in exchange.tool_calls)
+    errors = Counter(call.name for exchange in exchanges for call in exchange.tool_calls if call.error)
     if tools:
         lines.append("  tool calls: " + ", ".join(f"{name} {count}" + (f" ({errors[name]} failed)" if errors[name] else "") for name, count in tools.most_common()))
     flags = {
-        "error": sum(1 for turn in turns if turn.error),
-        "empty answer": sum(1 for turn in turns if not turn.final_answer.strip()),
-        "truncated": sum(1 for turn in turns if turn.truncated),
-        "hit tool round cap": sum(1 for turn in turns if turn.hit_tool_round_cap),
-        "malformed tool calls": sum(turn.malformed_tool_call_count for turn in turns),
-        "empty completion retries": sum(turn.empty_completion_retries for turn in turns),
+        "error": sum(1 for exchange in exchanges if exchange.error),
+        "empty answer": sum(1 for exchange in exchanges if not exchange.final_answer.strip()),
+        "truncated": sum(1 for exchange in exchanges if exchange.truncated),
+        "hit tool round cap": sum(1 for exchange in exchanges if exchange.hit_tool_round_cap),
+        "malformed tool calls": sum(exchange.malformed_tool_call_count for exchange in exchanges),
+        "empty completion retries": sum(exchange.empty_completion_retries for exchange in exchanges),
     }
     lines.append("  failure flags: " + ", ".join(f"{name} {count}" for name, count in flags.items() if count) if any(flags.values()) else "  failure flags: none")
-    prompt_tokens = [call.prompt_tokens for turn in turns for call in turn.model_calls if call.prompt_tokens]
+    prompt_tokens = [call.prompt_tokens for exchange in exchanges for call in exchange.model_calls if call.prompt_tokens]
     if prompt_tokens:
         lines.append(f"  prompt tokens per model call: median {statistics.median(prompt_tokens):.0f}, max {max(prompt_tokens)}")
-    slow = sorted(turns, key=lambda turn: turn.total_seconds, reverse=True)[:3]
-    lines.append("  slowest: " + "; ".join(f"{turn.total_seconds:.0f}s {turn.user_text[:50]!r}" for turn in slow))
-    models = Counter(turn.model for turn in turns)
+    slow = sorted(exchanges, key=lambda exchange: exchange.total_seconds, reverse=True)[:3]
+    lines.append("  slowest: " + "; ".join(f"{exchange.total_seconds:.0f}s {exchange.user_text[:50]!r}" for exchange in slow))
+    models = Counter(exchange.model for exchange in exchanges)
     lines.append("  models: " + ", ".join(f"{model} {count}" for model, count in models.most_common()))
     return lines
 
@@ -169,9 +170,9 @@ def render(log_dir: Path, days: int, today: date | None = None) -> str:
     today = today or datetime.now(UTC).date()
     since = today - timedelta(days=days - 1)
     header = [f"Operations report for {log_dir}  ({since} to {today}, {days} days)", ""]
-    turns = load_turns(log_dir, since)
+    exchanges = load_exchanges(log_dir, since)
     body = (
-        turns_section(turns)
+        exchanges_section(exchanges)
         + [""]
         + health_section(load_snapshots(log_dir, since))
         + [""]
