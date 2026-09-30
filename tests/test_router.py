@@ -47,6 +47,13 @@ def test_weather_rule_fires_only_for_home_and_leaves_other_places_to_the_model()
         assert rule_route(elsewhere_or_not_forecast) is None, elsewhere_or_not_forecast
 
 
+def test_weather_rule_needs_a_question_about_coming_or_current_conditions_not_just_a_rain_or_snow_word() -> None:
+    for forecast in ("Do I need an umbrella tomorrow?", "Will it rain this afternoon?", "Is it going to snow in the morning?", "What's the weather?"):
+        assert rule_route(forecast).route == Route.WEATHER, forecast
+    for not_forecast_by_rule in ("Who sang Purple Rain?", "Who wrote Snow Crash?", "How much rain does Seattle get a year?", "What's the weather in Lisbon?"):
+        assert rule_route(not_forecast_by_rule) is None, not_forecast_by_rule
+
+
 def test_weather_route_falls_back_to_search_when_the_server_offers_no_forecast_tool() -> None:
     weather = RouteDecision(route=Route.WEATHER, source="rule", detail="weather word")
     forecast_tool = ToolSpec(name="weather_forecast", description="", input_schema={})

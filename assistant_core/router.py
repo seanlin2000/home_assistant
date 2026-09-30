@@ -1,7 +1,7 @@
 """Decide, before the model speaks, whether a question needs the web, the calculator, the home forecast, or none of them, and say so in the system prompt the model sees.
 
-Two layers. Rules fire on unmistakable wording (an explicit request to search, several numbers with an arithmetic cue, or a weather word with no other place
-named) at no cost. When no rule fires, one short structured-output call asks the same model to classify the question. For search, calculate, and weather a
+Two layers. Rules fire on unmistakable wording (an explicit request to search, several numbers with an arithmetic cue, or a question about coming or current
+weather with no other place named) at no cost. When no rule fires, one short structured-output call asks the same model to classify the question. For search, calculate, and weather a
 directive naming the tool to call is appended to the system prompt, because Ollama offers no way to force a tool call; answer adds nothing, and the user's
 message is left exactly as spoken. The decision is recorded on the transcript so the benchmark can score the router on its own.
 """
@@ -51,9 +51,18 @@ ARITHMETIC_CUE = re.compile(
     re.IGNORECASE,
 )
 MIN_NUMBERS_FOR_ARITHMETIC = 2
-# The weather rule fires only when no other place could be meant. Whatever follows a preposition (skipping "the") must be a word that names a time or
-# the user's own surroundings; "in Lucerne", "in the Alps", or anything unrecognised leaves the question to the model layer, which sends other places to search.
-WEATHER_WORD = re.compile(r"\b(weather|umbrella|rain(s|ing|y)?|snow(s|ing|y)?|drizzl\w*|thunderstorms?|sleet)\b", re.IGNORECASE)
+# The weather rule fires only on a question about coming or current conditions at home. "Weather", "umbrella", or "the forecast" says so on its own; a
+# precipitation word needs a time cue or a forecast question form as well, because "Purple Rain", "Snow Crash", or "how much rain does Seattle get a year"
+# name rain and snow without asking about them. And no other place may be named: whatever follows a preposition (skipping "the") must be a word that names
+# a time or the user's own surroundings; "in Lucerne", "in the Alps", or anything unrecognised leaves the question to the model layer, which sends other
+# places to search.
+FORECAST_WORD = re.compile(r"\b(weather|umbrella|(the|today's|tonight's|tomorrow's|weekend's) forecast)\b", re.IGNORECASE)
+PRECIPITATION_WORD = re.compile(r"\b(rain(s|ing|y)?|snow(s|ing|y)?|drizzl\w*|thunderstorms?|sleet)\b", re.IGNORECASE)
+TIME_CUE = re.compile(
+    r"\b(today|tonight|tomorrow|(this|in the) (morning|afternoon|evening)|(this|next) week(end)?|weekend|later|now|monday|tuesday|wednesday|thursday|friday|saturday|sunday)\b",
+    re.IGNORECASE,
+)
+FORECAST_QUESTION_FORM = re.compile(r"\b(will it|is it (going to|gonna)|will there be|is there going to be|should i (bring|take|wear|expect))\b", re.IGNORECASE)
 EXPLANATION_CUE = re.compile(r"\b(why|explain|what causes|what makes|how (does|do) (rain|snow|weather|the weather))\b", re.IGNORECASE)
 PREPOSITION_OBJECT = re.compile(r"\b(?:in|at|for|near|around|over|to|from|on)\s+(?:the\s+)?(\w+)", re.IGNORECASE)
 WORDS_THAT_NAME_NO_OTHER_PLACE = frozenset(
@@ -71,9 +80,21 @@ def rule_route(text: str) -> RouteDecision | None:
     cue = ARITHMETIC_CUE.search(text)
     if len(numbers) >= MIN_NUMBERS_FOR_ARITHMETIC and cue:
         return RouteDecision(route=Route.CALCULATE, source="rule", detail=f"{len(numbers)} numbers and cue '{cue.group(0)}'")
-    weather_word = WEATHER_WORD.search(text)
-    if weather_word and not EXPLANATION_CUE.search(text) and not names_another_place(text):
-        return RouteDecision(route=Route.WEATHER, source="rule", detail=f"weather word '{weather_word.group(0)}' and no other place named")
+    weather_cue = forecast_cue(text)
+    if weather_cue and not EXPLANATION_CUE.search(text) and not names_another_place(text):
+        return RouteDecision(route=Route.WEATHER, source="rule", detail=f"{weather_cue} and no other place named")
+    return None
+
+
+def forecast_cue(text: str) -> str | None:
+    """What makes the text a question about coming or current weather, or None when nothing does."""
+    forecast_word = FORECAST_WORD.search(text)
+    if forecast_word:
+        return f"forecast word '{forecast_word.group(0)}'"
+    precipitation_word = PRECIPITATION_WORD.search(text)
+    time_or_form = TIME_CUE.search(text) or FORECAST_QUESTION_FORM.search(text)
+    if precipitation_word and time_or_form:
+        return f"'{precipitation_word.group(0)}' with '{time_or_form.group(0)}'"
     return None
 
 

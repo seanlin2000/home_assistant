@@ -208,7 +208,7 @@ Weather questions now reach the agent (doc 06 §12), and the tool server offers 
  user text ──▶ rule layer (regex, 0 ms)
                │  "search the web", "look up"                          ─▶ search
                │  two or more numbers + an arithmetic cue              ─▶ calculate
-               │  a weather word and no other place named              ─▶ weather     "Do I need an umbrella tomorrow afternoon?"
+               │  coming weather at home, no other place named         ─▶ weather     "Do I need an umbrella tomorrow afternoon?"
                │  nothing matched
                ▼
              model layer (one structured-output call, four routes)     ─▶ weather     "How cold is it going to get tonight?"
@@ -226,7 +226,7 @@ Weather questions now reach the agent (doc 06 §12), and the tool server offers 
 
 **The weather rule.** The rule layer checks explicit search first, then arithmetic, then weather, and the weather rule is deliberately conservative, like the others:
 
-- It needs a weather word: weather, umbrella, rain, snow, drizzle, thunderstorm, or sleet, in any of their common forms.
+- It needs a question about coming or current weather. "Weather", "umbrella", or "the forecast" is enough on its own. A precipitation word (rain, snow, drizzle, thunderstorm, sleet) also needs a time cue ("today", "tonight", "tomorrow", "this afternoon", "the weekend", a weekday, "later", "now") or a forecast question form ("will it", "is it going to", "should I bring"), because "Who sang Purple Rain?", "Who wrote Snow Crash?", and "How much rain does Seattle get a year?" mention rain and snow without asking about them.
 - It stands aside for explanations ("why does it rain more in the afternoon"), which the model answers from knowledge.
 - It stands aside when another place may be named. After each preposition (in, at, for, near, on, and a few more, skipping "the"), the next word must be one that cannot be a place: a time ("tomorrow", "saturday", "tonight"), the user's own surroundings ("home", "outside", "work"), or a verb ("to bring", "to snow"). "In Lucerne", "in the Alps", or any word the rule does not know leaves the question to the model layer, which sends other places to search.
 
