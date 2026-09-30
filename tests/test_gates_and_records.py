@@ -26,7 +26,7 @@ QUESTIONS = load_questions(Path("benchmark/questions.yaml"))
 
 def test_question_set_shape() -> None:
     assert len(QUESTIONS.questions) == 31
-    assert {question.id for question in QUESTIONS.questions if question.route.value == "weather"} == {"D29", "D30", "D31"}
+    assert {question.id for question in QUESTIONS.questions if question.route.value == "weather"} == {"E36", "E37", "E38"}
     assert QUESTIONS.by_id("B13").route.value == "search"
     assert QUESTIONS.by_id("C23").route.value == "calculate" and QUESTIONS.by_id("B11").route.value == "search" and QUESTIONS.by_id("A1").route.value == "answer"
     assert QUESTIONS.by_id("A6").exchanges[1].startswith("Suppose")
@@ -49,13 +49,13 @@ def test_harness_gates_for_search_decisions() -> None:
 
 
 def test_harness_gates_for_weather_questions() -> None:
-    assert harness_gates(QUESTIONS.by_id("D29"), result("D29", "Take one.", searched=False), 4) == [Gate.DID_NOT_CHECK_FORECAST_ON_WEATHER_QUESTION]
-    assert harness_gates(QUESTIONS.by_id("D29"), result("D29", "Take one.", searched=True, tool_calls=1), 4) == [
+    assert harness_gates(QUESTIONS.by_id("E36"), result("E36", "Take one.", searched=False), 4) == [Gate.DID_NOT_CHECK_FORECAST_ON_WEATHER_QUESTION]
+    assert harness_gates(QUESTIONS.by_id("E36"), result("E36", "Take one.", searched=True, tool_calls=1), 4) == [
         Gate.SEARCHED_ON_NO_SEARCH_QUESTION,
         Gate.DID_NOT_CHECK_FORECAST_ON_WEATHER_QUESTION,
     ]
-    checked = result("D29", "Take one.", searched=False, tool_calls=1, checked_forecast=True)
-    assert harness_gates(QUESTIONS.by_id("D29"), checked, 4) == []
+    checked = result("E36", "Take one.", searched=False, tool_calls=1, checked_forecast=True)
+    assert harness_gates(QUESTIONS.by_id("E36"), checked, 4) == []
     assert checked.forecast_call_count == 1 and checked.calculator_call_count == 0
 
 

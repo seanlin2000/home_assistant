@@ -40,7 +40,7 @@ def test_rules_catch_explicit_searches_and_plain_arithmetic() -> None:
 
 def test_weather_rule_fires_only_for_home_and_leaves_other_places_to_the_model() -> None:
     fired = {question.id for question in QUESTIONS.questions if (decision := rule_route(question.exchanges[-1])) and decision.route == Route.WEATHER}
-    assert {"D29", "D30"} <= fired and "B13" not in fired
+    assert {"E36", "E37"} <= fired and "B13" not in fired
     for home in ("what's the weather", "Is it going to snow on Saturday?", "Do I need to bring an umbrella to work?", "will it rain at 5 pm"):
         assert rule_route(home).route == Route.WEATHER, home
     for elsewhere_or_not_forecast in ("Will it rain in Paris tomorrow?", "What's the weather in the Alps this weekend?", "Why does rain smell nice?"):

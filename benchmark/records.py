@@ -15,7 +15,7 @@ class Category(StrEnum):
     A = "A"  # reason without searching
     B = "B"  # should search
     C = "C"  # explicit arithmetic: no search, calculator expected
-    D = "D"  # weather at home: no search, weather_forecast expected
+    E = "E"  # home weather: no search, weather_forecast expected
 
 
 class Gate(StrEnum):

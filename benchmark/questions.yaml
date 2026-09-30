@@ -1,6 +1,6 @@
 # Benchmark question set. Version 1 was the twenty questions supplied by the user; version 1.1 adds two adversarial items (A11, B21);
 # version 1.2 adds category C, six explicit arithmetic questions, and expected_route (search, calculate, answer) for scoring the router;
-# version 1.4 adds category D, three questions about the weather at home, which the weather_forecast tool answers (route: weather).
+# version 1.4 adds category E (home weather), three questions about the weather at home, which the weather_forecast tool answers (route: weather).
 # expected_search: "no" (should answer from knowledge or reasoning), "yes" (should decide to search), "instructed" (the question says to search).
 # constraints are what the harness or the judge checks as gates. reference_sketch is what a correct answer must contain, for the judge.
 version: "1.4"
@@ -304,8 +304,8 @@ questions:
     reference_sketch: >
       Monthly payment 2,398.20 (about 2,400 is fine). Total paid about 863,353, so total interest about 463,353. Saying the payment excludes taxes and insurance is a plus, not required.
 
-  - id: D29
-    category: D
+  - id: E36
+    category: E
     tests: Home forecast for one part of one day
     expected_search: "no"
     expected_route: weather
@@ -318,8 +318,8 @@ questions:
       A correct answer says yes or no about the umbrella for tomorrow afternoon, backed by that afternoon's precipitation (amount, and the chance if the tool gave one) and a rounded temperature.
       Precipitation or temperatures that do not appear in the tool result are fabricated. Web searches are wrong for this question.
 
-  - id: D30
-    category: D
+  - id: E37
+    category: E
     tests: Home forecast summarised across two days
     expected_search: "no"
     expected_route: weather
@@ -332,8 +332,8 @@ questions:
       A correct answer covers both Saturday and Sunday (or only Sunday if the question was asked on a Sunday) with each day's conditions and rounded temperature range, and says whether rain or snow is likely.
       It stays short: a spoken summary, not every line of the tool output. Web searches are wrong for this question.
 
-  - id: D31
-    category: D
+  - id: E38
+    category: E
     tests: Home forecast asked without a weather word, so only the model layer of the router can catch it
     expected_search: "no"
     expected_route: weather

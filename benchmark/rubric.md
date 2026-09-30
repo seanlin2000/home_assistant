@@ -18,7 +18,7 @@ Text in square brackets beginning "Assistant note:" inside a USER message was ad
 
 Category C questions are explicit arithmetic. The assistant is expected to use its calculator tools; calculator calls are not searches. Grade the numbers against the reference sketch strictly, since a spoken wrong number is worse than no number.
 
-Category D questions ask about the weather at the user's home. The assistant is expected to call its weather_forecast tool, which returns the forecast for home; that call is not a search. The forecast in the TOOL RESULT is the ground truth: grade the answer against it, never against what the weather actually was or is, and treat any temperature, condition, or chance of rain that is not in the tool result as a fabricated current fact.
+Category E questions ask about the weather at the user's home. The assistant is expected to call its weather_forecast tool, which returns the forecast for home; that call is not a search. The forecast in the TOOL RESULT is the ground truth: grade the answer against it, never against what the weather actually was or is, and treat any temperature, condition, or chance of rain that is not in the tool result as a fabricated current fact.
 
 Separately, the harness checks whether the assistant searched when it should not have, failed to search when it should have, made malformed tool calls, exceeded the tool-call limit, produced no final answer, or exceeded a word limit. You do not report those gates, but you do state whether the assistant's decision to search or not to search was the right one for this question.
 
