@@ -1,4 +1,5 @@
-"""Runs web_search_mcp as a child process for the duration of a benchmark run, with a per-run cache so every candidate sees identical search results."""
+"""Runs web_search_mcp as a child process for the duration of a benchmark run, with a per-run cache so every candidate sees identical search results
+and the same home forecast."""
 
 import asyncio
 import os
@@ -7,7 +8,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-from assistant_core.models import REQUIRED_TOOL_NAMES, ToolSpec
+from assistant_core.models import REQUIRED_TOOL_NAMES, WEATHER_TOOL_NAMES, ToolSpec
 from assistant_core.tools import McpToolBox
 from benchmark.records import Services
 
@@ -38,14 +39,15 @@ class McpServerProcess:
             "WEB_SEARCH_PORT": str(self._services.mcp_port),
             "WEB_SEARCH_HOST": self._services.mcp_host,
             "WEB_SEARCH_SEARXNG_URL": self._services.searxng_url,
+            **self._services.weather_home.environment(),
         }
         self._process = subprocess.Popen([sys.executable, "-m", "web_search_mcp.server"], env=env, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         tools = await wait_until_ready(self._services.mcp_url)
         if self._process.poll() is not None:
             raise RuntimeError(f"web_search_mcp exited with code {self._process.returncode}; something else answered at {self._services.mcp_url}")
-        names = {tool.name for tool in tools}
-        if not REQUIRED_TOOL_NAMES <= names:
-            raise RuntimeError(f"the server at {self._services.mcp_url} is not this run's server: it lacks {sorted(REQUIRED_TOOL_NAMES - names)}")
+        missing = sorted((REQUIRED_TOOL_NAMES | WEATHER_TOOL_NAMES) - {tool.name for tool in tools})
+        if missing:
+            raise RuntimeError(f"the server at {self._services.mcp_url} is not this run's server: it lacks {missing}")
         return self._services.mcp_url
 
     async def __aexit__(self, *exc_info: object) -> None:

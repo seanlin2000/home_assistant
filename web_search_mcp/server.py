@@ -1,4 +1,4 @@
-"""The agent's tool server over streamable HTTP: search_and_read (what small models should use), web_search, fetch_page, and the calculator tools."""
+"""The agent's tool server over streamable HTTP: search_and_read (what small models should use), web_search, fetch_page, the calculator tools, and the home weather forecast."""
 
 from pathlib import Path
 
@@ -11,6 +11,8 @@ from starlette.responses import JSONResponse, Response
 from assistant_core.exchange_record import EXCHANGES_ROUTE, ExchangeRecord
 from assistant_core.models import REQUIRED_TOOL_NAMES
 from calculator_mcp.register import register_calculator_tools
+from weather_mcp.register import register_weather_tools
+from weather_mcp.settings import WeatherSettings, weather_settings_from_environment
 from web_search_mcp.exchange_log import ExchangeLog
 from web_search_mcp.page_extractor import PageExcerpt, PageExtractor
 from web_search_mcp.query_cache import QueryCache
@@ -19,13 +21,13 @@ from web_search_mcp.settings import SearchSettings, allowed_host_list, settings_
 from web_search_mcp.url_guard import UnsafeUrl
 
 
-def build_server(settings: SearchSettings, searxng: SearxngClient | None = None, extractor: PageExtractor | None = None) -> MCPServer:
+def build_server(settings: SearchSettings, searxng: SearxngClient | None = None, extractor: PageExtractor | None = None, weather: WeatherSettings | None = None) -> MCPServer:
     cache = QueryCache(settings.cache_dir)
     searxng = searxng or SearxngClient(settings, cache)
     extractor = extractor or PageExtractor(settings, cache)
     server = MCPServer(
         "assistant-tools",
-        instructions="Web search backed by a local SearXNG instance plus exact calculator tools. Prefer search_and_read for questions about the world; use the calculator tools for any arithmetic.",
+        instructions="Web search backed by a local SearXNG instance, exact calculator tools, and the forecast for home. Prefer search_and_read for questions about the world; use the calculator tools for any arithmetic and weather_forecast for the weather at home.",
     )
 
     @server.tool()
@@ -53,6 +55,7 @@ def build_server(settings: SearchSettings, searxng: SearxngClient | None = None,
         return " ".join(text.split()[: settings.words_per_page * 2])
 
     register_calculator_tools(server)
+    register_weather_tools(server, weather or WeatherSettings(), cache)
     register_operations_routes(server, ExchangeLog(Path(settings.exchanges_dir)) if settings.exchanges_dir else None, allowed_host_list(settings))
     return server
 
@@ -126,7 +129,7 @@ def render_grounded_context(query: str, results: list[SearchResult], excerpts: l
 
 def main() -> None:
     settings = settings_from_environment()
-    build_server(settings).run(transport="streamable-http", host=settings.host, port=settings.port, transport_security=transport_security_for(settings))
+    build_server(settings, weather=weather_settings_from_environment()).run(transport="streamable-http", host=settings.host, port=settings.port, transport_security=transport_security_for(settings))
 
 
 if __name__ == "__main__":

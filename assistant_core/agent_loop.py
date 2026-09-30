@@ -10,6 +10,7 @@ from assistant_core.llm_client import LLMClient
 from assistant_core.memory import ConversationMemory, NoMemory
 from assistant_core.models import (
     SEARCH_TOOL_NAMES,
+    WEATHER_TOOL_NAMES,
     AgentEvent,
     AgentPolicy,
     AnswerDelta,
@@ -31,7 +32,7 @@ from assistant_core.models import (
 from assistant_core.prompts import system_prompt
 
 EMPTY_COMPLETION_RETRIES = 1
-from assistant_core.router import apply_route, decide_route
+from assistant_core.router import apply_route, decide_route, route_to_offered_tools
 from assistant_core.tools import ToolBox
 
 TOOL_LIMIT_NOTICE = "Tool call limit reached. Answer the user now with what you already know; do not call any more tools."
@@ -86,7 +87,7 @@ async def run(conversation: list[Message], llm: LLMClient, tools: ToolBox, polic
     cap = SpokenAnswerCap(policy.word_budget)
     tool_specs = await load_tool_specs(tools, transcript)
     if policy.route_questions and tool_specs:
-        transcript.route = await decide_route(llm, conversation, policy)
+        transcript.route = route_to_offered_tools(await decide_route(llm, conversation, policy), tool_specs)
         messages = apply_route(messages, transcript.route)
     for round_index in range(policy.max_tool_rounds + 1):
         reply = ModelReply()
@@ -160,8 +161,13 @@ async def stream_model_reply(
 
 
 def filler_for(tool_name: str, policy: AgentPolicy) -> str:
-    """The sentence spoken while the first tool of an exchange runs: a web line for search tools, a math line for everything else."""
-    phrases = policy.filler_phrases if tool_name in SEARCH_TOOL_NAMES else policy.calculate_filler_phrases
+    """The sentence spoken while the first tool of an exchange runs: a web line for search tools, a forecast line for the weather, a math line for everything else."""
+    if tool_name in SEARCH_TOOL_NAMES:
+        phrases = policy.filler_phrases
+    elif tool_name in WEATHER_TOOL_NAMES:
+        phrases = policy.weather_filler_phrases
+    else:
+        phrases = policy.calculate_filler_phrases
     return random.choice(phrases or policy.filler_phrases)
 
 

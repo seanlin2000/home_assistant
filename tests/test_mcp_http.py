@@ -18,13 +18,14 @@ def test_parse_sse_extracts_every_data_event() -> None:
 
 async def test_lists_and_calls_tools_on_the_real_server(unused_tcp_port: int, tmp_path: Path) -> None:
     from benchmark.mcp_process import McpServerProcess
-    from benchmark.records import Services
+    from benchmark.records import Services, WeatherHome
 
-    services = Services(ollama_host="http://127.0.0.1:11434", searxng_url="http://127.0.0.1:1", mcp_host="127.0.0.1", mcp_port=unused_tcp_port, results_dir="benchmark/results")
+    oslo = WeatherHome(latitude=59.9139, longitude=10.7522, timezone="Europe/Oslo", units="metric")
+    services = Services(ollama_host="http://127.0.0.1:11434", searxng_url="http://127.0.0.1:1", mcp_host="127.0.0.1", mcp_port=unused_tcp_port, results_dir="benchmark/results", weather_home=oslo)
     async with McpServerProcess(services, tmp_path / "cache") as url:
         async with HttpMcpToolBox(url) as toolbox:
             names = {tool.name for tool in await toolbox.list_tools()}
-            assert {"search_and_read", "web_search", "fetch_page"} <= names
+            assert {"search_and_read", "web_search", "fetch_page", "weather_forecast"} <= names, "the benchmark's home coordinates reach the subprocess"
             # SearXNG is pointed at a dead port on purpose: the call must come back as text, not raise.
             result = await toolbox.call(ToolCall(id="c1", name="search_and_read", arguments={"query": "ping"}))
             assert isinstance(result, str) and result

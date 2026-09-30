@@ -173,3 +173,69 @@ The broader rule for the product stays: never give the model a tool that acts on
 A day of benchmark passes, each firing dozens of searches within an hour, got the Mac's address throttled by every engine behind SearXNG at the same time: Brave answered "too many requests", DuckDuckGo demanded a CAPTCHA, Bing refused the connection, and Google returned empty pages while still answering a plain browser request from the same machine. The search tool then returned "No search results" and told the model to say so, which the harness records; the affected candidates were set aside and rerun later. Two changes came out of it: `SearxngClient` now waits a minimum gap between live requests (default 3 s; cached queries never wait), and the benchmark's search cache is kept per pass so a rerun of the same pass does not re-hit the engines. If Google stays blocked, the design's fallback of a Brave Search API key still applies.
 
 The block did not lift on its own. A day later, with the container restarted so that SearXNG's in-process engine suspensions were cleared, each engine was probed from inside the container: Google now returns a page that says JavaScript is required (SearXNG issues #5286 and #5827 track the broken Google engine), Brave still answers 429, DuckDuckGo answers a CAPTCHA challenge, and SearXNG 2026.9.5's Bing engine drops the connection even though bing.com itself answers from the same container. Community guidance (SearXNG issues #2498, #2287, #1628 and the "searxng engine selection" note at conselara.dev) is to space queries at least three seconds apart, keep a session under about twenty queries, and enable engines beyond the big four. So `docker/searxng/settings.yml` now also keeps Startpage, Yahoo, and Wikipedia. Startpage (which serves Google's index) and Yahoo (which serves Bing's) answered at once with ten and seven results. Mojeek and Qwant, two smaller independent engines, were tried the same day, returned nothing for the probe query, and were dropped: they are not engines the user knows or wants results from. Benchmark pass 4 onward therefore searches through Startpage and Yahoo, where passes 1 to 3 searched Google, Bing, Brave, and DuckDuckGo. Within one pass every candidate sees the same engines, which is the fairness rule that matters; across passes, search results were never identical anyway because the web moves.
+
+## 14. Weather tool, added 2026-09-30
+
+The same MCP server now also offers `weather_forecast`, from the `weather_mcp` package, which reads the forecast for home straight from Met.no, the Norwegian Meteorological Institute's free forecast service. Before it, "what's the weather" was answered by Home Assistant's built-in weather intent, which reads only the current state of the Met.no entity: it could say "18 degrees and cloudy", but "do I need an umbrella tomorrow afternoon" or "what's the weekend like" fell through to the agent, which searched the web for it (slow, noisy, and sometimes the wrong town) or guessed. Home Assistant now hands every weather question to the agent (doc 06 §12), and the agent answers from this tool (doc 04 §15).
+
+```
+  model (Ollama)                                  weather_mcp, on the same MCP server (port 8765)
+  ┌────────────────────────────┐   tools/call     ┌──────────────────────────────────────────────────┐
+  │ weather_forecast(          │─────────────────▶│ MetnoClient.forecast()                           │
+  │   day="tomorrow",          │                  │   1. pinned in the benchmark run cache?  use it  │
+  │   part_of_day="afternoon") │                  │   2. held, and before its Expires time?  use it  │
+  └────────────────────────────┘                  │   3. otherwise GET with If-Modified-Since ───────┼──▶ api.met.no
+                ▲                                 │      (if the GET fails, keep the held copy)      │    /locationforecast/2.0/complete
+                │ tool result, text:              │                                                  │    ?lat=..&lon=.. (4 decimals)
+                │ "Home weather forecast for      │ ForecastReader                                   │    User-Agent:
+                │  tomorrow, Thursday October 1:  │   UTC time steps → local days, parts of day      │    studio-assistant-weather/1.0
+                │  afternoon (noon to 6 pm):      │   symbol codes   → plain words ("light rain")    │    github.com/seanlin2000/home_assistant
+                │  59 to 64°F, partly cloudy,     │   units          → °F, in, mph or °C, mm, km/h   │
+                │  dry, wind up to 9 mph"         │                                                  │
+                └─────────────────────────────────┤                                                  │
+                                                  └──────────────────────────────────────────────────┘
+```
+
+**What the tool takes and returns.**
+
+- Two arguments, both plain words. `day` is `today`, `tomorrow`, a weekday such as `saturday`, `weekend`, or `week` (the next seven days). `part_of_day` is `morning` (6 am to noon), `afternoon` (noon to 6 pm), `evening` (6 pm to midnight), `night` (midnight to 6 am after that day's evening), or `all`.
+- There is no place argument. The tool only knows home, so the model cannot send it another town's name, and the coordinates never appear in the conversation. Weather anywhere else is still a web search.
+- The result is a few lines of text: a heading naming the date, then one line per part of the day, or one line per day for `weekend` and `week`. Each line gives the temperature range, the usual sky with the wettest precipitation added ("cloudy with light rain at times"), the total precipitation, the chance of precipitation where Met.no provides one, and, for a part of the day, the strongest wind.
+- `today` starts with a "now" line and leaves out the parts of the day that have passed. Asked after midnight, tonight is the night already in progress, labelled "overnight". A day past the end of the forecast gets a sentence saying how far the forecast reaches, never a guess.
+- Mistakes come back as sentences the model can act on: an unknown `day` or `part_of_day` names the allowed values, and an unreachable Met.no, with no earlier copy held, returns "Weather error: the forecast service did not answer. Tell the user you could not get the forecast right now."
+
+**How Met.no's document becomes those lines.** The document is a time series in UTC. Each row (a "time step") holds an instant reading (temperature, wind) and summaries of the next one and six hours (a weather symbol such as `lightrainshowers_day`, the precipitation amount, and the six-hour minimum and maximum temperature). Rows are hourly for about two and a half days and six-hourly after that, out to about ten days. `ForecastReader` works like a group-by on a local-time key:
+
+1. Each row becomes a block: one hour long while the next row is an hour later, six hours long after that, so blocks never overlap. The last rows carry no summary and are dropped.
+2. Each block goes to the local day and part of the day that contain its midpoint, in the home time zone. Grouping in local time, not UTC, is the point: a New York afternoon in summer is 16:00 to 22:00 UTC.
+3. Each group is reduced: minimum and maximum temperature, total precipitation, highest chance of precipitation, strongest wind, and the most common symbol, turned into words from Met.no's symbol legend (`fair` reads as "mostly clear").
+4. Numbers are converted to the units Home Assistant uses (°F, inches, mph, or °C, millimetres, km/h) and rounded for speech.
+
+The time zone and units come from Home Assistant through `.env`, like the coordinates (doc 06 §12). The time zone is an IANA name such as `America/New_York`, not a fixed offset, so a daylight-saving change inside the forecast week lands on the right hour.
+
+**Why the `complete` product and not `compact`.** Locationforecast offers both. `compact` has no minimum and maximum temperature per six-hour block and no chance of precipitation. `complete` has the six-hour minimum and maximum everywhere, and the chance of precipitation only in the Nordic area: present for Oslo, absent for London and Chicago when checked on 2026-09-30. So for a home in the United States the lines give the amount and leave the chance out, and the tool never makes one up.
+
+**Met.no's terms of service, and how the client meets them** (`weather_mcp/metno_client.py`):
+
+| Term | How it is met |
+|---|---|
+| Identify the application and a way to contact its owner in the User-Agent | `studio-assistant-weather/1.0 github.com/seanlin2000/home_assistant`: the repository is the contact, so no email address or other personal detail is sent |
+| At most four decimals in the coordinates (five or more gets 403) | Coordinates are sent rounded to four decimals |
+| Keep a response until its `Expires` time instead of asking again | The client holds the last forecast in memory and serves it until `Expires` |
+| After that, ask with `If-Modified-Since` | The request carries the `Last-Modified` value from the held copy; an unchanged forecast comes back as an empty 304, which moves the held copy's expiry forward (checked live on 2026-09-30) |
+| At most 20 requests a second; 429 means throttled, 203 means the product is deprecated | One request per expiry at most. A 203 body is still used; any other non-200 answer counts as a failure |
+| Credit the data (CC BY 4.0) | The docs name Met.no as the source. Nothing is republished |
+
+**Caching.** The product keeps one forecast in memory. When a refresh fails, the held copy is served even past its expiry, because a forecast issued an hour or two ago still describes the coming days well. Only a server that has never fetched a forecast answers with the error sentence. In the benchmark the forecast is also pinned in the per-run query cache: the first call of a run fetches it, and every later call in that run, for every candidate, reads the same document, which is the same fairness rule as for search.
+
+**Privacy.** Met.no receives the home's latitude and longitude rounded to four decimals (about 11 metres), the apartment's IP address, and the User-Agent above. No account, no key, and nothing from the conversation: the question itself never leaves the Mac. Home Assistant's own Met.no integration already sends the home's coordinates for its weather entity, so this adds a second client, not a new kind of data leaving the home.
+
+**Offered only when home is known.** The server reads `WEATHER_LATITUDE`, `WEATHER_LONGITUDE`, `WEATHER_TIMEZONE`, and `WEATHER_UNITS` from its environment (`weather_mcp/settings.py`). `scripts/ha_setup.py --only weather` copies them from Home Assistant into `.env`, and `scripts/services.sh install` passes them to the tool server's launchd job. Without coordinates the server starts without the weather tool and logs why, and the agent sends weather questions to search instead. The benchmark sets its own fixed coordinates in `benchmark/config.yaml`, so its results never depend on `.env`.
+
+| Package | Role in the business logic |
+|---|---|
+| `httpx` | The Met.no request, with the timeout, the conditional header, and a replaceable transport that the tests use to play Met.no without the network |
+| `zoneinfo` (standard library) | Turns UTC time steps into local days and parts of the day, daylight saving included |
+| `pydantic` | `WeatherSettings`, the typed home location read from the environment |
+
+No dependency was added; all three were already in the lock file.

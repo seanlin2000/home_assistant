@@ -26,6 +26,11 @@ usage() {
 
 plist_path() { echo "$AGENTS_DIR/$PREFIX.$1.plist"; }
 
+env_file_value() {
+    # $1 key; its value in the project's .env, or nothing when absent
+    grep -E "^$1=" "$PROJECT_DIR/.env" 2>/dev/null | tail -n 1 | cut -d= -f2- || true
+}
+
 write_plist() {
     # $1 name, $2.. program arguments; environment via ENV_KEYS/ENV_VALUES arrays.
     # PLIST_START_INTERVAL=N makes a periodic job (launchd runs it every N seconds) instead of a kept-alive daemon.
@@ -100,6 +105,16 @@ install_agents() {
     lan_address="$(ipconfig getifaddr en0 2>/dev/null || true)"
     ENV_KEYS=(WEB_SEARCH_HOST WEB_SEARCH_PORT WEB_SEARCH_EXCHANGES_DIR WEB_SEARCH_ALLOWED_HOSTS)
     ENV_VALUES=(0.0.0.0 8765 "$LOG_DIR/exchanges" "${WEB_SEARCH_ALLOWED_HOSTS:-${lan_address:+$lan_address:8765,}localhost:8765,127.0.0.1:8765}")
+    # Home for weather_forecast, written to .env by scripts/ha_setup.py --only weather (the shell environment wins). Without coordinates the server
+    # starts without the weather tool and says why in mcp.log.
+    local key value
+    for key in WEATHER_LATITUDE WEATHER_LONGITUDE WEATHER_TIMEZONE WEATHER_UNITS; do
+        value="${!key:-$(env_file_value "$key")}"
+        if [[ -n "$value" ]]; then
+            ENV_KEYS+=("$key")
+            ENV_VALUES+=("$value")
+        fi
+    done
     write_plist mcp "$PROJECT_DIR/.venv/bin/web-search-mcp"
     ENV_KEYS=() ENV_VALUES=()
     write_plist whisper "$PROJECT_DIR/.venv/bin/wyoming-mlx-whisper" --uri tcp://0.0.0.0:10300 --model mlx-community/whisper-large-v3-turbo --language en

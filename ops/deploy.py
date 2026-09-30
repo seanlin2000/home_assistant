@@ -43,7 +43,7 @@ RULES: tuple[Rule, ...] = (
         actions=("sync_env", "restart:mcp", "restart:whisper", "restart:kokoro"),
         why="dependencies changed: sync the venv and restart every long-running Python service",
     ),
-    Rule(prefixes=("web_search_mcp/", "calculator_mcp/", "assistant_core/", "utils/"), actions=("restart:mcp",), why="tool server code changed"),
+    Rule(prefixes=("web_search_mcp/", "calculator_mcp/", "weather_mcp/", "assistant_core/", "utils/"), actions=("restart:mcp",), why="tool server code changed"),
     Rule(prefixes=("custom_components/", "assistant_core/"), actions=("deploy_component",), why="the component or its vendored core changed"),
     Rule(prefixes=("voice/",), actions=("restart:kokoro",), why="Kokoro server wrapper changed"),
     Rule(prefixes=("scripts/services.sh",), actions=("reinstall_agents",), why="launchd definitions changed"),

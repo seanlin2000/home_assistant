@@ -121,6 +121,13 @@ async def test_calculator_call_speaks_the_math_filler_not_the_web_one() -> None:
     assert events[0].text == "Doing the math."
 
 
+async def test_forecast_call_speaks_the_forecast_filler_not_the_web_one() -> None:
+    llm = ScriptedLLM([tool_reply("tomorrow", tool_name="weather_forecast"), text_reply("Dry tomorrow afternoon.")])
+    policy = AgentPolicy(filler_phrases=["Checking the web."], weather_filler_phrases=["Checking the forecast."])
+    events = await collect(llm, FakeToolBox(), policy)
+    assert events[0] == FillerSpoken(text="Checking the forecast.")
+
+
 async def test_empty_completion_is_retried_once_and_the_retry_answers() -> None:
     llm = ScriptedLLM([empty_reply(), text_reply("Yes, it can.")])
     events = await collect(llm, FakeToolBox())

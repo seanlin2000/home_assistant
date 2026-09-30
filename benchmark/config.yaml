@@ -13,6 +13,13 @@ services:
   mcp_host: 127.0.0.1
   mcp_port: 8766  # the product's MCP service owns 8765; the benchmark runs its own server with a per-run cache on a separate port
   results_dir: benchmark/results
+  # The home weather_forecast reports on in the benchmark: a public landmark (the Empire State Building, also scripts/ha_setup.py's default) in the
+  # user's time zone and units, fixed here so results never depend on .env. The per-run cache pins the first forecast fetched for the whole run.
+  weather_home:
+    latitude: 40.7484
+    longitude: -73.9857
+    timezone: America/New_York
+    units: imperial
 
 # preview: a reduced-precision build of a model whose production version does not fit the prototype machine.
 candidates:
