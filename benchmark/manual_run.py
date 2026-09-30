@@ -61,6 +61,9 @@ class ScriptedAnswers(BaseModel):
     def by_id(self, question_id: str) -> ScriptedQuestion:
         return next(question for question in self.questions if question.question_id == question_id)
 
+    def scripted_ids(self) -> set[str]:
+        return {question.question_id for question in self.questions}
+
 
 class ScriptedAnswerClient:
     """Plays one scripted exchange as if it were a model: first the search calls, then the spoken answer."""
@@ -124,11 +127,14 @@ async def main_async(args: argparse.Namespace) -> None:
     candidate = config.candidate(args.candidate)
     answers = load_answers(MANUAL_DIR / f"{candidate.key}.yaml")
     run_dir = Path(config.services.results_dir) / args.run
+    # A script written before a question set grew answers only the questions it has; the rest are left unanswered rather than failing the replay.
+    scripted = [question for question in question_set.questions if question.id in answers.scripted_ids()]
     async with McpServerProcess(config.services, run_dir / "cache") as mcp_url:
         async with McpToolBox(mcp_url) as toolbox:
-            results = [await replay_question(question, answers.by_id(question.id), candidate, toolbox, config.policy) for question in question_set.questions]
+            results = [await replay_question(question, answers.by_id(question.id), candidate, toolbox, config.policy) for question in scripted]
     write_jsonl(run_dir / f"{candidate.key}.jsonl", results)
-    console.print(f"wrote {len(results)} results for {candidate.key} (answered by {answers.answered_by})")
+    unscripted = len(question_set.questions) - len(scripted)
+    console.print(f"wrote {len(results)} results for {candidate.key} (answered by {answers.answered_by})" + (f"; {unscripted} questions have no scripted answer" if unscripted else ""))
 
 
 def load_answers(path: Path) -> ScriptedAnswers:

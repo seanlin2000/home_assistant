@@ -13,6 +13,7 @@ from homeassistant.helpers.httpx_client import get_async_client
 from .const import (
     CONF_CONTEXT_TOKENS,
     CONF_CONTINUE_CONVERSATION,
+    CONF_MAX_FOLLOW_UPS,
     CONF_MAX_OUTPUT_TOKENS,
     CONF_MAX_TOOL_ROUNDS,
     CONF_MCP_URL,
@@ -24,6 +25,7 @@ from .const import (
     CONF_WORD_BUDGET,
     DEFAULT_CONTEXT_TOKENS,
     DEFAULT_CONTINUE_CONVERSATION,
+    DEFAULT_MAX_FOLLOW_UPS,
     DEFAULT_MAX_OUTPUT_TOKENS,
     DEFAULT_MAX_TOOL_ROUNDS,
     DEFAULT_MCP_URL,
@@ -62,6 +64,7 @@ def policy_schema(defaults: dict[str, Any]) -> vol.Schema:
             vol.Optional(CONF_THINK, default=defaults.get(CONF_THINK, DEFAULT_THINK)): bool,
             vol.Optional(CONF_TOOL_TIMEOUT, default=defaults.get(CONF_TOOL_TIMEOUT, DEFAULT_TOOL_TIMEOUT)): vol.Coerce(float),
             vol.Optional(CONF_CONTINUE_CONVERSATION, default=defaults.get(CONF_CONTINUE_CONVERSATION, DEFAULT_CONTINUE_CONVERSATION)): bool,
+            vol.Optional(CONF_MAX_FOLLOW_UPS, default=defaults.get(CONF_MAX_FOLLOW_UPS, DEFAULT_MAX_FOLLOW_UPS)): vol.Coerce(int),
         }
     )
 

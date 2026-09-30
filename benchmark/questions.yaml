@@ -1,8 +1,10 @@
 # Benchmark question set. Version 1 was the twenty questions supplied by the user; version 1.1 adds two adversarial items (A11, B21);
 # version 1.2 adds category C, six explicit arithmetic questions, and expected_route (search, calculate, answer) for scoring the router.
+# version 1.3 adds category D, seven unclear inputs of the kind a false wake or a botched request produces, and expected_reply for them:
+# "silent" (reply with the silence marker, nothing spoken), "clarify" (a brief request to repeat), "acknowledge" (the fixed "Okay."); absent means an ordinary answer.
 # expected_search: "no" (should answer from knowledge or reasoning), "yes" (should decide to search), "instructed" (the question says to search).
 # constraints are what the harness or the judge checks as gates. reference_sketch is what a correct answer must contain, for the judge.
-version: "1.2"
+version: "1.3"
 questions:
   - id: A1
     category: A
@@ -303,3 +305,81 @@ questions:
     reference_sketch: >
       Monthly payment 2,398.20 (about 2,400 is fine). Total paid about 863,353, so total interest about 463,353. Saying the payment excludes taxes and insurance is a plus, not required.
 
+  - id: D29
+    category: D
+    tests: Overheard television that mentions a searchable topic
+    expected_search: "no"
+    expected_route: answer
+    expected_reply: silent
+    exchanges:
+      - "And after the break, the weekend forecast for the tri-state area."
+    reference_sketch: >
+      This is a television or radio host, not a request. The correct reply is the silence marker alone, so nothing is spoken.
+      Searching for the forecast, answering with one, or asking whether the user wants the forecast are all wrong.
+
+  - id: D30
+    category: D
+    tests: A speech-recognition artifact heard in near silence
+    expected_search: "no"
+    expected_route: answer
+    expected_reply: silent
+    exchanges:
+      - "Thank you for watching."
+    reference_sketch: >
+      Whisper often produces this phrase from background noise or silence. It is not addressed to the assistant; the correct reply is the silence marker alone.
+      "You're welcome" or any other spoken reply is wrong.
+
+  - id: D31
+    category: D
+    tests: A fragment of conversation between people in the room
+    expected_search: "no"
+    expected_route: answer
+    expected_reply: silent
+    exchanges:
+      - "No, I told her we'd be there by seven, but she never listens."
+    reference_sketch: >
+      One person talking to another about their evening. The correct reply is the silence marker alone; advice, sympathy, or a question back are all wrong.
+
+  - id: D32
+    category: D
+    tests: A short request that came out garbled
+    expected_search: "no"
+    expected_route: answer
+    expected_reply: clarify
+    exchanges:
+      - "What's the the uh capital"
+    reference_sketch: >
+      The request is cut off before it names a place. The best reply is "Can you repeat that?"; a two-to-five-word question naming the gap ("The capital of where?") is equally good.
+      Guessing a country, listing possible countries, or a long explanation of what was unclear are wrong.
+
+  - id: D33
+    category: D
+    tests: The user calls off the request
+    expected_search: "no"
+    expected_route: answer
+    expected_reply: acknowledge
+    exchanges:
+      - "Never mind."
+    reference_sketch: >
+      The correct reply is "Okay." and nothing more. Asking what the user wanted, offering further help, or staying silent are wrong.
+
+  - id: D34
+    category: D
+    tests: Control, a terse but clear question
+    expected_search: "no"
+    expected_route: answer
+    exchanges:
+      - "Capital of Australia?"
+    reference_sketch: >
+      Canberra. A terse question is still a question: silence, a request to repeat, or a clarifying question are wrong. Adding that it is not Sydney is fine.
+
+  - id: D35
+    category: D
+    tests: Control, a clearly misheard word in a clear question
+    expected_search: "no"
+    expected_route: answer
+    exchanges:
+      - "Who rote Pride and Prejudice?"
+    reference_sketch: >
+      Jane Austen. "Rote" is a misheard "wrote"; the answer should simply answer the intended question without remarking on the wording.
+      Silence, a request to repeat, or a clarifying question are wrong.
