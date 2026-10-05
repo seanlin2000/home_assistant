@@ -13,7 +13,7 @@ The always-on machine and where each service runs on it. The prototype runs on t
   │                                                                                              │
   │  native processes (launchd, start at login)          UTM VM (bridged)      Docker Desktop    │
   │  ┌──────────────────────────────────────────┐        ┌────────────────┐    ┌──────────────┐  │
-  │  │ Ollama (Homebrew)          GPU via MLX    │        │ Home Assistant │    │ SearXNG      │  │
+  │  │ Ollama (launchd)           GPU via MLX    │        │ Home Assistant │    │ SearXNG      │  │
   │  │ wyoming-mlx-whisper (.venv) GPU via MLX   │◀──LAN──│ OS + add-ons   │    │ localhost    │  │
   │  │ Kokoro Wyoming server (.venv) CPU         │        │ ESPHome, Piper,│    │ :8080        │  │
   │  │ web_search_mcp (.venv)      CPU ──────────┼────────┼────────────────┼───▶│              │  │
@@ -65,7 +65,7 @@ Apple announced the M6 and M5 Pro Mac minis on August 25, 2026, shipping Septemb
 | Resident item | Memory |
 |---|---|
 | macOS and system | ~3 GB |
-| Home Assistant VM | 3 to 4 GB |
+| Home Assistant VM, given 3,072 MB | 3 to 4 GB |
 | Gemma 4 26B-A4B, 4-bit weights | ~16 GB |
 | KV cache at 16k context | 1 to 2 GB |
 | Whisper large-v3-turbo | ~1.6 GB |
@@ -73,6 +73,8 @@ Apple announced the M6 and M5 Pro Mac minis on August 25, 2026, shipping Septemb
 | **Total** | **~25 to 27 GB** |
 
 This is why 24 GB is the budget tier and not the default: the target-class model does not fit next to everything else with headroom.
+
+The VM row is the least certain. `scripts/bootstrap_mac.sh` has the mini's VM created with `HAOS_VM_MEMORY_MB=3072`, but on the 16 GB prototype, where `scripts/haos_vm.sh` gives the VM its default 4,096 MB, the QEMU process holds about 7.5 GB (doc 06 §11).
 
 ## 5. Bill of materials
 
@@ -89,17 +91,18 @@ Running cost: Mac mini averaging 8 W, puck 1.5 W, Sonos 2 W idle, about 100 kWh 
 
 ## 6. Coming back after a reboot
 
-- Ollama: Homebrew service, starts at login. `OLLAMA_KEEP_ALIVE=-1` so the model is loaded once and stays.
-- Whisper, Kokoro, MCP server: one launchd plist each in `~/Library/LaunchAgents`, `RunAtLoad` and `KeepAlive`, pointing at `.venv/bin/python` by absolute path. Logs to `~/Library/Logs/`.
-- Docker Desktop: starts at login; the SearXNG compose file has `restart: unless-stopped`.
-- UTM: starts at login; the VM is set to autostart. A launchd health check pings the Home Assistant API every minute and restarts the VM if it is down for five.
+- Native services: `scripts/services.sh install` writes one launchd agent per service, `~/Library/LaunchAgents/com.studio-assistant.<name>.plist`, and loads it. Ollama, the MCP server, Whisper, and Kokoro each get `RunAtLoad` and `KeepAlive`; the program is `ollama serve` or the `.venv` command, by absolute path. Logs go to `~/Library/Logs/studio-assistant/<name>.log`.
+- Ollama: our launchd agent, not Homebrew's service, which `services.sh install` stops because it binds localhost only. The agent sets `OLLAMA_HOST=0.0.0.0:11434`, `OLLAMA_KEEP_ALIVE=-1` so the model is loaded once and stays, and `OLLAMA_MAX_LOADED_MODELS=1`.
+- Docker Desktop: a login item, registered by `scripts/bootstrap_mac.sh`; the SearXNG compose file has `restart: unless-stopped`.
+- UTM: a login item, registered by `scripts/bootstrap_mac.sh`; opening UTM does not start the VM. The health check, a fifth launchd agent that runs at login and then every 300 seconds (`StartInterval`), starts the VM with `utmctl start` whenever `utmctl status` is not `started`, and stops and starts it when the Home Assistant API has failed five checks in a row (25 minutes) while the VM runs. Thresholds and cooldowns are in doc 10 §3.5.
 - macOS: automatic login enabled, sleep disabled, "start up automatically after a power failure" enabled. Automatic OS updates off; updates are applied deliberately after the monthly Home Assistant update.
 
 ## 7. Networking
 
 - The Mac on Ethernet if the router is within reach, otherwise Wi-Fi. Fixed IP reservation on the router for the Mac, the VM, the puck, and the Sonos.
 - Everything listens on the LAN only. No port forwarding, no cloud relay.
-- Ports (fixed, documented in doc 09): Ollama 11434, Whisper 10300, Kokoro 10210, Piper 10200, MCP server 8765, SearXNG 8080 (localhost only), Home Assistant 8123 on the VM's address.
+- Ports (fixed in `scripts/services.sh` and `docker/searxng/docker-compose.yml`): Ollama 11434, Whisper 10300, Kokoro 10210, and the MCP server 8765 on all of the Mac's addresses; SearXNG 8080 on localhost only; Home Assistant 80 on the VM's address.
+- Piper has no port on the LAN. It is an add-on inside the VM, and Home Assistant finds it through the Supervisor's add-on discovery, which `scripts/ha_setup.py` only confirms.
 
 ## 8. Failure modes
 
@@ -107,7 +110,7 @@ Running cost: Mac mini averaging 8 W, puck 1.5 W, Sonos 2 W idle, about 100 kWh 
 - **Thermal throttling.** Not an issue for the Mac mini at these loads.
 - **Wi-Fi congestion.** Audio streaming from the puck is small; music to the Sonos is larger. Ethernet for the Mac removes it from the equation.
 - **Power outage.** Everything autostarts; the puck and Sonos come back on their own.
-- **macOS update breaks a launchd agent.** Health check logs point at it; agents are plain files in the repo under `deploy/launchd/`.
+- **macOS update breaks a launchd agent.** The health snapshot names the failing agent; `scripts/services.sh install` rewrites every plist from its template and reloads it.
 
 ## 9. Concepts for newcomers
 

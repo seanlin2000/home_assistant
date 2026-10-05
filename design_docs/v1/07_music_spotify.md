@@ -10,7 +10,7 @@
   "play Radiohead"
         │
         ▼
-  Assist pipeline ── intent matcher ── HassPlayMedia / Music Assistant intent ──▶ Music Assistant (add-on)
+  Assist pipeline ── intent matcher ── HassMediaSearchAndPlay intent ───────────▶ Music Assistant (add-on)
                        (no LLM)                                                   │
                                                                                   │ 1. search "Radiohead" in
                                                                                   │    the Spotify provider
@@ -36,7 +36,7 @@
 
 1. **Spotify authorization, once.** You create a free app in the Spotify developer dashboard, which yields a client id and secret. The Home Assistant Spotify integration uses them for an OAuth login to your Premium account and stores the refresh token locally. Music Assistant's Spotify provider logs in the same way.
 2. **Speaker discovery.** The Sonos integration finds the Era 100 SL by mDNS and exposes it as a media player. Music Assistant sees it as a player it can stream to.
-3. **A voice command arrives.** The transcript "play Radiohead" matches a media intent before the agent is consulted. Music Assistant receives the request with the target player set to the studio's default.
+3. **A voice command arrives.** The transcript "play Radiohead" matches Home Assistant's built-in `HassMediaSearchAndPlay` intent, with `search_query="Radiohead"`, before the agent is consulted. Music Assistant receives the request with the target player set to the studio's default.
 4. **Resolution.** Music Assistant searches the Spotify provider, applies fuzzy matching (Whisper will sometimes hear "Radio Head"), decides between artist, album, track, or playlist, and queues it.
 5. **Playback.** Music Assistant streams to the Sonos over the LAN. Transport commands ("pause", "next", "volume down") are further intents handled the same way.
 6. **Talking over music.** The puck's echo cancellation and the Sonos being a separate device mean "Hey Jarvis" still works during playback; Home Assistant can duck the music volume while the assistant speaks.

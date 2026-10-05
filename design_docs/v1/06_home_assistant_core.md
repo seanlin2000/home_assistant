@@ -57,7 +57,7 @@ Home Assistant offers several install methods. The two that matter here:
 | Home Assistant OS in a UTM VM, bridged | Yes | Yes | Production |
 | Home Assistant Container in Docker Desktop on macOS | No | No host networking on macOS Docker, so discovery breaks | Prototype shortcut only |
 
-The VM costs 3 to 4 GB of memory and a few minutes of setup. The alternative is a $99 Home Assistant Green running Home Assistant OS natively, with the Mac purely as the inference box. That is cleaner and frees memory on the Mac; it is the fallback if the VM proves annoying.
+The VM is given 4,096 MB of memory on the prototype, the default in `scripts/haos_vm.sh`, and 3,072 MB on the Mac mini (`HAOS_VM_MEMORY_MB=3072`, as `scripts/bootstrap_mac.sh` instructs). It costs the Mac more than it is given: on the prototype the QEMU process holds about 7.5 GB (§11). Setup takes a few minutes. The alternative is a $99 Home Assistant Green running Home Assistant OS natively, with the Mac purely as the inference box. That is cleaner and frees memory on the Mac; it is the fallback if the VM proves annoying.
 
 ## 6. Packages and components, and what they do for us
 
@@ -77,7 +77,7 @@ The VM costs 3 to 4 GB of memory and a few minutes of setup. The alternative is 
 
 ## 7. Configuration we control
 
-- VM: 2 vCPUs, 4 GB memory, 32 GB disk, bridged network, autostart with UTM at login.
+- VM: 2 vCPUs, 4,096 MB of memory on the prototype and 3,072 MB on the mini (`HAOS_VM_MEMORY_MB`), 32 GB disk, bridged network. UTM opens at login and the launchd health check starts the VM (doc 08 §6).
 - Pipeline: STT and TTS entities, agent, language, local-first setting, VAD sensitivity.
 - Puck: wake word, pipeline assignment, LED brightness, volume.
 - Recorder retention: 10 days is plenty; keeps the database small.
@@ -87,7 +87,7 @@ The VM costs 3 to 4 GB of memory and a few minutes of setup. The alternative is 
 ## 8. Failure modes
 
 - **Monthly release breaks an integration or the conversation API.** Read the release notes; the custom component's test suite pins the version. Update Home Assistant OS monthly, on purpose, not automatically.
-- **VM does not start after a Mac reboot.** UTM set to launch at login with the VM set to autostart; a launchd health check restarts it if the API is unreachable.
+- **VM does not start after a Mac reboot.** UTM opens at login but does not start the VM. The launchd health check starts it with `utmctl start` whenever `utmctl status` is not `started`, and stops and starts it after five failed Home Assistant checks in a row (doc 08 §6).
 - **Discovery fails.** Almost always the network mode. Bridged, not shared.
 - **Recorder database grows.** Retention setting above.
 - **Spotify token expires.** The integration refreshes automatically; if the developer app's credentials change, re-authenticate from the UI.
@@ -100,7 +100,7 @@ The VM costs 3 to 4 GB of memory and a few minutes of setup. The alternative is 
 
 **Add-on.** A Docker container that Home Assistant OS manages for you: ESPHome, Piper, Music Assistant. Only available on Home Assistant OS or Supervised installs, which is why we run the OS image.
 
-**Intent.** A structured meaning extracted from a sentence, such as `HassPlayMedia(artist="Radiohead")`. Home Assistant ships thousands of sentence templates that map speech to intents without a language model.
+**Intent.** A structured meaning extracted from a sentence, such as `HassMediaSearchAndPlay(search_query="Radiohead", media_class="artist")`. Home Assistant ships thousands of sentence templates that map speech to intents without a language model.
 
 **mDNS / zeroconf.** How devices on a home network announce themselves by name without a central server. The puck, the Sonos, and the ESPHome add-on rely on it, and it does not cross Docker's network isolation on macOS.
 
