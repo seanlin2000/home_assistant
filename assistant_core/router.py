@@ -1,24 +1,25 @@
-"""Decide, before the model speaks, whether a question needs the web, the calculator, or neither, and say so in the system prompt the model sees.
+"""Decide, before the model speaks, whether a question needs the web, the calculator, the home forecast, or none of them, and say so in the system prompt the model sees.
 
-Two layers. Rules fire on unmistakable wording (an explicit request to search, or several numbers with an arithmetic cue) at no cost. When no rule fires,
-one short structured-output call asks the same model to classify the question. For search and calculate a directive naming the tool to call is appended to
-the system prompt, because Ollama offers no way to force a tool call; answer adds nothing, and the user's message is left exactly as spoken. The decision
-is recorded on the transcript so the benchmark can score the router on its own.
+Two layers. Rules fire on unmistakable wording (an explicit request to search, several numbers with an arithmetic cue, or a question about coming or current
+weather with no other place named) at no cost. When no rule fires, one short structured-output call asks the same model to classify the question. For search, calculate, and weather a
+directive naming the tool to call is appended to the system prompt, because Ollama offers no way to force a tool call; answer adds nothing, and the user's
+message is left exactly as spoken. The decision is recorded on the transcript so the benchmark can score the router on its own.
 """
 
 import re
 import time
 
 from assistant_core.llm_client import LLMClient
-from assistant_core.models import AgentPolicy, Message, Role, Route, RouteDecision
+from assistant_core.models import WEATHER_TOOL_NAMES, AgentPolicy, Message, Role, Route, RouteDecision, ToolSpec
 
 ROUTE_SCHEMA = {"type": "object", "properties": {"route": {"type": "string", "enum": [route.value for route in Route]}}, "required": ["route"]}
 
-ROUTER_SYSTEM_PROMPT = """You sort spoken questions for a home voice assistant. Reply with JSON only: {"route": "search" | "calculate" | "answer"}.
-search: the correct answer depends on facts that change over time or that the assistant cannot know without checking: current prices, rates, news, weather, schedules, product availability, recent releases, market conditions, what to buy today, whether an offer is competitive right now, or a claim about a recent event. Also anything the user explicitly asks to be searched or looked up.
+ROUTER_SYSTEM_PROMPT = """You sort spoken questions for a home voice assistant. Reply with JSON only: {"route": "search" | "calculate" | "weather" | "answer"}.
+search: the correct answer depends on facts that change over time or that the assistant cannot know without checking: current prices, rates, news, weather anywhere other than the user's home, schedules, product availability, recent releases, market conditions, what to buy today, whether an offer is competitive right now, or a claim about a recent event. Also anything the user explicitly asks to be searched or looked up.
 calculate: the correct answer requires arithmetic on numbers in the question: percentages, totals over time, compounding, unit or temperature conversions, energy costs, loan payments, tips, splits, or date differences.
+weather: the weather or forecast where the user lives, with no other place named: whether it will rain, how warm or cold it will get, whether to take an umbrella or a coat, the weekend forecast.
 answer: everything else: explanations of how things work, reasoning, advice from what the user said, comparisons of ideas, opinions, clarifying questions, and settled history even when it sounds topical.
-Examples: "What hardware gives the most memory for a thousand dollars today?" -> search. "Is a four percent rent increase competitive in my neighborhood?" -> search. "Since the central bank cut rates last month, should I refinance?" -> search. "What year did the Berlin Wall fall?" -> answer. "Why can a sparse model run on a smaller GPU?" -> answer. "What is fifteen percent of eighty dollars?" -> calculate."""
+Examples: "What hardware gives the most memory for a thousand dollars today?" -> search. "Is a four percent rent increase competitive in my neighborhood?" -> search. "Since the central bank cut rates last month, should I refinance?" -> search. "What year did the Berlin Wall fall?" -> answer. "Why can a sparse model run on a smaller GPU?" -> answer. "What is fifteen percent of eighty dollars?" -> calculate. "Do I need an umbrella tomorrow?" -> weather. "What's the weather in Lisbon this weekend?" -> search."""
 
 # Since prompt version 1.3 the directive is appended to the system prompt for the exchange, not to the user's message: models weight operator
 # instructions above trailing notes in the request, and one worked example shows the exact call shape. The wording stays a plain instruction;
@@ -33,7 +34,11 @@ CALCULATE_DIRECTIVE = """Routing for this question: CALCULATE.
 This question needs arithmetic. Call the calculator tools (calculate, percent, convert, growth_schedule, energy_cost, loan_payment, break_even, date_math) for every number; do not do the math yourself. Then say what the result means.
 Example call: percent(kind="of", a=15, b=80)
 """
-DIRECTIVES = {Route.SEARCH: SEARCH_DIRECTIVE, Route.CALCULATE: CALCULATE_DIRECTIVE}
+WEATHER_DIRECTIVE = """Routing for this question: WEATHER.
+This question is about the weather at home. Call weather_forecast first; do not search the web and do not answer from memory. Answer from the forecast it returns.
+Example call: weather_forecast(day="tomorrow", part_of_day="afternoon")
+"""
+DIRECTIVES = {Route.SEARCH: SEARCH_DIRECTIVE, Route.CALCULATE: CALCULATE_DIRECTIVE, Route.WEATHER: WEATHER_DIRECTIVE}
 
 EXPLICIT_SEARCH = re.compile(
     r"\b(search (the )?(web|internet|online)|search for|look (it |this |that |them )?up|look up|google (it|this|that|for)|web search for|check (the web|online)|find (me )?the (latest|current|newest|best current))\b",
@@ -46,6 +51,26 @@ ARITHMETIC_CUE = re.compile(
     re.IGNORECASE,
 )
 MIN_NUMBERS_FOR_ARITHMETIC = 2
+# The weather rule fires only on a question about coming or current conditions at home. "Weather", "umbrella", or "the forecast" says so on its own; a
+# precipitation word needs a time cue or a forecast question form as well, because "Purple Rain", "Snow Crash", or "how much rain does Seattle get a year"
+# name rain and snow without asking about them. And no other place may be named: whatever follows a preposition (skipping "the") must be a word that names
+# a time or the user's own surroundings; "in Lucerne", "in the Alps", or anything unrecognised leaves the question to the model layer, which sends other
+# places to search.
+FORECAST_WORD = re.compile(r"\b(weather|umbrella|(the|today's|tonight's|tomorrow's|weekend's) forecast)\b", re.IGNORECASE)
+PRECIPITATION_WORD = re.compile(r"\b(rain(s|ing|y)?|snow(s|ing|y)?|drizzl\w*|thunderstorms?|sleet)\b", re.IGNORECASE)
+TIME_CUE = re.compile(
+    r"\b(today|tonight|tomorrow|(this|in the) (morning|afternoon|evening)|(this|next) week(end)?|weekend|later|now|monday|tuesday|wednesday|thursday|friday|saturday|sunday)\b",
+    re.IGNORECASE,
+)
+FORECAST_QUESTION_FORM = re.compile(r"\b(will it|is it (going to|gonna)|will there be|is there going to be|should i (bring|take|wear|expect))\b", re.IGNORECASE)
+EXPLANATION_CUE = re.compile(r"\b(why|explain|what causes|what makes|how (does|do) (rain|snow|weather|the weather))\b", re.IGNORECASE)
+PREPOSITION_OBJECT = re.compile(r"\b(?:in|at|for|near|around|over|to|from|on)\s+(?:the\s+)?(\w+)", re.IGNORECASE)
+WORDS_THAT_NAME_NO_OTHER_PLACE = frozenset(
+    {"this", "that", "a", "an", "my", "our", "here", "home", "outside", "work", "commute"}
+    | {"today", "tonight", "tomorrow", "morning", "afternoon", "evening", "night", "weekend", "week", "next", "later", "now", "noon", "midnight"}
+    | {"monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"}
+    | {"go", "be", "get", "bring", "wear", "take", "walk", "run", "bike", "rain", "snow", "sleet", "drizzle", "storm"}
+)
 
 
 def rule_route(text: str) -> RouteDecision | None:
@@ -55,7 +80,26 @@ def rule_route(text: str) -> RouteDecision | None:
     cue = ARITHMETIC_CUE.search(text)
     if len(numbers) >= MIN_NUMBERS_FOR_ARITHMETIC and cue:
         return RouteDecision(route=Route.CALCULATE, source="rule", detail=f"{len(numbers)} numbers and cue '{cue.group(0)}'")
+    weather_cue = forecast_cue(text)
+    if weather_cue and not EXPLANATION_CUE.search(text) and not names_another_place(text):
+        return RouteDecision(route=Route.WEATHER, source="rule", detail=f"{weather_cue} and no other place named")
     return None
+
+
+def forecast_cue(text: str) -> str | None:
+    """What makes the text a question about coming or current weather, or None when nothing does."""
+    forecast_word = FORECAST_WORD.search(text)
+    if forecast_word:
+        return f"forecast word '{forecast_word.group(0)}'"
+    precipitation_word = PRECIPITATION_WORD.search(text)
+    time_or_form = TIME_CUE.search(text) or FORECAST_QUESTION_FORM.search(text)
+    if precipitation_word and time_or_form:
+        return f"'{precipitation_word.group(0)}' with '{time_or_form.group(0)}'"
+    return None
+
+
+def names_another_place(text: str) -> bool:
+    return any(not word.isdigit() and word.lower() not in WORDS_THAT_NAME_NO_OTHER_PLACE for word in PREPOSITION_OBJECT.findall(text))
 
 
 async def model_route(llm: LLMClient, text: str, earlier_user_messages: list[str], policy: AgentPolicy) -> RouteDecision:
@@ -78,6 +122,13 @@ async def decide_route(llm: LLMClient, conversation: list[Message], policy: Agen
     if decision is not None:
         return decision
     return await model_route(llm, user_messages[-1], user_messages[:-1], policy)
+
+
+def route_to_offered_tools(decision: RouteDecision, tool_specs: list[ToolSpec]) -> RouteDecision:
+    """The tool server offers weather_forecast only when home has coordinates; without it a weather question is searched like any other place's weather."""
+    if decision.route != Route.WEATHER or any(spec.name in WEATHER_TOOL_NAMES for spec in tool_specs):
+        return decision
+    return decision.model_copy(update={"route": Route.SEARCH, "detail": f"{decision.detail}; weather tool not offered, so searched"})
 
 
 def apply_route(messages: list[Message], decision: RouteDecision) -> list[Message]:

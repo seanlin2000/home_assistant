@@ -16,6 +16,7 @@ class Category(StrEnum):
     B = "B"  # should search
     C = "C"  # explicit arithmetic: no search, calculator expected
     D = "D"  # unclear input: speech not meant for the assistant, a garbled request, "never mind", and clear controls
+    E = "E"  # home weather: no search, weather_forecast expected
 
 
 class ExpectedReply(StrEnum):
@@ -30,6 +31,7 @@ class Gate(StrEnum):
     FABRICATED_CURRENT_FACT = "fabricated_current_fact"
     SEARCHED_ON_NO_SEARCH_QUESTION = "searched_on_no_search_question"
     DID_NOT_SEARCH_ON_SEARCH_QUESTION = "did_not_search_on_search_question"
+    DID_NOT_CHECK_FORECAST_ON_WEATHER_QUESTION = "did_not_check_forecast_on_weather_question"
     VIOLATED_EXPLICIT_CONSTRAINT = "violated_explicit_constraint"
     PRESENTED_ESTIMATE_AS_FACT = "presented_estimate_as_fact"
     LOST_PRIOR_EXCHANGE_CONTEXT = "lost_prior_exchange_context"
@@ -42,7 +44,7 @@ class Gate(StrEnum):
     RUN_ERROR = "run_error"
 
 
-from assistant_core.models import SEARCH_TOOL_NAMES  # noqa: E402 - shared with the agent loop so both agree on what counts as a search
+from assistant_core.models import SEARCH_TOOL_NAMES, WEATHER_TOOL_NAMES  # noqa: E402 - shared with the agent loop so both agree on what counts as a search
 
 JUDGE_GATES = (Gate.FABRICATED_CURRENT_FACT, Gate.VIOLATED_EXPLICIT_CONSTRAINT, Gate.PRESENTED_ESTIMATE_AS_FACT, Gate.LOST_PRIOR_EXCHANGE_CONTEXT, Gate.AGREED_WITH_FALSE_PREMISE)
 
@@ -102,12 +104,25 @@ class Candidate(BaseModel):
     preview: bool = False
 
 
+class WeatherHome(BaseModel):
+    """The home the benchmark's own tool server forecasts for: fixed in config.yaml so no result depends on the user's .env."""
+
+    latitude: float
+    longitude: float
+    timezone: str
+    units: Literal["metric", "imperial"]
+
+    def environment(self) -> dict[str, str]:
+        return {"WEATHER_LATITUDE": str(self.latitude), "WEATHER_LONGITUDE": str(self.longitude), "WEATHER_TIMEZONE": self.timezone, "WEATHER_UNITS": self.units}
+
+
 class Services(BaseModel):
     ollama_host: str
     searxng_url: str
     mcp_host: str
     mcp_port: int
     results_dir: str
+    weather_home: WeatherHome
 
     @property
     def mcp_url(self) -> str:
@@ -160,8 +175,16 @@ class QuestionResult(BaseModel):
         return self.final.route
 
     @property
+    def checked_forecast(self) -> bool:
+        return self.forecast_call_count > 0
+
+    @property
+    def forecast_call_count(self) -> int:
+        return sum(1 for transcript in self.exchanges for tool_call_record in transcript.tool_call_records if tool_call_record.call.name in WEATHER_TOOL_NAMES)
+
+    @property
     def calculator_call_count(self) -> int:
-        return sum(1 for transcript in self.exchanges for tool_call_record in transcript.tool_call_records if tool_call_record.call.name not in SEARCH_TOOL_NAMES)
+        return sum(1 for transcript in self.exchanges for tool_call_record in transcript.tool_call_records if tool_call_record.call.name not in SEARCH_TOOL_NAMES | WEATHER_TOOL_NAMES)
 
     @property
     def tool_call_count(self) -> int:

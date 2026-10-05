@@ -162,7 +162,7 @@ def render_harness_notes(result: QuestionResult, gates: list[Gate]) -> str:
     return "\n".join(
         [
             "# Harness observations",
-            f"Searched: {'yes' if result.searched else 'no'}; tool calls: {result.tool_call_count}; calculator calls: {result.calculator_call_count}",
+            f"Searched: {'yes' if result.searched else 'no'}; tool calls: {result.tool_call_count}; calculator calls: {result.calculator_call_count}; forecast calls: {result.forecast_call_count}",
             f"Stayed silent (the final reply was the silence marker {SILENCE_MARKER}, so nothing was spoken): {'yes' if result.final.stayed_silent else 'no'}",
             render_route_note(result),
             f"Harness gates already applied: {', '.join(gate.value for gate in gates) or 'none'}",

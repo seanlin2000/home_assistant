@@ -50,7 +50,7 @@ Priorities, in order: (1) answering questions well, including with web search, (
 1. The puck listens continuously for "Hey Jarvis" using a tiny neural network on its own chip. No audio leaves the puck until the wake word fires.
 2. After the wake word, the puck streams your speech over Wi-Fi to Home Assistant, which runs in a virtual machine on the Mac.
 3. Home Assistant's Assist pipeline sends the audio to Whisper, a speech-to-text model running on the Mac's GPU, and gets back text.
-4. The pipeline first tries its built-in intent matcher. "Play Radiohead" and "what's the weather" match fixed sentence patterns and are handled directly, without a language model. This is fast and deterministic.
+4. The pipeline first tries its built-in intent matcher. "Play Radiohead" matches a fixed sentence pattern and is handled directly, without a language model. This is fast and deterministic. Weather questions are deliberately let through to the agent, because the built-in weather intent can only read out current conditions; the agent answers them from a forecast tool that reads Met.no (docs 03 and 06).
 5. Anything else goes to our conversation agent, a small Python component we write. It sends the conversation to the language model through Ollama.
 6. If the model decides it needs current information, it asks for the `web_search` tool. Our agent immediately streams a short filler sentence ("Let me pull some sources on that") so the puck starts speaking while the search runs. The search goes to our MCP server, which queries a self-hosted SearXNG, fetches the top pages, extracts the readable text, and returns excerpts. The model reads them and writes the answer.
 7. The answer streams sentence by sentence to a text-to-speech engine (Kokoro or Piper) and plays on the puck.
@@ -107,7 +107,7 @@ Running cost is about $2.50 a month in electricity. Spotify Premium is already p
 | Model weights and inference | Ollama on the Mac. |
 | Search queries | SearXNG on the Mac forwards them to Google, Bing, Brave, and DuckDuckGo with no account and no cookies. The engines see the query text and the apartment's IP address. |
 | Spotify commands | Spotify's API, tied to your Premium account, as with any Spotify client. |
-| Weather | Latitude and longitude to Met.no. |
+| Weather | The home's latitude and longitude to Met.no, from Home Assistant's Met.no integration and from our forecast tool, which rounds them to four decimals. The tool's User-Agent names the app and its repository, nothing personal. The question itself never leaves the Mac. |
 | Benchmark only | The twenty benchmark questions and the candidate models' answers go to a Claude Code subagent for judging. They contain no personal data. |
 
 ## 8. Phase plan

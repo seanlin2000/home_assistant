@@ -19,6 +19,7 @@ def test_docs_tests_and_ops_change_nothing() -> None:
 def test_tool_server_code_restarts_only_the_tool_server() -> None:
     assert actions("web_search_mcp/server.py") == ["restart:mcp"]
     assert actions("calculator_mcp/tools.py", "utils/jsonl_utils.py") == ["restart:mcp"]
+    assert actions("weather_mcp/forecast.py") == ["restart:mcp"]
 
 
 def test_shared_core_restarts_the_tool_server_and_redeploys_the_component() -> None:

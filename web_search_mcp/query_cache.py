@@ -1,4 +1,5 @@
-"""Optional on-disk cache keyed by query string and URL. The benchmark turns it on so every candidate sees identical search results; production leaves it off."""
+"""Optional on-disk cache keyed by query string, URL, and forecast location. The benchmark turns it on so every candidate sees identical search results and
+the same forecast; production leaves it off."""
 
 from typing import Any
 
@@ -24,6 +25,12 @@ class QueryCache:
 
     def put_page(self, url: str, text: str) -> None:
         self._put(f"page:{url}", text)
+
+    def get_forecast(self, location_key: str) -> dict[str, Any] | None:
+        return self._get(f"forecast:{location_key}")
+
+    def put_forecast(self, location_key: str, forecast: dict[str, Any]) -> None:
+        self._put(f"forecast:{location_key}", forecast)
 
     def _get(self, key: str) -> Any:
         return None if self._cache is None else self._cache.get(key)

@@ -4,8 +4,8 @@ from pathlib import Path
 
 import pytest
 
-from assistant_core.models import AgentPolicy, Message, Role, Route
-from assistant_core.router import CALCULATE_DIRECTIVE, SEARCH_DIRECTIVE, apply_route, decide_route, rule_route
+from assistant_core.models import AgentPolicy, Message, Role, Route, RouteDecision, ToolSpec
+from assistant_core.router import CALCULATE_DIRECTIVE, SEARCH_DIRECTIVE, WEATHER_DIRECTIVE, apply_route, decide_route, route_to_offered_tools, rule_route
 from benchmark.records import load_questions
 
 QUESTIONS = load_questions(Path("benchmark/questions.yaml"))
@@ -38,6 +38,32 @@ def test_rules_catch_explicit_searches_and_plain_arithmetic() -> None:
     assert rule_route("Why is the sky blue?") is None
 
 
+def test_weather_rule_fires_only_for_home_and_leaves_other_places_to_the_model() -> None:
+    fired = {question.id for question in QUESTIONS.questions if (decision := rule_route(question.exchanges[-1])) and decision.route == Route.WEATHER}
+    assert {"E36", "E37"} <= fired and "B13" not in fired
+    for home in ("what's the weather", "Is it going to snow on Saturday?", "Do I need to bring an umbrella to work?", "will it rain at 5 pm"):
+        assert rule_route(home).route == Route.WEATHER, home
+    for elsewhere_or_not_forecast in ("Will it rain in Paris tomorrow?", "What's the weather in the Alps this weekend?", "Why does rain smell nice?"):
+        assert rule_route(elsewhere_or_not_forecast) is None, elsewhere_or_not_forecast
+
+
+def test_weather_rule_needs_a_question_about_coming_or_current_conditions_not_just_a_rain_or_snow_word() -> None:
+    for forecast in ("Do I need an umbrella tomorrow?", "Will it rain this afternoon?", "Is it going to snow in the morning?", "What's the weather?"):
+        assert rule_route(forecast).route == Route.WEATHER, forecast
+    for not_forecast_by_rule in ("Who sang Purple Rain?", "Who wrote Snow Crash?", "How much rain does Seattle get a year?", "What's the weather in Lisbon?"):
+        assert rule_route(not_forecast_by_rule) is None, not_forecast_by_rule
+
+
+def test_weather_route_falls_back_to_search_when_the_server_offers_no_forecast_tool() -> None:
+    weather = RouteDecision(route=Route.WEATHER, source="rule", detail="weather word")
+    forecast_tool = ToolSpec(name="weather_forecast", description="", input_schema={})
+    assert route_to_offered_tools(weather, [forecast_tool]) is weather
+    fallback = route_to_offered_tools(weather, [ToolSpec(name="search_and_read", description="", input_schema={})])
+    assert fallback.route == Route.SEARCH and fallback.detail.endswith("weather tool not offered, so searched")
+    answer = RouteDecision(route=Route.ANSWER, source="model")
+    assert route_to_offered_tools(answer, []) is answer
+
+
 @pytest.mark.asyncio
 async def test_model_layer_runs_only_when_no_rule_fires_and_defaults_on_failure() -> None:
     classifier = FakeClassifier("search")
@@ -68,6 +94,8 @@ def test_apply_route_appends_the_directive_to_the_system_prompt_and_leaves_the_u
     assert search[0].content == f"sys\n\n{SEARCH_DIRECTIVE.rstrip()}" and search[-1].content == "second" and messages[0].content == "sys"
     calc = apply_route(messages, rule_route("what is 15% of $80 plus $20"))
     assert calc[0].content.endswith(CALCULATE_DIRECTIVE.rstrip()) and "do not do the math yourself" in calc[0].content
+    weather = apply_route(messages, rule_route("do I need an umbrella tomorrow"))
+    assert weather[0].content.endswith(WEATHER_DIRECTIVE.rstrip()) and 'weather_forecast(day="tomorrow"' in weather[0].content
     from assistant_core.models import RouteDecision
 
     assert apply_route(messages, RouteDecision(route=Route.ANSWER, source="model")) is messages

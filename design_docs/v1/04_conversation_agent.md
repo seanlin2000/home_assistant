@@ -14,7 +14,7 @@ The loop that turns a transcribed question into a spoken answer. It holds the pe
  │                    │ hit                 (custom component)     │
  │                    ▼                        │                   │
  │              built-in handler               │ ConversationEntity.async_process(user_input, chat_log)
- │              (music, weather)               ▼                   │
+ │              (music)                        ▼                   │
  │                                   ┌───────────────────────┐    │
  │                                   │ HA adapter             │    │
  │                                   │  chat_log ⇄ messages   │    │
@@ -40,7 +40,7 @@ The loop that turns a transcribed question into a spoken answer. It holds the pe
 
 ## 3. How it works, step by step
 
-1. Home Assistant's pipeline has already turned speech into text and tried its built-in intents. Music and weather never reach us. Everything else arrives as `ConversationInput` with the text, a conversation id, and a `ChatLog` holding the earlier messages of this conversation.
+1. Home Assistant's pipeline has already turned speech into text and tried its built-in intents. Music commands never reach us. Weather questions do, because Home Assistant's weather intent is left with nothing to answer from (doc 06 §12, and §16 below). Everything else arrives as `ConversationInput` with the text, a conversation id, and a `ChatLog` holding the earlier messages of this conversation.
 2. The adapter converts the chat log into the core's plain message list and calls `agent_loop.run`.
 3. The core builds the message list: the shared system prompt (persona "Jarvis", English, one to three sentences, lead with the answer, no lists or URLs aloud, when to search), then the conversation's messages. `memory.get_context()` is called and, in v1, returns nothing; this is the seam for persistent memory later.
 4. The core streams from the model. Text deltas are yielded upward immediately; the adapter writes them into the chat log as streaming content, and Home Assistant's text-to-speech starts on the first complete sentence.
@@ -237,3 +237,51 @@ The Voice PE puck's wake word sometimes fires on a television, a radio, or peopl
 - The puck reuses a conversation id for five minutes after its last exchange. If a follow-up window closes with nobody speaking, that conversation's count stays where it was, and a new wake word within five minutes starts from it, so that conversation gets one fewer follow-up than usual.
 
 Code: `assistant_core/prompts.py`, `SilenceMarkerHold` and `finish_transcript` in `assistant_core/agent_loop.py`, `Transcript.stayed_silent` in `assistant_core/models.py`, `ExchangeRecord.stayed_silent`, `FollowUpListening` and `agent_events_to_deltas` in the component's `adapter.py`, and `_async_handle_message` in `conversation.py`. The benchmark measures the prompt rules with category D (doc 01, "Question set 1.3").
+
+## 16. As built, 2026-09-30: weather at home (prompt 1.7)
+
+Weather questions now reach the agent (doc 06 §12), and the tool server offers `weather_forecast`, which reads Met.no's forecast for home (doc 03 §14). The router gains a fourth route so the model calls that tool instead of searching the web or answering from memory.
+
+```
+ user text ──▶ rule layer (regex, 0 ms)
+               │  "search the web", "look up"                          ─▶ search
+               │  two or more numbers + an arithmetic cue              ─▶ calculate
+               │  coming weather at home, no other place named         ─▶ weather     "Do I need an umbrella tomorrow afternoon?"
+               │  nothing matched
+               ▼
+             model layer (one structured-output call, four routes)     ─▶ weather     "How cold is it going to get tonight?"
+               │                                                       ─▶ search      "What's the weather in Lisbon this weekend?"
+               ▼
+             route_to_offered_tools: weather tool not offered?         ─▶ search
+               │
+               ├─ search, calculate, answer ─▶ directives as in §12 and §14
+               └─ weather ─▶ system prompt + "Routing for this question: WEATHER. ... Call weather_forecast first ..."
+                             Example call: weather_forecast(day="tomorrow", part_of_day="afternoon")
+                               │
+                               ▼
+                             model calls weather_forecast ─▶ filler "Checking the forecast." ─▶ tool result ─▶ spoken answer
+```
+
+**The weather rule.** The rule layer checks explicit search first, then arithmetic, then weather, and the weather rule is deliberately conservative, like the others:
+
+- It needs a question about coming or current weather. "Weather", "umbrella", or "the forecast" is enough on its own. A precipitation word (rain, snow, drizzle, thunderstorm, sleet) also needs a time cue ("today", "tonight", "tomorrow", "this afternoon", "the weekend", a weekday, "later", "now") or a forecast question form ("will it", "is it going to", "should I bring"), because "Who sang Purple Rain?", "Who wrote Snow Crash?", and "How much rain does Seattle get a year?" mention rain and snow without asking about them.
+- It stands aside for explanations ("why does it rain more in the afternoon"), which the model answers from knowledge.
+- It stands aside when another place may be named. After each preposition (in, at, for, near, on, and a few more, skipping "the"), the next word must be one that cannot be a place: a time ("tomorrow", "saturday", "tonight"), the user's own surroundings ("home", "outside", "work"), or a verb ("to bring", "to snow"). "In Lucerne", "in the Alps", or any word the rule does not know leaves the question to the model layer, which sends other places to search.
+
+Questions without a weather word, such as "how cold is it going to get tonight", reach the model layer. Its prompt now lists four routes, defines weather as "the weather or forecast where the user lives, with no other place named", and moves "weather anywhere other than the user's home" into the search definition. On question set 1.4 the rule decides two of the three weather questions; the model layer has to catch the third.
+
+**Fallback when the tool is missing.** The server offers `weather_forecast` only when it knows where home is. `route_to_offered_tools` turns a weather route into a search route when the tool list lacks it, and appends "weather tool not offered, so searched" to the route's detail, so a server started without coordinates degrades to the old behaviour instead of telling the model to call a tool that does not exist.
+
+**Prompt 1.7.** Two changes to the base prompt, plus the weather directive:
+
+- The search list says "weather anywhere other than home" where it said "weather".
+- A new "Weather at home" section tells the model to call `weather_forecast` for the weather where the user lives, to search for anywhere else, and to answer from what the tool returns: conditions, temperature range, and whether rain or snow is likely, with the numbers rounded.
+- The weather directive has the same shape as the others since prompt 1.4: the instruction and one example call, nothing after it.
+
+Version 1.6 was taken by a separate change to the prompt developed at the same time, so this one is 1.7. Category E (home weather) is new, so a pass under 1.7 compares with earlier passes on categories A to D only.
+
+**The filler.** `filler_for` now has three lists: search tools get the web phrases, `weather_forecast` gets `weather_filler_phrases` ("Checking the forecast.", "One moment, getting the forecast."), and everything else gets the calculator phrases. "Checking the web" would be wrong for a forecast read from one fixed service, for the same reason it was wrong for arithmetic. The phrases live in `AgentPolicy`; the Home Assistant component does not expose any filler phrases in its options, so it uses the defaults.
+
+**How the benchmark measures it.** Question set 1.4 adds category E (home weather), three weather questions with the weather route expected: E36 "Do I need an umbrella tomorrow afternoon?", E37 "What's the weather looking like this weekend?", and E38 "How cold is it going to get tonight?". A new gate, `did_not_check_forecast_on_weather_question`, fails a weather-route question on which the candidate never called the forecast tool. The judge sees the tool result, as it does for search, and the rubric makes that forecast the ground truth: any figure or condition not in it counts as a fabricated current fact. B13 (a day trip from Lucerne that depends on the weather there) still expects search, which checks that another town's weather does not go to the home forecast.
+
+Code: `assistant_core/router.py` (rule, classifier prompt, directive, `route_to_offered_tools`), `assistant_core/prompts.py`, `assistant_core/models.py` (`Route.WEATHER`, `WEATHER_TOOL_NAMES`, the filler phrases), and two lines in `agent_loop.py`.

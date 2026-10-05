@@ -16,7 +16,7 @@ from pydantic import BaseModel, Field
 from rich.console import Console
 
 from assistant_core import agent_loop
-from assistant_core.models import AgentPolicy, Completion, Done, GenerationStats, LLMEvent, Message, Role, TextDelta, ToolCall, ToolCallRequest, ToolSpec, Transcript
+from assistant_core.models import WEATHER_TOOL_NAMES, AgentPolicy, Completion, Done, GenerationStats, LLMEvent, Message, Role, TextDelta, ToolCall, ToolCallRequest, ToolSpec, Transcript
 from assistant_core.tools import McpToolBox
 from benchmark.mcp_process import McpServerProcess
 from benchmark.records import Candidate, Question, QuestionResult, load_config, load_questions, write_jsonl
@@ -34,7 +34,7 @@ class ScriptedCall(BaseModel):
 
 class ScriptedExchange(BaseModel):
     queries: list[str] = Field(default_factory=list)  # shorthand for search_and_read calls
-    calls: list[ScriptedCall] = Field(default_factory=list)  # any other tool calls, e.g. the calculator
+    calls: list[ScriptedCall] = Field(default_factory=list)  # any other tool calls, e.g. the calculator or weather_forecast
     answer: str
 
     def tool_calls(self) -> list[ToolCall]:
@@ -45,6 +45,8 @@ class ScriptedExchange(BaseModel):
     def implied_route(self) -> str:
         if self.queries:
             return "search"
+        if any(call.name in WEATHER_TOOL_NAMES for call in self.calls):
+            return "weather"
         return "calculate" if self.calls else "answer"
 
 

@@ -49,7 +49,7 @@ Choose the language model, and therefore the hardware, from evidence instead of 
 
 ## 4. Question set, version 1
 
-Stored verbatim in `benchmark/questions.yaml`. Category A should be answered without searching. Category B should trigger a search. Category C, added in question set 1.2, should go through the calculator tools. Category D, added in question set 1.3, is unclear input: speech the assistant should ignore, a garbled request, "never mind", and two clear controls. Metadata per question: `expected_search` (no / yes / instructed, where "instructed" means the question itself says to search), explicit constraints to check, and a reference sketch for Category A.
+Stored verbatim in `benchmark/questions.yaml`. Category A should be answered without searching. Category B should trigger a search. Category C, added in question set 1.2, should go through the calculator tools. Category D, added in question set 1.3, is unclear input: speech the assistant should ignore, a garbled request, "never mind", and two clear controls. Category E, added in question set 1.4, is home weather: questions about the weather where the user lives, which the `weather_forecast` tool answers. Metadata per question: `expected_search` (no / yes / instructed, where "instructed" means the question itself says to search), explicit constraints to check, and a reference sketch for Category A.
 
 ### Category A: answer from reasoning or knowledge, do not search
 
@@ -108,6 +108,16 @@ The wake word sometimes fires on a television or on people talking, and the spee
 | D34 | none (control) | Capital of Australia? | Canberra. |
 | D35 | none (control) | Who rote Pride and Prejudice? | Jane Austen; "rote" is a misheard "wrote". |
 
+### Category E: home weather (added in question set 1.4)
+
+Prompt 1.7 sends questions about the weather at home to the `weather_forecast` tool (doc 04 §16). Each question is one exchange, expects no search, and expects the weather route. The forecast the tool returned in the transcript is the ground truth: the judge grades against it, not against the real weather, and any figure or condition not in it counts as a fabricated current fact.
+
+| Id | Tests | Question | What a correct answer is |
+|---|---|---|---|
+| E36 | Home forecast for one part of one day | Do I need an umbrella tomorrow afternoon? | Yes or no about the umbrella, backed by that afternoon's precipitation and a rounded temperature. |
+| E37 | Home forecast summarised across two days | What's the weather looking like this weekend? | Saturday and Sunday, each with conditions and a rounded temperature range, and whether rain or snow is likely; a short spoken summary. |
+| E38 | Home forecast with no weather word, so only the router's model layer can catch it | How cold is it going to get tonight? | Tonight's low as a rounded number with its unit. |
+
 ### Notes for version 1.1
 
 Not changes to v1. B17 to B19 say "search for", so they test instruction following more than the search decision. The set also has no pure adversarial items. Two candidates to add after the first run: a question that sounds current but is not ("What year did the Berlin Wall fall?", should not search), and one with a false current premise ("Since the Fed cut rates to zero last month, should I refinance?", should search and correct the premise).
@@ -134,6 +144,7 @@ Any gate failure sets the question's score to 0 and is listed by name in the rep
 | Malformed tool calls, more than 4 tool calls, or no final answer | Harness |
 | Spoke when it should have stayed silent (a Category D question expecting the silence marker) | Harness: the final reply was not the marker |
 | Stayed silent on a real request (any question not expecting silence) | Harness: an exchange's reply was the marker |
+| Did not check the forecast on a weather question (`did_not_check_forecast_on_weather_question`, a Category E question) | Harness: no `weather_forecast` call |
 
 ### Step 2: score, 0 to 10 per question
 
@@ -339,3 +350,18 @@ What changed in the harness:
 - **Hand-written references answer only what they script.** `benchmark-manual` used to fail on a question its YAML file did not cover; it now replays the scripted questions and reports how many it skipped, so the existing references still run. The reference needs category D answers added before it can be compared on D.
 
 Category D has not been run yet: the first pass under question set 1.3 and prompt 1.6 will show whether the small models can keep to the fixed replies, and whether the overheard forecast line (D29) pulls the router into a search.
+
+### Question set 1.4: category E and the forecast gate, 2026-09-30
+
+Prompt 1.7 gave the agent a weather route and the `weather_forecast` tool (doc 04 §16). Question set 1.4 adds category E (E36 to E38, above) to measure them; the other 35 questions are unchanged, so a 1.4 pass compares with earlier passes on the shared questions through `benchmark-report --compare`.
+
+What changed in the harness:
+
+- **A fixed home.** The benchmark's tool server forecasts for `weather_home` in `benchmark/config.yaml`: a public landmark (the Empire State Building), `America/New_York`, imperial units. Results never depend on the user's `.env`, and the user's home stays out of the repository.
+- **One forecast per run.** The per-run cache pins the first forecast fetched, so every candidate in a run answers from the same forecast.
+- **One harness gate.** `did_not_check_forecast_on_weather_question` fires on a weather-route question answered without a `weather_forecast` call.
+- **The judge sees the forecast.** The harness observations count forecast calls, and `benchmark/rubric.md` makes the forecast in the tool result the ground truth.
+- **The report has a category E column**, 30 points for the three questions, shown as "n/a" for a pass without them. The total maximum becomes 380.
+- **The hand-written reference has no category E answers yet**, so `benchmark-manual` leaves E36 to E38 unanswered until they are written.
+
+Category E has not been run yet.

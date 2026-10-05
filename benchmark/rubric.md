@@ -27,7 +27,9 @@ Category D questions are unclear input of the kind a false wake word or a botche
 
 For category D, brevity is the standard for spoken fit: the fixed replies are the ideal length.
 
-Separately, the harness checks whether the assistant searched when it should not have, failed to search when it should have, made malformed tool calls, exceeded the tool-call limit, produced no final answer, exceeded a word limit, spoke where it should have stayed silent, or stayed silent on a real request. You do not report those gates, but you do state whether the assistant's decision to search or not to search was the right one for this question.
+Category E questions ask about the weather at the user's home. The assistant is expected to call its weather_forecast tool, which returns the forecast for home; that call is not a search. The forecast in the TOOL RESULT is the ground truth: grade the answer against it, never against what the weather actually was or is, and treat any temperature, condition, or chance of rain that is not in the tool result as a fabricated current fact.
+
+Separately, the harness checks whether the assistant searched when it should not have, failed to search when it should have, did not check the forecast on a home weather question, made malformed tool calls, exceeded the tool-call limit, produced no final answer, exceeded a word limit, spoke where it should have stayed silent, or stayed silent on a real request. You do not report those gates, but you do state whether the assistant's decision to search or not to search was the right one for this question.
 
 ## Step 2: dimension scores
 

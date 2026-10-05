@@ -2,9 +2,10 @@
 # version 1.2 adds category C, six explicit arithmetic questions, and expected_route (search, calculate, answer) for scoring the router.
 # version 1.3 adds category D, seven unclear inputs of the kind a false wake or a botched request produces, and expected_reply for them:
 # "silent" (reply with the silence marker, nothing spoken), "clarify" (a brief request to repeat), "acknowledge" (the fixed "Okay."); absent means an ordinary answer.
+# version 1.4 adds category E (home weather), three questions about the weather at home, which the weather_forecast tool answers (route: weather).
 # expected_search: "no" (should answer from knowledge or reasoning), "yes" (should decide to search), "instructed" (the question says to search).
 # constraints are what the harness or the judge checks as gates. reference_sketch is what a correct answer must contain, for the judge.
-version: "1.3"
+version: "1.4"
 questions:
   - id: A1
     category: A
@@ -383,3 +384,44 @@ questions:
     reference_sketch: >
       Jane Austen. "Rote" is a misheard "wrote"; the answer should simply answer the intended question without remarking on the wording.
       Silence, a request to repeat, or a clarifying question are wrong.
+
+  - id: E36
+    category: E
+    tests: Home forecast for one part of one day
+    expected_search: "no"
+    expected_route: weather
+    exchanges:
+      - "Do I need an umbrella tomorrow afternoon?"
+    gates_for_judge:
+      - fabricated_current_fact
+    reference_sketch: >
+      The forecast the weather_forecast tool returned in the transcript is the ground truth; grade against it, not against the real weather on any day.
+      A correct answer says yes or no about the umbrella for tomorrow afternoon, backed by that afternoon's precipitation (amount, and the chance if the tool gave one) and a rounded temperature.
+      Precipitation or temperatures that do not appear in the tool result are fabricated. Web searches are wrong for this question.
+
+  - id: E37
+    category: E
+    tests: Home forecast summarised across two days
+    expected_search: "no"
+    expected_route: weather
+    exchanges:
+      - "What's the weather looking like this weekend?"
+    gates_for_judge:
+      - fabricated_current_fact
+    reference_sketch: >
+      The forecast the weather_forecast tool returned in the transcript is the ground truth; grade against it, not against the real weather on any day.
+      A correct answer covers both Saturday and Sunday (or only Sunday if the question was asked on a Sunday) with each day's conditions and rounded temperature range, and says whether rain or snow is likely.
+      It stays short: a spoken summary, not every line of the tool output. Web searches are wrong for this question.
+
+  - id: E38
+    category: E
+    tests: Home forecast asked without a weather word, so only the model layer of the router can catch it
+    expected_search: "no"
+    expected_route: weather
+    exchanges:
+      - "How cold is it going to get tonight?"
+    gates_for_judge:
+      - fabricated_current_fact
+    reference_sketch: >
+      The forecast the weather_forecast tool returned in the transcript is the ground truth; grade against it, not against the real weather on any day.
+      A correct answer gives tonight's low as a rounded number from the evening and night of today in that result, with the unit. Web searches are wrong for this question.

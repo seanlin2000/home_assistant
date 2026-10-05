@@ -5,9 +5,12 @@ Steps (each is skipped when already done, so the script can be re-run):
   2. add-ons: Samba (for deploys), Piper (text to speech), Music Assistant, ESPHome (for the puck), openWakeWord (optional server-side wake word)
   3. integrations: Wyoming entries for Whisper and Kokoro on the Mac, confirm the discovered Piper add-on, add studio_assistant
   4. pipeline: an Assist pipeline "Jarvis" using Whisper, studio_assistant, and Piper, set as preferred
+  5. weather: copy the home location, time zone, and units into .env for the weather_forecast tool, and hide every weather entity from Assist so
+     Home Assistant's built-in weather intent finds nothing to answer with and every weather question reaches studio_assistant
 
     uv run python scripts/ha_setup.py --host 192.168.1.60          # first run
     uv run python scripts/ha_setup.py --host 192.168.1.60 --only pipeline
+    uv run python scripts/ha_setup.py --host 192.168.1.60 --only weather   # then scripts/services.sh install, so the tool server sees the coordinates
 
 Credentials: HA_ADMIN_USER / HA_ADMIN_PASSWORD / HA_SAMBA_PASSWORD are read from .env and generated if missing. Everything lives on the LAN.
 """
@@ -30,7 +33,7 @@ PROJECT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT))  # scripts/ is not a package; make `ops` importable when run as a file
 ENV_PATH = PROJECT / ".env"
 MAC_IP_DEFAULT = "192.168.1.152"
-STEPS = ("onboarding", "addons", "integrations", "pipeline")
+STEPS = ("onboarding", "addons", "integrations", "pipeline", "weather")
 ADDONS = {
     "core_samba": {"options": None},  # options are filled in at runtime with the generated password
     "core_piper": {
@@ -255,6 +258,36 @@ async def pipeline(ha: HomeAssistant, args: argparse.Namespace) -> None:
     print(f"pipeline: '{PIPELINE_NAME}' uses {stt} -> {agent} -> {tts} (preferred)")
 
 
+# ---------------------------------------------------------------- step 5: weather
+
+
+async def weather(ha: HomeAssistant, args: argparse.Namespace) -> None:
+    await save_home_location(ha)
+    await hide_weather_entities_from_assist(ha)
+
+
+async def save_home_location(ha: HomeAssistant) -> None:
+    """The weather_forecast tool reads WEATHER_* from .env (through the tool server's launchd agent); copying them from Home Assistant means the
+    coordinates are typed once, in Home Assistant, and never in this repository."""
+    config = await ha.get("/api/config")
+    units = "imperial" if config["unit_system"]["temperature"] == "°F" else "metric"
+    for name, value in (("WEATHER_LATITUDE", config["latitude"]), ("WEATHER_LONGITUDE", config["longitude"]), ("WEATHER_TIMEZONE", config["time_zone"]), ("WEATHER_UNITS", units)):
+        save_env(name, str(value))
+    print(f"weather: home location, time zone {config['time_zone']}, and {units} units saved to .env; run scripts/services.sh install to pass them to the tool server")
+
+
+async def hide_weather_entities_from_assist(ha: HomeAssistant) -> None:
+    """Home Assistant's built-in weather intent answers "what's the weather" from an exposed weather entity, and only with its current state. With no
+    weather entity exposed the intent fails to match a target, the pipeline hands the text to studio_assistant, and weather_forecast answers every
+    weather question, streamed like any other answer. The Met.no entity itself stays for dashboards. Rerun after adding another weather integration."""
+    weather_ids = sorted(state["entity_id"] for state in await ha.get("/api/states") if state["entity_id"].startswith("weather."))
+    if not weather_ids:
+        print("weather: no weather entities to hide from Assist")
+        return
+    await ha.ws({"type": "homeassistant/expose_entity", "assistants": ["conversation"], "entity_ids": weather_ids, "should_expose": False})
+    print(f"weather: {', '.join(weather_ids)} hidden from Assist, so weather questions reach studio_assistant")
+
+
 # ---------------------------------------------------------------- main
 
 
@@ -281,7 +314,7 @@ async def main_async() -> None:
     await wait_for_api(ha)
     save_env("HA_BASE", ha.base)
     print(f"Home Assistant API at {ha.base}")
-    for name, step in (("onboarding", onboarding), ("addons", addons), ("integrations", integrations), ("pipeline", pipeline)):
+    for name, step in (("onboarding", onboarding), ("addons", addons), ("integrations", integrations), ("pipeline", pipeline), ("weather", weather)):
         if args.only and name not in args.only:
             continue
         await step(ha, args)

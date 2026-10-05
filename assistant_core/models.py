@@ -14,6 +14,7 @@ class Role(StrEnum):
 class Route(StrEnum):
     SEARCH = "search"
     CALCULATE = "calculate"
+    WEATHER = "weather"
     ANSWER = "answer"
 
 
@@ -57,11 +58,12 @@ class AgentPolicy(BaseModel):
     route_questions: bool = True
     filler_phrases: list[str] = Field(default_factory=lambda: list(DEFAULT_FILLER_PHRASES))
     calculate_filler_phrases: list[str] = Field(default_factory=lambda: list(DEFAULT_CALCULATE_FILLER_PHRASES))
+    weather_filler_phrases: list[str] = Field(default_factory=lambda: list(DEFAULT_WEATHER_FILLER_PHRASES))
     tool_timeout_seconds: float = 30.0
 
 
-# Spoken while the first tool call of an exchange runs, so the user hears something within a second or two. Search and calculation get different
-# lines because "checking the web" is wrong, and mildly alarming, when the assistant is only doing arithmetic locally.
+# Spoken while the first tool call of an exchange runs, so the user hears something within a second or two. Search, calculation, and the forecast get
+# different lines because "checking the web" is wrong, and mildly alarming, when the assistant is only doing arithmetic locally or reading the forecast.
 DEFAULT_FILLER_PHRASES = (
     "Let me pull some sources on that.",
     "One moment, checking the web.",
@@ -71,7 +73,12 @@ DEFAULT_CALCULATE_FILLER_PHRASES = (
     "Let me work that out.",
     "One second, doing the math.",
 )
+DEFAULT_WEATHER_FILLER_PHRASES = (
+    "Checking the forecast.",
+    "One moment, getting the forecast.",
+)
 SEARCH_TOOL_NAMES = frozenset({"search_and_read", "web_search", "fetch_page"})
+WEATHER_TOOL_NAMES = frozenset({"weather_forecast"})
 # The tools a live tool server must expose before the benchmark or the health check trusts it as ours (a stale server once served a different set).
 REQUIRED_TOOL_NAMES = frozenset({"search_and_read", "web_search", "fetch_page", "calculate", "percent", "convert"})
 

@@ -139,7 +139,7 @@ def render_router_table(question_set: QuestionSet, reports: list[CandidateReport
     if not routed:
         return "## Router\n\nNo routed results in this run."
     lines = [
-        "## Router accuracy (search / calculate / answer decided before the model spoke)",
+        "## Router accuracy (search / calculate / weather / answer decided before the model spoke)",
         "",
         "The rule layer is model-independent, so its row is the same for every candidate; the model layer is the candidate classifying its own question.",
         "",
@@ -196,13 +196,13 @@ def render_summary_table(reports: list[CandidateReport]) -> str:
         "",
         "Total counts a gated question as zero; ungated total ignores the gates and sums the dimension scores, so the gap between them is what the gates cost.",
         "",
-        "| Candidate | Total | Ungated total | Category A | Category B | Category C | Category D | Gated questions | Quality /5 | Judgment /3 | Spoken /2 | Unjudged |",
-        "|---|---|---|---|---|---|---|---|---|---|---|---|",
+        "| Candidate | Total | Ungated total | Category A | Category B | Category C | Category D | Category E | Gated questions | Quality /5 | Judgment /3 | Spoken /2 | Unjudged |",
+        "|---|---|---|---|---|---|---|---|---|---|---|---|---|",
     ]
     for report in sorted(reports, key=lambda item: item.total(), reverse=True):
         unjudged = len(report.scores) - len(report.judged())
         lines.append(
-            f"| {label(report)} | {report.total()}/{report.maximum()} | {report.ungated_total()}/{report.maximum()} | {report.total(Category.A)}/{report.maximum(Category.A)} | {report.total(Category.B)}/{report.maximum(Category.B)} | {category_cell(report, Category.C)} | {category_cell(report, Category.D)} | {report.gated_question_count()} | {report.mean_dimension('answer_quality'):.1f} | {report.mean_dimension('judgment'):.1f} | {report.mean_dimension('spoken_fit'):.1f} | {unjudged} |"
+            f"| {label(report)} | {report.total()}/{report.maximum()} | {report.ungated_total()}/{report.maximum()} | {report.total(Category.A)}/{report.maximum(Category.A)} | {report.total(Category.B)}/{report.maximum(Category.B)} | {category_cell(report, Category.C)} | {category_cell(report, Category.D)} | {category_cell(report, Category.E)} | {report.gated_question_count()} | {report.mean_dimension('answer_quality'):.1f} | {report.mean_dimension('judgment'):.1f} | {report.mean_dimension('spoken_fit'):.1f} | {unjudged} |"
         )
     return "\n".join(lines)
 
