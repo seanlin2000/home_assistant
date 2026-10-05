@@ -86,7 +86,7 @@ fi
 # A detached checkout of an exact commit: the mini never has a branch to drift on; ops.deploy moves it from one commit to the next.
 run git -C "$TARGET_DIR" checkout --detach --quiet "$REF"
 
-step "virtual environment (uv sync --frozen)"
+step "virtual environment (uv sync --locked)"
 run "$TARGET_DIR/scripts/dev_setup.sh"
 
 step "log directory"

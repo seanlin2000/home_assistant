@@ -27,7 +27,7 @@ Every piece of Python in this repository runs from a virtual environment inside 
   └── CLAUDE.md
 
   freeze:   uv lock                       → rewrites uv.lock from pyproject constraints
-  rebuild:  uv sync --frozen              → .venv exactly as locked, fails if lock is stale
+  rebuild:  uv sync --locked              → .venv exactly as locked, fails if lock is stale
   upgrade:  uv lock --upgrade [--upgrade-package X] && uv sync && uv run pytest
   run:      uv run python scripts/benchmark_llm.py      uv run web-search-mcp      uv run pytest
 ```
@@ -36,7 +36,7 @@ Every piece of Python in this repository runs from a virtual environment inside 
 
 1. Install `uv` once with Homebrew. It is a single binary that manages Python interpreters, virtual environments, and dependency resolution.
 2. `uv python install 3.12` downloads a standalone interpreter into uv's own directory. `.python-version` in the repo tells uv to use it here. The interpreter that ships with macOS, and any Homebrew Python, are never involved.
-3. `uv sync` reads `pyproject.toml` and `uv.lock`, creates `.venv/` in the project folder, and installs exactly the locked versions. On a clean clone this reproduces the environment. `--frozen` makes it fail loudly instead of silently re-resolving if the lock is out of date.
+3. `uv sync` reads `pyproject.toml` and `uv.lock`, creates `.venv/` in the project folder, and installs exactly the locked versions. On a clean clone this reproduces the environment. `--locked` makes it fail with an error, and install nothing, when `uv.lock` no longer matches `pyproject.toml`. Without it, `uv sync` and `uv run` silently re-resolve and rewrite the lock; `--frozen` installs the stale lock without checking it.
 4. Adding a dependency is `uv add httpx`, which edits `pyproject.toml`, re-locks, and syncs in one step.
 5. Running anything is `uv run <command>`, which guarantees the command executes inside `.venv`. Scripts declared under `[project.scripts]` become commands, so the search server is `uv run web-search-mcp`.
 6. Upgrading is deliberate: `uv lock --upgrade` moves everything to the newest versions allowed by the constraints, or `--upgrade-package` moves one. Then `uv sync`, `uv run pytest`, review the lock diff, commit.
@@ -79,7 +79,7 @@ Every piece of Python in this repository runs from a virtual environment inside 
 ## 8. Failure modes
 
 - **Someone runs `python3 script.py`.** It may work by accident with the system Python and then fail on the next machine. Every documented command uses `uv run`; a pre-commit hook can refuse commits when `.venv` is not active.
-- **Lock drifts from pyproject.** `uv sync --frozen` fails and says so; `uv lock` fixes it.
+- **Lock drifts from pyproject.** `uv sync --locked` fails and says so, in `scripts/dev_setup.sh`, in CI, and in the mini's deploy; `uv lock` fixes it.
 - **A transitive dependency breaks on upgrade.** The upgrade command is followed by the test suite before commit; the lock diff shows exactly what moved.
 - **`manifest.json` and the lock disagree.** The deploy script refuses to copy.
 - **launchd agent runs the wrong interpreter.** Plists use absolute `.venv/bin/python` paths; a health check logs `sys.executable` at startup.
@@ -102,7 +102,7 @@ Most of this will be familiar from data work; two things are worth stating plain
 ## 11. As built, 2026-09-05
 
 - `uv 0.12`, Python 3.12.14 installed by uv, `pyproject.toml` with hatchling and the three packages listed explicitly, `uv.lock` committed. Console scripts: `web-search-mcp`, `benchmark-run`, `benchmark-judge`, `benchmark-report`.
-- `scripts/dev_setup.sh` is the documented way to create or refresh the environment. It runs `uv sync --frozen` (or `uv lock --upgrade && uv sync` with `--upgrade`) and then `chflags -R nohidden .venv`. The flag matters because this repository lives in an iCloud-synced Desktop folder, macOS marks dot-prefixed trees there as hidden, and Python 3.12.14 skips hidden `.pth` files, which removes the project's own packages from the environment. Moving the repository out of an iCloud-synced folder would remove the need for this step.
+- `scripts/dev_setup.sh` is the documented way to create or refresh the environment. It runs `uv sync --locked` (preceded by `uv lock --upgrade` with `--upgrade`) and then `chflags -R nohidden .venv`. The flag matters because this repository lives in an iCloud-synced Desktop folder, macOS marks dot-prefixed trees there as hidden, and Python 3.12.14 skips hidden `.pth` files, which removes the project's own packages from the environment. Moving the repository out of an iCloud-synced folder would remove the need for this step.
 - `scripts/lint.sh` runs black and isort through `uv run`, then shfmt and shellcheck on the shell scripts, skipping `.venv`.
 - Docker Desktop 29.7 provides the daemon; its CLI is used from the application bundle because the `/usr/local/bin` link was not created. `scripts/searxng.sh` adds that path itself.
 - Ollama 0.33.3 from Homebrew, started with `brew services start ollama`.
@@ -143,6 +143,6 @@ Once the repository had five packages and forty commits pushed straight to `main
 
 **The `/create-pr` skill.** A Claude Code skill is a markdown file of instructions that a session loads when the user types its slash command; `.claude/skills/create-pr/SKILL.md` is checked in, so every session and every contributor gets the same procedure. It walks the path a change takes to `main` in order: the worktree and branch from `origin/main` (never from the current tree, where other edits may be in progress), `scripts/dev_setup.sh` so the hook can run, commits with the hook on, the description written outside the tree with references from `pr-refs resolve`, `pr-refs check` and `pr-refs lint` before the body is used, `gh pr create` or `gh pr edit`, then `gh pr checks --watch`. Steps 1 and 4 of that path (branching and the description's shape) were the two the tooling could not enforce on its own; the skill closes the first and `lint` the second.
 
-**GitHub Actions and branch protection.** GitHub Actions runs the workflow in `.github/workflows/checks.yml` on a fresh Ubuntu machine for every pull request; it installs the locked environment with `uv sync --frozen` (without the `voice` group, whose MLX wheels exist only for Apple Silicon) and runs the same commands as the hook. Branch protection is a repository setting that makes `main` accept only merges of pull requests whose required jobs passed and whose review threads are all resolved. No approving review is required: GitHub never lets a pull request's author approve their own PR, and on a one-person repository the author is always the same person, so a required approval would block every merge. The human step is the Merge click itself, after reading the review rounds.
+**GitHub Actions and branch protection.** GitHub Actions runs the workflow in `.github/workflows/checks.yml` on a fresh Ubuntu machine for every pull request; it installs the locked environment with `uv sync --locked` (without the `voice` group, whose MLX wheels exist only for Apple Silicon), which fails the job when `uv.lock` does not match `pyproject.toml`, and runs the same commands as the hook. Branch protection is a repository setting that makes `main` accept only merges of pull requests whose required jobs passed and whose review threads are all resolved. No approving review is required: GitHub never lets a pull request's author approve their own PR, and on a one-person repository the author is always the same person, so a required approval would block every merge. The human step is the Merge click itself, after reading the review rounds.
 
 Sources: [git hooks](https://git-scm.com/docs/githooks), [GitHub branch protection](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches), [Python `tokenize`](https://docs.python.org/3/library/tokenize.html), [Python `ast`](https://docs.python.org/3/library/ast.html).
