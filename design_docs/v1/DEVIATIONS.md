@@ -10,7 +10,7 @@ Every place the build departed from the frozen design in `design_docs/v0/`, with
 | [04 Conversation agent](#04-conversation-agent) | 13 |
 | [05 Voice pipeline](#05-voice-pipeline) | 1 |
 | [06 Home Assistant core](#06-home-assistant-core) | 6 |
-| [08 Hardware and deployment](#08-hardware-and-deployment) | 4 |
+| [08 Hardware and deployment](#08-hardware-and-deployment) | 5 |
 | [09 Dev environment](#09-dev-environment) | 6 |
 | [10 Operations](#10-operations) | 6 |
 
@@ -100,6 +100,7 @@ Every place the build departed from the frozen design in `design_docs/v0/`, with
 | 2026-09-06 | Component deployment (SMB) | 06 | `deploy_component.py` treats a dropped connection on the restart call as success and polls `/api/` until Home Assistant is back, and the deploy procedure now forbids deploying while the Supervisor is pulling add-on images. | Home Assistant 2026.9 closes the connection as it restarts instead of answering 200, and a deploy attempted during image pulls left a kernel-level hung SMB mount on the Mac that only `sudo umount -f` could clear (doc 08 §11). |
 | 2026-09-07 | launchd agents | 10 | There is no `deploy/launchd/` folder of plist files; `scripts/services.sh install` writes the plists from a template (environment, program arguments, `KeepAlive` or `StartInterval`) and loads them. | One generator keeps the log paths, environment, and working directory consistent across the five agents, and the health agent's `StartInterval` is a one-line variation of the same template. |
 | 2026-09-07 | Health check cadence and actions | 10 | Doc 08 §6 promised a health check "every minute, restarting after five minutes down". As built it runs every five minutes with staged thresholds: agent kickstart after two failed checks (30 min cooldown), SearXNG after two, VM start at once, VM restart only after five consecutive Home Assistant failures (25 min, 2 h cooldown), nothing while a deploy holds the maintenance flag. | Home Assistant is legitimately unreachable for minutes during its own updates and add-on installs; a one-minute cadence with a five-minute trigger would restart the VM in the middle of them. Every action is recorded in the snapshot so the report can show what the machine did to itself. |
+| 2026-09-07 | VM start after a reboot | 06, 10 | Docs 06 §7 and 08 §6 set the VM to autostart with UTM. As built, `scripts/bootstrap_mac.sh` registers UTM as a login item, and opening UTM does not start the VM: the launchd health check does, with `utmctl start` whenever `utmctl status` is not `started`, at login and then every 300 seconds (30 min cooldown). | The health check already reads the VM's state through `utmctl` to decide on a restart, so starting a stopped VM is one more row of its policy table, and the laptop, whose check runs with `--no-remediate`, keeps its VM stopped between sessions. |
 
 ## 09 Dev environment
 

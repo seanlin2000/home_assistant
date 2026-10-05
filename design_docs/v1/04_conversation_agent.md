@@ -136,9 +136,9 @@ Pass 1 of the benchmark showed two failure patterns the model alone did not fix:
                ▼
              RouteDecision(route, source="rule"|"model", detail, seconds)  ── recorded on the Transcript
                │
-               ├─ search    ─▶ append "[Assistant note: ... call search_and_read before answering ...]" to the user message
-               ├─ calculate ─▶ append "[Assistant note: ... call the calculator tools for every number ...]"
-               └─ answer    ─▶ message unchanged
+               ├─ search    ─▶ append "Routing for this question: SEARCH. ... Call search_and_read first ..." to the system prompt
+               ├─ calculate ─▶ append "Routing for this question: CALCULATE. ... Call the calculator tools ... for every number ..."
+               └─ answer    ─▶ messages unchanged          (the user's message is never changed)
                                                     ▼
                                     normal loop: model ─▶ tools ─▶ model ─▶ spoken answer
 ```
@@ -148,7 +148,7 @@ Design rules:
 - **Rules only fire when they cannot be wrong.** The explicit-search pattern needs an imperative ("search for", "look up", "find me the latest"); a noun like "web search" does not count. The arithmetic pattern needs at least two numbers and a cue such as a percent sign, "per month", "watts", or "mortgage". A test asserts that no rule fires wrongly on any benchmark question; on question set 1.2 rules decide 15 of 28 questions.
 - **The model layer is the same model classifying its own question.** It costs one short call (about 10 output tokens, 1.1 s on Gemma 4 E4B) before the first real call. The request must use the same `num_ctx` as the chat calls: Ollama reloads a model whose context length changes, and the first pass-2 attempt paid about 5 s twice per question for exactly that reason before the fix. It is measured separately in the report because it may or may not beat the tool descriptions.
 - **A broken router never blocks an answer.** Any exception in the model layer yields the answer route with the error in `detail`.
-- **The directive is visible in the transcript.** It is appended to the user message, so the judge sees it; the rubric tells the judge it came from the harness. The `route_questions` policy flag turns the whole layer off.
+- **The route is recorded; the directive is not.** `apply_route` appends the directive to the system prompt for that exchange only. The transcript keeps the base system prompt and a conversation without system messages, so neither the transcript nor the judge's case file contains the directive. The judge sees the route as a harness observation, "Router decided 'search' by rule (...)", and the rubric tells it to grade the answer, not the routing. The `route_questions` policy flag turns the whole layer off.
 
 Packages: `re` for the rule layer; `ollama`'s `format` argument (a JSON schema the server constrains decoding to) for the model layer. Code: `assistant_core/router.py`, the `classify` method on the client, and four lines in `agent_loop.run`.
 

@@ -21,7 +21,6 @@ Every piece of Python in this repository runs from a virtual environment inside 
   ├── tests/                                       ┘
   │
   ├── docker/searxng/        compose + settings    image tag pinned in docker-compose.yml
-  ├── deploy/launchd/        plists                point at /abs/path/.venv/bin/python
   ├── design_docs/           v0 frozen, v1 living
   ├── claude_docs/           coding conventions
   └── CLAUDE.md
@@ -40,7 +39,7 @@ Every piece of Python in this repository runs from a virtual environment inside 
 4. Adding a dependency is `uv add httpx`, which edits `pyproject.toml`, re-locks, and syncs in one step.
 5. Running anything is `uv run <command>`, which guarantees the command executes inside `.venv`. Scripts declared under `[project.scripts]` become commands, so the search server is `uv run web-search-mcp`.
 6. Upgrading is deliberate: `uv lock --upgrade` moves everything to the newest versions allowed by the constraints, or `--upgrade-package` moves one. Then `uv sync`, `uv run pytest`, review the lock diff, commit.
-7. Long-running services on the Mac are launchd agents whose plists call `.venv/bin/python` by absolute path, so they also run inside the environment without needing `uv` on the path at login.
+7. Long-running services on the Mac are launchd agents, written by `scripts/services.sh install`; the Python ones call their `.venv` programs by absolute path, so they also run inside the environment without needing `uv` on the path at login.
 
 ## 4. The Home Assistant component exception
 
@@ -82,7 +81,7 @@ Every piece of Python in this repository runs from a virtual environment inside 
 - **Lock drifts from pyproject.** `uv sync --locked` fails and says so, in `scripts/dev_setup.sh`, in CI, and in the mini's deploy; `uv lock` fixes it.
 - **A transitive dependency breaks on upgrade.** The upgrade command is followed by the test suite before commit; the lock diff shows exactly what moved.
 - **`manifest.json` and the lock disagree.** The deploy script refuses to copy.
-- **launchd agent runs the wrong interpreter.** Plists use absolute `.venv/bin/python` paths; a health check logs `sys.executable` at startup.
+- **launchd agent runs the wrong interpreter.** `scripts/services.sh install` writes each Python service's plist with the absolute path of its `.venv` program, so none depends on the shell's path.
 
 ## 9. Concepts for newcomers
 
