@@ -17,7 +17,7 @@ jobs:
         with:
           enable-cache: true
       - name: Install the locked environment (the voice group needs Apple Silicon wheels)
-        run: uv sync --frozen --no-group voice
+        run: uv sync --locked --no-group voice
       - name: Install shfmt and shellcheck
         run: |
           sudo apt-get update -qq && sudo apt-get install -y -qq shellcheck
@@ -41,7 +41,7 @@ jobs:
       - uses: astral-sh/setup-uv@v6
         with:
           enable-cache: true
-      - run: uv sync --frozen --no-group voice
+      - run: uv sync --locked --no-group voice
       - name: Check every line reference in the description against the PR head, and the description's shape
         env:
           PR_BODY: ${{ github.event.pull_request.body }}

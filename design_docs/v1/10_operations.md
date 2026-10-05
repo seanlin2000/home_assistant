@@ -170,7 +170,7 @@ launchd opens each service's log file in append mode and never closes it. The he
  mini.sh deploy ── ssh ──▶ ops.deploy apply --ref <sha>
    refuses if tree dirty        │ touch maintenance flag        (health check stands down)
    or HEAD not pushed           │ git fetch; checkout <sha>
-                                │ uv sync --frozen  (if lock changed)
+                                │ uv sync --locked  (if lock changed)
                                 │ pytest -q         (fail ──▶ abort, nothing restarted)
                                 │ git diff old..new ──▶ plan:
                                 │    web_search_mcp/ assistant_core/ ──▶ restart mcp
@@ -186,7 +186,7 @@ launchd opens each service's log file in append mode and never closes it. The he
                                  ──▶ fail: flag left set, exit 2, "restore by hand"
 ```
 
-Pushing to the repository changes nothing on the mini. Going live is a separate, deliberate act: `scripts/mini.sh deploy` from the laptop. It refuses to start if the laptop's working tree has uncommitted changes or its commit has not been pushed, because the mini can only pull what the remote has. On the mini, `ops.deploy apply` takes a lock, raises the maintenance flag, fetches, checks out the exact commit, syncs the environment if the lock file changed, checks the component manifest against the lock, and runs the test suite; a failing preflight or suite returns the checkout (and the environment) to the old commit before anything is restarted, and leaves the flag set so the laptop's command reports it. It then diffs the old and new commits and derives the smallest set of actions from a rules table:
+Pushing to the repository changes nothing on the mini. Going live is a separate, deliberate act: `scripts/mini.sh deploy` from the laptop. It refuses to start if the laptop's working tree has uncommitted changes or its commit has not been pushed, because the mini can only pull what the remote has. On the mini, `ops.deploy apply` takes a lock, raises the maintenance flag, fetches, checks out the exact commit, syncs the environment if the lock file changed, checks the component manifest against the lock, and runs the test suite; a failing sync (including a `uv.lock` that does not match `pyproject.toml`), preflight, or suite returns the checkout (and the environment) to the old commit before anything is restarted, and leaves the flag set so the laptop's command reports it. It then diffs the old and new commits and derives the smallest set of actions from a rules table:
 
 | Changed path | Action |
 |---|---|

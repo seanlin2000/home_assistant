@@ -12,10 +12,9 @@ cd "$(dirname "$0")/.."
 
 if [ "${1:-}" = "--upgrade" ]; then
     uv lock --upgrade
-    uv sync
-else
-    uv sync --frozen
 fi
+# --locked refuses a uv.lock that no longer matches pyproject.toml, so a forgotten `uv lock` fails here instead of being installed.
+uv sync --locked
 
 chflags -R nohidden .venv
 git config core.hooksPath .githooks

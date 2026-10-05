@@ -35,7 +35,7 @@ All Python runs from a `uv`-managed virtual environment in this folder. See `des
 ```
 brew install uv shfmt shellcheck gh
 uv python install 3.12
-scripts/dev_setup.sh          # uv sync --frozen, clears the macOS hidden flag on .venv, installs the pre-commit hook
+scripts/dev_setup.sh          # uv sync --locked (fails if uv.lock is stale), clears the macOS hidden flag on .venv, installs the pre-commit hook
 uv run pytest
 scripts/lint.sh               # black, isort, shfmt, shellcheck
 uv run deslop                 # typed parameters and comment-to-code ratio, per claude_docs/CLEAN_CODE.md
