@@ -278,7 +278,7 @@ Questions without a weather word, such as "how cold is it going to get tonight",
 - A new "Weather at home" section tells the model to call `weather_forecast` for the weather where the user lives, to search for anywhere else, and to answer from what the tool returns: conditions, temperature range, and whether rain or snow is likely, with the numbers rounded.
 - The weather directive has the same shape as the others since prompt 1.4: the instruction and one example call, nothing after it.
 
-Version 1.6 was taken by a separate change to the prompt developed at the same time, so this one is 1.7. Category E (home weather) is new, so a pass under 1.7 compares with earlier passes on categories A to C only.
+Version 1.6 was taken by a separate change to the prompt developed at the same time, so this one is 1.7. Category E (home weather) is new, so a pass under 1.7 compares with earlier passes on categories A to D only.
 
 **The filler.** `filler_for` now has three lists: search tools get the web phrases, `weather_forecast` gets `weather_filler_phrases` ("Checking the forecast.", "One moment, getting the forecast."), and everything else gets the calculator phrases. "Checking the web" would be wrong for a forecast read from one fixed service, for the same reason it was wrong for arithmetic. The phrases live in `AgentPolicy`; the Home Assistant component does not expose any filler phrases in its options, so it uses the defaults.
 
