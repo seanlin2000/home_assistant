@@ -40,12 +40,12 @@ The loop that turns a transcribed question into a spoken answer. It holds the pe
 
 ## 3. How it works, step by step
 
-1. Home Assistant's pipeline has already turned speech into text and tried its built-in intents. Music commands never reach us. Weather questions do, because Home Assistant's weather intent is left with nothing to answer from (doc 06 §12, and §15 below). Everything else arrives as `ConversationInput` with the text, a conversation id, and a `ChatLog` holding the earlier messages of this conversation.
+1. Home Assistant's pipeline has already turned speech into text and tried its built-in intents. Music commands never reach us. Weather questions do, because Home Assistant's weather intent is left with nothing to answer from (doc 06 §12, and §16 below). Everything else arrives as `ConversationInput` with the text, a conversation id, and a `ChatLog` holding the earlier messages of this conversation.
 2. The adapter converts the chat log into the core's plain message list and calls `agent_loop.run`.
 3. The core builds the message list: the shared system prompt (persona "Jarvis", English, one to three sentences, lead with the answer, no lists or URLs aloud, when to search), then the conversation's messages. `memory.get_context()` is called and, in v1, returns nothing; this is the seam for persistent memory later.
 4. The core streams from the model. Text deltas are yielded upward immediately; the adapter writes them into the chat log as streaming content, and Home Assistant's text-to-speech starts on the first complete sentence.
 5. If the model emits a tool call instead, the core first yields a filler sentence chosen from a short list ("Let me pull some sources on that.", "One moment, checking the web."). Because it is yielded before the tool runs, the listener hears it within a second of finishing their question. Then the tool is executed through the MCP client, its result appended as a tool message, and the model is called again. At most four tool rounds.
-6. When the final answer finishes, the adapter returns a `ConversationResult` with `continue_conversation=True`, which tells the puck to reopen the microphone for a few seconds without the wake word.
+6. When the final answer finishes, the adapter decides whether the puck should reopen the microphone for a few seconds without the wake word, and returns a `ConversationResult` with `continue_conversation` set to that decision. It says yes after an ordinary answer, no after a silent reply or "Okay.", and no once a conversation has had two follow-ups in a row (§15).
 7. The full transcript, including tool calls, retrieved excerpts, and timings, is returned. In production it is logged at debug level; in the benchmark it is the record that gets judged.
 
 ## 4. Why two layers
@@ -61,7 +61,8 @@ The benchmark must exercise exactly the code the product runs, or it measures th
 
 - **Brevity.** The system prompt asks for one to three sentences and the answer first. The agent also enforces a soft cap: if a response runs past a word budget, the remainder is dropped after the current sentence, and the model is told in the system prompt that it can offer more detail if asked.
 - **Filler before tools.** Deterministic, in code, not left to the model.
-- **Follow-up.** `continue_conversation=True` after every answer. A follow-up arrives as a new `async_process` call with the same conversation id and the chat log already holding the prior exchanges, which is how the two-exchange benchmark question works too.
+- **Follow-up.** After an ordinary answer the puck listens again without the wake word, at most two times in a row per conversation (§15). A follow-up arrives as a new `async_process` call with the same conversation id and the chat log already holding the prior exchanges, which is how the two-exchange benchmark question works too.
+- **Unclear input.** The wake word sometimes fires on a television or on people talking. The system prompt tells the model to reply with a silence marker to speech not meant for it, to ask "Can you repeat that?" after a garbled request, and to say "Okay." to "never mind"; the loop never speaks the marker (§15).
 - **Search restraint.** The system prompt tells the model when to search (current facts, prices, schedules, anything after its training cutoff, anything it is unsure about) and when not to (arithmetic, explanations, opinions).
 - **Memory seam.** `memory.py` defines `get_context(conversation) -> str` and `remember(conversation) -> None` with a no-op implementation. Persistent memory later means swapping the implementation, not rewriting the loop.
 
@@ -77,7 +78,7 @@ The benchmark must exercise exactly the code the product runs, or it measures th
 
 ## 7. Configuration we control
 
-Set through the component's UI config flow and stored by Home Assistant: Ollama URL and model tag, MCP server URL, persona name, temperature, word budget, filler phrases, follow-up on or off. `assistant_core` reads the same fields from a small config object so the benchmark can set them from `benchmark/config.yaml`.
+Set through the component's UI config flow and stored by Home Assistant: Ollama URL and model tag, MCP server URL, persona name, temperature, word budget, filler phrases, follow-up on or off, and how many follow-ups in a row are heard before the wake word is needed again (`max_follow_ups`, default 2). `assistant_core` reads the same fields from a small config object so the benchmark can set them from `benchmark/config.yaml`.
 
 ## 8. Failure modes
 
@@ -96,7 +97,7 @@ Set through the component's UI config flow and stored by Home Assistant: Ollama 
 
 **Streaming.** Receiving the answer token by token as it is generated rather than waiting for the whole thing. For voice it means speech can start after the first sentence.
 
-**Conversation id and chat log.** Home Assistant groups exchanges into a conversation and hands the agent the history each time, so the agent itself stores nothing between calls. Statelessness makes the component simple and the benchmark reproducible.
+**Conversation id and chat log.** Home Assistant groups exchanges into a conversation and hands the agent the history each time, so the agent itself stores no history between calls. Statelessness makes the component simple and the benchmark reproducible. The one exception is a small counter per conversation of how many follow-ups in a row it has had, kept in memory by the component (§15).
 
 **Custom component.** A Python package dropped into Home Assistant's `custom_components/` folder that Home Assistant loads at startup. It declares its Python dependencies in `manifest.json`, and Home Assistant installs them into its own environment inside the VM.
 
@@ -200,7 +201,44 @@ The models do not know what day it is. In benchmark pass 4, fourteen of the fort
 
 Gemma 4 E4B returned nothing on about one answer in seven across passes 3 to 5: no words, no tool call, twenty to fifty output tokens billed. Replaying the same requests against Ollama returned a valid tool call every time, so in the failing cases the model wrote a call with a small formatting slip and Ollama's Gemma parser dropped it without reporting anything (pass 4's server log shows the same class of failure with an "invalid character" warning). Read aloud, an empty completion is silence. `run_agent` therefore treats a completion with neither text nor tool calls as a miss and asks the model once more with the same messages before accepting the empty answer; the miss is still counted in `model_calls` and in a new `Transcript.empty_completion_retries` field, so the benchmark can see how often it happens. One retry, not more: a model that returns nothing twice is not going to answer, and the caller should not wait on a third attempt.
 
-## 15. As built, 2026-09-30: weather at home (prompt 1.7)
+## 15. As built, 2026-09-30: unclear input, the silence marker, and the follow-up cap (prompt 1.6)
+
+The Voice PE puck's wake word sometimes fires on a television, a radio, or people talking in the room. Until this change the component asked the puck to listen again after every answer, so a false wake could loop: the assistant answered the television, the microphone reopened, the television was still talking, and the assistant answered it again, for as long as twenty minutes. The prompt also gave the model no guidance for speech that was garbled, overheard, or called off. Three pieces fix it: rules in the prompt, a silence path in the loop, and a cap on follow-ups in the component. The wake word itself is unchanged.
+
+```
+ transcript text ──▶ model, system prompt 1.6
+                       │
+                       ├─ speech not meant for it           ─▶ replies "*"                     ─▶ loop speaks nothing; Transcript.stayed_silent
+                       ├─ short garbled or cut-off request  ─▶ replies "Can you repeat that?"  ─▶ spoken
+                       ├─ "never mind", "stop", "cancel"    ─▶ replies "Okay."                 ─▶ spoken
+                       └─ a real question, however phrased  ─▶ answers it                      ─▶ spoken
+
+ then studio_assistant decides: listen again without the wake word?  (rules checked in this order)
+   1. the follow-up setting is off                                   ─▶ no
+   2. the reply stayed silent                                        ─▶ no, count forgotten
+   3. the reply was "Okay."                                          ─▶ no, count forgotten
+   4. this conversation already had max_follow_ups (2) in a row      ─▶ no, count forgotten
+   5. otherwise                                                      ─▶ yes, count goes up by one
+
+ wake word ─▶ answer (listen) ─▶ follow-up ─▶ answer (listen) ─▶ follow-up ─▶ answer (stop: the wake word is needed again)
+```
+
+**The prompt rules.** A new section of the system prompt, "When what you heard is unclear", modelled on a decision hierarchy a Home Assistant forum user had run successfully with a local model. It tells the model that its input is a speech-recognition transcript and that the wake word sometimes fires by mistake, then gives one fixed reply per case: `*` for speech not addressed to it (overheard conversation, a television or radio, rambling narration, stray phrases, and recognizer artifacts such as "Thank you for watching.", which Whisper produces from near silence), "Can you repeat that?" for a botched request of about one to ten words, and "Okay." for "never mind", "stop", or "cancel". A real question stays a question even when oddly phrased or when a word was clearly misheard, and a clarifying question, when one is needed, is two to five words that name only the ambiguity, never a list of options. The three replies are constants in `assistant_core/prompts.py` (`SILENCE_MARKER`, `REPEAT_REQUEST_REPLY`, `ACKNOWLEDGEMENT_REPLY`) so the loop, the component, and the benchmark read the same strings. An asterisk is a safe marker because the prompt already forbids markdown, so no real answer is an asterisk alone.
+
+**Silence in the loop.** A model streams its reply a few characters at a time, and the loop normally passes each piece on to be spoken at once. `SilenceMarkerHold` in `agent_loop.py` holds the text back only while everything received so far, ignoring whitespace, could still be the marker, which for a one-character marker means only until the first character that is not `*` or whitespace. At that point everything held is released together, so an ordinary answer gains no delay, and an answer that happens to begin with an asterisk followed by more text is spoken in full. A reply that is exactly `*` is never released: nothing is spoken, `spoken_text` stays empty, `final_answer` keeps the `*` so the log shows what the model chose, and `Transcript.stayed_silent` is set. The same flag is copied onto the exchange record the component posts to the tool server, so the production log can count silent exchanges.
+
+**The follow-up cap.** `FollowUpListening` in `custom_components/studio_assistant/adapter.py` is plain Python with no Home Assistant import, so it is unit-tested directly. The entity keeps one instance, and it keeps a count per conversation id of the follow-ups in a row. The count is removed whenever a conversation stops listening, and at most 32 conversations are tracked, oldest dropped first, because a follow-up that nobody spoke into ends without another call to the agent and would otherwise leave its count behind. "Can you repeat that?" is an ordinary reply here and counts toward the cap. `max_follow_ups` is a new option in the component's options form, default 2; turning the existing follow-up setting off now means the puck never listens again without the wake word.
+
+**What Home Assistant does with a silent reply.** A silent reply streams no text into Home Assistant's chat log, and Home Assistant's helper that builds the conversation result raises an error when the log does not end with an assistant entry, which the puck would announce as a failure. The entity therefore adds an empty assistant entry when the stream produced none. The result then carries empty speech, and Home Assistant's pipeline skips the text-to-speech stage when the speech is empty or whitespace; the puck's firmware treats a run that ends without a text-to-speech stage as "never mind" and returns to idle. This is the same path Home Assistant's own "never mind" intent takes. It was established by reading the Home Assistant and ESPHome sources and has not yet been heard on the real puck.
+
+**Known edges.**
+
+- If the router sends overheard speech to the search route (a television line about the weather can do that), the filler sentence is spoken before the model replies `*`. The exchange still counts as silent, so the puck does not listen again, but the listener heard "Let me look that up."
+- The puck reuses a conversation id for five minutes after its last exchange. If a follow-up window closes with nobody speaking, that conversation's count stays where it was, and a new wake word within five minutes starts from it, so that conversation gets one fewer follow-up than usual.
+
+Code: `assistant_core/prompts.py`, `SilenceMarkerHold` and `finish_transcript` in `assistant_core/agent_loop.py`, `Transcript.stayed_silent` in `assistant_core/models.py`, `ExchangeRecord.stayed_silent`, `FollowUpListening` and `agent_events_to_deltas` in the component's `adapter.py`, and `_async_handle_message` in `conversation.py`. The benchmark measures the prompt rules with category D (doc 01, "Question set 1.3").
+
+## 16. As built, 2026-09-30: weather at home (prompt 1.7)
 
 Weather questions now reach the agent (doc 06 §12), and the tool server offers `weather_forecast`, which reads Met.no's forecast for home (doc 03 §14). The router gains a fourth route so the model calls that tool instead of searching the web or answering from memory.
 

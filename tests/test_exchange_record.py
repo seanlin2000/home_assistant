@@ -63,6 +63,12 @@ def test_empty_conversation_produces_a_record_without_crashing() -> None:
     assert record.user_text == "" and record.history_messages == 0 and record.failed
 
 
+def test_a_silent_exchange_is_recorded_as_silent_not_as_failed() -> None:
+    silent = Transcript(model="m", system_prompt="", conversation=[Message(role=Role.USER, content="Thank you for watching.")], final_answer="*", stayed_silent=True)
+    record = exchange_record_from_transcript(silent)
+    assert record.stayed_silent is True and record.spoken_chars == 0 and not record.failed
+
+
 def test_record_round_trips_through_json() -> None:
     record = exchange_record_from_transcript(searched_transcript())
     assert ExchangeRecord.model_validate_json(record.model_dump_json()) == record

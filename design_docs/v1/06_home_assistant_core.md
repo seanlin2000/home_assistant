@@ -142,7 +142,7 @@ Memory on the 16 GB Mac while all of this runs: QEMU about 7.5 GB resident, Whis
 
 ## 12. As built, 2026-09-30: weather questions go to the agent
 
-Home Assistant's built-in weather intent, `HassGetWeather`, answers "what's the weather" by reading out the current state of a weather entity: one condition and one temperature. It cannot answer "do I need an umbrella tomorrow afternoon" or "what's the weekend like", and those questions already fell through to the agent, which searched the web for them. The agent now has a forecast tool for home (doc 03 §14, doc 04 §15), so every weather question should reach it. The built-in intent is switched off in the least invasive way available: the weather entity is hidden from Assist.
+Home Assistant's built-in weather intent, `HassGetWeather`, answers "what's the weather" by reading out the current state of a weather entity: one condition and one temperature. It cannot answer "do I need an umbrella tomorrow afternoon" or "what's the weekend like", and those questions already fell through to the agent, which searched the web for them. The agent now has a forecast tool for home (doc 03 §14, doc 04 §16), so every weather question should reach it. The built-in intent is switched off in the least invasive way available: the weather entity is hidden from Assist.
 
 ```
  "what's the weather tomorrow?"   (text from speech to text)

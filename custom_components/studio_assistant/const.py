@@ -13,6 +13,7 @@ CONF_MAX_OUTPUT_TOKENS = "max_output_tokens"
 CONF_THINK = "think"
 CONF_TOOL_TIMEOUT = "tool_timeout_seconds"
 CONF_CONTINUE_CONVERSATION = "continue_conversation"
+CONF_MAX_FOLLOW_UPS = "max_follow_ups"
 
 DEFAULT_OLLAMA_URL = "http://192.168.1.152:11434"
 DEFAULT_MODEL = "gemma4:e4b-it-qat"
@@ -25,3 +26,4 @@ DEFAULT_MAX_OUTPUT_TOKENS = 600
 DEFAULT_THINK = False
 DEFAULT_TOOL_TIMEOUT = 60.0
 DEFAULT_CONTINUE_CONVERSATION = True
+DEFAULT_MAX_FOLLOW_UPS = 2  # follow-ups heard without the wake word before it is needed again

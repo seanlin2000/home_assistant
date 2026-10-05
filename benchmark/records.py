@@ -15,7 +15,16 @@ class Category(StrEnum):
     A = "A"  # reason without searching
     B = "B"  # should search
     C = "C"  # explicit arithmetic: no search, calculator expected
+    D = "D"  # unclear input: speech not meant for the assistant, a garbled request, "never mind", and clear controls
     E = "E"  # home weather: no search, weather_forecast expected
+
+
+class ExpectedReply(StrEnum):
+    """What a category D question expects instead of an ordinary answer. A question without one expects an ordinary answer."""
+
+    SILENT = "silent"  # the silence marker: nothing is spoken
+    CLARIFY = "clarify"  # a brief request to repeat or clarify
+    ACKNOWLEDGE = "acknowledge"  # the fixed "Okay."
 
 
 class Gate(StrEnum):
@@ -30,6 +39,8 @@ class Gate(StrEnum):
     MALFORMED_TOOL_CALL = "malformed_tool_call"
     TOO_MANY_TOOL_CALLS = "too_many_tool_calls"
     NO_FINAL_ANSWER = "no_final_answer"
+    SPOKE_WHEN_IT_SHOULD_STAY_SILENT = "spoke_when_it_should_stay_silent"
+    STAYED_SILENT_ON_REAL_REQUEST = "stayed_silent_on_real_request"
     RUN_ERROR = "run_error"
 
 
@@ -54,6 +65,7 @@ class Question(BaseModel):
     gates_for_judge: list[Gate] = Field(default_factory=list)
     reference_sketch: str | None = None
     expected_route: Route | None = None
+    expected_reply: ExpectedReply | None = None
 
     @property
     def should_search(self) -> bool:
@@ -65,6 +77,10 @@ class Question(BaseModel):
         if self.should_search:
             return Route.SEARCH
         return self.expected_route or Route.ANSWER
+
+    @property
+    def should_stay_silent(self) -> bool:
+        return self.expected_reply == ExpectedReply.SILENT
 
 
 class QuestionSet(BaseModel):

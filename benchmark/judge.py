@@ -13,6 +13,7 @@ from pathlib import Path
 from rich.console import Console
 
 from assistant_core.models import Message, Transcript
+from assistant_core.prompts import SILENCE_MARKER
 from benchmark.gates import harness_gates
 from benchmark.records import BenchmarkConfig, Gate, JudgeVerdict, Question, QuestionResult, Score, load_config, load_questions, read_jsonl, write_jsonl
 
@@ -130,6 +131,7 @@ def render_question(question: Question) -> str:
         f"# Question {question.id} (category {question.category.value})",
         f"What it tests: {question.tests}",
         f"Expected search behavior: {question.expected_search}",
+        f"Expected reply: {question.expected_reply.value if question.expected_reply else 'an ordinary answer'}",
         f"Constraints: {question.constraints.model_dump(exclude_defaults=True) or 'none'}",
         f"Gates especially relevant here: {', '.join(gate.value for gate in question.gates_for_judge) or 'none beyond the general rules'}",
     ]
@@ -161,6 +163,7 @@ def render_harness_notes(result: QuestionResult, gates: list[Gate]) -> str:
         [
             "# Harness observations",
             f"Searched: {'yes' if result.searched else 'no'}; tool calls: {result.tool_call_count}; calculator calls: {result.calculator_call_count}; forecast calls: {result.forecast_call_count}",
+            f"Stayed silent (the final reply was the silence marker {SILENCE_MARKER}, so nothing was spoken): {'yes' if result.final.stayed_silent else 'no'}",
             render_route_note(result),
             f"Harness gates already applied: {', '.join(gate.value for gate in gates) or 'none'}",
             "Grade the final ASSISTANT message of the last exchange as the answer. Return the structured verdict.",

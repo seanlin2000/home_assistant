@@ -34,7 +34,7 @@ Everything between your voice and the agent's text, and back: the puck that hear
 4. **Speech to text.** The pipeline forwards the audio to a Wyoming speech-to-text service. Ours is `wyoming-mlx-whisper` running natively on the Mac, using OpenAI's Whisper large-v3-turbo model through Apple's MLX so it runs on the GPU. It returns the transcript. English-only configuration keeps it fast and accurate.
 5. **Intents, then the agent.** Covered in docs 04 and 06.
 6. **Text to speech.** The agent's answer streams back sentence by sentence. The pipeline sends each sentence to the selected Wyoming text-to-speech service and plays the audio on the puck as it arrives. Two services are installed: Piper (Home Assistant's official add-on, fast, plain) and Kokoro (a community Wyoming wrapper around an 82M-parameter model with natural voices). Switching is a dropdown in the pipeline settings. You pick by listening on the real puck in the real room.
-7. **Follow-up.** With `continue_conversation`, the puck reopens the microphone after the reply for a few seconds, so "and tomorrow?" works without the wake word.
+7. **Follow-up.** When the agent returns `continue_conversation`, the puck reopens the microphone after the reply for a few seconds, so "and tomorrow?" works without the wake word. The agent asks for this after an ordinary answer, at most two times in a row; after a silent reply, "Okay.", or the second follow-up, the wake word is needed again (doc 04 §15).
 
 ## 4. Latency budget
 
@@ -72,7 +72,7 @@ Kokoro synthesizes about 14 times faster than real time on an M1 CPU, so a ten-s
 
 ## 7. Failure modes
 
-- **False wake-ups or missed wake-ups.** Tune sensitivity per wake word on the device page. "Hey Jarvis" is well trained; the mute switch is the hard guarantee.
+- **False wake-ups or missed wake-ups.** Tune sensitivity per wake word on the device page. "Hey Jarvis" is well trained; the mute switch is the hard guarantee. A false wake on a television used to loop, because the agent asked for a follow-up after every answer and the television kept talking into the reopened microphone. The agent now replies to speech not meant for it with a silence marker that is never spoken, a silent reply ends the exchange without text to speech or a follow-up, and follow-ups are capped at two in a row (doc 04 §15).
 - **Cut-off transcripts.** Voice activity detection ended too early. Raise the silence threshold in the pipeline settings.
 - **Whisper misrecognizes names** (artists, places). Expected with any speech model; Music Assistant's fuzzy matching absorbs most of it for music. For questions, the agent can ask to confirm.
 - **Kokoro wrapper not streaming.** Described above; fallback is our own server.

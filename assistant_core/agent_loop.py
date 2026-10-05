@@ -29,7 +29,7 @@ from assistant_core.models import (
     ToolStarted,
     Transcript,
 )
-from assistant_core.prompts import system_prompt
+from assistant_core.prompts import SILENCE_MARKER, system_prompt
 
 EMPTY_COMPLETION_RETRIES = 1
 from assistant_core.router import apply_route, decide_route, route_to_offered_tools
@@ -40,6 +40,26 @@ TOOL_UNREACHABLE_NOTICE = "The web search tool is unavailable right now. Tell th
 SENTENCE_END = re.compile(r"[.!?][\"')\]]?(\s|$)")
 
 
+class SilenceMarkerHold:
+    """Holds back the start of a model reply while it could still be the silence marker, so a reply that is only the marker is never spoken.
+    The moment the text stops matching the marker, everything held is released at once, so an ordinary answer is spoken without delay."""
+
+    def __init__(self) -> None:
+        self._held_parts: list[str] = []
+        self._released = False
+
+    def release(self, text: str) -> str:
+        """The text that may be spoken now: nothing while the reply so far could still be the marker, then everything held plus this chunk."""
+        if self._released:
+            return text
+        self._held_parts.append(text)
+        held_text = "".join(self._held_parts)
+        if SILENCE_MARKER.startswith(held_text.strip()):
+            return ""
+        self._released = True
+        return held_text
+
+
 class ModelReply:
     """What one call to the model produced, collected while its events are streamed onward."""
 
@@ -48,10 +68,15 @@ class ModelReply:
         self.tool_calls: list[ToolCall] = []
         self.malformed: list[str] = []
         self.completion: Completion | None = None
+        self.silence_hold = SilenceMarkerHold()
 
     @property
     def text(self) -> str:
         return "".join(self.text_parts)
+
+    @property
+    def is_silence(self) -> bool:
+        return self.text.strip() == SILENCE_MARKER
 
 
 class SpokenAnswerCap:
@@ -145,7 +170,8 @@ async def stream_model_reply(
     async for event in llm.chat(messages, tool_specs, policy):
         if isinstance(event, TextDelta):
             reply.text_parts.append(event.text)
-            spoken = cap.admit(event.text)
+            speakable = reply.silence_hold.release(event.text)
+            spoken = cap.admit(speakable) if speakable else ""
             if spoken:
                 mark_first_spoken(transcript, started)
                 yield AnswerDelta(text=spoken)
@@ -211,6 +237,7 @@ def limit_notices(calls: list[ToolCall]) -> list[Message]:
 
 def finish_transcript(transcript: Transcript, reply: ModelReply, cap: SpokenAnswerCap, messages: list[Message], started: float) -> None:
     transcript.final_answer = reply.text.strip()
+    transcript.stayed_silent = reply.is_silence
     transcript.spoken_text = cap.spoken_text
     transcript.truncated = cap.truncated
     transcript.conversation = [message for message in messages if message.role != Role.SYSTEM]

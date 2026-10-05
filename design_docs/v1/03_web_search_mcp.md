@@ -176,7 +176,7 @@ The block did not lift on its own. A day later, with the container restarted so 
 
 ## 14. Weather tool, added 2026-09-30
 
-The same MCP server now also offers `weather_forecast`, from the `weather_mcp` package, which reads the forecast for home straight from Met.no, the Norwegian Meteorological Institute's free forecast service. Before it, "what's the weather" was answered by Home Assistant's built-in weather intent, which reads only the current state of the Met.no entity: it could say "18 degrees and cloudy", but "do I need an umbrella tomorrow afternoon" or "what's the weekend like" fell through to the agent, which searched the web for it (slow, noisy, and sometimes the wrong town) or guessed. Home Assistant now hands every weather question to the agent (doc 06 §12), and the agent answers from this tool (doc 04 §15).
+The same MCP server now also offers `weather_forecast`, from the `weather_mcp` package, which reads the forecast for home straight from Met.no, the Norwegian Meteorological Institute's free forecast service. Before it, "what's the weather" was answered by Home Assistant's built-in weather intent, which reads only the current state of the Met.no entity: it could say "18 degrees and cloudy", but "do I need an umbrella tomorrow afternoon" or "what's the weekend like" fell through to the agent, which searched the web for it (slow, noisy, and sometimes the wrong town) or guessed. Home Assistant now hands every weather question to the agent (doc 06 §12), and the agent answers from this tool (doc 04 §16).
 
 ```
   model (Ollama)                                  weather_mcp, on the same MCP server (port 8765)

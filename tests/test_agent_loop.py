@@ -1,6 +1,7 @@
 from assistant_core import agent_loop
-from assistant_core.agent_loop import SpokenAnswerCap
+from assistant_core.agent_loop import SilenceMarkerHold, SpokenAnswerCap
 from assistant_core.models import AgentEvent, AgentPolicy, AnswerDelta, Done, FillerSpoken, Message, Role, ToolFinished, ToolStarted
+from assistant_core.prompts import SILENCE_MARKER
 from tests.fakes import FakeToolBox, ScriptedLLM, empty_reply, text_reply, tool_replies_past_the_cap, tool_reply
 
 
@@ -151,3 +152,39 @@ async def test_filler_is_spoken_once_even_when_tools_run_in_two_rounds() -> None
     events = await collect(llm, FakeToolBox())
     assert len([event for event in events if isinstance(event, FillerSpoken)]) == 1
     assert events[-1].transcript.final_answer == "Seventy-six eleven."
+
+
+def spoken_deltas(events: list[AgentEvent]) -> list[str]:
+    return [event.text for event in events if isinstance(event, AnswerDelta)]
+
+
+async def test_silence_marker_alone_is_never_spoken_and_is_recorded() -> None:
+    events = await collect(ScriptedLLM([text_reply(SILENCE_MARKER)]), FakeToolBox())
+    transcript = events[-1].transcript
+    assert spoken_deltas(events) == []
+    assert transcript.stayed_silent is True
+    assert transcript.spoken_text == ""
+    assert transcript.time_to_first_spoken_seconds is None
+
+
+async def test_silence_marker_surrounded_by_whitespace_is_still_silence() -> None:
+    events = await collect(ScriptedLLM([text_reply(" ", f"{SILENCE_MARKER}", "\n")]), FakeToolBox())
+    assert spoken_deltas(events) == []
+    assert events[-1].transcript.stayed_silent is True
+
+
+async def test_an_ordinary_answer_is_released_from_its_first_chunk() -> None:
+    events = await collect(ScriptedLLM([text_reply("Canberra ", "is the capital.")]), FakeToolBox())
+    assert spoken_deltas(events) == ["Canberra ", "is the capital."]
+    assert events[-1].transcript.stayed_silent is False
+
+
+async def test_an_answer_that_starts_with_the_marker_character_is_spoken_in_full() -> None:
+    events = await collect(ScriptedLLM([text_reply(" ", SILENCE_MARKER, " Canberra", " is the capital.")]), FakeToolBox())
+    assert spoken_deltas(events) == [f" {SILENCE_MARKER} Canberra", " is the capital."]
+    assert events[-1].transcript.stayed_silent is False
+
+
+def test_silence_hold_releases_everything_held_once_the_text_diverges() -> None:
+    hold = SilenceMarkerHold()
+    assert [hold.release(chunk) for chunk in ["\n", SILENCE_MARKER, "Not silent.", " More."]] == ["", "", f"\n{SILENCE_MARKER}Not silent.", " More."]

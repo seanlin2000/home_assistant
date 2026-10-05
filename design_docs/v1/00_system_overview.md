@@ -54,7 +54,7 @@ Priorities, in order: (1) answering questions well, including with web search, (
 5. Anything else goes to our conversation agent, a small Python component we write. It sends the conversation to the language model through Ollama.
 6. If the model decides it needs current information, it asks for the `web_search` tool. Our agent immediately streams a short filler sentence ("Let me pull some sources on that") so the puck starts speaking while the search runs. The search goes to our MCP server, which queries a self-hosted SearXNG, fetches the top pages, extracts the readable text, and returns excerpts. The model reads them and writes the answer.
 7. The answer streams sentence by sentence to a text-to-speech engine (Kokoro or Piper) and plays on the puck.
-8. The agent marks the conversation as continuing, so the puck listens for a follow-up for a few seconds without needing the wake word again.
+8. After an ordinary answer the agent marks the conversation as continuing, so the puck listens for a follow-up for a few seconds without needing the wake word again. It does this at most twice in a row, so a wake word fired by mistake on a television cannot keep the microphone open while the television talks. Speech that was not meant for the assistant gets no spoken reply at all, and after "never mind" the assistant says "Okay." and stops listening.
 
 ## 4. Subsystems and their tech stacks
 
