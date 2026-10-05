@@ -1,0 +1,56 @@
+--8<-- "_includes/palette.mmd"
+%% The fixed grid this map is drawn on: one line per row, ids in column order, "." an empty cell. diagrams/grid.py lays the rendered drawing out on it.
+%% grid: .      puck     .        .       laptop   .        .
+%% grid: .      stt      intents  .       agent    .        tts
+%% grid: sonos  .        ma       .       .        .        piper
+%% grid: .      whisper  .        .       ollama   mcp      health
+%% grid: .      .        .        .       .        searxng  .
+%% grid: .      .        spotify  metno   .        engines  .
+%% peers: stt intents tts
+%% peers: whisper ollama
+%% peers: mcp health
+subgraph studio["Your studio: everything inside stays local"]
+  puck("Voice puck")
+  laptop("Laptop: deploys,<br/>reads logs over SSH")
+  sonos("Sonos")
+  subgraph mac["Mac, always on"]
+    subgraph haos["Home Assistant OS, a virtual machine"]
+      stt("speech to text")
+      intents("intent matcher")
+      agent("our agent")
+      tts("text to speech")
+      ma("Music Assistant")
+      piper("Piper<br/>the voice")
+    end
+    whisper("Whisper<br/>on the GPU")
+    ollama("Ollama")
+    mcp("MCP server:<br/>search and<br/>calculator")
+    health("health<br/>check")
+    subgraph docker["Docker"]
+      searxng("SearXNG")
+    end
+  end
+end
+spotify("Spotify API")
+metno("Met.no")
+engines("public search engines")
+puck <-- "audio in,<br/>spoken reply back" --> stt
+stt --> intents
+intents -- "no match" --> agent
+agent -- "answer" --> tts
+stt -- "audio" --> whisper
+whisper -- "text" --> stt
+intents -- "play X" --> ma
+intents -- "weather" --> metno
+agent -- "conversation,<br/>tool list" --> ollama
+agent -- "tool calls" --> mcp
+tts -- "text" --> piper
+piper -- "speech" --> tts
+ma -- "music" --> sonos
+ma -- "catalogue,<br/>stream" --> spotify
+mcp -- "search" --> searxng
+searxng -- "search query" --> engines
+class agent,mcp,health ours
+class stt,intents,tts,ma,piper,whisper,ollama,searxng third
+class puck,laptop,sonos hw
+class spotify,metno,engines ext

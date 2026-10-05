@@ -49,3 +49,33 @@ jobs:
           printf '%s\n' "$PR_BODY" > "$RUNNER_TEMP/pr_body.md"
           uv run pr-refs check "$RUNNER_TEMP/pr_body.md"
           uv run pr-refs lint "$RUNNER_TEMP/pr_body.md"
+
+  docs:
+    name: docs
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+      - run: uv sync --locked --no-group voice
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install mermaid-cli (Homebrew on the Mac, npm here; the version docs/VERSIONS.md records)
+        run: npm install -g @mermaid-js/mermaid-cli@11.17.0
+      - name: Name the diagram cache after the drawing code, the installed mermaid-cli packages, and the runner image
+        id: diagram-cache
+        run: |
+          key_prefix="$(scripts/diagram_cache_key.sh)"
+          echo "key-prefix=$key_prefix" >> "$GITHUB_OUTPUT"
+      - name: Restore the diagrams the newest earlier run drew with the same code and renderer (this run saves its own at the end)
+        uses: actions/cache@v4
+        with:
+          path: .cache/manual_diagrams
+          key: ${{ steps.diagram-cache.outputs.key-prefix }}${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: ${{ steps.diagram-cache.outputs.key-prefix }}
+      - name: Build the operator manual with warnings as errors, drawing every Mermaid diagram not in the cache (one that will not render fails the build at its page and line)
+        run: uv run mkdocs build --strict
+      - name: Check the section structure (the build above has already rendered every diagram)
+        run: uv run manual-check --no-render
