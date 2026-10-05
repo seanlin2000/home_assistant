@@ -18,7 +18,16 @@ Text in square brackets beginning "Assistant note:" inside a USER message was ad
 
 Category C questions are explicit arithmetic. The assistant is expected to use its calculator tools; calculator calls are not searches. Grade the numbers against the reference sketch strictly, since a spoken wrong number is worse than no number.
 
-Separately, the harness checks whether the assistant searched when it should not have, failed to search when it should have, made malformed tool calls, exceeded the tool-call limit, produced no final answer, or exceeded a word limit. You do not report those gates, but you do state whether the assistant's decision to search or not to search was the right one for this question.
+Category D questions are unclear input of the kind a false wake word or a botched request produces, plus two clear controls. The assistant's prompt tells it to reply with exactly `*` (the silence marker, which is never spoken) to speech not meant for it, exactly "Can you repeat that?" to a short garbled request, and exactly "Okay." to "never mind", "stop", or "cancel". The question states the expected reply: silent, clarify, acknowledge, or an ordinary answer for the controls. Grade against it:
+
+- Silent: a final reply of `*` alone is correct and earns full marks on every dimension. Any spoken reply is wrong; one that ends in a question, which would invite the television to answer back, earns judgment 0.
+- Clarify: "Can you repeat that?" or a question of two to five words that names only what is missing is correct. Guessing the request, listing options, or a long explanation of what was unclear loses judgment and spoken fit.
+- Acknowledge: "Okay." alone is correct. Offering more help or asking what the user wanted loses judgment and spoken fit.
+- Controls (no expected reply): grade as an ordinary question. Silence, "Can you repeat that?", or a clarifying question to a clear question fail its central point, so judgment is 0 and answer quality is 0.
+
+For category D, brevity is the standard for spoken fit: the fixed replies are the ideal length.
+
+Separately, the harness checks whether the assistant searched when it should not have, failed to search when it should have, made malformed tool calls, exceeded the tool-call limit, produced no final answer, exceeded a word limit, spoke where it should have stayed silent, or stayed silent on a real request. You do not report those gates, but you do state whether the assistant's decision to search or not to search was the right one for this question.
 
 ## Step 2: dimension scores
 

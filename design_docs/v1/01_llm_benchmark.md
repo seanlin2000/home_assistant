@@ -49,7 +49,7 @@ Choose the language model, and therefore the hardware, from evidence instead of 
 
 ## 4. Question set, version 1
 
-Stored verbatim in `benchmark/questions.yaml`. Category A should be answered without searching. Category B should trigger a search. Category C, added in question set 1.2, should go through the calculator tools. Metadata per question: `expected_search` (no / yes / instructed, where "instructed" means the question itself says to search), explicit constraints to check, and a reference sketch for Category A.
+Stored verbatim in `benchmark/questions.yaml`. Category A should be answered without searching. Category B should trigger a search. Category C, added in question set 1.2, should go through the calculator tools. Category D, added in question set 1.3, is unclear input: speech the assistant should ignore, a garbled request, "never mind", and two clear controls. Metadata per question: `expected_search` (no / yes / instructed, where "instructed" means the question itself says to search), explicit constraints to check, and a reference sketch for Category A.
 
 ### Category A: answer from reasoning or knowledge, do not search
 
@@ -94,6 +94,20 @@ The router should mark every one of these `calculate`, the model should call the
 | C27 | Energy cost from watts, hours, and a stated price | My TV draws 120 watts. If I watch about 4 hours a day and electricity costs 30 cents per kilowatt hour, what does it cost me per month? | 0.48 kWh a day, about 14.4 kWh a month, about 4.32 dollars for 30 days (4.38 to 4.46 for 30.4 to 31 days is fine). The rate is given, so no assumption is needed. |
 | C28 | Loan amortization | What's the monthly payment on a $400,000 mortgage at 6 percent for 30 years, and roughly how much interest do I pay in total? | Payment 2,398.20 (about 2,400 is fine); total paid about 863,353, so interest about 463,353. Noting that taxes and insurance are excluded is a plus. |
 
+### Category D: unclear input (added in question set 1.3)
+
+The wake word sometimes fires on a television or on people talking, and the speech recognizer sometimes returns a garbled or cut-off request. Prompt 1.6 gives the model a fixed reply for each case (doc 04 §15): `*`, the silence marker, for speech not meant for it, which the loop never speaks; "Can you repeat that?" for a garbled request; "Okay." for "never mind". Each question is one exchange, expects no search, and routes to answer. A new field, `expected_reply`, names the reply expected instead of an answer: `silent`, `clarify`, or `acknowledge`; the two controls have none, because they expect an ordinary answer and check that the new rules did not make the model suspicious of real questions.
+
+| Id | Expected reply | Question | What a correct reply is |
+|---|---|---|---|
+| D29 | silent | And after the break, the weekend forecast for the tri-state area. | `*` alone. A television host mentions a searchable topic; searching or offering the forecast is wrong. |
+| D30 | silent | Thank you for watching. | `*` alone. Whisper produces this phrase from near silence. |
+| D31 | silent | No, I told her we'd be there by seven, but she never listens. | `*` alone. One person talking to another. |
+| D32 | clarify | What's the the uh capital | "Can you repeat that?" or a two-to-five-word question naming the gap; no guessing, no list of countries. |
+| D33 | acknowledge | Never mind. | "Okay." and nothing more. |
+| D34 | none (control) | Capital of Australia? | Canberra. |
+| D35 | none (control) | Who rote Pride and Prejudice? | Jane Austen; "rote" is a misheard "wrote". |
+
 ### Notes for version 1.1
 
 Not changes to v1. B17 to B19 say "search for", so they test instruction following more than the search decision. The set also has no pure adversarial items. Two candidates to add after the first run: a question that sounds current but is not ("What year did the Berlin Wall fall?", should not search), and one with a false current premise ("Since the Fed cut rates to zero last month, should I refinance?", should search and correct the premise).
@@ -118,6 +132,8 @@ Any gate failure sets the question's score to 0 and is listed by name in the rep
 | Lost prior-exchange context on A6, or asked the user to repeat it | Judge |
 | Agreed with the false premise in A3 | Judge |
 | Malformed tool calls, more than 4 tool calls, or no final answer | Harness |
+| Spoke when it should have stayed silent (a Category D question expecting the silence marker) | Harness: the final reply was not the marker |
+| Stayed silent on a real request (any question not expecting silence) | Harness: an exchange's reply was the marker |
 
 ### Step 2: score, 0 to 10 per question
 
@@ -309,3 +325,17 @@ What the pass says:
 - **Latency is for projection only.** On the 16 GB laptop the large models spill to the CPU and answer in one to three minutes. Fully resident on a 32 GB machine, the same models generate ten to twenty times faster (doc 02); the M5 and M6 neural accelerators cut prompt reading, which dominates a searched answer, by a further factor of three to four.
 
 Decision-gate reading: a 26B or 35B mixture-of-experts model at full 4-bit quantization is the model to deploy, which points at the 32 GB tier (doc 08). The model remains swappable; the harness and prompt are what the project keeps.
+
+### Question set 1.3: category D and two silence gates, 2026-09-30
+
+Prompt 1.6 added rules for unclear input and the Home Assistant component stopped listening for a follow-up after every answer (doc 04 §15). Question set 1.3 adds category D (D29 to D35, above) to measure the prompt rules; the other 28 questions are unchanged, so a 1.3 pass compares with earlier passes on the shared questions through `benchmark-report --compare`, as category C did in pass 2.
+
+What changed in the harness:
+
+- **The transcript records silence.** `Transcript.stayed_silent` is true when the final reply was exactly the silence marker. The judge case shows the reply as `ASSISTANT: *` and states in the harness observations whether the assistant stayed silent.
+- **Two harness gates.** `spoke_when_it_should_stay_silent` fires on a question with `expected_reply: silent` whose final reply was anything but the marker. `stayed_silent_on_real_request` fires on every other question, in any category, when an exchange's reply was the marker. Both are mechanical, so the judge does not report them. An empty reply on a silent question trips `no_final_answer` as well, because in Home Assistant an empty reply is replaced by a spoken apology.
+- **The judge is told how to grade category D.** `benchmark/rubric.md` gains a paragraph per expected reply: the marker alone earns full marks; a clarification must be "Can you repeat that?" or two to five words naming the gap, never a list of options; "Okay." alone is the acknowledgement; a question-ending reply to noise gets judgment 0, since it invites the television to answer back; and silence or a request to repeat on a control fails its central point. The judge case gains an "Expected reply" line.
+- **The report has a category D column**, 70 points for the seven questions, shown as "n/a" for a pass without them. The total maximum becomes 350.
+- **Hand-written references answer only what they script.** `benchmark-manual` used to fail on a question its YAML file did not cover; it now replays the scripted questions and reports how many it skipped, so the existing references still run. The reference needs category D answers added before it can be compared on D.
+
+Category D has not been run yet: the first pass under question set 1.3 and prompt 1.6 will show whether the small models can keep to the fixed replies, and whether the overheard forecast line (D29) pulls the router into a search.

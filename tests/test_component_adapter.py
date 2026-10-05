@@ -11,6 +11,7 @@ import httpx
 from assistant_core import agent_loop
 from assistant_core.exchange_record import ExchangeRecord, exchange_record_from_transcript
 from assistant_core.models import AgentEvent, AgentPolicy, AnswerDelta, Done, FillerSpoken, Message, Role, ToolCall, ToolStarted, Transcript
+from assistant_core.prompts import ACKNOWLEDGEMENT_REPLY, REPEAT_REQUEST_REPLY, SILENCE_MARKER
 from tests.fakes import FakeToolBox, ScriptedLLM, text_reply, tool_replies_past_the_cap
 
 ADAPTER_PATH = Path("custom_components/studio_assistant/adapter.py")
@@ -74,6 +75,12 @@ async def test_empty_answer_gets_a_spoken_fallback() -> None:
     assert deltas == [{"role": "assistant"}, {"content": adapter.EMPTY_ANSWER_FALLBACK}]
 
 
+async def test_silent_reply_streams_no_content_and_no_fallback() -> None:
+    transcript = Transcript(model="m", system_prompt="", conversation=[], final_answer=SILENCE_MARKER, stayed_silent=True)
+    deltas = await collect(events_from([Done(transcript=transcript)]))
+    assert deltas == [{"role": "assistant"}]
+
+
 def test_policy_from_settings_overrides_only_what_is_set() -> None:
     policy = adapter.policy_from_settings({"temperature": "0.3", "word_budget": 150, "think": True})
     defaults = AgentPolicy()
@@ -117,3 +124,49 @@ async def test_post_exchange_record_swallows_every_failure() -> None:
     for transport in (httpx.MockTransport(refuse), httpx.MockTransport(reject)):
         async with httpx.AsyncClient(transport=transport) as client:
             assert await adapter.post_exchange_record(client, "http://mac:8765/exchanges", record_for_test()) is False
+
+
+def reply(answer: str, stayed_silent: bool = False) -> Transcript:
+    return Transcript(model="m", system_prompt="", conversation=[], final_answer=answer, stayed_silent=stayed_silent)
+
+
+def decisions(listening: Any, replies: list[Transcript], conversation_id: str = "conv") -> list[bool]:
+    return [listening.record_reply_and_decide(conversation_id, transcript) for transcript in replies]
+
+
+def test_follow_ups_stop_after_the_cap_so_a_false_wake_cannot_loop() -> None:
+    listening = adapter.FollowUpListening(enabled=True, max_follow_ups=2)
+    assert decisions(listening, [reply("An answer."), reply("Another."), reply("A third.")]) == [True, True, False]
+    assert listening.follow_ups_so_far("conv") == 0
+    assert decisions(listening, [reply("After a new wake word.")]) == [True]
+
+
+def test_repeat_request_counts_toward_the_cap() -> None:
+    listening = adapter.FollowUpListening(enabled=True, max_follow_ups=2)
+    assert decisions(listening, [reply(REPEAT_REQUEST_REPLY), reply(REPEAT_REQUEST_REPLY), reply(REPEAT_REQUEST_REPLY)]) == [True, True, False]
+
+
+def test_silence_and_acknowledgement_end_the_conversation_and_reset_its_count() -> None:
+    listening = adapter.FollowUpListening(enabled=True, max_follow_ups=2)
+    assert decisions(listening, [reply("An answer."), reply(SILENCE_MARKER, stayed_silent=True)]) == [True, False]
+    assert listening.follow_ups_so_far("conv") == 0
+    assert decisions(listening, [reply("An answer."), reply(ACKNOWLEDGEMENT_REPLY)]) == [True, False]
+    assert listening.follow_ups_so_far("conv") == 0
+
+
+def test_setting_off_never_continues() -> None:
+    listening = adapter.FollowUpListening(enabled=False, max_follow_ups=2)
+    assert decisions(listening, [reply("An answer."), reply("Another.")]) == [False, False]
+
+
+def test_conversations_are_counted_separately_and_the_oldest_are_forgotten() -> None:
+    listening = adapter.FollowUpListening(enabled=True, max_follow_ups=2)
+    for index in range(adapter.MAX_TRACKED_CONVERSATIONS + 1):
+        listening.record_reply_and_decide(f"conv{index}", reply("An answer."))
+    assert listening.follow_ups_so_far("conv0") == 0
+    assert listening.follow_ups_so_far(f"conv{adapter.MAX_TRACKED_CONVERSATIONS}") == 1
+
+
+def test_acknowledgement_tolerates_case_and_a_dropped_period() -> None:
+    assert all(adapter.is_acknowledgement(answer) for answer in ("Okay.", "okay", " Okay! "))
+    assert not adapter.is_acknowledgement("Okay, the capital is Canberra.")

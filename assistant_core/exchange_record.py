@@ -32,6 +32,7 @@ class ExchangeRecord(BaseModel):
     history_messages: int  # messages in the conversation before this exchange's question (0 for a fresh conversation)
     final_answer: str
     spoken_chars: int
+    stayed_silent: bool = False  # the model answered with the silence marker, judging the speech was not meant for it
     route: RouteDecision | None = None
     model_calls: list[GenerationStats] = Field(default_factory=list)
     tool_calls: list[ToolCallSummary] = Field(default_factory=list)
@@ -73,6 +74,7 @@ def exchange_record_from_transcript(transcript: Transcript, source: str = "home_
         history_messages=user_indexes[-1] if user_indexes else 0,
         final_answer=transcript.final_answer,
         spoken_chars=len(transcript.spoken_text),
+        stayed_silent=transcript.stayed_silent,
         route=transcript.route,
         model_calls=list(transcript.model_calls),
         tool_calls=[summarize_tool_call(tool_call_record) for tool_call_record in transcript.tool_call_records],

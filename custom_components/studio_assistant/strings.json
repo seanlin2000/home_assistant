@@ -28,7 +28,8 @@
           "max_output_tokens": "Maximum tokens per model call",
           "think": "Let the model think before answering",
           "tool_timeout_seconds": "Search timeout (seconds)",
-          "continue_conversation": "Keep the microphone open after each answer"
+          "continue_conversation": "Listen for a follow-up after an answer, without the wake word",
+          "max_follow_ups": "Follow-ups in a row before the wake word is needed again"
         }
       }
     }
