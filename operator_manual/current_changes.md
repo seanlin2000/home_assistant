@@ -2,8 +2,8 @@
 
 This page lists the pull requests that are open right now, one entry each, in the same shape as a section. An entry is written when its pull request opens and removed when the pull request merges or closes.
 
-## Branch search-passages: Read every search result for the passages that match the query
-<!-- manual-entry branch="search-passages" pr="pending" date="2026-10-07" -->
+## PR #16: Read every search result for the passages that match the query
+<!-- manual-entry branch="search-passages" pr="16" date="2026-10-07" -->
 
 ### Where this fits
 
