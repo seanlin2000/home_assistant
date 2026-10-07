@@ -1,7 +1,7 @@
 # MCP Tool Server
 <!-- complexity: packages=3 parts=3 concepts=3 tier=deep -->
 
-This part covers our MCP tool server, the program that serves the tools the language model can call: web search through SearXNG, Wikipedia articles with their tables, an exact calculator, and the weather forecast for home. When you ask something the model cannot know from training, such as today's interest rate or the price of a device, the model asks for a search. Our tool server sends the query to SearXNG, a search aggregator running in Docker on the Mac, fetches the top pages, pulls out the readable text, and hands the model a numbered block of excerpts to answer from. The same server also does arithmetic exactly, so the model describes a calculation and never carries the digits itself.
+This part covers our MCP tool server, the program that serves the tools the language model can call: web search through SearXNG, Wikipedia articles with their tables, an exact calculator, and the weather forecast for home. When you ask something the model cannot know from training, such as today's interest rate or the price of a device, the model asks for a search. Our tool server sends the query to SearXNG, a search aggregator running in Docker on the Mac, fetches the top pages, picks out the passages of each that best match the question, and hands the model a numbered block of excerpts to answer from. The same server also does arithmetic exactly, so the model describes a calculation and never carries the digits itself.
 
 ## Where this fits
 
@@ -31,7 +31,8 @@ class mcp,searxng,engines current
 | DNS rebinding | A hostile name server answering a safety check with a public address and the connection a moment later with a private one, which the URL guard defeats by connecting to the address it checked. |
 | Syntax tree | The structure Python builds from an expression before running anything, with each operator a node and the values it acts on as its children. |
 | Parsoid HTML | The HTML that Wikipedia's REST API returns for an article, in which every section is a `<section>` element holding its heading and data tables carry the class `wikitable`. |
-| Focus | The words or year a caller names to pick the part of a long Wikipedia article it needs, so the lines that match are kept and the rest is dropped. |
+| Focus | The words or year that pick the part of a long page to keep, so the lines that match are kept and the rest is dropped: the search query in `search_and_read`, or the `focus` argument of `wikipedia_lookup`. |
+| BM25 | A ranking formula from text search that scores a line by the focus words it contains, weighting each word by how few lines of the page hold it and discounting long lines. |
 
 ## Packages and tools
 
@@ -41,7 +42,7 @@ class mcp,searxng,engines current
 | Docker Desktop 4.89.0 | Runs Linux containers on macOS inside a hidden Linux VM | Hosts the SearXNG container. `docker/searxng/docker-compose.yml` binds the port to the Mac only and mounts `settings.yml` read-only |
 | `mcp` 2.1.1 | The official Python MCP SDK | `MCPServer` turns each decorated Python function into a tool with a generated schema and serves them over streamable HTTP at `/mcp` on port 8765. `uvicorn` 0.52.4 and `starlette` 1.6.0 are the HTTP layer underneath, and the same `starlette` request objects serve the two plain routes `/healthz` and `/exchanges` |
 | `httpx` 0.28.1 | An async HTTP client | Makes the SearXNG request, fetches pages with a 6 s timeout, asks Met.no for the forecast and Wikipedia for articles, and, on the agent side, is the only dependency of the MCP client in `assistant_core/mcp_http.py` |
-| `trafilatura` 2.2.0 | A main-content extraction library | Turns each fetched HTML page into article text, keeping tables and dropping comments |
+| `trafilatura` 2.2.0 | A main-content extraction library | Turns each fetched HTML page into Markdown text that keeps its headings, tables, and lists, and drops comments |
 | `lxml` 6.1.3 | An HTML and XML parser | Parses Wikipedia's article HTML into sections, headings, and table rows in `wikipedia_mcp/article.py` |
 | `pydantic` 2.13.5 | Typed data models | `SearchResult`, `PageExcerpt`, `SearchSettings`, `WeatherSettings`, and `WikipediaSettings` give every tool result and every setting a fixed shape |
 | `diskcache` 5.6.3 | An on-disk key-value cache | Stores search results by query, page text by URL, the forecast by location, and Wikipedia search titles and article HTML when a cache directory is set. On during a benchmark so every candidate model sees the same pages, the same forecast, and the same article revisions, off in the product |
@@ -87,11 +88,11 @@ The server is one process called `assistant-tools`, built by `build_server` in `
 
 ```python
     @server.tool()
-    async def search_and_read(query: str) -> str:
-        """Search the web and read the top pages. Returns numbered sources with title, URL, and the main text of each page, ready to synthesize an answer from. Use short keyword queries, e.g. "federal funds rate september 2026"."""
-        results = await searxng.search(query)
+    async def search_and_read(query: str, time_range: TimeRange | None = None) -> str:
+        """Search the web and read the top pages. Returns the ranked results, numbered, with the parts of each readable page that best match the query and the snippet of each page that could not be read, ready to synthesize an answer from. Use short keyword queries, e.g. "federal funds rate september 2026". time_range: optional "day", "week", "month", or "year" to keep only recent pages; use it for "latest" or "this week" questions."""
+        results = await searxng.search(query, time_range)
         excerpts = await extractor.read_pages(results, query)
-        return render_grounded_context(query, results, excerpts)
+        return render_grounded_context(query, results, excerpts, settings.results_to_return)
 ```
 
 On the client side, the agent speaks the protocol with `HttpMcpToolBox` in `assistant_core/mcp_http.py`. MCP messages are JSON-RPC 2.0. It is a plain JSON-RPC client over `httpx`, because Home Assistant pins its own older `mcp` release and the component cannot rely on that package's API. It sends, in order:
@@ -105,11 +106,16 @@ The server may answer any POST as plain JSON or as a server-sent-events stream, 
 
 What the model reads back depends on the tool and on what the search found:
 
-- **`search_and_read`, pages read:** `render_grounded_context` opens with `Read 4 of 28 results for "..."`, so the model can say when evidence is thin, then lists each source as `[1] title`, `URL: ...`, and the page's text.
+- **`search_and_read`, pages read:** `render_grounded_context` opens with `Read 6 of 28 results for "..."`, so the model can say when evidence is thin. Then it lists the first 8 results, and any page read below them, by search rank:
+    - a page that was read appears as `[1] title`, `URL: ...`, and its passages;
+    - a page that could not be read, such as a video or a forum behind a login, appears as `[2] title (not read)` and its snippet, because its title or snippet often names the answer;
+    - a last line tells the model: `If these sources do not answer the question, say plainly that you could not find it.`
 - **`search_and_read`, no results:** the tool result tells the model to say it could not find anything and to answer from its own knowledge with that caveat.
 - **`search_and_read`, results but no readable page:** the first five snippets instead.
 - **`web_search`:** only the ranked list of the first 8 results.
-- **`fetch_page`:** one page's text, up to 1,200 words.
+- **`fetch_page`:** the top of one page's text, up to 700 words, with its headings and table rows on their own lines.
+
+Both search tools take an optional `time_range` of `day`, `week`, `month`, or `year`, which keeps only pages published within that span. Their descriptions tell the model to use it for "latest" or "this week" questions.
 - **`wikipedia_lookup`:** the article's title and URL, the lines that answer the focus, and the next few article titles, as in [Wikipedia articles](#wikipedia-articles).
 
 A capable model can chain `web_search` and `fetch_page`.
@@ -184,7 +190,7 @@ The only file we control is `docker/searxng/settings.yml`, mounted read-only int
 - **Rate limiter:** off, because the instance is not public.
 - **Timeouts:** 6 s for each engine, with a hard stop at 10 s.
 
-`SearxngClient` in `web_search_mcp/searxng_client.py` makes one GET per query with `format=json`, `language=en`, and `safesearch=0`, and turns each item of the JSON answer into a `SearchResult` with title, URL, snippet, the engines that returned it, and a score. SearXNG scores a result higher when several engines return it. The client checks the query cache first and, with a cache directory set, stores every live result there. Live requests are at least 3 s apart, a gap held under a lock so concurrent callers queue. The gap exists because the four large engines rate-limit or CAPTCHA a single home address that queries in bursts, and the three smaller engines keep search alive when they do. A spoken question rarely makes two live searches, so the assistant does not feel the gap; a benchmark firing dozens of questions does.
+`SearxngClient` in `web_search_mcp/searxng_client.py` makes one GET per query with `format=json`, `language=en`, and `safesearch=0`, plus SearXNG's `time_range` parameter when the model gave one, and turns each item of the JSON answer into a `SearchResult` with title, URL, snippet, the engines that returned it, and a score. SearXNG scores a result higher when several engines return it. The client checks the query cache first and, with a cache directory set, stores every live result there, under the query and its time range. Live requests are at least 3 s apart, a gap held under a lock so concurrent callers queue. The gap exists because the four large engines rate-limit or CAPTCHA a single home address that queries in bursts, and the three smaller engines keep search alive when they do. A spoken question rarely makes two live searches, so the assistant does not feel the gap; a benchmark firing dozens of questions does.
 
 ### Reading the pages
 
@@ -204,21 +210,52 @@ class results third
 class download,extract,sources ours
 ```
 
-Snippets are 10 to 30 words, written for a person skimming a results page, and the model needs paragraphs. So `PageExtractor` in `web_search_mcp/page_extractor.py` reads the pages themselves. `read_pages` takes five steps:
+Snippets are 10 to 30 words, written for a person skimming a results page, and the model needs paragraphs. So `PageExtractor` in `web_search_mcp/page_extractor.py` reads the pages themselves. `read_pages` takes six steps:
 
 1. **Filter.** It drops any result that is not `http` or `https`, that ends in a binary extension such as `.pdf` or `.jpg`, or that sits on a blocked domain. The blocked list in `web_search_mcp/settings.py` holds:
     - social networks: Facebook, Instagram, X and Twitter, TikTok, Pinterest, and LinkedIn;
     - hard paywalls: the Wall Street Journal, the Financial Times, Bloomberg, and the New York Times.
-2. **Pick.** It takes the first 8 survivors, twice the 4 pages it wants.
+2. **Pick.** It takes the first 12 survivors, twice the 6 pages it wants.
 3. **Download.** It fetches them concurrently with `asyncio.gather`, each through [the URL guard](#the-url-guard), so one slow site costs at most the 6 s timeout rather than 6 s per page. Results keep their order, so the engines' ranking survives extraction.
-4. **Extract.** Each page goes through `trafilatura.extract` with comments dropped, tables kept, and precision favoured over recall. A result on `en.wikipedia.org/wiki/` is the exception: it is read through Wikipedia's API instead, and the search query picks its lines, as in [Wikipedia articles](#wikipedia-articles).
-5. **Budget.** Each page is clipped to its first 600 words as a `PageExcerpt`, the first four with text are kept, and `apply_total_budget` trims the last of them so the block stays under 2,000 words.
+4. **Extract.** Each page goes through `trafilatura.extract` with comments dropped, tables kept, precision favoured over recall, and Markdown output. `to_passage_format` in `web_search_mcp/page_markdown.py` turns that Markdown into the same lines a Wikipedia article becomes: `#` headings, table rows with cells joined by ` | `, and `- ` list items. A result on `en.wikipedia.org/wiki/` is read through Wikipedia's API instead, as in [Wikipedia articles](#wikipedia-articles).
+5. **Select.** `select_passages` keeps the parts of each page that best match the query, up to 350 words, as described in [Passages that match](#passages-that-match).
+6. **Budget.** The first six pages with text are kept as `PageExcerpt`s, and `apply_total_budget` trims the last of them so the block stays under 2,000 words.
 
 A page that yields no text, times out, is not HTML, runs past 2 MB, or is refused by the URL guard becomes an empty string and is skipped.
 
 - **Why tables are kept:** rate and price pages carry their numbers in tables.
 - **Why 2,000 words:** the model reads the whole block before it writes a word, and that reading time on the Mac grows with prompt length.
+- **Why passages and not the top of the page:** the answer to a narrow question often sits far down a long page, such as a row in the fourth table of a wiki page, and six pages of matching passages fit the same 2,000 words as four page tops.
 - **The cache:** with a cache directory set, page text is stored by URL, so a repeated fetch never opens a socket.
+
+### Passages that match
+
+A long page rarely answers a narrow question in its first paragraphs. So `select_passages` in `utils/passage_utils.py` keeps the parts of a page that best match the query, for every page `search_and_read` reads and for `wikipedia_lookup`. It reads the shared line format: blocks separated by a blank line, `#` headings, table rows with cells joined by ` | `, and `- ` list items. It takes five steps:
+
+1. **Short pages.** A page within the budget, 350 words in `search_and_read`, comes back whole.
+2. **Opening prose.** The paragraphs before the first section heading are kept, up to a quarter of the budget. A level-1 heading above all the text is the page's name, not a section.
+3. **Ranking.** Every other line gets a score against the query's words, by the rules below.
+4. **Choosing.** Lines are taken best first while they fit. A line's cost counts everything printed with it: the headings above it, its table's header row, and, when it leaves matching lines of its table behind, the note that says how many.
+5. **Printing.** The kept lines come back in page order under their headings.
+
+A line's score follows five rules:
+
+- **Title words set aside.** Query words that appear in the page's title, such as "kill confirm" on the page titled *Kill confirm*, describe every line of the page, so they are ignored. When every query word is in the title, they all count.
+- **BM25.** A query word counts for more the fewer lines it appears on, and a long line is discounted, so a short row that matches beats a long one with the same words.
+- **Headings.** A query word in a heading counts at half weight for every line under it, so the rows of a *Starting quarterbacks* table match "starting quarterbacks" although no row says so.
+- **Proximity.** Two different query words at most three words apart add extra weight, so "Jab to back aerial" beats a line that says "jab" in one sentence and "back" in another.
+- **Years and cut tables.** A year in the query means that year onward, and a table is never cut in the middle, as in [Wikipedia articles](#wikipedia-articles).
+
+For the query `Super Smash Bros character jab back air kill confirm`, SmashWiki's 5,340-word *Kill confirm* page ended its 350 words with these lines, the answer included:
+
+```text
+### In Super Smash Bros. Ultimate
+Character | Description
+Roy | *Jab to sweetspotted back aerial *Up aerial to sweetspotted back aerial *The first hit of neutral aerial can be followed up with any KO move at high percents. *Up aerial to down aerial
+Chrom | *Jab to back aerial *Up aerial to back aerial *The first hit of neutral aerial can be followed up with any KO move at high percents. *Up aerial to down aerial
+Steve | *Jab to forward aerial *Up tilt to back aerial
+[40 more matching lines here did not fit; to see them, ask again with a narrower focus, such as a year]
+```
 
 ### The URL guard
 
@@ -324,7 +361,7 @@ Some questions are answered by a list or a record rather than by today's news: h
     - paragraphs and list items become lines;
     - every row of a `wikitable` or infobox becomes one line, its cells joined by ` | `;
     - citations, navigation boxes, figures, hidden sort keys, and the closing sections such as References and See also are dropped.
-4. **Select.** An article within 900 words comes back whole. A longer one keeps the opening paragraphs, up to a quarter of the budget, then the lines that share the most words with the focus, printed in article order under their headings. A line under a heading that names a focus word counts as related, and a table row brings its header row.
+4. **Select.** An article within 900 words comes back whole. A longer one goes through the same passage selection as every page `search_and_read` reads, described in [Passages that match](#passages-that-match), with the focus as the query and the article's title as the page title.
 
 Two rules keep the selection safe to count from:
 
@@ -372,7 +409,7 @@ Other articles: Brock Purdy; C. J. Beathard; Mac Jones; List of current NFL star
 
 What else uses this code, and what comes back when it cannot help:
 
-- **`search_and_read`** reads any result on `en.wikipedia.org/wiki/` through the same client and renderer, with the search query as the focus and the 600-word page budget. If the API fails, the page is read like any other.
+- **`search_and_read`** reads any result on `en.wikipedia.org/wiki/` through the same client and renderer, then selects from it as from any page, with the search query as the focus and the 350-word page budget. If the API fails, the page is read like any other.
 - **`fetch_page`** does not use the API. A URL the model picks always goes through [the URL guard](#the-url-guard). The Wikipedia client skips the guard because its host is fixed by `WIKIPEDIA_BASE_URL`, not chosen by the model.
 - **Failures** come back as sentences the model can act on: `Wikipedia has no article matching "..."` with a hint to try another topic, or `Wikipedia error: Wikipedia did not answer. Search the web with search_and_read instead.`
 - **What leaves the Mac:** the topic the model wrote, the titles it reads, and a User-Agent naming the project, sent to Wikimedia. The question itself stays home.
@@ -540,7 +577,7 @@ asyncio.run(main())
 EOF
 ```
 
-You see twelve tools, or thirteen with `weather_forecast`, with the first line of each description, then `result: 44.10` with a `spoken:` line the model can read aloud, then `Read 4 of ...` followed by numbered excerpts with URLs. Those excerpts are exactly what the model reads before it answers a searched question. Last comes `Wikipedia: List of San Francisco 49ers starting quarterbacks`, the opening paragraphs, and one line per season from 2000 on, such as `2001 | Jeff Garcia (16)`, ending with `Other articles:`. The search takes several seconds on a live query and returns at once on a cached repeat. The script exits on its own.
+You see twelve tools, or thirteen with `weather_forecast`, with the first line of each description, then `result: 44.10` with a `spoken:` line the model can read aloud, then `Read 6 of ...` followed by the ranked results: pages that were read with their URLs and passages, pages that could not be read marked `(not read)` with their snippets, and the closing not-found line. That block is exactly what the model reads before it answers a searched question. Last comes `Wikipedia: List of San Francisco 49ers starting quarterbacks`, the opening paragraphs, and one line per season from 2000 on, such as `2001 | Jeff Garcia (16)`, ending with `Other articles:`. The search takes several seconds on a live query and returns at once on a cached repeat. The script exits on its own.
 
 Finally, test the URL guard. Change the last call in the snippet to `fetch_page` with `{"url": "http://192.168.1.156/"}`, or any address on your own network, and run it again. The tool answers `Refused to fetch http://192.168.1.156/: '192.168.1.156' resolves to non-public address 192.168.1.156. Only public web addresses can be read.` and nothing on the network is touched. `uv run pytest tests/test_url_guard.py` runs the same rules against fake resolvers and redirects without opening a socket.
 
@@ -548,9 +585,11 @@ Finally, test the URL guard. Change the last call in the snippet to `fetch_page`
 
 | Path | What you find there |
 |---|---|
-| `web_search_mcp/server.py` | `build_server`: the three search tools, the Wikipedia, calculator, and weather registrations, `/healthz` and `/exchanges`, the Host allow-list, and `main` |
-| `web_search_mcp/searxng_client.py` | `SearxngClient`: the SearXNG request, the query cache in front, the 3 s gap behind |
-| `web_search_mcp/page_extractor.py` | `PageExtractor`: filtering, concurrent download, redirect handling, the byte cap, `trafilatura` extraction, Wikipedia results read through the API, and the word budgets |
+| `web_search_mcp/server.py` | `build_server`: the three search tools, `render_grounded_context` and its ranked list, the Wikipedia, calculator, and weather registrations, `/healthz` and `/exchanges`, the Host allow-list, and `main` |
+| `web_search_mcp/searxng_client.py` | `SearxngClient`: the SearXNG request and its time range, the query cache in front, the 3 s gap behind |
+| `web_search_mcp/page_extractor.py` | `PageExtractor`: filtering, concurrent download, redirect handling, the byte cap, `trafilatura` extraction, Wikipedia results read through the API, passage selection, and the word budgets |
+| `web_search_mcp/page_markdown.py` | `to_passage_format`: trafilatura's Markdown turned into headings, table rows, and list items |
+| `utils/passage_utils.py` | `select_passages`, shared by `search_and_read` and `wikipedia_lookup`: the BM25 ranking, the title, heading, proximity, and year rules, and the budget that pays for headings and notes |
 | `web_search_mcp/url_guard.py` | `ensure_public_url`, `is_public_address`, `pin_url_to_address`, `host_header`: the public-address rule |
 | `web_search_mcp/query_cache.py` | `QueryCache`: `diskcache` keyed by query, by URL, by forecast location, and by Wikipedia topic and title, active only with a cache directory |
 | `web_search_mcp/settings.py` | `SearchSettings`: every default and the `WEB_SEARCH_*` environment overrides |
@@ -558,11 +597,11 @@ Finally, test the URL guard. Change the last call in the snippet to `fetch_page`
 | `calculator_mcp/functions.py` | The eight calculator functions and `Result`, pure Python with no MCP dependency |
 | `calculator_mcp/register.py` | `register_calculator_tools`: the tool docstrings the model reads, and `rendered` |
 | `weather_mcp/register.py`, `weather_mcp/metno_client.py`, `weather_mcp/forecast.py`, `weather_mcp/settings.py` | `register_weather_tools`, which offers `weather_forecast` only when home has coordinates; `MetnoClient`, the Met.no request; `ForecastReader`, which turns the forecast into local days and parts of the day; `WeatherSettings` and the `WEATHER_*` environment overrides |
-| `wikipedia_mcp/register.py`, `wikipedia_mcp/client.py`, `wikipedia_mcp/article.py`, `wikipedia_mcp/passages.py`, `wikipedia_mcp/settings.py` | `register_wikipedia_tools` and the docstring the model reads; `WikipediaClient`, the two REST requests and the redirect rule; `render_article`, the HTML turned into lines; `select_passages`, the lines kept for a focus; `WikipediaSettings` and the `WIKIPEDIA_*` environment overrides |
+| `wikipedia_mcp/register.py`, `wikipedia_mcp/client.py`, `wikipedia_mcp/article.py`, `wikipedia_mcp/settings.py` | `register_wikipedia_tools` and the docstring the model reads; `WikipediaClient`, the two REST requests and the redirect rule; `render_article`, the HTML turned into lines; `WikipediaSettings` and the `WIKIPEDIA_*` environment overrides |
 | `docker/searxng/docker-compose.yml`, `docker/searxng/settings.yml` | The container definition and the seven engines, output formats, and timeouts |
 | `scripts/searxng.sh` | `up`, `down`, `restart`, `status`, `logs` for the container, and the secret in `docker/searxng/.env` |
 | `assistant_core/mcp_http.py` | `HttpMcpToolBox`: the client side of the protocol, `initialize`, `tools/list`, `tools/call`, and the SSE parser |
-| `tests/test_url_guard.py`, `tests/test_web_search_mcp.py`, `tests/test_calculator.py`, `tests/test_weather_forecast.py`, `tests/test_wikipedia_lookup.py`, `tests/test_mcp_http.py` | The guard against private addresses, redirects, rebinding, and oversized pages; the tools listed and called in process; the arithmetic; the forecast; the Wikipedia tool against a recorded article; the client against the real server |
+| `tests/test_url_guard.py`, `tests/test_web_search_mcp.py`, `tests/test_passage_utils.py`, `tests/test_calculator.py`, `tests/test_weather_forecast.py`, `tests/test_wikipedia_lookup.py`, `tests/test_mcp_http.py` | The guard against private addresses, redirects, rebinding, and oversized pages; the tools listed and called in process, the ranked list, and a recorded SmashWiki page whose answer sits 3,000 words down; the passage ranker; the arithmetic; the forecast; the Wikipedia tool against a recorded article; the client against the real server |
 
 ## Further reading
 
