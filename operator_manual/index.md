@@ -178,6 +178,6 @@ pgrep -fl benchmark-run || echo "no benchmark running"
 Each page's "Run it yourself" says how to start and stop its services:
 
 - **Always up:** Ollama and the tool server, which are small.
-- **Started when you want to talk, stopped when you are done:** Whisper and the Home Assistant VM, whose Piper add-on speaks the answers. `scripts/services.sh start` also starts Kokoro beside Whisper, but the pipeline speaks through Kokoro only after `scripts/ha_setup.py --tts kokoro`.
+- **Started when you want to talk, stopped when you are done:** Whisper, Kokoro, which speaks the answers in its Fable voice, and the Home Assistant VM. `scripts/services.sh start` starts Kokoro beside Whisper; the VM's Piper add-on speaks instead after `scripts/ha_setup.py --tts piper`.
 
 `scripts/services.sh status` shows what is listening on each port right now.

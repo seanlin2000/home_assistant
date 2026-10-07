@@ -130,3 +130,19 @@ Two details that only showed up at run time:
 - Home Assistant starts TTS the moment the agent's streamed text ends, so the time the listener waits is the agent's time. With the model warm and no tool call, that was 2.3 s here; the first question after a model load was 35 s, which is why Ollama's keep-alive matters (doc 08 §6).
 
 Still to do for voice: the puck (Phase 3 hardware), wake-word assignment, and a spoken end-to-end test with real audio through Whisper.
+
+## 11. As built, 2026-10-07: Kokoro's Fable voice by default
+
+The engine was left to "pick by listening on the real puck" (§3). With the puck in the room, the choice is Kokoro with the voice `bm_fable`, a British English male voice, and the pipeline now speaks with it by default. Piper stays installed as the alternative.
+
+| Setting | Where | Value |
+|---|---|---|
+| Pipeline text to speech | `scripts/ha_setup.py`, step 4 | `tts.kokoro`, language `en_GB`, voice `bm_fable`; `--tts piper` gives `tts.piper` with `en_US` and the add-on's voice |
+| Another voice | `scripts/ha_setup.py --tts-voice NAME --tts-language CODE` | Any name from Kokoro's `info` (`uv run python scripts/voice_check.py --port 10210 info`), with `en_US` for the American voices (`af_*`, `am_*`) |
+| Kokoro's own default | `scripts/services.sh`, the Kokoro agent | `--voice bm_fable`, used when a client names no voice |
+
+What the choice costs:
+
+- **Language.** Fable is a British voice, so the pipeline's text-to-speech language is `en_GB`. Kokoro rejects a voice whose language the pipeline does not ask for, and a bare `en` still fails every run (§10).
+- **The filler.** The filler sentence takes about 0.2 s with Kokoro against 0.05 s with Piper (§4), still well inside the time a search takes.
+- **Where speech comes from.** Speech now comes from the Mac, not from an add-on inside the VM, so a Kokoro agent that fails to load leaves the puck silent. `scripts/services.sh install` used to hide exactly that failure: `launchctl bootout` returns while launchd still holds the job, Kokoro needs about 5.3 s to exit, and loading its plist again in that window fails with `Bootstrap failed: 5: Input/output error`, which the script discarded. The script now waits for every agent to unload before rewriting its plist, names any agent that fails to load, and exits 1 (doc 08, `DEVIATIONS.md`).

@@ -31,7 +31,7 @@ class laptop,health current
 |---|---|---|
 | `ops` package (ours) | Python modules under `ops/` | `health` probes, decides, and does the housekeeping; `deploy` plans, applies, and rolls back; `smoke` asks the one test question; `report` summarises a log directory; `pipeline_runs` pulls Home Assistant's debug runs |
 | `scripts/mini.sh`, `scripts/bootstrap_mac.sh`, `scripts/services.sh` (ours) | Three shell scripts | `mini.sh` is the laptop side of every operation and the only script that knows the mini's address. `bootstrap_mac.sh` is copied to the mini and run there. `services.sh` writes and controls the five launchd agents |
-| launchd and `launchctl` | macOS's service manager and its command line | Runs the four services and the health check. `launchctl kickstart -k` restarts one agent by name, `bootout` unloads one, and `print` tells the health check whether one is loaded |
+| launchd and `launchctl` | macOS's service manager and its command line | Runs the four services and the health check. `launchctl kickstart -k` restarts one agent by name, `bootout` unloads one, and `print` tells the health check and `services.sh` whether one is loaded. `bootout` returns before the agent has exited, so `services.sh` waits for `print` to stop finding it before loading the agent again |
 | OpenSSH: `ssh`, `scp`, `ssh-copy-id` | The remote shell, built into macOS | Every command on the mini travels over `ssh` with `BatchMode=yes`, so a missing key fails instead of prompting for a password |
 | rsync 3.x from Homebrew | A copy tool that sends only the differences; macOS ships `openrsync`, which lacks some of its flags | Pulls the mini's log directory into `logs/mini/`, pushes the model's files, and pushes the VM. An interrupted copy resumes |
 | git | Version control | The mini holds a detached checkout. A deploy is `git fetch` then `git checkout --detach SHA`; the mini never commits or pushes |
@@ -186,6 +186,8 @@ Each action runs one command:
 | `restart:NAME` | `scripts/services.sh restart NAME` |
 | `restart_searxng` | `scripts/searxng.sh restart` |
 | `deploy_component` | `scripts/deploy_component.py`, which copies the component into the VM over the Samba share and restarts Home Assistant, as [Home Assistant](06_home_assistant_core.md#the-custom-component) describes |
+
+A command that fails stops the deploy at that action, with the maintenance flag still set. `scripts/services.sh install` fails when an agent does not load, printing a line such as `failed to load: kokoro (Bootstrap failed: 5: Input/output error)`, and `scripts/services.sh status` lists every agent that is not loaded, so a service that did not come back shows up in the deploy rather than as a silent puck.
 
 ### The health check
 

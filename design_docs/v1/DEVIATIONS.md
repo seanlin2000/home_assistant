@@ -8,9 +8,9 @@ Every place the build departed from the frozen design in `design_docs/v0/`, with
 | [02 Local LLM](#02-local-llm) | 1 |
 | [03 Web search MCP](#03-web-search-mcp) | 10 |
 | [04 Conversation agent](#04-conversation-agent) | 13 |
-| [05 Voice pipeline](#05-voice-pipeline) | 1 |
+| [05 Voice pipeline](#05-voice-pipeline) | 2 |
 | [06 Home Assistant core](#06-home-assistant-core) | 6 |
-| [08 Hardware and deployment](#08-hardware-and-deployment) | 5 |
+| [08 Hardware and deployment](#08-hardware-and-deployment) | 6 |
 | [09 Dev environment](#09-dev-environment) | 6 |
 | [10 Operations](#10-operations) | 6 |
 
@@ -81,6 +81,7 @@ Every place the build departed from the frozen design in `design_docs/v0/`, with
 | Date | Part of the system | Also touches | Deviation | Why |
 |---|---|---|---|---|
 | 2026-09-06 | Kokoro TTS | 08 | Kokoro runs through the `wyoming-kokoro-torch` package (PyPI, `--streaming` flag, CPU or Metal via `--device`) rather than the `kokoro-wyoming` Docker wrapper named in v0. | It installs from PyPI into the project venv, streams on sentence boundaries, and runs natively (no Docker). It needs `espeak-ng` from Homebrew and the model weights linked into its data directory, which `scripts/services.sh install` does. |
+| 2026-10-07 | Default voice | 06, 08 | The pipeline speaks with Kokoro's voice `bm_fable` (language `en_GB`) by default instead of Piper: `ha_setup.py` defaults to `--tts kokoro` and takes `--tts-voice` and `--tts-language`, and the Kokoro agent starts with `--voice bm_fable`. Piper stays installed as the alternative (`--tts piper`). | v0 left the choice to listening on the real puck (05 §3); with the puck in the room, Fable was the voice chosen. Doc 05 §11. |
 
 ## 06 Home Assistant core
 
@@ -102,6 +103,7 @@ Every place the build departed from the frozen design in `design_docs/v0/`, with
 | 2026-09-07 | launchd agents | 10 | There is no `deploy/launchd/` folder of plist files; `scripts/services.sh install` writes the plists from a template (environment, program arguments, `KeepAlive` or `StartInterval`) and loads them. | One generator keeps the log paths, environment, and working directory consistent across the five agents, and the health agent's `StartInterval` is a one-line variation of the same template. |
 | 2026-09-07 | Health check cadence and actions | 10 | Doc 08 §6 promised a health check "every minute, restarting after five minutes down". As built it runs every five minutes with staged thresholds: agent kickstart after two failed checks (30 min cooldown), SearXNG after two, VM start at once, VM restart only after five consecutive Home Assistant failures (25 min, 2 h cooldown), nothing while a deploy holds the maintenance flag. | Home Assistant is legitimately unreachable for minutes during its own updates and add-on installs; a one-minute cadence with a five-minute trigger would restart the VM in the middle of them. Every action is recorded in the snapshot so the report can show what the machine did to itself. |
 | 2026-09-07 | VM start after a reboot | 06, 10 | Docs 06 §7 and 08 §6 set the VM to autostart with UTM. As built, `scripts/bootstrap_mac.sh` registers UTM as a login item, and opening UTM does not start the VM: the launchd health check does, with `utmctl start` whenever `utmctl status` is not `started`, at login and then every 300 seconds (30 min cooldown). | The health check already reads the VM's state through `utmctl` to decide on a restart, so starting a stopped VM is one more row of its policy table, and the laptop, whose check runs with `--no-remediate`, keeps its VM stopped between sessions. |
+| 2026-10-07 | `services.sh` start and stop | 05, 10 | `scripts/services.sh` waits for every agent to unload after `launchctl bootout` (up to `UNLOAD_TIMEOUT_SECONDS`, 30 s), loads unloaded agents and restarts loaded ones, names any agent that fails, and exits 1; `status` reports every agent that is not loaded. | `bootout` returns while launchd still holds the job, and Kokoro needs about 5.3 s to exit, so `install` reloaded its plist inside that window and got `Bootstrap failed: 5: Input/output error`, which the script discarded: the puck went silent and the only sign was "NOT listening on 10210". |
 
 ## 09 Dev environment
 

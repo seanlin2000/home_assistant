@@ -5,7 +5,7 @@ sentence it synthesizes (and for every capability check). On this machine that c
 is the whole latency budget for the filler sentence. This entry point runs the upstream server unchanged except that the model and the
 per-language pipeline are shared across connections.
 
-    kokoro-server --uri tcp://0.0.0.0:10210 --voice af_heart --data-dir ~/.cache/wyoming-kokoro --streaming --device cpu
+    kokoro-server --uri tcp://0.0.0.0:10210 --voice bm_fable --data-dir ~/.cache/wyoming-kokoro --streaming --device cpu
 """
 
 import asyncio

@@ -17,6 +17,7 @@ LOG_DIR="$HOME/Library/Logs/studio-assistant"
 PREFIX="com.studio-assistant"
 SERVICES=(ollama mcp whisper kokoro health)
 HEALTH_INTERVAL_SECONDS="${HEALTH_INTERVAL_SECONDS:-300}"
+UNLOAD_TIMEOUT_SECONDS="${UNLOAD_TIMEOUT_SECONDS:-30}"
 OLLAMA_BIN="$(command -v ollama || echo /opt/homebrew/bin/ollama)"
 
 usage() {
@@ -25,6 +26,10 @@ usage() {
 }
 
 plist_path() { echo "$AGENTS_DIR/$PREFIX.$1.plist"; }
+
+agent_target() { echo "gui/$(id -u)/$PREFIX.$1"; }
+
+agent_loaded() { launchctl print "$(agent_target "$1")" >/dev/null 2>&1; }
 
 env_file_value() {
     # $1 key; its value in the project's .env, or nothing when absent
@@ -118,34 +123,69 @@ install_agents() {
     write_plist mcp "$PROJECT_DIR/.venv/bin/web-search-mcp"
     ENV_KEYS=() ENV_VALUES=()
     write_plist whisper "$PROJECT_DIR/.venv/bin/wyoming-mlx-whisper" --uri tcp://0.0.0.0:10300 --model mlx-community/whisper-large-v3-turbo --language en
-    write_plist kokoro "$PROJECT_DIR/.venv/bin/kokoro-server" --uri tcp://0.0.0.0:10210 --voice af_heart --data-dir "$HOME/.cache/wyoming-kokoro" --streaming --device cpu
+    write_plist kokoro "$PROJECT_DIR/.venv/bin/kokoro-server" --uri tcp://0.0.0.0:10210 --voice bm_fable --data-dir "$HOME/.cache/wyoming-kokoro" --streaming --device cpu
     # HEALTH_CHECK_FLAGS="--no-remediate" installs an observe-only check (used on the laptop, where the VM is stopped on purpose most of the time).
     read -ra health_flags <<<"${HEALTH_CHECK_FLAGS:-}"
-    PLIST_START_INTERVAL="$HEALTH_INTERVAL_SECONDS" write_plist health "$PROJECT_DIR/.venv/bin/python" "$PROJECT_DIR/scripts/health_check.py" "${health_flags[@]}"
+    # Bash 3.2, the one macOS ships, treats "${array[@]}" of an empty array as unbound under set -u; this form expands to nothing instead.
+    PLIST_START_INTERVAL="$HEALTH_INTERVAL_SECONDS" write_plist health "$PROJECT_DIR/.venv/bin/python" "$PROJECT_DIR/scripts/health_check.py" ${health_flags[@]+"${health_flags[@]}"}
     start_agents
 }
 
 start_agents() {
+    # A loaded agent is restarted; an unloaded one is loaded from its plist. Any agent that fails either way is named and the command fails,
+    # because a silent failure here once left the puck with no voice and only "NOT listening" in the status to show for it.
+    local name error failed=()
     for name in "${SERVICES[@]}"; do
-        [[ -f "$(plist_path "$name")" ]] && launchctl bootstrap "gui/$(id -u)" "$(plist_path "$name")" 2>/dev/null || launchctl kickstart -k "gui/$(id -u)/$PREFIX.$name" 2>/dev/null || true
+        [[ -f "$(plist_path "$name")" ]] || continue
+        if agent_loaded "$name"; then
+            error="$(launchctl kickstart -k "$(agent_target "$name")" 2>&1)" || failed+=("$name (${error%%$'\n'*})")
+        else
+            error="$(launchctl bootstrap "gui/$(id -u)" "$(plist_path "$name")" 2>&1)" || failed+=("$name (${error%%$'\n'*})")
+        fi
     done
     sleep 2
     status
+    if ((${#failed[@]} > 0)); then
+        printf 'failed to load: %s\n' "${failed[@]}" >&2
+        return 1
+    fi
 }
 
 stop_agents() {
+    local name
     for name in "${SERVICES[@]}"; do
-        launchctl bootout "gui/$(id -u)/$PREFIX.$name" 2>/dev/null || true
+        launchctl bootout "$(agent_target "$name")" 2>/dev/null || true
+    done
+    for name in "${SERVICES[@]}"; do
+        wait_until_unloaded "$name"
+    done
+}
+
+wait_until_unloaded() {
+    # bootout returns while launchd still holds the job: Kokoro takes about 5 s to exit, and loading its plist again in that window fails with
+    # "Bootstrap failed: 5: Input/output error". Rewriting or reloading a plist waits until the old job is gone.
+    local name="$1" half_seconds=0
+    while agent_loaded "$name"; do
+        if ((half_seconds >= UNLOAD_TIMEOUT_SECONDS * 2)); then
+            echo "$name still unloading after $UNLOAD_TIMEOUT_SECONDS s" >&2
+            return 1
+        fi
+        sleep 0.5
+        half_seconds=$((half_seconds + 1))
     done
 }
 
 restart_agent() {
     local name="${1:?service name}"
-    launchctl kickstart -k "gui/$(id -u)/$PREFIX.$name" 2>/dev/null || launchctl bootstrap "gui/$(id -u)" "$(plist_path "$name")"
+    launchctl kickstart -k "$(agent_target "$name")" 2>/dev/null || launchctl bootstrap "gui/$(id -u)" "$(plist_path "$name")"
     echo "restarted $name"
 }
 
 status() {
+    local name
+    for name in "${SERVICES[@]}"; do
+        agent_loaded "$name" || echo "$name: agent NOT loaded"
+    done
     local ports=("ollama:11434" "mcp:8765" "whisper:10300" "kokoro:10210")
     for entry in "${ports[@]}"; do
         local name="${entry%%:*}" port="${entry##*:}"
@@ -155,11 +195,7 @@ status() {
             echo "$name: NOT listening on $port"
         fi
     done
-    if launchctl print "gui/$(id -u)/$PREFIX.health" >/dev/null 2>&1; then
-        echo "health: checks every $HEALTH_INTERVAL_SECONDS s"
-    else
-        echo "health: agent NOT loaded"
-    fi
+    agent_loaded health && echo "health: checks every $HEALTH_INTERVAL_SECONDS s"
     [[ -f "$LOG_DIR/maintenance" ]] && echo "MAINTENANCE FLAG SET: self-healing is off ($LOG_DIR/maintenance)"
     if [[ -f "$LOG_DIR/health.json" ]]; then
         "$PROJECT_DIR/.venv/bin/python" "$PROJECT_DIR/scripts/health_check.py" --last
