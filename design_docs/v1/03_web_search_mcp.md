@@ -19,8 +19,8 @@ Give the language model Google-quality web results without an API key, an accoun
           ▲                                │                                                    │
           │                                │ page_extractor.py                                  │
           │  grounded excerpts             │   fetch top N urls concurrently (httpx, timeouts)   │
-          │  [1] title, url, 600-word text │   trafilatura extracts main text, drops nav/ads     │
-          │  [2] ...                       │   cap words, dedupe, keep url for attribution       │
+          │  [1] title, url, passages      │   trafilatura extracts main text, drops nav/ads     │
+          │  [2] ...                       │   keep the lines that best match the query          │
           └────────────────────────────────│                                                    │
                                            └───────────────┬────────────────────────────────────┘
                                                            │
@@ -69,7 +69,7 @@ The two lower-level tools exist for flexibility: `web_search` returns only the r
 
 - `docker/searxng/settings.yml`: engines (google, bing, brave, duckduckgo), `search.formats: [html, json]`, safe search, language `en`, request timeouts.
 - `docker/searxng/docker-compose.yml`: image tag pinned, port bound to localhost only.
-- Server settings: top N pages to fetch (default 4), words per page (600), total word budget (2,000), fetch timeout (6 s), blocked domains (paywalls, social networks), user agent.
+- Server settings: top N pages to read (default 6), words per page (350), total word budget (2,000), fetch timeout (6 s), blocked domains (paywalls, social networks), user agent.
 - Cache on or off, and its directory.
 
 ## 7. Failure modes
@@ -263,7 +263,7 @@ The same MCP server now also offers `wikipedia_lookup`, from the `wikipedia_mcp`
                 └──────────────────────────────────┤                                                    │
                                                    └────────────────────────────────────────────────────┘
   search_and_read: a result on en.wikipedia.org/wiki/... goes through WikipediaClient + render_article instead of the page download,
-                   and select_passages uses the search query as the focus and words_per_page (600) as the budget.
+                   and select_passages uses the search query as the focus and words_per_page (350, §16) as the budget.
 ```
 
 **What the tool takes and returns.**

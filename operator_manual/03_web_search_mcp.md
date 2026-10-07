@@ -199,13 +199,14 @@ flowchart TB
 --8<-- "_includes/palette.mmd"
 %% grid: results  download  extract  sources
 %% peers: results download extract sources
+%% column-gap: 160
 results("ranked results<br/>from SearXNG<br/>best match first")
-download("download<br/>first 8 web pages<br/>6 s, 2 MB each")
-extract("trafilatura<br/>keeps the main text<br/>and the tables")
-sources("numbered sources<br/>4 pages with text<br/>under 2,000 words")
+download("download<br/>first 12 web pages<br/>6 s, 2 MB each")
+extract("keep the parts<br/>that match the query<br/>350 words a page")
+sources("one ranked list<br/>passages of 6 pages,<br/>the rest as snippets")
 results -- "28 URLs" --> download
 download -- "HTML pages" --> extract
-extract -- "page text" --> sources
+extract -- "passages" --> sources
 class results third
 class download,extract,sources ours
 ```
