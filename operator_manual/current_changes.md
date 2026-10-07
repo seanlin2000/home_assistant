@@ -2,8 +2,8 @@
 
 This page lists the pull requests that are open right now, one entry each, in the same shape as a section. An entry is written when its pull request opens and removed when the pull request merges or closes.
 
-## Branch kokoro-fable-default: Kokoro's Fable voice by default, and a services.sh that reports agents that fail to load
-<!-- manual-entry branch="kokoro-fable-default" pr="pending" date="2026-10-07" -->
+## PR #17: Kokoro's Fable voice by default, and a services.sh that reports agents that fail to load
+<!-- manual-entry branch="kokoro-fable-default" pr="17" date="2026-10-07" -->
 
 ### Where this fits
 
