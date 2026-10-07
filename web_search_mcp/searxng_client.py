@@ -1,7 +1,6 @@
 import asyncio
 import time
 from collections.abc import Awaitable, Callable
-from typing import Literal
 
 import httpx
 from pydantic import BaseModel
@@ -9,7 +8,13 @@ from pydantic import BaseModel
 from web_search_mcp.query_cache import QueryCache
 from web_search_mcp.settings import SearchSettings
 
-TimeRange = Literal["day", "week", "month", "year"]  # SearXNG's time_range values: only results published within that span
+TIME_RANGES = frozenset({"day", "week", "month", "year"})  # SearXNG's time_range values: only results published within that span
+
+
+def time_range_filter(time_range: str | None) -> str | None:
+    """A time range SearXNG knows, in any case; anything else, "" included, searches without a filter rather than failing, since the model fills it in."""
+    normalized = (time_range or "").strip().lower()
+    return normalized if normalized in TIME_RANGES else None
 
 
 class SearchResult(BaseModel):
@@ -35,13 +40,14 @@ class SearxngClient:
         self._last_live_search: float | None = None
         self._gap_lock = asyncio.Lock()
 
-    async def search(self, query: str, time_range: TimeRange | None = None) -> list[SearchResult]:
-        cached = self._cache.get_search(query, time_range)
+    async def search(self, query: str, time_range: str | None = None) -> list[SearchResult]:
+        time_filter = time_range_filter(time_range)
+        cached = self._cache.get_search(query, time_filter)
         if cached is not None:
             return [SearchResult(**item) for item in cached]
         await self._wait_for_gap()
-        results = await self._search_uncached(query, time_range)
-        self._cache.put_search(query, time_range, [result.model_dump() for result in results])
+        results = await self._search_uncached(query, time_filter)
+        self._cache.put_search(query, time_filter, [result.model_dump() for result in results])
         return results
 
     async def _wait_for_gap(self) -> None:
@@ -52,7 +58,7 @@ class SearxngClient:
                     await self._sleep(remaining)
             self._last_live_search = self._clock()
 
-    async def _search_uncached(self, query: str, time_range: TimeRange | None) -> list[SearchResult]:
+    async def _search_uncached(self, query: str, time_range: str | None) -> list[SearchResult]:
         params = {"q": query, "format": "json", "language": "en", "safesearch": "0"} | ({"time_range": time_range} if time_range else {})
         async with httpx.AsyncClient(timeout=self._settings.fetch_timeout_seconds + 4) as client:
             response = await client.get(f"{self._settings.searxng_url}/search", params=params)

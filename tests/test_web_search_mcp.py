@@ -2,7 +2,6 @@
 query. The SmashWiki fixture is the "Kill confirm" page (revision 2034943) as served on 2026-10-07, trimmed to its article: the lead, the Smash 64,
 Melee, and Brawl sections, and the first 40 rows of the Ultimate table, which hold the answer."""
 
-import json
 from pathlib import Path
 
 import httpx
@@ -12,7 +11,7 @@ from assistant_core.tools import McpToolBox
 from web_search_mcp.page_extractor import PageExcerpt, PageExtractor, apply_total_budget
 from web_search_mcp.page_markdown import to_passage_format
 from web_search_mcp.query_cache import QueryCache
-from web_search_mcp.searxng_client import SearchResult, TimeRange
+from web_search_mcp.searxng_client import SearchResult
 from web_search_mcp.server import NOT_FOUND_INSTRUCTION, build_server, render_grounded_context
 from web_search_mcp.settings import SearchSettings
 
@@ -22,7 +21,11 @@ KILL_CONFIRM_RESULT = SearchResult(title="Kill confirm - SmashWiki, the Super Sm
 
 
 class FakeSearxng:
-    async def search(self, query: str, time_range: TimeRange | None = None) -> list[SearchResult]:
+    def __init__(self) -> None:
+        self.time_ranges: list[str | None] = []
+
+    async def search(self, query: str, time_range: str | None = None) -> list[SearchResult]:
+        self.time_ranges.append(time_range)
         return [SearchResult(title=f"Result for {query}", url="http://example.com/a", snippet="snippet", engines=["google"], score=1.0)]
 
 
@@ -64,11 +67,15 @@ def test_blocked_and_binary_urls_are_not_fetched() -> None:
     assert extractor.is_fetchable("https://example.com/report.pdf") is False
 
 
-async def test_search_tools_take_an_optional_time_range() -> None:
-    async with McpToolBox(build_server(SearchSettings(), searxng=FakeSearxng(), extractor=FakeExtractor())) as toolbox:
+async def test_search_tools_take_an_optional_time_range_that_never_fails_validation() -> None:
+    searxng = FakeSearxng()
+    async with McpToolBox(build_server(SearchSettings(), searxng=searxng, extractor=FakeExtractor())) as toolbox:
         specs = {spec.name: spec for spec in await toolbox.list_tools()}
-    for name in ("search_and_read", "web_search"):
-        assert "week" in json.dumps(specs[name].input_schema["properties"]["time_range"]) and specs[name].input_schema["required"] == ["query"]
+        for name in ("search_and_read", "web_search"):
+            for time_range in ("week", "", "decade"):
+                await toolbox.call(ToolCall(id=name + time_range, name=name, arguments={"query": "fed funds rate", "time_range": time_range}))
+    assert searxng.time_ranges == ["week", "", "decade"] * 2
+    assert all(specs[name].input_schema["required"] == ["query"] for name in ("search_and_read", "web_search"))
 
 
 def search_result(rank: int, title: str, snippet: str = "") -> SearchResult:

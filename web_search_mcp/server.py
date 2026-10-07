@@ -20,7 +20,7 @@ from weather_mcp.settings import WeatherSettings, weather_settings_from_environm
 from web_search_mcp.exchange_log import ExchangeLog
 from web_search_mcp.page_extractor import PageExcerpt, PageExtractor
 from web_search_mcp.query_cache import QueryCache
-from web_search_mcp.searxng_client import SearchResult, SearxngClient, TimeRange
+from web_search_mcp.searxng_client import SearchResult, SearxngClient
 from web_search_mcp.settings import SearchSettings, allowed_host_list, settings_from_environment
 from web_search_mcp.url_guard import UnsafeUrl
 from wikipedia_mcp.client import WikipediaClient
@@ -51,14 +51,14 @@ def build_server(
     )
 
     @server.tool()
-    async def search_and_read(query: str, time_range: TimeRange | None = None) -> str:
+    async def search_and_read(query: str, time_range: str | None = None) -> str:
         """Search the web and read the top pages. Returns the ranked results, numbered, with the parts of each readable page that best match the query and the snippet of each page that could not be read, ready to synthesize an answer from. Use short keyword queries, e.g. "federal funds rate september 2026". time_range: optional "day", "week", "month", or "year" to keep only recent pages; use it for "latest" or "this week" questions."""
         results = await searxng.search(query, time_range)
         excerpts = await extractor.read_pages(results, query)
         return render_grounded_context(query, results, excerpts, settings.results_to_return)
 
     @server.tool()
-    async def web_search(query: str, time_range: TimeRange | None = None) -> str:
+    async def web_search(query: str, time_range: str | None = None) -> str:
         """Search the web and return only the ranked result list (title, URL, snippet) without reading the pages. Use when you want to pick which page to read with fetch_page. time_range: optional "day", "week", "month", or "year" to keep only recent pages; use it for "latest" or "this week" questions."""
         results = await searxng.search(query, time_range)
         return render_result_list(results[: settings.results_to_return])
@@ -72,7 +72,7 @@ def build_server(
             return f"Refused to fetch {url}: {error}. Only public web addresses can be read."
         if not text:
             return f"Could not extract readable text from {url}."
-        return clip_to_words(text, settings.words_per_page * 2)
+        return clip_to_words(text, settings.fetch_page_words)
 
     register_calculator_tools(server)
     register_weather_tools(server, weather or WeatherSettings(), cache)

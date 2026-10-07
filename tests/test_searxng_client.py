@@ -72,3 +72,11 @@ async def test_a_time_range_reaches_searxng_and_is_cached_apart_from_the_plain_q
     await client.search("fed funds rate", "week")
     assert [request.url.params.get("time_range") for request in requests] == ["week", None]
     assert search_key(" Fed Funds Rate", None) == "search:fed funds rate"
+
+
+async def test_an_empty_or_unknown_time_range_searches_without_a_filter_and_case_does_not_matter(monkeypatch: pytest.MonkeyPatch) -> None:
+    requests: list[httpx.Request] = []
+    client = client_with(FakeTime(), monkeypatch, gap=0.0, seen_requests=requests)
+    for time_range in ("", "decade", " WEEK "):
+        await client.search("fed funds rate", time_range)
+    assert [request.url.params.get("time_range") for request in requests] == [None, None, "week"]
