@@ -9,7 +9,13 @@ from utils.text_utils import word_count
 
 LEAD = "A kill confirm is a fast attack that reliably leads into a knockout at high percents."
 FILLER = "Players practise these setups often, because they change with the opponent's weight, falling speed, and the version of the game being played."
-NOTE = re.compile(re.escape(LEFT_OUT_NOTE).replace(re.escape("{count}"), r"\d+"))
+
+
+def note_pattern(template: str) -> re.Pattern[str]:
+    return re.compile(re.escape(template).replace(re.escape("{count}"), r"\d+"))
+
+
+NOTE = note_pattern(LEFT_OUT_NOTE)
 
 
 def page(*blocks: str) -> str:
@@ -60,11 +66,20 @@ def test_a_short_row_outranks_a_long_one_with_the_same_words() -> None:
     assert short_row in selected and "Falco |" not in selected
 
 
+VERSION_SECTIONS = [page(f"## Version {version}", table("Character | Setup", *[f"Fighter {version}{row} | Jab to back aerial at high percents" for row in range(6)])) for version in range(5)]
+LONG_PAGE = page(LEAD, *VERSION_SECTIONS)
+
+
 def test_headings_and_notes_are_paid_for_so_no_line_is_cut_short() -> None:
-    sections = [page(f"## Version {version}", table("Character | Setup", *[f"Fighter {version}{row} | Jab to back aerial at high percents" for row in range(6)])) for version in range(5)]
-    long_page = page(LEAD, *sections)
-    selected = select_passages(long_page, "jab back aerial", 80)
-    whole_lines = set(long_page.split("\n"))
+    selected = select_passages(LONG_PAGE, "jab back aerial", 80)
+    whole_lines = set(LONG_PAGE.split("\n"))
     assert word_count(selected) <= 80
     assert all(line in whole_lines or NOTE.fullmatch(line) for line in selected.split("\n"))
     assert NOTE.search(selected)
+
+
+def test_a_caller_note_replaces_the_default_and_its_words_are_paid_for() -> None:
+    long_note = "[{count} more matching lines here did not fit; to see them, ask again with a narrower focus, such as a year]"
+    selected = select_passages(LONG_PAGE, "jab back aerial", 80, left_out_note=long_note)
+    assert word_count(selected) <= 80
+    assert note_pattern(long_note).search(selected) and not NOTE.search(selected)

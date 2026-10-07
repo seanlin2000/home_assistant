@@ -5,9 +5,9 @@ import logging
 import httpx
 from mcp.server.mcpserver import MCPServer
 
-from utils.passage_utils import select_passages
 from wikipedia_mcp.article import render_article
 from wikipedia_mcp.client import ArticleStore, WikipediaClient, WikipediaUnavailable
+from wikipedia_mcp.passages import select_passages
 from wikipedia_mcp.settings import WikipediaSettings
 
 WIKIPEDIA_TOOL_NAME = "wikipedia_lookup"

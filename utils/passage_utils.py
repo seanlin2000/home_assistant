@@ -39,8 +39,7 @@ PAGE_TITLE_LEVEL = 1  # a level-1 heading above all the text names the page; Wik
 YEAR = re.compile(r"\b(1[5-9]\d\d|20\d\d)\b")
 WORD = re.compile(r"[a-z0-9]+")
 MIN_FOCUS_WORD_LENGTH = 3
-LEFT_OUT_NOTE = "[{count} more matching lines here did not fit; to see them, ask again with a narrower focus, such as a year]"
-NOTE_WORDS = len(LEFT_OUT_NOTE.split())
+LEFT_OUT_NOTE = "[{count} more matching lines left out]"  # the default; a tool that can ask for the lines left out passes its own note, saying how
 LEAD_SHARE_OF_BUDGET = 4  # the opening prose may take up to a quarter of the words, leaving the rest for what the focus asks about
 TERM_SATURATION = 1.2  # BM25's k1: a word's second appearance in a line adds less than its first
 LENGTH_NORMALIZATION = 0.75  # BM25's b: how strongly a line longer than the page's average is discounted
@@ -155,6 +154,7 @@ class BudgetedSelection:
     passages: list[Passage]
     budget: int
     unkept_matches: Counter[int]  # by block, the matching lines not yet kept
+    note_words: int
     kept: set[int] = field(default_factory=set)
     closed_blocks: set[int] = field(default_factory=set)
     noted_blocks: set[int] = field(default_factory=set)
@@ -187,8 +187,8 @@ class BudgetedSelection:
     def _note_cost_change(self, block_index: int) -> int:
         leaves_matches_behind = self.unkept_matches[block_index] > 1
         if leaves_matches_behind and block_index not in self.noted_blocks:
-            return NOTE_WORDS
-        return -NOTE_WORDS if not leaves_matches_behind and block_index in self.noted_blocks else 0
+            return self.note_words
+        return -self.note_words if not leaves_matches_behind and block_index in self.noted_blocks else 0
 
     def _count_kept_match(self, block_index: int) -> None:
         self.unkept_matches[block_index] -= 1
@@ -198,32 +198,76 @@ class BudgetedSelection:
             self.noted_blocks.discard(block_index)
 
 
-def select_passages(text: str, focus: str, max_words: int, page_title: str = "") -> str:
+def select_passages(text: str, focus: str, max_words: int, page_title: str = "", left_out_note: str = LEFT_OUT_NOTE) -> str:
+    """left_out_note is a template with a {count} field, printed after a table or list the budget cut; its words are paid for like any line's."""
     terms = FocusTerms.from_text(focus, page_title)
     if word_count(text) <= max_words or terms.is_empty:
         return clip_to_words(text, max_words)
     passages = parse_passages(text)
     scorer = RelevanceScorer.for_page(passages, terms)
-    lines = lines_within_budget(passages, [scorer.relevance(passage) for passage in passages], max_words)
+    lines = RankedPage(passages, [scorer.relevance(passage) for passage in passages], left_out_note).lines_within_budget(max_words)
     return clip_to_words("\n".join(lines), max_words) if lines else clip_to_words(text, max_words)
 
 
-def lines_within_budget(passages: list[Passage], relevances: list[Relevance], max_words: int) -> list[str]:
-    """The opening prose, then the best-matching lines in the words left. The selection already pays for every heading and note it prints; should
-    the printed lines still run over, because a heading is printed again when a kept line from another section sits between its lines, the overflow
-    is taken off the budget and the lines picked again, so no line is ever cut short."""
-    opening = opening_prose_indexes(passages, max_words // LEAD_SHARE_OF_BUDGET)
-    budget = max_words - sum(passages[index].word_count for index in opening)
-    while budget > 0:
-        related = related_indexes(passages, relevances, budget)
-        if not related:
-            return []
-        lines = lines_in_page_order(passages, opening | related, left_out_lines(passages, relevances, related))
-        overflow = word_count("\n".join(lines)) - max_words
-        if overflow <= 0:
-            return lines
-        budget -= overflow
-    return []
+@dataclass(frozen=True)
+class RankedPage:
+    """A page's lines, each line's relevance to the focus, and the note that says how many matching lines a cut table or list lost."""
+
+    passages: list[Passage]
+    relevances: list[Relevance]
+    left_out_note: str
+
+    @property
+    def note_words(self) -> int:
+        return word_count(self.left_out_note)
+
+    def lines_within_budget(self, max_words: int) -> list[str]:
+        """The opening prose, then the best-matching lines in the words left. The selection already pays for every heading and note it prints;
+        should the printed lines still run over, because a heading is printed again when a kept line from another section sits between its lines,
+        the overflow is taken off the budget and the lines picked again, so no line is ever cut short."""
+        opening = opening_prose_indexes(self.passages, max_words // LEAD_SHARE_OF_BUDGET)
+        budget = max_words - sum(self.passages[index].word_count for index in opening)
+        while budget > 0:
+            related = self.related_indexes(budget)
+            if not related:
+                return []
+            lines = self.lines_in_page_order(opening | related, self.left_out_lines(related))
+            overflow = word_count("\n".join(lines)) - max_words
+            if overflow <= 0:
+                return lines
+            budget -= overflow
+        return []
+
+    def related_indexes(self, budget: int) -> set[int]:
+        """Most related first, earlier first among equals (a reversed sort stays stable)."""
+        matching = self.matching_indexes()
+        selection = BudgetedSelection(self.passages, budget, Counter(self.passages[index].block_index for index in matching), self.note_words)
+        for index in sorted(matching, key=self.relevances.__getitem__, reverse=True):
+            selection.offer(index)
+        return selection.kept
+
+    def matching_indexes(self) -> list[int]:
+        return [index for index, passage in enumerate(self.passages) if self.relevances[index] > NO_RELEVANCE and not passage.is_opening_prose]
+
+    def left_out_lines(self, kept: set[int]) -> Counter[int]:
+        """How many matching lines each partly kept table or list lost to the budget."""
+        kept_blocks = {self.passages[index].block_index for index in kept}
+        return Counter(self.passages[index].block_index for index in self.matching_indexes() if index not in kept and self.passages[index].block_index in kept_blocks)
+
+    def lines_in_page_order(self, kept: set[int], left_out: Counter[int]) -> list[str]:
+        lines: list[str] = []
+        printed_headings: tuple[str, ...] = ()
+        ordered = sorted(kept)
+        for position, index in enumerate(ordered):
+            headings = self.passages[index].headings
+            lines.extend(headings[shared_prefix_length(printed_headings, headings) :])
+            printed_headings = headings
+            lines.append(self.passages[index].text)
+            block_index = self.passages[index].block_index
+            next_block_index = self.passages[ordered[position + 1]].block_index if position + 1 < len(ordered) else None
+            if block_index != next_block_index and left_out[block_index]:
+                lines.append(self.left_out_note.format(count=left_out[block_index]))
+        return lines
 
 
 def parse_passages(text: str) -> list[Passage]:
@@ -269,41 +313,6 @@ def opening_prose_indexes(passages: list[Passage], budget: int) -> set[int]:
         kept.add(index)
         used += passage.word_count
     return kept
-
-
-def related_indexes(passages: list[Passage], relevances: list[Relevance], budget: int) -> set[int]:
-    """Most related first, earlier first among equals (a reversed sort stays stable)."""
-    matching = matching_indexes(passages, relevances)
-    selection = BudgetedSelection(passages, budget, Counter(passages[index].block_index for index in matching))
-    for index in sorted(matching, key=relevances.__getitem__, reverse=True):
-        selection.offer(index)
-    return selection.kept
-
-
-def matching_indexes(passages: list[Passage], relevances: list[Relevance]) -> list[int]:
-    return [index for index, passage in enumerate(passages) if relevances[index] > NO_RELEVANCE and not passage.is_opening_prose]
-
-
-def left_out_lines(passages: list[Passage], relevances: list[Relevance], kept: set[int]) -> Counter[int]:
-    """How many matching lines each partly kept table or list lost to the budget."""
-    kept_blocks = {passages[index].block_index for index in kept}
-    return Counter(passages[index].block_index for index in matching_indexes(passages, relevances) if index not in kept and passages[index].block_index in kept_blocks)
-
-
-def lines_in_page_order(passages: list[Passage], kept: set[int], left_out: Counter[int]) -> list[str]:
-    lines: list[str] = []
-    printed_headings: tuple[str, ...] = ()
-    ordered = sorted(kept)
-    for position, index in enumerate(ordered):
-        headings = passages[index].headings
-        lines.extend(headings[shared_prefix_length(printed_headings, headings) :])
-        printed_headings = headings
-        lines.append(passages[index].text)
-        block_index = passages[index].block_index
-        next_block_index = passages[ordered[position + 1]].block_index if position + 1 < len(ordered) else None
-        if block_index != next_block_index and left_out[block_index]:
-            lines.append(LEFT_OUT_NOTE.format(count=left_out[block_index]))
-    return lines
 
 
 def shared_prefix_length(printed: tuple[str, ...], wanted: tuple[str, ...]) -> int:
