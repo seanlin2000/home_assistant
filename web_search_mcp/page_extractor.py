@@ -5,10 +5,14 @@ import httpx
 import trafilatura
 from pydantic import BaseModel
 
+from utils.text_utils import clip_to_words, word_count
 from web_search_mcp.query_cache import QueryCache
 from web_search_mcp.searxng_client import SearchResult
 from web_search_mcp.settings import SearchSettings
 from web_search_mcp.url_guard import Resolver, UnsafeUrl, ensure_public_url, host_header, is_public_address, pin_url_to_address, system_resolver
+from wikipedia_mcp.article import render_article
+from wikipedia_mcp.client import WikipediaClient, WikipediaUnavailable
+from wikipedia_mcp.passages import select_passages
 
 SKIPPED_EXTENSIONS = (".pdf", ".zip", ".png", ".jpg", ".jpeg", ".gif", ".mp4", ".mp3")
 
@@ -25,18 +29,33 @@ class PageTooLarge(ValueError):
 
 
 class PageExtractor:
-    def __init__(self, settings: SearchSettings, cache: QueryCache, resolver: Resolver = system_resolver, transport: httpx.AsyncBaseTransport | None = None) -> None:
+    def __init__(
+        self,
+        settings: SearchSettings,
+        cache: QueryCache,
+        resolver: Resolver = system_resolver,
+        transport: httpx.AsyncBaseTransport | None = None,
+        wikipedia: WikipediaClient | None = None,
+    ) -> None:
         self._settings = settings
         self._cache = cache
         self._resolver = resolver  # injectable so tests can pretend a name resolves to a private address
         self._transport = transport  # injectable so tests can serve canned responses without a socket
+        self._wikipedia = wikipedia  # reads Wikipedia articles through its API, tables included; None reads them like any other page
 
-    async def read_pages(self, results: list[SearchResult]) -> list[PageExcerpt]:
-        """Fetches the first readable pages concurrently and keeps result order so ranking survives extraction."""
+    async def read_pages(self, results: list[SearchResult], focus: str) -> list[PageExcerpt]:
+        """Fetches the first readable pages concurrently and keeps result order so ranking survives extraction. The focus (the search query) picks the
+        part of a long Wikipedia article to keep; any other page is read from the top."""
         candidates = [result for result in results if self.is_fetchable(result.url)][: self._settings.pages_to_read * 2]
         texts = await asyncio.gather(*(self._read_or_empty(result.url) for result in candidates))
-        excerpts = [to_excerpt(result, text, self._settings.words_per_page) for result, text in zip(candidates, texts) if text]
+        excerpts = [to_excerpt(result, self._focused(result.url, text, focus), self._settings.words_per_page) for result, text in zip(candidates, texts) if text]
         return apply_total_budget(excerpts[: self._settings.pages_to_read], self._settings.total_word_budget)
+
+    def _focused(self, url: str, text: str, focus: str) -> str:
+        return select_passages(text, focus, self._settings.words_per_page) if self._wikipedia_title(url) else text
+
+    def _wikipedia_title(self, url: str) -> str | None:
+        return self._wikipedia.article_title_in(url) if self._wikipedia is not None else None
 
     async def _read_or_empty(self, url: str) -> str:
         try:
@@ -54,6 +73,19 @@ class PageExtractor:
         return text
 
     async def _read_uncached(self, url: str) -> str:
+        """A Wikipedia article comes through its API with every table row on its own line; if that fails it is read like any other page."""
+        title = self._wikipedia_title(url)
+        article = await self._read_wikipedia_article(title) if title else ""
+        return article or await self._read_generic_page(url)
+
+    async def _read_wikipedia_article(self, title: str) -> str:
+        try:
+            return render_article(await self._wikipedia.article_html(title))
+        except WikipediaUnavailable:
+            return ""
+
+    async def _read_generic_page(self, url: str) -> str:
+        """The text comes back as one line: trafilatura's line breaks carry no structure the excerpt needs, and only Wikipedia's rows keep theirs."""
         try:
             html = await self._download(url)
         except UnsafeUrl:
@@ -61,7 +93,7 @@ class PageExtractor:
         except (httpx.HTTPError, ValueError):
             return ""
         extracted = trafilatura.extract(html, include_comments=False, include_tables=True, favor_precision=True)
-        return (extracted or "").strip()
+        return " ".join((extracted or "").split())
 
     async def _download(self, url: str) -> str:
         """Follow redirects by hand so every hop is checked against the public-address rule, and stop reading past the byte cap.
@@ -116,9 +148,8 @@ def refuse_unless_public_peer(response: httpx.Response) -> None:
 
 
 def to_excerpt(result: SearchResult, text: str, words_per_page: int) -> PageExcerpt:
-    words = text.split()
-    clipped = " ".join(words[:words_per_page])
-    return PageExcerpt(title=result.title, url=result.url, text=clipped, word_count=len(clipped.split()))
+    clipped = clip_to_words(text, words_per_page)
+    return PageExcerpt(title=result.title, url=result.url, text=clipped, word_count=word_count(clipped))
 
 
 def apply_total_budget(excerpts: list[PageExcerpt], total_word_budget: int) -> list[PageExcerpt]:
@@ -127,7 +158,7 @@ def apply_total_budget(excerpts: list[PageExcerpt], total_word_budget: int) -> l
     for excerpt in excerpts:
         if remaining <= 0:
             break
-        words = excerpt.text.split()[:remaining]
-        kept.append(PageExcerpt(title=excerpt.title, url=excerpt.url, text=" ".join(words), word_count=len(words)))
-        remaining -= len(words)
+        clipped = clip_to_words(excerpt.text, remaining)
+        kept.append(PageExcerpt(title=excerpt.title, url=excerpt.url, text=clipped, word_count=word_count(clipped)))
+        remaining -= word_count(clipped)
     return kept

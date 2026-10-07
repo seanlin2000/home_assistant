@@ -37,6 +37,7 @@ Every term the handbook defines, in one sentence, with the section that explains
 | Far-field microphones | Microphones and processing built to hear a voice across a room, through echoes and background noise, rather than next to the mouth. | [Voice Pipeline](05_voice_pipeline.md#today-and-with-the-puck) |
 | FileVault | macOS disk encryption, which asks for a password before the operating system starts, so a Mac that must reboot unattended has it off. | [Hardware](08_hardware_and_deployment.md#coming-back-after-a-reboot) |
 | Filler sentence | A short sentence such as "Let me work that out." that the agent speaks as soon as the model asks for its first tool, so you hear something within a second or two. | [Conversation Agent](04_conversation_agent.md#one-exchange) |
+| Focus | The words or year a caller names to pick the part of a long Wikipedia article it needs, so the lines that match are kept and the rest is dropped. | [MCP Tool Server](03_web_search_mcp.md#key-definitions) |
 | Fuzzy matching | Tolerant string comparison, so "Radio Head" resolves to Radiohead. | [Music](07_music_spotify.md#the-path) |
 | Gate | A pass-or-fail rule in the benchmark rubric whose failure zeroes the question, so a fluent fabrication cannot score well. | [Benchmarking and Model Selection](01_llm_benchmark.md#gates) |
 | Git hook | A program git runs at a fixed moment, such as just before a commit is recorded, whose non-zero exit cancels the commit. | [Development](09_dev_environment.md#the-path-to-main) |
@@ -78,6 +79,7 @@ Every term the handbook defines, in one sentence, with the section that explains
 | Neural accelerators | Matrix-multiply units inside each GPU core of Apple's M5 and M6 chips, which speed up reading the prompt. | [Hardware](08_hardware_and_deployment.md#the-memory-budget) |
 | OAuth | The login flow where you authorise an application to act on your account without giving it your password. | [Music](07_music_spotify.md#run-it-yourself) |
 | Parameters | The learned numbers inside a model, counted in billions ("26B"), where more of them means more capability and more memory. | [LLMs on Apple Silicon](02_local_llm.md#memory-cost) |
+| Parsoid HTML | The HTML that Wikipedia's REST API returns for an article, in which every section is a `<section>` element holding its heading and data tables carry the class `wikitable`. | [MCP Tool Server](03_web_search_mcp.md#key-definitions) |
 | PCM audio | Uncompressed sound stored as a sequence of integer samples, described by a sample rate, a sample width, and a channel count. | [Voice Pipeline](05_voice_pipeline.md#key-definitions) |
 | Phonemizer | A program that turns written text into the sequence of speech sounds a text-to-speech model pronounces. | [Voice Pipeline](05_voice_pipeline.md#packages-and-tools) |
 | Prefill | Reading the whole prompt in one batch before the first token, which is limited by compute. | [LLMs on Apple Silicon](02_local_llm.md#prefill-and-decode) |

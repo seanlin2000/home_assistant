@@ -1,7 +1,7 @@
 # MCP Tool Server
 <!-- complexity: packages=3 parts=3 concepts=3 tier=deep -->
 
-This part covers our MCP tool server, the program that serves the tools the language model can call: web search through SearXNG, an exact calculator, and the weather forecast for home. When you ask something the model cannot know from training, such as today's interest rate or the price of a device, the model asks for a search. Our tool server sends the query to SearXNG, a search aggregator running in Docker on the Mac, fetches the top pages, pulls out the readable text, and hands the model a numbered block of excerpts to answer from. The same server also does arithmetic exactly, so the model describes a calculation and never carries the digits itself.
+This part covers our MCP tool server, the program that serves the tools the language model can call: web search through SearXNG, Wikipedia articles with their tables, an exact calculator, and the weather forecast for home. When you ask something the model cannot know from training, such as today's interest rate or the price of a device, the model asks for a search. Our tool server sends the query to SearXNG, a search aggregator running in Docker on the Mac, fetches the top pages, pulls out the readable text, and hands the model a numbered block of excerpts to answer from. The same server also does arithmetic exactly, so the model describes a calculation and never carries the digits itself.
 
 ## Where this fits
 
@@ -11,7 +11,7 @@ flowchart TB
 class mcp,searxng,engines current
 ```
 
-`web_search_mcp` receives tool calls over MCP from the conversation agent and, during a benchmark, from the laptop. It sends each search query to SearXNG, a container that listens only on the Mac itself; SearXNG forwards the query to the public search engines, the first traffic that leaves the apartment. The server then fetches the pages the engines named, extracts their readable text, and returns numbered excerpts to the agent, which is what the model reads before it answers. The calculator tools live in the same server and never leave the Mac.
+`web_search_mcp` receives tool calls over MCP from the conversation agent and, during a benchmark, from the laptop. It sends each search query to SearXNG, a container that listens only on the Mac itself; SearXNG forwards the query to the public search engines, the first traffic that leaves the apartment. The server then fetches the pages the engines named, extracts their readable text, and returns numbered excerpts to the agent, which is what the model reads before it answers. The calculator tools live in the same server and never leave the Mac. The Wikipedia tool asks Wikipedia's own API directly, without SearXNG, and is described in [Wikipedia articles](#wikipedia-articles).
 
 ## Key definitions
 
@@ -30,6 +30,8 @@ class mcp,searxng,engines current
 | Globally routable address | An IP address that belongs on the public internet, which rules out loopback, private-range, link-local, and multicast addresses. |
 | DNS rebinding | A hostile name server answering a safety check with a public address and the connection a moment later with a private one, which the URL guard defeats by connecting to the address it checked. |
 | Syntax tree | The structure Python builds from an expression before running anything, with each operator a node and the values it acts on as its children. |
+| Parsoid HTML | The HTML that Wikipedia's REST API returns for an article, in which every section is a `<section>` element holding its heading and data tables carry the class `wikitable`. |
+| Focus | The words or year a caller names to pick the part of a long Wikipedia article it needs, so the lines that match are kept and the rest is dropped. |
 
 ## Packages and tools
 
@@ -38,11 +40,13 @@ class mcp,searxng,engines current
 | SearXNG (`searxng/searxng:latest`) | An open-source metasearch engine, run here as one Docker container named `studio-searxng` | Fans each query out to seven engines, merges and ranks the results, and returns them as JSON on `127.0.0.1:8080`. No account and no API key |
 | Docker Desktop 4.89.0 | Runs Linux containers on macOS inside a hidden Linux VM | Hosts the SearXNG container. `docker/searxng/docker-compose.yml` binds the port to the Mac only and mounts `settings.yml` read-only |
 | `mcp` 2.1.1 | The official Python MCP SDK | `MCPServer` turns each decorated Python function into a tool with a generated schema and serves them over streamable HTTP at `/mcp` on port 8765. `uvicorn` 0.52.4 and `starlette` 1.6.0 are the HTTP layer underneath, and the same `starlette` request objects serve the two plain routes `/healthz` and `/exchanges` |
-| `httpx` 0.28.1 | An async HTTP client | Makes the SearXNG request, fetches pages with a 6 s timeout, asks Met.no for the forecast, and, on the agent side, is the only dependency of the MCP client in `assistant_core/mcp_http.py` |
+| `httpx` 0.28.1 | An async HTTP client | Makes the SearXNG request, fetches pages with a 6 s timeout, asks Met.no for the forecast and Wikipedia for articles, and, on the agent side, is the only dependency of the MCP client in `assistant_core/mcp_http.py` |
 | `trafilatura` 2.2.0 | A main-content extraction library | Turns each fetched HTML page into article text, keeping tables and dropping comments |
-| `pydantic` 2.13.5 | Typed data models | `SearchResult`, `PageExcerpt`, `SearchSettings`, and `WeatherSettings` give every tool result and every setting a fixed shape |
-| `diskcache` 5.6.3 | An on-disk key-value cache | Stores search results by query, page text by URL, and the forecast by location when a cache directory is set. On during a benchmark so every candidate model sees the same pages and the same forecast, off in the product |
+| `lxml` 6.1.3 | An HTML and XML parser | Parses Wikipedia's article HTML into sections, headings, and table rows in `wikipedia_mcp/article.py` |
+| `pydantic` 2.13.5 | Typed data models | `SearchResult`, `PageExcerpt`, `SearchSettings`, `WeatherSettings`, and `WikipediaSettings` give every tool result and every setting a fixed shape |
+| `diskcache` 5.6.3 | An on-disk key-value cache | Stores search results by query, page text by URL, the forecast by location, and Wikipedia search titles and article HTML when a cache directory is set. On during a benchmark so every candidate model sees the same pages, the same forecast, and the same article revisions, off in the product |
 | Met.no Locationforecast 2.0 | The Norwegian Meteorological Institute's free forecast API, used through its `complete` product | `MetnoClient` in `weather_mcp/metno_client.py` asks it for the forecast at home's coordinates, rounded to four decimals, with a User-Agent naming the project, and keeps each answer until its `Expires` time |
+| Wikipedia REST API | Wikimedia's free API for English Wikipedia, with no account and no key | `WikipediaClient` in `wikipedia_mcp/client.py` searches it for a topic (`/w/rest.php/v1/search/page`) and fetches an article's HTML (`/w/rest.php/v1/page/{title}/html`), with a User-Agent naming the project |
 | `curl` and a browser | Standard HTTP clients | Prove the server and the container are up, and let you use SearXNG at http://127.0.0.1:8080 like any search page |
 
 ## How it works
@@ -77,7 +81,7 @@ class searxng third
 class engines,pages ext
 ```
 
-The server is one process called `assistant-tools`, built by `build_server` in `web_search_mcp/server.py`. It publishes eleven tools: `search_and_read`, `web_search`, and `fetch_page` for the web, and eight calculator tools registered by `calculator_mcp/register.py`. A twelfth, `weather_forecast`, registered by `weather_mcp/register.py`, is offered only when `WEATHER_LATITUDE` and `WEATHER_LONGITUDE` give the home's coordinates. Each tool is a Python function with a docstring. The `mcp` package reads the function signature to produce the JSON schema and the docstring to produce the description, so the docstring is the text the model reads when it decides whether to call the tool. `search_and_read` is the tool the system prompt steers small models to, and it is the one the figure above traces.
+The server is one process called `assistant-tools`, built by `build_server` in `web_search_mcp/server.py`. It publishes twelve tools: `search_and_read`, `web_search`, and `fetch_page` for the web, `wikipedia_lookup` registered by `wikipedia_mcp/register.py`, and eight calculator tools registered by `calculator_mcp/register.py`. A thirteenth, `weather_forecast`, registered by `weather_mcp/register.py`, is offered only when `WEATHER_LATITUDE` and `WEATHER_LONGITUDE` give the home's coordinates. Each tool is a Python function with a docstring. The `mcp` package reads the function signature to produce the JSON schema and the docstring to produce the description, so the docstring is the text the model reads when it decides whether to call the tool. `search_and_read` is the tool the system prompt steers small models to, and it is the one the figure above traces.
 
 *From `web_search_mcp/server.py`, `search_and_read`:*
 
@@ -86,7 +90,7 @@ The server is one process called `assistant-tools`, built by `build_server` in `
     async def search_and_read(query: str) -> str:
         """Search the web and read the top pages. Returns numbered sources with title, URL, and the main text of each page, ready to synthesize an answer from. Use short keyword queries, e.g. "federal funds rate september 2026"."""
         results = await searxng.search(query)
-        excerpts = await extractor.read_pages(results)
+        excerpts = await extractor.read_pages(results, query)
         return render_grounded_context(query, results, excerpts)
 ```
 
@@ -106,6 +110,7 @@ What the model reads back depends on the tool and on what the search found:
 - **`search_and_read`, results but no readable page:** the first five snippets instead.
 - **`web_search`:** only the ranked list of the first 8 results.
 - **`fetch_page`:** one page's text, up to 1,200 words.
+- **`wikipedia_lookup`:** the article's title and URL, the lines that answer the focus, and the next few article titles, as in [Wikipedia articles](#wikipedia-articles).
 
 A capable model can chain `web_search` and `fetch_page`.
 
@@ -206,7 +211,7 @@ Snippets are 10 to 30 words, written for a person skimming a results page, and t
     - hard paywalls: the Wall Street Journal, the Financial Times, Bloomberg, and the New York Times.
 2. **Pick.** It takes the first 8 survivors, twice the 4 pages it wants.
 3. **Download.** It fetches them concurrently with `asyncio.gather`, each through [the URL guard](#the-url-guard), so one slow site costs at most the 6 s timeout rather than 6 s per page. Results keep their order, so the engines' ranking survives extraction.
-4. **Extract.** Each page goes through `trafilatura.extract` with comments dropped, tables kept, and precision favoured over recall.
+4. **Extract.** Each page goes through `trafilatura.extract` with comments dropped, tables kept, and precision favoured over recall. A result on `en.wikipedia.org/wiki/` is the exception: it is read through Wikipedia's API instead, and the search query picks its lines, as in [Wikipedia articles](#wikipedia-articles).
 5. **Budget.** Each page is clipped to its first 600 words as a `PageExcerpt`, the first four with text are kept, and `apply_total_budget` trims the last of them so the block stays under 2,000 words.
 
 A page that yields no text, times out, is not HTML, runs past 2 MB, or is refused by the URL guard becomes an empty string and is skipped.
@@ -288,6 +293,89 @@ What happens after a refusal, and how it is tested:
 - **Tests:** the resolver and the HTTP transport are constructor arguments of `PageExtractor`, which is how `tests/test_url_guard.py` pretends a public-looking name resolves to the router and serves redirects without opening a socket.
 
 The broader rule stands: nothing derived from a web page is an instruction, and no tool that acts on the home is given to the model without an intent or confirmation layer in front of it, as the page on the [conversation agent](04_conversation_agent.md) explains.
+
+### Wikipedia articles
+
+```mermaid
+flowchart TB
+--8<-- "_includes/palette.mmd"
+%% grid: asked  wikisearch  wikiarticle  rendering  selecting
+%% peers: asked wikisearch wikiarticle rendering selecting
+asked("topic and focus<br/>from the model<br/>49ers QBs, 2000")
+wikisearch("Wikipedia search<br/>en.wikipedia.org<br/>five titles")
+wikiarticle("the article<br/>Parsoid HTML<br/>for the best title")
+rendering("render_article<br/>one line for each<br/>table row")
+selecting("select_passages<br/>the lines that match<br/>up to 900 words")
+asked -- "topic" --> wikisearch
+wikisearch -- "best title" --> wikiarticle
+wikiarticle -- "HTML" --> rendering
+rendering -- "text" --> selecting
+class asked third
+class wikisearch,wikiarticle ext
+class rendering,selecting ours
+```
+
+Some questions are answered by a list or a record rather than by today's news: how many quarterbacks have started for a team since 2000, or which years a team won. On Wikipedia those answers sit in tables, and trafilatura, tuned for precision, drops table rows. So `wikipedia_lookup` reads Wikipedia through its own API and keeps every row. It takes the steps in the figure:
+
+1. **Search.** `WikipediaClient.search_titles` asks Wikipedia's search for up to five article titles matching the topic. The best one is read. The rest are listed at the end of the reply as `Other articles:`, so the model can ask for one of them by name.
+2. **Fetch.** `article_html` fetches that article's Parsoid HTML. A redirect is followed only within `en.wikipedia.org`, at most three hops.
+3. **Render.** `render_article` walks the sections in order:
+    - headings become `## ...` lines, one `#` per level;
+    - paragraphs and list items become lines;
+    - every row of a `wikitable` or infobox becomes one line, its cells joined by ` | `;
+    - citations, navigation boxes, figures, hidden sort keys, and the closing sections such as References and See also are dropped.
+4. **Select.** An article within 900 words comes back whole. A longer one keeps the opening paragraphs, up to a quarter of the budget, then the lines that share the most words with the focus, printed in article order under their headings. A line under a heading that names a focus word counts as related, and a table row brings its header row.
+
+Two rules keep the selection safe to count from:
+
+- **A year means that year onward.** A focus of `2000` keeps every row naming 2000 or a later year and drops the rows that name only earlier ones.
+- **A table is never cut in the middle.** When a row does not fit, the rest of its table is left out with it, and a line such as `[3 more matching lines here did not fit; ...]` tells the model the list is incomplete.
+
+The tool's docstring is the description the model reads when it decides whether to call it:
+
+*From `wikipedia_mcp/register.py`, `wikipedia_lookup`:*
+
+```python
+    @server.tool(name=WIKIPEDIA_TOOL_NAME)
+    async def wikipedia_lookup(topic: str, focus: str = "") -> str:
+        """Read the encyclopedia article on a topic, for settled facts, lists, records, and histories: who held an office, a team's seasons or starting players, a person's career, a country's history. Tables come back as rows. topic: what the article is about, e.g. "San Francisco 49ers starting quarterbacks". focus: optional words or a year naming the part you need; a year means that year onward, e.g. "2000". Not for prices, news, or anything that changes week to week; search the web for those."""
+        if not topic.strip():
+            return NO_TOPIC_MESSAGE
+        try:
+            return await looked_up(client, topic, focus or topic, settings.max_words)
+        except WikipediaUnavailable as error:
+            _LOGGER.warning("%s failed: %s", WIKIPEDIA_TOOL_NAME, error)
+            return SERVICE_DOWN_MESSAGE
+```
+
+Called with `topic="San Francisco 49ers starting quarterbacks"` and `focus="2000"`, it returned 607 words that began like this:
+
+```text
+Wikipedia: List of San Francisco 49ers starting quarterbacks
+URL: https://en.wikipedia.org/wiki/List_of_San_Francisco_49ers_starting_quarterbacks
+
+These quarterbacks have started at least one game for the San Francisco 49ers of the National Football League.
+...
+## Starting quarterbacks
+### Regular season
+Season(s) | Quarterback(s)
+2000 | Jeff Garcia (16)
+2001 | Jeff Garcia (16)
+...
+2026 | Brock Purdy (2)
+### Postseason
+Season | Quarterback(s)
+2001 | Jeff Garcia (0–1)
+...
+Other articles: Brock Purdy; C. J. Beathard; Mac Jones; List of current NFL starting quarterbacks
+```
+
+What else uses this code, and what comes back when it cannot help:
+
+- **`search_and_read`** reads any result on `en.wikipedia.org/wiki/` through the same client and renderer, with the search query as the focus and the 600-word page budget. If the API fails, the page is read like any other.
+- **`fetch_page`** does not use the API. A URL the model picks always goes through [the URL guard](#the-url-guard). The Wikipedia client skips the guard because its host is fixed by `WIKIPEDIA_BASE_URL`, not chosen by the model.
+- **Failures** come back as sentences the model can act on: `Wikipedia has no article matching "..."` with a hint to try another topic, or `Wikipedia error: Wikipedia did not answer. Search the web with search_and_read instead.`
+- **What leaves the Mac:** the topic the model wrote, the titles it reads, and a User-Agent naming the project, sent to Wikimedia. The question itself stays home.
 
 ### The calculator tools
 
@@ -380,7 +468,7 @@ agent("conversation agent<br/>in the Home<br/>Assistant VM")
 health("health check<br/>launchd, every<br/>5 minutes")
 browser("a web page<br/>in a browser<br/>on the Wi-Fi")
 subgraph server["web_search_mcp, port 8765"]
-  mcp("/mcp<br/>the eleven tools<br/>over MCP")
+  mcp("/mcp<br/>the twelve tools<br/>over MCP")
   exchanges("/exchanges<br/>one JSON Lines<br/>file per day")
   healthz("/healthz<br/>tool names, and<br/>ok or degraded")
   refused("421 Misdirected<br/>Host not this Mac,<br/>or a browser Origin")
@@ -397,8 +485,8 @@ The server answers on three routes, all on port 8765. `register_operations_route
 
 | Route | Who calls it | What it does |
 |-------|--------------|--------------|
-| `/mcp` | The conversation agent, and the benchmark on the laptop | Serves the eleven tools, or twelve with `weather_forecast`, over MCP, as in [One tool call, end to end](#one-tool-call-end-to-end) |
-| `GET /healthz` | The health check | Lists the tool names the server is serving and reports `ok`, or `degraded` with the missing names, against the six tools a live server must expose: `search_and_read`, `web_search`, `fetch_page`, `calculate`, `percent`, and `convert`. That is how the [health check](10_operations.md#the-health-check) proves the process on port 8765 is ours |
+| `/mcp` | The conversation agent, and the benchmark on the laptop | Serves the twelve tools, or thirteen with `weather_forecast`, over MCP, as in [One tool call, end to end](#one-tool-call-end-to-end) |
+| `GET /healthz` | The health check | Lists the tool names the server is serving and reports `ok`, or `degraded` with the missing names, against the seven tools a live server must expose: `search_and_read`, `web_search`, `fetch_page`, `wikipedia_lookup`, `calculate`, `percent`, and `convert`. That is how the [health check](10_operations.md#the-health-check) proves the process on port 8765 is ours |
 | `POST /exchanges` | The conversation agent, after each answer. A record that fails to post is dropped, and the answer is unaffected | Saves an *exchange record*, a one-line summary of the exchange (the question, the answer, the tool calls and their timings, and the failure flags), to that day's log file, which is deleted after 90 days. The laptop copies these files for the [operations report](10_operations.md#the-report) |
 | Any route, with a wrong `Host` or a browser `Origin` | Whatever sends it, such as a web page in a browser on the Wi-Fi | Refuses it with 421 Misdirected Request |
 
@@ -427,7 +515,7 @@ curl -s -o /dev/null -w "MCP server: %{http_code}\n" http://127.0.0.1:8765/mcp
 curl -s http://127.0.0.1:8765/healthz
 ```
 
-The first line prints `MCP server: 400`, and 400 is the healthy answer: the endpoint is up but wants an MCP client, not a browser. The second prints JSON with `"status": "ok"` and the tool names: eleven, or twelve when the home's coordinates are set. On the always-on Mac the server runs under launchd, and `scripts/services.sh status` shows port 8765 next to the other services, `scripts/services.sh logs mcp` tails `~/Library/Logs/studio-assistant/mcp.log` until you press Ctrl-C, and `scripts/services.sh restart mcp` restarts it. On a laptop without those agents, `uv run web-search-mcp` starts the same server in the foreground on `127.0.0.1:8765`; Ctrl-C stops it. Set `WEB_SEARCH_CACHE_DIR` to a folder before starting it if you want repeated queries served from disk.
+The first line prints `MCP server: 400`, and 400 is the healthy answer: the endpoint is up but wants an MCP client, not a browser. The second prints JSON with `"status": "ok"` and the tool names: twelve, or thirteen when the home's coordinates are set. On the always-on Mac the server runs under launchd, and `scripts/services.sh status` shows port 8765 next to the other services, `scripts/services.sh logs mcp` tails `~/Library/Logs/studio-assistant/mcp.log` until you press Ctrl-C, and `scripts/services.sh restart mcp` restarts it. On a laptop without those agents, `uv run web-search-mcp` starts the same server in the foreground on `127.0.0.1:8765`; Ctrl-C stops it. Set `WEB_SEARCH_CACHE_DIR` to a folder before starting it if you want repeated queries served from disk.
 
 Now call tools by hand with the same client the Home Assistant component uses:
 
@@ -445,12 +533,14 @@ async def main():
         print(await tools.call(ToolCall(id="1", name="percent", arguments={"kind": "of", "a": 18, "b": 245})))
         print()
         print((await tools.call(ToolCall(id="2", name="search_and_read", arguments={"query": "Home Assistant Voice Preview Edition price"})))[:1500])
+        print()
+        print(await tools.call(ToolCall(id="3", name="wikipedia_lookup", arguments={"topic": "San Francisco 49ers starting quarterbacks", "focus": "2000"})))
 
 asyncio.run(main())
 EOF
 ```
 
-You see eleven tools, or twelve with `weather_forecast`, with the first line of each description, then `result: 44.10` with a `spoken:` line the model can read aloud, then `Read 4 of ...` followed by numbered excerpts with URLs. Those excerpts are exactly what the model reads before it answers a searched question. The search takes several seconds on a live query and returns at once on a cached repeat. The script exits on its own.
+You see twelve tools, or thirteen with `weather_forecast`, with the first line of each description, then `result: 44.10` with a `spoken:` line the model can read aloud, then `Read 4 of ...` followed by numbered excerpts with URLs. Those excerpts are exactly what the model reads before it answers a searched question. Last comes `Wikipedia: List of San Francisco 49ers starting quarterbacks`, the opening paragraphs, and one line per season from 2000 on, such as `2001 | Jeff Garcia (16)`, ending with `Other articles:`. The search takes several seconds on a live query and returns at once on a cached repeat. The script exits on its own.
 
 Finally, test the URL guard. Change the last call in the snippet to `fetch_page` with `{"url": "http://192.168.1.156/"}`, or any address on your own network, and run it again. The tool answers `Refused to fetch http://192.168.1.156/: '192.168.1.156' resolves to non-public address 192.168.1.156. Only public web addresses can be read.` and nothing on the network is touched. `uv run pytest tests/test_url_guard.py` runs the same rules against fake resolvers and redirects without opening a socket.
 
@@ -458,24 +548,26 @@ Finally, test the URL guard. Change the last call in the snippet to `fetch_page`
 
 | Path | What you find there |
 |---|---|
-| `web_search_mcp/server.py` | `build_server`: the three search tools, the calculator and weather registrations, `/healthz` and `/exchanges`, the Host allow-list, and `main` |
+| `web_search_mcp/server.py` | `build_server`: the three search tools, the Wikipedia, calculator, and weather registrations, `/healthz` and `/exchanges`, the Host allow-list, and `main` |
 | `web_search_mcp/searxng_client.py` | `SearxngClient`: the SearXNG request, the query cache in front, the 3 s gap behind |
-| `web_search_mcp/page_extractor.py` | `PageExtractor`: filtering, concurrent download, redirect handling, the byte cap, `trafilatura` extraction, and the word budgets |
+| `web_search_mcp/page_extractor.py` | `PageExtractor`: filtering, concurrent download, redirect handling, the byte cap, `trafilatura` extraction, Wikipedia results read through the API, and the word budgets |
 | `web_search_mcp/url_guard.py` | `ensure_public_url`, `is_public_address`, `pin_url_to_address`, `host_header`: the public-address rule |
-| `web_search_mcp/query_cache.py` | `QueryCache`: `diskcache` keyed by query, by URL, and by forecast location, active only with a cache directory |
+| `web_search_mcp/query_cache.py` | `QueryCache`: `diskcache` keyed by query, by URL, by forecast location, and by Wikipedia topic and title, active only with a cache directory |
 | `web_search_mcp/settings.py` | `SearchSettings`: every default and the `WEB_SEARCH_*` environment overrides |
 | `web_search_mcp/exchange_log.py` | `ExchangeLog`: one JSON Lines file per day under the exchanges directory, pruned after 90 days |
 | `calculator_mcp/functions.py` | The eight calculator functions and `Result`, pure Python with no MCP dependency |
 | `calculator_mcp/register.py` | `register_calculator_tools`: the tool docstrings the model reads, and `rendered` |
 | `weather_mcp/register.py`, `weather_mcp/metno_client.py`, `weather_mcp/forecast.py`, `weather_mcp/settings.py` | `register_weather_tools`, which offers `weather_forecast` only when home has coordinates; `MetnoClient`, the Met.no request; `ForecastReader`, which turns the forecast into local days and parts of the day; `WeatherSettings` and the `WEATHER_*` environment overrides |
+| `wikipedia_mcp/register.py`, `wikipedia_mcp/client.py`, `wikipedia_mcp/article.py`, `wikipedia_mcp/passages.py`, `wikipedia_mcp/settings.py` | `register_wikipedia_tools` and the docstring the model reads; `WikipediaClient`, the two REST requests and the redirect rule; `render_article`, the HTML turned into lines; `select_passages`, the lines kept for a focus; `WikipediaSettings` and the `WIKIPEDIA_*` environment overrides |
 | `docker/searxng/docker-compose.yml`, `docker/searxng/settings.yml` | The container definition and the seven engines, output formats, and timeouts |
 | `scripts/searxng.sh` | `up`, `down`, `restart`, `status`, `logs` for the container, and the secret in `docker/searxng/.env` |
 | `assistant_core/mcp_http.py` | `HttpMcpToolBox`: the client side of the protocol, `initialize`, `tools/list`, `tools/call`, and the SSE parser |
-| `tests/test_url_guard.py`, `tests/test_web_search_mcp.py`, `tests/test_calculator.py`, `tests/test_weather_forecast.py`, `tests/test_mcp_http.py` | The guard against private addresses, redirects, rebinding, and oversized pages; the tools listed and called in process; the arithmetic; the forecast; the client against the real server |
+| `tests/test_url_guard.py`, `tests/test_web_search_mcp.py`, `tests/test_calculator.py`, `tests/test_weather_forecast.py`, `tests/test_wikipedia_lookup.py`, `tests/test_mcp_http.py` | The guard against private addresses, redirects, rebinding, and oversized pages; the tools listed and called in process; the arithmetic; the forecast; the Wikipedia tool against a recorded article; the client against the real server |
 
 ## Further reading
 
-- Design doc: https://github.com/seanlin2000/home_assistant/blob/main/design_docs/v1/03_web_search_mcp.md, with the as-built sections on the calculator tools, fetch safety, and engine rate limits
+- Design doc: https://github.com/seanlin2000/home_assistant/blob/main/design_docs/v1/03_web_search_mcp.md, with the as-built sections on the calculator tools, fetch safety, engine rate limits, the weather tool, and the Wikipedia tool
+- Wikimedia Core REST API, https://api.wikimedia.org/wiki/Core_REST_API, for the search and page endpoints the Wikipedia tool calls
 - SearXNG documentation, https://docs.searxng.org/, for every key `settings.yml` can hold and what each engine needs
 - MCP Python SDK, https://github.com/modelcontextprotocol/python-sdk, for `MCPServer`, the `@server.tool()` decorator, and the transport settings the server passes on `run()`
 - trafilatura, https://trafilatura.readthedocs.io/, for what `favor_precision` and `include_tables` change in extraction

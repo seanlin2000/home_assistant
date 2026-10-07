@@ -25,7 +25,7 @@ async def test_lists_and_calls_tools_on_the_real_server(unused_tcp_port: int, tm
     async with McpServerProcess(services, tmp_path / "cache") as url:
         async with HttpMcpToolBox(url) as toolbox:
             names = {tool.name for tool in await toolbox.list_tools()}
-            assert {"search_and_read", "web_search", "fetch_page", "weather_forecast"} <= names, "the benchmark's home coordinates reach the subprocess"
+            assert {"search_and_read", "web_search", "fetch_page", "wikipedia_lookup", "weather_forecast"} <= names, "the benchmark's home coordinates reach the subprocess"
             # SearXNG is pointed at a dead port on purpose: the call must come back as text, not raise.
             result = await toolbox.call(ToolCall(id="c1", name="search_and_read", arguments={"query": "ping"}))
             assert isinstance(result, str) and result

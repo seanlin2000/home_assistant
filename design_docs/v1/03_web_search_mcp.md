@@ -239,3 +239,70 @@ The time zone and units come from Home Assistant through `.env`, like the coordi
 | `pydantic` | `WeatherSettings`, the typed home location read from the environment |
 
 No dependency was added; all three were already in the lock file.
+
+## 15. Wikipedia tool, added 2026-10-07
+
+The same MCP server now also offers `wikipedia_lookup`, from the `wikipedia_mcp` package, and `search_and_read` reads any English Wikipedia result through the same code. Before it, questions that need a list or a record ("how many quarterbacks have started for the 49ers since 2000") went wrong in two ways: search snippets are a sentence or two, and the page reader (trafilatura with `favor_precision=True`, §5) drops Wikipedia's tables. Reading *List of San Francisco 49ers starting quarterbacks* through `fetch_page` returned 925 words of prose and not one season row. The tables are the answer, so this reader keeps them.
+
+```
+  model (Ollama)                                   wikipedia_mcp, on the same MCP server (port 8765)
+  ┌─────────────────────────────────┐ tools/call   ┌────────────────────────────────────────────────────┐
+  │ wikipedia_lookup(               │─────────────▶│ WikipediaClient                                    │
+  │   topic="49ers starting         │              │   search_titles(topic)  ───────────────────────────┼──▶ en.wikipedia.org
+  │          quarterbacks",         │              │   article_html(best title) ────────────────────────┼──▶   /w/rest.php/v1/search/page?q=..&limit=5
+  │   focus="2000")                 │              │   (both pinned in the run cache under wiki: keys)  │      /w/rest.php/v1/page/{title}/html
+  └─────────────────────────────────┘              │                                                    │    User-Agent:
+                ▲                                  │ render_article      Parsoid HTML → text            │    studio-assistant-wikipedia/1.0
+                │ tool result, text:               │   headings as "## ...", prose as paragraphs,       │    github.com/seanlin2000/home_assistant
+                │ "Wikipedia: List of San          │   every wikitable and infobox row on its own line  │
+                │  Francisco 49ers starting ...    │ select_passages     the part the focus asks about  │
+                │  ### Regular season              │   opening prose, then the best-matching lines,     │
+                │  Season(s) | Quarterback(s)      │   up to 900 words                                  │
+                │  2000 | Jeff Garcia (16) ...     │                                                    │
+                │  Other articles: Brock Purdy ..."│                                                    │
+                └──────────────────────────────────┤                                                    │
+                                                   └────────────────────────────────────────────────────┘
+  search_and_read: a result on en.wikipedia.org/wiki/... goes through WikipediaClient + render_article instead of the page download,
+                   and select_passages uses the search query as the focus and words_per_page (600) as the budget.
+```
+
+**What the tool takes and returns.**
+
+- Two arguments. `topic` is what the article is about, in plain words; Wikipedia's own search picks the article, so "49ers starting quarterbacks" finds the list. `focus` is optional words or a year naming the part wanted; without it the topic's words serve as the focus.
+- The result is the article's title and URL, the selected text, and `Other articles:` with the next four search titles, so a model that got the wrong article can ask for one of those by name.
+- Failures come back as sentences, never exceptions: no matching article ("Wikipedia has no article matching ..."), Wikipedia unreachable or answering with an error ("Wikipedia error: Wikipedia did not answer. Search the web with search_and_read instead."), or an empty topic.
+
+**How the article becomes text** (`wikipedia_mcp/article.py`). The REST endpoint returns Parsoid HTML, in which every section is a `<section>` element holding its heading. The renderer walks those sections in order. Headings become `## Heading` lines, one `#` per level. Paragraphs and list items become lines. Every table with the class `wikitable` or `infobox` becomes one line per row, cells joined with ` | `, its caption first. Citations, styles, figures and image frames, navigation boxes, hatnotes, edit links, hidden sort keys, and the closing sections (References, See also, Notes, External links, and their usual variants) are dropped. Superscripts and line breaks get a space on each side, because a cell such as `San Francisco 49ers<sup>N</sup>(1, 1–0)` would otherwise read "49ersN(1," and no longer match the team's name. A merged cell appears once, in the first row it spans.
+
+**How the part that answers is picked** (`wikipedia_mcp/passages.py`). An article within the budget comes back whole. A longer one keeps:
+
+1. The opening paragraphs, up to a quarter of the budget.
+2. Then the lines that share the most words with the focus, plural and singular alike. A line under a heading that names a focus word also counts as related, so "starting quarterbacks" keeps the rows of the *Starting quarterbacks* table although no row says so.
+3. A year in the focus reads as "from then on", because list questions name a starting year ("since 2000") far more often than a single one. Lines naming only earlier years are left out, and lines naming that year or later rank first, so the year itself still leads.
+4. A kept row brings its table's header row. When a row does not fit, the rest of its table is passed over with it: a list with a gap in the middle reads as complete and would be counted wrong. A table cut by the budget ends with "[N more matching lines here did not fit; to see them, ask again with a narrower focus, such as a year]".
+
+The kept lines are printed in article order under their headings. Checked live on 2026-10-07: the 49ers list with focus "2000" returns every regular-season row from 2000 to 2026 and the postseason rows from 2001, in 606 words; *List of Super Bowl champions* with focus "49ers" returns the eight Super Bowl rows the 49ers played in and their franchise record.
+
+**Inside `search_and_read`.** `PageExtractor` takes an optional `WikipediaClient`. For a result URL on the client's own host under `/wiki/`, `read_page` fetches the article through the API and renders it as above, and `read_pages` selects from it with the search query as the focus and `words_per_page` as the budget. If the API fails, the URL is read like any other page. Every other page is read as before. Its text is now kept on one line at read time, so the clipping helpers can keep the line breaks of Wikipedia text (`utils/text_utils.py`, `clip_to_words`) without changing what any other page's excerpt looks like.
+
+**Wikimedia's API etiquette, and how the client meets it** (`wikipedia_mcp/client.py`):
+
+| Etiquette | How it is met |
+|---|---|
+| Identify the application and a way to contact its owner in the User-Agent | `studio-assistant-wikipedia/1.0 github.com/seanlin2000/home_assistant`: the repository is the contact, as for Met.no |
+| Keep request rates modest; no crawling | Two requests per lookup (search, then the article), one at a time; a `search_and_read` question adds at most one article read per Wikipedia result |
+| Follow redirects to the canonical title | Followed by hand, up to three hops, and only within `en.wikipedia.org`; a redirect anywhere else is an error |
+
+The host is fixed by `WIKIPEDIA_BASE_URL` (default `https://en.wikipedia.org`), not chosen by the model, so these requests skip the public-address guard of §12, as the SearXNG and Met.no clients do. A model-chosen Wikipedia URL in `fetch_page` still goes through the guard: only `search_and_read` results use the API path.
+
+**Caching.** The product caches nothing: a lookup costs two requests to Wikipedia, which answers in well under a second. In the benchmark the search titles and the article HTML are pinned in the per-run query cache (`wiki:search:` and `wiki:article:` keys), so every candidate reads the same revision.
+
+**Privacy.** Wikimedia receives the topic the model wrote, the titles it reads, the apartment's IP address, and the User-Agent above. The topic is a few words the model chose from the question, not the transcript; this is the same kind of data a web search already sends to the search engines through SearXNG.
+
+**Limits.** The tool answers what an encyclopedia records. Wikipedia lists the 49ers' starting quarterbacks and their first-round picks, but no article lists every player they drafted in every round, so "how many quarterbacks have the 49ers drafted since 2000" still has no table to read. Questions about anything that changes week to week stay with `search_and_read`.
+
+| Package | Role in the business logic |
+|---|---|
+| `httpx` | The two REST requests, the redirect check, and a replaceable transport that the tests use to play Wikipedia without the network |
+| `lxml` | Parses Parsoid HTML: sections, headings, table rows, and the clutter to drop. It was already installed through trafilatura and is now a declared dependency, because this package imports it directly |
+| `pydantic` | `WikipediaSettings`, read from `WIKIPEDIA_*` environment variables, all with working defaults |

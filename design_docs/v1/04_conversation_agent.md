@@ -285,3 +285,16 @@ Version 1.6 was taken by a separate change to the prompt developed at the same t
 **How the benchmark measures it.** Question set 1.4 adds category E (home weather), three weather questions with the weather route expected: E36 "Do I need an umbrella tomorrow afternoon?", E37 "What's the weather looking like this weekend?", and E38 "How cold is it going to get tonight?". A new gate, `did_not_check_forecast_on_weather_question`, fails a weather-route question on which the candidate never called the forecast tool. The judge sees the tool result, as it does for search, and the rubric makes that forecast the ground truth: any figure or condition not in it counts as a fabricated current fact. B13 (a day trip from Lucerne that depends on the weather there) still expects search, which checks that another town's weather does not go to the home forecast.
 
 Code: `assistant_core/router.py` (rule, classifier prompt, directive, `route_to_offered_tools`), `assistant_core/prompts.py`, `assistant_core/models.py` (`Route.WEATHER`, `WEATHER_TOOL_NAMES`, the filler phrases), and two lines in `agent_loop.py`.
+
+## 17. As built, 2026-10-07: Wikipedia for settled facts, lists, and records (prompt 1.8)
+
+The tool server now offers `wikipedia_lookup` (doc 03 §15). No route is added: a list or record question is either a search question or an answer question, and the model can call the tool from either.
+
+**Prompt 1.8.** Two changes:
+
+- The "When to search the web" section gains a line: for a settled fact the model is not sure of, or a list or record (a team's past players or seasons, who held an office, a person's career), call `wikipedia_lookup`, which returns the encyclopedia article with its tables; anything that changes over time still needs `search_and_read`.
+- The search directive now reads "This question needs information you must look up. Call search_and_read first, or wikipedia_lookup when it asks about a settled fact, list, or record such as a team's past players or who held an office; do not answer it from memory. Answer from what the tool returns." Its example call stays `search_and_read`, the commoner of the two, because since prompt 1.4 each directive shows one call and nothing else.
+
+**Shared tool sets.** `wikipedia_lookup` joins `SEARCH_TOOL_NAMES`, so it gets the web filler phrases and counts as a search in benchmark records, and `REQUIRED_TOOL_NAMES`, so the health check and the benchmark refuse a tool server that lacks it. Counting it as a search means the `searched_on_no_search_question` gate fails a candidate that looks up settled history the question set expects answered from memory (A11). No benchmark pass has run under 1.8; the question set is unchanged.
+
+Code: `assistant_core/prompts.py`, `assistant_core/router.py` (`SEARCH_DIRECTIVE`), and `assistant_core/models.py`.

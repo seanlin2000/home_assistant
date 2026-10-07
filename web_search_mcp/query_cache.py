@@ -1,5 +1,5 @@
-"""Optional on-disk cache keyed by query string, URL, and forecast location. The benchmark turns it on so every candidate sees identical search results and
-the same forecast; production leaves it off."""
+"""Optional on-disk cache keyed by query string, URL, forecast location, and Wikipedia topic or title. The benchmark turns it on so every candidate sees identical
+search results, the same forecast, and the same article revisions; production leaves it off."""
 
 from typing import Any
 
@@ -31,6 +31,18 @@ class QueryCache:
 
     def put_forecast(self, location_key: str, forecast: dict[str, Any]) -> None:
         self._put(f"forecast:{location_key}", forecast)
+
+    def get_article_titles(self, topic: str) -> list[str] | None:
+        return self._get(f"wiki:search:{topic.strip().lower()}")
+
+    def put_article_titles(self, topic: str, titles: list[str]) -> None:
+        self._put(f"wiki:search:{topic.strip().lower()}", titles)
+
+    def get_article_html(self, title: str) -> str | None:
+        return self._get(f"wiki:article:{title}")
+
+    def put_article_html(self, title: str, html: str) -> None:
+        self._put(f"wiki:article:{title}", html)
 
     def _get(self, key: str) -> Any:
         return None if self._cache is None else self._cache.get(key)

@@ -70,7 +70,7 @@ In nav order, each page by its title and file stem. The nav groups and design do
 | Home Assistant | `06_home_assistant_core` | `stt,intents,agent,tts,ma` | | `custom_components/studio_assistant/`, `scripts/haos_vm.sh`, `scripts/ha_setup.py`, `ops/ha_client.py`, `ops/deploy.py` |
 | Voice Pipeline | `05_voice_pipeline` | `puck,stt,tts,piper,whisper` | | `voice/kokoro_server.py`, `scripts/voice_check.py`, `scripts/services.sh`, `pyproject.toml` (`voice` group) |
 | Conversation Agent | `04_conversation_agent` | `agent,ollama,mcp` | | `assistant_core/` (`agent_loop.py`, `router.py`, `prompts.py`, `tools.py`, `memory.py`, `models.py`, `exchange_record.py`), `custom_components/studio_assistant/`, `tests/test_agent_loop.py`, `tests/test_router.py` |
-| MCP Tool Server | `03_web_search_mcp` | `mcp,searxng,engines` | | `web_search_mcp/`, `calculator_mcp/`, `docker/searxng/`, `scripts/searxng.sh`, `assistant_core/mcp_http.py`, `tests/test_url_guard.py`, `tests/test_web_search_mcp.py`, `tests/test_calculator.py`, `tests/test_mcp_http.py` |
+| MCP Tool Server | `03_web_search_mcp` | `mcp,searxng,engines` | | `web_search_mcp/`, `calculator_mcp/`, `wikipedia_mcp/`, `docker/searxng/`, `scripts/searxng.sh`, `assistant_core/mcp_http.py`, `tests/test_url_guard.py`, `tests/test_web_search_mcp.py`, `tests/test_calculator.py`, `tests/test_wikipedia_lookup.py`, `tests/test_mcp_http.py` |
 | Music | `07_music_spotify` | `ma,sonos,spotify` | | `scripts/ha_setup.py` (music parts), `docs/VERSIONS.md` (add-ons) |
 | LLMs on Apple Silicon | `02_local_llm` | `ollama` | | `assistant_core/llm_client.py`, `benchmark/ollama_utils.py`, `scripts/benchmark_llm.py`, `scripts/services.sh`, `docs/VERSIONS.md` |
 | Benchmarking and Model Selection | `01_llm_benchmark` | `ollama,mcp,laptop` | | `benchmark/` (`run.py`, `judge.py`, `report.py`, `gates.py`, `records.py`, `costs.py`, `questions.yaml`, `rubric.md`, `config.yaml`), `scripts/benchmark_llm.py`, `.claude/agents/benchmark-judge.md`, `tests/test_gates_and_records.py`, `tests/test_manual_run.py`, `tests/test_mcp_process.py` |
@@ -83,7 +83,7 @@ In nav order, each page by its title and file stem. The nav groups and design do
 | Changed path starts with | Highlight |
 |---|---|
 | `assistant_core/`, `custom_components/` | `agent` |
-| `web_search_mcp/`, `calculator_mcp/`, `docker/` | `mcp` (and `searxng` for `docker/`) |
+| `web_search_mcp/`, `calculator_mcp/`, `wikipedia_mcp/`, `docker/` | `mcp` (and `searxng` for `docker/`) |
 | `benchmark/` | `laptop,ollama` |
 | `ops/`, `scripts/` | `laptop,health` |
 | `voice/` | `tts,whisper` |

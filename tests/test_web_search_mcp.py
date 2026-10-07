@@ -13,7 +13,7 @@ class FakeSearxng:
 
 
 class FakeExtractor:
-    async def read_pages(self, results: list[SearchResult]) -> list[PageExcerpt]:
+    async def read_pages(self, results: list[SearchResult], focus: str) -> list[PageExcerpt]:
         return [PageExcerpt(title=result.title, url=result.url, text="Body text of the page.", word_count=5) for result in results]
 
     async def read_page(self, url: str) -> str:

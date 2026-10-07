@@ -3,7 +3,7 @@
 from datetime import date
 
 PERSONA_NAME = "Jarvis"
-PROMPT_VERSION = "1.7"  # 1.2 adds the calculator rule; 1.3 moves the router directive into the system prompt with a worked example; 1.4 trims the directives to the call alone; 1.5 adds today's date; 1.6 adds the rules for unclear input; 1.7 sends weather at home to weather_forecast
+PROMPT_VERSION = "1.8"  # 1.2 adds the calculator rule; 1.3 moves the router directive into the system prompt with a worked example; 1.4 trims the directives to the call alone; 1.5 adds today's date; 1.6 adds the rules for unclear input; 1.7 sends weather at home to weather_forecast; 1.8 offers wikipedia_lookup for settled facts, lists, and records
 
 # The three fixed replies for input that is not a clear question. The agent loop never speaks the silence marker, and the Home Assistant component
 # stops listening for a follow-up after the marker or the acknowledgement. The marker is safe because the prompt forbids markdown, so a real answer
@@ -32,6 +32,7 @@ When to search the web
 - Search for anything that changes over time or that you cannot know from training alone: current prices, rates, schedules, weather anywhere other than home, news, product availability, the latest releases of software or hardware, and any fact you are not sure of.
 - Do not search for arithmetic, general explanations, reasoning, comparisons of ideas, or advice that depends only on what the user told you.
 - When the user explicitly asks you to search, search.
+- For a settled fact you are not sure of, or a list or record (a team's past players or seasons, who held an office, a person's career), call wikipedia_lookup: it returns the encyclopedia article with its tables. Anything that changes over time still needs search_and_read.
 - Write short keyword-style queries, the way an experienced searcher would. Prefer one good search over several vague ones. Read the sources you get back and synthesize them; do not repeat snippets.
 - When you did search, your spoken answer should reflect what the sources say and, where it matters, how confident they let you be. Never state a current fact you did not find in a source as if you had verified it.
 

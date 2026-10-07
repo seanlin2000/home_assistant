@@ -1,4 +1,5 @@
-"""The agent's tool server over streamable HTTP: search_and_read (what small models should use), web_search, fetch_page, the calculator tools, and the home weather forecast."""
+"""The agent's tool server over streamable HTTP: search_and_read (what small models should use), web_search, fetch_page, the calculator tools, the home weather
+forecast, and Wikipedia lookups."""
 
 from pathlib import Path
 
@@ -11,6 +12,7 @@ from starlette.responses import JSONResponse, Response
 from assistant_core.exchange_record import EXCHANGES_ROUTE, ExchangeRecord
 from assistant_core.models import REQUIRED_TOOL_NAMES
 from calculator_mcp.register import register_calculator_tools
+from utils.text_utils import clip_to_words
 from weather_mcp.register import register_weather_tools
 from weather_mcp.settings import WeatherSettings, weather_settings_from_environment
 from web_search_mcp.exchange_log import ExchangeLog
@@ -19,22 +21,35 @@ from web_search_mcp.query_cache import QueryCache
 from web_search_mcp.searxng_client import SearchResult, SearxngClient
 from web_search_mcp.settings import SearchSettings, allowed_host_list, settings_from_environment
 from web_search_mcp.url_guard import UnsafeUrl
+from wikipedia_mcp.client import WikipediaClient
+from wikipedia_mcp.register import register_wikipedia_tools
+from wikipedia_mcp.settings import WikipediaSettings, wikipedia_settings_from_environment
 
 
-def build_server(settings: SearchSettings, searxng: SearxngClient | None = None, extractor: PageExtractor | None = None, weather: WeatherSettings | None = None) -> MCPServer:
+def build_server(
+    settings: SearchSettings,
+    searxng: SearxngClient | None = None,
+    extractor: PageExtractor | None = None,
+    weather: WeatherSettings | None = None,
+    wikipedia: WikipediaSettings | None = None,
+) -> MCPServer:
     cache = QueryCache(settings.cache_dir)
+    wikipedia = wikipedia or WikipediaSettings()
     searxng = searxng or SearxngClient(settings, cache)
-    extractor = extractor or PageExtractor(settings, cache)
+    extractor = extractor or PageExtractor(settings, cache, wikipedia=WikipediaClient(wikipedia, cache))
     server = MCPServer(
         "assistant-tools",
-        instructions="Web search backed by a local SearXNG instance, exact calculator tools, and the forecast for home. Prefer search_and_read for questions about the world; use the calculator tools for any arithmetic and weather_forecast for the weather at home.",
+        instructions=(
+            "Web search backed by a local SearXNG instance, Wikipedia articles, exact calculator tools, and the forecast for home. Prefer search_and_read for questions"
+            " about the world and wikipedia_lookup for settled facts, lists, and records; use the calculator tools for any arithmetic and weather_forecast for the weather at home."
+        ),
     )
 
     @server.tool()
     async def search_and_read(query: str) -> str:
         """Search the web and read the top pages. Returns numbered sources with title, URL, and the main text of each page, ready to synthesize an answer from. Use short keyword queries, e.g. "federal funds rate september 2026"."""
         results = await searxng.search(query)
-        excerpts = await extractor.read_pages(results)
+        excerpts = await extractor.read_pages(results, query)
         return render_grounded_context(query, results, excerpts)
 
     @server.tool()
@@ -52,10 +67,11 @@ def build_server(settings: SearchSettings, searxng: SearxngClient | None = None,
             return f"Refused to fetch {url}: {error}. Only public web addresses can be read."
         if not text:
             return f"Could not extract readable text from {url}."
-        return " ".join(text.split()[: settings.words_per_page * 2])
+        return clip_to_words(text, settings.words_per_page * 2)
 
     register_calculator_tools(server)
     register_weather_tools(server, weather or WeatherSettings(), cache)
+    register_wikipedia_tools(server, wikipedia, cache)
     register_operations_routes(server, ExchangeLog(Path(settings.exchanges_dir)) if settings.exchanges_dir else None, allowed_host_list(settings))
     return server
 
@@ -129,7 +145,9 @@ def render_grounded_context(query: str, results: list[SearchResult], excerpts: l
 
 def main() -> None:
     settings = settings_from_environment()
-    build_server(settings, weather=weather_settings_from_environment()).run(transport="streamable-http", host=settings.host, port=settings.port, transport_security=transport_security_for(settings))
+    build_server(settings, weather=weather_settings_from_environment(), wikipedia=wikipedia_settings_from_environment()).run(
+        transport="streamable-http", host=settings.host, port=settings.port, transport_security=transport_security_for(settings)
+    )
 
 
 if __name__ == "__main__":

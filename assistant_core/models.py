@@ -77,10 +77,10 @@ DEFAULT_WEATHER_FILLER_PHRASES = (
     "Checking the forecast.",
     "One moment, getting the forecast.",
 )
-SEARCH_TOOL_NAMES = frozenset({"search_and_read", "web_search", "fetch_page"})
+SEARCH_TOOL_NAMES = frozenset({"search_and_read", "web_search", "fetch_page", "wikipedia_lookup"})
 WEATHER_TOOL_NAMES = frozenset({"weather_forecast"})
 # The tools a live tool server must expose before the benchmark or the health check trusts it as ours (a stale server once served a different set).
-REQUIRED_TOOL_NAMES = frozenset({"search_and_read", "web_search", "fetch_page", "calculate", "percent", "convert"})
+REQUIRED_TOOL_NAMES = frozenset({"search_and_read", "web_search", "fetch_page", "wikipedia_lookup", "calculate", "percent", "convert"})
 
 
 class GenerationStats(BaseModel):
