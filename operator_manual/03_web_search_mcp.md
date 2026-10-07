@@ -88,7 +88,7 @@ The server is one process called `assistant-tools`, built by `build_server` in `
 
 ```python
     @server.tool()
-    async def search_and_read(query: str, time_range: TimeRange | None = None) -> str:
+    async def search_and_read(query: str, time_range: str | None = None) -> str:
         """Search the web and read the top pages. Returns the ranked results, numbered, with the parts of each readable page that best match the query and the snippet of each page that could not be read, ready to synthesize an answer from. Use short keyword queries, e.g. "federal funds rate september 2026". time_range: optional "day", "week", "month", or "year" to keep only recent pages; use it for "latest" or "this week" questions."""
         results = await searxng.search(query, time_range)
         excerpts = await extractor.read_pages(results, query)
@@ -113,9 +113,9 @@ What the model reads back depends on the tool and on what the search found:
 - **`search_and_read`, no results:** the tool result tells the model to say it could not find anything and to answer from its own knowledge with that caveat.
 - **`search_and_read`, results but no readable page:** the first five snippets instead.
 - **`web_search`:** only the ranked list of the first 8 results.
-- **`fetch_page`:** the top of one page's text, up to 700 words, with its headings and table rows on their own lines.
+- **`fetch_page`:** the top of one page's text, up to 1,200 words (`fetch_page_words`), with its headings and table rows on their own lines.
 
-Both search tools take an optional `time_range` of `day`, `week`, `month`, or `year`, which keeps only pages published within that span. Their descriptions tell the model to use it for "latest" or "this week" questions.
+Both search tools take an optional `time_range` of `day`, `week`, `month`, or `year`, which keeps only pages published within that span. Their descriptions tell the model to use it for "latest" or "this week" questions. Case does not matter, and any other value, an empty one included, searches without a filter, so a value the model makes up never fails the call.
 - **`wikipedia_lookup`:** the article's title and URL, the lines that answer the focus, and the next few article titles, as in [Wikipedia articles](#wikipedia-articles).
 
 A capable model can chain `web_search` and `fetch_page`.
@@ -244,7 +244,7 @@ A line's score follows five rules:
 - **BM25.** A query word counts for more the fewer lines it appears on, and a long line is discounted, so a short row that matches beats a long one with the same words.
 - **Headings.** A query word in a heading counts at half weight for every line under it, so the rows of a *Starting quarterbacks* table match "starting quarterbacks" although no row says so.
 - **Proximity.** Two different query words at most three words apart add extra weight, so "Jab to back aerial" beats a line that says "jab" in one sentence and "back" in another.
-- **Years and cut tables.** A year in the query means that year onward, and a table is never cut in the middle, as in [Wikipedia articles](#wikipedia-articles).
+- **Years and cut tables.** A year in the query means that year onward, and a table is never cut in the middle, as in [Wikipedia articles](#wikipedia-articles). A cut table or list ends with a short note such as `[40 more matching lines left out]`.
 
 For the query `Super Smash Bros character jab back air kill confirm`, SmashWiki's 5,340-word *Kill confirm* page ended its 350 words with these lines, the answer included:
 
@@ -254,7 +254,7 @@ Character | Description
 Roy | *Jab to sweetspotted back aerial *Up aerial to sweetspotted back aerial *The first hit of neutral aerial can be followed up with any KO move at high percents. *Up aerial to down aerial
 Chrom | *Jab to back aerial *Up aerial to back aerial *The first hit of neutral aerial can be followed up with any KO move at high percents. *Up aerial to down aerial
 Steve | *Jab to forward aerial *Up tilt to back aerial
-[40 more matching lines here did not fit; to see them, ask again with a narrower focus, such as a year]
+[40 more matching lines left out]
 ```
 
 ### The URL guard
@@ -366,7 +366,7 @@ Some questions are answered by a list or a record rather than by today's news: h
 Two rules keep the selection safe to count from:
 
 - **A year means that year onward.** A focus of `2000` keeps every row naming 2000 or a later year and drops the rows that name only earlier ones.
-- **A table is never cut in the middle.** When a row does not fit, the rest of its table is left out with it, and a line such as `[3 more matching lines here did not fit; ...]` tells the model the list is incomplete.
+- **A table is never cut in the middle.** When a row does not fit, the rest of its table is left out with it, and a line such as `[3 more matching lines here did not fit; to see them, ask again with a narrower focus, such as a year]` tells the model the list is incomplete and how to ask for the rest. This longer note is `wikipedia_lookup`'s own, because its focus argument can narrow the selection; `search_and_read` has no such argument and prints the short one.
 
 The tool's docstring is the description the model reads when it decides whether to call it:
 
@@ -597,7 +597,7 @@ Finally, test the URL guard. Change the last call in the snippet to `fetch_page`
 | `calculator_mcp/functions.py` | The eight calculator functions and `Result`, pure Python with no MCP dependency |
 | `calculator_mcp/register.py` | `register_calculator_tools`: the tool docstrings the model reads, and `rendered` |
 | `weather_mcp/register.py`, `weather_mcp/metno_client.py`, `weather_mcp/forecast.py`, `weather_mcp/settings.py` | `register_weather_tools`, which offers `weather_forecast` only when home has coordinates; `MetnoClient`, the Met.no request; `ForecastReader`, which turns the forecast into local days and parts of the day; `WeatherSettings` and the `WEATHER_*` environment overrides |
-| `wikipedia_mcp/register.py`, `wikipedia_mcp/client.py`, `wikipedia_mcp/article.py`, `wikipedia_mcp/settings.py` | `register_wikipedia_tools` and the docstring the model reads; `WikipediaClient`, the two REST requests and the redirect rule; `render_article`, the HTML turned into lines; `WikipediaSettings` and the `WIKIPEDIA_*` environment overrides |
+| `wikipedia_mcp/register.py`, `wikipedia_mcp/client.py`, `wikipedia_mcp/article.py`, `wikipedia_mcp/passages.py`, `wikipedia_mcp/settings.py` | `register_wikipedia_tools` and the docstring the model reads; `WikipediaClient`, the two REST requests and the redirect rule; `render_article`, the HTML turned into lines; `select_passages` with the tool's longer left-out note; `WikipediaSettings` and the `WIKIPEDIA_*` environment overrides |
 | `docker/searxng/docker-compose.yml`, `docker/searxng/settings.yml` | The container definition and the seven engines, output formats, and timeouts |
 | `scripts/searxng.sh` | `up`, `down`, `restart`, `status`, `logs` for the container, and the secret in `docker/searxng/.env` |
 | `assistant_core/mcp_http.py` | `HttpMcpToolBox`: the client side of the protocol, `initialize`, `tools/list`, `tools/call`, and the SSE parser |
