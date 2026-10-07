@@ -173,5 +173,5 @@ async def test_search_batches_skip_unsafe_urls_instead_of_failing() -> None:
 
     extractor = extractor_with(handler, {"good.example": ["93.184.216.34"], "nas.example": ["192.168.1.20"]})
     results = [SearchResult(title="nas", url="http://nas.example/", snippet="", engines=["x"], score=1.0), SearchResult(title="good", url="http://good.example/", snippet="", engines=["x"], score=1.0)]
-    excerpts = await extractor.read_pages(results)
+    excerpts = await extractor.read_pages(results, "useful")
     assert [excerpt.title for excerpt in excerpts] == ["good"]

@@ -26,8 +26,9 @@ Examples: "What hardware gives the most memory for a thousand dollars today?" ->
 # nothing in the harness enforces it, so it makes no threats about what happens to an answer that ignores it.
 # Prompt 1.4 trimmed both blocks after pass 3: the search example had shown a finished spoken answer, and the smaller models imitated the answer
 # instead of the tool call. Each block now shows the call and nothing else.
+# Prompt 1.8 names wikipedia_lookup in the search block for lists and records; the example stays a search_and_read call, the commoner of the two.
 SEARCH_DIRECTIVE = """Routing for this question: SEARCH.
-This question needs current information from the web. Call search_and_read first; do not answer it from memory. Answer from the excerpts it returns.
+This question needs information you must look up. Call search_and_read first, or wikipedia_lookup when it asks about a settled fact, list, or record such as a team's past players or who held an office; do not answer it from memory. Answer from what the tool returns.
 Example call: search_and_read(query="used RTX 3090 price")
 """
 CALCULATE_DIRECTIVE = """Routing for this question: CALCULATE.
