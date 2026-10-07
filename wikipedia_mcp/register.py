@@ -38,6 +38,6 @@ async def looked_up(client: WikipediaClient, topic: str, focus: str, max_words: 
     if not titles:
         return NO_ARTICLE_MESSAGE.format(topic=topic)
     best_title, *other_titles = titles
-    text = select_passages(render_article(await client.article_html(best_title)), focus, max_words)
+    text = select_passages(render_article(await client.article_html(best_title)), focus, max_words, best_title)
     reply = f"Wikipedia: {best_title}\nURL: {client.article_url(best_title)}\n\n{text}"
     return reply + (f"\n\nOther articles: {'; '.join(other_titles)}" if other_titles else "")

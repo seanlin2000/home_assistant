@@ -5,14 +5,15 @@ import httpx
 import trafilatura
 from pydantic import BaseModel
 
+from utils.passage_utils import select_passages
 from utils.text_utils import clip_to_words, word_count
+from web_search_mcp.page_markdown import to_passage_format
 from web_search_mcp.query_cache import QueryCache
 from web_search_mcp.searxng_client import SearchResult
 from web_search_mcp.settings import SearchSettings
 from web_search_mcp.url_guard import Resolver, UnsafeUrl, ensure_public_url, host_header, is_public_address, pin_url_to_address, system_resolver
 from wikipedia_mcp.article import render_article
 from wikipedia_mcp.client import WikipediaClient, WikipediaUnavailable
-from wikipedia_mcp.passages import select_passages
 
 SKIPPED_EXTENSIONS = (".pdf", ".zip", ".png", ".jpg", ".jpeg", ".gif", ".mp4", ".mp3")
 
@@ -45,14 +46,11 @@ class PageExtractor:
 
     async def read_pages(self, results: list[SearchResult], focus: str) -> list[PageExcerpt]:
         """Fetches the first readable pages concurrently and keeps result order so ranking survives extraction. The focus (the search query) picks the
-        part of a long Wikipedia article to keep; any other page is read from the top."""
+        part of each long page to keep, with the result's title naming what the page is about."""
         candidates = [result for result in results if self.is_fetchable(result.url)][: self._settings.pages_to_read * 2]
         texts = await asyncio.gather(*(self._read_or_empty(result.url) for result in candidates))
-        excerpts = [to_excerpt(result, self._focused(result.url, text, focus), self._settings.words_per_page) for result, text in zip(candidates, texts) if text]
+        excerpts = [to_excerpt(result, select_passages(text, focus, self._settings.words_per_page, result.title), self._settings.words_per_page) for result, text in zip(candidates, texts) if text]
         return apply_total_budget(excerpts[: self._settings.pages_to_read], self._settings.total_word_budget)
-
-    def _focused(self, url: str, text: str, focus: str) -> str:
-        return select_passages(text, focus, self._settings.words_per_page) if self._wikipedia_title(url) else text
 
     def _wikipedia_title(self, url: str) -> str | None:
         return self._wikipedia.article_title_in(url) if self._wikipedia is not None else None
@@ -85,15 +83,15 @@ class PageExtractor:
             return ""
 
     async def _read_generic_page(self, url: str) -> str:
-        """The text comes back as one line: trafilatura's line breaks carry no structure the excerpt needs, and only Wikipedia's rows keep theirs."""
+        """trafilatura's Markdown keeps the page's headings, table rows, and lists, which passage selection needs to choose between them."""
         try:
             html = await self._download(url)
         except UnsafeUrl:
             raise
         except (httpx.HTTPError, ValueError):
             return ""
-        extracted = trafilatura.extract(html, include_comments=False, include_tables=True, favor_precision=True)
-        return " ".join((extracted or "").split())
+        extracted = trafilatura.extract(html, include_comments=False, include_tables=True, favor_precision=True, output_format="markdown")
+        return to_passage_format(extracted or "")
 
     async def _download(self, url: str) -> str:
         """Follow redirects by hand so every hop is checked against the public-address rule, and stop reading past the byte cap.

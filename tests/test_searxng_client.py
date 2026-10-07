@@ -1,11 +1,12 @@
-"""The SearXNG client keeps a minimum gap between live requests so the upstream engines do not rate-limit a burst, and never delays cached queries."""
+"""The SearXNG client keeps a minimum gap between live requests so the upstream engines do not rate-limit a burst, never delays cached queries, and passes
+a time range on to SearXNG."""
 
 from pathlib import Path
 
 import httpx
 import pytest
 
-from web_search_mcp.query_cache import QueryCache
+from web_search_mcp.query_cache import QueryCache, search_key
 from web_search_mcp.searxng_client import SearxngClient
 from web_search_mcp.settings import SearchSettings
 
@@ -23,9 +24,15 @@ class FakeTime:
         self.now += seconds
 
 
-def client_with(fake: FakeTime, monkeypatch: pytest.MonkeyPatch, gap: float = 3.0, cache_dir: str | None = None) -> SearxngClient:
+def client_with(fake: FakeTime, monkeypatch: pytest.MonkeyPatch, gap: float = 3.0, cache_dir: str | None = None, seen_requests: list[httpx.Request] | None = None) -> SearxngClient:
     payload = {"results": [{"title": "t", "url": "http://example.com", "content": "c", "engines": ["google"], "score": 1.0}]}
-    transport = httpx.MockTransport(lambda request: httpx.Response(200, json=payload))
+
+    def answer(request: httpx.Request) -> httpx.Response:
+        if seen_requests is not None:
+            seen_requests.append(request)
+        return httpx.Response(200, json=payload)
+
+    transport = httpx.MockTransport(answer)
     real_async_client = httpx.AsyncClient
     monkeypatch.setattr(httpx, "AsyncClient", lambda **kwargs: real_async_client(transport=transport, **kwargs))
     return SearxngClient(SearchSettings(min_seconds_between_searches=gap), QueryCache(cache_dir), clock=fake.clock, sleep=fake.sleep)
@@ -55,3 +62,21 @@ async def test_no_wait_once_the_gap_has_already_passed(monkeypatch: pytest.Monke
     fake.now += 10.0
     await client.search("second")
     assert fake.slept == []
+
+
+async def test_a_time_range_reaches_searxng_and_is_cached_apart_from_the_plain_query(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    requests: list[httpx.Request] = []
+    client = client_with(FakeTime(), monkeypatch, gap=0.0, cache_dir=str(tmp_path), seen_requests=requests)
+    await client.search("fed funds rate", "week")
+    await client.search("fed funds rate")
+    await client.search("fed funds rate", "week")
+    assert [request.url.params.get("time_range") for request in requests] == ["week", None]
+    assert search_key(" Fed Funds Rate", None) == "search:fed funds rate"
+
+
+async def test_an_empty_or_unknown_time_range_searches_without_a_filter_and_case_does_not_matter(monkeypatch: pytest.MonkeyPatch) -> None:
+    requests: list[httpx.Request] = []
+    client = client_with(FakeTime(), monkeypatch, gap=0.0, seen_requests=requests)
+    for time_range in ("", "decade", " WEEK "):
+        await client.search("fed funds rate", time_range)
+    assert [request.url.params.get("time_range") for request in requests] == [None, None, "week"]

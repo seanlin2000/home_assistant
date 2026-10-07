@@ -8,11 +8,11 @@ canvas = Canvas(146, 5)
 
 boxes = [
     ["ranked results", "from SearXNG", "best match first"],
-    ["download", "first 8 web pages", "6 s, 2 MB each"],
-    ["trafilatura", "keeps the main text", "and the tables"],
-    ["numbered sources", "4 pages with text", "under 2,000 words"],
+    ["download", "first 12 web pages", "6 s, 2 MB each"],
+    ["keep the parts", "that match the query", "350 words a page"],
+    ["one ranked list", "passages of 6 pages,", "the rest as snippets"],
 ]
-labels = ["28 URLs", "HTML pages", "page text"]
+labels = ["28 URLs", "HTML pages", "passages"]
 
 left_edge = 1
 spans = []

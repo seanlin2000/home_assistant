@@ -1,6 +1,8 @@
 """The agent's tool server over streamable HTTP: search_and_read (what small models should use), web_search, fetch_page, the calculator tools, the home weather
 forecast, and Wikipedia lookups."""
 
+import html
+import re
 from pathlib import Path
 
 from mcp.server.mcpserver import MCPServer
@@ -25,6 +27,9 @@ from wikipedia_mcp.client import WikipediaClient
 from wikipedia_mcp.register import register_wikipedia_tools
 from wikipedia_mcp.settings import WikipediaSettings, wikipedia_settings_from_environment
 
+HTML_TAG = re.compile(r"<[^>]+>")
+NOT_FOUND_INSTRUCTION = "If these sources do not answer the question, say plainly that you could not find it."
+
 
 def build_server(
     settings: SearchSettings,
@@ -46,16 +51,16 @@ def build_server(
     )
 
     @server.tool()
-    async def search_and_read(query: str) -> str:
-        """Search the web and read the top pages. Returns numbered sources with title, URL, and the main text of each page, ready to synthesize an answer from. Use short keyword queries, e.g. "federal funds rate september 2026"."""
-        results = await searxng.search(query)
+    async def search_and_read(query: str, time_range: str | None = None) -> str:
+        """Search the web and read the top pages. Returns the ranked results, numbered, with the parts of each readable page that best match the query and the snippet of each page that could not be read, ready to synthesize an answer from. Use short keyword queries, e.g. "federal funds rate september 2026". time_range: optional "day", "week", "month", or "year" to keep only recent pages; use it for "latest" or "this week" questions."""
+        results = await searxng.search(query, time_range)
         excerpts = await extractor.read_pages(results, query)
-        return render_grounded_context(query, results, excerpts)
+        return render_grounded_context(query, results, excerpts, settings.results_to_return)
 
     @server.tool()
-    async def web_search(query: str) -> str:
-        """Search the web and return only the ranked result list (title, URL, snippet) without reading the pages. Use when you want to pick which page to read with fetch_page."""
-        results = await searxng.search(query)
+    async def web_search(query: str, time_range: str | None = None) -> str:
+        """Search the web and return only the ranked result list (title, URL, snippet) without reading the pages. Use when you want to pick which page to read with fetch_page. time_range: optional "day", "week", "month", or "year" to keep only recent pages; use it for "latest" or "this week" questions."""
+        results = await searxng.search(query, time_range)
         return render_result_list(results[: settings.results_to_return])
 
     @server.tool()
@@ -67,7 +72,7 @@ def build_server(
             return f"Refused to fetch {url}: {error}. Only public web addresses can be read."
         if not text:
             return f"Could not extract readable text from {url}."
-        return clip_to_words(text, settings.words_per_page * 2)
+        return clip_to_words(text, settings.fetch_page_words)
 
     register_calculator_tools(server)
     register_weather_tools(server, weather or WeatherSettings(), cache)
@@ -133,14 +138,31 @@ def render_result_list(results: list[SearchResult]) -> str:
     return "\n".join(lines)
 
 
-def render_grounded_context(query: str, results: list[SearchResult], excerpts: list[PageExcerpt]) -> str:
+def render_grounded_context(query: str, results: list[SearchResult], excerpts: list[PageExcerpt], results_to_list: int) -> str:
+    """Every result keeps its search rank, read or not: a page that could not be read (a video, a forum behind a login) often names the answer in its
+    title or snippet, and the rank tells the model how far down the evidence sits."""
     if not results:
         return f'No search results for "{query}". Tell the user you could not find anything and answer from your own knowledge with that caveat.'
     if not excerpts:
         return f'Search for "{query}" returned results but none of the pages could be read. Snippets only:\n{render_result_list(results[:5])}'
+    excerpts_by_url = {excerpt.url: excerpt for excerpt in excerpts}
+    listed = [(rank, result) for rank, result in enumerate(results, start=1) if rank <= results_to_list or result.url in excerpts_by_url]
+    sources = [read_source(rank, excerpts_by_url[result.url]) if result.url in excerpts_by_url else unread_source(rank, result) for rank, result in listed]
     header = f'Read {len(excerpts)} of {len(results)} results for "{query}".'
-    sources = [f"[{index}] {excerpt.title}\nURL: {excerpt.url}\n{excerpt.text}" for index, excerpt in enumerate(excerpts, start=1)]
-    return header + "\n\n" + "\n\n".join(sources)
+    return "\n\n".join([header, *sources, NOT_FOUND_INSTRUCTION])
+
+
+def read_source(rank: int, excerpt: PageExcerpt) -> str:
+    return f"[{rank}] {excerpt.title}\nURL: {excerpt.url}\n{excerpt.text}"
+
+
+def unread_source(rank: int, result: SearchResult) -> str:
+    return "\n".join(line for line in (f"[{rank}] {result.title} (not read)", plain_snippet(result.snippet)) if line)
+
+
+def plain_snippet(snippet: str) -> str:
+    """Engines return snippets with their own highlighting tags and HTML entities, such as "<b>Roy</b> &amp; Chrom"."""
+    return " ".join(html.unescape(HTML_TAG.sub("", snippet)).split())
 
 
 def main() -> None:

@@ -19,8 +19,8 @@ Give the language model Google-quality web results without an API key, an accoun
           ▲                                │                                                    │
           │                                │ page_extractor.py                                  │
           │  grounded excerpts             │   fetch top N urls concurrently (httpx, timeouts)   │
-          │  [1] title, url, 600-word text │   trafilatura extracts main text, drops nav/ads     │
-          │  [2] ...                       │   cap words, dedupe, keep url for attribution       │
+          │  [1] title, url, passages      │   trafilatura extracts main text, drops nav/ads     │
+          │  [2] ...                       │   keep the lines that best match the query          │
           └────────────────────────────────│                                                    │
                                            └───────────────┬────────────────────────────────────┘
                                                            │
@@ -40,7 +40,7 @@ Give the language model Google-quality web results without an API key, an accoun
 1. The model decides it needs current information and emits a tool call, usually `search_and_read(query)`. The agent loop forwards it over MCP to our server.
 2. `searxng_client` issues one GET to the local SearXNG instance with `format=json`. SearXNG fans the query out to the configured engines in parallel, merges and re-ranks the results, and returns a JSON list with title, URL, snippet, and which engines returned it. Results that several engines agree on rank higher.
 3. `page_extractor` fetches the top N URLs concurrently with short timeouts, skipping PDFs and known paywalls. `trafilatura` pulls the main article text out of each page and drops navigation, ads, and boilerplate.
-4. The server assembles a compact block: numbered sources with title, URL, and up to about 600 words of extracted text each, capped at a total word budget so the prompt does not balloon. This block is the tool result.
+4. The server assembles a compact block: every result keeps its search rank and number; a page that was read carries its URL and up to 350 words of the passages that best match the query, and one that could not be read carries its title and snippet. A total word budget caps the block so the prompt does not balloon, and a closing line tells the model to say plainly when the sources do not answer. This block is the tool result (§16).
 5. The model reads the block and writes the answer, citing source numbers in its reasoning if asked (the spoken answer itself omits URLs).
 6. During a benchmark run, SearXNG responses are cached by query string so every candidate model that issues the same query sees the same pages.
 
@@ -69,7 +69,7 @@ The two lower-level tools exist for flexibility: `web_search` returns only the r
 
 - `docker/searxng/settings.yml`: engines (google, bing, brave, duckduckgo), `search.formats: [html, json]`, safe search, language `en`, request timeouts.
 - `docker/searxng/docker-compose.yml`: image tag pinned, port bound to localhost only.
-- Server settings: top N pages to fetch (default 4), words per page (600), total word budget (2,000), fetch timeout (6 s), blocked domains (paywalls, social networks), user agent.
+- Server settings: top N pages to read (default 6), words per page (350), total word budget (2,000), fetch timeout (6 s), blocked domains (paywalls, social networks), user agent.
 - Cache on or off, and its directory.
 
 ## 7. Failure modes
@@ -107,7 +107,7 @@ The two lower-level tools exist for flexibility: `web_search` returns only the r
 
 - The `mcp` package is at major version 2 (2.1.1, on Python 3.12). The server is `mcp.server.mcpserver.MCPServer`, run with `server.run(transport="streamable-http", host=..., port=...)`, endpoint `/mcp`. The client is `mcp.client.client.Client`, which accepts either a URL or an in-process server object; tests use the latter.
 - Modules: `settings.py` (defaults overridable by `WEB_SEARCH_*` environment variables), `searxng_client.py`, `page_extractor.py`, `query_cache.py` (diskcache, on only when a cache directory is given), `server.py`.
-- Defaults: 4 pages read, 600 words per page, 2,000 words total, 6 s fetch timeout, social networks and hard paywalls skipped, tables kept during extraction because rate and price pages keep their numbers in tables.
+- Defaults: 6 pages read, 350 words per page (the passages that best match the query, §16; 4 pages of 600 words from the top until 2026-10-07), 2,000 words total, 6 s fetch timeout, social networks and hard paywalls skipped, tables kept during extraction because rate and price pages keep their numbers in tables.
 - Measured on the prototype: a `search_and_read` call against live SearXNG took about 7 s and returned about 2,000 words from 4 of 28 results; a cached repeat returned instantly with identical text.
 - SearXNG runs from `docker/searxng/docker-compose.yml` with `scripts/searxng.sh up|down|status|logs`; the secret is generated into `docker/searxng/.env`, which git ignores. Google, Brave, and DuckDuckGo all returned results on the first day; Bing is configured but was not observed in the first samples.
 
@@ -263,7 +263,7 @@ The same MCP server now also offers `wikipedia_lookup`, from the `wikipedia_mcp`
                 └──────────────────────────────────┤                                                    │
                                                    └────────────────────────────────────────────────────┘
   search_and_read: a result on en.wikipedia.org/wiki/... goes through WikipediaClient + render_article instead of the page download,
-                   and select_passages uses the search query as the focus and words_per_page (600) as the budget.
+                   and select_passages uses the search query as the focus and words_per_page (350, §16) as the budget.
 ```
 
 **What the tool takes and returns.**
@@ -274,7 +274,7 @@ The same MCP server now also offers `wikipedia_lookup`, from the `wikipedia_mcp`
 
 **How the article becomes text** (`wikipedia_mcp/article.py`). The REST endpoint returns Parsoid HTML, in which every section is a `<section>` element holding its heading. The renderer walks those sections in order. Headings become `## Heading` lines, one `#` per level. Paragraphs and list items become lines. Every table with the class `wikitable` or `infobox` becomes one line per row, cells joined with ` | `, its caption first. Citations, styles, figures and image frames, navigation boxes, hatnotes, edit links, hidden sort keys, and the closing sections (References, See also, Notes, External links, and their usual variants) are dropped. Superscripts and line breaks get a space on each side, because a cell such as `San Francisco 49ers<sup>N</sup>(1, 1–0)` would otherwise read "49ersN(1," and no longer match the team's name. A merged cell appears once, in the first row it spans.
 
-**How the part that answers is picked** (`wikipedia_mcp/passages.py`). An article within the budget comes back whole. A longer one keeps:
+**How the part that answers is picked** (`wikipedia_mcp/passages.py` when this section was written; since §16 the ranker is `utils/passage_utils.py`, shared with every page `search_and_read` reads, and scores lines with BM25). An article within the budget comes back whole. A longer one keeps:
 
 1. The opening paragraphs, up to a quarter of the budget.
 2. Then the lines that share the most words with the focus, plural and singular alike. A line under a heading that names a focus word also counts as related, so "starting quarterbacks" keeps the rows of the *Starting quarterbacks* table although no row says so.
@@ -283,7 +283,7 @@ The same MCP server now also offers `wikipedia_lookup`, from the `wikipedia_mcp`
 
 The kept lines are printed in article order under their headings. Checked live on 2026-10-07: the 49ers list with focus "2000" returns every regular-season row from 2000 to 2026 and the postseason rows from 2001, in 606 words; *List of Super Bowl champions* with focus "49ers" returns the eight Super Bowl rows the 49ers played in and their franchise record.
 
-**Inside `search_and_read`.** `PageExtractor` takes an optional `WikipediaClient`. For a result URL on the client's own host under `/wiki/`, `read_page` fetches the article through the API and renders it as above, and `read_pages` selects from it with the search query as the focus and `words_per_page` as the budget. If the API fails, the URL is read like any other page. Every other page is read as before. Its text is now kept on one line at read time, so the clipping helpers can keep the line breaks of Wikipedia text (`utils/text_utils.py`, `clip_to_words`) without changing what any other page's excerpt looks like.
+**Inside `search_and_read`.** `PageExtractor` takes an optional `WikipediaClient`. For a result URL on the client's own host under `/wiki/`, `read_page` fetches the article through the API and renders it as above, and `read_pages` selects from it with the search query as the focus and `words_per_page` as the budget. If the API fails, the URL is read like any other page. When this section was written every other page was read from the top, with its text kept on one line; §16 gives every page its structure back and selects passages from all of them.
 
 **Wikimedia's API etiquette, and how the client meets it** (`wikipedia_mcp/client.py`):
 
@@ -306,3 +306,48 @@ The host is fixed by `WIKIPEDIA_BASE_URL` (default `https://en.wikipedia.org`), 
 | `httpx` | The two REST requests, the redirect check, and a replaceable transport that the tests use to play Wikipedia without the network |
 | `lxml` | Parses Parsoid HTML: sections, headings, table rows, and the clutter to drop. It was already installed through trafilatura and is now a declared dependency, because this package imports it directly |
 | `pydantic` | `WikipediaSettings`, read from `WIKIPEDIA_*` environment variables, all with working defaults |
+
+## 16. Passages for every page, added 2026-10-07
+
+Asked "which Super Smash Bros. character uses the jab back air kill confirm" (exchange of 2026-10-07), the assistant answered that the sources did not say. The model was faithful to what it got; the tool lost the answer twice:
+
+- **The page was read from the top.** SmashWiki's *Kill confirm* page was read, but the rows that answer ("Roy | Jab to sweetspotted back aerial", "Chrom | Jab to back aerial") sit about 3,600 words into its 5,340, in the *Super Smash Bros. Ultimate* table, and only the first 600 words reached the model.
+- **Unread results were dropped.** Five of the ten results named Roy or Chrom in their title or snippet (YouTube, Reddit, GameFAQs, Smashboards), but none of those pages could be read (no extractable text, 403, a login wall), and `render_grounded_context` left out every result it had not read.
+
+The ideas come from [skye-harris/llm_intents](https://github.com/skye-harris/llm_intents): its Brave "LLM context" mode returns the passages of each page that best match the query rather than the page head, its SearXNG tool always returns title and snippet, and its Brave tools take a freshness filter. They are taken here locally, with no new service and no API key.
+
+**One ranker for every page** (`utils/passage_utils.py`). `select_passages(text, focus, max_words, page_title, left_out_note)` moved out of `wikipedia_mcp` and was rewritten; `wikipedia_mcp/passages.py` keeps the old name and calls it with §15's left-out note. Every guarantee of §15 stands: a short page comes back whole, the opening prose gets up to a quarter of the budget, kept lines are printed in page order under their headings, a table row brings its header row, a cut table or list is cut at the end and says how many matching lines it lost, a year means "from then on", and plurals match their singular. What changed:
+
+| Rule | Why |
+|---|---|
+| Lines are scored with BM25 (k1 = 1.2, b = 0.75), with the page's own lines as the collection | A focus word counts for more the fewer lines it is on, so "jab" outweighs "character" on a page where every table has a Character column; a long row no longer wins only by having more words |
+| Focus words in the page's title are set aside, unless that leaves none | The title names what every line is about: "Super Smash Bros" and "kill confirm" are on every row of *Kill confirm*. For `search_and_read` the title is the search result's, for `wikipedia_lookup` the article's. "49ers starting quarterbacks" against *List of San Francisco 49ers starting quarterbacks* keeps all its words through the fallback |
+| A focus word in a heading counts, at half weight, for every line under it | Rows of the *Starting quarterbacks* table still match "starting quarterbacks" although no row says so |
+| Two different focus words at most three words apart add the smaller of their two weights | "Jab to back aerial" outranks a row that says "jab" in one sentence and "back" in another |
+| A line naming a year asked about ranks above every line that does not | The §15 year rule, kept exactly; BM25 orders the lines within each group |
+| Headings, header rows, and left-out notes are paid for from the budget when a line is chosen | Unpaid, they pushed the last real rows past the final clip, which cut them mid-line |
+| A cut table or list ends with "[N more matching lines left out]"; the caller can pass its own note template, and `wikipedia_lookup` passes §15's wording | §15's note tells the model to ask again with a narrower focus, which `search_and_read` has no argument for, and its 21 words were a large share of a 350-word budget |
+| A level-1 heading above all the text is the page's own name, not a section | trafilatura starts a page with `# Title`; without the rule no line of an ordinary page would count as its opening prose |
+
+**Ordinary pages keep their structure** (`web_search_mcp/page_markdown.py`). `trafilatura.extract` is asked for `output_format="markdown"`, which keeps `#` headings, `| a | b |` table rows, and `- ` list items. `to_passage_format` drops the `|---|` separator rows, the outer pipes, emphasis marks, simple inline tags such as `<sub>`, wiki `[edit]` links, and empty headings, and joins a paragraph's lines, so the page reaches `select_passages` in the same format as a Wikipedia article. `fetch_page` still returns the head of the page, now with its line breaks.
+
+**Budgets** (`web_search_mcp/settings.py`). `pages_to_read` went from 4 to 6 and `words_per_page` from 600 to 350; `total_word_budget` stays 2,000, so the prompt does not grow. `fetch_page` has its own setting, `fetch_page_words` (1,200), so it keeps returning the 1,200 words it returned before `words_per_page` shrank. `wikipedia_lookup` keeps its own 900-word budget.
+
+**One ranked list** (`render_grounded_context`, `web_search_mcp/server.py`). Every result up to `results_to_return` (8), and any page read below it, keeps its search rank as its number. A read page carries `URL:` and its passages; an unread one is marked `(not read)` and carries its snippet, with the engines' HTML tags stripped and entities unescaped. The header stays `Read N of M results for "<query>".` The block ends with: "If these sources do not answer the question, say plainly that you could not find it." The no-results and no-readable-page replies are unchanged. There is no automatic second search.
+
+**`time_range`.** `search_and_read` and `web_search` take an optional `time_range` of `day`, `week`, `month`, or `year`, passed to SearXNG as its `time_range` parameter. The docstrings tell the model to use it for "latest" or "this week" questions. The argument is a plain string so that it never fails validation: `time_range_filter` in `searxng_client.py` lowercases it and keeps only those four values, and anything else, an empty string included, searches without a filter. A search with a time range is cached under its own key; one without keeps the key it always had.
+
+**Checked.** The SmashWiki page, trimmed and saved as `tests/fixtures/smashwiki_kill_confirm.html`, is read through `PageExtractor` with the exchange's query, and the test asserts the Roy and Chrom rows are in the 350-word excerpt. Run live in process on 2026-10-07, the same query read 2 of 10 results, with the Roy and Chrom rows in the first, the five unread results listed by title and snippet, and the not-found line last.
+
+**Side effects.**
+
+- **The benchmark cache.** It holds page text, which the reader of §15 flattened to one line. A page cached before this change has no lines to choose between, so selection falls back to its head; a fresh cache directory gets the structure.
+- **Comparability.** What `search_and_read` builds from the same pages changed, so search-category scores from later benchmark passes are not directly comparable with passes 1 to 5.
+
+**Out of scope.** Reddit stays snippet-only (it requires a login and OAuth was declined), YouTube stays snippet-only (oEmbed returns only the title), and ranking stays lexical: no embedding model.
+
+| Package | Role in the business logic |
+|---|---|
+| `trafilatura` | Now asked for Markdown, which keeps the headings, table rows, and lists that passage selection chooses between |
+
+No dependency was added.

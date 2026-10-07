@@ -8,8 +8,9 @@ class SearchSettings(BaseModel):
     host: str = "127.0.0.1"
     port: int = 8765
     allowed_hosts: str = ""  # comma-separated Host header values (host:port) accepted when bound to the LAN; empty means no Host check (localhost binds)
-    pages_to_read: int = 4
-    words_per_page: int = 600
+    pages_to_read: int = 6
+    words_per_page: int = 350  # the passages of a page that best match the query; six pages of them come to about the total budget
+    fetch_page_words: int = 1200  # fetch_page returns the top of one page the model chose, so it gets more room than one of six pages
     total_word_budget: int = 2000
     fetch_timeout_seconds: float = 6.0
     max_page_bytes: int = 2_000_000  # stop reading a page past this; a hostile page cannot flood the model
