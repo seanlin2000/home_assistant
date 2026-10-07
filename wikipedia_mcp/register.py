@@ -5,9 +5,9 @@ import logging
 import httpx
 from mcp.server.mcpserver import MCPServer
 
+from utils.passage_utils import select_passages
 from wikipedia_mcp.article import render_article
 from wikipedia_mcp.client import ArticleStore, WikipediaClient, WikipediaUnavailable
-from wikipedia_mcp.passages import select_passages
 from wikipedia_mcp.settings import WikipediaSettings
 
 WIKIPEDIA_TOOL_NAME = "wikipedia_lookup"
@@ -38,6 +38,6 @@ async def looked_up(client: WikipediaClient, topic: str, focus: str, max_words: 
     if not titles:
         return NO_ARTICLE_MESSAGE.format(topic=topic)
     best_title, *other_titles = titles
-    text = select_passages(render_article(await client.article_html(best_title)), focus, max_words)
+    text = select_passages(render_article(await client.article_html(best_title)), focus, max_words, best_title)
     reply = f"Wikipedia: {best_title}\nURL: {client.article_url(best_title)}\n\n{text}"
     return reply + (f"\n\nOther articles: {'; '.join(other_titles)}" if other_titles else "")

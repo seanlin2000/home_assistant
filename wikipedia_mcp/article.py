@@ -2,8 +2,7 @@
 
 The generic page reader (trafilatura, tuned for precision) drops table rows, and on Wikipedia the answer to "who started at quarterback in 2001" or
 "which seasons did they win" lives in a table. Here each wikitable and infobox becomes one line per row, cells joined by " | ", under the headings it sat
-under. Blocks are separated by a blank line, a heading block starts with one "#" per level, and a list item with "- ", which is the shape
-wikipedia_mcp.passages reads back when it picks the parts of a long article that answer the question. Citations, navigation boxes, figures, edit links,
+under, in the shared format of utils.passage_utils, which reads it back when it picks the parts of a long article that answer the question. Citations, navigation boxes, figures, edit links,
 and the closing reference sections are left out.
 """
 
@@ -12,11 +11,10 @@ from collections.abc import Callable
 import lxml.html
 from lxml.html import HtmlElement
 
+from utils.passage_utils import BLOCK_SEPARATOR, CELL_SEPARATOR, HEADING_MARK, LIST_ITEM_PREFIX
+
 HEADING_TAGS = ("h2", "h3", "h4", "h5", "h6")
 RENDERED_TABLE_CLASSES = ("wikitable", "infobox")
-CELL_SEPARATOR = " | "
-LIST_ITEM_PREFIX = "- "
-BLOCK_SEPARATOR = "\n\n"
 CLUTTER_XPATH = " | ".join(
     (
         "//sup[contains(@class, 'reference')]",
@@ -70,7 +68,7 @@ def blocks_of(container: HtmlElement) -> list[str]:
 
 def heading_block(heading: HtmlElement) -> list[str]:
     level = int(heading.tag[1])
-    return [f"{'#' * level} {clean_text(heading)}"]
+    return [f"{HEADING_MARK * level} {clean_text(heading)}"]
 
 
 def section_blocks(section: HtmlElement) -> list[str]:

@@ -14,11 +14,11 @@ class QueryCache:
     def enabled(self) -> bool:
         return self._cache is not None
 
-    def get_search(self, query: str) -> list[dict[str, Any]] | None:
-        return self._get(f"search:{query.strip().lower()}")
+    def get_search(self, query: str, time_range: str | None) -> list[dict[str, Any]] | None:
+        return self._get(search_key(query, time_range))
 
-    def put_search(self, query: str, results: list[dict[str, Any]]) -> None:
-        self._put(f"search:{query.strip().lower()}", results)
+    def put_search(self, query: str, time_range: str | None, results: list[dict[str, Any]]) -> None:
+        self._put(search_key(query, time_range), results)
 
     def get_page(self, url: str) -> str | None:
         return self._get(f"page:{url}")
@@ -50,3 +50,8 @@ class QueryCache:
     def _put(self, key: str, value: Any) -> None:
         if self._cache is not None:
             self._cache.set(key, value)
+
+
+def search_key(query: str, time_range: str | None) -> str:
+    """A search without a time range keeps the key it always had, so a benchmark cache filled before time ranges existed still answers it."""
+    return f"search:{query.strip().lower()}" + (f" time_range:{time_range}" if time_range else "")
