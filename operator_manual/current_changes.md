@@ -2,50 +2,46 @@
 
 This page lists the pull requests that are open right now, one entry each, in the same shape as a section. An entry is written when its pull request opens and removed when the pull request merges or closes.
 
-## PR #16: Read every search result for the passages that match the query
-<!-- manual-entry branch="search-passages" pr="16" date="2026-10-07" -->
+## Branch kokoro-fable-default: Kokoro's Fable voice by default, and a services.sh that reports agents that fail to load
+<!-- manual-entry branch="kokoro-fable-default" pr="pending" date="2026-10-07" -->
 
 ### Where this fits
 
 ```mermaid
 flowchart TB
 --8<-- "_includes/system_map.mmd"
-class mcp,laptop current
+class tts,whisper,laptop,health current
 ```
 
 ### Key definitions
 
-One term this change introduces:
-
-| Term | Meaning |
-|---|---|
-| BM25 | A ranking formula from text search that scores a line by the focus words it contains, weighting each word by how few lines of the page hold it and discounting long lines. |
+None new.
 
 ### Packages and tools
 
-No package is added; one is used differently:
-
-| Tool | What it is | How this change uses it |
-|---|---|---|
-| `trafilatura` 2.2.0 | A main-content extraction library | Asked for Markdown, which keeps a page's headings, table rows, and lists for passage selection to choose between |
+No new packages. The change uses `launchctl print`, already used by the health check, to tell whether an agent is still loaded.
 
 ### What changed
 
-The change has four parts:
+The change has two parts:
 
-- **Passages for every page.** `search_and_read` keeps the 350 words of each page that best match the query, chosen by one BM25 ranker that `wikipedia_lookup` shares, instead of the first 600 words; [Passages that match](03_web_search_mcp.md#passages-that-match) explains the rules.
-- **Pages keep their structure.** An ordinary page now reaches the ranker with its headings, table rows, and list items on their own lines, as a Wikipedia article does, and six pages fit the same 2,000 words as four did (see [Reading the pages](03_web_search_mcp.md#reading-the-pages)).
-- **One ranked list.** Results that could not be read keep their rank, title, and snippet beside the pages that were, and the block ends with a line telling the model to say plainly when the sources do not answer, as in [One tool call, end to end](03_web_search_mcp.md#one-tool-call-end-to-end).
-- **`time_range`.** `search_and_read` and `web_search` take an optional `day`, `week`, `month`, or `year` for questions about the latest news, passed on to SearXNG (see [SearXNG in Docker](03_web_search_mcp.md#searxng-in-docker)).
+- **Kokoro's Fable voice by default.** The Jarvis pipeline speaks with `tts.kokoro`, language `en_GB`, voice `bm_fable`, and Kokoro itself starts with `--voice bm_fable`. `scripts/ha_setup.py --tts piper` switches back to Piper, and `--tts-voice` with `--tts-language` picks another Kokoro voice. [Text to speech](05_voice_pipeline.md#text-to-speech) on the Voice Pipeline page compares the two engines.
+- **Agents that fail to load are reported.** `scripts/services.sh` waits for every agent to finish unloading before it loads it again, since Kokoro takes about 5 s to exit and a reload inside that window failed silently. `install` and `start` now name any agent that does not load and exit 1, and `status` lists every agent that is not loaded. [Operations](10_operations.md) shows how a failed load stops a deploy.
 
 ### Run it yourself
 
-1. Run the tests for the ranker, the search tools, and the Wikipedia tool:
+1. Reinstall the agents on the laptop:
 
     ```bash
-    uv run pytest tests/test_passage_utils.py tests/test_web_search_mcp.py tests/test_wikipedia_lookup.py -q
+    HEALTH_CHECK_FLAGS="--no-remediate" scripts/services.sh install
     ```
 
-    It prints `34 passed`. One of them reads a recorded SmashWiki page whose answer sits 3,000 words down.
+    Every service prints `listening on` its port, and the command exits 0. An agent that does not load prints `failed to load: NAME (...)` and the command exits 1.
 
-2. After the change is deployed, run the tool-call script in [Run it yourself](03_web_search_mcp.md#run-it-yourself) with the query `Super Smash Bros character jab back air kill confirm`. The SmashWiki source shows the `Roy |` and `Chrom |` rows, the unread videos and forum threads appear as `(not read)` with their snippets, and the block ends with the not-found line.
+2. With the VM running, rebuild the pipeline:
+
+    ```bash
+    uv run python scripts/ha_setup.py --only pipeline
+    ```
+
+    It prints `pipeline: 'Jarvis' uses stt.mlx_whisper -> conversation.studio_assistant -> tts.kokoro (en_GB, voice bm_fable) (preferred)`.
