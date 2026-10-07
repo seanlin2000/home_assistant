@@ -83,7 +83,7 @@ In nav order, each page by its title and file stem. The nav groups and design do
 | Changed path starts with | Highlight |
 |---|---|
 | `assistant_core/`, `custom_components/` | `agent` |
-| `web_search_mcp/`, `calculator_mcp/`, `docker/` | `mcp` (and `searxng` for `docker/`) |
+| `web_search_mcp/`, `calculator_mcp/`, `wikipedia_mcp/`, `docker/` | `mcp` (and `searxng` for `docker/`) |
 | `benchmark/` | `laptop,ollama` |
 | `ops/`, `scripts/` | `laptop,health` |
 | `voice/` | `tts,whisper` |

@@ -153,7 +153,7 @@ A pass is one `benchmark-run --run version_N` invocation, and `version_N` is a f
 1. Checks that SearXNG answers.
 2. Refuses to continue if port 8766 is already taken.
 3. Starts `web_search_mcp` as a child process with `WEB_SEARCH_CACHE_DIR` pointing at `version_N/cache` and the forecast's home taken from `weather_home` in `config.yaml`. The cache keeps the first forecast fetched, so every candidate in the pass reads the same one.
-4. Lists the server's tools and refuses to continue unless all seven expected tools are present: `search_and_read`, `web_search`, `fetch_page`, `calculate`, `percent`, `convert`, and `weather_forecast`. A stale server from an earlier run can therefore never answer this run's tool calls.
+4. Lists the server's tools and refuses to continue unless all eight expected tools are present: `search_and_read`, `web_search`, `fetch_page`, `wikipedia_lookup`, `calculate`, `percent`, `convert`, and `weather_forecast`. A stale server from an earlier run can therefore never answer this run's tool calls.
 5. Writes `run_meta.json` with the question set version, the system prompt version, the policy, the candidate list, the machine, the chip, the memory size, the Ollama version, and the git commit.
 
 **For each candidate**
@@ -177,7 +177,7 @@ A pass is one `benchmark-run --run version_N` invocation, and `version_N` is a f
 
 ### Gates
 
-Some gates need no judgment, only a look at the transcript. `benchmark/gates.py` evaluates nine of them together and returns every one that failed. `benchmark-judge` applies them twice for every question: `--export` writes them into the case file the judge reads, and `--import` records them in the question's score. "Searched" means any call to `search_and_read`, `web_search`, or `fetch_page`; calculator and forecast calls do not count, so a category C question that calls `calculate` and never searches passes both search gates. The word-limit gate applies only to questions that declare `max_words` (A10, the 45-second spoken explanation, with a limit of 120). A question whose model call raised an exception gets the single gate `run_error` and is never sent to the judge.
+Some gates need no judgment, only a look at the transcript. `benchmark/gates.py` evaluates nine of them together and returns every one that failed. `benchmark-judge` applies them twice for every question: `--export` writes them into the case file the judge reads, and `--import` records them in the question's score. "Searched" means any call to `search_and_read`, `web_search`, `fetch_page`, or `wikipedia_lookup`; calculator and forecast calls do not count, so a category C question that calls `calculate` and never searches passes both search gates. The word-limit gate applies only to questions that declare `max_words` (A10, the 45-second spoken explanation, with a limit of 120). A question whose model call raised an exception gets the single gate `run_error` and is never sent to the judge.
 
 The nine checks sit side by side in `harness_gates`, from `benchmark/gates.py`:
 

@@ -260,12 +260,13 @@ async def run(conversation: list[Message], llm: LLMClient, tools: ToolBox, polic
 
 The setup happens once per exchange:
 
-- **The system prompt.** `build_messages` puts it first and the conversation after it. It is version 1.7 in `assistant_core/prompts.py`:
+- **The system prompt.** `build_messages` puts it first and the conversation after it. It is version 1.8 in `assistant_core/prompts.py`:
     - the persona, Jarvis, a voice assistant in a small studio apartment;
     - today's date, filled in on every request, so a search query does not assume the year the model's training ended;
     - the rules for answering: lead with the answer, one to three sentences, plain spoken prose, no lists or URLs, say when you are estimating, draw on earlier exchanges in the conversation;
     - what to do when the text is unclear: reply exactly "Can you repeat that?" to a garbled request, "Okay." to "never mind", and the silence marker `*`, which is never spoken, to speech not meant for the assistant, such as a television;
-    - when to search and when not to, and the rule to call the calculator for anything with more than one arithmetic step;
+    - when to search and when not to, and the rule to call `wikipedia_lookup` for a settled fact, a list, or a record;
+    - the rule to call the calculator for anything with more than one arithmetic step;
     - the rule to call `weather_forecast` for the weather at home and to search for the weather anywhere else.
 - **Memory.** `memory.get_context` is asked what the assistant remembers about this user. `NoMemory` returns nothing, so no "What you remember about this user" paragraph is added. A real memory replaces that class and nothing else.
 - **The tools and the route.** The tool schemas are listed from the tool server, and the [question router](#the-question-router) adds its directive to the system prompt.
@@ -274,7 +275,7 @@ Each pass through the `for` loop is one call to the model:
 
 - **Text.** `stream_model_reply` passes each text delta through `SilenceMarkerHold`, which holds it back while the reply could still be the silence marker `*`, and then through `SpokenAnswerCap`. Whatever the cap admits is yielded as an `AnswerDelta`.
 - **The filler.** The first tool request yields a `FillerSpoken` event before the call is collected, unless something has already been spoken in this exchange, so a second round of tools gets no second filler. The line is picked at random from three lists in `AgentPolicy`:
-    - three web lines when the tool is `search_and_read`, `web_search`, or `fetch_page`;
+    - three web lines when the tool is `search_and_read`, `web_search`, `fetch_page`, or `wikipedia_lookup`;
     - two forecast lines when the tool is `weather_forecast`;
     - two arithmetic lines otherwise, because "checking the web" is wrong when the assistant is only doing sums on the Mac.
 - **The tools.** `execute_tool_calls` runs the calls in order and appends each result to the messages as a tool message with the call's id and name.
@@ -360,7 +361,7 @@ A failure anywhere in this call, from a refused connection to unparseable JSON, 
 
 `apply_route` returns a copy of the messages with one paragraph added to the end of the system prompt. For `answer` it returns the messages unchanged. The user's message is always left exactly as spoken.
 
-- **Search:** "Routing for this question: SEARCH. This question needs current information from the web. Call search_and_read first; do not answer it from memory. Answer from the excerpts it returns." It ends with one example call, `search_and_read(query="used RTX 3090 price")`.
+- **Search:** "Routing for this question: SEARCH. This question needs information you must look up. Call search_and_read first, or wikipedia_lookup when it asks about a settled fact, list, or record such as a team's past players or who held an office; do not answer it from memory. Answer from what the tool returns." It ends with one example call, `search_and_read(query="used RTX 3090 price")`.
 - **Calculate:** it names the eight calculator tools, says "do not do the math yourself", and ends with `percent(kind="of", a=15, b=80)`.
 - **Weather:** it says to call `weather_forecast` first, not to search or answer from memory, and ends with `weather_forecast(day="tomorrow", part_of_day="afternoon")`. When the tool server does not offer `weather_forecast`, `route_to_offered_tools` turns a weather decision into search before the directive is added.
 
