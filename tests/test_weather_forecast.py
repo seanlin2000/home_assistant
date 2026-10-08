@@ -58,6 +58,10 @@ def test_tonight_asked_after_midnight_means_the_night_in_progress() -> None:
     assert "overnight (midnight to 6 am)" in reader(now=two_am_in_oslo).describe("today", "night")
 
 
+def test_tonight_as_the_day_reads_as_today_at_night() -> None:
+    assert reader().describe("tonight", "all") == reader().describe("today", "night")
+
+
 def test_week_has_one_line_per_day_starting_with_the_rest_of_today() -> None:
     lines = reader(units="imperial").describe("week", "all").splitlines()
     assert len(lines) == 8

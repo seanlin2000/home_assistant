@@ -38,7 +38,7 @@ def register_weather_tools(server: MCPServer, settings: WeatherSettings, store: 
 
     @server.tool(name=WEATHER_TOOL_NAME)
     async def weather_forecast(day: str = "today", part_of_day: str = "all", place: Annotated[str, Field(max_length=MAX_PLACE_CHARS)] = "") -> str:
-        """Weather forecast for the user's home, or for any other place. day: "today", "tomorrow", a weekday such as "saturday", "weekend", or "week" for the next seven days. part_of_day: "morning", "afternoon", "evening", "night" (the night after that day's evening), or "all". place: leave empty for home; otherwise the place as the user said it, with the region or country after a comma when it helps, e.g. "Lisbon" or "Portland, Maine". Times are the place's local time."""
+        """Weather forecast for the user's home, or for any other place. day: "today", "tonight", "tomorrow", a weekday such as "saturday", "weekend", or "week" for the next seven days. part_of_day: "morning", "afternoon", "evening", "night" (the night after that day's evening), or "all". place: leave empty for home; otherwise the place as the user said it, with the region or country after a comma when it helps, e.g. "Lisbon" or "Portland, Maine". Times are the place's local time."""
         if not place.strip():
             return await home_forecast(client, settings, clock(), day, part_of_day)
         return await place_forecast(client, geocoder, settings, clock(), place.strip(), day, part_of_day)

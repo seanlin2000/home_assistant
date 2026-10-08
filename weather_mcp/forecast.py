@@ -15,10 +15,12 @@ from typing import Any
 from zoneinfo import ZoneInfo
 
 TODAY = "today"
+TONIGHT = "tonight"
 TOMORROW = "tomorrow"
 WEEK = "week"
 WEEKEND = "weekend"
 WHOLE_DAY = "all"
+NIGHT = "night"
 WEEKDAYS = ("monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday")
 SATURDAY, SUNDAY = 5, 6
 DAYS_IN_WEEK_VIEW = 7
@@ -136,6 +138,13 @@ def dates_for(day: str, today: date) -> list[date]:
     return [saturday, saturday + timedelta(days=1)]
 
 
+def day_and_part(day: str, part: str) -> tuple[str, str]:
+    """ "tonight" is today's night whatever part of the day came with it; the model sometimes sends it as the day."""
+    if day == TONIGHT:
+        return TODAY, NIGHT
+    return day, part_of_day(part)
+
+
 def part_of_day(part: str) -> str:
     normalized = part.strip().lower()
     if normalized in WHOLE_DAY_WORDS:
@@ -209,8 +218,7 @@ class ForecastReader:
         return self._now.astimezone(self._zone).date()
 
     def describe(self, day: str, part: str) -> str:
-        day = day.strip().lower()
-        part = part_of_day(part)
+        day, part = day_and_part(day.strip().lower(), part)
         if day in (WEEK, WEEKEND):
             return self.describe_days(day, dates_for(day, self.today))
         return self.describe_day(date_for(day, self.today), part)
