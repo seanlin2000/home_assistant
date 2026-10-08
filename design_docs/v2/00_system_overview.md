@@ -103,9 +103,9 @@ v2 holds only the docs that change or are new. Voice, Home Assistant, music, and
 | 05 Voice pipeline | | v1/05 still applies | Unchanged |
 | 06 Home Assistant core | | v1/06 still applies | Unchanged, apart from the thin client (doc 04) |
 | 07 Music | | v1/07 still applies | Unchanged |
-| 08 Hardware and deployment | to be written | v1/08 | Mac mini or Mac Studio; memory budget; ports bound to the Mac where they can be |
+| 08 Hardware and deployment | [08_hardware_and_deployment.md](08_hardware_and_deployment.md) | v1/08 | Who can reach which port; the memory budget; moving to the new Mac |
 | 09 Dev environment | | v1/09 still applies | Unchanged; new packages are listed in each doc |
-| 10 Operations | to be written | v1/10 | llama-server and the harness as services; deploy rules |
+| 10 Operations | [10_operations.md](10_operations.md) | v1/10 | llama-server and the harness as services; what a deploy restarts; new health checks; backing up the notes |
 | 11 Memory | to be written | new | One summary note per conversation, its index, how notes are read |
 | 12 Security | [12_security.md](12_security.md) | new | Threat model, trust marks, the guards, supply chain |
 | 13 Personal-data tools | to be written | new | Gmail, calendar, X, Reddit, and bank statements |
@@ -132,7 +132,7 @@ v2 holds only the docs that change or are new. Voice, Home Assistant, music, and
 |---|---|---|
 | Whether llama-server's tool calling works for Gemma 4 E4B | Closed 2026-10-08 | A trial on the laptop: every tool call well formed, including a second tool call in one conversation. The real gain is the prompt order, not the engine (doc 02 §3.2). |
 | The context window per model | M1 | Measured: the memory left free on each machine, and where the benchmark shows answers stay good. v1 used 16,384 tokens; E4B accepts 128K. |
-| Which Mac | Doc 08 | Benchmark pass 5 pointed at a 26B or 35B mixture-of-experts model on a 32 GB machine; doc 08 weighs a Mac mini against a Mac Studio. |
+| Which Mac | Before M8 | Chosen outside these docs. Benchmark pass 5 pointed at a 26B or 35B mixture-of-experts model; doc 08's memory budget is measured on the chosen Mac in M8. |
 | Who keeps the conversation history | Closed in doc 04 | Home Assistant's chat log stays the record; the harness keeps only the trust mark, the compaction summary, and when the conversation was last used (doc 04 §3.5). |
 | Whether oMLX replaces llama-server | M9 | Re-measured on the new Mac, built from source at a pinned commit, against the same benchmark. |
 
@@ -140,7 +140,7 @@ v2 holds only the docs that change or are new. Voice, Home Assistant, music, and
 
 | Item | Cost |
 |---|---|
-| The new Mac | Chosen in doc 08 |
+| The new Mac | Chosen before M8 |
 | Software, models, and the new tools' data sources | $0 |
 | Agent accounts for Reddit and X | $0 |
 | SimpleFIN Bridge for bank data (optional, after the new Mac) | $15 a year |
