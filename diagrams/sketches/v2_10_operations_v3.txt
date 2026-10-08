@@ -1,0 +1,13 @@
+ A DEPLOY, started from the laptop                                                                                                      
+                                                                                                                                        
+ ╭────────────────────╮      ╭────────────────────╮      ╭────────────────────╮      ╭────────────────────╮      ╭────────────────────╮ 
+ │   changed files    │      │  select restarts   │      │      restart       │      │      warm up       │      │     smoke test     │ 
+ │ since last deploy  │─────▶│ by folder changed  │─────▶│ llama, harness...  │─────▶│  both slots read   │─────▶│ a question via HA  │ 
+ ╰────────────────────╯      ╰────────────────────╯      ╰────────────────────╯      ╰────────────────────╯      ╰────────────────────╯ 
+                                                                                                                                        
+ THE HEALTH CHECK, every five minutes                                                                                                   
+                                                                                                                                        
+ ╭────────────────────╮      ╭────────────────────╮      ╭────────────────────╮      ╭────────────────────╮      ╭════════════════════╮ 
+ │  check each part   │      │       record       │      │   count failures   │      │  restart the part  │      │    health.json     │ 
+ │ llama, harness...  │─────▶│ RAM, slow requests │─────▶│ since last success │─────▶│  after 2 failures  │─────▶│    the snapshot    │ 
+ ╰────────────────────╯      ╰────────────────────╯      ╰────────────────────╯      ╰────────────────────╯      ╰════════════════════╯ 
