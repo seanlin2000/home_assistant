@@ -42,25 +42,36 @@ REPEATED_CALL_NOTE = "You already made this exact call for this question; here i
 TOOL_LIMIT_NOTICE = "Tool call limit reached. Answer the user now with what you already know; do not call any more tools."
 TOOL_UNREACHABLE_NOTICE = "The web search tool is unavailable right now. Tell the user you could not check the web, then answer from your own knowledge with that caveat."
 SENTENCE_END = re.compile(r"[.!?][\"')\]]?(\s|$)")
+# Gemma 4 now and then writes its tool call as text ("<tool_call> search_and_read(query=...)", "<execute_tool> ...") instead of calling the tool.
+MARKUP_START = "<"
+WRITTEN_TOOL_CALL = re.compile(r"^\s*<\|?\s*(tool_call|execute_tool|tool_code|function_call)\b", re.IGNORECASE)
 
 
-class SilenceMarkerHold:
+class SpeechHold:
     """Holds back the start of a model reply while it could still be the silence marker, so a reply that is only the marker is never spoken.
-    The moment the text stops matching the marker, everything held is released at once, so an ordinary answer is spoken without delay."""
+    The moment the text stops matching the marker, everything held is released at once, so an ordinary answer is spoken without delay. A reply
+    that starts with markup is held to its end, since no spoken answer starts with "<"; it may be a tool call written as text."""
 
     def __init__(self) -> None:
         self._held_parts: list[str] = []
         self._released = False
 
     def release(self, text: str) -> str:
-        """The text that may be spoken now: nothing while the reply so far could still be the marker, then everything held plus this chunk."""
+        """The text that may be spoken now: nothing while the reply so far could still be the marker or is markup, then everything held plus this chunk."""
         if self._released:
             return text
         self._held_parts.append(text)
         held_text = "".join(self._held_parts)
-        if SILENCE_MARKER.startswith(held_text.strip()):
+        if SILENCE_MARKER.startswith(held_text.strip()) or held_text.lstrip().startswith(MARKUP_START):
             return ""
         self._released = True
+        return held_text
+
+    def leftover(self) -> str:
+        """At the end of the reply: held text that is neither the silence marker nor a written tool call, which may now be spoken."""
+        held_text = "".join(self._held_parts)
+        if self._released or held_text.strip() == SILENCE_MARKER or WRITTEN_TOOL_CALL.match(held_text):
+            return ""
         return held_text
 
 
@@ -72,7 +83,7 @@ class ModelReply:
         self.tool_calls: list[ToolCall] = []
         self.malformed: list[str] = []
         self.completion: Completion | None = None
-        self.silence_hold = SilenceMarkerHold()
+        self.speech_hold = SpeechHold()
 
     @property
     def text(self) -> str:
@@ -160,8 +171,10 @@ def reply_is_empty(reply: ModelReply) -> bool:  # deslop: allow-comments
 
 
 def reply_is_broken(reply: ModelReply) -> bool:
-    """The only output was an unparseable tool call, which left in the history would teach the model the broken format (design doc v2/04 section 3.3)."""
-    return reply.completion is not None and bool(reply.malformed) and not reply.text_parts and not reply.tool_calls
+    """The only output was an unparseable or written-out tool call, which left in the history would teach the model the broken format (design doc v2/04 section 3.3)."""
+    if reply.completion is None or reply.tool_calls:
+        return False
+    return (bool(reply.malformed) and not reply.text_parts) or bool(WRITTEN_TOOL_CALL.match(reply.text))
 
 
 def may_ask_again(reply: ModelReply, transcript: Transcript) -> bool:
@@ -176,7 +189,7 @@ def set_aside_unusable_reply(reply: ModelReply, transcript: Transcript) -> None:
         transcript.empty_completion_retries += 1
     else:
         transcript.malformed_retries += 1
-        transcript.malformed_tool_calls.extend(reply.malformed)
+        transcript.malformed_tool_calls.extend(reply.malformed or [reply.text])
     transcript.model_calls.append(reply.completion.stats)
 
 
@@ -211,7 +224,7 @@ async def stream_model_reply(
     async for event in llm.chat(messages, tool_specs, policy):
         if isinstance(event, TextDelta):
             reply.text_parts.append(event.text)
-            speakable = reply.silence_hold.release(event.text)
+            speakable = reply.speech_hold.release(event.text)
             spoken = cap.admit(speakable) if speakable else ""
             if spoken:
                 mark_first_spoken(transcript, started)
@@ -225,6 +238,11 @@ async def stream_model_reply(
             reply.malformed.append(event.raw)
         elif isinstance(event, Completion):
             reply.completion = event
+    leftover = reply.speech_hold.leftover()
+    spoken = cap.admit(leftover) if leftover else ""
+    if spoken:
+        mark_first_spoken(transcript, started)
+        yield AnswerDelta(text=spoken)
 
 
 def filler_for(tool_name: str, policy: AgentPolicy) -> str:

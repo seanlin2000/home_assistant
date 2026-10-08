@@ -86,6 +86,8 @@ DEFAULT_WEATHER_FILLER_PHRASES = (
 )
 SEARCH_TOOL_NAMES = frozenset({"search_and_read", "web_search", "fetch_page", "wikipedia_lookup"})
 WEATHER_TOOL_NAMES = frozenset({"weather_forecast"})
+# The router's JSON: a route, up to two more, and a one-sentence plan. Forty tokens held the route alone and cut the plan off mid-string.
+CLASSIFY_MAX_TOKENS = 120
 CALCULATOR_TOOL_NAMES = frozenset({"calculate", "percent", "convert", "growth_schedule", "energy_cost", "loan_payment", "break_even", "date_math"})
 TOOL_NAMES_BY_ROUTE = {Route.SEARCH: SEARCH_TOOL_NAMES, Route.CALCULATE: CALCULATOR_TOOL_NAMES, Route.WEATHER: WEATHER_TOOL_NAMES}
 # The tools a live tool server must expose before the benchmark or the health check trusts it as ours (a stale server once served a different set).

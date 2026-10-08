@@ -1,7 +1,7 @@
 import asyncio
 
 from assistant_core import agent_loop
-from assistant_core.agent_loop import SilenceMarkerHold, SpokenAnswerCap
+from assistant_core.agent_loop import SpeechHold, SpokenAnswerCap
 from assistant_core.models import AgentEvent, AgentPolicy, AnswerDelta, Done, FillerSpoken, Message, Role, ToolCall, ToolFinished, ToolStarted
 from assistant_core.prompts import SILENCE_MARKER
 from tests.fakes import FakeToolBox, ScriptedLLM, empty_reply, malformed_reply, several_tool_calls_reply, text_reply, tool_replies_past_the_cap, tool_reply
@@ -189,7 +189,7 @@ async def test_an_answer_that_starts_with_the_marker_character_is_spoken_in_full
 
 
 def test_silence_hold_releases_everything_held_once_the_text_diverges() -> None:
-    hold = SilenceMarkerHold()
+    hold = SpeechHold()
     assert [hold.release(chunk) for chunk in ["\n", SILENCE_MARKER, "Not silent.", " More."]] == ["", "", f"\n{SILENCE_MARKER}Not silent.", " More."]
 
 
@@ -244,3 +244,18 @@ async def test_a_repeated_call_is_answered_from_the_first_without_reaching_the_t
     assert [call.arguments["query"] for call in tools.calls] == ["gold price"]
     assert [record.repeated for record in transcript.tool_call_records] == [False, True, True]
     assert transcript.tool_call_records[2].result.startswith(agent_loop.REPEATED_CALL_NOTE)
+
+
+async def test_a_tool_call_written_as_text_is_never_spoken_and_is_asked_again() -> None:
+    written = '<tool_call> search_and_read(query="fed funds rate") </tool_call>'
+    llm = ScriptedLLM([text_reply("<tool", "_call> search_and_read", '(query="fed funds rate") </tool_call>'), text_reply("It is four percent.")])
+    events = await collect(llm, FakeToolBox())
+    assert spoken_deltas(events) == ["It is four percent."]
+    transcript = events[-1].transcript
+    assert transcript.malformed_retries == 1 and transcript.malformed_tool_calls == [written]
+    assert llm.seen_messages[1] == llm.seen_messages[0]
+
+
+async def test_a_reply_that_starts_with_markup_but_is_not_a_tool_call_is_spoken_at_its_end() -> None:
+    events = await collect(ScriptedLLM([text_reply("<3 thanks, ", "glad to help.")]), FakeToolBox())
+    assert "".join(spoken_deltas(events)) == "<3 thanks, glad to help."
