@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The Qwen3.8 27B at 4-bit using about 13.3 GB with room left for KV cache traces to Paul's Programming Notes, and the quality, quantization, and offload tradeoffs are explained, though it omits the MoE option Qwen3.6-35B-A3B with partial offload and repeats the 27B point.",
+  "judgment_reason": "It searched as instructed, grounded its model picks in the excerpts, and explained tradeoffs rather than only listing models.",
+  "spoken_fit_reason": "Four paragraphs that repeat the 27B fit and were cut by the word cap, too long for speech though free of lists or markdown."
+}

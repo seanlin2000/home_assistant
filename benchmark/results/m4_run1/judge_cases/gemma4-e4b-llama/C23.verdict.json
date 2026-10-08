@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The tip of eleven sixty-one matches the percent tool, but the spoken total of seventy-six dollars and ten cents is a cent off the correct 76.11 and is not presented as rounding.",
+  "judgment_reason": "It rightly used the percent tool for the tip but, after two malformed calculate calls, computed the total by hand and got it slightly wrong.",
+  "spoken_fit_reason": "Two short plain sentences that give the tip and the total."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It asks which country is meant, naming only the missing piece, but in a clumsy ten-word form rather than the expected short question.",
+  "judgment_reason": "It neither guessed a country nor listed options, and asked only for the missing place.",
+  "spoken_fit_reason": "'What is the capital of which country you are asking?' is twice the ideal length and ungrammatical aloud."
+}

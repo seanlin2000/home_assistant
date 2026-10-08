@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The used RTX 3090 with 24 GB is supported by the excerpts as the best VRAM per dollar, but the answer gives no prices and ignores the promptquorum excerpt saying a 3090 build 'pushes total cost past $1,300'.",
+  "judgment_reason": "It searched appropriately but glossed over the $1,000 budget, never saying whether a full 3090 build fits it even though the retrieved sources disagree on that point.",
+  "spoken_fit_reason": "Two short plain paragraphs that lead with the recommendation."
+}

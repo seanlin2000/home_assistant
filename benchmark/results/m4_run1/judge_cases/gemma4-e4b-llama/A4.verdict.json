@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It names nitrogen deficiency and overwatering and asks for plant type and watering, but omits normal senescence of old leaves, the key 'this may be normal' explanation, and other details like light and fertilizer history.",
+  "judgment_reason": "It rightly asks for missing information instead of asserting one cause, but opens by framing it as a nutrient or watering problem without allowing that it may be normal.",
+  "spoken_fit_reason": "Three plain sentences ending in a short question, suitable aloud."
+}

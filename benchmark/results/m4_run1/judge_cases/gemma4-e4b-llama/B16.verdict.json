@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It cites RentCafe's $6,386 two-bedroom average while ignoring the $5,574 and $3,879 figures from other excerpts, never compares a rate of increase to market rent growth, and limits the advertised-rent risk to fees rather than asking rents, concessions, or unit mix.",
+  "judgment_reason": "It silently assumed a two-bedroom and called 4 percent 'might be competitive' from an absolute rent level without the user's current rent, an unsupported comparison.",
+  "spoken_fit_reason": "Two plain sentences of reasonable length."
+}
