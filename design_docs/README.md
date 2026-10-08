@@ -5,11 +5,14 @@ Design documentation for the local-first voice assistant. The docs are versioned
 | Folder | Status | Rule |
 |---|---|---|
 | `v0/` | Frozen. Written before any code. | Never edited after the initial commit, not even to fix a number that later proves wrong. |
-| `v1/` | Created when the build starts, by copying `v0/`. Living, as-built. | Updated as each component lands. `v1/DEVIATIONS.md` logs each departure from v0 with one line of reasoning. |
+| `v1/` | Created when the build started, by copying `v0/`. As-built record of the text-in, text-out assistant; frozen 2026-10-08. | No longer edited. `v1/DEVIATIONS.md` logs each departure from v0 with one line of reasoning. |
+| `v2/` | Created 2026-10-08 for the harness build: memory, several tools per question, more tools, llama-server. Holds only the docs that change or are new; for every other subsystem the v1 doc still applies. | Written before the code, then living. Each doc's second line is `Status: designed`, `building`, or `built YYYY-MM-DD`. `v2/DEVIATIONS.md` logs each departure from v2. |
 
 These docs record intent and how the build departed from it. For the built system explained as prose for a newcomer, with diagrams and the commands to run each part, read the Home Assistant Handbook in `operator_manual/` (`uv run mkdocs serve`).
 
-Each design doc has one handbook page, listed here in the handbook's navigation order:
+Each handbook page comes from the latest built version of its design doc: the v2 doc once its status says `built`, and the v1 doc until then. A v2 doc that is still `designed` or `building` describes the system to come, not the one running.
+
+Each design doc has one handbook page, listed here in the handbook's navigation order. The table names the doc each page is written from today:
 
 | Design doc | Handbook page | Nav group | Page title |
 |---|---|---|---|
@@ -29,7 +32,7 @@ The point of keeping both is a retrospective at the end of the build: did the en
 
 ## Reading order
 
-Start with `00_system_overview.md`. Every other doc covers one subsystem that has its own tech stack and follows the same skeleton:
+Start with `00_system_overview.md`: `v1/` for the assistant as built, `v2/` for the harness build under way. Every other doc covers one subsystem that has its own tech stack and follows the same skeleton:
 
 1. Purpose in one paragraph
 2. ASCII diagram
@@ -53,3 +56,6 @@ Start with `00_system_overview.md`. Every other doc covers one subsystem that ha
 | `08_hardware_and_deployment.md` | The always-on Mac and where each service runs |
 | `09_dev_environment.md` | Virtual environment, pinned dependencies, how to run things |
 | `10_operations.md` | Running, updating, watching, and debugging the headless Mac mini from the laptop (v1 only; added after the design was frozen) |
+| `11_memory.md` | Summaries of past conversations, and how the assistant draws on them (v2) |
+| `12_security.md` | Threat model, trust marks, the guards, and supply-chain rules (v2) |
+| `13_personal_data_tools.md` | Gmail, calendar, X, Reddit, and bank statements (v2) |
