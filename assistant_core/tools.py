@@ -18,6 +18,16 @@ class ToolBox(Protocol):
     async def call(self, call: ToolCall) -> str: ...
 
 
+class UnavailableToolBox:
+    """A tool box with no tools, used when the tool server cannot be reached so the model answers from knowledge with the loop's caveat."""
+
+    async def list_tools(self) -> list[ToolSpec]:
+        return []
+
+    async def call(self, call: ToolCall) -> str:
+        raise ConnectionError("tool server unavailable")
+
+
 class McpToolBox:
     """Connects to an MCP server (streamable HTTP by URL, or an in-process server object in tests) and exposes its tools."""
 

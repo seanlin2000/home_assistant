@@ -10,11 +10,11 @@ from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
 
 from assistant_core.exchange_record import ExchangeRecord
+from assistant_service.exchange_log import ExchangeLog
 from ops import paths
 from ops.health import Snapshot
 from ops.pipeline_runs import PipelineRun
 from utils.jsonl_utils import read_jsonl
-from web_search_mcp.exchange_log import ExchangeLog
 
 PRINT_TIMING = re.compile(r"print_timing:.*\|\s+(prompt eval time|eval time)\s+=\s+([\d.]+) ms /\s+(\d+) tokens")
 OLLAMA_TIMESTAMP = re.compile(r"time=(\d{4}-\d{2}-\d{2})")

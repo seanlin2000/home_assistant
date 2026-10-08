@@ -6,10 +6,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-import httpx
-
 from assistant_core import agent_loop
-from assistant_core.exchange_record import ExchangeRecord, exchange_record_from_transcript
 from assistant_core.models import AgentEvent, AgentPolicy, AnswerDelta, Done, FillerSpoken, Message, Role, ToolCall, ToolStarted, Transcript
 from assistant_core.prompts import ACKNOWLEDGEMENT_REPLY, REPEAT_REQUEST_REPLY, SILENCE_MARKER
 from tests.fakes import FakeToolBox, ScriptedLLM, text_reply, tool_replies_past_the_cap
@@ -81,11 +78,10 @@ async def test_silent_reply_streams_no_content_and_no_fallback() -> None:
     assert deltas == [{"role": "assistant"}]
 
 
-def test_policy_from_settings_overrides_only_what_is_set() -> None:
-    policy = adapter.policy_from_settings({"temperature": "0.3", "word_budget": 150, "think": True})
-    defaults = AgentPolicy()
-    assert (policy.temperature, policy.word_budget, policy.think) == (0.3, 150, True)
-    assert (policy.max_tool_rounds, policy.context_tokens, policy.tool_timeout_seconds) == (defaults.max_tool_rounds, defaults.context_tokens, defaults.tool_timeout_seconds)
+async def test_an_unreachable_harness_is_announced_rather_than_silent() -> None:
+    question = [Message(role=Role.USER, content="What's the weather?")]
+    deltas = await collect(adapter.harness_unreachable(question, "connection refused"))
+    assert deltas == [{"role": "assistant"}, {"content": adapter.HARNESS_UNREACHABLE_ANSWER}]
 
 
 async def test_on_done_receives_the_transcript_before_the_stream_ends() -> None:
@@ -94,36 +90,6 @@ async def test_on_done_receives_the_transcript_before_the_stream_ends() -> None:
     deltas = [delta async for delta in adapter.agent_events_to_deltas(events_from([AnswerDelta(text="Done."), Done(transcript=transcript)]), on_done=seen.append)]
     assert seen == [transcript]
     assert deltas[-1] == {"content": "Done."}
-
-
-def record_for_test() -> ExchangeRecord:
-    return exchange_record_from_transcript(Transcript(model="m", system_prompt="", conversation=[], final_answer="It is 30."))
-
-
-async def test_post_exchange_record_sends_json_and_reports_success() -> None:
-    received = {}
-
-    def handler(request: httpx.Request) -> httpx.Response:
-        received["url"] = str(request.url)
-        received["body"] = request.read()
-        return httpx.Response(204)
-
-    async with httpx.AsyncClient(transport=httpx.MockTransport(handler)) as client:
-        assert await adapter.post_exchange_record(client, "http://mac:8765/exchanges", record_for_test()) is True
-    assert received["url"] == "http://mac:8765/exchanges"
-    assert ExchangeRecord.model_validate_json(received["body"]).final_answer == "It is 30."
-
-
-async def test_post_exchange_record_swallows_every_failure() -> None:
-    def refuse(request: httpx.Request) -> httpx.Response:
-        raise httpx.ConnectError("connection refused")
-
-    def reject(request: httpx.Request) -> httpx.Response:
-        return httpx.Response(503, json={"error": "not configured"})
-
-    for transport in (httpx.MockTransport(refuse), httpx.MockTransport(reject)):
-        async with httpx.AsyncClient(transport=transport) as client:
-            assert await adapter.post_exchange_record(client, "http://mac:8765/exchanges", record_for_test()) is False
 
 
 def reply(answer: str, stayed_silent: bool = False) -> Transcript:

@@ -1,8 +1,8 @@
 """Pure translation between Home Assistant's chat log vocabulary and assistant_core's, kept free of Home Assistant imports so it is unit-testable in the project venv.
 
 Home Assistant hands the agent a chat log of typed content objects and expects a stream of delta dictionaries back. assistant_core speaks Message
-objects in and AgentEvent objects out. Everything the entity does is these two conversions, the policy mapping, and the decision whether to listen
-for a follow-up.
+objects in and AgentEvent objects out. Everything the entity does is these two conversions, the answer it gives when the harness is down, and the
+decision whether to listen for a follow-up.
 """
 
 import logging
@@ -10,15 +10,13 @@ from collections import OrderedDict
 from collections.abc import AsyncIterator, Callable
 from typing import Any, Protocol
 
-import httpx
-
-from assistant_core.exchange_record import ExchangeRecord
-from assistant_core.models import AgentEvent, AgentPolicy, AnswerDelta, Done, FillerSpoken, Message, Role, Transcript
+from assistant_core.models import AgentEvent, AnswerDelta, Done, FillerSpoken, Message, Role, Transcript
 from assistant_core.prompts import ACKNOWLEDGEMENT_REPLY
 
 _LOGGER = logging.getLogger(__name__)
 
 EMPTY_ANSWER_FALLBACK = "Sorry, I could not come up with an answer to that."
+HARNESS_UNREACHABLE_ANSWER = "I can't reach the assistant right now."
 
 
 class ChatContent(Protocol):
@@ -78,37 +76,17 @@ def log_transcript(transcript: Transcript) -> None:
         )
 
 
-EXCHANGE_RECORD_TIMEOUT_SECONDS = 3.0
-
-
-async def post_exchange_record(client: httpx.AsyncClient, url: str, record: ExchangeRecord, timeout: float = EXCHANGE_RECORD_TIMEOUT_SECONDS) -> bool:
-    """Send one exchange's record to the tool server's /exchanges route (design doc 10 §3.4). Best effort: every failure is logged at debug level and swallowed,
-    because a missing log line must never cost the user an answer or a warning in Home Assistant's log."""
-    try:
-        response = await client.post(url, content=record.model_dump_json(), headers={"content-type": "application/json"}, timeout=timeout)
-    except Exception as error:  # noqa: BLE001 - anything from a refused connection to a cancelled loop
-        _LOGGER.debug("studio_assistant: exchange record not posted to %s (%s)", url, error)
-        return False
-    if response.status_code != 204:
-        _LOGGER.debug("studio_assistant: exchange record rejected by %s with %s: %s", url, response.status_code, response.text[:200])
-        return False
-    return True
-
-
-def policy_from_settings(settings: dict[str, Any], defaults: AgentPolicy | None = None) -> AgentPolicy:
-    """Build the loop policy from the config entry's merged data and options, falling back to the core defaults for anything unset."""
-    base = defaults or AgentPolicy()
-    return base.model_copy(
-        update={
-            "temperature": float(settings.get("temperature", base.temperature)),
-            "word_budget": int(settings.get("word_budget", base.word_budget)),
-            "max_tool_rounds": int(settings.get("max_tool_rounds", base.max_tool_rounds)),
-            "context_tokens": int(settings.get("context_tokens", base.context_tokens)),
-            "max_output_tokens": int(settings.get("max_output_tokens", base.max_output_tokens)),
-            "think": settings.get("think", base.think),
-            "tool_timeout_seconds": float(settings.get("tool_timeout_seconds", base.tool_timeout_seconds)),
-        }
+def harness_unreachable(conversation: list[Message], error: str) -> AsyncIterator[AgentEvent]:
+    """The events of an answer that says the harness is down, so the user hears why instead of silence (design doc v2/04 section 6)."""
+    return events_of(
+        AnswerDelta(text=HARNESS_UNREACHABLE_ANSWER),
+        Done(transcript=Transcript(model="", system_prompt="", conversation=list(conversation), spoken_text=HARNESS_UNREACHABLE_ANSWER, final_answer=HARNESS_UNREACHABLE_ANSWER, error=error)),
     )
+
+
+async def events_of(*events: AgentEvent) -> AsyncIterator[AgentEvent]:
+    for event in events:
+        yield event
 
 
 MAX_TRACKED_CONVERSATIONS = 32

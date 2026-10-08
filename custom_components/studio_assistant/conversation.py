@@ -1,4 +1,5 @@
-"""The conversation entity: Home Assistant's Assist pipeline calls it with the transcript and a chat log, and it streams the agent's spoken answer back."""
+"""The conversation entity: Home Assistant's Assist pipeline calls it with the transcript and a chat log; it sends the conversation to the harness on
+the Mac and streams the spoken answer back (design doc v2/04 section 3.2)."""
 
 from __future__ import annotations
 
@@ -6,6 +7,7 @@ import logging
 from collections.abc import AsyncIterator
 from typing import Literal
 
+import httpx
 from homeassistant.components import conversation
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
@@ -13,14 +15,12 @@ from homeassistant.helpers.device_registry import DeviceEntryType, DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.httpx_client import get_async_client
 
-from assistant_core import agent_loop
-from assistant_core.exchange_record import exchange_record_from_transcript, exchanges_url_from_mcp_url
-from assistant_core.llm_client import OllamaClient
-from assistant_core.mcp_http import HttpMcpToolBox
-from assistant_core.models import AgentEvent, ToolCall, Transcript
+from assistant_core.converse_protocol import ConverseRequest
+from assistant_core.harness_client import HarnessClient
+from assistant_core.models import AgentEvent, Transcript
 
 from . import adapter
-from .const import CONF_CONTINUE_CONVERSATION, CONF_MAX_FOLLOW_UPS, CONF_MCP_URL, CONF_MODEL, CONF_OLLAMA_URL, DEFAULT_CONTINUE_CONVERSATION, DEFAULT_MAX_FOLLOW_UPS, DOMAIN
+from .const import CONF_CONTINUE_CONVERSATION, CONF_HARNESS_API_KEY, CONF_HARNESS_URL, CONF_MAX_FOLLOW_UPS, DEFAULT_CONTINUE_CONVERSATION, DEFAULT_MAX_FOLLOW_UPS, DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -44,7 +44,7 @@ class StudioAssistantEntity(conversation.ConversationEntity):
             identifiers={(DOMAIN, entry.entry_id)},
             name=entry.title,
             manufacturer="studio_assistant",
-            model="assistant_core agent loop",
+            model="assistant harness client",
             entry_type=DeviceEntryType.SERVICE,
         )
         settings = {**entry.data, **entry.options}
@@ -59,6 +59,8 @@ class StudioAssistantEntity(conversation.ConversationEntity):
 
     async def async_added_to_hass(self) -> None:
         await super().async_added_to_hass()
+        settings = {**self.entry.data, **self.entry.options}
+        self._harness = HarnessClient(settings[CONF_HARNESS_URL], settings[CONF_HARNESS_API_KEY], client=get_async_client(self.hass))
         conversation.async_set_agent(self.hass, self.entry, self)
 
     async def async_will_remove_from_hass(self) -> None:
@@ -76,43 +78,17 @@ class StudioAssistantEntity(conversation.ConversationEntity):
         return conversation.ConversationResult(response=result.response, conversation_id=result.conversation_id, continue_conversation=keep_listening)
 
     async def _stream_answer_into(self, chat_log: conversation.ChatLog) -> Transcript:
-        """Run the agent loop and stream its spoken answer into the chat log; return the exchange's transcript."""
-        settings = {**self.entry.data, **self.entry.options}
+        """Ask the harness and stream its spoken answer into the chat log; return the exchange's transcript."""
         history = adapter.chat_log_to_conversation(chat_log.content)
-        # Built off the event loop: the underlying httpx client loads the CA bundle from disk when it is created, which Home Assistant flags as a blocking call.
-        llm = await self.hass.async_add_executor_job(OllamaClient, settings[CONF_MODEL], settings[CONF_OLLAMA_URL], "30m")
-        policy = adapter.policy_from_settings(settings)
+        request = ConverseRequest(conversation_id=chat_log.conversation_id, conversation=history)
         try:
-            async with HttpMcpToolBox(settings[CONF_MCP_URL], client=get_async_client(self.hass), timeout_seconds=policy.tool_timeout_seconds) as tools:
-                return await self._stream_events(chat_log, agent_loop.run(history, llm, tools, policy))
-        except Exception as error:  # the tool server being down must not silence the assistant
-            _LOGGER.warning("studio_assistant: search tool unavailable (%s); answering without it", error)
-            return await self._stream_events(chat_log, agent_loop.run(history, llm, UnavailableToolBox(), policy))
+            return await self._stream_events(chat_log, self._harness.converse(request))
+        except httpx.HTTPError as error:  # the harness being down must not silence the assistant
+            _LOGGER.warning("studio_assistant: harness unavailable (%s)", error)
+            return await self._stream_events(chat_log, adapter.harness_unreachable(history, str(error)))
 
     async def _stream_events(self, chat_log: conversation.ChatLog, events: AsyncIterator[AgentEvent]) -> Transcript:
         finished: list[Transcript] = []
-
-        def on_done(transcript: Transcript) -> None:
-            finished.append(transcript)
-            self._record_exchange(transcript)
-
-        async for _content in chat_log.async_add_delta_content_stream(self.entity_id, adapter.agent_events_to_deltas(events, on_done=on_done)):
+        async for _content in chat_log.async_add_delta_content_stream(self.entity_id, adapter.agent_events_to_deltas(events, on_done=finished.append)):
             pass
         return finished[-1]
-
-    def _record_exchange(self, transcript: Transcript) -> None:
-        """Called when the agent loop finishes an exchange. The post runs as a background task so the spoken answer is never held up by logging."""
-        settings = {**self.entry.data, **self.entry.options}
-        url = exchanges_url_from_mcp_url(settings[CONF_MCP_URL])
-        record = exchange_record_from_transcript(transcript, source="home_assistant")
-        self.hass.async_create_background_task(adapter.post_exchange_record(get_async_client(self.hass), url, record), name="studio_assistant exchange record")
-
-
-class UnavailableToolBox:
-    """A tool box with no tools, used when the MCP server cannot be reached so the model answers from knowledge with the loop's caveat."""
-
-    async def list_tools(self) -> list:
-        return []
-
-    async def call(self, call: ToolCall) -> str:
-        raise ConnectionError("tool server unavailable")

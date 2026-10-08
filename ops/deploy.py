@@ -40,18 +40,23 @@ class Rule(BaseModel):
 RULES: tuple[Rule, ...] = (
     Rule(
         prefixes=("uv.lock", "pyproject.toml"),
-        actions=("sync_env", "restart:mcp", "restart:whisper", "restart:kokoro"),
+        actions=("sync_env", "restart:mcp", "restart:harness", "restart:whisper", "restart:kokoro"),
         why="dependencies changed: sync the venv and restart every long-running Python service",
     ),
     Rule(prefixes=("web_search_mcp/", "calculator_mcp/", "weather_mcp/", "assistant_core/", "utils/"), actions=("restart:mcp",), why="tool server code changed"),
-    Rule(prefixes=("custom_components/", "assistant_core/"), actions=("deploy_component",), why="the component or its vendored core changed"),
-    Rule(prefixes=("config/serving.toml", "serving/"), actions=("restart:llama",), why="llama-server's settings or its launcher changed"),
+    Rule(prefixes=("assistant_core/", "assistant_service/", "config/harness.toml", "utils/"), actions=("restart:harness",), why="the harness's code or settings changed"),
+    Rule(prefixes=("custom_components/", *paths.VENDORED_CORE_FILES), actions=("deploy_component",), why="the component or its vendored core changed"),
+    Rule(
+        prefixes=("config/serving.toml", "serving/"),
+        actions=("restart:llama", "restart:harness"),
+        why="llama-server's settings or its launcher changed; the harness reads the model's budget from them",
+    ),
     Rule(prefixes=("voice/",), actions=("restart:kokoro",), why="Kokoro server wrapper changed"),
     Rule(prefixes=("scripts/services.sh",), actions=("reinstall_agents",), why="launchd definitions changed"),
     Rule(prefixes=("docker/searxng/",), actions=("restart_searxng",), why="SearXNG configuration changed"),
 )
-ACTION_ORDER = ("sync_env", "reinstall_agents", "restart:llama", "restart:mcp", "restart:kokoro", "restart:whisper", "restart_searxng", "deploy_component")
-RESTARTS_COVERED_BY_REINSTALL = {"restart:llama", "restart:mcp", "restart:kokoro", "restart:whisper"}
+ACTION_ORDER = ("sync_env", "reinstall_agents", "restart:llama", "restart:mcp", "restart:harness", "restart:kokoro", "restart:whisper", "restart_searxng", "deploy_component")
+RESTARTS_COVERED_BY_REINSTALL = {"restart:llama", "restart:mcp", "restart:harness", "restart:kokoro", "restart:whisper"}
 
 
 class Plan(BaseModel):

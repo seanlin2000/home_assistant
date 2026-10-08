@@ -12,8 +12,6 @@ from pydantic import BaseModel, Field
 
 from assistant_core.models import GenerationStats, Role, RouteDecision, ToolCallRecord, Transcript
 
-EXCHANGES_ROUTE = "/exchanges"
-
 
 class ToolCallSummary(BaseModel):
     round_index: int
@@ -88,11 +86,3 @@ def exchange_record_from_transcript(transcript: Transcript, source: str = "home_
         malformed_tool_call_count=len(transcript.malformed_tool_calls),
         error=transcript.error,
     )
-
-
-def exchanges_url_from_mcp_url(mcp_url: str) -> str:
-    """The tool server's record route lives beside its MCP endpoint: http://host:8765/mcp -> http://host:8765/exchanges."""
-    base = mcp_url.rstrip("/")
-    if base.endswith("/mcp"):
-        base = base[: -len("/mcp")]
-    return base + EXCHANGES_ROUTE
