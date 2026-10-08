@@ -89,7 +89,7 @@ v2 holds only the docs that change or are new. Voice, Home Assistant, music, and
 4. llama-server runs Gemma 4 on the Mac's GPU, reachable only from the Mac itself. When the model asks for tools, the harness speaks a short filler sentence, checks each call against the security rules (doc 12), and runs it on the MCP tool server. A question may take several tool rounds: a forecast, another forecast, then the calculator.
 5. A tool result from the open web marks the exchange as untrusted, and so does a past summary that carries that mark. From then on no tool call may carry a private detail out.
 6. The answer streams back through the thin client to Kokoro, which speaks it on the puck. As in v1, the puck then listens briefly for a follow-up.
-7. When the conversation ends, a separate model call with no tools writes a short summary of it. Code checks the summary, skips conversations with nothing worth keeping, and saves the rest as one note per conversation. A conversation that was marked untrusted keeps the mark on its note.
+7. When the conversation ends, a separate llama.cpp request with no tools writes a short summary of it. Code checks the summary, skips conversations with nothing worth keeping, and saves the rest as one note per conversation. A conversation that was marked untrusted keeps the mark on its note.
 
 ## 4. What v2 changes, doc by doc
 
@@ -97,9 +97,9 @@ v2 holds only the docs that change or are new. Voice, Home Assistant, music, and
 |---|---|---|---|
 | 00 System overview | this doc | v1/00 | The harness on the Mac, milestones, costs, privacy |
 | 01 LLM benchmark | to be written | v1/01 | Question set 2.0: several tools per question, memory recall, injection, weather anywhere, sports |
-| 02 Inference engine | to be written | v1/02 | llama-server instead of Ollama; serving settings in one file; prompt caching |
+| 02 Inference engine | [02_inference_engine.md](02_inference_engine.md) | v1/02 | llama-server instead of Ollama; serving settings in one file; prompt caching |
 | 03 Tool server | to be written | v1/03 | Weather anywhere, sports, a Reddit reader, output hygiene |
-| 04 Agent harness | to be written | v1/04 | A Mac service; several tools per question; a context budget per model |
+| 04 Agent harness | [04_agent_harness.md](04_agent_harness.md) | v1/04 | A Mac service; several tools per question; a context budget per model |
 | 05 Voice pipeline | | v1/05 still applies | Unchanged |
 | 06 Home Assistant core | | v1/06 still applies | Unchanged, apart from the thin client (doc 04) |
 | 07 Music | | v1/07 still applies | Unchanged |
@@ -130,10 +130,10 @@ v2 holds only the docs that change or are new. Voice, Home Assistant, music, and
 
 | Decision | Closes in | How |
 |---|---|---|
-| Whether llama-server's tool calling works for Gemma 4 E4B | Before doc 02 | A one-to-two-hour trial on the laptop: one tool call, a multi-turn tool exchange, and cold versus warm time to first token. If it fails, M1 stays on Ollama until a fixed release. |
+| Whether llama-server's tool calling works for Gemma 4 E4B | Closed 2026-10-08 | A trial on the laptop: every tool call well formed, including a second tool call in one conversation. The real gain is the prompt order, not the engine (doc 02 §3.2). |
 | The context window per model | M1 | Measured: the memory left free on each machine, and where the benchmark shows answers stay good. v1 used 16,384 tokens; E4B accepts 128K. |
 | Which Mac | Doc 08 | Benchmark pass 5 pointed at a 26B or 35B mixture-of-experts model on a 32 GB machine; doc 08 weighs a Mac mini against a Mac Studio. |
-| Who keeps the conversation history | Doc 04 | Home Assistant's chat log, or a session store in the harness. |
+| Who keeps the conversation history | Closed in doc 04 | Home Assistant's chat log stays the record; the harness keeps only the trust mark, the compaction summary, and when the conversation was last used (doc 04 §3.5). |
 | Whether oMLX replaces llama-server | M9 | Re-measured on the new Mac, built from source at a pinned commit, against the same benchmark. |
 
 ## 7. Costs
@@ -169,12 +169,12 @@ Each milestone keeps the benchmark and the product on the same code, and none ma
 
 | # | Milestone | Done when |
 |---|---|---|
-| M1 | Engine swap: llama-server replaces Ollama, after an Ollama baseline | Question set 1.4 scores at least Ollama's minus noise; malformed tool calls no more often than on Ollama; empty answers rarer than one in seven; median warm time to first token at most half of Ollama's |
+| M1 | Engine swap: llama-server replaces Ollama, after an Ollama baseline | Question set 1.4 scores at least Ollama's minus noise; malformed tool calls no more often than on Ollama; empty answers rarer than one in seven; median time to the first spoken word at most half of Ollama's; in nine questions out of ten the first llama.cpp request reads at most 600 prompt tokens fresh |
 | M2 | The harness becomes a service on the Mac; the component becomes a thin client | The same gates through the service; `ops.smoke` passes; the first spoken word comes at most 150 ms later than in-process |
 | M3 | Security baseline: trust marks, the egress guard, `fetch_page` provenance, output hygiene | No injected instruction followed and no unprovenanced URL fetched in the injection category |
 | M4 | Weather anywhere | Every weather-anywhere question finds the right place and calls the forecast |
 | M5 | Several tools per question | A required tool is missed in at most one question in eight of the multi-tool category |
-| M6 | Memory v1: a summary per conversation, the full-text index, retrieval, `search_memory` | At least 80% of the memory-recall questions answered right; no untrusted summary saved without its mark and no private detail in a tool call; warm time to first token at most 10% slower |
+| M6 | Memory v1: a summary per conversation, the full-text index, retrieval, `search_memory` | At least 80% of the memory-recall questions answered right; no untrusted summary saved without its mark and no private detail in a tool call; the first spoken word at most 10% later |
 | M7 | Sports statistics | Answers match the fixture data |
 
 **After the new Mac**
@@ -188,7 +188,7 @@ Each milestone keeps the benchmark and the product on the same code, and none ma
 
 ## 10. Risks
 
-- **Memory on the 16 GB laptop.** llama-server's cache slots, an embedding model later, and the Home Assistant VM must fit together.
+- **Memory on the 16 GB laptop.** llama-server's model and prompt cache, an embedding model later, and the Home Assistant VM must fit together.
 - **The small model may not chain tools reliably.** Gemma 4 E4B is widely reported as weak at multi-step tool calling; M5 could miss its target for the model's sake, not the harness's, until the bigger model arrives.
 - **Gemma 4 tool-call bugs.** Every engine has had them; the harness keeps malformed calls out of the history and caps retries.
 - **Anyone the puck hears can use memory.** There is no speaker identification, so a visitor or a television can ask what was said before. Nothing financial or otherwise sensitive goes into a summary, and you curate the notes.
@@ -200,7 +200,7 @@ Each milestone keeps the benchmark and the product on the same code, and none ma
 
 **Harness.** The code around a model: it builds the prompt, offers tools, runs the tools the model asks for, enforces limits, and decides what is remembered. With a small model, a better harness buys more capability than a bigger prompt.
 
-**Prompt cache.** A model reads the whole prompt before writing anything, and on this laptop that costs seconds per thousand tokens. llama-server keeps what it computed for the last prompt and reuses the longest identical beginning, so a prompt that keeps its stable parts first and its changing parts last is mostly free to read again.
+**Prompt cache.** A model reads the whole prompt before writing anything, and on this laptop that costs seconds per thousand tokens. llama-server keeps what it computed for recent prompts and reuses the longest identical beginning, so a prompt that keeps its stable parts first and its changing parts last is mostly free to read again.
 
 **Context window.** The most text the model can consider at once, counted in tokens. A larger window costs memory and time, and small models answer worse well before they reach their advertised limit.
 

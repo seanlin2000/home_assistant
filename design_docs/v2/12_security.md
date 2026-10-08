@@ -97,7 +97,7 @@ Email, Reddit threads, and X posts are written by strangers on purpose, so their
 | Instructions | A fixed extraction prompt: what to pull out, nothing else |
 | Input | The question and the raw text; no memory, no conversation, no tools |
 | Output | Forced into a JSON schema by llama-server, for example `{"headline": "…", "points": ["…"], "dates": []}` |
-| Cache | Its own slot, so the conversation's cached prompt is not disturbed |
+| Cache | Runs in llama-server's second slot, so the conversation's cached prompt in the first is untouched (doc 02 §3.4) |
 
 The harness checks the fields' lengths and passes only those fields to the main model, quoted as data, and the exchange is marked untrusted. A crafted email can still make the summary wrong. It cannot call a tool, and it never sees anything private. Each read costs one extra model call, a few seconds on the small model, which is why web search does not go through it: the trust mark and the egress guard cover the web, and spoken questions cannot afford the delay.
 
