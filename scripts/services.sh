@@ -1,21 +1,23 @@
 #!/usr/bin/env bash
 # Install, start, stop, and inspect the native macOS services that Home Assistant talks to over the LAN.
 #
-#   scripts/services.sh install      write launchd agents for whisper, kokoro, mcp, ollama (LAN binding) and the 5-minute health check, and load them
+#   scripts/services.sh install      write launchd agents for whisper, kokoro, mcp, ollama (LAN binding), llama-server (127.0.0.1) and the 5-minute health check, and load them
 #   scripts/services.sh start|stop   load/unload the agents
-#   scripts/services.sh restart NAME restart one agent (ollama|mcp|whisper|kokoro|health)
+#   scripts/services.sh restart NAME restart one agent (ollama|llama|mcp|whisper|kokoro|health)
 #   scripts/services.sh status       show what is listening on each port and the last health snapshot
-#   scripts/services.sh logs NAME    tail a service log (whisper|kokoro|mcp|ollama|health)
+#   scripts/services.sh logs NAME    tail a service log (whisper|kokoro|mcp|ollama|llama|health)
 #   scripts/services.sh uninstall    unload and remove the agents
 #
-# Ports: Ollama 11434, Whisper 10300, Kokoro 10210, MCP 8765 (design_docs/v1/08 section 7). Everything binds 0.0.0.0 so the VM can reach it.
+# Ports: Ollama 11434, Whisper 10300, Kokoro 10210, MCP 8765 (design_docs/v1/08 section 7) bind 0.0.0.0 so the VM can reach them. llama-server binds
+# 127.0.0.1:8090 with an API key, from config/serving.toml (design_docs/v2/08 section 3.2).
 set -euo pipefail
 
 PROJECT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 AGENTS_DIR="$HOME/Library/LaunchAgents"
 LOG_DIR="$HOME/Library/Logs/studio-assistant"
 PREFIX="com.studio-assistant"
-SERVICES=(ollama mcp whisper kokoro health)
+SERVICES=(ollama llama mcp whisper kokoro health)
+APP_SUPPORT_DIR="$HOME/Library/Application Support/studio-assistant"
 HEALTH_INTERVAL_SECONDS="${HEALTH_INTERVAL_SECONDS:-300}"
 UNLOAD_TIMEOUT_SECONDS="${UNLOAD_TIMEOUT_SECONDS:-30}"
 OLLAMA_BIN="$(command -v ollama || echo /opt/homebrew/bin/ollama)"
@@ -92,6 +94,16 @@ prepare_kokoro() {
     fi
 }
 
+ensure_api_key() {
+    # $1 the key's name. Made once, readable only by this user, and kept on later installs; delete the file to change the key (design_docs/v2/10 section 3.2).
+    local path="$APP_SUPPORT_DIR/$1.key"
+    mkdir -p "$APP_SUPPORT_DIR"
+    if [[ ! -s "$path" ]]; then
+        (umask 077 && openssl rand -hex 32 >"$path")
+        echo "made $path"
+    fi
+}
+
 install_agents() {
     mkdir -p "$AGENTS_DIR" "$LOG_DIR"
     prepare_kokoro
@@ -104,6 +116,10 @@ install_agents() {
     brew services stop ollama >/dev/null 2>&1 || true
     ENV_KEYS=(OLLAMA_HOST OLLAMA_KEEP_ALIVE OLLAMA_MAX_LOADED_MODELS) ENV_VALUES=(0.0.0.0:11434 -1 1)
     write_plist ollama "$OLLAMA_BIN" serve
+    # llama-server: the launcher checks the model's hash and replaces itself with llama-server, so launchd supervises the server directly.
+    ensure_api_key llama-server
+    ENV_KEYS=() ENV_VALUES=()
+    write_plist llama "$PROJECT_DIR/.venv/bin/serving" launch
     # Bound to the LAN, the tool server answers only requests that name this machine (Host header); a web page cannot reach it by DNS rebinding.
     # WEB_SEARCH_ALLOWED_HOSTS in the environment overrides the derived list (the mini's interface may not be en0). Rerun install after an address change.
     local lan_address
@@ -186,7 +202,7 @@ status() {
     for name in "${SERVICES[@]}"; do
         agent_loaded "$name" || echo "$name: agent NOT loaded"
     done
-    local ports=("ollama:11434" "mcp:8765" "whisper:10300" "kokoro:10210")
+    local ports=("ollama:11434" "llama:8090" "mcp:8765" "whisper:10300" "kokoro:10210")
     for entry in "${ports[@]}"; do
         local name="${entry%%:*}" port="${entry##*:}"
         if lsof -nP -iTCP:"$port" -sTCP:LISTEN >/dev/null 2>&1; then

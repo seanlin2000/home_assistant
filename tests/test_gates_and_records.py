@@ -49,7 +49,7 @@ def test_category_d_questions_declare_their_expected_reply() -> None:
 
 def test_config_candidates_run_locally_or_by_hand_so_no_run_spends_paid_api_credit() -> None:
     config = load_config(Path("benchmark/config.yaml"))
-    assert {candidate.provider for candidate in config.candidates} <= {"ollama", "manual"}
+    assert {candidate.provider for candidate in config.candidates} <= {"ollama", "llama-server", "manual"}
     assert config.policy.max_tool_rounds == 4
     with pytest.raises(ValidationError):
         Candidate(key="api", label="API model", provider="anthropic", model="any")

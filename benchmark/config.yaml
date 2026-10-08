@@ -33,6 +33,12 @@ candidates:
     provider: ollama
     model: gemma4:e4b-it-qat
     think: false
+  # llama-server: the model is the table key in config/serving.toml; start the server with `uv run serving launch` before the run.
+  - key: gemma4-e4b-llama
+    label: Gemma 4 E4B, QAT q4_0, on llama-server (prompt 2.0)
+    provider: llama-server
+    model: gemma-4-e4b
+    think: false
   - key: qwen3.5-9b
     label: Qwen 3.5 9B, Q4_K_M
     provider: ollama

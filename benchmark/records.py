@@ -98,7 +98,7 @@ def load_questions(path: Path) -> QuestionSet:
 class Candidate(BaseModel):
     key: str
     label: str
-    provider: Literal["ollama", "manual"]
+    provider: Literal["ollama", "llama-server", "manual"]  # llama-server: the model config/serving.toml serves, named by its table key
     model: str
     think: bool | str | None = None
     preview: bool = False

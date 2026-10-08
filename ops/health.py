@@ -26,7 +26,8 @@ from utils.jsonl_utils import append_jsonl
 from web_search_mcp.exchange_log import ExchangeLog
 
 LAUNCHD_PREFIX = "com.studio-assistant"
-LAUNCHD_SERVICES = ("ollama", "mcp", "whisper", "kokoro")
+LAUNCHD_SERVICES = ("ollama", "llama", "mcp", "whisper", "kokoro")
+LLAMA_SERVER_PROCESS = "llama-server"
 DEFAULT_VM_NAME = "Home Assistant"
 PROJECT_DIR = Path(__file__).resolve().parent.parent
 SNAPSHOT_HISTORY_DAYS = 90
@@ -91,6 +92,7 @@ class Action(BaseModel):
 
 class Settings(BaseModel):
     ollama_url: str = "http://127.0.0.1:11434"
+    llama_server_url: str = "http://127.0.0.1:8090"
     mcp_url: str = "http://127.0.0.1:8765"
     whisper_port: int = 10300
     kokoro_port: int = 10210
@@ -118,6 +120,7 @@ async def run_checks(settings: Settings, full: bool = False) -> dict[str, Check]
     async with httpx.AsyncClient(timeout=settings.probe_timeout_seconds) as client:
         results = await asyncio.gather(
             timed("ollama", check_ollama(client, settings)),
+            timed("llama", check_llama_server(client, settings)),
             timed("mcp", check_mcp(client, settings)),
             timed("whisper", check_tcp("127.0.0.1", settings.whisper_port, settings.probe_timeout_seconds)),
             timed("kokoro", check_tcp("127.0.0.1", settings.kokoro_port, settings.probe_timeout_seconds)),
@@ -147,6 +150,16 @@ async def check_ollama(client: httpx.AsyncClient, settings: Settings) -> Check:
     if response.status_code != 200:
         return Check(ok=False, detail=f"HTTP {response.status_code}")
     return Check(ok=True, detail=f"ollama {response.json().get('version', '?')}")
+
+
+async def check_llama_server(client: httpx.AsyncClient, settings: Settings) -> Check:
+    """llama-server's /health needs no key: 200 once the model is loaded, 503 while it loads, which is neither healthy nor a failure."""
+    response = await client.get(f"{settings.llama_server_url}/health")
+    if response.status_code == httpx.codes.SERVICE_UNAVAILABLE:
+        return Check(ok=None, detail="loading the model")
+    if response.status_code != httpx.codes.OK:
+        return Check(ok=False, detail=f"HTTP {response.status_code}")
+    return Check(ok=True, detail="model loaded")
 
 
 async def check_mcp(client: httpx.AsyncClient, settings: Settings) -> Check:
@@ -227,7 +240,21 @@ def read_memory(settings: Settings) -> Memory:
         memory.resident_model_mb = round(sum(model.get("size", 0) for model in models) / 1e6, 1) if models else 0.0
     except (httpx.HTTPError, ValueError):
         pass
+    add_llama_server_memory(memory)
     return memory
+
+
+def add_llama_server_memory(memory: Memory) -> None:
+    """llama-server's resident memory: the weights, the KV pool, and the prompt cache in RAM (design doc v2/08 section 3.3)."""
+    try:
+        pids = subprocess.run(["pgrep", "-x", LLAMA_SERVER_PROCESS], capture_output=True, text=True, timeout=10).stdout.split()
+        if not pids:
+            return
+        resident_kb = sum(int(value) for value in subprocess.run(["ps", "-o", "rss=", "-p", ",".join(pids)], capture_output=True, text=True, timeout=10).stdout.split())
+    except (OSError, subprocess.SubprocessError, ValueError):
+        return
+    memory.resident_models.append(LLAMA_SERVER_PROCESS)
+    memory.resident_model_mb = round((memory.resident_model_mb or 0.0) + resident_kb / 1024, 1)
 
 
 def parse_memory_pressure(text: str) -> int | None:

@@ -86,6 +86,8 @@ REQUIRED_TOOL_NAMES = frozenset({"search_and_read", "web_search", "fetch_page", 
 class GenerationStats(BaseModel):
     model: str
     prompt_tokens: int | None = None
+    fresh_prompt_tokens: int | None = None  # read from nothing on this request; the rest came from the prompt cache
+    cached_prompt_tokens: int | None = None
     output_tokens: int | None = None
     time_to_first_token_seconds: float | None = None
     total_seconds: float
@@ -93,6 +95,7 @@ class GenerationStats(BaseModel):
     generation_seconds: float | None = None
     load_seconds: float | None = None
     stop_reason: str | None = None
+    slot: int | None = None  # the llama-server slot the request was pinned to; None on Ollama
 
 
 class TextDelta(BaseModel):
