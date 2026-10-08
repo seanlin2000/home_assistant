@@ -153,7 +153,7 @@ Open http://192.168.1.156 in a browser. Sign in with `HA_ADMIN_USER` and `HA_ADM
 Worth a look:
 
 - **Settings → Devices & services.** The Wyoming Protocol card holds Whisper, Kokoro, Piper, and openWakeWord; Studio Assistant is our component; Music Assistant is the music layer for later. (Two duplicate Wyoming entries, "mlx-whisper" and "kokoro", were created by a setup rerun; delete them from the entry's three-dot menu.)
-- **Settings → Voice assistants.** The "Jarvis" pipeline: speech to text `mlx-whisper`, conversation agent Studio Assistant, text to speech Piper. Click it to see or change any stage. Switch text to speech to Kokoro here if you want to compare voices.
+- **Settings → Voice assistants.** The "Jarvis" pipeline: speech to text `mlx-whisper`, conversation agent Studio Assistant, text to speech Kokoro with the voice `bm_fable`. Click it to see or change any stage. Switch text to speech to Piper, or Kokoro to another voice, here if you want to compare voices.
 - **Settings → Add-ons.** Samba (how we copy the component in), Piper, openWakeWord, Music Assistant, ESPHome (for the puck later).
 - **Settings → System → Logs.** Where component errors show up. Look for `studio_assistant`.
 
@@ -195,8 +195,8 @@ In a second terminal, `ollama ps` shows the model resident while an answer strea
 
 There is no puck yet, but you can speak to the pipeline two ways:
 
-- **Home Assistant Companion app** (iPhone or Android) on the same Wi-Fi. Add the server at http://192.168.1.156, sign in, then tap the Assist icon and hold the microphone. It uses the Jarvis pipeline: Whisper on the Mac hears you, the agent answers, Piper speaks. This is the closest thing to the puck experience.
-- **Typed text with spoken reply** from the browser Assist window: type a question and Piper's audio plays in the browser.
+- **Home Assistant Companion app** (iPhone or Android) on the same Wi-Fi. Add the server at http://192.168.1.156, sign in, then tap the Assist icon and hold the microphone. It uses the Jarvis pipeline: Whisper on the Mac hears you, the agent answers, Kokoro speaks. This is the closest thing to the puck experience.
+- **Typed text with spoken reply** from the browser Assist window: type a question and Kokoro's audio plays in the browser.
 
 What to listen for: how soon the filler sentence starts after you stop talking (target under 1.5 s on the final hardware; on this Mac with the model warm it is around 2 to 3 s), and whether the answer sounds like a person talking rather than a document.
 
@@ -221,7 +221,7 @@ Ollama and the tool server are small and always stay running.
 | Assist answers "Sorry, I couldn't understand that" | pipeline could not reach the agent | Settings → System → Logs for `studio_assistant`; is Ollama up on the Mac? |
 | Answer says it could not check the web | the tool server was unreachable from the VM | `curl http://192.168.1.152:8765/mcp` from the Mac; macOS firewall prompt for python was denied? |
 | First answer takes 30+ seconds | model was not loaded | normal once per idle period; `ollama ps` |
-| Text to speech fails with "not supported" | pipeline language set to `en` instead of `en_US` | Settings → Voice assistants → Jarvis → text to speech language |
+| Text to speech fails with "not supported" | pipeline language set to `en` instead of `en_GB` (Kokoro's Fable) or `en_US` (Piper) | Settings → Voice assistants → Jarvis → text to speech language |
 | The Mac gets sluggish, apps get killed | VM plus speech services plus something else heavy | section 6, then Activity Monitor → Memory |
 
 More depth on each piece: `design_docs/v1/` (04 the agent, 05 voice, 06 Home Assistant, 03 the tool server), and `design_docs/v1/DEVIATIONS.md` for everything that differed from the original plan.

@@ -33,10 +33,10 @@ class puck,stt,tts,piper,whisper current
 |---|---|---|
 | `wyoming` 1.7.2 | The Python library for the Wyoming protocol: event classes such as `Transcribe`, `AudioChunk`, and `Synthesize`, and a TCP client and server | Both speech servers are built on it; `scripts/voice_check.py` uses its `AsyncTcpClient` to talk to them without Home Assistant |
 | `wyoming-mlx-whisper` 1.5.0 and `mlx-whisper` 0.4.3 | A Wyoming server around OpenAI's Whisper model, run through MLX on the Mac's GPU | Speech to text on port 10300, which Home Assistant sees as `stt.mlx_whisper` |
-| `wyoming-kokoro-torch` 3.2.0 and `kokoro` 0.9.4 | A Wyoming server around the Kokoro-82M text-to-speech model, run through PyTorch | Text to speech on port 10210, through our `kokoro-server` entry point, which Home Assistant sees as `tts.kokoro` |
+| `wyoming-kokoro-torch` 3.2.0 and `kokoro` 0.9.4 | A Wyoming server around the Kokoro-82M text-to-speech model, run through PyTorch | Text to speech on port 10210, through our `kokoro-server` entry point, which Home Assistant sees as `tts.kokoro`, the pipeline's default text-to-speech entity, with the voice `bm_fable` |
 | `hexgrad/Kokoro-82M` weights | The model file `kokoro-v1_0.pth` and its `config.json`, published on Hugging Face | `scripts/services.sh install` downloads them once and links them into `~/.cache/wyoming-kokoro`, the server's data directory. Voices download on first use |
 | espeak-ng | A phonemizer, installed with Homebrew from the `Brewfile` | The fallback in Kokoro's English text processing. `misaki`, which `kokoro` installs, turns text into phonemes from its own dictionaries and hands espeak-ng only what they do not cover |
-| Piper add-on 2.3.4 | Home Assistant's own neural text-to-speech engine, running as an add-on inside the VM | The pipeline's default text-to-speech entity, `tts.piper`, with the voice `en_US-lessac-medium` and streaming on |
+| Piper add-on 2.3.4 | Home Assistant's own neural text-to-speech engine, running as an add-on inside the VM | The alternative text-to-speech entity, `tts.piper`, with the voice `en_US-lessac-medium` and streaming on |
 | openWakeWord add-on 2.1.1 | A server-side wake word engine, running as an add-on | Installed with threshold 0.5 and trigger level 1, and not assigned to the pipeline, because the puck detects the wake word on its own chip |
 | ESPHome add-on 2026.8.2 | The firmware framework and the add-on that adopts devices running it | Waits for the puck, to discover it on the network and expose its wake word selector, LEDs, and media player |
 | Home Assistant Voice Preview Edition | A small puck with far-field microphones, echo cancellation, an on-device wake word, a speaker, and a mute switch | The microphone and speaker the system is built for, not connected yet |
@@ -88,7 +88,7 @@ Every spoken question runs through the Assist pipeline named "Jarvis", Home Assi
 |---|---|
 | Speech to text | `stt.mlx_whisper`, language `en` |
 | Conversation | `conversation.studio_assistant`, language `en` |
-| Text to speech | `tts.piper`, language `en_US`; `--tts kokoro` picks `tts.kokoro` instead |
+| Text to speech | `tts.kokoro`, language `en_GB`, voice `bm_fable`; `--tts piper` picks `tts.piper` with `en_US` instead, and `--tts-voice` with `--tts-language` picks another Kokoro voice |
 | Wake word | None, because the puck detects it on its own chip |
 | `prefer_local_intents` | On, so Home Assistant's fixed sentences answer first and the agent gets the rest |
 | Preferred pipeline | Yes, so the Companion app and the browser use it without being told |
@@ -124,14 +124,14 @@ What this repository chooses for it:
 ```bash
     ENV_KEYS=() ENV_VALUES=()
     write_plist whisper "$PROJECT_DIR/.venv/bin/wyoming-mlx-whisper" --uri tcp://0.0.0.0:10300 --model mlx-community/whisper-large-v3-turbo --language en
-    write_plist kokoro "$PROJECT_DIR/.venv/bin/kokoro-server" --uri tcp://0.0.0.0:10210 --voice af_heart --data-dir "$HOME/.cache/wyoming-kokoro" --streaming --device cpu
+    write_plist kokoro "$PROJECT_DIR/.venv/bin/kokoro-server" --uri tcp://0.0.0.0:10210 --voice bm_fable --data-dir "$HOME/.cache/wyoming-kokoro" --streaming --device cpu
 ```
 
 | Flag | What it sets |
 |---|---|
 | `--uri tcp://0.0.0.0:10300`, `:10210` | Listen on every interface, so the VM reaches the servers at the Mac's LAN address. `scripts/ha_setup.py` registers each with the Wyoming integration, which asks only for a host and a port |
 | `--model`, `--language en` | Whisper's model and its fixed language |
-| `--voice af_heart` | Kokoro's default voice, used when Home Assistant names none |
+| `--voice bm_fable` | Kokoro's default voice, Fable, a British English male voice, used when a client names none |
 | `--data-dir ~/.cache/wyoming-kokoro` | Where Kokoro finds the weights that `prepare_kokoro` fetched from `hexgrad/Kokoro-82M`, and where it saves the voices it downloads |
 | `--streaming` | Kokoro accepts streamed text; see [Text to speech](#text-to-speech) |
 | `--device cpu` | Kokoro's PyTorch model runs on the CPU |
@@ -182,13 +182,15 @@ The pipeline can use either engine:
 |---|---|---|
 | Runs | As an add-on inside the VM | Natively on the Mac, on the CPU |
 | How Home Assistant finds it | Discovered from the add-on | A Wyoming entry for `192.168.1.152:10210` |
-| Voice | `en_US-lessac-medium` | `af_heart` |
+| Voice | `en_US-lessac-medium` | `bm_fable` |
 | Streaming | The add-on's `streaming` option, on | The `--streaming` flag |
 | First sentence synthesized | About 0.05 s | About 0.2 s |
 | Sound | Faster and plainer | More like a person |
-| In the pipeline | The default, `tts.piper` | `tts.kokoro`, after `scripts/ha_setup.py --tts kokoro` |
+| In the pipeline | `tts.piper`, after `scripts/ha_setup.py --tts piper` | The default, `tts.kokoro` |
 
-Kokoro has 82 million parameters, takes about 1 GB of memory, and synthesizes a ten-second answer in under a second, spread across its sentences. Both engines advertise region codes such as `en_US` rather than `en`, which is why the pipeline's text-to-speech language is `en_US`. A pipeline saved with `en` is accepted by the editor and fails every run with `tts-not-supported`.
+Kokoro has 82 million parameters, takes about 1 GB of memory, and synthesizes a ten-second answer in under a second, spread across its sentences. Both engines advertise region codes such as `en_US` and `en_GB` rather than `en`, and each voice belongs to one of them: Fable is British, so the pipeline's text-to-speech language is `en_GB`, while Piper's voice and Kokoro's American voices (`af_*`, `am_*`) need `en_US`. A pipeline saved with `en` is accepted by the editor and fails every run with `tts-not-supported`.
+
+Because the default voice now comes from the Mac, a Kokoro agent that is not running leaves the puck silent. `scripts/services.sh` waits for each agent to unload before loading it again and fails, naming the agent, when one does not load; see [Operations](10_operations.md).
 
 ### The latency budget
 
@@ -266,7 +268,7 @@ Unlike Home Assistant, `tts` sends the whole text at once, but the server still 
     afplay /tmp/kokoro.wav
     ```
 
-    The script prints one line of the form `tts: first audio after 0.00s, 0.0s of audio in 0.00s (0.0x real time), 0 chunks -> /tmp/kokoro.wav`, with your numbers. A first-audio time well below the total means the first sentence left before the second was synthesized. `--voice am_michael`, or any name from the `info` output, tries another voice.
+    The script prints one line of the form `tts: first audio after 0.00s, 0.0s of audio in 0.00s (0.0x real time), 0 chunks -> /tmp/kokoro.wav`, with your numbers. A first-audio time well below the total means the first sentence left before the second was synthesized. With no `--voice` the server's default, `bm_fable`, speaks; `--voice am_michael`, or any name from the `info` output, tries another voice.
 
 5. Transcribe that file back with Whisper:
 
@@ -277,8 +279,8 @@ Unlike Home Assistant, `tts` sends the whole text at once, but the server still 
     You get one line of the form `stt: 0.00s for 0.0s of audio -> 'Let me work that out. ...'`, with Whisper's own punctuation and capitalisation. On the prototype a clip takes a little less than its own length to transcribe. To try your own voice, record a 16-bit WAV with QuickTime or any recorder and pass it with `--wav`; the server converts it to 16 kHz mono.
 
 6. Speak to the whole pipeline. Start the Home Assistant VM (see [Home Assistant](06_home_assistant_core.md#run-it-yourself)), then use either microphone:
-    - **The Companion app** on a phone on the same Wi-Fi: add the server at `http://192.168.1.156`, sign in, tap the Assist icon, and hold the microphone button while you ask a question. Whisper hears you, the agent answers, and Piper speaks through the phone.
-    - **The browser:** open `http://192.168.1.156`, open the Assist window, and type a question. Piper's audio plays in the browser.
+    - **The Companion app** on a phone on the same Wi-Fi: add the server at `http://192.168.1.156`, sign in, tap the Assist icon, and hold the microphone button while you ask a question. Whisper hears you, the agent answers, and Kokoro speaks through the phone.
+    - **The browser:** open `http://192.168.1.156`, open the Assist window, and type a question. Kokoro's audio plays in the browser.
 
     Listen for how soon the first sentence starts after you stop talking, about 5 to 6 s on the prototype with the model warm, and for whether the answer sounds like a person talking rather than a document being read.
 
@@ -310,7 +312,7 @@ Unlike Home Assistant, `tts` sends the whole text at once, but the server still 
 - Design doc: [`design_docs/v1/05_voice_pipeline.md`](https://github.com/seanlin2000/home_assistant/blob/main/design_docs/v1/05_voice_pipeline.md), which also lists the failure modes, from false wake-ups to cut-off transcripts, and what to tune for each
 - [Wyoming protocol](https://github.com/rhasspy/wyoming), for the full list of event types and the exact wire format of an event and its binary payload
 - [wyoming-mlx-whisper](https://pypi.org/project/wyoming-mlx-whisper/), for the server's flags and the Whisper models it can load
-- [Kokoro-82M](https://huggingface.co/hexgrad/Kokoro-82M), for the model's voices, languages, and licence
+- [Kokoro-82M](https://huggingface.co/hexgrad/Kokoro-82M), for the model's voices, languages, and licence, and to hear the voices before changing `bm_fable`
 - [Home Assistant streaming text to speech](https://www.home-assistant.io/integrations/tts/), for how the pipeline hands streamed text to an engine that supports it
 - [Piper voice samples](https://rhasspy.github.io/piper-samples/), to hear the voices before changing `en_US-lessac-medium`
 - [Voice Preview Edition](https://www.home-assistant.io/voice-pe/), for the puck's hardware, and [wake words on the puck](https://www.home-assistant.io/voice_control/about_wake_word/), for what the device detects on its own chip

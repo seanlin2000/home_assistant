@@ -35,7 +35,7 @@ class stt,intents,agent,tts,ma current
 |---|---|---|
 | UTM 4.7.5 | A virtualisation app for macOS, installed with `brew install --cask utm`, that runs QEMU virtual machines on Apple's hypervisor | Runs the Home Assistant OS disk image as a VM named "Home Assistant" with 4 GB of memory, 2 cores, UEFI boot, and a bridged network interface. `utmctl`, its command line, is what `scripts/haos_vm.sh` and the health check call to start, stop, and query it |
 | Home Assistant OS 18.2, Core 2026.9.1 | The appliance image and the Python application inside it | The VM's whole operating system. Core serves the web interface and the REST and websocket APIs on port 80 of the VM's address, runs the Assist pipeline, and loads our custom component from `/config/custom_components/` |
-| Supervisor and the add-ons: Samba 12.10.0, Piper 2.3.4, openWakeWord 2.1.1, Music Assistant 2.10.2, ESPHome 2026.8.2 | The Supervisor is the add-on manager inside Home Assistant OS; each add-on is a container it runs | Samba is how code is copied into the VM. Piper is the text-to-speech engine the Jarvis pipeline uses. openWakeWord is a server-side wake word engine, installed and idle. Music Assistant is the music layer (see [Music](07_music_spotify.md)). ESPHome adopts the puck (see [Voice Pipeline](05_voice_pipeline.md#today-and-with-the-puck)). All five start at boot with the Supervisor's watchdog on |
+| Supervisor and the add-ons: Samba 12.10.0, Piper 2.3.4, openWakeWord 2.1.1, Music Assistant 2.10.2, ESPHome 2026.8.2 | The Supervisor is the add-on manager inside Home Assistant OS; each add-on is a container it runs | Samba is how code is copied into the VM. Piper is the alternative text-to-speech engine; the Jarvis pipeline speaks with Kokoro on the Mac. openWakeWord is a server-side wake word engine, installed and idle. Music Assistant is the music layer (see [Music](07_music_spotify.md)). ESPHome adopts the puck (see [Voice Pipeline](05_voice_pipeline.md#today-and-with-the-puck)). All five start at boot with the Supervisor's watchdog on |
 | Wyoming integration | Home Assistant's built-in connector for speech services that speak the Wyoming protocol | One entry per service: Whisper at `192.168.1.152:10300` and Kokoro at `192.168.1.152:10210` on the Mac, added by the setup script, plus Piper and openWakeWord discovered from their add-ons. Each entry produces an `stt.` or `tts.` entity the pipeline can pick |
 | Laptop-side clients: `httpx` 0.28.1, `websockets` 17.1, `python-dotenv` 1.2.3 | An async HTTP client, a websocket client, and a reader of `KEY=value` files, all pinned in `uv.lock` | `ops/ha_client.py` reaches Home Assistant's REST and websocket APIs with the first two; the setup and deploy scripts read `.env` with the third |
 | `mount_smbfs` and `osascript` | macOS's SMB mounter and its AppleScript runner | The deploy script mounts `//192.168.1.156/config` with the first; `scripts/haos_vm.sh create` tells UTM to build the VM with the second |
@@ -181,24 +181,24 @@ class stt,intents,builtin,tts third
 class agent ours
 ```
 
-A pipeline is the chain of stages one request passes through, and building one means choosing an entity for each stage. The setup script's fourth step looks up three entities in the entity registry: the Wyoming speech-to-text entity for Whisper, the Wyoming text-to-speech entity for Piper, and the conversation entity our component registered. It creates or updates "Jarvis" from them and marks it as the preferred pipeline, the one Home Assistant uses unless told otherwise.
+A pipeline is the chain of stages one request passes through, and building one means choosing an entity for each stage. The setup script's fourth step looks up three entities in the entity registry: the Wyoming speech-to-text entity for Whisper, the Wyoming text-to-speech entity for Kokoro (or Piper, with `--tts piper`), and the conversation entity our component registered. It creates or updates "Jarvis" from them, with the text-to-speech language and voice from `TTS_DEFAULTS` unless `--tts-language` and `--tts-voice` name others, and marks it as the preferred pipeline, the one Home Assistant uses unless told otherwise.
 
-*From `scripts/ha_setup.py`, `pipeline`:*
+*From `scripts/ha_setup.py`, `TTS_DEFAULTS` and `pipeline_payload`:*
 
 ```python
-    stt = entity_id(registry, "stt", "wyoming", "whisper")
-    tts = entity_id(registry, "tts", "wyoming", args.tts)
-    agent = entity_id(registry, "conversation", "studio_assistant", "")
-    payload = {
+TTS_DEFAULTS = {"kokoro": ("en_GB", "bm_fable"), "piper": ("en_US", None)}
+...
+def pipeline_payload(stt: str, agent: str, tts: TextToSpeech) -> dict[str, Any]:
+    return {
         "name": PIPELINE_NAME,
         "language": "en",
         "conversation_engine": agent,
         "conversation_language": "en",
         "stt_engine": stt,
         "stt_language": "en",
-        "tts_engine": tts,
-        "tts_language": "en_US",  # Piper and Kokoro advertise region codes (en_US, en_GB); a bare "en" is rejected at run time with tts-not-supported
-        "tts_voice": None,
+        "tts_engine": tts.entity,
+        "tts_language": tts.language,
+        "tts_voice": tts.voice,
         "wake_word_entity": None,
         "wake_word_id": None,
         "prefer_local_intents": True,
@@ -209,7 +209,7 @@ Two values in that payload matter most:
 
 | Value | Why |
 |---|---|
-| `tts_language: "en_US"` | Piper and Kokoro advertise region codes, and a pipeline that asks for a bare `en` fails at run time with "tts-not-supported" |
+| `tts_language` and `tts_voice` | Piper and Kokoro advertise region codes, and a pipeline that asks for a bare `en` fails at run time with "tts-not-supported". Each voice belongs to one code: Kokoro's Fable, `bm_fable`, is British and needs `en_GB`, and Piper's voice needs `en_US` |
 | `prefer_local_intents: True` | Puts the intent matcher in front of our agent. Home Assistant's thousands of English sentence templates, plus Music Assistant's own, answer "play Radiohead" and "set volume to 50 percent" in tens of milliseconds with no language model. Only a sentence no template matches reaches `conversation.studio_assistant`, and so does every weather question: with no weather entity exposed to Assist, the built-in weather intent finds nothing to answer from |
 
 When a sentence does reach our agent:
@@ -310,7 +310,7 @@ until curl -s -o /dev/null -w "%{http_code}" -H "Authorization: Bearer $HA_TOKEN
 | Page | What you see |
 |---|---|
 | Settings, Devices & services | The Wyoming Protocol card with Whisper, Kokoro, Piper, and openWakeWord; Studio Assistant, our component, with a Configure button that opens the options flow; Music Assistant |
-| Settings, Voice assistants | The "Jarvis" pipeline: speech to text `mlx-whisper`, conversation agent Studio Assistant, text to speech Piper. Click it to change any stage; switching text to speech to Kokoro here is how you compare voices |
+| Settings, Voice assistants | The "Jarvis" pipeline: speech to text `mlx-whisper`, conversation agent Studio Assistant, text to speech Kokoro with the voice `bm_fable`. Click it to change any stage; switching text to speech to Piper, or Kokoro to another voice, here is how you compare voices |
 | Settings, Add-ons | Samba, Piper, openWakeWord, Music Assistant, and ESPHome, each with its state, version, and log |
 | Settings, System, Logs | Where component errors appear. Search for `studio_assistant` |
 
@@ -364,7 +364,7 @@ The rows of the troubleshooting table that belong to this page:
 |---|---|---|
 | Assist answers "Sorry, I couldn't understand that" | the pipeline could not reach the agent | Settings, System, Logs for `studio_assistant`; is Ollama up on the Mac? |
 | The answer says it could not check the web | the tool server was unreachable from the VM | `curl http://192.168.1.152:8765/mcp` from the Mac; was the macOS firewall prompt for python denied? |
-| Text to speech fails with "not supported" | pipeline language set to `en` instead of `en_US` | Settings, Voice assistants, Jarvis, text to speech language |
+| Text to speech fails with "not supported" | pipeline language set to `en`, or to a region the voice does not speak, instead of `en_GB` for Kokoro's Fable or `en_US` for Piper | Settings, Voice assistants, Jarvis, text to speech language |
 | The Mac gets sluggish and apps get killed | the VM, the speech services, and something else heavy at once | stop the VM as above, then Activity Monitor, Memory |
 
 ## Where to look in the code

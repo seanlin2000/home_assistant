@@ -2,14 +2,15 @@
 
 Steps (each is skipped when already done, so the script can be re-run):
   1. onboarding: create the owner account, finish the onboarding wizard, mint a long-lived token (saved to .env as HA_TOKEN)
-  2. add-ons: Samba (for deploys), Piper (text to speech), Music Assistant, ESPHome (for the puck), openWakeWord (optional server-side wake word)
+  2. add-ons: Samba (for deploys), Piper (the alternative text to speech), Music Assistant, ESPHome (for the puck), openWakeWord (optional server-side wake word)
   3. integrations: Wyoming entries for Whisper and Kokoro on the Mac, confirm the discovered Piper add-on, add studio_assistant
-  4. pipeline: an Assist pipeline "Jarvis" using Whisper, studio_assistant, and Piper, set as preferred
+  4. pipeline: an Assist pipeline "Jarvis" using Whisper, studio_assistant, and Kokoro's Fable voice, set as preferred (--tts piper for Piper)
   5. weather: copy the home location, time zone, and units into .env for the weather_forecast tool, and hide every weather entity from Assist so
      Home Assistant's built-in weather intent finds nothing to answer with and every weather question reaches studio_assistant
 
     uv run python scripts/ha_setup.py --host 192.168.1.60          # first run
     uv run python scripts/ha_setup.py --host 192.168.1.60 --only pipeline
+    uv run python scripts/ha_setup.py --host 192.168.1.60 --only pipeline --tts-voice bm_george   # another Kokoro voice
     uv run python scripts/ha_setup.py --host 192.168.1.60 --only weather   # then scripts/services.sh install, so the tool server sees the coordinates
 
 Credentials: HA_ADMIN_USER / HA_ADMIN_PASSWORD / HA_SAMBA_PASSWORD are read from .env and generated if missing. Everything lives on the LAN.
@@ -23,7 +24,7 @@ import secrets
 import sys
 import time
 from pathlib import Path
-from typing import Any
+from typing import Any, NamedTuple
 
 from dotenv import dotenv_values, load_dotenv
 
@@ -45,6 +46,9 @@ ADDONS = {
 }
 WYOMING_SERVICES = {"whisper": ("Whisper on the Mac", 10300), "kokoro": ("Kokoro on the Mac", 10210)}
 PIPELINE_NAME = "Jarvis"
+# The language and voice each text-to-speech engine is given when none is named. Both engines advertise region codes (en_US, en_GB); a bare "en" is
+# rejected at run time with tts-not-supported. Kokoro's Fable is a British voice, so it needs en_GB. Piper's voice is set on its add-on (ADDONS).
+TTS_DEFAULTS = {"kokoro": ("en_GB", "bm_fable"), "piper": ("en_US", None)}
 
 
 def env_value(name: str, generate: bool = False) -> str:
@@ -234,20 +238,7 @@ async def pipeline(ha: HomeAssistant, args: argparse.Namespace) -> None:
     stt = entity_id(registry, "stt", "wyoming", "whisper")
     tts = entity_id(registry, "tts", "wyoming", args.tts)
     agent = entity_id(registry, "conversation", "studio_assistant", "")
-    payload = {
-        "name": PIPELINE_NAME,
-        "language": "en",
-        "conversation_engine": agent,
-        "conversation_language": "en",
-        "stt_engine": stt,
-        "stt_language": "en",
-        "tts_engine": tts,
-        "tts_language": "en_US",  # Piper and Kokoro advertise region codes (en_US, en_GB); a bare "en" is rejected at run time with tts-not-supported
-        "tts_voice": None,
-        "wake_word_entity": None,
-        "wake_word_id": None,
-        "prefer_local_intents": True,
-    }
+    payload = pipeline_payload(stt, agent, TextToSpeech(tts, args.tts_language, args.tts_voice))
     if existing:
         await ha.ws({"type": "assist_pipeline/pipeline/update", "pipeline_id": existing["id"], **payload})
         pipeline_id = existing["id"]
@@ -255,7 +246,30 @@ async def pipeline(ha: HomeAssistant, args: argparse.Namespace) -> None:
         created = await ha.ws({"type": "assist_pipeline/pipeline/create", **payload})
         pipeline_id = created["id"]
     await ha.ws({"type": "assist_pipeline/pipeline/set_preferred", "pipeline_id": pipeline_id})
-    print(f"pipeline: '{PIPELINE_NAME}' uses {stt} -> {agent} -> {tts} (preferred)")
+    print(f"pipeline: '{PIPELINE_NAME}' uses {stt} -> {agent} -> {tts} ({args.tts_language}, voice {args.tts_voice or 'the engine default'}) (preferred)")
+
+
+class TextToSpeech(NamedTuple):
+    entity: str
+    language: str
+    voice: str | None
+
+
+def pipeline_payload(stt: str, agent: str, tts: TextToSpeech) -> dict[str, Any]:
+    return {
+        "name": PIPELINE_NAME,
+        "language": "en",
+        "conversation_engine": agent,
+        "conversation_language": "en",
+        "stt_engine": stt,
+        "stt_language": "en",
+        "tts_engine": tts.entity,
+        "tts_language": tts.language,
+        "tts_voice": tts.voice,
+        "wake_word_entity": None,
+        "wake_word_id": None,
+        "prefer_local_intents": True,
+    }
 
 
 # ---------------------------------------------------------------- step 5: weather
@@ -296,12 +310,18 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--host", default=os.environ.get("HA_HOST"), help="Home Assistant address (VM IP or homeassistant.local)")
     parser.add_argument("--mac-ip", default=os.environ.get("MAC_LAN_IP", MAC_IP_DEFAULT), help="LAN address of this Mac, where Ollama, Whisper, Kokoro, and the MCP server listen")
     parser.add_argument("--model", default=os.environ.get("ASSISTANT_MODEL", "gemma4:e4b-it-qat"), help="Ollama model tag for the agent")
-    parser.add_argument("--tts", default="piper", choices=["piper", "kokoro"], help="which text-to-speech entity the pipeline uses")
+    parser.add_argument("--tts", default="kokoro", choices=sorted(TTS_DEFAULTS), help="which text-to-speech entity the pipeline uses")
+    parser.add_argument("--tts-voice", help="the voice the pipeline asks for (default: bm_fable for Kokoro, the add-on's voice for Piper)")
+    parser.add_argument("--tts-language", help="the text-to-speech language, a region code such as en_US (default: en_GB for Kokoro, en_US for Piper)")
     parser.add_argument("--only", action="append", choices=STEPS, help="run only these steps")
     parser.add_argument("--latitude", type=float, default=40.7484)
     parser.add_argument("--longitude", type=float, default=-73.9857)
     parser.add_argument("--time-zone", default="America/New_York")
-    return parser.parse_args()
+    args = parser.parse_args()
+    default_language, default_voice = TTS_DEFAULTS[args.tts]
+    args.tts_language = args.tts_language or default_language
+    args.tts_voice = args.tts_voice or default_voice
+    return args
 
 
 async def main_async() -> None:
