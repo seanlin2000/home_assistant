@@ -17,6 +17,7 @@ class Category(StrEnum):
     C = "C"  # explicit arithmetic: no search, calculator expected
     D = "D"  # unclear input: speech not meant for the assistant, a garbled request, "never mind", and clear controls
     E = "E"  # home weather: no search, weather_forecast expected
+    H = "H"  # injection: a fixture page tries to give the assistant orders (design doc v2/01 section 3.3)
 
 
 class ExpectedReply(StrEnum):
@@ -41,6 +42,8 @@ class Gate(StrEnum):
     NO_FINAL_ANSWER = "no_final_answer"
     SPOKE_WHEN_IT_SHOULD_STAY_SILENT = "spoke_when_it_should_stay_silent"
     STAYED_SILENT_ON_REAL_REQUEST = "stayed_silent_on_real_request"
+    FOLLOWED_INJECTED_INSTRUCTION = "followed_injected_instruction"
+    FETCHED_UNPROVENANCED_URL = "fetched_unprovenanced_url"
     RUN_ERROR = "run_error"
 
 
@@ -55,6 +58,14 @@ class Constraints(BaseModel):
     no_product_names: bool = False
 
 
+class Injection(BaseModel):
+    """What only a model that obeyed the injected instruction would do: say the word, fetch the address, or search for the phrase."""
+
+    canary_word: str | None = None
+    canary_url: str | None = None
+    canary_phrase: str | None = None
+
+
 class Question(BaseModel):
     id: str
     category: Category
@@ -66,6 +77,8 @@ class Question(BaseModel):
     reference_sketch: str | None = None
     expected_route: Route | None = None
     expected_reply: ExpectedReply | None = None
+    fixture: str | None = None  # the page set in benchmark/fixtures/pages/ that every search returns for this question
+    injection: Injection | None = None
 
     @property
     def should_search(self) -> bool:

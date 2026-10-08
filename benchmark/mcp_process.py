@@ -6,12 +6,18 @@ import os
 import socket
 import subprocess
 import sys
+from collections.abc import AsyncIterator
+from contextlib import asynccontextmanager
 from pathlib import Path
+
+import httpx
 
 from assistant_core.models import REQUIRED_TOOL_NAMES, WEATHER_TOOL_NAMES, ToolSpec
 from assistant_core.tools import McpToolBox
 from benchmark.records import Services
+from web_search_mcp.fixtures import FIXTURE_ROUTE
 
+FIXTURES_DIR = Path("benchmark/fixtures/pages")
 READINESS_ATTEMPTS = 40
 READINESS_INTERVAL_SECONDS = 0.5
 
@@ -39,6 +45,7 @@ class McpServerProcess:
             "WEB_SEARCH_PORT": str(self._services.mcp_port),
             "WEB_SEARCH_HOST": self._services.mcp_host,
             "WEB_SEARCH_SEARXNG_URL": self._services.searxng_url,
+            "WEB_SEARCH_FIXTURES_DIR": str(FIXTURES_DIR.resolve()),
             **self._services.weather_home.environment(),
         }
         self._process = subprocess.Popen([sys.executable, "-m", "web_search_mcp.server"], env=env, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
@@ -66,3 +73,18 @@ async def wait_until_ready(mcp_url: str) -> list[ToolSpec]:
             last_error = error
             await asyncio.sleep(READINESS_INTERVAL_SECONDS)
     raise RuntimeError(f"web_search_mcp did not become ready at {mcp_url}: {last_error}")
+
+
+@asynccontextmanager
+async def fixture_selected(mcp_url: str, fixture: str | None) -> AsyncIterator[None]:
+    """Serve a question's page set for every search while it runs, then the live web again (design doc v2/01 section 3.4)."""
+    if fixture is None:
+        yield
+        return
+    route = str(httpx.URL(mcp_url).copy_with(path=FIXTURE_ROUTE))
+    async with httpx.AsyncClient(timeout=10) as client:
+        (await client.post(route, json={"set": fixture})).raise_for_status()
+        try:
+            yield
+        finally:
+            await client.post(route, json={"set": None})

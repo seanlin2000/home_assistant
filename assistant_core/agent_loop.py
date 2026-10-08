@@ -34,6 +34,7 @@ from assistant_core.prompts import SILENCE_MARKER, per_question_block, question_
 
 EMPTY_COMPLETION_RETRIES = 1
 from assistant_core.router import decide_route, directive_for, route_to_offered_tools
+from assistant_core.tool_guards import GuardedToolBox, ToolRefused, load_tool_table
 from assistant_core.tools import ToolBox
 
 TOOL_LIMIT_NOTICE = "Tool call limit reached. Answer the user now with what you already know; do not call any more tools."
@@ -108,6 +109,7 @@ class SpokenAnswerCap:
 async def run(conversation: list[Message], llm: LLMClient, tools: ToolBox, policy: AgentPolicy, memory: ConversationMemory | None = None) -> AsyncIterator[AgentEvent]:
     started = time.perf_counter()
     memory = memory or NoMemory()
+    tools = GuardedToolBox(tools, load_tool_table(), conversation)
     messages = [Message(role=Role.SYSTEM, content=system_prompt()), *conversation]
     transcript = Transcript(model=llm.model_name, system_prompt=system_prompt(), conversation=list(conversation))
     cap = SpokenAnswerCap(policy.word_budget)
@@ -142,6 +144,7 @@ async def run(conversation: list[Message], llm: LLMClient, tools: ToolBox, polic
             yield event
     restore_spoken_question(messages, spoken_question)
     finish_transcript(transcript, reply, cap, messages, started)
+    transcript.untrusted = tools.untrusted
     memory.remember(transcript.conversation)
     yield Done(transcript=transcript)
 
@@ -241,6 +244,8 @@ async def execute_one_call(tools: ToolBox, call: ToolCall, round_index: int, pol
     try:
         result = await asyncio.wait_for(tools.call(call), timeout=policy.tool_timeout_seconds)
         return ToolCallRecord(round_index=round_index, call=call, result=result, seconds=time.perf_counter() - call_started)
+    except ToolRefused as refusal:
+        return ToolCallRecord(round_index=round_index, call=call, result=str(refusal), seconds=time.perf_counter() - call_started, refused=True)
     except Exception as error:
         return ToolCallRecord(round_index=round_index, call=call, result=TOOL_UNREACHABLE_NOTICE, seconds=time.perf_counter() - call_started, error=f"{type(error).__name__}: {error}")
 

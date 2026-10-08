@@ -3,6 +3,7 @@ forecast, and Wikipedia lookups."""
 
 import html
 import re
+from pathlib import Path
 
 from mcp.server.mcpserver import MCPServer
 from mcp.server.transport_security import TransportSecuritySettings
@@ -15,6 +16,7 @@ from utils.http_access_utils import host_allowed, misdirected
 from utils.text_utils import clip_to_words
 from weather_mcp.register import register_weather_tools
 from weather_mcp.settings import WeatherSettings, weather_settings_from_environment
+from web_search_mcp.fixtures import FIXTURE_ROUTE, FixturePages, FixtureSearch, fixture_route
 from web_search_mcp.page_extractor import PageExcerpt, PageExtractor
 from web_search_mcp.query_cache import QueryCache
 from web_search_mcp.searxng_client import SearchResult, SearxngClient
@@ -37,8 +39,11 @@ def build_server(
 ) -> MCPServer:
     cache = QueryCache(settings.cache_dir)
     wikipedia = wikipedia or WikipediaSettings()
+    fixture_pages = FixturePages(Path(settings.fixtures_dir)) if settings.fixtures_dir else None
     searxng = searxng or SearxngClient(settings, cache)
-    extractor = extractor or PageExtractor(settings, cache, wikipedia=WikipediaClient(wikipedia, cache))
+    if fixture_pages:
+        searxng = FixtureSearch(searxng, fixture_pages)
+    extractor = extractor or PageExtractor(settings, cache, wikipedia=WikipediaClient(wikipedia, cache), fixture_pages=fixture_pages)
     server = MCPServer(
         "assistant-tools",
         instructions=(
@@ -75,6 +80,8 @@ def build_server(
     register_weather_tools(server, weather or WeatherSettings(), cache)
     register_wikipedia_tools(server, wikipedia, cache)
     register_operations_routes(server, allowed_host_list(settings))
+    if fixture_pages:
+        server.custom_route(FIXTURE_ROUTE, ["POST"])(fixture_route(fixture_pages))
     return server
 
 

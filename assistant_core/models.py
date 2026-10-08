@@ -142,6 +142,7 @@ class ToolCallRecord(BaseModel):
     result: str
     seconds: float
     error: str | None = None
+    refused: bool = False  # the guards stopped it before it ran; result holds the sentence the model read instead
 
 
 class Transcript(BaseModel):
@@ -162,6 +163,7 @@ class Transcript(BaseModel):
     time_to_first_token_seconds: float | None = None
     time_to_first_spoken_seconds: float | None = None
     route: RouteDecision | None = None
+    untrusted: bool = False  # a tool whose text is written by strangers ran in this exchange (design doc v2/12 section 3.2)
     error: str | None = None
 
 

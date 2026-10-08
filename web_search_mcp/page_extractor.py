@@ -7,6 +7,7 @@ from pydantic import BaseModel
 
 from utils.passage_utils import select_passages
 from utils.text_utils import clip_to_words, word_count
+from web_search_mcp.fixtures import FixturePages
 from web_search_mcp.page_markdown import to_passage_format
 from web_search_mcp.query_cache import QueryCache
 from web_search_mcp.searxng_client import SearchResult
@@ -37,12 +38,14 @@ class PageExtractor:
         resolver: Resolver = system_resolver,
         transport: httpx.AsyncBaseTransport | None = None,
         wikipedia: WikipediaClient | None = None,
+        fixture_pages: FixturePages | None = None,
     ) -> None:
         self._settings = settings
         self._cache = cache
         self._resolver = resolver  # injectable so tests can pretend a name resolves to a private address
         self._transport = transport  # injectable so tests can serve canned responses without a socket
         self._wikipedia = wikipedia  # reads Wikipedia articles through its API, tables included; None reads them like any other page
+        self._fixture_pages = fixture_pages  # the benchmark's known pages, read from files instead of the web
 
     async def read_pages(self, results: list[SearchResult], focus: str) -> list[PageExcerpt]:
         """Fetches the first readable pages concurrently and keeps result order so ranking survives extraction. The focus (the search query) picks the
@@ -63,6 +66,9 @@ class PageExtractor:
 
     async def read_page(self, url: str) -> str:
         """Main text of one page, or "" when it cannot be read. Raises UnsafeUrl for addresses the server must never contact."""
+        fixture_text = self._fixture_pages.text_for(url) if self._fixture_pages else None
+        if fixture_text is not None:
+            return fixture_text
         cached = self._cache.get_page(url)
         if cached is not None:
             return cached
