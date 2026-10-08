@@ -5,13 +5,13 @@ from assistant_core.prompts import SYSTEM_PROMPT, per_question_block, question_w
 
 def test_system_prompt_is_the_same_for_every_question_so_it_stays_cached() -> None:
     assert system_prompt() == SYSTEM_PROMPT
-    assert "Today is" not in system_prompt()
+    assert "today is" not in system_prompt().lower()
 
 
 def test_per_question_block_carries_the_date_then_the_directive_then_memory() -> None:
     block = per_question_block(date(2026, 9, 6), "Routing for this question: SEARCH.\n", "likes trams")
     lines = block.split("\n")
-    assert lines[0].startswith("Today is Sunday, September 6, 2026.")
+    assert "today is Sunday, September 6, 2026." in lines[0]
     assert lines[1] == "Routing for this question: SEARCH."
     assert block.endswith("What you remember about this user:\nlikes trams")
 
