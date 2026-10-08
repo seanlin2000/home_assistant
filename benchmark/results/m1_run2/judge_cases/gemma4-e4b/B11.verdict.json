@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It reports 5.33% and 5.25% to 5.50% from a page marked \"Last updated: April 10, 2025\" while ignoring the newer excerpt giving 3.50%–3.75% as of September 16, 2026 after three cuts in late 2025, and it never answers how the rate changed over the year.",
+  "judgment_reason": "Searching was right, but it presented a clearly dated figure as current without flagging its age and passed over the more recent source.",
+  "spoken_fit_reason": "Two plain sentences with no URLs or markup that lead with a figure."
+}

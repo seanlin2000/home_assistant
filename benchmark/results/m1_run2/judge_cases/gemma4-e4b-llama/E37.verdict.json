@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Saturday's partly cloudy 52 to 67 and Sunday's rain at times with 0.04 inches match the tool result, but it omits Sunday's 54 to 68 degree range.",
+  "judgment_reason": "It used weather_forecast for the weekend instead of searching and flagged the Sunday rain.",
+  "spoken_fit_reason": "A single plain-prose sentence summarizing both days, short enough for speech."
+}

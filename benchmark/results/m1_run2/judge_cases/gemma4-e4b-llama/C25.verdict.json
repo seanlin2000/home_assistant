@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Both conversions match the reference: 72 F is 22.2 C and 5 km is 3.11 miles, taken from the two convert tool results.",
+  "judgment_reason": "It used the convert tool for both conversions in parallel and did not search.",
+  "spoken_fit_reason": "One plain sentence giving both answers, though \"twenty-two point two zero\" and \"three point eleven\" are slightly awkward readings of the numbers."
+}

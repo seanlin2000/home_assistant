@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It names nutrient imbalance and watering and asks for plant type and recent care changes, but omits normal senescence of old leaves, the key \"this may be normal\" explanation, and lighter on the information list (light, fertilizer, pattern of yellowing).",
+  "judgment_reason": "It asks for missing information rather than asserting one cause, but never raises that this pattern is often normal, which is the decision the user asked about.",
+  "spoken_fit_reason": "Two short plain sentences that lead with the likely explanations."
+}

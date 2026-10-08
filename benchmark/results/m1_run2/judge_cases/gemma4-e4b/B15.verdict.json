@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The RTX 4060 Ti 16GB at $449 to $499 traces to the InsiderLLM excerpt, but it skips that source's $380 to $420 used price for the same card, which best fits a user who accepts used hardware, and offers an AMD RX 6950 XT for a question about NVIDIA cards.",
+  "judgment_reason": "It stayed under budget and labeled the AMD card as AMD, but stepping outside the NVIDIA requirement for the used pick was a lapse when a used NVIDIA option was in the excerpts.",
+  "spoken_fit_reason": "Three plain sentences with prices written out for speech and no formatting."
+}

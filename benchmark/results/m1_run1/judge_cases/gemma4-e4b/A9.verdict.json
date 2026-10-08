@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It names only climate preference and budget as missing, leaving out departure city, dates, trip length, passport or visa, and companions, and it gives just two assumptions to avoid ('warm' means tropical, low cost means no amenities).",
+  "judgment_reason": "It avoids naming a destination, but it turns a question about what is missing into questions aimed back at the user, so it never fully answers what was asked.",
+  "spoken_fit_reason": "Two short plain sentences, easy to listen to."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Saturday's conditions and 52 to 67°F range and Sunday's rain with 0.04 inches all match the tool result, but it leaves out Sunday's 54 to 68°F temperature range.",
+  "judgment_reason": "It called the home forecast for the weekend and made no web search.",
+  "spoken_fit_reason": "Three short plain sentences that summarize the weekend instead of reading every line."
+}

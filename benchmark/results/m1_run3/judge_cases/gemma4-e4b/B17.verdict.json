@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The answer that custom wake words work through community firmware rather than out of the box traces to the Open Voice PE repo [3], but it skips the explicitly requested explanation of which source it trusted and why, and ignores the microWakeWord ESPHome route in [5].",
+  "judgment_reason": "It relied on a single community GitHub repo without weighing it against the official Home Assistant page [4] or saying why it found that repo credible, which is what the question tests.",
+  "spoken_fit_reason": "Two plain sentences that lead with the answer."
+}

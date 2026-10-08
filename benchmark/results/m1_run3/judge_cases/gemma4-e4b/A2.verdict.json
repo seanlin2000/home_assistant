@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 0,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The one-year total of 44,100 is right, but the two-year total of 86,520 ignores the compounding second-year increase (should be 87,817.80), and the 42,420 'savings' compares one year against two years.",
+  "judgment_reason": "It presented a single savings number from comparing leases of different lengths without noting the unknown second-year renewal or comparing year one, which fails the central point of the question.",
+  "spoken_fit_reason": "Three plain sentences that lead with the totals, with no formatting."
+}

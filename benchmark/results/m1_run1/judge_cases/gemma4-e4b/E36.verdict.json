@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It says no umbrella is needed and backs that with the tool's 'clear, dry' afternoon and the 68 to 71°F range, all from the forecast result.",
+  "judgment_reason": "It checked the home forecast for the right day and part of the day and did not search the web.",
+  "spoken_fit_reason": "One sentence that leads with 'No' and gives the reason."
+}

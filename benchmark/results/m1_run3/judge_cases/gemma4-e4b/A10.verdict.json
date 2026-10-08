@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It explains that a model that does not fit 'simply won't run or will run incredibly slowly' by offloading to system RAM, but never says that extra capacity also allows less aggressive quantization and longer context.",
+  "judgment_reason": "It answered directly without searching and stayed well within the spoken-length constraint.",
+  "spoken_fit_reason": "Two natural sentences, well under 120 words, with no lists."
+}

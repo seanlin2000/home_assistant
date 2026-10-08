@@ -1,0 +1,123 @@
+{
+  "question_set_version": "1.4",
+  "prompt_version": "2.0",
+  "policy": {
+    "temperature": 0.7,
+    "max_tool_rounds": 4,
+    "max_output_tokens": 600,
+    "word_budget": 200,
+    "context_tokens": 16384,
+    "think": null,
+    "route_questions": true,
+    "filler_phrases": [
+      "Let me pull some sources on that.",
+      "One moment, checking the web.",
+      "Understood, let me look that up."
+    ],
+    "calculate_filler_phrases": [
+      "Let me work that out.",
+      "One second, doing the math."
+    ],
+    "weather_filler_phrases": [
+      "Checking the forecast.",
+      "One moment, getting the forecast."
+    ],
+    "tool_timeout_seconds": 60.0
+  },
+  "candidates": [
+    {
+      "key": "qwen3.5-4b",
+      "label": "Qwen 3.5 4B, Q4_K_M",
+      "provider": "ollama",
+      "model": "qwen3.5:4b",
+      "think": false,
+      "preview": false
+    },
+    {
+      "key": "gemma4-e4b",
+      "label": "Gemma 4 E4B, QAT int4",
+      "provider": "ollama",
+      "model": "gemma4:e4b-it-qat",
+      "think": false,
+      "preview": false
+    },
+    {
+      "key": "gemma4-e4b-llama",
+      "label": "Gemma 4 E4B, QAT q4_0, on llama-server (prompt 2.0)",
+      "provider": "llama-server",
+      "model": "gemma-4-e4b",
+      "think": false,
+      "preview": false
+    },
+    {
+      "key": "qwen3.5-9b",
+      "label": "Qwen 3.5 9B, Q4_K_M",
+      "provider": "ollama",
+      "model": "qwen3.5:9b",
+      "think": false,
+      "preview": false
+    },
+    {
+      "key": "gemma4-12b",
+      "label": "Gemma 4 12B, Q4_K_M",
+      "provider": "ollama",
+      "model": "gemma4:12b",
+      "think": false,
+      "preview": false
+    },
+    {
+      "key": "gpt-oss-20b",
+      "label": "gpt-oss 20B, MXFP4",
+      "provider": "ollama",
+      "model": "gpt-oss:20b",
+      "think": "low",
+      "preview": false
+    },
+    {
+      "key": "gemma4-26b-a4b-iq3",
+      "label": "Gemma 4 26B-A4B, UD-IQ3_XXS (3-bit preview)",
+      "provider": "ollama",
+      "model": "hf.co/unsloth/gemma-4-26B-A4B-it-GGUF:UD-IQ3_XXS",
+      "think": false,
+      "preview": true
+    },
+    {
+      "key": "gemma4-26b-a4b-iq4",
+      "label": "Gemma 4 26B-A4B, UD-IQ4_XS (preview, tight fit)",
+      "provider": "ollama",
+      "model": "hf.co/unsloth/gemma-4-26B-A4B-it-GGUF:UD-IQ4_XS",
+      "think": false,
+      "preview": true
+    },
+    {
+      "key": "qwen3.6-35b-a3b-iq3",
+      "label": "Qwen 3.6 35B-A3B, UD-IQ3_XXS (3-bit preview)",
+      "provider": "ollama",
+      "model": "hf.co/unsloth/Qwen3.6-35B-A3B-GGUF:UD-IQ3_XXS",
+      "think": false,
+      "preview": true
+    },
+    {
+      "key": "qwen3.6-27b-q3ks",
+      "label": "Qwen 3.6 27B dense, Q3_K_S (3-bit preview, spills to CPU on 16 GB)",
+      "provider": "ollama",
+      "model": "hf.co/unsloth/Qwen3.6-27B-GGUF:Q3_K_S",
+      "think": false,
+      "preview": true
+    },
+    {
+      "key": "claude-fable-5-1-manual-2",
+      "label": "Claude Fable 5.1, closed-book hand-written pass by a fresh subagent (reference ceiling)",
+      "provider": "manual",
+      "model": "claude-fable-5-1 (manual, pass 2)",
+      "think": null,
+      "preview": false
+    }
+  ],
+  "machine": "macOS-15.7.3-arm64-arm-64bit",
+  "chip": "Apple M1 Pro",
+  "memory_bytes": "17179869184",
+  "ollama_version": "ollama version is 0.33.3",
+  "llama_server_version": "",
+  "git_commit": "b3d6aa4"
+}

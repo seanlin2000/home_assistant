@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It names nitrogen deficiency and overwatering but leaves out normal aging of old leaves, the key 'this is normal' explanation, and says the pattern 'usually suggests a nutrient or watering issue'.",
+  "judgment_reason": "It asks for missing information (plant type and soil) instead of asserting one cause, but it leans toward a problem without asking about watering, light, fertilizer, or how fast the leaves are dying.",
+  "spoken_fit_reason": "Three plain sentences that lead with the assessment, good to read aloud."
+}

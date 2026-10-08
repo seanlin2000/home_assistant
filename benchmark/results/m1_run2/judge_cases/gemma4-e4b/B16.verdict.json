@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It calls 4% \"on the lower side\" even though the excerpts show LIC rents rising only 1.34% (RentCafe) to 3.9% year over year, and the line \"even with a one percent increase, the overall market is showing significant appreciation\" is muddled; only the point about concessions and net effective versus asking rent is solid.",
+  "judgment_reason": "Searching was right, but it reached a conclusion the data contradicts and never noted that comparing the offer needs the user's current rent and unit size.",
+  "spoken_fit_reason": "Plain prose with no markup, but three paragraphs is long for a spoken answer and the lead sentence is the wrong conclusion."
+}

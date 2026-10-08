@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The final reply is the silence marker '*' alone, which is the expected reply to the Whisper artifact 'Thank you for watching.'",
+  "judgment_reason": "It correctly recognized the phrase was not addressed to it and stayed silent.",
+  "spoken_fit_reason": "Nothing was spoken, which is the ideal for this input."
+}

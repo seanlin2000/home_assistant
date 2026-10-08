@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 1,
+  "answer_quality_reason": "Calling 4 percent 'on the higher end' is plausible, but it never cites the retrieved trend figures that support that (RentCafe's 1.34 percent rise, realtor.com's 2.66 percent decline) and instead lists rent levels, which do not measure an annual increase; its risk discussion skips asking-versus-signed rents and concessions.",
+  "judgment_reason": "Searching was right and it did flag that advertised rents vary by unit and listing date, but it compared a percentage increase against dollar rent levels without knowing the user's current rent or unit size and did not ask.",
+  "spoken_fit_reason": "Plain prose without formatting, but two long paragraphs with a run of dollar figures that bury the verdict's reasoning."
+}

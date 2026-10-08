@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It replied exactly \"Can you repeat that?\" to the cut-off \"What's the the uh capital\", the best reply per the reference.",
+  "judgment_reason": "It asked for clarification instead of guessing a country or searching.",
+  "spoken_fit_reason": "The fixed four-word reply is the ideal length for a clarify case."
+}

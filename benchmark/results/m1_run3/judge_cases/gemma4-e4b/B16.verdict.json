@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It gives no market comparison and does not explain the risks of using advertised rents, which needed no search, only a disclaimer and an offer to search.",
+  "judgment_reason": "It asked 'Would you like me to search' when the user had explicitly asked for a comparison with current market conditions, so it never did the central task.",
+  "spoken_fit_reason": "Plain prose with no formatting, but it is a non-answer that ends in a question."
+}

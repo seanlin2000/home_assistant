@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It computed the one-year lease as 3500 * 12 = 42,000 with no 5% increase and the two-year as a flat 3500 * 1.03 * 24 with no second-year compounding, so both totals and the 44,520 savings are wrong against the reference 44,100 and 87,817.80.",
+  "judgment_reason": "It called a one-year total \"cheaper\" than a two-year total without noting the options cover different lengths or stating any assumption about the second year.",
+  "spoken_fit_reason": "Two short plain sentences that lead with the totals, with numbers written out for speech."
+}

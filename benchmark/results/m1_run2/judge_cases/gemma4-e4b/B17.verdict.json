@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "\"Yes, through community firmware\" is supported by the Open Voice PE GitHub excerpt, but it omits the more direct route in the chris-potter excerpt of loading custom microWakeWord models via ESPHome, and it cites \"associated discussions\" that were not read.",
+  "judgment_reason": "It searched as instructed and said which source it trusted and why, pointing to concrete instructions and code.",
+  "spoken_fit_reason": "Three plain sentences that lead with \"Yes\", with no URLs or markup."
+}

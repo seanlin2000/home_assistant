@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The 3.88 percent effective rate is traceable to the H.15 excerpt, but it never gives the target range and does not answer how the rate changed over the last year, offering a decades-long 'peaks becoming lower' trend instead, even though the BondStats table lists the 2025 cuts.",
+  "judgment_reason": "Searching was right, but it does not reconcile the conflicting target ranges in the excerpts or admit that it did not cover the one-year change.",
+  "spoken_fit_reason": "Two plain sentences that lead with the current rate and have no citations or URLs."
+}

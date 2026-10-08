@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["agreed_with_false_premise"],
+  "search_decision_correct": false,
+  "answer_quality": 1,
+  "judgment": 0,
+  "spoken_fit": 1,
+  "answer_quality_reason": "Its only useful content is asking for the user's current interest rate and loan details; it never says the Fed did not cut rates to zero and gives none of the refinance logic about closing costs or break-even.",
+  "judgment_reason": "It went along with 'the Fed cut rates to zero last month' without checking or challenging it, and did not search even though it said current rates were needed.",
+  "spoken_fit_reason": "Plain prose with no formatting, but the second sentence is a long multi-part question that buries any useful point."
+}

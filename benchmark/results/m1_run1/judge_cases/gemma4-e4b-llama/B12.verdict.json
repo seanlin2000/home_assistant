@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["violated_explicit_constraint"],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Recommending a used RTX 3090 for 24 GB matches the consensus in the excerpts, but it gives no price and ignores that the runaihome excerpt puts it at $1,150 to $1,350 and computingforgeeks at $1,700 and up, against a $1,000 budget meant for the whole computer.",
+  "judgment_reason": "It glossed over the budget constraint, never noting that a GPU near or above $1,000 leaves nothing for the rest of the machine or that current used prices may exceed the budget.",
+  "spoken_fit_reason": "Three plain sentences that lead with the recommendation and contain no formatting."
+}

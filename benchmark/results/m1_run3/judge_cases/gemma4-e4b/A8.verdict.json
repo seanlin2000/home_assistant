@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It recommends the router design for speed and cost but omits its costs (routing errors, more moving parts), the predictability of deterministic tools, and the single model's simplicity and flexibility.",
+  "judgment_reason": "The recommendation is sound but one-sided, with no note on when a single large model would be fine.",
+  "spoken_fit_reason": "Three short plain sentences, though the opening 'That is an interesting architectural question' delays the recommendation slightly."
+}

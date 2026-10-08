@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It says no, backed by the tool's 'clear, dry' afternoon and the 68 to 71 degree range, all matching the forecast result.",
+  "judgment_reason": "It called weather_forecast for tomorrow afternoon only and did not search the web.",
+  "spoken_fit_reason": "One sentence that leads with 'No' and gives the supporting conditions."
+}

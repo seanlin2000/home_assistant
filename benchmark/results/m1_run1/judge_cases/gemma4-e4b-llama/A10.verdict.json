@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It correctly explains that a model too large for VRAM spills to much slower system RAM regardless of GPU speed, though it omits that larger memory also allows less aggressive quantization and longer context.",
+  "judgment_reason": "It answered from general knowledge without searching and stayed well within the spoken length the user asked for.",
+  "spoken_fit_reason": "Two plain sentences of about eighty words that lead with the main reason and would fit comfortably under 45 seconds."
+}

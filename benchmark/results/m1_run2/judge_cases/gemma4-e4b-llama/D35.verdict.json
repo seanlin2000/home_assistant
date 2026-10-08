@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "\"The author of Pride and Prejudice is Jane Austen\" is correct and does not remark on the misheard \"rote\".",
+  "judgment_reason": "It read through the transcription error and answered the intended question without searching or asking for clarification.",
+  "spoken_fit_reason": "One short plain sentence that gives the answer directly."
+}

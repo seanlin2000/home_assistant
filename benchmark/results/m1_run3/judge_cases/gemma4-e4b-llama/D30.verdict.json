@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It replied with the silence marker '*' alone, the expected reply to a speech-recognition artifact.",
+  "judgment_reason": "It recognized 'Thank you for watching.' as not addressed to it and neither searched nor spoke.",
+  "spoken_fit_reason": "Nothing was spoken, which is the ideal for this input."
+}

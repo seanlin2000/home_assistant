@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The figure of about $6.52 a month matches the energy_cost result (1.45 kWh a day, 43.5 kWh a month at $0.15), and it states the assumed rate and the 1 hour active plus 23 hours idle split, but it never notes that the machine probably is not at 300 W for the whole hour.",
+  "judgment_reason": "It names its rate and duty-cycle assumptions, but the user explicitly asked it not to pretend to know the time under load, and it treats the full active hour as given without saying the real figure is likely lower.",
+  "spoken_fit_reason": "Leads with the dollar figure in two plain sentences with the numbers spelled out."
+}

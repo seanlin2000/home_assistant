@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The $6.52 monthly figure matches the tool's 1.45 kWh a day and 43.5 kWh a month, but it misspeaks the assumed rate as \"one-fifty per kilowatt hour\" instead of fifteen cents and omits the daily or monthly kWh.",
+  "judgment_reason": "It calls the result an estimate and names the rate and 30-day assumptions, but treats the full hour at 300 W as given rather than noting the load time is uncertain, which the user explicitly asked it to address.",
+  "spoken_fit_reason": "Two plain sentences that lead with the cost and suit text to speech."
+}

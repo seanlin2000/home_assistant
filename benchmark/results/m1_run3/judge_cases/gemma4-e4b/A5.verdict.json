@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It covers a beamforming multi-microphone array, local low-latency compute, and placement, but omits echo cancellation, a local wake-word path, speaker separation from the mic, and privacy of always-on audio.",
+  "judgment_reason": "It respected the no-product-names constraint and stayed focused on microphone quality and conversation over automation, as the user asked.",
+  "spoken_fit_reason": "Four plain sentences that open with the three main areas, with no list or markdown."
+}

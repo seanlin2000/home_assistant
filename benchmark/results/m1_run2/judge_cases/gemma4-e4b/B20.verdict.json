@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The final assistant message is empty, so the user gets no hardware approach and no verdict on whether the budget can be met.",
+  "judgment_reason": "It searched appropriately but never delivered the explicit feasibility call the user demanded about ChatGPT-like quality under $1,000.",
+  "spoken_fit_reason": "Nothing would be spoken in reply to a real request."
+}

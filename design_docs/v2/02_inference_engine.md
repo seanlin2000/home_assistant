@@ -1,6 +1,6 @@
 # 02. Inference engine
 
-Status: designed 2026-10-08
+Status: building
 
 ## 1. Purpose
 
@@ -203,6 +203,20 @@ M1 replaces Ollama only after measuring both engines on the same questions:
    - the decode speed.
 
 M1 is done when the score is at least Ollama's minus the noise, tool calls are malformed no more often, empty completions stay below one in seven, the median time to the first spoken word is at most half of Ollama's, and in at least nine questions out of ten the first llama.cpp request reads no more than 600 prompt tokens fresh (v2/00 §9). The last measure is per first request rather than a share of all prompt tokens, because a search result is always new text: a question that reads a 2,700-token result cannot be mostly cached however well the prompt is ordered. Ollama stays installed until M1 closes, and is removed afterwards.
+
+**Result, 2026-10-08** (`benchmark/results/m1_bake_off.md`, runs `m1_run1` to `m1_run3`): four of the five criteria are met.
+
+| Criterion | Ollama | llama-server | Met |
+|---|---|---|---|
+| Score, mean of three runs | 221.0, noise band 11 | 228.0 | Yes |
+| Exchanges with a malformed tool call | 0 of 117 | 1 of 117 | No |
+| Exchanges with an empty completion | 2 of 117 | 0 of 117 | Yes |
+| Median first spoken word | 3.66 s | 1.04 s | Yes |
+| First requests reading at most 600 tokens fresh | not reported by Ollama | 117 of 117 | Yes |
+
+The one malformed call is a repetition loop: the model repeated one sum inside a calculator call until the 600-token output cap cut it off. Two other findings come from the judge:
+- **The date is spoken.** In 12 of 117 exchanges on llama-server, against 2 on Ollama, the answer reads the date from the per-question note aloud.
+- **Arithmetic is weaker.** Category C fell from 46 to 36 on average, still inside its noise band of 14, through wrong calculator arguments (an annual rate used as monthly, arguments swapped).
 
 ### 3.8 Why llama-server, and what waits for the new Mac
 

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It gives no hardware approach and no feasibility verdict, only 'I need to research current hardware options' without doing so.",
+  "judgment_reason": "It said it needed to research and then did not search, leaving the central question, whether the requirements fit in $1,000, unanswered.",
+  "spoken_fit_reason": "Two plain sentences with no formatting, but there is no answer to lead with."
+}
