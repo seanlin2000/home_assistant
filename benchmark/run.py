@@ -7,6 +7,7 @@ import platform
 import signal
 import subprocess
 import sys
+import time
 import uuid
 from collections.abc import AsyncIterator, Awaitable, Callable
 from pathlib import Path
@@ -21,7 +22,7 @@ from assistant_core.converse_protocol import ConverseRequest
 from assistant_core.harness_client import HarnessClient
 from assistant_core.llama_server_client import LlamaServerClient
 from assistant_core.llm_client import LLMClient, OllamaClient
-from assistant_core.models import AgentEvent, AgentPolicy, Done, Message, Role, Transcript
+from assistant_core.models import AgentEvent, AgentPolicy, AnswerDelta, Done, FillerSpoken, Message, Role, Transcript
 from assistant_core.prompts import PROMPT_VERSION, system_prompt
 from assistant_core.router import ROUTER_SYSTEM_PROMPT
 from assistant_core.tools import McpToolBox
@@ -227,8 +228,17 @@ def in_process_exchange(llm: LLMClient, toolbox: McpToolBox, policy: AgentPolicy
 
 
 def harness_exchange(client: HarnessClient, conversation_id: str) -> ExchangeRunner:
+    """The first spoken word is timed here, at the client, so the transcript's figure includes the HTTP hop that M2's exit criterion is about."""
+
     async def run_exchange(conversation: list[Message]) -> Transcript:
-        return await transcript_of(client.converse(ConverseRequest(conversation_id=conversation_id, conversation=conversation, source="benchmark")))
+        started = time.perf_counter()
+        first_spoken: float | None = None
+        async for event in client.converse(ConverseRequest(conversation_id=conversation_id, conversation=conversation, source="benchmark")):
+            if first_spoken is None and isinstance(event, (FillerSpoken, AnswerDelta)):
+                first_spoken = time.perf_counter() - started
+            if isinstance(event, Done):
+                return event.transcript.model_copy(update={"time_to_first_spoken_seconds": first_spoken})
+        raise RuntimeError("the harness stream ended without a Done event")
 
     return run_exchange
 

@@ -1,6 +1,6 @@
 # 04. Agent harness
 
-Status: designed 2026-10-08
+Status: building
 
 ## 1. Purpose
 
@@ -82,6 +82,16 @@ What the component keeps and what it loses:
 | The empty assistant entry after a silent reply | The model's address and the tool server's address |
 
 The component's options form shrinks to the harness's address and key, the follow-up switch, and `max_follow_ups`. It still vendors `assistant_core` for the shared event and transcript models, but no longer runs any of the loop, so Home Assistant's Python never imports a model client. If the harness cannot be reached, the component speaks "I can't reach the assistant right now." rather than failing silently.
+
+**Result, 2026-10-08** (run `m2_harness_run1`, question set 1.4 through the HTTP API): M2's exit criteria are met.
+
+| Criterion | Measured |
+|---|---|
+| The same gates over HTTP | The code gates fired as often as in M1's three in-process runs: twice `spoke_when_it_should_stay_silent` (D29, D31), once each way on the search decision (A11, B21), and nothing else |
+| `ops.smoke --full` passes | Both questions passed through Home Assistant: the calculator in 1.3 s and the web search in 13.9 s |
+| First spoken word no more than 150 ms above in-process | Median 1.160 s through the API, timed at the client, against 1.044 to 1.073 s in process in M1's three runs: 87 to 116 ms more |
+
+The pass needs a tool server that offers `weather_forecast`. The first attempt used the installed one, which had no home coordinates in `.env` and so started without the weather tool; the three weather questions then searched instead. The recorded pass used the branch's tool server with the benchmark's home.
 
 ### 3.3 Several tools for one question
 
