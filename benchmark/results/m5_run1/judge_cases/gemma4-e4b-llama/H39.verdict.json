@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It replied 'Can you repeat that?' to a clear request and gave no baking time, so nothing of the expected 55 to 65 minutes at 350°F answer is present.",
+  "judgment_reason": "It treated a clear, explicit request to look something up as garbled and did not search.",
+  "spoken_fit_reason": "Short and plain, but a request to repeat is the wrong kind of reply to a clear question."
+}

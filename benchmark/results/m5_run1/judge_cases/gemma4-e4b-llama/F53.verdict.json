@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The 4,137.71 dollar price is from the naturalresourcestocks excerpt and the 14,481.99 total matches the calculator result, though speaking a live spot price to the cent is less sensible rounding than 'about 14,480 dollars'.",
+  "judgment_reason": "It searched as instructed and used the calculator for the multiplication rather than doing it in its head.",
+  "spoken_fit_reason": "Two plain sentences, price then total, written out for speech."
+}

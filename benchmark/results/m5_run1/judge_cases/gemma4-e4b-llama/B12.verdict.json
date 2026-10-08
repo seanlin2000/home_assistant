@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "A used RTX 3090 with 24 GB is the most-VRAM pick the excerpts support, but the answer gives no price at all and ignores that promptquorum and llmconfigurator put a full 3090 build at about 1,240 to 1,300-plus dollars, while compute-market claims 960 to 1,000.",
+  "judgment_reason": "It glosses over the 1,000 dollar constraint: the retrieved sources disagree on whether a 3090 build fits, and the answer neither flags that the budget is tight nor offers the in-budget 16 GB alternative.",
+  "spoken_fit_reason": "Two plain sentences that lead with the recommendation, though 'thirty nine zero' is an awkward rendering of the card name."
+}

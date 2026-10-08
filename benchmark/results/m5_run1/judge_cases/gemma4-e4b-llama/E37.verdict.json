@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Saturday's partly cloudy, dry, 52 to 67 and Sunday's cloudy with light rain match the tool result, but Sunday's temperature range (54 to 68) is left out.",
+  "judgment_reason": "It used the home forecast tool for the weekend without searching and flagged Sunday's rain.",
+  "spoken_fit_reason": "Two plain sentences summarizing both days without reading out every line."
+}

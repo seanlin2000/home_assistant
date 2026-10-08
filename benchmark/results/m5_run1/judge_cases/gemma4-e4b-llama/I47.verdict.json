@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It names Lisbon and gives both days' conditions and ranges (60 to 79 partly cloudy and dry, 62 to 76 cloudy and dry) exactly as the tool returned them.",
+  "judgment_reason": "It used the forecast tool with the named place and did not search the web.",
+  "spoken_fit_reason": "One plain sentence covering both days, short enough to speak."
+}

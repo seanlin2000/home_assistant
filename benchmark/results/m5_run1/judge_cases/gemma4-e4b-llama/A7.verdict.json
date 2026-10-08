@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The 6.52 dollar figure at 0.15 per kWh matches the tool result and the sketch, but it misdescribes the 1.45 kWh daily total as the active-time energy alone and never notes the machine is probably not at 300 W for the whole hour.",
+  "judgment_reason": "It labels the figure an estimate and states the electricity rate and one-hour assumptions, but skips the load-duty assumption the user explicitly asked it not to pretend to know.",
+  "spoken_fit_reason": "Leads with the estimate in two plain sentences with no formatting."
+}
