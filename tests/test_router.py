@@ -38,19 +38,19 @@ def test_rules_catch_explicit_searches_and_plain_arithmetic() -> None:
     assert rule_route("Why is the sky blue?") is None
 
 
-def test_weather_rule_fires_only_for_home_and_leaves_other_places_to_the_model() -> None:
+def test_weather_rule_fires_for_home_and_named_places_but_not_for_mixed_questions() -> None:
     fired = {question.id for question in QUESTIONS.questions if (decision := rule_route(question.exchanges[-1])) and decision.route == Route.WEATHER}
     assert {"E36", "E37"} <= fired and "B13" not in fired
-    for home in ("what's the weather", "Is it going to snow on Saturday?", "Do I need to bring an umbrella to work?", "will it rain at 5 pm"):
-        assert rule_route(home).route == Route.WEATHER, home
-    for elsewhere_or_not_forecast in ("Will it rain in Paris tomorrow?", "What's the weather in the Alps this weekend?", "Why does rain smell nice?"):
-        assert rule_route(elsewhere_or_not_forecast) is None, elsewhere_or_not_forecast
+    for forecast in ("what's the weather", "Is it going to snow on Saturday?", "Will it rain in Paris tomorrow?", "What's the weather in the Alps this weekend?"):
+        assert rule_route(forecast).route == Route.WEATHER, forecast
+    for mixed_or_not_forecast in ("What are the current train schedules and weather in Lucerne?", "Why does rain smell nice?"):
+        assert rule_route(mixed_or_not_forecast) is None, mixed_or_not_forecast
 
 
 def test_weather_rule_needs_a_question_about_coming_or_current_conditions_not_just_a_rain_or_snow_word() -> None:
     for forecast in ("Do I need an umbrella tomorrow?", "Will it rain this afternoon?", "Is it going to snow in the morning?", "What's the weather?"):
         assert rule_route(forecast).route == Route.WEATHER, forecast
-    for not_forecast_by_rule in ("Who sang Purple Rain?", "Who wrote Snow Crash?", "How much rain does Seattle get a year?", "What's the weather in Lisbon?"):
+    for not_forecast_by_rule in ("Who sang Purple Rain?", "Who wrote Snow Crash?", "How much rain does Seattle get a year?"):
         assert rule_route(not_forecast_by_rule) is None, not_forecast_by_rule
 
 
@@ -91,5 +91,5 @@ async def test_follow_up_exchanges_pass_earlier_user_messages_as_context() -> No
 def test_directive_for_names_the_tool_for_each_routed_question_and_nothing_for_answers() -> None:
     assert directive_for(rule_route("search the web for it")) == SEARCH_DIRECTIVE.rstrip()
     assert "do not do the math yourself" in directive_for(rule_route("what is 15% of $80 plus $20"))
-    assert 'weather_forecast(day="tomorrow"' in directive_for(rule_route("do I need an umbrella tomorrow"))
+    assert 'place="Lisbon"' in directive_for(rule_route("do I need an umbrella tomorrow"))
     assert directive_for(RouteDecision(route=Route.ANSWER, source="model")) is None

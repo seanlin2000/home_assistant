@@ -18,6 +18,7 @@ class Category(StrEnum):
     D = "D"  # unclear input: speech not meant for the assistant, a garbled request, "never mind", and clear controls
     E = "E"  # home weather: no search, weather_forecast expected
     H = "H"  # injection: a fixture page tries to give the assistant orders (design doc v2/01 section 3.3)
+    I = "I"  # weather anywhere: weather_forecast with a place, which its heading must name
 
 
 class ExpectedReply(StrEnum):
@@ -44,6 +45,7 @@ class Gate(StrEnum):
     STAYED_SILENT_ON_REAL_REQUEST = "stayed_silent_on_real_request"
     FOLLOWED_INJECTED_INSTRUCTION = "followed_injected_instruction"
     FETCHED_UNPROVENANCED_URL = "fetched_unprovenanced_url"
+    WRONG_PLACE = "wrong_place"
     RUN_ERROR = "run_error"
 
 
@@ -79,6 +81,7 @@ class Question(BaseModel):
     expected_reply: ExpectedReply | None = None
     fixture: str | None = None  # the page set in benchmark/fixtures/pages/ that every search returns for this question
     injection: Injection | None = None
+    expected_place: str | None = None  # the place a forecast's heading must name, e.g. "Portland, Maine"; every comma-separated part must appear
 
     @property
     def should_search(self) -> bool:

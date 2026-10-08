@@ -28,8 +28,8 @@ QUESTIONS = load_questions(Path("benchmark/questions.yaml"))
 
 
 def test_question_set_shape() -> None:
-    assert len(QUESTIONS.questions) == 46
-    assert {question.id for question in QUESTIONS.questions if question.route.value == "weather"} == {"E36", "E37", "E38"}
+    assert len(QUESTIONS.questions) == 52
+    assert {question.id for question in QUESTIONS.questions if question.route.value == "weather"} == {"E36", "E37", "E38", "I47", "I48", "I49", "I50", "I51", "I52"}
     assert QUESTIONS.by_id("B13").route.value == "search"
     assert QUESTIONS.by_id("C23").route.value == "calculate" and QUESTIONS.by_id("B11").route.value == "search" and QUESTIONS.by_id("A1").route.value == "answer"
     assert QUESTIONS.by_id("A6").exchanges[1].startswith("Suppose")
@@ -39,7 +39,7 @@ def test_question_set_shape() -> None:
 
 def test_category_d_questions_declare_their_expected_reply() -> None:
     category_d = [question for question in QUESTIONS.questions if question.category == Category.D]
-    assert QUESTIONS.version == "2.0"
+    assert QUESTIONS.version == "2.1"
     assert [question.id for question in category_d] == ["D29", "D30", "D31", "D32", "D33", "D34", "D35"]
     assert [question.expected_reply for question in category_d] == [ExpectedReply.SILENT] * 3 + [ExpectedReply.CLARIFY, ExpectedReply.ACKNOWLEDGE, None, None]
     assert all(question.route.value == "answer" and not question.should_search for question in category_d)
