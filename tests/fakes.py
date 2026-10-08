@@ -2,7 +2,7 @@
 
 from collections.abc import AsyncIterator
 
-from assistant_core.models import AgentPolicy, Completion, GenerationStats, LLMEvent, Message, Role, TextDelta, ToolCall, ToolCallRequest, ToolSpec
+from assistant_core.models import AgentPolicy, Completion, GenerationStats, LLMEvent, MalformedToolCall, Message, Role, TextDelta, ToolCall, ToolCallRequest, ToolSpec
 
 SEARCH_TOOL = ToolSpec(name="search_and_read", description="search", input_schema={"type": "object", "properties": {"query": {"type": "string"}}, "required": ["query"]})
 
@@ -17,6 +17,17 @@ def text_reply(*chunks: str) -> list[LLMEvent]:
 def tool_reply(query: str, call_id: str = "call_0", tool_name: str = "search_and_read") -> list[LLMEvent]:
     call = ToolCall(id=call_id, name=tool_name, arguments={"query": query})
     return [ToolCallRequest(call=call), Completion(message=Message(role=Role.ASSISTANT, content="", tool_calls=[call]), stats=GenerationStats(model="fake", total_seconds=0.1))]
+
+
+def several_tool_calls_reply(*queries: str) -> list[LLMEvent]:
+    """One model turn asking for a search per query at once."""
+    calls = [ToolCall(id=f"call_{index}", name="search_and_read", arguments={"query": query}) for index, query in enumerate(queries)]
+    return [*(ToolCallRequest(call=call) for call in calls), Completion(message=Message(role=Role.ASSISTANT, content="", tool_calls=calls), stats=GenerationStats(model="fake", total_seconds=0.1))]
+
+
+def malformed_reply(raw: str = '{"query": "fed funds') -> list[LLMEvent]:
+    """A turn whose only output is a tool call the client could not parse."""
+    return [MalformedToolCall(raw=raw), Completion(message=Message(role=Role.ASSISTANT, content=raw), stats=GenerationStats(model="fake", total_seconds=0.1))]
 
 
 def tool_replies_past_the_cap(policy: AgentPolicy) -> list[list[LLMEvent]]:

@@ -1,8 +1,10 @@
+import asyncio
+
 from assistant_core import agent_loop
 from assistant_core.agent_loop import SilenceMarkerHold, SpokenAnswerCap
-from assistant_core.models import AgentEvent, AgentPolicy, AnswerDelta, Done, FillerSpoken, Message, Role, ToolFinished, ToolStarted
+from assistant_core.models import AgentEvent, AgentPolicy, AnswerDelta, Done, FillerSpoken, Message, Role, ToolCall, ToolFinished, ToolStarted
 from assistant_core.prompts import SILENCE_MARKER
-from tests.fakes import FakeToolBox, ScriptedLLM, empty_reply, text_reply, tool_replies_past_the_cap, tool_reply
+from tests.fakes import FakeToolBox, ScriptedLLM, empty_reply, malformed_reply, several_tool_calls_reply, text_reply, tool_replies_past_the_cap, tool_reply
 
 
 async def collect(llm: ScriptedLLM, tools: FakeToolBox, policy: AgentPolicy | None = None) -> list[AgentEvent]:
@@ -199,3 +201,46 @@ async def test_the_model_sees_the_block_before_the_question_but_the_history_keep
     assert "today is" not in llm.seen_messages[0][0].content.lower()
     transcript = events[-1].transcript
     assert transcript.conversation[0].content == "What is the fed funds rate?"
+
+
+async def test_a_broken_tool_call_is_asked_again_once_and_kept_out_of_the_history() -> None:
+    llm = ScriptedLLM([malformed_reply(), text_reply("It is four percent.")])
+    transcript = (await collect(llm, FakeToolBox()))[-1].transcript
+    assert transcript.final_answer == "It is four percent."
+    assert transcript.malformed_retries == 1 and transcript.malformed_tool_calls == ['{"query": "fed funds']
+    assert llm.seen_messages[1] == llm.seen_messages[0]
+    assert all(message.content != '{"query": "fed funds' for message in transcript.conversation)
+
+
+class SlowToolBox(FakeToolBox):
+    """Counts how many calls are in flight at once."""
+
+    def __init__(self) -> None:
+        super().__init__()
+        self.in_flight = 0
+        self.most_in_flight = 0
+
+    async def call(self, call: ToolCall) -> str:
+        self.in_flight += 1
+        self.most_in_flight = max(self.most_in_flight, self.in_flight)
+        await asyncio.sleep(0.01)
+        self.in_flight -= 1
+        return await super().call(call)
+
+
+async def test_calls_in_one_turn_run_together_and_their_results_keep_the_order_asked() -> None:
+    tools = SlowToolBox()
+    events = await collect(ScriptedLLM([several_tool_calls_reply("gold price", "silver price"), text_reply("Done.")]), tools)
+    transcript = events[-1].transcript
+    assert tools.most_in_flight == 2
+    assert [record.call.arguments["query"] for record in transcript.tool_call_records] == ["gold price", "silver price"]
+    assert [type(event) for event in events if isinstance(event, (ToolStarted, ToolFinished))] == [ToolStarted, ToolStarted, ToolFinished, ToolFinished]
+
+
+async def test_a_repeated_call_is_answered_from_the_first_without_reaching_the_tool_again() -> None:
+    tools = FakeToolBox()
+    llm = ScriptedLLM([several_tool_calls_reply("gold price", "gold price"), tool_reply("gold price", "call_9"), text_reply("Done.")])
+    transcript = (await collect(llm, tools))[-1].transcript
+    assert [call.arguments["query"] for call in tools.calls] == ["gold price"]
+    assert [record.repeated for record in transcript.tool_call_records] == [False, True, True]
+    assert transcript.tool_call_records[2].result.startswith(agent_loop.REPEATED_CALL_NOTE)

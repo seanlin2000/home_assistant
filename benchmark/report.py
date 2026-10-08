@@ -8,7 +8,7 @@ from pathlib import Path
 
 import yaml
 
-from assistant_core.models import Route
+from assistant_core.models import Route, RouteDecision
 from benchmark.records import Candidate, Category, Gate, Question, QuestionResult, QuestionSet, Score, load_config, load_questions, read_jsonl
 
 CONFIG_PATH = Path("benchmark/config.yaml")
@@ -148,10 +148,10 @@ def render_router_table(question_set: QuestionSet, reports: list[CandidateReport
     ]
     for report in routed:
         outcomes = report.route_outcomes(question_set)
-        by_rule = [(question, decision) for question, decision in outcomes if decision.source == "rule"]
+        by_rule = [(question, decision) for question, decision in outcomes if decision.source.startswith("rule")]
         by_model = [(question, decision) for question, decision in outcomes if decision.source == "model"]
-        correct = [(question, decision) for question, decision in outcomes if decision.route == question.route]
-        misroutes = ", ".join(f"{question.id} ({decision.route.value}, {question.route.value})" for question, decision in outcomes if decision.route != question.route) or "none"
+        correct = [(question, decision) for question, decision in outcomes if question.routed_as_expected(decision)]
+        misroutes = ", ".join(f"{question.id} ({decision.route.value}, {question.route.value})" for question, decision in outcomes if not question.routed_as_expected(decision)) or "none"
         model_seconds = [decision.seconds for _, decision in by_model]
         lines.append(
             f"| {label(report)} | {len(by_rule)} | {count_correct(by_rule)}/{len(by_rule)} | {len(by_model)} | {count_correct(by_model)}/{len(by_model)} | {len(correct)}/{len(outcomes)} ({len(correct) / len(outcomes):.0%}) | {statistics.median(model_seconds) if model_seconds else 0:.2f} s | {misroutes} |"
@@ -159,8 +159,8 @@ def render_router_table(question_set: QuestionSet, reports: list[CandidateReport
     return "\n".join(lines)
 
 
-def count_correct(outcomes: list[tuple[Question, object]]) -> int:
-    return sum(1 for question, decision in outcomes if decision.route == question.route)
+def count_correct(outcomes: list[tuple[Question, RouteDecision]]) -> int:
+    return sum(1 for question, decision in outcomes if question.routed_as_expected(decision))
 
 
 def render_comparison(reports: list[CandidateReport], previous: list[CandidateReport], previous_name: str) -> str:

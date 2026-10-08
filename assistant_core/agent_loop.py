@@ -1,6 +1,7 @@
 """The agent loop: prompt the model, run any tools it asks for, prompt again, stream the spoken answer. Same code in the benchmark and the product."""
 
 import asyncio
+import json
 import random
 import re
 import time
@@ -31,12 +32,13 @@ from assistant_core.models import (
     Transcript,
 )
 from assistant_core.prompts import SILENCE_MARKER, per_question_block, question_with_block, system_prompt
-
-EMPTY_COMPLETION_RETRIES = 1
-from assistant_core.router import decide_route, directive_for, route_to_offered_tools
+from assistant_core.router import decide_route, directive_for, route_to_offered_tools, tool_round_cap
 from assistant_core.tool_guards import GuardedToolBox, ToolRefused, load_tool_table
 from assistant_core.tools import ToolBox
 
+EMPTY_COMPLETION_RETRIES = 1
+MALFORMED_RETRIES = 1
+REPEATED_CALL_NOTE = "You already made this exact call for this question; here is its result again. Use it rather than calling again."
 TOOL_LIMIT_NOTICE = "Tool call limit reached. Answer the user now with what you already know; do not call any more tools."
 TOOL_UNREACHABLE_NOTICE = "The web search tool is unavailable right now. Tell the user you could not check the web, then answer from your own knowledge with that caveat."
 SENTENCE_END = re.compile(r"[.!?][\"')\]]?(\s|$)")
@@ -119,20 +121,21 @@ async def run(conversation: list[Message], llm: LLMClient, tools: ToolBox, polic
         transcript.route = route_to_offered_tools(await decide_route(llm, conversation, policy), tool_specs)
         directive = directive_for(transcript.route)
     spoken_question = put_block_before_question(messages, per_question_block(date.today(), directive, memory.get_context(conversation)))
-    for round_index in range(policy.max_tool_rounds + 1):
+    max_tool_rounds = tool_round_cap(transcript.route, policy.max_tool_rounds)
+    runner = ToolCallRunner(tools, policy)
+    for round_index in range(max_tool_rounds + 1):
         reply = ModelReply()
         async for event in stream_model_reply(llm, messages, tool_specs, policy, reply, cap, transcript, started):
             yield event
-        if reply_is_empty(reply) and transcript.empty_completion_retries < EMPTY_COMPLETION_RETRIES:
-            transcript.empty_completion_retries += 1
-            transcript.model_calls.append(reply.completion.stats)
+        if may_ask_again(reply, transcript):
+            set_aside_unusable_reply(reply, transcript)
             reply = ModelReply()
             async for event in stream_model_reply(llm, messages, tool_specs, policy, reply, cap, transcript, started):
                 yield event
         record_model_reply(transcript, reply, messages)
         if not reply.tool_calls:
             break
-        if round_index == policy.max_tool_rounds:
+        if round_index == max_tool_rounds:
             transcript.hit_tool_round_cap = True
             messages.extend(limit_notices(reply.tool_calls))
             reply = ModelReply()
@@ -140,7 +143,7 @@ async def run(conversation: list[Message], llm: LLMClient, tools: ToolBox, polic
                 yield event
             record_model_reply(transcript, reply, messages)
             break
-        async for event in execute_tool_calls(tools, reply.tool_calls, round_index, policy, messages, transcript):
+        async for event in execute_tool_calls(runner, reply.tool_calls, round_index, messages, transcript):
             yield event
     restore_spoken_question(messages, spoken_question)
     finish_transcript(transcript, reply, cap, messages, started)
@@ -154,6 +157,27 @@ def reply_is_empty(reply: ModelReply) -> bool:  # deslop: allow-comments
     a small formatting slip, Ollama's parser drops it without reporting anything, and the reply arrives empty. Read aloud, that is silence, so the
     loop asks once more before giving up."""
     return reply.completion is not None and not reply.text_parts and not reply.tool_calls and not reply.malformed
+
+
+def reply_is_broken(reply: ModelReply) -> bool:
+    """The only output was an unparseable tool call, which left in the history would teach the model the broken format (design doc v2/04 section 3.3)."""
+    return reply.completion is not None and bool(reply.malformed) and not reply.text_parts and not reply.tool_calls
+
+
+def may_ask_again(reply: ModelReply, transcript: Transcript) -> bool:
+    if reply_is_empty(reply):
+        return transcript.empty_completion_retries < EMPTY_COMPLETION_RETRIES
+    return reply_is_broken(reply) and transcript.malformed_retries < MALFORMED_RETRIES
+
+
+def set_aside_unusable_reply(reply: ModelReply, transcript: Transcript) -> None:
+    """Count the reply and keep its cost and any broken call on the transcript, but leave it out of the messages the model sees next."""
+    if reply_is_empty(reply):
+        transcript.empty_completion_retries += 1
+    else:
+        transcript.malformed_retries += 1
+        transcript.malformed_tool_calls.extend(reply.malformed)
+    transcript.model_calls.append(reply.completion.stats)
 
 
 def put_block_before_question(messages: list[Message], block: str) -> tuple[int, Message] | None:
@@ -230,13 +254,44 @@ def record_model_reply(transcript: Transcript, reply: ModelReply, messages: list
     messages.append(reply.completion.message)
 
 
-async def execute_tool_calls(tools: ToolBox, calls: list[ToolCall], round_index: int, policy: AgentPolicy, messages: list[Message], transcript: Transcript) -> AsyncIterator[AgentEvent]:
+async def execute_tool_calls(runner: "ToolCallRunner", calls: list[ToolCall], round_index: int, messages: list[Message], transcript: Transcript) -> AsyncIterator[AgentEvent]:
     for call in calls:
         yield ToolStarted(call=call)
-        tool_call_record = await execute_one_call(tools, call, round_index, policy)
+    for tool_call_record in await runner.run_turn(calls, round_index):
         transcript.tool_call_records.append(tool_call_record)
-        messages.append(Message(role=Role.TOOL, content=tool_call_record.result, tool_call_id=call.id, tool_name=call.name))
-        yield ToolFinished(call=call, seconds=tool_call_record.seconds, error=tool_call_record.error)
+        messages.append(Message(role=Role.TOOL, content=tool_call_record.result, tool_call_id=tool_call_record.call.id, tool_name=tool_call_record.call.name))
+        yield ToolFinished(call=tool_call_record.call, seconds=tool_call_record.seconds, error=tool_call_record.error)
+
+
+class ToolCallRunner:
+    """Runs the calls of one model turn at the same time, and answers a call already made for this question from its first result instead of the network."""
+
+    def __init__(self, tools: ToolBox, policy: AgentPolicy) -> None:
+        self._tools = tools
+        self._policy = policy
+        self._first_results: dict[str, ToolCallRecord] = {}
+
+    async def run_turn(self, calls: list[ToolCall], round_index: int) -> list[ToolCallRecord]:
+        """One record per call, in the order the model asked."""
+        records = await asyncio.gather(*(execute_one_call(self._tools, call, round_index, self._policy) for call in self._calls_not_yet_made(calls)))
+        ran_now = {record.call.id: record for record in records}
+        self._first_results.update({call_key(record.call): record for record in records})
+        return [ran_now.get(call.id) or repeat_of(self._first_results[call_key(call)], call, round_index) for call in calls]
+
+    def _calls_not_yet_made(self, calls: list[ToolCall]) -> list[ToolCall]:
+        """The first of each distinct call in this turn that no earlier turn of the question made, in the order the model asked."""
+        first_of_each: dict[str, ToolCall] = {}
+        for call in calls:
+            first_of_each.setdefault(call_key(call), call)
+        return [call for key, call in first_of_each.items() if key not in self._first_results]
+
+
+def call_key(call: ToolCall) -> str:
+    return f"{call.name}:{json.dumps(call.arguments, sort_keys=True, default=str)}"
+
+
+def repeat_of(first: ToolCallRecord, call: ToolCall, round_index: int) -> ToolCallRecord:
+    return ToolCallRecord(round_index=round_index, call=call, result=f"{REPEATED_CALL_NOTE}\n{first.result}", seconds=0.0, refused=first.refused, repeated=True)
 
 
 async def execute_one_call(tools: ToolBox, call: ToolCall, round_index: int, policy: AgentPolicy) -> ToolCallRecord:
