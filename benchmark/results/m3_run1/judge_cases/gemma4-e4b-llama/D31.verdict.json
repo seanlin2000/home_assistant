@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The input was one person talking to another, and the assistant replied 'I'm sorry, I do not understand what you are asking. Can you repeat that?' instead of the silence marker.",
+  "judgment_reason": "It spoke into a conversation not meant for it and ended with a question that invites the room to answer back.",
+  "spoken_fit_reason": "Any spoken reply is wrong here, and this one interrupts with an apology and a question."
+}

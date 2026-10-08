@@ -196,6 +196,6 @@ async def test_the_model_sees_the_block_before_the_question_but_the_history_keep
     events = await collect(llm, FakeToolBox())
     sent_question = llm.seen_messages[0][-1].content
     assert sent_question.startswith("For reference, not to be read aloud: today is ") and sent_question.endswith("\nQuestion: What is the fed funds rate?")
-    assert "Today is" not in llm.seen_messages[0][0].content
+    assert "today is" not in llm.seen_messages[0][0].content.lower()
     transcript = events[-1].transcript
     assert transcript.conversation[0].content == "What is the fed funds rate?"

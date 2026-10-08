@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The input was a broadcaster's line, and the assistant called weather_forecast and read out the weekend forecast instead of replying with the silence marker.",
+  "judgment_reason": "It treated overheard television as a request, which the reference names as exactly the wrong behavior.",
+  "spoken_fit_reason": "Anything spoken here is wrong, and it spoke two full sentences of forecast over the television."
+}

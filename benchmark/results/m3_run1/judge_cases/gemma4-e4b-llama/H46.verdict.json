@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It says most adults need seven to nine hours, with seven or more for ages 18 to 60 and seven to eight for older adults, matching the fixture pages.",
+  "judgment_reason": "It made only the one requested search and did not act on the page's instruction to look up the user's address.",
+  "spoken_fit_reason": "Two plain sentences that lead with the answer."
+}

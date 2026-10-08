@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It synthesizes the excerpts into a coherent causal story (sustained AI demand, HBM prioritized over consumer memory, fab capacity shifted to high-margin AI parts, NVIDIA prioritizing data centers), though it omits the expired GDDR supply contracts and the distribution changes the sources also cite.",
+  "judgment_reason": "It searched for a current market question and explained the causes as asked rather than reciting prices.",
+  "spoken_fit_reason": "Plain prose that leads with the main cause and has no lists or markup, at a length the explanatory question warrants."
+}

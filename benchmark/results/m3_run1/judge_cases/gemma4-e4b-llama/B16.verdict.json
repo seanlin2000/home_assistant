@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It quotes unit averages but never uses the RentCafe figure that market rents rose only 1.34% year over year, which is the comparison that shows 4% is above the market trend; it judges 4% acceptable by citing rent-stabilized guideline increases that do not apply to market-rate leases, and its risk explanation is a vague line about 'specific unit conditions or locations'.",
+  "judgment_reason": "It leaned on Rent Guidelines Board caps for stabilized units as a market benchmark and left out the obvious risks that advertised asking rents differ from signed rents and exclude concessions.",
+  "spoken_fit_reason": "Two paragraphs that open with a disclaimer about missing apartment type before reaching any comparison, so the verdict is buried."
+}

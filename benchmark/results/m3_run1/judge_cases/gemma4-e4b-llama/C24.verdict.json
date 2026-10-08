@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It answers $1,623.23, less than the $18,000 of deposits alone, against a reference of about $19,091; the growth_schedule call modeled three periods at 4 percent each starting from $500 rather than 36 monthly deposits.",
+  "judgment_reason": "It set up the tool call wrongly and did not notice that the result was absurd for three years of $500 monthly deposits.",
+  "spoken_fit_reason": "One short sentence that leads with the figure."
+}

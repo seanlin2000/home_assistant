@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The energy_cost result of 1.45 kWh a day, 43.5 kWh a month and about $5.22 at 12 cents per kWh matches the reference arithmetic, and the answer names the 30-day month, the rate, and one hour active plus twenty-three idle.",
+  "judgment_reason": "It stated the rate and day-split assumptions as asked, but did not note that the machine is unlikely to draw 300 W for the whole hour, which was the uncertainty the user specifically asked it to acknowledge.",
+  "spoken_fit_reason": "Two plain sentences that lead with the estimated cost and its assumptions."
+}
