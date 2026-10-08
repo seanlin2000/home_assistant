@@ -96,9 +96,9 @@ v2 holds only the docs that change or are new. Voice, Home Assistant, music, and
 | Doc | v2 | Replaces | What changes |
 |---|---|---|---|
 | 00 System overview | this doc | v1/00 | The harness on the Mac, milestones, costs, privacy |
-| 01 LLM benchmark | to be written | v1/01 | Question set 2.0: several tools per question, memory recall, injection, weather anywhere, sports |
+| 01 LLM benchmark | [01_llm_benchmark.md](01_llm_benchmark.md) | v1/01 | The engine as a candidate; repeated runs for the noise band; categories F to J, one per milestone, with gates decided in code |
 | 02 Inference engine | [02_inference_engine.md](02_inference_engine.md) | v1/02 | llama-server instead of Ollama; serving settings in one file; prompt caching |
-| 03 Tool server | to be written | v1/03 | Weather anywhere, sports, a Reddit reader, output hygiene |
+| 03 Tool server | [03_tool_server.md](03_tool_server.md) | v1/03 | Weather anywhere; a tier for every tool; fixture search for the benchmark; sports and Reddit to come |
 | 04 Agent harness | [04_agent_harness.md](04_agent_harness.md) | v1/04 | A Mac service; several tools per question; a context budget per model |
 | 05 Voice pipeline | | v1/05 still applies | Unchanged |
 | 06 Home Assistant core | | v1/06 still applies | Unchanged, apart from the thin client (doc 04) |
