@@ -5,6 +5,7 @@ import random
 import re
 import time
 from collections.abc import AsyncIterator
+from datetime import date
 
 from assistant_core.llm_client import LLMClient
 from assistant_core.memory import ConversationMemory, NoMemory
@@ -29,10 +30,10 @@ from assistant_core.models import (
     ToolStarted,
     Transcript,
 )
-from assistant_core.prompts import SILENCE_MARKER, system_prompt
+from assistant_core.prompts import SILENCE_MARKER, per_question_block, question_with_block, system_prompt
 
 EMPTY_COMPLETION_RETRIES = 1
-from assistant_core.router import apply_route, decide_route, route_to_offered_tools
+from assistant_core.router import decide_route, directive_for, route_to_offered_tools
 from assistant_core.tools import ToolBox
 
 TOOL_LIMIT_NOTICE = "Tool call limit reached. Answer the user now with what you already know; do not call any more tools."
@@ -107,13 +108,15 @@ class SpokenAnswerCap:
 async def run(conversation: list[Message], llm: LLMClient, tools: ToolBox, policy: AgentPolicy, memory: ConversationMemory | None = None) -> AsyncIterator[AgentEvent]:
     started = time.perf_counter()
     memory = memory or NoMemory()
-    messages = build_messages(conversation, memory)
+    messages = [Message(role=Role.SYSTEM, content=system_prompt()), *conversation]
     transcript = Transcript(model=llm.model_name, system_prompt=system_prompt(), conversation=list(conversation))
     cap = SpokenAnswerCap(policy.word_budget)
     tool_specs = await load_tool_specs(tools, transcript)
+    directive = None
     if policy.route_questions and tool_specs:
         transcript.route = route_to_offered_tools(await decide_route(llm, conversation, policy), tool_specs)
-        messages = apply_route(messages, transcript.route)
+        directive = directive_for(transcript.route)
+    spoken_question = put_block_before_question(messages, per_question_block(date.today(), directive, memory.get_context(conversation)))
     for round_index in range(policy.max_tool_rounds + 1):
         reply = ModelReply()
         async for event in stream_model_reply(llm, messages, tool_specs, policy, reply, cap, transcript, started):
@@ -137,6 +140,7 @@ async def run(conversation: list[Message], llm: LLMClient, tools: ToolBox, polic
             break
         async for event in execute_tool_calls(tools, reply.tool_calls, round_index, policy, messages, transcript):
             yield event
+    restore_spoken_question(messages, spoken_question)
     finish_transcript(transcript, reply, cap, messages, started)
     memory.remember(transcript.conversation)
     yield Done(transcript=transcript)
@@ -149,11 +153,21 @@ def reply_is_empty(reply: ModelReply) -> bool:  # deslop: allow-comments
     return reply.completion is not None and not reply.text_parts and not reply.tool_calls and not reply.malformed
 
 
-def build_messages(conversation: list[Message], memory: ConversationMemory) -> list[Message]:
-    context = memory.get_context(conversation)
-    base = system_prompt()
-    system_text = base if not context else f"{base}\n\nWhat you remember about this user:\n{context}"
-    return [Message(role=Role.SYSTEM, content=system_text), *conversation]
+def put_block_before_question(messages: list[Message], block: str) -> tuple[int, Message] | None:
+    """Prefix the latest user message with the per-question block and return where it was and what was said, so the history keeps the words as spoken.
+    Earlier questions are replayed without their blocks, so the prompt departs from the cached one only at the previous question (design doc v2/02 3.3)."""
+    for index in range(len(messages) - 1, -1, -1):
+        if messages[index].role == Role.USER:
+            spoken = messages[index]
+            messages[index] = spoken.model_copy(update={"content": question_with_block(spoken.content, block)})
+            return index, spoken
+    return None
+
+
+def restore_spoken_question(messages: list[Message], spoken_question: tuple[int, Message] | None) -> None:
+    if spoken_question is not None:
+        index, spoken = spoken_question
+        messages[index] = spoken
 
 
 async def load_tool_specs(tools: ToolBox, transcript: Transcript) -> list:

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It accurately reports that the excerpts cover Qwen3 8B at 8.1 GB but nothing on Qwen3.8, and says fit data alone does not predict voice experience, but it names only 'latency and conversational quality' without the concrete factors (time to first token, tokens per second, sharing the GPU with speech models, context size) that make the point useful.",
+  "judgment_reason": "It searched as instructed, did not invent a Qwen3.8 result, and pushed back on treating 'it runs' as enough to predict a good voice experience.",
+  "spoken_fit_reason": "Two plain sentences that lead with the finding and contain no formatting or URLs."
+}

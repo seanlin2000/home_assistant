@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 4,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It clearly says the claim is incorrect because VRAM follows total parameters while active parameters set speed, and mentions KV cache, though the closing offer and the hypothetical 4B-total case add little.",
+  "judgment_reason": "It pushed back on the false premise correctly but ran a web search on a stable conceptual question that needed none.",
+  "spoken_fit_reason": "The listener heard the date and the 'I will use the search_and_read tool' narration, then several paragraphs until the word cap cut it off."
+}

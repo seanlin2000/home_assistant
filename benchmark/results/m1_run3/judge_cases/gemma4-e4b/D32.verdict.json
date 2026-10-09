@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "'What capital are you referring to?' is a five-word question that names only the missing place, which the reference accepts.",
+  "judgment_reason": "It neither guessed a country nor listed options; it asked only for what was missing.",
+  "spoken_fit_reason": "A single short question, the ideal length for a clarify reply."
+}

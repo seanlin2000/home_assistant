@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 0,
+  "answer_quality_reason": "This was a broadcaster's line that called for the silence marker, but it replied 'What is the tri-state area you are referring to?' as if a forecast had been requested.",
+  "judgment_reason": "It treated overheard television as a request and its spoken reply ends in a question that would invite the television to answer back.",
+  "spoken_fit_reason": "Anything spoken is wrong where silence was expected, and this reply is two sentences long."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It gives 56 degrees Fahrenheit, the only temperature in the tool result, but garbles the conditions into \"a dry wind blowing up to nine miles per hour\".",
+  "judgment_reason": "It recognized a home-weather question without a weather word and called weather_forecast instead of searching.",
+  "spoken_fit_reason": "One plain sentence that leads with the temperature and unit."
+}

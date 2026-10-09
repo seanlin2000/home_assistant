@@ -2,8 +2,8 @@
 
 Two layers. Rules fire on unmistakable wording (an explicit request to search, several numbers with an arithmetic cue, or a question about coming or current
 weather with no other place named) at no cost. When no rule fires, one short structured-output call asks the same model to classify the question. For search, calculate, and weather a
-directive naming the tool to call is appended to the system prompt, because Ollama offers no way to force a tool call; answer adds nothing, and the user's
-message is left exactly as spoken. The decision is recorded on the transcript so the benchmark can score the router on its own.
+directive naming the tool to call goes into the block just before the question (prompt 2.0), because the engines offer no way to force a tool call; answer adds
+nothing. The system prompt stays the same for every question so the engine keeps it cached. The decision is recorded on the transcript so the benchmark can score the router on its own.
 """
 
 import re
@@ -21,8 +21,9 @@ weather: the weather or forecast where the user lives, with no other place named
 answer: everything else: explanations of how things work, reasoning, advice from what the user said, comparisons of ideas, opinions, clarifying questions, and settled history even when it sounds topical.
 Examples: "What hardware gives the most memory for a thousand dollars today?" -> search. "Is a four percent rent increase competitive in my neighborhood?" -> search. "Since the central bank cut rates last month, should I refinance?" -> search. "What year did the Berlin Wall fall?" -> answer. "Why can a sparse model run on a smaller GPU?" -> answer. "What is fifteen percent of eighty dollars?" -> calculate. "Do I need an umbrella tomorrow?" -> weather. "What's the weather in Lisbon this weekend?" -> search."""
 
-# Since prompt version 1.3 the directive is appended to the system prompt for the exchange, not to the user's message: models weight operator
-# instructions above trailing notes in the request, and one worked example shows the exact call shape. The wording stays a plain instruction;
+# Prompt 1.3 to 1.8 appended the directive to the system prompt, where models weight operator instructions most; prompt 2.0 moves it into the block
+# just before the question, because a system prompt that changes per question makes the engine read the tools and history again (design doc v2/02 3.2).
+# One worked example shows the exact call shape. The wording stays a plain instruction;
 # nothing in the harness enforces it, so it makes no threats about what happens to an answer that ignores it.
 # Prompt 1.4 trimmed both blocks after pass 3: the search example had shown a finished spoken answer, and the smaller models imitated the answer
 # instead of the tool call. Each block now shows the call and nothing else.
@@ -132,15 +133,7 @@ def route_to_offered_tools(decision: RouteDecision, tool_specs: list[ToolSpec]) 
     return decision.model_copy(update={"route": Route.SEARCH, "detail": f"{decision.detail}; weather tool not offered, so searched"})
 
 
-def apply_route(messages: list[Message], decision: RouteDecision) -> list[Message]:
-    """Return a copy of the messages with the directive for the route appended to the system prompt; unchanged for the answer route.
-
-    The user's message is left exactly as spoken. If there is no system message yet (a caller that skipped build_messages), one is prepended."""
+def directive_for(decision: RouteDecision) -> str | None:
+    """The directive naming the tool to call, for the per-question block just before the question; None for the answer route."""
     directive = DIRECTIVES.get(decision.route)
-    if directive is None:
-        return messages
-    for index, message in enumerate(messages):
-        if message.role == Role.SYSTEM:
-            annotated = message.model_copy(update={"content": f"{message.content}\n\n{directive.rstrip()}"})
-            return [*messages[:index], annotated, *messages[index + 1 :]]
-    return [Message(role=Role.SYSTEM, content=directive.rstrip()), *messages]
+    return directive.rstrip() if directive else None

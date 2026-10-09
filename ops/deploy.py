@@ -45,12 +45,13 @@ RULES: tuple[Rule, ...] = (
     ),
     Rule(prefixes=("web_search_mcp/", "calculator_mcp/", "weather_mcp/", "assistant_core/", "utils/"), actions=("restart:mcp",), why="tool server code changed"),
     Rule(prefixes=("custom_components/", "assistant_core/"), actions=("deploy_component",), why="the component or its vendored core changed"),
+    Rule(prefixes=("config/serving.toml", "serving/"), actions=("restart:llama",), why="llama-server's settings or its launcher changed"),
     Rule(prefixes=("voice/",), actions=("restart:kokoro",), why="Kokoro server wrapper changed"),
     Rule(prefixes=("scripts/services.sh",), actions=("reinstall_agents",), why="launchd definitions changed"),
     Rule(prefixes=("docker/searxng/",), actions=("restart_searxng",), why="SearXNG configuration changed"),
 )
-ACTION_ORDER = ("sync_env", "reinstall_agents", "restart:mcp", "restart:kokoro", "restart:whisper", "restart_searxng", "deploy_component")
-RESTARTS_COVERED_BY_REINSTALL = {"restart:mcp", "restart:kokoro", "restart:whisper"}
+ACTION_ORDER = ("sync_env", "reinstall_agents", "restart:llama", "restart:mcp", "restart:kokoro", "restart:whisper", "restart_searxng", "deploy_component")
+RESTARTS_COVERED_BY_REINSTALL = {"restart:llama", "restart:mcp", "restart:kokoro", "restart:whisper"}
 
 
 class Plan(BaseModel):

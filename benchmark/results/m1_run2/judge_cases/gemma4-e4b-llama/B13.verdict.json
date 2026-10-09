@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Pilatus, Interlaken and Bern are traceable to the excerpts, but the answer says nothing about tomorrow's weather or schedules, which the user explicitly asked it to consider, and skips useful retrieved detail such as the autumn season limits and the Interlaken train time.",
+  "judgment_reason": "It never searched for or mentioned the Lucerne weather and did not say plainly that it could not find current schedules or weather, instead asking a preference question.",
+  "spoken_fit_reason": "Three short plain sentences that lead with the options and contain no lists, URLs or citation markers."
+}

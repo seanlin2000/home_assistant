@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It gives nitrogen or potassium mobile-nutrient deficiency and watering, and asks for species, watering, and soil, but omits normal senescence of old leaves, the most likely explanation for an otherwise healthy plant.",
+  "judgment_reason": "It rightly asks for missing information instead of settling on one cause, but frames deficiency as a \"classic sign\" without raising that this may simply be normal.",
+  "spoken_fit_reason": "Four plain sentences that lead with the likely explanation and end with a short question, no formatting."
+}

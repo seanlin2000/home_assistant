@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It lists budget, trip length, climate preference and activities, but omits the departure location, travel dates and domestic-versus-international, and its assumptions to avoid ('a specific type of vacation') are vague compared with the sketch's home city, budget level, and warm-means-beach.",
+  "judgment_reason": "It did not invent preferences or name a destination, and correctly answered without searching.",
+  "spoken_fit_reason": "Two plain sentences that lead directly with the missing information."
+}

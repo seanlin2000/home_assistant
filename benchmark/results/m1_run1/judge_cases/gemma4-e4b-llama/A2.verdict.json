@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 1,
+  "answer_quality_reason": "After a malformed calculate call with the integer 35000, the final reply gives no lease totals or savings at all.",
+  "judgment_reason": "It asks the user to confirm the $3,500 rent that was stated plainly in the question instead of retrying the calculation, failing the central task.",
+  "spoken_fit_reason": "Two plain sentences that would be listenable, but they narrate a tool error rather than leading with any answer."
+}

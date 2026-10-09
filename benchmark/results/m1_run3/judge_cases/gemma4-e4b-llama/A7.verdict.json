@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The stated assumptions (1 hour at load, 23 idle, 30 days, $0.25/kWh) give about 43.5 kWh and roughly $10.88, but it says $12.37, a wrong number computed without any calculator call.",
+  "judgment_reason": "It labels the figure an estimate and names the rate and usage assumptions, but does not note that the machine is unlikely to draw 300 W for the full hour, which the user specifically asked it not to pretend to know.",
+  "spoken_fit_reason": "Leads with the figure in two plain sentences with no formatting."
+}

@@ -3,7 +3,7 @@
 from datetime import date
 
 PERSONA_NAME = "Jarvis"
-PROMPT_VERSION = "1.8"  # 1.2 adds the calculator rule; 1.3 moves the router directive into the system prompt with a worked example; 1.4 trims the directives to the call alone; 1.5 adds today's date; 1.6 adds the rules for unclear input; 1.7 sends weather at home to weather_forecast; 1.8 offers wikipedia_lookup for settled facts, lists, and records
+PROMPT_VERSION = "2.0"  # 1.2 adds the calculator rule; 1.3 moves the router directive into the system prompt with a worked example; 1.4 trims the directives to the call alone; 1.5 adds today's date; 1.6 adds the rules for unclear input; 1.7 sends weather at home to weather_forecast; 1.8 offers wikipedia_lookup for settled facts, lists, and records; 2.0 moves the date and the route directive out of the system prompt into a block just before the question, so the system prompt and tools stay cached
 
 # The three fixed replies for input that is not a clear question. The agent loop never speaks the silence marker, and the Home Assistant component
 # stops listening for a follow-up after the marker or the acknowledgement. The marker is safe because the prompt forbids markdown, so a real answer
@@ -20,6 +20,7 @@ How to answer
 - Be direct about uncertainty. If you are estimating, say so and state the assumption. If the question rests on a false premise, say so plainly. If you cannot meet a constraint the user gave, say that instead of quietly bending it.
 - If a good answer needs information only the user has, ask for it in one short question instead of guessing their preferences.
 - Use earlier turns of this conversation; do not ask the user to repeat what they already told you.
+- Each question arrives after a short note from the assistant software, not from the user: today's date and, when a tool is needed, which one to call. Follow the note and answer the question after it.
 
 When what you heard is unclear
 - What you receive is a speech-recognition transcript, and the wake word sometimes fires by mistake on a television, a radio, or people talking in the room.
@@ -45,12 +46,24 @@ Weather at home
 - Answer from what it returns: the conditions, the temperature range, and whether rain or snow is likely, with the numbers rounded."""
 
 DATE_LINE = "Today is {today}. Use this date whenever a question depends on what is current; do not assume an earlier year in your searches or answers."
+QUESTION_LABEL = "Question: "
 
 
-def system_prompt(today: date | None = None) -> str:
-    """The system prompt with today's date on its second line.
-    Without it the models assume the year their training ended and search for last year's prices and schedules; pass 4 of the benchmark
-    had fourteen of forty-six queries pinned to 2024 or 2025. The date is filled in per request so the text is never frozen in the code."""
-    line = DATE_LINE.format(today=f"{today or date.today():%A, %B %-d, %Y}")
-    first_paragraph, rest = SYSTEM_PROMPT.split("\n\n", 1)
-    return f"{first_paragraph}\n{line}\n\n{rest}"
+def system_prompt() -> str:
+    """The rules every question shares. Nothing in it changes between questions, so llama-server reads it once and keeps it cached (design doc v2/02 section 3.3)."""
+    return SYSTEM_PROMPT
+
+
+def per_question_block(today: date, directive: str | None = None, memory_context: str = "") -> str:
+    """What changes with every question, placed just before it: the date, the router's directive, and later the matching memory notes.
+    Without the date the models assume the year their training ended; pass 4 of the benchmark had fourteen of forty-six queries pinned to 2024 or 2025."""
+    lines = [DATE_LINE.format(today=f"{today:%A, %B %-d, %Y}")]
+    if directive:
+        lines.append(directive.rstrip())
+    if memory_context:
+        lines.append(f"What you remember about this user:\n{memory_context}")
+    return "\n".join(lines)
+
+
+def question_with_block(question: str, block: str) -> str:
+    return f"{block}\n{QUESTION_LABEL}{question}"

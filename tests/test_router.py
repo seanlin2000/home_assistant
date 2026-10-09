@@ -5,7 +5,7 @@ from pathlib import Path
 import pytest
 
 from assistant_core.models import AgentPolicy, Message, Role, Route, RouteDecision, ToolSpec
-from assistant_core.router import CALCULATE_DIRECTIVE, SEARCH_DIRECTIVE, WEATHER_DIRECTIVE, apply_route, decide_route, route_to_offered_tools, rule_route
+from assistant_core.router import SEARCH_DIRECTIVE, decide_route, directive_for, route_to_offered_tools, rule_route
 from benchmark.records import load_questions
 
 QUESTIONS = load_questions(Path("benchmark/questions.yaml"))
@@ -88,20 +88,8 @@ async def test_follow_up_exchanges_pass_earlier_user_messages_as_context() -> No
     assert "Earlier the user said: I am choosing between 16 and 24 GB." in classifier.calls[0]
 
 
-def test_apply_route_appends_the_directive_to_the_system_prompt_and_leaves_the_user_message_alone() -> None:
-    messages = [Message(role=Role.SYSTEM, content="sys"), Message(role=Role.USER, content="first"), Message(role=Role.ASSISTANT, content="a"), Message(role=Role.USER, content="second")]
-    search = apply_route(messages, rule_route("search the web for it"))
-    assert search[0].content == f"sys\n\n{SEARCH_DIRECTIVE.rstrip()}" and search[-1].content == "second" and messages[0].content == "sys"
-    calc = apply_route(messages, rule_route("what is 15% of $80 plus $20"))
-    assert calc[0].content.endswith(CALCULATE_DIRECTIVE.rstrip()) and "do not do the math yourself" in calc[0].content
-    weather = apply_route(messages, rule_route("do I need an umbrella tomorrow"))
-    assert weather[0].content.endswith(WEATHER_DIRECTIVE.rstrip()) and 'weather_forecast(day="tomorrow"' in weather[0].content
-    from assistant_core.models import RouteDecision
-
-    assert apply_route(messages, RouteDecision(route=Route.ANSWER, source="model")) is messages
-
-
-def test_apply_route_prepends_a_system_message_when_there_is_none() -> None:
-    messages = [Message(role=Role.USER, content="what is 15% of $80 plus $20")]
-    calc = apply_route(messages, rule_route(messages[0].content))
-    assert calc[0].role == Role.SYSTEM and calc[0].content == CALCULATE_DIRECTIVE.rstrip() and calc[1] is messages[0]
+def test_directive_for_names_the_tool_for_each_routed_question_and_nothing_for_answers() -> None:
+    assert directive_for(rule_route("search the web for it")) == SEARCH_DIRECTIVE.rstrip()
+    assert "do not do the math yourself" in directive_for(rule_route("what is 15% of $80 plus $20"))
+    assert 'weather_forecast(day="tomorrow"' in directive_for(rule_route("do I need an umbrella tomorrow"))
+    assert directive_for(RouteDecision(route=Route.ANSWER, source="model")) is None

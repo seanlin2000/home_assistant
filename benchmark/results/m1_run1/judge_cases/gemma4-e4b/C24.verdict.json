@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 0,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It reports $19,478.78 from a growth_schedule call that raised the monthly deposit by 4 percent each year instead of compounding the deposits monthly, so the figure is wrong compared with about $19,091, and it never says that $18,000 of the total is deposits.",
+  "judgment_reason": "It correctly used a calculator instead of searching, but it set up the tool wrongly and did not sanity-check the result or mention when the deposits are made.",
+  "spoken_fit_reason": "One short sentence that leads with the amount spelled out."
+}

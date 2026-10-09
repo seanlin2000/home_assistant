@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "\"About thirty-eight percent\" is acceptable, but the increased rent is given as \"three thousand dollar eight hundred forty dollars\" instead of 2,964, a wrong and garbled spoken number.",
+  "judgment_reason": "It used the wrong percent kind (getting 210,900), retried calculate with malformed float arguments, then fell back to unverified mental arithmetic and stated a wrong figure without caveat.",
+  "spoken_fit_reason": "It opens with an apology about the calculator and a sentence of process before the figures, and the final number is garbled."
+}

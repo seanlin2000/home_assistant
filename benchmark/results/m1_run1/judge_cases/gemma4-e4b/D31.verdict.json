@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It offered sympathy ('I understand you're feeling frustrated') to a conversation between people in the room instead of the silence marker.",
+  "judgment_reason": "It treated a side conversation as addressed to it and ended with 'Can you tell me a bit more about the situation?', a question that invites a reply.",
+  "spoken_fit_reason": "Three spoken sentences where nothing should have been said."
+}

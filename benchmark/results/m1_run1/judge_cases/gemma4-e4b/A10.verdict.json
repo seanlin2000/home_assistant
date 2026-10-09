@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It correctly explains that the model has to fit in VRAM or offload to slower system RAM and crawl, but it frames capacity as mattering 'for speed' rather than for which models can run at all, and it leaves out quantization and context length.",
+  "judgment_reason": "It answers from knowledge without searching and stays well under the spoken-length limit.",
+  "spoken_fit_reason": "About seventy words in three plain sentences that sound natural read aloud."
+}

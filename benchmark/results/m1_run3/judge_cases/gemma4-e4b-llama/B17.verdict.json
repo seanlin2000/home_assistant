@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The 'yes, through custom firmware' answer traces to the Open Voice PE repo in excerpt [3], but it omits the simpler routes the excerpts show, loading trained microWakeWord models after taking control in ESPHome [5] and the experimental streaming wake word firmware [6].",
+  "judgment_reason": "It searched as instructed and named its source, but its reason for trusting a third-party GitHub repo ('detailed specific implementations') does not weigh it against the official Home Assistant documentation it also retrieved.",
+  "spoken_fit_reason": "Leads with the answer in a few plain sentences with no URLs or formatting."
+}

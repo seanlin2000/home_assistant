@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The yes-via-custom-firmware answer is supported by the Open Voice PE GitHub excerpt, but it ignores the Nabu Casa support page showing the stock options are only Hey Jarvis, Hey Mycroft, and Okay Nabu, and the microWakeWord route of taking control in ESPHome.",
+  "judgment_reason": "It searched as instructed and explained its trust, but it chose a community GitHub repo over the official Nabu Casa and Home Assistant documentation without weighing them.",
+  "spoken_fit_reason": "Two short plain paragraphs that lead with the answer and contain no URLs or formatting."
+}

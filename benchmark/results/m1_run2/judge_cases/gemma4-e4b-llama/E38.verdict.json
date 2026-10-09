@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The 53 to 57 degree range is taken from the tool's overnight (midnight to 6 am Friday) forecast, so the low is grounded, but it gives a range rather than stating the low of about 53 plainly and never checked this evening's portion of tonight.",
+  "judgment_reason": "It recognized a home weather question with no weather word and used weather_forecast instead of searching.",
+  "spoken_fit_reason": "One plain sentence that leads with the temperatures, with units spelled out for speech."
+}

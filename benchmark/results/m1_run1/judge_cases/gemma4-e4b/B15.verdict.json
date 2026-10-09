@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact", "violated_explicit_constraint"],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 0,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It says the RTX 5060 Ti 16GB is 'available for around four hundred twenty-nine dollars new', but the GPCB excerpt says $429 was the launch price and the card now sells for 'close to $800', and its used suggestion, the RTX 3080, has only 10 GB, so it does not meet the 16 GB requirement.",
+  "judgment_reason": "It recommends a card whose street price in the excerpts is far over the $500 budget, calls it only 'pushing the upper limit', and never says that no qualifying 16 GB NVIDIA card was clearly found under budget.",
+  "spoken_fit_reason": "Three plain sentences that lead with the recommendation, with no formatting."
+}

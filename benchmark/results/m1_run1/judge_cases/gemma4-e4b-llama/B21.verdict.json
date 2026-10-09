@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The reply only declines to give advice and offers to look things up, so it never says rates were not cut to zero and gives no refinance logic such as comparing rates, closing costs, and break-even time.",
+  "judgment_reason": "It neither searched to check the false 'cut to zero' premise nor challenged it, failing the central point of the question.",
+  "spoken_fit_reason": "One short plain sentence, but it is a deflection and an offer rather than an answer."
+}

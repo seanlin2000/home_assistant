@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It offers no market comparison and no discussion of the risks of using advertised rents, only a request for the user's current rent.",
+  "judgment_reason": "Whether a 4% increase is competitive can be judged against current market rent growth without the user's rent, so it asked for information that was not needed instead of searching as the question required.",
+  "spoken_fit_reason": "Two short plain sentences, fine to read aloud."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 0,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It claims an Intel N100 mini PC running Ollama 'should provide a ChatGPT-like experience', when the aimadetools excerpt it draws on pairs that tier with a 7B model for automation logic, and it gives no budget breakdown; only the satellites-plus-central-server layout is sound.",
+  "judgment_reason": "The user explicitly asked to be told if ChatGPT-like quality could not be met for $1,000, and instead of saying so it overstated what a low-end box can do.",
+  "spoken_fit_reason": "Two plain sentences with no formatting that lead with the recommendation."
+}

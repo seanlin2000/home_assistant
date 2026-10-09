@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It correctly reports that the 27B runs only with quantization and offload at about two to four tokens per second, but its critique misses that these are tool estimates rather than measurements, and that two to four tokens per second with a 25-second-plus time to first token already predicts a poor voice experience.",
+  "judgment_reason": "It rightly hesitates to equate \"can run\" with \"good experience\", but it does not draw the obvious conclusion from the latency figures it had.",
+  "spoken_fit_reason": "Plain prose that leads with the finding; five sentences suit a two-part question."
+}

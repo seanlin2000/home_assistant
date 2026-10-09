@@ -15,13 +15,16 @@ from dotenv import load_dotenv
 from rich.console import Console
 
 from assistant_core import agent_loop
+from assistant_core.llama_server_client import LlamaServerClient
 from assistant_core.llm_client import LLMClient, OllamaClient
 from assistant_core.models import AgentPolicy, Done, Message, Role, Transcript
-from assistant_core.prompts import PROMPT_VERSION
+from assistant_core.prompts import PROMPT_VERSION, system_prompt
+from assistant_core.router import ROUTER_SYSTEM_PROMPT
 from assistant_core.tools import McpToolBox
 from benchmark.mcp_process import McpServerProcess
 from benchmark.ollama_utils import delete_model, ensure_model_present, unload, warm_up
 from benchmark.records import BenchmarkConfig, Candidate, MemoryFit, Question, QuestionResult, QuestionSet, append_jsonl, load_config, load_questions, read_jsonl
+from serving.settings import load_serving_config, read_api_key
 
 CONFIG_PATH = Path("benchmark/config.yaml")
 QUESTIONS_PATH = Path("benchmark/questions.yaml")
@@ -78,6 +81,7 @@ def write_run_metadata(run_dir: Path, config: BenchmarkConfig, question_set: Que
         "chip": run_command(["sysctl", "-n", "machdep.cpu.brand_string"]),
         "memory_bytes": run_command(["sysctl", "-n", "hw.memsize"]),
         "ollama_version": run_command(["ollama", "--version"]),
+        "llama_server_version": run_command(["llama-server", "--version"]),
         "git_commit": run_command(["git", "rev-parse", "--short", "HEAD"]),
     }
     (run_dir / "run_meta.json").write_text(json.dumps(metadata, indent=2))
@@ -103,6 +107,8 @@ async def run_candidate(candidate: Candidate, questions: list[Question], config:
     memory_fit = await prepare_model(candidate, config)
     policy = config.policy.model_copy(update={"think": candidate.think})
     async with McpToolBox(mcp_url) as toolbox:
+        if isinstance(llm, LlamaServerClient):
+            await warm_up_llama_server(llm, toolbox)
         for question in pending:
             result = await run_question(question, candidate, llm, toolbox, policy, memory_fit)
             append_jsonl(output_path, result)
@@ -122,7 +128,24 @@ def build_llm(candidate: Candidate, config: BenchmarkConfig) -> LLMClient | None
     if candidate.provider == "manual":
         console.print(f"[dim]Skipping {candidate.key}: manual candidates are produced by benchmark-manual, not run.[/dim]")
         return None
+    if candidate.provider == "llama-server":
+        return llama_server_client(candidate)
     return OllamaClient(candidate.model, host=config.services.ollama_host)
+
+
+def llama_server_client(candidate: Candidate) -> LlamaServerClient:
+    """The client for the server config/serving.toml describes. The candidate names the model table it expects, so a server started with another model is caught."""
+    serving = load_serving_config()
+    if serving.server.model != candidate.model:
+        raise SystemExit(f"{candidate.key} expects llama-server to serve {candidate.model}, but config/serving.toml serves {serving.server.model}")
+    return LlamaServerClient(serving.server.base_url, read_api_key(serving.server.api_key_path), candidate.model)
+
+
+async def warm_up_llama_server(llm: LlamaServerClient, toolbox: McpToolBox) -> None:
+    """Both slots read their stable prompts before the first question, as the harness does at startup (design doc v2/02 section 3.4)."""
+    if not await llm.is_ready():
+        raise SystemExit("llama-server is not answering on its /health route. Start it with `uv run serving launch`.")
+    await llm.warm_up(system_prompt(), await toolbox.list_tools(), ROUTER_SYSTEM_PROMPT)
 
 
 async def prepare_model(candidate: Candidate, config: BenchmarkConfig) -> MemoryFit:

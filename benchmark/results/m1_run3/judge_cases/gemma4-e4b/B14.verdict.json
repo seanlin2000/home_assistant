@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It gives no explanation of supply-chain or market changes, only an offer to search and a question about the time frame.",
+  "judgment_reason": "It did not search, and asked for a time frame the user had already given as 'recently', which stalls the central request.",
+  "spoken_fit_reason": "Short plain prose with no formatting, but it ends in a question and has no answer to lead with."
+}

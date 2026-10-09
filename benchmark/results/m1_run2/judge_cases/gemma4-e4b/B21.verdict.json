@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["agreed_with_false_premise"],
+  "search_decision_correct": false,
+  "answer_quality": 1,
+  "judgment": 0,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It only asks for principal, rate, and term, which touches the reference's \"ask for the user's current rate\", but never says the Fed did not cut rates to zero and gives no refinance logic.",
+  "judgment_reason": "It neither searched to check the claim that rates were cut to zero nor questioned it, and went straight to gathering refinance details as if the premise were true.",
+  "spoken_fit_reason": "One plain sentence with no formatting."
+}

@@ -1,0 +1,28 @@
+# Every llama-server setting, one table per model (design_docs/v2/02_inference_engine.md section 3.5). `uv run serving show` prints the command
+# this file produces; `uv run serving launch` checks the model's hash and runs it. Unknown keys stop the launch rather than being passed through.
+
+[server]
+host = "127.0.0.1"
+port = 8090
+api_key_file = "~/Library/Application Support/studio-assistant/llama-server.key"
+model = "gemma-4-e4b"                       # which table below is served
+
+[models.gemma-4-e4b]
+gguf = "~/models/gguf/gemma-4-E4B_q4_0-it.gguf"
+source = "google/gemma-4-E4B-it-qat-q4_0-gguf"
+revision = "4b4a2c1d584be7264f87aac328a1bc739ce81b6c"
+sha256 = "676c35070db6dbe52f93e9c864ee0fba4eddea94b9c875d9cb10daff453fbaee"
+context_tokens = 18432                      # -c, the pool both slots share
+conversation_tokens = 16384                 # slot 0's share; the harness budgets against it
+slots = 2                                   # -np
+kv_unified = true                           # --kv-unified
+cache_idle_slots = false                    # --no-cache-idle-slots
+gpu_layers = "all"                          # -ngl
+flash_attention = "on"                      # -fa
+prompt_cache_mib = 1024                     # -cram
+reasoning = "off"                           # --reasoning
+swa_full = false                            # --swa-full
+
+[models.gemma-4-e4b.sampling]               # defaults; the harness may override per request
+temperature = 0.7
+max_output_tokens = 600

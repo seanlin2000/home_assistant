@@ -85,3 +85,8 @@ def test_cli_status_reports_head_and_flags(monkeypatch: pytest.MonkeyPatch, tmp_
     report = json.loads(capsys.readouterr().out)
     assert len(report["head"]) == 40
     assert report["maintenance"] is False and report["last_good_ref"] is None
+
+
+def test_serving_settings_or_launcher_restart_llama_server() -> None:
+    assert deploy.plan_actions(["config/serving.toml"]).actions == ["restart:llama"]
+    assert deploy.plan_actions(["serving/command.py"]).actions == ["restart:llama"]

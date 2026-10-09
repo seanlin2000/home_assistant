@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It correctly explains that the model must fit in VRAM or spill to slower system memory regardless of GPU speed, but omits that more memory also allows less aggressive quantization and longer context.",
+  "judgment_reason": "It answered from knowledge without searching and stayed within the 120-word limit.",
+  "spoken_fit_reason": "The explanation is plain spoken prose, but it opens with an irrelevant date announcement before the answer."
+}
