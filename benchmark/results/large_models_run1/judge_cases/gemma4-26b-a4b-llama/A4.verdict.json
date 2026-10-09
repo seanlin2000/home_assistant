@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It names natural senescence, nitrogen deficiency, overwatering and salt buildup, and asks about species, watering and fertilizing, but it leaves out light or shading and pot-bound roots.",
+  "judgment_reason": "It offers likely causes but asks for the missing facts rather than settling on one cause.",
+  "spoken_fit_reason": "Three plain sentences that lead with the most likely explanation."
+}

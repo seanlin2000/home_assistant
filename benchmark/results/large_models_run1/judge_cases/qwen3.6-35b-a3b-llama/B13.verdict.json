@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It correctly reads the forecast as rain all day with wind up to 15 mph and lists Rigi, Pilatus, Titlis, Jungfrau, and the Gotthard Panorama Express with routes and the October 18 season end from the excerpts, but it invents a 'Titlis Cogwheel Railway' and gives no actual departure times.",
+  "judgment_reason": "It checked both the forecast and current sources and adjusted its advice to the rain, suggesting staying in town or packing for wet weather.",
+  "spoken_fit_reason": "It leads with the weather in plain prose, but one dense paragraph lists five trips with route details and was cut by the word cap."
+}

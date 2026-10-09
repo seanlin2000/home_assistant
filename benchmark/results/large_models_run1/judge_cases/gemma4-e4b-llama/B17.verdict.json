@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The gist that custom wake words work through community firmware (Open Voice PE with openWakeWord) or ESPHome-adopted microWakeWord models traces to the excerpts, but the answer stays hedged ('it appears', 'might have limitations') and gives no clear yes or no.",
+  "judgment_reason": "It searched as instructed, but its stated reason for trusting the sources, that they are 'community-driven', is weak and it passes over the official home-assistant.io pages that were retrieved.",
+  "spoken_fit_reason": "One long paragraph of plain prose that buries the answer behind hedges, though it has no formatting."
+}

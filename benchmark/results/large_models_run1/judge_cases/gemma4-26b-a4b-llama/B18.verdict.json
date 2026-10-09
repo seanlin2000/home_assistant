@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It names Qwen3.8-27B as the realistic pick for 16 GB even though the excerpt it cites puts the quantized model at 16 to 17 GB on 24 GB cards like the 3090 and 4090, it never mentions KV cache, and it refers to a 'Qwen 3.5 7B' that the sources do not list.",
+  "judgment_reason": "It glossed over the fact that its top pick exceeds the user's 16 GB limit before any context is counted, and its speed tradeoff ('optimized for modern hardware') is vague and unsupported.",
+  "spoken_fit_reason": "Markdown bullets with bold headings would sound wrong read aloud, and the reply was cut by the word cap."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The rain answer matches the forecast's 'light rain at times', but 'one twenty-five PM' as the last ferry to Bainbridge is not in the excerpts: 1:25 is the final entry on the weekend list for boats leaving Bainbridge, and the 'P' there marks a vessel, not PM.",
+  "judgment_reason": "It used both the forecast and the search, but it stated a misread schedule time as fact instead of saying the results did not clearly give the last Seattle-to-Bainbridge sailing.",
+  "spoken_fit_reason": "Two plain sentences that answer both parts directly."
+}

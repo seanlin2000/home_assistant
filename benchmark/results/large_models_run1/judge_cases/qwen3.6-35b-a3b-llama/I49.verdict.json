@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It names Chicago and uses the tool's 61 to 64°F, clear and dry, but for 'how cold will it get' it gives the range rather than plainly stating the low of about 61.",
+  "judgment_reason": "It used the forecast tool for Chicago tonight and did not search.",
+  "spoken_fit_reason": "A single short sentence."
+}

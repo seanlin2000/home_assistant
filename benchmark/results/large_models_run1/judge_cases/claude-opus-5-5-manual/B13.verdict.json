@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The rain and 50s-to-low-60s temperatures match the forecast tool, and the Golden Round Trip boats until October 18 with Saturday departures at 8:38, 9:38, and 10:38 match the Pilatus timetable footnotes for that date.",
+  "judgment_reason": "It ties the weather to the decision, noting that summit views will likely be clouded, advises checking webcams, and offers rain-friendly alternatives instead of pushing a mountain.",
+  "spoken_fit_reason": "It leads with the forecast and continues in plain prose with no lists, at a length justified by a question about schedules and weather together."
+}

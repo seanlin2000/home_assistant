@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The 1.1269 rate it calls the October 9 rate is the ECB value for October 6 in the forecasteconomy table, while the excerpts give about 1.12 for October 8 and 9, so the 1,352.28 conversion runs about $10 high.",
+  "judgment_reason": "It searched and used the calculator, but it picked an older table entry and mislabeled it as today's rate.",
+  "spoken_fit_reason": "Two plain sentences that give the rate and the converted amount."
+}

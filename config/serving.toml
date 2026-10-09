@@ -26,3 +26,46 @@ swa_full = false                            # --swa-full
 [models.gemma-4-e4b.sampling]               # defaults; the harness may override per request
 temperature = 0.7
 max_output_tokens = 600
+
+# Benchmark-only: the larger models, compared on llama-server through the same loop. Neither fits a 16 GB machine whole, and on Apple silicon any GPU
+# layer makes Metal map the whole file into its working set, which hangs the load. On the CPU the file stays memory-mapped, so macOS reads the
+# experts' pages from disk as needed instead of swapping.
+[models.gemma-4-26b-a4b]
+gguf = "~/models/gguf/gemma-4-26B-A4B-it-UD-IQ4_XS.gguf"
+source = "unsloth/gemma-4-26B-A4B-it-GGUF"
+revision = "c099eb48e663fd284577b04978a94ffccb261841"
+sha256 = "babd1e389d386352f71600765d37390f7dc993fbfad6725caccf996ffe34aecf"
+context_tokens = 18432
+conversation_tokens = 16384
+slots = 2
+kv_unified = true
+cache_idle_slots = false
+gpu_layers = 0
+flash_attention = "on"
+prompt_cache_mib = 1024
+reasoning = "off"
+swa_full = false
+
+[models.gemma-4-26b-a4b.sampling]
+temperature = 0.7
+max_output_tokens = 600
+
+[models.qwen3-6-35b-a3b]
+gguf = "~/models/gguf/Qwen3.6-35B-A3B-UD-IQ4_XS.gguf"
+source = "unsloth/Qwen3.6-35B-A3B-GGUF"
+revision = "a483e9e6cbd595906af30beda3187c2663a1118c"
+sha256 = "649d7508507b84638732c4f52c24c8b15843c6dca2f3ff793ae07c14a67ebbb3"
+context_tokens = 18432
+conversation_tokens = 16384
+slots = 2
+kv_unified = true
+cache_idle_slots = false
+gpu_layers = 0
+flash_attention = "on"
+prompt_cache_mib = 1024
+reasoning = "off"
+swa_full = false
+
+[models.qwen3-6-35b-a3b.sampling]
+temperature = 0.7
+max_output_tokens = 600

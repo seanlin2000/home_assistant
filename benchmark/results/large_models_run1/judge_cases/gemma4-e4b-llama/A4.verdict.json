@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It gives only vague 'nutrient distribution or watering issues' and asks about plant type, watering and soil, but it omits normal senescence of old leaves, mobile-nitrogen deficiency, shading and light, which are central to the reference.",
+  "judgment_reason": "It rightly asks for missing information instead of asserting one cause, but it never raises the possibility that this is normal, which is the decision the user asked about.",
+  "spoken_fit_reason": "Two short plain sentences that would read naturally aloud."
+}

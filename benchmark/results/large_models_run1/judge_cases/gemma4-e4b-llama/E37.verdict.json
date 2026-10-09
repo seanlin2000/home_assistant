@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It covers both days with the tool's figures: Saturday partly cloudy and dry, 53 to 69 degrees, and Sunday partly cloudy with rain at times, 0.26 inches, 56 to 64 degrees.",
+  "judgment_reason": "It checked the home forecast for the weekend and did not search.",
+  "spoken_fit_reason": "Two plain sentences that summarize each day without lists."
+}

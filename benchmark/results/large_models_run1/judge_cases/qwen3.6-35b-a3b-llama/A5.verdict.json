@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It covers the beamforming mic array, echo cancellation, gain control, a local wake-word engine, low latency, speaker intelligibility, and placement, but it omits where the compute runs, network reliability, and privacy, and adds an irrelevant point about wind noise.",
+  "judgment_reason": "It respected the no-product-names constraint throughout and tailored the advice to the user's priority on conversation over automation.",
+  "spoken_fit_reason": "It is plain prose that leads with the topic, but at three dense paragraphs it was cut by the word cap."
+}

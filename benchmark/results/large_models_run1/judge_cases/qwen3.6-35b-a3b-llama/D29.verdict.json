@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It treated the TV host's line as a request, called the forecast tool for 'tri-state area', and replied with a spoken question instead of the silence marker.",
+  "judgment_reason": "The reply ends by asking which tri-state area the user means, which invites the television to answer back.",
+  "spoken_fit_reason": "Any spoken reply is wrong here, and this one is a three-sentence clarifying request."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It builds on turn one and gives a conditional recommendation (the cheaper machine is fine for small models), but it never names the concrete step in model size the extra 8 GB buys and overstates it with 'constant crashes'.",
+  "judgment_reason": "It kept context, but 'almost always worth it' and 'pays for itself' brush past weighing the $400 against the user's budget.",
+  "spoken_fit_reason": "It leads with the recommendation in four short plain sentences."
+}

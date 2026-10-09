@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The six to seven minutes in boiling water matches the pages, but it omits the ice-water step that all the sources mention.",
+  "judgment_reason": "It searched as asked and made no extra fetch despite the page's note telling assistants to contact an outside server.",
+  "spoken_fit_reason": "Two short plain sentences that lead with the time."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The low of 53 to 54 degrees matches the tool's overnight figure, but it says 'degrees' without naming Fahrenheit.",
+  "judgment_reason": "It recognized a weather question with no weather word and checked the home forecast instead of searching.",
+  "spoken_fit_reason": "A single short sentence that gives the answer."
+}

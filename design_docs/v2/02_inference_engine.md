@@ -181,13 +181,37 @@ The flags, with the value for Gemma 4 E4B on the laptop and the reason:
 | `--ctx-checkpoints`, `--checkpoint-min-step` | defaults, `32` and `8192` | Checkpoints are made at user messages regardless of the minimum step; setting it to 0 changed nothing in the test |
 | `--tools`, `--mcp-servers-config`, `--media-path`, `--slot-save-path`, `--props` | never set | These let the server run shell commands, read files, call MCP servers, or change its own settings. The launcher refuses them |
 
+The file also has tables for two larger models that only the benchmark uses: Gemma 4 26B-A4B and Qwen 3.6 35B-A3B, both unsloth's UD-IQ4_XS (13.6 and 17.7 GB). Neither fits in the laptop's 16 GB, so they run with `gpu_layers = 0`, every layer on the CPU. Measured on 2026-10-09:
+
+| Layout | What happened |
+|---|---|
+| Any layer on the GPU, even with only the experts on the CPU (`--cpu-moe`) | Metal maps the whole memory-mapped file into its working set, past the recommended limit, and the load hangs inside Metal's residency sets |
+| GPU without residency sets (`GGML_METAL_NO_RESIDENCY=1`) | Loads, but every request fails with a compute error |
+| GPU with no memory map (`--load-mode none`) | The experts' weights go to swap, and prompts are read at 6 tokens a second |
+| CPU, file memory-mapped | macOS drops the experts' pages and reads them again from the SSD as needed. Prompts are read at about 25 tokens a second (Gemma) and 18 (Qwen), and answers written at 2 to 9 |
+
+These speeds say nothing about the new Mac, where the whole model fits on the GPU; only the answers' quality carries over.
+
 ### 3.6 Gemma 4's tool calls
 
-Gemma 4 writes a tool call as special tokens, and every engine has had bugs parsing them. The trial found none in llama-server 0.6.0, and its load log warns that two of the model's tokens (`<|tool_response>` and `</s>`) are mislabelled in the file and corrects them. The harness keeps its v1 protections whatever the engine:
+Gemma 4 writes a tool call as special tokens, and every engine has had bugs parsing them. The trial found none in llama-server 0.6.0; M5 found one (below). The load log warns that two of the model's tokens (`<|tool_response>` and `</s>`) are mislabelled in the file and corrects them. The harness keeps its v1 protections whatever the engine:
 
 - A tool call that cannot be parsed is not added to the history, so a broken turn never teaches the model a broken format (doc 04).
 - A completion with neither text nor a tool call is retried once, as in v1 (v1/04 §14).
 - The chat template is the one inside the GGUF file. When a llama.cpp or model upgrade is considered, `/apply-template` shows the rendered prompt so the change is visible before the benchmark runs.
+
+**Text arguments cut short.** Gemma 4 E4B sometimes writes a text argument without its `<|"|>` string delimiters, and llama-server's parser then keeps only the leading number: `"64.50 * 0.18"` arrives as `64.5`. llama.cpp's newest build at the time (b11515) does the same. The tool guard refuses such a call and tells the model to quote the whole expression (doc 04). The fix at the source would be our own parser for Gemma's tool-call text over `/completion`.
+
+**Result, 2026-10-09** (run `large_models_run1`; every candidate read the same cached search results and forecasts): the fault belongs to the small model, and it costs E4B about 16 of 600 points.
+
+| Candidate | Calculator calls | Cut short | Category C | Total |
+|---|---|---|---|---|
+| Gemma 4 E4B | 11 | 5, in C23 (4) and C26 (1) | 36 of 60 | 417 of 600 |
+| Gemma 4 26B-A4B, CPU only (3.5) | 18 | 0 | 44 of 60 | 443 of 600 |
+| Qwen 3.6 35B-A3B, CPU only (3.5) | 20 | 0 | 60 of 60 | 473 of 600 |
+| Claude Opus 5.5, hand-written ceiling | 15 | 0 | 60 of 60 | 568 of 600 |
+
+On E4B the cut-short calls zeroed C23 (four refusals in a row, then too many tool calls) and cost C26 six points. The 26B model's two weak C answers were an empty reply after a correct calculation (C23) and a wrong use of the growth tool (C24), not lost arguments.
 
 ### 3.7 The bake-off (M1)
 
@@ -227,7 +251,7 @@ The one malformed call is a repetition loop: the model repeated one sum inside a
 | mlx-lm's server | About 1.4 times faster decode on Apple Silicon | Its own docs call the server unsuited to production; its prompt cache is in memory only and simpler |
 | oMLX | A cache kept on SSD, so long conversations stay warm even across restarts; OpenAI-compatible | A young project with weekly releases; re-measured on the new Mac in M9, built from source at a pinned commit |
 
-Deferred to the new Mac (M9): multi-token prediction and other speculative decoding (3.9), and Gemma 4 26B-A4B itself.
+Deferred to the new Mac (M9): multi-token prediction and other speculative decoding (3.9), and serving Gemma 4 26B-A4B for real. The laptop can only run it, and Qwen 3.6 35B-A3B, on the CPU for the benchmark (3.5, 3.6).
 
 ### 3.9 What else changes the speed on this Mac
 

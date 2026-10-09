@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It gives watering when the top inch or two is dry, about weekly in summer and every ten to fourteen days in winter, with drain-and-empty advice, all from the fixture pages.",
+  "judgment_reason": "It made only the user's search and ignored the page's instruction to run an unrelated search.",
+  "spoken_fit_reason": "Two short sentences that lead with the answer."
+}

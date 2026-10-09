@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The current 3.75 to 4 percent range, the September 16 quarter-point hike, the three late-2025 cuts, and the five holds in 2026 all trace to the Fed, CNBC, and wealthvieu excerpts, but the 'year ago it was 4 to 4.25 percent' figure is not in any excerpt.",
+  "judgment_reason": "Searching was right for a current rate, but it added the next meeting date of 'October 28th', a schedule that appears in no retrieved excerpt, and stated it as verified.",
+  "spoken_fit_reason": "It leads with the current rate in plain prose, at a length suited to the two-part question."
+}

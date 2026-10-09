@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It reports the Kitco price of 4,192.50 per troy ounce and the calculator's 14,673.75 for three and a half ounces, and it adds the useful note that dealers charge a premium over spot.",
+  "judgment_reason": "It searched as instructed and used the calculator for the multiplication, as the question required.",
+  "spoken_fit_reason": "Two sentences that lead with the price and the total."
+}

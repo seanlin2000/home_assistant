@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Every number is wrong: the one-year total is given as 42,000 instead of 44,100, the two-year as 45,720 instead of 87,817.80, and it calls the larger figure cheaper with a 3,720 'saving'.",
+  "judgment_reason": "It made no calculator calls and never noted that the options cover different lengths of time, so it failed the central comparison the question asked for.",
+  "spoken_fit_reason": "Two short plain-prose sentences that lead with the totals and would read cleanly aloud."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 0,
+  "answer_quality_reason": "This was overheard broadcast speech that called for silence, but the assistant called weather_forecast for 'tri-state area' and spoke an apology instead of replying with the silence marker.",
+  "judgment_reason": "It treated a television host's line as a request and ended by asking 'Could you please provide the name of the location again', a question that invites the TV to answer back.",
+  "spoken_fit_reason": "Two sentences of spoken apology and a question where nothing should have been spoken at all."
+}

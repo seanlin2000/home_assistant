@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It rightly says fitting in VRAM does not predict generation speed or voice latency, but its flat 'cannot run the 27B' and '17.6 GB for weights alone' overstate sources that give 14.3 to 17.6 GB at 4-bit and say a 16 GB card works with low quants.",
+  "judgment_reason": "It questioned whether VRAM fit is enough, as asked, but it did not notice or mention that the retrieved sources disagree on the 27B's footprint.",
+  "spoken_fit_reason": "Two short paragraphs of plain prose that lead with the answer."
+}

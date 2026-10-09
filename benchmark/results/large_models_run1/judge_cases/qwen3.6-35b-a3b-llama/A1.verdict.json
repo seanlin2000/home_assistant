@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The answer claims an MoE needs much less memory because 'you are only loading the weights for the active experts', which is exactly the misconception the reference says a correct answer must avoid; only the description of expert routing is right.",
+  "judgment_reason": "Not searching was right, but it drifted into irrelevant training and optimizer-state caveats and never noted that quantization or offloading is what actually lets a 30B MoE fit in 16 GB.",
+  "spoken_fit_reason": "It leads with a short answer in plain prose, but it runs three long paragraphs and was cut off by the word cap."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["violated_explicit_constraint"],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The used RTX 3090 with 24 GB is the pick the sources agree on, but it quotes the $750 to $900 range from an affiliate page and ignores the September 2026 tracked prices of $1,150 to $1,350 that the runaihome excerpt reported.",
+  "judgment_reason": "The user set $1,000 for a whole computer, yet the answer spends $750 to $900 on the GPU alone with no word on the rest of the system or the evidence that the card itself may now be over budget.",
+  "spoken_fit_reason": "A few plain sentences that lead with the recommendation and contain no lists or URLs."
+}

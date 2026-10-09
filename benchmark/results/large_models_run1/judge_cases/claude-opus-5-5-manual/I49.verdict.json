@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It names Chicago and gets cloudy and dry right, but it says 'around 55 degrees' when the tool gave 56°F, a small imprecision that does not mislead.",
+  "judgment_reason": "It called the forecast tool for Chicago tonight and did not search.",
+  "spoken_fit_reason": "Two short sentences that lead with the direct answer."
+}

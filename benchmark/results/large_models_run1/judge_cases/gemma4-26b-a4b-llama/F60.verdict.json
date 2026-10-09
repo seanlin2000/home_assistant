@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It states the unit price it used, $198.79, and the calculator's $858.77 for four with 8 percent tax, both traceable to the transcript, but it does not say that this is an Amazon tracker price or that retailers vary.",
+  "judgment_reason": "It searched and used the calculator as asked, but it presented a marked-up Amazon listing as 'the current price' without flagging that other sources, including the official page's $120, differ.",
+  "spoken_fit_reason": "One sentence that gives the unit price and the total."
+}

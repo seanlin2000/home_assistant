@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It names nitrogen deficiency and a root-bound pot and asks about species, repotting, fertilizer, and the yellowing pattern, but it misses normal senescence of old leaves, the most likely benign cause, as well as overwatering and shading.",
+  "judgment_reason": "It asks for the right missing information, but it opens by asserting 'the most likely explanation' is repotting or nitrogen instead of leaving open that this may be normal.",
+  "spoken_fit_reason": "It is two short plain-prose paragraphs that lead with the explanation and end with the questions."
+}
