@@ -3,7 +3,7 @@
 Steps (each is skipped when already done, so the script can be re-run):
   1. onboarding: create the owner account, finish the onboarding wizard, mint a long-lived token (saved to .env as HA_TOKEN)
   2. add-ons: Samba (for deploys), Piper (the alternative text to speech), Music Assistant, ESPHome (for the puck), openWakeWord (optional server-side wake word)
-  3. integrations: Wyoming entries for Whisper and Kokoro on the Mac, confirm the discovered Piper add-on, add studio_assistant
+  3. integrations: Wyoming entries for Whisper and Kokoro on the Mac, confirm the discovered Piper add-on, add studio_assistant pointed at the harness
   4. pipeline: an Assist pipeline "Jarvis" using Whisper, studio_assistant, and Kokoro's Fable voice, set as preferred (--tts piper for Piper)
   5. weather: copy the home location, time zone, and units into .env for the weather_forecast tool, and hide every weather entity from Assist so
      Home Assistant's built-in weather intent finds nothing to answer with and every weather question reaches studio_assistant
@@ -28,7 +28,9 @@ from typing import Any, NamedTuple
 
 from dotenv import dotenv_values, load_dotenv
 
+from assistant_service.settings import load_harness_config
 from ops.ha_client import HomeAssistant, entity_id, wait_for_api
+from serving.settings import read_api_key
 
 PROJECT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT))  # scripts/ is not a package; make `ops` importable when run as a file
@@ -203,10 +205,25 @@ async def integrations(ha: HomeAssistant, args: argparse.Namespace) -> None:
         created = await run_flow(ha, "wyoming", {"host": args.mac_ip, "port": port}, title)
         save_env(env_key, created["result"]["entry_id"])
     await confirm_discovered_flows(ha)
-    if not any(entry["domain"] == "studio_assistant" for entry in entries):
-        await run_flow(ha, "studio_assistant", {"ollama_url": f"http://{args.mac_ip}:11434", "model": args.model, "mcp_url": f"http://{args.mac_ip}:8765/mcp"}, "Studio Assistant")
-    else:
-        print("integrations: studio_assistant present")
+    await point_studio_assistant_at_harness(ha, entries, harness_settings(args.mac_ip))
+
+
+def harness_settings(mac_ip: str) -> dict[str, str]:
+    """The harness's address on the Mac and the key it requires, read from the key file services.sh created there."""
+    service = load_harness_config().service
+    return {"harness_url": f"http://{mac_ip}:{service.port}", "harness_api_key": read_api_key(service.api_key_path)}
+
+
+async def point_studio_assistant_at_harness(ha: HomeAssistant, entries: list[dict[str, Any]], settings: dict[str, str]) -> None:
+    """A new entry is created with the harness settings. An entry from v1 keeps its data and gets them as options instead, which the component
+    reads over its data, so redeploying the v1 component still finds the Ollama settings it needs."""
+    existing = [entry for entry in entries if entry["domain"] == "studio_assistant"]
+    if not existing:
+        await run_flow(ha, "studio_assistant", settings, "Studio Assistant")
+        return
+    flow = await ha.post("/api/config/config_entries/options/flow", {"handler": existing[0]["entry_id"]})
+    result = await ha.post(f"/api/config/config_entries/options/flow/{flow['flow_id']}", settings)
+    print(f"integrations: studio_assistant pointed at {settings['harness_url']} -> {result.get('type')}")
 
 
 async def run_flow(ha: HomeAssistant, handler: str, user_input: dict[str, Any], label: str) -> dict[str, Any]:
@@ -308,8 +325,7 @@ async def hide_weather_entities_from_assist(ha: HomeAssistant) -> None:
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Configure Home Assistant for the studio assistant.")
     parser.add_argument("--host", default=os.environ.get("HA_HOST"), help="Home Assistant address (VM IP or homeassistant.local)")
-    parser.add_argument("--mac-ip", default=os.environ.get("MAC_LAN_IP", MAC_IP_DEFAULT), help="LAN address of this Mac, where Ollama, Whisper, Kokoro, and the MCP server listen")
-    parser.add_argument("--model", default=os.environ.get("ASSISTANT_MODEL", "gemma4:e4b-it-qat"), help="Ollama model tag for the agent")
+    parser.add_argument("--mac-ip", default=os.environ.get("MAC_LAN_IP", MAC_IP_DEFAULT), help="LAN address of this Mac, where Whisper, Kokoro, and the harness listen")
     parser.add_argument("--tts", default="kokoro", choices=sorted(TTS_DEFAULTS), help="which text-to-speech entity the pipeline uses")
     parser.add_argument("--tts-voice", help="the voice the pipeline asks for (default: bm_fable for Kokoro, the add-on's voice for Piper)")
     parser.add_argument("--tts-language", help="the text-to-speech language, a region code such as en_US (default: en_GB for Kokoro, en_US for Piper)")

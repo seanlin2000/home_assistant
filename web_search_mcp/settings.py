@@ -18,7 +18,6 @@ class SearchSettings(BaseModel):
     results_to_return: int = 8
     min_seconds_between_searches: float = 3.0  # gap between live SearXNG requests; the upstream engines rate-limit bursts (cached queries never wait)
     cache_dir: str | None = None
-    exchanges_dir: str | None = None  # where POST /exchanges appends the assistant's per-exchange records; unset means the route answers 503
     user_agent: str = "Mozilla/5.0 (Macintosh; Intel Mac OS X 14_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0 Safari/537.36"
     blocked_domains: tuple[str, ...] = (
         "facebook.com",

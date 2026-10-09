@@ -39,6 +39,12 @@ candidates:
     provider: llama-server
     model: gemma-4-e4b
     think: false
+  # harness: the same model through the harness's HTTP API (design doc v2/04 section 3.2); install the services first (scripts/services.sh install).
+  - key: gemma4-e4b-harness
+    label: Gemma 4 E4B on llama-server, through the harness service
+    provider: harness
+    model: gemma-4-e4b
+    think: false
   - key: qwen3.5-9b
     label: Qwen 3.5 9B, Q4_K_M
     provider: ollama

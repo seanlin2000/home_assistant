@@ -1,4 +1,4 @@
-"""Copy custom_components/studio_assistant (with a vendored assistant_core) into Home Assistant's config share and restart Home Assistant.
+"""Copy custom_components/studio_assistant (with the part of assistant_core it needs, vendored) into Home Assistant's config share and restart Home Assistant.
 
 Home Assistant OS exposes /config over SMB once the Samba add-on is running (scripts/ha_setup.py installs it). This script mounts the share,
 syncs the component, unmounts, and asks Home Assistant to restart so the new code is loaded.
@@ -21,12 +21,11 @@ import httpx
 from dotenv import load_dotenv
 
 from ops.ha_client import HomeAssistant, wait_for_api
+from ops.paths import VENDORED_CORE_FILES
 
 PROJECT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT))  # scripts/ is not a package; make `ops` importable when run as a file
 COMPONENT = PROJECT / "custom_components" / "studio_assistant"
-CORE = PROJECT / "assistant_core"
-VENDOR_EXCLUDE = {"__pycache__"}
 
 
 def main() -> None:
@@ -57,10 +56,13 @@ def parse_args() -> argparse.Namespace:
 
 
 def stage_component() -> Path:
-    """Build the exact tree that will land in /config: the component plus assistant_core under vendor/."""
+    """Build the exact tree that will land in /config: the component plus the vendored part of assistant_core under vendor/."""
     staging = Path(tempfile.mkdtemp(prefix="studio_assistant-")) / "studio_assistant"
     shutil.copytree(COMPONENT, staging, ignore=shutil.ignore_patterns("__pycache__", "vendor"))
-    shutil.copytree(CORE, staging / "vendor" / "assistant_core", ignore=shutil.ignore_patterns(*VENDOR_EXCLUDE))
+    for relative_path in VENDORED_CORE_FILES:
+        destination = staging / "vendor" / relative_path
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(PROJECT / relative_path, destination)
     return staging
 
 

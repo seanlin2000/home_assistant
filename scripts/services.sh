@@ -1,22 +1,22 @@
 #!/usr/bin/env bash
 # Install, start, stop, and inspect the native macOS services that Home Assistant talks to over the LAN.
 #
-#   scripts/services.sh install      write launchd agents for whisper, kokoro, mcp, ollama (LAN binding), llama-server (127.0.0.1) and the 5-minute health check, and load them
+#   scripts/services.sh install      write launchd agents for whisper, kokoro, ollama, the harness (LAN), llama-server and mcp (127.0.0.1), and the health check, and load them
 #   scripts/services.sh start|stop   load/unload the agents
-#   scripts/services.sh restart NAME restart one agent (ollama|llama|mcp|whisper|kokoro|health)
+#   scripts/services.sh restart NAME restart one agent (ollama|llama|mcp|harness|whisper|kokoro|health)
 #   scripts/services.sh status       show what is listening on each port and the last health snapshot
-#   scripts/services.sh logs NAME    tail a service log (whisper|kokoro|mcp|ollama|llama|health)
+#   scripts/services.sh logs NAME    tail a service log (whisper|kokoro|mcp|harness|ollama|llama|health)
 #   scripts/services.sh uninstall    unload and remove the agents
 #
-# Ports: Ollama 11434, Whisper 10300, Kokoro 10210, MCP 8765 (design_docs/v1/08 section 7) bind 0.0.0.0 so the VM can reach them. llama-server binds
-# 127.0.0.1:8090 with an API key, from config/serving.toml (design_docs/v2/08 section 3.2).
+# Ports: Whisper 10300, Kokoro 10210, the harness 8770 (with an API key) and Ollama 11434 bind 0.0.0.0 so the VM can reach them. llama-server
+# 127.0.0.1:8090 (with an API key, from config/serving.toml) and the tool server 127.0.0.1:8765 answer only this Mac (design_docs/v2/08 section 3.2).
 set -euo pipefail
 
 PROJECT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 AGENTS_DIR="$HOME/Library/LaunchAgents"
 LOG_DIR="$HOME/Library/Logs/studio-assistant"
 PREFIX="com.studio-assistant"
-SERVICES=(ollama llama mcp whisper kokoro health)
+SERVICES=(ollama llama mcp harness whisper kokoro health)
 APP_SUPPORT_DIR="$HOME/Library/Application Support/studio-assistant"
 HEALTH_INTERVAL_SECONDS="${HEALTH_INTERVAL_SECONDS:-300}"
 UNLOAD_TIMEOUT_SECONDS="${UNLOAD_TIMEOUT_SECONDS:-30}"
@@ -109,7 +109,7 @@ install_agents() {
     prepare_kokoro
     # launchd keeps running the definition it loaded, so every agent is unloaded before its plist is rewritten; start_agents then loads the new ones.
     stop_agents
-    # With the tool server stopped, nothing appends to the old turns/ folder while the exchange logs move out of it (a no-op once moved).
+    # With the harness stopped, nothing appends to the old turns/ folder while the exchange logs move out of it (a no-op once moved).
     # A failed move leaves the files where they were, so it must not stop the agents from coming back.
     "$PROJECT_DIR/.venv/bin/python" -m ops.legacy_exchange_logs "$LOG_DIR" || echo "warning: exchange logs not moved out of $LOG_DIR/turns; rerun: .venv/bin/python -m ops.legacy_exchange_logs" >&2
     # Ollama: Homebrew's service binds to localhost only; ours binds the LAN and keeps the model loaded.
@@ -120,12 +120,9 @@ install_agents() {
     ensure_api_key llama-server
     ENV_KEYS=() ENV_VALUES=()
     write_plist llama "$PROJECT_DIR/.venv/bin/serving" launch
-    # Bound to the LAN, the tool server answers only requests that name this machine (Host header); a web page cannot reach it by DNS rebinding.
-    # WEB_SEARCH_ALLOWED_HOSTS in the environment overrides the derived list (the mini's interface may not be en0). Rerun install after an address change.
-    local lan_address
-    lan_address="$(ipconfig getifaddr en0 2>/dev/null || true)"
-    ENV_KEYS=(WEB_SEARCH_HOST WEB_SEARCH_PORT WEB_SEARCH_EXCHANGES_DIR WEB_SEARCH_ALLOWED_HOSTS)
-    ENV_VALUES=(0.0.0.0 8765 "$LOG_DIR/exchanges" "${WEB_SEARCH_ALLOWED_HOSTS:-${lan_address:+$lan_address:8765,}localhost:8765,127.0.0.1:8765}")
+    # Only the harness calls the tool server, so it listens on 127.0.0.1 alone.
+    ENV_KEYS=(WEB_SEARCH_HOST WEB_SEARCH_PORT)
+    ENV_VALUES=(127.0.0.1 8765)
     # Home for weather_forecast, written to .env by scripts/ha_setup.py --only weather (the shell environment wins). Without coordinates the server
     # starts without the weather tool and says why in mcp.log.
     local key value
@@ -137,6 +134,15 @@ install_agents() {
         fi
     done
     write_plist mcp "$PROJECT_DIR/.venv/bin/web-search-mcp"
+    # The harness listens on the LAN for the Home Assistant VM, so it requires its API key and answers only requests that name this machine (Host
+    # header); a web page cannot reach it by DNS rebinding. HARNESS_ALLOWED_HOSTS in the environment overrides the derived list (the new Mac's
+    # interface may not be en0). Rerun install after an address change. Its other settings are in config/harness.toml.
+    ensure_api_key harness
+    local lan_address
+    lan_address="$(ipconfig getifaddr en0 2>/dev/null || true)"
+    ENV_KEYS=(HARNESS_ALLOWED_HOSTS)
+    ENV_VALUES=("${HARNESS_ALLOWED_HOSTS:-${lan_address:+$lan_address:8770,}localhost:8770,127.0.0.1:8770}")
+    write_plist harness "$PROJECT_DIR/.venv/bin/assistant-service"
     ENV_KEYS=() ENV_VALUES=()
     write_plist whisper "$PROJECT_DIR/.venv/bin/wyoming-mlx-whisper" --uri tcp://0.0.0.0:10300 --model mlx-community/whisper-large-v3-turbo --language en
     write_plist kokoro "$PROJECT_DIR/.venv/bin/kokoro-server" --uri tcp://0.0.0.0:10210 --voice bm_fable --data-dir "$HOME/.cache/wyoming-kokoro" --streaming --device cpu
@@ -202,7 +208,7 @@ status() {
     for name in "${SERVICES[@]}"; do
         agent_loaded "$name" || echo "$name: agent NOT loaded"
     done
-    local ports=("ollama:11434" "llama:8090" "mcp:8765" "whisper:10300" "kokoro:10210")
+    local ports=("ollama:11434" "llama:8090" "mcp:8765" "harness:8770" "whisper:10300" "kokoro:10210")
     for entry in "${ports[@]}"; do
         local name="${entry%%:*}" port="${entry##*:}"
         if lsof -nP -iTCP:"$port" -sTCP:LISTEN >/dev/null 2>&1; then

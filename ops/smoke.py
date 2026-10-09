@@ -3,7 +3,7 @@
     uv run python -m ops.smoke            # "What is 12 percent of 250?" must come back with 30 within 60 s
     uv run python -m ops.smoke --full     # also one searched question, which needs SearXNG and the web
 
-That single call exercises Home Assistant, the component, Ollama, and the tool server; the plain version never touches the web, so it is
+That single call exercises Home Assistant, the component, the harness, llama-server, and the tool server; the plain version never touches the web, so it is
 safe to run as often as needed. Exit code 0 on pass, 1 on fail, with the answer printed either way.
 """
 
@@ -23,7 +23,7 @@ PROJECT_DIR = Path(__file__).resolve().parent.parent
 CALCULATOR_QUESTION = "What is 12 percent of 250?"
 CALCULATOR_EXPECTED = re.compile(r"\b(30|thirty)\b", re.IGNORECASE)
 SEARCH_QUESTION = "Search the web: what is the latest stable version of Home Assistant?"
-SEARCH_EXPECTED = re.compile(r"\b20\d\d\b")  # any year-style version number proves a search happened and was read
+SEARCH_EXPECTED = re.compile(r"\b(20\d\d|two thousand (twenty|thirty))\b", re.IGNORECASE)  # a year-style version, in digits or spoken, proves a search was read
 
 
 async def smoke(ha: HomeAssistant, timeout_seconds: float, full: bool) -> list[tuple[str, bool, str, float]]:

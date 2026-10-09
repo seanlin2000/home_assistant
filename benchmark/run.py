@@ -7,6 +7,9 @@ import platform
 import signal
 import subprocess
 import sys
+import time
+import uuid
+from collections.abc import AsyncIterator, Awaitable, Callable
 from pathlib import Path
 
 import httpx
@@ -15,17 +18,21 @@ from dotenv import load_dotenv
 from rich.console import Console
 
 from assistant_core import agent_loop
+from assistant_core.converse_protocol import ConverseRequest
+from assistant_core.harness_client import HarnessClient
 from assistant_core.llama_server_client import LlamaServerClient
 from assistant_core.llm_client import LLMClient, OllamaClient
-from assistant_core.models import AgentPolicy, Done, Message, Role, Transcript
+from assistant_core.models import AgentEvent, AgentPolicy, AnswerDelta, Done, FillerSpoken, Message, Role, Transcript
 from assistant_core.prompts import PROMPT_VERSION, system_prompt
 from assistant_core.router import ROUTER_SYSTEM_PROMPT
 from assistant_core.tools import McpToolBox
+from assistant_service.settings import load_harness_config
 from benchmark.mcp_process import McpServerProcess
 from benchmark.ollama_utils import delete_model, ensure_model_present, unload, warm_up
 from benchmark.records import BenchmarkConfig, Candidate, MemoryFit, Question, QuestionResult, QuestionSet, append_jsonl, load_config, load_questions, read_jsonl
 from serving.settings import load_serving_config, read_api_key
 
+ExchangeRunner = Callable[[list[Message]], Awaitable[Transcript]]
 CONFIG_PATH = Path("benchmark/config.yaml")
 QUESTIONS_PATH = Path("benchmark/questions.yaml")
 console = Console()
@@ -101,6 +108,9 @@ async def run_candidate(candidate: Candidate, questions: list[Question], config:
         console.print(f"[dim]{candidate.key}: nothing to do[/dim]")
         return
     console.rule(f"{candidate.label}  ({len(pending)} questions)")
+    if candidate.provider == "harness":
+        await run_through_harness(candidate, pending, output_path)
+        return
     llm = build_llm(candidate, config)
     if llm is None:
         return
@@ -110,10 +120,31 @@ async def run_candidate(candidate: Candidate, questions: list[Question], config:
         if isinstance(llm, LlamaServerClient):
             await warm_up_llama_server(llm, toolbox)
         for question in pending:
-            result = await run_question(question, candidate, llm, toolbox, policy, memory_fit)
+            result = await run_question(question, candidate, llm.model_name, in_process_exchange(llm, toolbox, policy), memory_fit)
             append_jsonl(output_path, result)
             print_result_line(question, result)
     await release_model(candidate, config, args.delete_models)
+
+
+async def run_through_harness(candidate: Candidate, pending: list[Question], output_path: Path) -> None:
+    """The same questions through the harness's HTTP API, as Home Assistant asks them; each question is its own conversation."""
+    client = harness_client(candidate)
+    health = await client.health()
+    if health.status != "ok":
+        raise SystemExit(f"the harness reports {health.model_dump()}; start it with scripts/services.sh install")
+    for question in pending:
+        conversation_id = f"benchmark-{candidate.key}-{question.id}-{uuid.uuid4().hex[:8]}"
+        result = await run_question(question, candidate, candidate.model, harness_exchange(client, conversation_id), MemoryFit())
+        append_jsonl(output_path, result)
+        print_result_line(question, result)
+
+
+def harness_client(candidate: Candidate) -> HarnessClient:
+    harness = load_harness_config()
+    serving = load_serving_config()
+    if serving.server.model != candidate.model:
+        raise SystemExit(f"{candidate.key} expects the harness to use {candidate.model}, but config/serving.toml serves {serving.server.model}")
+    return HarnessClient(f"http://127.0.0.1:{harness.service.port}", read_api_key(harness.service.api_key_path))
 
 
 def pending_questions(questions: list[Question], output_path: Path, force: bool) -> list[Question]:
@@ -168,29 +199,52 @@ async def release_model(candidate: Candidate, config: BenchmarkConfig, delete_af
         await delete_model(client, candidate.model)
 
 
-async def run_question(question: Question, candidate: Candidate, llm: LLMClient, toolbox: McpToolBox, policy: AgentPolicy, memory_fit: MemoryFit) -> QuestionResult:
+async def run_question(question: Question, candidate: Candidate, model_name: str, run_exchange: ExchangeRunner, memory_fit: MemoryFit) -> QuestionResult:
     transcripts: list[Transcript] = []
     conversation: list[Message] = []
     try:
         for user_text in question.exchanges:
             conversation.append(Message(role=Role.USER, content=user_text))
-            transcript = await run_exchange(conversation, llm, toolbox, policy)
+            transcript = await run_exchange(conversation)
             transcripts.append(transcript)
             conversation = list(transcript.conversation)
     except Exception as error:
         return QuestionResult(
             question_id=question.id,
             candidate_key=candidate.key,
-            model=llm.model_name,
-            exchanges=transcripts or [Transcript(model=llm.model_name, system_prompt="", conversation=conversation)],
+            model=model_name,
+            exchanges=transcripts or [Transcript(model=model_name, system_prompt="", conversation=conversation)],
             memory_fit=memory_fit,
             error=f"{type(error).__name__}: {error}",
         )
-    return QuestionResult(question_id=question.id, candidate_key=candidate.key, model=llm.model_name, exchanges=transcripts, memory_fit=memory_fit)
+    return QuestionResult(question_id=question.id, candidate_key=candidate.key, model=model_name, exchanges=transcripts, memory_fit=memory_fit)
 
 
-async def run_exchange(conversation: list[Message], llm: LLMClient, toolbox: McpToolBox, policy: AgentPolicy) -> Transcript:
-    async for event in agent_loop.run(conversation, llm, toolbox, policy):
+def in_process_exchange(llm: LLMClient, toolbox: McpToolBox, policy: AgentPolicy) -> ExchangeRunner:
+    async def run_exchange(conversation: list[Message]) -> Transcript:
+        return await transcript_of(agent_loop.run(conversation, llm, toolbox, policy))
+
+    return run_exchange
+
+
+def harness_exchange(client: HarnessClient, conversation_id: str) -> ExchangeRunner:
+    """The first spoken word is timed here, at the client, so the transcript's figure includes the HTTP hop that M2's exit criterion is about."""
+
+    async def run_exchange(conversation: list[Message]) -> Transcript:
+        started = time.perf_counter()
+        first_spoken: float | None = None
+        async for event in client.converse(ConverseRequest(conversation_id=conversation_id, conversation=conversation, source="benchmark")):
+            if first_spoken is None and isinstance(event, (FillerSpoken, AnswerDelta)):
+                first_spoken = time.perf_counter() - started
+            if isinstance(event, Done):
+                return event.transcript.model_copy(update={"time_to_first_spoken_seconds": first_spoken})
+        raise RuntimeError("the harness stream ended without a Done event")
+
+    return run_exchange
+
+
+async def transcript_of(events: AsyncIterator[AgentEvent]) -> Transcript:
+    async for event in events:
         if isinstance(event, Done):
             return event.transcript
     raise RuntimeError("agent loop ended without a Done event")

@@ -4,6 +4,7 @@ import json
 from datetime import date
 from pathlib import Path
 
+import httpx
 import pytest
 
 from ops import health, paths
@@ -130,3 +131,18 @@ def test_housekeeping_touches_every_file_under_the_log_dir(tmp_path: Path, monke
     notes = health.housekeeping(today=date(2026, 9, 7))
     assert notes == ["rotated mcp.log", "deleted 2025-01-01.jsonl"]
     assert (paths.exchanges_dir() / "2026-09-01.jsonl").exists()
+
+
+async def test_harness_check_sends_its_key_and_names_what_the_harness_cannot_reach(tmp_path: Path) -> None:
+    key_path = tmp_path / "harness.key"
+    key_path.write_text("secret\n")
+    seen = {}
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        seen["authorization"] = request.headers["authorization"]
+        return httpx.Response(200, json={"status": "degraded", "llama_server": False, "tool_server": True})
+
+    async with httpx.AsyncClient(transport=httpx.MockTransport(handler)) as client:
+        check = await health.check_harness(client, health.Settings(harness_key_path=key_path))
+    assert seen["authorization"] == "Bearer secret"
+    assert (check.ok, check.detail) == (True, "cannot reach llama-server")

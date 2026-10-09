@@ -3,31 +3,25 @@
     "step": {
       "user": {
         "title": "Studio Assistant",
-        "description": "Point the agent at Ollama and the web search tool running on the Mac.",
+        "description": "Point the agent at the harness running on the Mac. The key is in ~/Library/Application Support/studio-assistant/harness.key there.",
         "data": {
-          "ollama_url": "Ollama URL",
-          "model": "Ollama model tag",
-          "mcp_url": "Web search MCP URL"
+          "harness_url": "Harness URL",
+          "harness_api_key": "Harness API key"
         }
       }
     },
     "error": {
-      "cannot_connect": "Could not reach Ollama at that URL.",
-      "model_not_found": "Ollama does not have that model. Pull it first."
+      "cannot_connect": "Could not reach the harness at that URL.",
+      "invalid_auth": "The harness refused that API key."
     }
   },
   "options": {
     "step": {
       "init": {
-        "title": "Answer policy",
+        "title": "Studio Assistant",
         "data": {
-          "temperature": "Sampling temperature",
-          "word_budget": "Spoken word budget",
-          "max_tool_rounds": "Maximum search rounds per question",
-          "context_tokens": "Context window (tokens)",
-          "max_output_tokens": "Maximum tokens per model call",
-          "think": "Let the model think before answering",
-          "tool_timeout_seconds": "Search timeout (seconds)",
+          "harness_url": "Harness URL",
+          "harness_api_key": "Harness API key",
           "continue_conversation": "Listen for a follow-up after an answer, without the wake word",
           "max_follow_ups": "Follow-ups in a row before the wake word is needed again"
         }

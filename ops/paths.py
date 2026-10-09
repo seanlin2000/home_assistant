@@ -12,6 +12,9 @@ def log_dir() -> Path:
     return Path(override) if override else Path.home() / "Library" / "Logs" / "studio-assistant"
 
 
+# The parts of assistant_core the Home Assistant component vendors: the shared event and transcript models and the harness client. The loop and the
+# model clients stay on the Mac, so Home Assistant's Python never imports them (design doc v2/04 section 3.2).
+VENDORED_CORE_FILES = ("assistant_core/__init__.py", "assistant_core/models.py", "assistant_core/prompts.py", "assistant_core/converse_protocol.py", "assistant_core/harness_client.py")
 EXCHANGES_FOLDER = "exchanges"
 
 
@@ -45,7 +48,7 @@ def health_state() -> Path:
     return log_dir() / "health_state.json"
 
 
-SERVICE_LOG_NAMES = ("ollama", "mcp", "whisper", "kokoro", "health")
+SERVICE_LOG_NAMES = ("ollama", "llama", "mcp", "harness", "whisper", "kokoro", "health")
 
 
 def service_log(name: str) -> Path:

@@ -3,21 +3,18 @@ forecast, and Wikipedia lookups."""
 
 import html
 import re
-from pathlib import Path
 
 from mcp.server.mcpserver import MCPServer
 from mcp.server.transport_security import TransportSecuritySettings
-from pydantic import ValidationError
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
 
-from assistant_core.exchange_record import EXCHANGES_ROUTE, ExchangeRecord
 from assistant_core.models import REQUIRED_TOOL_NAMES
 from calculator_mcp.register import register_calculator_tools
+from utils.http_access_utils import host_allowed, misdirected
 from utils.text_utils import clip_to_words
 from weather_mcp.register import register_weather_tools
 from weather_mcp.settings import WeatherSettings, weather_settings_from_environment
-from web_search_mcp.exchange_log import ExchangeLog
 from web_search_mcp.page_extractor import PageExcerpt, PageExtractor
 from web_search_mcp.query_cache import QueryCache
 from web_search_mcp.searxng_client import SearchResult, SearxngClient
@@ -77,7 +74,7 @@ def build_server(
     register_calculator_tools(server)
     register_weather_tools(server, weather or WeatherSettings(), cache)
     register_wikipedia_tools(server, wikipedia, cache)
-    register_operations_routes(server, ExchangeLog(Path(settings.exchanges_dir)) if settings.exchanges_dir else None, allowed_host_list(settings))
+    register_operations_routes(server, allowed_host_list(settings))
     return server
 
 
@@ -91,19 +88,8 @@ def transport_security_for(settings: SearchSettings) -> TransportSecuritySetting
     return TransportSecuritySettings(enable_dns_rebinding_protection=True, allowed_hosts=allowed_hosts, allowed_origins=[])
 
 
-def host_allowed(request: Request, allowed_hosts: list[str]) -> bool:
-    if not allowed_hosts:
-        return True
-    if request.headers.get("origin"):
-        return False
-    host = request.headers.get("host", "")
-    return host in allowed_hosts or any(pattern.endswith(":*") and host.startswith(pattern[:-1]) for pattern in allowed_hosts)
-
-
-def register_operations_routes(server: MCPServer, exchange_log: ExchangeLog | None, allowed_hosts: list[str]) -> None:  # deslop: allow-comments
-    """Two plain HTTP routes beside the MCP endpoint (design doc 10): the health check proves this server is ours, and the component posts its exchange records.
-
-    Custom routes bypass MCP's session handling; like the rest of the server they are reachable only on the LAN."""
+def register_operations_routes(server: MCPServer, allowed_hosts: list[str]) -> None:
+    """A plain HTTP route beside the MCP endpoint for the health check, which proves this server is ours by its tools (design doc 10)."""
 
     @server.custom_route("/healthz", ["GET"])
     async def healthz(request: Request) -> Response:
@@ -111,24 +97,7 @@ def register_operations_routes(server: MCPServer, exchange_log: ExchangeLog | No
             return misdirected(request)
         names = sorted(tool.name for tool in await server.list_tools())
         missing = sorted(REQUIRED_TOOL_NAMES - set(names))
-        return JSONResponse({"status": "ok" if not missing else "degraded", "tools": names, "missing": missing, "exchanges_dir": str(exchange_log.directory) if exchange_log else None})
-
-    @server.custom_route(EXCHANGES_ROUTE, ["POST"])
-    async def exchanges(request: Request) -> Response:
-        if not host_allowed(request, allowed_hosts):
-            return misdirected(request)
-        if exchange_log is None:
-            return JSONResponse({"error": "exchange logging is not configured (WEB_SEARCH_EXCHANGES_DIR unset)"}, status_code=503)
-        try:
-            record = ExchangeRecord.model_validate_json(await request.body())
-        except ValidationError as error:
-            return JSONResponse({"error": "not an ExchangeRecord", "detail": error.errors(include_input=False, include_url=False)[:3]}, status_code=400)
-        exchange_log.append(record)
-        return Response(status_code=204)
-
-
-def misdirected(request: Request) -> Response:
-    return JSONResponse({"error": f"host {request.headers.get('host', '')!r} is not this server"}, status_code=421)
+        return JSONResponse({"status": "ok" if not missing else "degraded", "tools": names, "missing": missing})
 
 
 def render_result_list(results: list[SearchResult]) -> str:

@@ -1,12 +1,18 @@
 {
   "domain": "studio_assistant",
   "name": "Studio Assistant",
-  "codeowners": ["@seanlin2000"],
+  "codeowners": [
+    "@seanlin2000"
+  ],
   "config_flow": true,
-  "dependencies": ["conversation"],
-  "documentation": "https://github.com/seanlin2000/home_assistant/blob/main/design_docs/v1/04_conversation_agent.md",
+  "dependencies": [
+    "conversation"
+  ],
+  "documentation": "https://github.com/seanlin2000/home_assistant/blob/main/design_docs/v2/04_agent_harness.md",
   "integration_type": "service",
   "iot_class": "local_push",
-  "requirements": ["ollama==0.6.2", "pydantic>=2.0"],
-  "version": "0.3.0"
+  "requirements": [
+    "pydantic>=2.0"
+  ],
+  "version": "0.4.0"
 }

@@ -20,13 +20,16 @@ from pathlib import Path
 import httpx
 from pydantic import BaseModel, Field
 
+from assistant_core.converse_protocol import HEALTH_PATH, HarnessHealth
 from assistant_core.models import REQUIRED_TOOL_NAMES
+from assistant_service.exchange_log import ExchangeLog
+from assistant_service.settings import load_harness_config
 from ops import paths
+from serving.settings import read_api_key
 from utils.jsonl_utils import append_jsonl
-from web_search_mcp.exchange_log import ExchangeLog
 
 LAUNCHD_PREFIX = "com.studio-assistant"
-LAUNCHD_SERVICES = ("ollama", "llama", "mcp", "whisper", "kokoro")
+LAUNCHD_SERVICES = ("ollama", "llama", "mcp", "harness", "whisper", "kokoro")
 LLAMA_SERVER_PROCESS = "llama-server"
 DEFAULT_VM_NAME = "Home Assistant"
 PROJECT_DIR = Path(__file__).resolve().parent.parent
@@ -94,6 +97,8 @@ class Settings(BaseModel):
     ollama_url: str = "http://127.0.0.1:11434"
     llama_server_url: str = "http://127.0.0.1:8090"
     mcp_url: str = "http://127.0.0.1:8765"
+    harness_url: str = "http://127.0.0.1:8770"
+    harness_key_path: Path = Field(default_factory=lambda: load_harness_config().service.api_key_path)
     whisper_port: int = 10300
     kokoro_port: int = 10210
     searxng_url: str = "http://127.0.0.1:8080"
@@ -122,6 +127,7 @@ async def run_checks(settings: Settings, full: bool = False) -> dict[str, Check]
             timed("ollama", check_ollama(client, settings)),
             timed("llama", check_llama_server(client, settings)),
             timed("mcp", check_mcp(client, settings)),
+            timed("harness", check_harness(client, settings)),
             timed("whisper", check_tcp("127.0.0.1", settings.whisper_port, settings.probe_timeout_seconds)),
             timed("kokoro", check_tcp("127.0.0.1", settings.kokoro_port, settings.probe_timeout_seconds)),
             timed("searxng", check_searxng(client, settings, full)),
@@ -171,6 +177,17 @@ async def check_mcp(client: httpx.AsyncClient, settings: Settings) -> Check:
     if missing:
         return Check(ok=False, detail=f"not our tool server: missing {', '.join(missing)}")
     return Check(ok=True, detail=f"{len(body['tools'])} tools")
+
+
+async def check_harness(client: httpx.AsyncClient, settings: Settings) -> Check:
+    """The harness answers its /health only with its key. It is healthy when it answers; whether llama-server and the tool server answer it is
+    reported beside, since restarting the harness would not fix them and their own checks restart them."""
+    response = await client.get(f"{settings.harness_url}{HEALTH_PATH}", headers={"authorization": f"Bearer {read_api_key(settings.harness_key_path)}"})
+    if response.status_code != httpx.codes.OK:
+        return Check(ok=False, detail=f"HTTP {response.status_code}")
+    reported = HarnessHealth.model_validate(response.json())
+    unreachable = [name for name, answers in (("llama-server", reported.llama_server), ("tool server", reported.tool_server)) if not answers]
+    return Check(ok=True, detail=f"cannot reach {' or '.join(unreachable)}" if unreachable else "llama-server and tool server reachable")
 
 
 async def check_tcp(host: str, port: int, timeout: float) -> Check:

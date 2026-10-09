@@ -1,6 +1,6 @@
 from datetime import UTC, datetime
 
-from assistant_core.exchange_record import ExchangeRecord, exchange_record_from_transcript, exchanges_url_from_mcp_url
+from assistant_core.exchange_record import ExchangeRecord, exchange_record_from_transcript
 from assistant_core.models import GenerationStats, Message, Role, Route, RouteDecision, ToolCall, ToolCallRecord, Transcript
 
 
@@ -72,9 +72,3 @@ def test_a_silent_exchange_is_recorded_as_silent_not_as_failed() -> None:
 def test_record_round_trips_through_json() -> None:
     record = exchange_record_from_transcript(searched_transcript())
     assert ExchangeRecord.model_validate_json(record.model_dump_json()) == record
-
-
-def test_exchanges_url_sits_beside_the_mcp_endpoint() -> None:
-    assert exchanges_url_from_mcp_url("http://192.168.1.152:8765/mcp") == "http://192.168.1.152:8765/exchanges"
-    assert exchanges_url_from_mcp_url("http://192.168.1.152:8765/mcp/") == "http://192.168.1.152:8765/exchanges"
-    assert exchanges_url_from_mcp_url("http://127.0.0.1:8765") == "http://127.0.0.1:8765/exchanges"
