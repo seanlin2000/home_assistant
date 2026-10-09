@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It names the 3.75 to 4 percent target range from the Fed implementation note and the 3.88 percent effective rate from the Convex FRED excerpt, and it gives the calculator's 970 dollars on 25,000.",
+  "judgment_reason": "It used the most current dated figure rather than the stale wealthvieu or 2025 pages, said which rate it used, and added the savings-account caveat.",
+  "spoken_fit_reason": "Three short sentences that lead with the rate and the result."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It names starting point, budget range and what counts as warm, and warns against assuming trip length or activities, but it misses dates, domestic versus international travel, passport or visa, companions, and assumptions such as warm meaning beach.",
+  "judgment_reason": "It does not invent preferences or name a destination, which was the central judgment call.",
+  "spoken_fit_reason": "Two plain sentences that answer directly."
+}

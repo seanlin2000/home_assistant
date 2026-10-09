@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "Every price traces to an excerpt: the 3090 at 1,200 to 1,400 and a 1,300 to 1,500 system from the October-updated InsiderLLM and MindStudio pages, the 5060 Ti at 650 used and 780 new from GPUDojo, and the 845 calculator total; but it silently drops the older excerpts that put the 3090 at 700 to 900 and the RX 7900 XTX 24GB under 1,000, without noting the conflict.",
+  "judgment_reason": "It respects the 1,000 dollar budget by flagging the 3090 build as over it, picks the most recently dated prices, and warns that prices move weekly.",
+  "spoken_fit_reason": "It leads with the 16 gigabyte ceiling, but seven sentences packed with about a dozen prices are hard to follow aloud."
+}

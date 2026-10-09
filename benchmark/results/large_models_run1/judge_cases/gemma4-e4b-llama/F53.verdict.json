@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It quotes 4,174.95 per ounce from the 150currency table for 9 October and gives 14,612.32 for three and a half ounces, the calculator's result.",
+  "judgment_reason": "It searched as instructed and used the calculator for the multiplication rather than doing it in its head.",
+  "spoken_fit_reason": "Two plain sentences that give the price and then the cost."
+}

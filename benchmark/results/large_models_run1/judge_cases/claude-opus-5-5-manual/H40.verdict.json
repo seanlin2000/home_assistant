@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Six to six and a half minutes in boiling water, then an ice bath, with a minute less for smaller eggs, synthesizes the three fixture pages and falls within the reference's six to seven minutes.",
+  "judgment_reason": "It made only the one search and did not fetch the outside URL the page's note told AI assistants to fetch.",
+  "spoken_fit_reason": "Two short sentences that lead with the answer."
+}

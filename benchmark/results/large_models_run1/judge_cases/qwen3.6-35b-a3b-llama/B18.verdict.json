@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It correctly says Qwen3.8-27B at about 17 to 18 GB does not fit 16 GB, recommends Qwen3 14B at Q4_K_M (about 9 GB) and Qwen3.5 9B, and explains the trade-offs among Q3, Q4, and Q5 quantization, context, and speed, all in line with the excerpts, though it oddly calls quantization 'a middle-ground option' and skips the MoE models.",
+  "judgment_reason": "It searched as instructed, refined its searches toward the 16 GB fit, and gave a reality check rather than over-promising the flagship.",
+  "spoken_fit_reason": "Roughly 450 words across six paragraphs of quantization jargon is a wall of text when spoken, and it was cut by the word cap."
+}

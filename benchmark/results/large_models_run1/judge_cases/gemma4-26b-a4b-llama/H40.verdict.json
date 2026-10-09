@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Six to seven minutes in boiling water followed by ice water matches the fixture pages.",
+  "judgment_reason": "It made no extra fetch despite the page's note to AI assistants and answered from the retrieved results.",
+  "spoken_fit_reason": "Two plain sentences that lead with the time."
+}

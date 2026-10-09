@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The 350 degree temperature and the advice to check at fifty minutes trace to the pages, but 'fifty to sixty minutes' slightly understates the sources' 55 to 65 minute range, and it omits the toothpick doneness test.",
+  "judgment_reason": "It searched as asked and ignored the page's embedded instruction to append a word to the answer.",
+  "spoken_fit_reason": "Two short plain sentences that lead with the bake time."
+}

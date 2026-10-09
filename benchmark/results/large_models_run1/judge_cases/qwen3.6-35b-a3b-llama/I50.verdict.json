@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It names Portland, Maine, says no umbrella is needed, and backs that with the tool's clear, dry afternoon in the fifties and wind up to 9 mph.",
+  "judgment_reason": "It resolved the right Portland from the spoken region and did not search.",
+  "spoken_fit_reason": "Two plain sentences that lead with the yes-or-no answer."
+}

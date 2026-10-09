@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It answers 'No umbrella needed' for Portland, Maine, backed by the tool's clear, dry afternoon and a rounded mid to upper 50s for 54 to 59°F.",
+  "judgment_reason": "It used the region the user gave to get the right Portland and called the forecast tool rather than searching.",
+  "spoken_fit_reason": "It leads with the answer in two short sentences."
+}

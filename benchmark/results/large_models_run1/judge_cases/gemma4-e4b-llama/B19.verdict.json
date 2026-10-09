@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It accurately reports the willitrunai result that Qwen3.8 27B is 'Too heavy' on the 4060 Ti 16GB with offload and about 2.4 tokens per second, and it notes that tokens per second and time to first token matter, but it ignores the smaller models that fit and never names the speech recognition and speech synthesis stages that also shape a voice experience.",
+  "judgment_reason": "It rightly says a 'can it run' result does not predict voice-assistant quality, but it calls the outcome 'difficult to predict' even though the retrieved 82-second time to first token clearly signals a poor experience for that model.",
+  "spoken_fit_reason": "Two short paragraphs of plain prose that lead with the finding and contain no formatting."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It names Chicago and gives about 56 degrees tonight with cloudy skies, matching the tool's overnight forecast.",
+  "judgment_reason": "It used the weather tool for Chicago instead of searching.",
+  "spoken_fit_reason": "A single short sentence that gives the answer."
+}

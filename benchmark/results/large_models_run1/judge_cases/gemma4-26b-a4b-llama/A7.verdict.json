@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The figures of 1.45 kWh a day and about $6.52 a month at an assumed $0.15 per kWh match the reference, but it gives one rate rather than a range.",
+  "judgment_reason": "It names the rate and the 1-hour active, 23-hour idle split as assumptions, but it never says the machine is unlikely to draw 300 W for the whole hour, which the user explicitly asked it not to pretend to know.",
+  "spoken_fit_reason": "Two plain sentences that lead with the cost and name the rate."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The 10-degree difference from the calculator's 79 minus 69 is right, but it never states either afternoon temperature, which the reference expects.",
+  "judgment_reason": "It called both forecasts and the calculator without searching, and it stated its high-versus-high assumption.",
+  "spoken_fit_reason": "A single short sentence that leads with the answer."
+}

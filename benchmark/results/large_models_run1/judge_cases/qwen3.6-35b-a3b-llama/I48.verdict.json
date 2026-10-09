@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It names Tokyo, says no rain with clear, dry conditions all day, and gives temperatures from the upper fifties to about 76, all matching the tool result.",
+  "judgment_reason": "It used the forecast tool for Tokyo's tomorrow and did not search.",
+  "spoken_fit_reason": "Two plain sentences that lead with the no-rain answer."
+}

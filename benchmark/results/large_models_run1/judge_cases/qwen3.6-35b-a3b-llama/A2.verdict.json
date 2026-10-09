@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The figures are wrong and contradict each other: it gives the two-year lease as $86,520 and the one-year path as $43,260 and then $87,618, and claims $1,098 savings, while the reference has $44,100 for the one-year lease, $87,817.80 for the two-year lease, and $840 saved in year one.",
+  "judgment_reason": "It did name the assumption of renewing the one-year lease at 5%, but it misused the calculator (11 periods of monthly compounding) and presented numbers its own tool results did not support.",
+  "spoken_fit_reason": "It is a long, rambling answer with a mid-answer 'Wait, let me correct that' and conflicting totals, and it was cut by the word cap."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "About 11.7 degrees Celsius correctly converts the forecast's 53°F with the convert tool, though it was not rounded to the whole degree the reference asks for.",
+  "judgment_reason": "It checked the home forecast and used the convert tool without searching.",
+  "spoken_fit_reason": "A single short sentence that gives the answer."
+}

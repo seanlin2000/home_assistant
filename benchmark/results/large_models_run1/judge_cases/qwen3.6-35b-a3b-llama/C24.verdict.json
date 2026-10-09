@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "About $19,090.80 matches the reference's end-of-month figure of about 19,091, and it notes the $18,000 in contributions and roughly $1,090 of interest.",
+  "judgment_reason": "It used the correct annuity formula in the calculator and did not search.",
+  "spoken_fit_reason": "Two short sentences with the amounts written out for speech."
+}

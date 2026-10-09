@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The tool's 54 to 57°F becomes 'about 12 to 14 degrees Celsius', which is right for the low of about 12°C, but it gives a range rather than the low the question asked for.",
+  "judgment_reason": "It called convert on a guessed 55°F before seeing the forecast and then did the actual 54 and 57 conversions without the tool.",
+  "spoken_fit_reason": "One sentence with both units."
+}

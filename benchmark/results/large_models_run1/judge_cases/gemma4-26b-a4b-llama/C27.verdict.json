@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "About $4.32 a month matches the reference figure for a 30-day month.",
+  "judgment_reason": "It used the given price directly with the energy tool and added no unneeded assumptions.",
+  "spoken_fit_reason": "A single short sentence that gives the answer."
+}

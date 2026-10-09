@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It names Lisbon and gives Saturday clear and dry at 60 to 79 degrees and Sunday partly cloudy and dry at 62 to 79, matching the tool result.",
+  "judgment_reason": "It called the forecast for the named place rather than searching.",
+  "spoken_fit_reason": "Three plain sentences that lead with an overall summary, an acceptable length for a two-day forecast."
+}

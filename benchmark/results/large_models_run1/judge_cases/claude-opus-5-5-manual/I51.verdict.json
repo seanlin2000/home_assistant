@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It names Paris, Texas and accurately summarizes the week from the tool: clear through Monday with mid-80s highs and 60s lows, near 89 Tuesday, showers Wednesday, and heavy rain close to an inch Thursday with a high around 80.",
+  "judgment_reason": "It took Paris, Texas as the user said rather than the capital, and it called the forecast tool without searching.",
+  "spoken_fit_reason": "Three prose sentences that compress seven days into a listenable summary."
+}

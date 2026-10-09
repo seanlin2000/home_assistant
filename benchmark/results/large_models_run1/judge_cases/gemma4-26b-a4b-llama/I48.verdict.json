@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "A clear 'No' for Tokyo tomorrow, matching the tool's clear and dry forecast for every part of the day.",
+  "judgment_reason": "It used the weather tool for Tokyo instead of searching and answered exactly what was asked.",
+  "spoken_fit_reason": "Two short sentences that lead with the answer."
+}

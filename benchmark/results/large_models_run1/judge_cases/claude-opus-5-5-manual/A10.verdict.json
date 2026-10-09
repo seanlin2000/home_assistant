@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It makes the central point that 'memory capacity decides which models you can run at all, while speed only decides how fast they run once they fit', with the spill-to-system-memory slowdown, but it omits the reference's point that more memory allows lighter quantization and longer context.",
+  "judgment_reason": "It answers from stable knowledge without searching and stays within the spoken-length constraint.",
+  "spoken_fit_reason": "Six short prose sentences of about 112 words, under the 120-word limit, with no lists, so it reads naturally aloud in under 45 seconds."
+}

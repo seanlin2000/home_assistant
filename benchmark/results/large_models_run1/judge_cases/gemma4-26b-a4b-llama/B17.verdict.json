@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It gives a correct qualified yes, that custom wake words work through ESPHome takeover or custom firmware using microWakeWord or openWakeWord, which matches the GitHub and chris-potter excerpts, but it does not mention the official experimental streaming wake word firmware or the openWakeWord streaming route in the Home Assistant docs.",
+  "judgment_reason": "It explains its trust in hands-on technical guides, but it does not weigh those community sources against the official Home Assistant documentation it also retrieved.",
+  "spoken_fit_reason": "Two short paragraphs of plain prose that lead with the answer."
+}

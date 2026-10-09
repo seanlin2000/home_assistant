@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The light morning rain, barely measurable afternoon showers, and upper-40s to mid-50s temperatures match the Seattle forecast, and the 2:10 a.m. last sailing (12:45 before it) matches the Saturday leave-Seattle list in the Fall 2026 timetable.",
+  "judgment_reason": "It worked out that tomorrow is Saturday and used the weekend timetable, clarified that 2:10 is technically early Sunday, and flagged the recent cancellations shown on the live status page.",
+  "spoken_fit_reason": "Three prose sentences that answer the weather and the ferry in order."
+}

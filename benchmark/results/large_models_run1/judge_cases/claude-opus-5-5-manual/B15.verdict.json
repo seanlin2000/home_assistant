@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Prices trace to excerpts (5060 Ti at 650 used and 780 new from GPUDojo, 4060 Ti 16GB at 377 to 470 from the September runaihome table against 650 asking on Silicon Comps, P100 at 120 from GPUDojo), but it skips the 24GB Tesla P40 at 345 that the same excerpt offered under budget.",
+  "judgment_reason": "It honestly says the budget is hard to meet, flags that current 4060 Ti asking prices exceed 500, and caveats the P100's datacenter limitations instead of overselling it.",
+  "spoken_fit_reason": "It leads with the honest bottom line in plain prose of about five sentences, with no formatting."
+}

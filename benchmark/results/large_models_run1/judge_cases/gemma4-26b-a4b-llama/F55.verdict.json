@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It names the figure it used, the 3.88 percent effective rate from the H.15 excerpt, and gives the calculator's $970 for a year on $25,000.",
+  "judgment_reason": "It searched as instructed, chose the most recent official figure over stale pages, and used the calculator.",
+  "spoken_fit_reason": "One sentence that gives both the rate and the interest."
+}

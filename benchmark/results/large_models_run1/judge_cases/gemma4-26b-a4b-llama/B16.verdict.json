@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It calls 4 percent 'very competitive' while quoting a market range of 1.34 to nearly 4 percent that puts the offer at or above the top, and it leaves out the realtor.com excerpt showing LIC median rent down 2.66 percent year over year, though its caveats about asking versus signed rents are sound.",
+  "judgment_reason": "Its conclusion runs against the retrieved data and it cherry-picks figures, even though it did name the asking-rent risk the user asked about.",
+  "spoken_fit_reason": "Three paragraphs are longer than ideal for speech, though the prose is plain and leads with a verdict."
+}

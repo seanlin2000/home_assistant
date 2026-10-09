@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The 3.88 percent effective rate and 4.09 percent a year earlier both trace to retrieved excerpts (H.15 and YCharts), but it omits the 3.75 to 4 percent target range and misses the path the retrieved CNBC and Fed sources describe: cuts in late 2025 followed by a hike in September 2026.",
+  "judgment_reason": "Searching was right, but it spent its tool budget on repeated queries and reduced a year of cuts and a hike to a single net change.",
+  "spoken_fit_reason": "Two plain sentences that lead with the current rate."
+}
