@@ -148,10 +148,10 @@ async def test_harness_check_sends_its_key_and_names_what_the_harness_cannot_rea
     assert (check.ok, check.detail) == (True, "cannot reach llama-server")
 
 
-def test_full_searxng_check_needs_two_web_engines_and_names_the_silent_ones() -> None:
+def test_full_searxng_check_passes_on_one_engine_but_says_there_is_no_fallback() -> None:
     one_engine = {"results": [{"engines": ["duckduckgo"]}, {"engines": ["duckduckgo"]}], "unresponsive_engines": [["brave", "too many requests"]]}
-    two_engines = {"results": [{"engines": ["bing", "duckduckgo"]}, {"engines": ["bing"]}], "unresponsive_engines": []}
-    degraded = health.engines_answering_check(one_engine)
-    assert degraded.ok is False
-    assert degraded.detail == "2 results from duckduckgo; not answering: brave (too many requests)"
-    assert health.engines_answering_check(two_engines) == Check(ok=True, detail="2 results from bing, duckduckgo")
+    no_engine = {"results": [], "unresponsive_engines": [["brave", "too many requests"], ["duckduckgo", "CAPTCHA"]]}
+    two_engines = {"results": [{"engines": ["brave", "duckduckgo"]}, {"engines": ["brave"]}], "unresponsive_engines": []}
+    assert health.engines_answering_check(one_engine) == Check(ok=True, detail="2 results from duckduckgo (no fallback); not answering: brave (too many requests)")
+    assert health.engines_answering_check(no_engine) == Check(ok=False, detail="0 results from no engine; not answering: brave (too many requests), duckduckgo (CAPTCHA)")
+    assert health.engines_answering_check(two_engines) == Check(ok=True, detail="2 results from brave, duckduckgo")

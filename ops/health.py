@@ -37,7 +37,6 @@ PROJECT_DIR = Path(__file__).resolve().parent.parent
 SNAPSHOT_HISTORY_DAYS = 90
 ROTATE_OVER_BYTES = 20 * 1024 * 1024
 ROTATE_GENERATIONS = 3
-MIN_ANSWERING_SEARCH_ENGINES = 2
 
 
 class Check(BaseModel):
@@ -210,14 +209,16 @@ async def check_searxng(client: httpx.AsyncClient, settings: Settings, full: boo
 
 
 def engines_answering_check(reply: dict) -> Check:
-    """Healthy only while two web engines answer. With one left, search still returns results but has no fallback, which is how it ran
+    """Healthy while any web engine answers. The detail says when only one is left, because search then has no fallback, which is how it ran
     unnoticed on DuckDuckGo alone until 2026-10-09."""
     answering = sorted({engine for result in reply.get("results", []) for engine in result.get("engines", [])})
     silent = reply.get("unresponsive_engines", [])
     detail = f"{len(reply.get('results', []))} results from {', '.join(answering) or 'no engine'}"
+    if len(answering) == 1:
+        detail += " (no fallback)"
     if silent:
         detail += f"; not answering: {describe_unresponsive_engines(silent)}"
-    return Check(ok=len(answering) >= MIN_ANSWERING_SEARCH_ENGINES, detail=detail)
+    return Check(ok=bool(answering), detail=detail)
 
 
 async def check_home_assistant(client: httpx.AsyncClient, settings: Settings) -> Check:

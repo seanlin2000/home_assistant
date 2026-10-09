@@ -85,6 +85,6 @@ async def test_an_empty_or_unknown_time_range_searches_without_a_filter_and_case
 
 def test_engines_that_did_not_answer_are_logged_by_name_and_reason(caplog: pytest.LogCaptureFixture) -> None:
     with caplog.at_level(logging.WARNING):
-        warn_about_unresponsive_engines([["brave", "too many requests"], ["bing", "HTTP connection error"]])
+        warn_about_unresponsive_engines([["brave", "too many requests"], ["duckduckgo", "CAPTCHA"]])
         warn_about_unresponsive_engines([])
-    assert [record.getMessage() for record in caplog.records] == ["SearXNG engines not answering: brave (too many requests), bing (HTTP connection error)"]
+    assert [record.getMessage() for record in caplog.records] == ["SearXNG engines not answering: brave (too many requests), duckduckgo (CAPTCHA)"]

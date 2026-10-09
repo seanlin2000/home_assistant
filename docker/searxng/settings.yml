@@ -2,22 +2,14 @@
 # Only the keys that differ from the image defaults are listed; everything else is inherited.
 use_default_settings:
   engines:
-    # One or two front doors per index, measured on 2026-10-09. Bing and DuckDuckGo both serve Bing's index, so either keeps search alive when
-    # the other is blocked. Brave has its own index but answers this address "too many requests"; it stays in case that lifts. Google's index
-    # has no working door: SearXNG's google engine calls a retired endpoint, and the image marks startpage inactive (proof-of-work CAPTCHA).
-    # Yahoo is a third door to Bing's index and adds nothing. keep_only removes the other engines; it does not enable one the image disables.
+    # One front door per independent index, measured on 2026-10-09. DuckDuckGo serves Bing's index. Bing's own engine is left out: without a
+    # browser it answers many queries with results for the first word only ("best hiking trails" gives Best Buy), from Docker and from the Mac
+    # alike. Brave has its own index but answers this address "too many requests"; it stays in case that lifts. Google's index has no working
+    # door: SearXNG's google engine calls a retired endpoint, and the image marks startpage inactive (proof-of-work CAPTCHA).
     keep_only:
-      - bing
       - duckduckgo
       - brave
       - wikipedia
-
-engines:
-  # The image ships bing disabled. Its engine asks for HTTP/3, which fails from Docker Desktop on this Mac (curl: ERR_DRAINING) while
-  # HTTP/2 answers every time.
-  - name: bing
-    disabled: false
-    enable_http3: false
 
 general:
   instance_name: "studio-search"
