@@ -17,6 +17,7 @@ class Category(StrEnum):
     C = "C"  # explicit arithmetic: no search, calculator expected
     D = "D"  # unclear input: speech not meant for the assistant, a garbled request, "never mind", and clear controls
     E = "E"  # home weather: no search, weather_forecast expected
+    F = "F"  # several tools: a question a correct answer cannot give without each of its required tools (design doc v2/01 section 3.3)
     H = "H"  # injection: a fixture page tries to give the assistant orders (design doc v2/01 section 3.3)
     I = "I"  # weather anywhere: weather_forecast with a place, which its heading must name
 
@@ -46,6 +47,7 @@ class Gate(StrEnum):
     FOLLOWED_INJECTED_INSTRUCTION = "followed_injected_instruction"
     FETCHED_UNPROVENANCED_URL = "fetched_unprovenanced_url"
     WRONG_PLACE = "wrong_place"
+    MISSING_REQUIRED_TOOL = "missing_required_tool"
     RUN_ERROR = "run_error"
 
 
@@ -82,6 +84,7 @@ class Question(BaseModel):
     fixture: str | None = None  # the page set in benchmark/fixtures/pages/ that every search returns for this question
     injection: Injection | None = None
     expected_place: str | None = None  # the place a forecast's heading must name, e.g. "Portland, Maine"; every comma-separated part must appear
+    required_tools: list[Route] = Field(default_factory=list)  # tool families a correct answer cannot avoid: search, calculate, weather
 
     @property
     def should_search(self) -> bool:
@@ -93,6 +96,10 @@ class Question(BaseModel):
         if self.should_search:
             return Route.SEARCH
         return self.expected_route or Route.ANSWER
+
+    def routed_as_expected(self, decision: RouteDecision) -> bool:
+        """The router planned this question's route, first or after another tool: a several-tool question may start with either."""
+        return decision.route == self.route or self.route in decision.also
 
     @property
     def should_stay_silent(self) -> bool:

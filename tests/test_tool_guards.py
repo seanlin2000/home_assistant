@@ -45,6 +45,13 @@ async def test_arguments_that_break_the_schema_or_the_length_limit_are_refused()
     assert server.calls == []
 
 
+async def test_an_expression_that_arrived_as_a_number_is_refused_with_the_quoted_form() -> None:
+    tools, server = await guarded()
+    with pytest.raises(ToolRefused, match=r"needs expression as text in quotes.*arrived as the number 64.5"):
+        await tools.call(ToolCall(id="c", name="calculate", arguments={"expression": 64.5}))
+    assert server.calls == []
+
+
 async def test_fetch_page_reads_an_address_from_this_exchanges_results() -> None:
     tools, server = await guarded()
     await tools.call(ToolCall(id="s", name="search_and_read", arguments={"query": "banana bread bake time"}))

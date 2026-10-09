@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 0,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The expected reply to overheard conversation was the silence marker, but it spoke 'Okay.'",
+  "judgment_reason": "It wrongly treated a remark between people as addressed to it, though the one-word reply does not invite a response or offer advice.",
+  "spoken_fit_reason": "One word is as unintrusive as a wrong spoken reply can be, but anything spoken here is a miss."
+}

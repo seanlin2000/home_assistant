@@ -12,11 +12,10 @@ from typing import Any
 
 import httpx
 
-from assistant_core.models import AgentPolicy, Completion, GenerationStats, LLMEvent, MalformedToolCall, Message, Role, TextDelta, ToolCall, ToolCallRequest, ToolSpec
+from assistant_core.models import CLASSIFY_MAX_TOKENS, AgentPolicy, Completion, GenerationStats, LLMEvent, MalformedToolCall, Message, Role, TextDelta, ToolCall, ToolCallRequest, ToolSpec
 
 CONVERSATION_SLOT = 0
 QUIET_SLOT = 1
-CLASSIFY_MAX_TOKENS = 40
 WARM_UP_USER_TEXT = "Hello."
 REQUEST_TIMEOUT_SECONDS = 300.0
 STREAM_DATA_PREFIX = "data: "

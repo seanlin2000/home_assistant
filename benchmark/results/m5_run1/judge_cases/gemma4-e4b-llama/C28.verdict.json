@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The payment of 2,398.20 and total interest of about 463,353 both match the loan_payment result and the reference.",
+  "judgment_reason": "It used the loan tool directly with the stated terms and answered both parts without searching.",
+  "spoken_fit_reason": "Two plain sentences with figures written out for speech, leading with the payment."
+}

@@ -5,7 +5,7 @@ from pydantic import ValidationError
 
 from assistant_core.models import ToolCall, ToolCallRecord, Transcript
 from assistant_core.prompts import ACKNOWLEDGEMENT_REPLY, SILENCE_MARKER
-from benchmark.gates import harness_gates
+from benchmark.gates import allowed_tool_calls, harness_gates
 from benchmark.judge import render_case
 from benchmark.records import Candidate, Category, ExpectedReply, Gate, JudgeVerdict, QuestionResult, Score, load_config, load_questions
 from benchmark.report import CandidateReport, render_summary_table
@@ -28,8 +28,8 @@ QUESTIONS = load_questions(Path("benchmark/questions.yaml"))
 
 
 def test_question_set_shape() -> None:
-    assert len(QUESTIONS.questions) == 52
-    assert {question.id for question in QUESTIONS.questions if question.route.value == "weather"} == {"E36", "E37", "E38", "I47", "I48", "I49", "I50", "I51", "I52"}
+    assert len(QUESTIONS.questions) == 60
+    assert {question.id for question in QUESTIONS.questions if question.route.value == "weather"} == {"E36", "E37", "E38", "I47", "I48", "I49", "I50", "I51", "I52", "F54", "F59"}
     assert QUESTIONS.by_id("B13").route.value == "search"
     assert QUESTIONS.by_id("C23").route.value == "calculate" and QUESTIONS.by_id("B11").route.value == "search" and QUESTIONS.by_id("A1").route.value == "answer"
     assert QUESTIONS.by_id("A6").exchanges[1].startswith("Suppose")
@@ -39,7 +39,7 @@ def test_question_set_shape() -> None:
 
 def test_category_d_questions_declare_their_expected_reply() -> None:
     category_d = [question for question in QUESTIONS.questions if question.category == Category.D]
-    assert QUESTIONS.version == "2.1"
+    assert QUESTIONS.version == "2.2"
     assert [question.id for question in category_d] == ["D29", "D30", "D31", "D32", "D33", "D34", "D35"]
     assert [question.expected_reply for question in category_d] == [ExpectedReply.SILENT] * 3 + [ExpectedReply.CLARIFY, ExpectedReply.ACKNOWLEDGE, None, None]
     assert all(question.route.value == "answer" and not question.should_search for question in category_d)
@@ -112,3 +112,18 @@ def test_report_shows_category_d_with_its_own_maximum() -> None:
     report = CandidateReport(Candidate(key="c", label="C", provider="ollama", model="m"), [], scores)
     summary_row = render_summary_table([report]).splitlines()[-1]
     assert "| 0/0 | n/a | 10/20 |" in summary_row
+
+
+def test_missing_required_tool_needs_a_call_that_ran_from_every_required_family() -> None:
+    question = QUESTIONS.by_id("F53")
+    searched_only = result("F53", "About 8,400 dollars.", searched=True)
+    assert Gate.MISSING_REQUIRED_TOOL in harness_gates(question, searched_only, max_tool_rounds=4)
+    both = searched_only.model_copy(deep=True)
+    both.exchanges[0].tool_call_records.append(ToolCallRecord(round_index=1, call=ToolCall(id="3", name="calculate", arguments={"expression": "2 * 3"}), result="6", seconds=0.1))
+    assert Gate.MISSING_REQUIRED_TOOL not in harness_gates(question, both, max_tool_rounds=4)
+    both.exchanges[0].tool_call_records[-1].refused = True
+    assert Gate.MISSING_REQUIRED_TOOL in harness_gates(question, both, max_tool_rounds=4)
+
+
+def test_a_several_tool_question_may_make_one_more_call_per_extra_tool_family() -> None:
+    assert allowed_tool_calls(QUESTIONS.by_id("F53"), 4) == 5 and allowed_tool_calls(QUESTIONS.by_id("B11"), 4) == 4

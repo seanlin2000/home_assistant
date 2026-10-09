@@ -32,6 +32,12 @@ HIDDEN_CHARACTERS = re.compile("[​-‏‪-‮⁠-⁤⁦-⁩﻿\U000e0000-\U000
 UNTRUSTED_TAG = re.compile(r"</?\s*untrusted", re.IGNORECASE)
 
 UNLISTED_REFUSAL = "Refused: {name} is not a tool this assistant may use."
+# Gemma 4 sometimes writes a text argument without its string delimiters, and llama-server then keeps only the leading number ("64.50 * 0.18" arrives
+# as 64.5). Saying so, with the quoted form, gets a correct call on the retry far more often than "not of type 'string'" does.
+TEXT_ARRIVED_AS_NUMBER_REFUSAL = (
+    'Refused: {name} needs {field} as text in quotes, the whole expression, for example "64.50 * 0.18". It arrived as the number {value}, '
+    "so anything after that number was lost. Call it again with {field} in quotes."
+)
 ARGUMENTS_REFUSAL = "Refused: the arguments for {name} are not valid ({reason}). Call it again with valid arguments, or answer without it."
 PROVENANCE_REFUSAL = "Refused: I can only read an address that came up in this conversation's search results or that you said yourself."
 EGRESS_REFUSAL = "Refused: the request carried private details from memory."
@@ -100,6 +106,9 @@ class GuardedToolBox:
     def _refuse_if_unsafe(self, call: ToolCall) -> None:
         if call.name not in self._table.tools or call.name not in self._specs:
             raise ToolRefused(UNLISTED_REFUSAL.format(name=call.name))
+        number_for_text = text_argument_given_as_number(self._specs[call.name], call.arguments)
+        if number_for_text:
+            raise ToolRefused(TEXT_ARRIVED_AS_NUMBER_REFUSAL.format(name=call.name, field=number_for_text, value=call.arguments[number_for_text]))
         problem = argument_problem(self._specs[call.name], call.arguments, self._table.limits.max_string_argument_chars)
         if problem:
             raise ToolRefused(ARGUMENTS_REFUSAL.format(name=call.name, reason=problem))
@@ -123,6 +132,12 @@ def argument_problem(spec: ToolSpec, arguments: dict, max_string_chars: int) -> 
         return errors[0].message
     too_long = [name for name, value in arguments.items() if isinstance(value, str) and len(value) > max_string_chars]
     return f"{too_long[0]} is longer than {max_string_chars} characters" if too_long else None
+
+
+def text_argument_given_as_number(spec: ToolSpec, arguments: dict) -> str | None:
+    """The first argument the schema declares as text that arrived as a number, or None."""
+    properties = spec.input_schema.get("properties", {})
+    return next((name for name, value in arguments.items() if properties.get(name, {}).get("type") == "string" and isinstance(value, (int, float))), None)
 
 
 def as_untrusted_block(source: str, text: str) -> str:

@@ -105,6 +105,16 @@ v1's loop allows several tool rounds but the router picks only one route, and in
 
 The harness also records whether every planned tool was called, which is what the benchmark's `missing_required_tool` gate checks (doc 01).
 
+**Result, 2026-10-08** (run `m5_run1`, question set 2.2): M5's exit criterion is met. The changes as built differ from the list above in three places, recorded in `DEVIATIONS.md`: the router plans tool families rather than tool names, a ruled question with a second request also asks the model, and the round cap never drops below the configured four.
+
+| Criterion | Measured |
+|---|---|
+| `missing_required_tool` on F at most 1 in 8 | 0 in 8: every F question called each tool family it needs, including both forecasts and the subtraction for "how much warmer in Lisbon than at home" |
+| No A to E regression | 229, inside the range of M1's llama-server runs (215, 242, 227) |
+| F score | 63 of 80; the judge took points for a wrong ferry time read from a correct timetable (F56) and a city population divided into a metropolitan one (F58) |
+
+Two model faults turned up while building it, and both are handled in the loop. Gemma 4 sometimes writes a tool call as text (`<tool_call> search_and_read(…)`): a reply that starts with markup is now held until it ends, never spoken if it is a written tool call, and asked again once. It also sometimes drops the string delimiters around a text argument, and llama-server 0.6.0 then keeps only the leading number, so `calculate("64.50 * 0.18")` arrives as `64.5`. About one calculator expression in four came out that way when sampled directly. The guards now refuse such a call with the quoted form, but the model often repeats it. Parsing Gemma's tool-call text ourselves would fix it at the source; that is a change to the model client (doc 02), not made here.
+
 ### 3.4 The context budget
 
 Every model gets a budget: how many tokens the whole prompt may take and how they are shared between its parts. Its numbers live with the model's serving settings in `config/serving.toml` (doc 02 §3.5), so the window the harness plans for is always the one llama-server was started with:

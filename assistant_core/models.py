@@ -19,12 +19,19 @@ class Route(StrEnum):
 
 
 class RouteDecision(BaseModel):
-    """What the router decided before the model spoke: which tool family the question needs and which layer decided it."""
+    """What the router decided before the model spoke: which tool family the question needs first, any it needs as well, and which layer decided it."""
 
     route: Route
     source: str  # "rule", "model", or "none"
     detail: str = ""
     seconds: float = 0.0
+    also: list[Route] = Field(default_factory=list)  # further tool families, in the order to use them (design doc v2/04 section 3.3)
+    plan: str = ""  # one sentence on how the tools fit together, when there is more than one
+
+    @property
+    def tool_routes(self) -> list[Route]:
+        """Every tool family the question needs, first one first; empty for a question answered without tools."""
+        return [route for route in (self.route, *self.also) if route != Route.ANSWER]
 
 
 class ToolCall(BaseModel):
@@ -79,6 +86,10 @@ DEFAULT_WEATHER_FILLER_PHRASES = (
 )
 SEARCH_TOOL_NAMES = frozenset({"search_and_read", "web_search", "fetch_page", "wikipedia_lookup"})
 WEATHER_TOOL_NAMES = frozenset({"weather_forecast"})
+# The router's JSON: a route, up to two more, and a one-sentence plan. Forty tokens held the route alone and cut the plan off mid-string.
+CLASSIFY_MAX_TOKENS = 120
+CALCULATOR_TOOL_NAMES = frozenset({"calculate", "percent", "convert", "growth_schedule", "energy_cost", "loan_payment", "break_even", "date_math"})
+TOOL_NAMES_BY_ROUTE = {Route.SEARCH: SEARCH_TOOL_NAMES, Route.CALCULATE: CALCULATOR_TOOL_NAMES, Route.WEATHER: WEATHER_TOOL_NAMES}
 # The tools a live tool server must expose before the benchmark or the health check trusts it as ours (a stale server once served a different set).
 REQUIRED_TOOL_NAMES = frozenset({"search_and_read", "web_search", "fetch_page", "wikipedia_lookup", "calculate", "percent", "convert"})
 
@@ -143,6 +154,7 @@ class ToolCallRecord(BaseModel):
     seconds: float
     error: str | None = None
     refused: bool = False  # the guards stopped it before it ran; result holds the sentence the model read instead
+    repeated: bool = False  # the same call ran earlier in this question; result is that call's result, not a new one
 
 
 class Transcript(BaseModel):
@@ -158,6 +170,7 @@ class Transcript(BaseModel):
     tool_call_count: int = 0
     hit_tool_round_cap: bool = False
     empty_completion_retries: int = 0  # times the model returned neither text nor a tool call and was asked again
+    malformed_retries: int = 0  # times the model's only output was a tool call that could not be parsed, and it was asked again without it
     stayed_silent: bool = False  # the final reply was the silence marker, so no answer was spoken
     total_seconds: float = 0.0
     time_to_first_token_seconds: float | None = None

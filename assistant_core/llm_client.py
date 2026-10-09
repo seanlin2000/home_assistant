@@ -7,10 +7,9 @@ from typing import Any, Protocol
 
 import ollama
 
-from assistant_core.models import AgentPolicy, Completion, GenerationStats, LLMEvent, Message, Role, TextDelta, ToolCall, ToolCallRequest, ToolSpec
+from assistant_core.models import CLASSIFY_MAX_TOKENS, AgentPolicy, Completion, GenerationStats, LLMEvent, Message, Role, TextDelta, ToolCall, ToolCallRequest, ToolSpec
 
 NANOSECONDS_PER_SECOND = 1_000_000_000
-CLASSIFY_MAX_TOKENS = 40
 
 
 class LLMClient(Protocol):

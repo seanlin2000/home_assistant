@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The tip of eleven dollars sixty-one is correct, but the total of 'one hundred and seventy-six dollars and one cent' is badly wrong against the reference 76.11.",
+  "judgment_reason": "It repeated the same malformed calculate call five times despite explicit correction from the tool, then spoke an unverified total without flagging that the calculator never ran.",
+  "spoken_fit_reason": "One plain sentence with amounts written out for speech."
+}

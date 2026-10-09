@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The 3.88 percent effective rate for October 6, 2026 comes from the Federal Reserve H.15 table, but the 'zero percent change' covers only five days of that table, ignoring the wealthvieu excerpt's three cuts in late 2025 and holds through 2026, so the year-over-year part is unanswered and misleading.",
+  "judgment_reason": "Searching was right, but running a calculator on two identical numbers from a one-week table and presenting it as the change answer is a poor call that fails to say the one-year history was not in the best source.",
+  "spoken_fit_reason": "Two plain sentences that lead with the rate, with the figure written out for speech."
+}

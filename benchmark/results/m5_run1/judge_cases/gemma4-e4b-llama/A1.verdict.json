@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It correctly says storage is set by total parameters but then claims only the activated experts need to be loaded into GPU memory, which is exactly the misleading 'MoE needs less VRAM by nature' claim the reference sketch rules out, and it never mentions quantization or CPU offloading.",
+  "judgment_reason": "Not searching was right, but it reinforced the misconception rather than separating compute (active parameters) from storage (total parameters).",
+  "spoken_fit_reason": "Plain prose with no formatting, but two paragraphs is longer than needed and the answer is not crisply led."
+}

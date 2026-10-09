@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The rain answer (heavy in the morning, light in the afternoon) matches the forecast, but the last Seattle departure on the weekday timetable in the bainbridgeisland.com excerpt is 2:10 am, not the 12:50 am it gave.",
+  "judgment_reason": "It used the forecast tool for the weather and searched for the schedule, which is the right split, and drew the time from a retrieved timetable rather than inventing one.",
+  "spoken_fit_reason": "Two plain sentences answering both parts in order."
+}
