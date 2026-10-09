@@ -27,6 +27,7 @@ from assistant_service.settings import load_harness_config
 from ops import paths
 from serving.settings import read_api_key
 from utils.jsonl_utils import append_jsonl
+from web_search_mcp.searxng_client import describe_unresponsive_engines
 
 LAUNCHD_PREFIX = "com.studio-assistant"
 LAUNCHD_SERVICES = ("ollama", "llama", "mcp", "harness", "whisper", "kokoro")
@@ -36,6 +37,7 @@ PROJECT_DIR = Path(__file__).resolve().parent.parent
 SNAPSHOT_HISTORY_DAYS = 90
 ROTATE_OVER_BYTES = 20 * 1024 * 1024
 ROTATE_GENERATIONS = 3
+MIN_ANSWERING_SEARCH_ENGINES = 2
 
 
 class Check(BaseModel):
@@ -201,11 +203,21 @@ async def check_searxng(client: httpx.AsyncClient, settings: Settings, full: boo
     if not full:
         response = await client.get(settings.searxng_url)
         return Check(ok=response.status_code < 500, detail=f"HTTP {response.status_code}")
-    response = await client.get(f"{settings.searxng_url}/search", params={"q": "test", "format": "json"}, timeout=20)
+    response = await client.get(f"{settings.searxng_url}/search", params={"q": "test", "format": "json", "categories": "web"}, timeout=20)
     if response.status_code != 200:
         return Check(ok=False, detail=f"search HTTP {response.status_code}")
-    count = len(response.json().get("results", []))
-    return Check(ok=count > 0, detail=f"{count} results for a test query")
+    return engines_answering_check(response.json())
+
+
+def engines_answering_check(reply: dict) -> Check:
+    """Healthy only while two web engines answer. With one left, search still returns results but has no fallback, which is how it ran
+    unnoticed on DuckDuckGo alone until 2026-10-09."""
+    answering = sorted({engine for result in reply.get("results", []) for engine in result.get("engines", [])})
+    silent = reply.get("unresponsive_engines", [])
+    detail = f"{len(reply.get('results', []))} results from {', '.join(answering) or 'no engine'}"
+    if silent:
+        detail += f"; not answering: {describe_unresponsive_engines(silent)}"
+    return Check(ok=len(answering) >= MIN_ANSWERING_SEARCH_ENGINES, detail=detail)
 
 
 async def check_home_assistant(client: httpx.AsyncClient, settings: Settings) -> Check:

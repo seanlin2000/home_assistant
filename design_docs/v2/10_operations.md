@@ -117,7 +117,8 @@ The health check is still one launchd agent that runs every five minutes, checks
 | llama-server | `GET /health` | 200. A 503 means the model is still loading: recorded, but not counted as a failure for the first five minutes after a start |
 | The harness | `GET /health`, with its key | 200. Its answer also says whether it can reach llama-server and the tool server |
 | The tool server | `GET /healthz`, as in v1 | It lists the tools the harness depends on |
-| Whisper, Kokoro, SearXNG, Home Assistant, the VM | As in v1 | As in v1 |
+| Whisper, Kokoro, Home Assistant, the VM | As in v1 | As in v1 |
+| SearXNG | `GET /`, as in v1; with `--full`, one real search of the web engines | The status is below 500; with `--full`, at least two web engines answer. The detail names the engines that answered and those that did not, with SearXNG's reason |
 | Ollama | As in v1 | Until M2, then removed |
 
 **2. Record RAM use and slow requests.** Each snapshot records the Mac's free memory and swap, as in v1. Two figures change:

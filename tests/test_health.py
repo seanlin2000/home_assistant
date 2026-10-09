@@ -146,3 +146,12 @@ async def test_harness_check_sends_its_key_and_names_what_the_harness_cannot_rea
         check = await health.check_harness(client, health.Settings(harness_key_path=key_path))
     assert seen["authorization"] == "Bearer secret"
     assert (check.ok, check.detail) == (True, "cannot reach llama-server")
+
+
+def test_full_searxng_check_needs_two_web_engines_and_names_the_silent_ones() -> None:
+    one_engine = {"results": [{"engines": ["duckduckgo"]}, {"engines": ["duckduckgo"]}], "unresponsive_engines": [["brave", "too many requests"]]}
+    two_engines = {"results": [{"engines": ["bing", "duckduckgo"]}, {"engines": ["bing"]}], "unresponsive_engines": []}
+    degraded = health.engines_answering_check(one_engine)
+    assert degraded.ok is False
+    assert degraded.detail == "2 results from duckduckgo; not answering: brave (too many requests)"
+    assert health.engines_answering_check(two_engines) == Check(ok=True, detail="2 results from bing, duckduckgo")

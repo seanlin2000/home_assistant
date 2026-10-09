@@ -1,13 +1,14 @@
 """The SearXNG client keeps a minimum gap between live requests so the upstream engines do not rate-limit a burst, never delays cached queries, and passes
 a time range on to SearXNG."""
 
+import logging
 from pathlib import Path
 
 import httpx
 import pytest
 
 from web_search_mcp.query_cache import QueryCache, search_key
-from web_search_mcp.searxng_client import SearxngClient
+from web_search_mcp.searxng_client import SearxngClient, warn_about_unresponsive_engines
 from web_search_mcp.settings import SearchSettings
 
 
@@ -80,3 +81,10 @@ async def test_an_empty_or_unknown_time_range_searches_without_a_filter_and_case
     for time_range in ("", "decade", " WEEK "):
         await client.search("fed funds rate", time_range)
     assert [request.url.params.get("time_range") for request in requests] == [None, None, "week"]
+
+
+def test_engines_that_did_not_answer_are_logged_by_name_and_reason(caplog: pytest.LogCaptureFixture) -> None:
+    with caplog.at_level(logging.WARNING):
+        warn_about_unresponsive_engines([["brave", "too many requests"], ["bing", "HTTP connection error"]])
+        warn_about_unresponsive_engines([])
+    assert [record.getMessage() for record in caplog.records] == ["SearXNG engines not answering: brave (too many requests), bing (HTTP connection error)"]
