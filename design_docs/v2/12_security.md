@@ -135,6 +135,7 @@ Doc 11 describes memory; the security rules for it are these:
 - **Few dependencies.** No routers or agent frameworks; the harness talks to llama-server over plain HTTP with `httpx`. Each new package is named, with what it does, in the doc that adds it.
 - **Model weights.** Only GGUF files, from the `ggml-org` or `google` repositories on Hugging Face, pinned by revision and SHA-256 in the serving file (doc 02). Never pickle formats (`.bin`, `.pt`), which can run code when loaded.
 - **Programs.** llama.cpp from homebrew-core at a pinned version, or built from a tagged release. No third-party Homebrew taps and no unsigned app downloads.
+- **Container images.** SearXNG's image is pinned by tag and digest in `docker/searxng/docker-compose.yml`, and a release is taken only once it is seven days old, as for Python packages. Until 2026-10-09 the file named `latest`, which `docker compose up` never pulls again, so the engines' scrapers went a month stale. An upgrade runs the new image beside the old one on another port and moves the pin only if at least as many engines answer.
 
 ### 3.11 Why we write our own harness
 
