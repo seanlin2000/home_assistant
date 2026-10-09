@@ -17,7 +17,8 @@ from mcp.server.mcpserver import MCPServer
 from assistant_core.models import ToolCall
 from assistant_core.tools import McpToolBox
 from weather_mcp.forecast import ForecastReader, ForecastRequestError, condition_words
-from weather_mcp.metno_client import MetnoClient, WeatherUnavailable
+from weather_mcp.geocoding import Geocoder, PlaceNotFound, choose_match, place_from_match
+from weather_mcp.metno_client import PLACES_HELD, MetnoClient, WeatherUnavailable
 from weather_mcp.register import SERVICE_DOWN_MESSAGE, WEATHER_TOOL_NAME, register_weather_tools
 from weather_mcp.settings import WeatherSettings, weather_settings_from_environment
 from web_search_mcp.query_cache import QueryCache
@@ -55,6 +56,10 @@ def test_today_starts_with_now_and_drops_the_parts_that_have_passed() -> None:
 def test_tonight_asked_after_midnight_means_the_night_in_progress() -> None:
     two_am_in_oslo = datetime(2026, 10, 1, 0, 0, tzinfo=UTC)
     assert "overnight (midnight to 6 am)" in reader(now=two_am_in_oslo).describe("today", "night")
+
+
+def test_tonight_as_the_day_reads_as_today_at_night() -> None:
+    assert reader().describe("tonight", "all") == reader().describe("today", "night")
 
 
 def test_week_has_one_line_per_day_starting_with_the_rest_of_today() -> None:
@@ -112,13 +117,16 @@ class FakeMetno:
         return self.now
 
 
+OSLO = (OSLO_SETTINGS.latitude, OSLO_SETTINGS.longitude)
+
+
 def metno_client(fake: FakeMetno, store: QueryCache | None = None) -> MetnoClient:
     return MetnoClient(OSLO_SETTINGS, store or QueryCache(None), fake.clock, transport=httpx.MockTransport(fake.handle))
 
 
 async def test_request_rounds_coordinates_and_identifies_the_app_without_personal_details() -> None:
     fake = FakeMetno(WEDNESDAY_LUNCHTIME_IN_OSLO)
-    await metno_client(fake).forecast()
+    await metno_client(fake).forecast(*OSLO)
     request = fake.requests[0]
     assert request.url.path == "/weatherapi/locationforecast/2.0/complete"
     assert dict(request.url.params) == {"lat": "59.9139", "lon": "10.7522"}
@@ -128,34 +136,34 @@ async def test_request_rounds_coordinates_and_identifies_the_app_without_persona
 async def test_forecast_is_reused_until_it_expires_then_revalidated_with_if_modified_since() -> None:
     fake = FakeMetno(WEDNESDAY_LUNCHTIME_IN_OSLO)
     client = metno_client(fake)
-    first = await client.forecast()
+    first = await client.forecast(*OSLO)
     fake.now += timedelta(minutes=20)
-    assert await client.forecast() is first and len(fake.requests) == 1
+    assert await client.forecast(*OSLO) is first and len(fake.requests) == 1
     fake.now += timedelta(minutes=20)
-    assert await client.forecast() is first
+    assert await client.forecast(*OSLO) is first
     assert len(fake.requests) == 2 and fake.requests[1].headers["If-Modified-Since"] == "Wed, 30 Sep 2026 06:24:27 GMT"
     fake.now += timedelta(minutes=10)
-    await client.forecast()
+    await client.forecast(*OSLO)
     assert len(fake.requests) == 2, "the 304 carried a new Expires, so the copy is fresh again"
 
 
 async def test_a_failed_refresh_keeps_the_copy_already_held_and_fails_only_without_one() -> None:
     fake = FakeMetno(WEDNESDAY_LUNCHTIME_IN_OSLO)
     client = metno_client(fake)
-    held = await client.forecast()
+    held = await client.forecast(*OSLO)
     fake.now += timedelta(hours=1)
     fake.status = 503
-    assert await client.forecast() is held
+    assert await client.forecast(*OSLO) is held
     with pytest.raises(WeatherUnavailable, match="503"):
-        await metno_client(fake).forecast()
+        await metno_client(fake).forecast(*OSLO)
 
 
 async def test_a_pinned_store_serves_every_later_call_without_the_network(tmp_path: Path) -> None:
     fake = FakeMetno(WEDNESDAY_LUNCHTIME_IN_OSLO)
     store = QueryCache(str(tmp_path))
-    await metno_client(fake, store).forecast()
+    await metno_client(fake, store).forecast(*OSLO)
     fake.now += timedelta(days=1)
-    assert await metno_client(fake, store).forecast() == FIXTURE and len(fake.requests) == 1
+    assert await metno_client(fake, store).forecast(*OSLO) == FIXTURE and len(fake.requests) == 1
 
 
 async def call_weather_tool(settings: WeatherSettings, store: QueryCache, arguments: dict[str, Any]) -> str:
@@ -174,7 +182,7 @@ async def test_tool_answers_from_the_forecast_and_relays_bad_arguments(tmp_path:
 
 
 async def test_tool_says_so_in_one_sentence_when_met_no_is_unreachable(monkeypatch: pytest.MonkeyPatch) -> None:
-    async def unreachable(self: MetnoClient) -> dict[str, Any]:
+    async def unreachable(self: MetnoClient, latitude: float, longitude: float) -> dict[str, Any]:
         raise WeatherUnavailable("no answer from Met.no (ConnectTimeout)")
 
     monkeypatch.setattr(MetnoClient, "forecast", unreachable)
@@ -189,7 +197,7 @@ async def test_server_offers_the_tool_only_when_home_has_coordinates(caplog: pyt
     assert "WEATHER_LATITUDE and WEATHER_LONGITUDE are unset" in caplog.text
     async with McpToolBox(build_server(SearchSettings(), weather=OSLO_SETTINGS)) as toolbox:
         spec = next(spec for spec in await toolbox.list_tools() if spec.name == WEATHER_TOOL_NAME)
-    assert set(spec.input_schema["properties"]) == {"day", "part_of_day"}
+    assert set(spec.input_schema["properties"]) == {"day", "part_of_day", "place"}
 
 
 def test_settings_come_from_weather_variables_and_empty_values_count_as_unset(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -200,3 +208,57 @@ def test_settings_come_from_weather_variables_and_empty_values_count_as_unset(mo
     assert settings.latitude == 40.7484 and settings.longitude is None and not settings.has_location and settings.units == "imperial"
     monkeypatch.setenv("WEATHER_TIMEZONE", "America/New_York")
     assert weather_settings_from_environment().zone() == NEW_YORK
+
+
+LISBON_MATCHES = [
+    {"name": "Lisbon", "admin1": "Lisbon", "country": "Portugal", "country_code": "PT", "latitude": 38.71667, "longitude": -9.13333, "timezone": "Europe/Lisbon"},
+    {"name": "Lisbon", "admin1": "Maine", "country": "United States", "country_code": "US", "latitude": 44.03146, "longitude": -70.10423, "timezone": "America/New_York"},
+]
+
+
+def test_the_part_after_the_comma_picks_the_region_country_or_code() -> None:
+    assert choose_match(LISBON_MATCHES, "")["country_code"] == "PT"
+    assert choose_match(LISBON_MATCHES, "Maine")["admin1"] == "Maine"
+    assert choose_match(LISBON_MATCHES, "us")["admin1"] == "Maine"
+    assert choose_match(LISBON_MATCHES, "Texas") is None
+    assert place_from_match(LISBON_MATCHES[0]).label == "Lisbon, Lisbon, Portugal"
+
+
+async def test_a_place_is_looked_up_once_then_remembered(tmp_path: Path) -> None:
+    requests = []
+
+    def geocoding(request: httpx.Request) -> httpx.Response:
+        requests.append(request)
+        return httpx.Response(200, json={"results": LISBON_MATCHES})
+
+    store = QueryCache(str(tmp_path))
+    geocoder = Geocoder(store, 5.0, "test", transport=httpx.MockTransport(geocoding))
+    first = await geocoder.locate("Lisbon, Maine")
+    assert (first.latitude, first.longitude) == (44.0315, -70.1042)
+    assert dict(requests[0].url.params) == {"name": "Lisbon", "count": "10", "language": "en", "format": "json"}
+    assert await Geocoder(store, 5.0, "test", transport=httpx.MockTransport(geocoding)).locate("lisbon,  maine") == first
+    assert len(requests) == 1
+
+
+async def test_an_unknown_place_is_a_sentence_the_model_can_repeat(tmp_path: Path) -> None:
+    geocoder = Geocoder(QueryCache(None), 5.0, "test", transport=httpx.MockTransport(lambda request: httpx.Response(200, json={})))
+    with pytest.raises(PlaceNotFound):
+        await geocoder.locate("Lisbonn")
+
+
+async def test_the_forecast_for_a_named_place_names_it_in_the_heading(tmp_path: Path) -> None:
+    store = QueryCache(str(tmp_path))
+    store.put_place("oslo, norway", {"name": "Oslo", "region": "Oslo", "country": "Norway", "country_code": "NO", "latitude": 59.9139, "longitude": 10.7522, "timezone": "Europe/Oslo"})
+    store.put_forecast("59.9139,10.7522", FIXTURE)
+    home_elsewhere = OSLO_SETTINGS.model_copy(update={"latitude": 40.7484, "longitude": -73.9857, "timezone": "America/New_York"})
+    answer = await call_weather_tool(home_elsewhere, store, {"day": "tomorrow", "part_of_day": "afternoon", "place": "Oslo, Norway"})
+    assert answer.startswith("Forecast for Oslo, Oslo, Norway, tomorrow, Thursday October 1, local time:")
+
+
+async def test_the_client_holds_at_most_thirty_two_places(tmp_path: Path) -> None:
+    fake = FakeMetno(WEDNESDAY_LUNCHTIME_IN_OSLO)
+    client = metno_client(fake)
+    for index in range(PLACES_HELD + 1):
+        await client.forecast(10.0 + index, 20.0)
+    await client.forecast(10.0, 20.0)
+    assert len(fake.requests) == PLACES_HELD + 2, "the first place was dropped when the thirty-third arrived"

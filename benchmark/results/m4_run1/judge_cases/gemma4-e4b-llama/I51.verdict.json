@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The mostly clear, mid-sixties to mid-eighties summary and Tuesday's 88 match the tool, but it says Wednesday climbs to 'ninety-nine degrees' when the tool result gives a high of 89.",
+  "judgment_reason": "It called weather_forecast for Paris, Texas for the week and did not search.",
+  "spoken_fit_reason": "Two plain sentences summarizing the week rather than reading every day."
+}

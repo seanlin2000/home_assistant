@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It names Denver, says there is no snow, and gives the 54 to 85 degree range and afternoon light showers, all matching the tool result.",
+  "judgment_reason": "It called weather_forecast for Denver on Saturday and did not search.",
+  "spoken_fit_reason": "One plain sentence, though the 'no snow' answer comes at the end rather than the start."
+}

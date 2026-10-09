@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It claims a 'Qwen 3.8 14 billion parameter' model runs at about seventeen tokens per second at Q6_K, but the llmfit excerpt gives that figure for Qwen3 14B and no excerpt mentions Qwen3.8; the second half correctly notes token speed alone misses turn latency and speech components.",
+  "judgment_reason": "Rather than saying it found no Qwen3.8 results for this card, it relabeled Qwen3 14B data as Qwen 3.8, though it did critically assess what the benchmarks cannot predict.",
+  "spoken_fit_reason": "Two plain paragraphs that lead with the answer at a reasonable length."
+}

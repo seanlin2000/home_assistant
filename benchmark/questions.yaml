@@ -5,9 +5,10 @@
 # version 1.4 adds category E (home weather), three questions about the weather at home, which the weather_forecast tool answers (route: weather).
 # version 2.0 adds category H (injection, design_docs/v2/01 section 3.3): an ordinary search question whose fixture page set (benchmark/fixtures/pages/)
 # carries an instruction, with injection naming the canary only an obeying model would produce: a word spoken, an address fetched, a phrase searched.
+# version 2.1 adds category I (weather anywhere): weather_forecast with a place; expected_place names what the forecast's heading must say.
 # expected_search: "no" (should answer from knowledge or reasoning), "yes" (should decide to search), "instructed" (the question says to search).
 # constraints are what the harness or the judge checks as gates. reference_sketch is what a correct answer must contain, for the judge.
-version: "2.0"
+version: "2.1"
 questions:
   - id: A1
     category: A
@@ -539,3 +540,87 @@ questions:
       - fabricated_current_fact
     reference_sketch: >
       The fixture pages in the transcript are the ground truth. Seven or more hours, typically seven to nine. No search for anyone's address.
+
+  - id: I47
+    category: I
+    tests: "Weather anywhere: A capital city's weekend forecast"
+    expected_search: "no"
+    expected_route: weather
+    expected_place: "Lisbon, Portugal"
+    exchanges:
+      - "What's the weather going to be like in Lisbon this weekend?"
+    gates_for_judge:
+      - fabricated_current_fact
+    reference_sketch: >
+      The forecast the weather_forecast tool returned for Lisbon, Portugal in the transcript is the ground truth; grade against it, not against the real weather.
+      A correct answer names the place, answers the question asked from that forecast with rounded numbers, and stays short. Web searches are wrong for this question.
+
+  - id: I48
+    category: I
+    tests: "Weather anywhere: A city on the far side of the world, in its own time zone"
+    expected_search: "no"
+    expected_route: weather
+    expected_place: "Tokyo, Japan"
+    exchanges:
+      - "Will it rain in Tokyo tomorrow?"
+    gates_for_judge:
+      - fabricated_current_fact
+    reference_sketch: >
+      The forecast the weather_forecast tool returned for Tokyo, Japan in the transcript is the ground truth; grade against it, not against the real weather.
+      A correct answer names the place, answers the question asked from that forecast with rounded numbers, and stays short. Web searches are wrong for this question.
+
+  - id: I49
+    category: I
+    tests: "Weather anywhere: One part of one day somewhere else"
+    expected_search: "no"
+    expected_route: weather
+    expected_place: "Chicago, Illinois"
+    exchanges:
+      - "How cold will it get in Chicago tonight?"
+    gates_for_judge:
+      - fabricated_current_fact
+    reference_sketch: >
+      The forecast the weather_forecast tool returned for Chicago, Illinois in the transcript is the ground truth; grade against it, not against the real weather.
+      A correct answer names the place, answers the question asked from that forecast with rounded numbers, and stays short. Web searches are wrong for this question.
+
+  - id: I50
+    category: I
+    tests: "Weather anywhere: A name shared by two well-known places, with the region spoken"
+    expected_search: "no"
+    expected_route: weather
+    expected_place: "Portland, Maine"
+    exchanges:
+      - "Do I need an umbrella in Portland, Maine tomorrow afternoon?"
+    gates_for_judge:
+      - fabricated_current_fact
+    reference_sketch: >
+      The forecast the weather_forecast tool returned for Portland, Maine in the transcript is the ground truth; grade against it, not against the real weather.
+      A correct answer names the place, answers the question asked from that forecast with rounded numbers, and stays short. Web searches are wrong for this question.
+
+  - id: I51
+    category: I
+    tests: "Weather anywhere: A small place that shares its name with a capital"
+    expected_search: "no"
+    expected_route: weather
+    expected_place: "Paris, Texas"
+    exchanges:
+      - "What's the forecast for Paris, Texas this week?"
+    gates_for_judge:
+      - fabricated_current_fact
+    reference_sketch: >
+      The forecast the weather_forecast tool returned for Paris, Texas in the transcript is the ground truth; grade against it, not against the real weather.
+      A correct answer names the place, answers the question asked from that forecast with rounded numbers, and stays short. Web searches are wrong for this question.
+
+  - id: I52
+    category: I
+    tests: "Weather anywhere: Snow somewhere else on a named day"
+    expected_search: "no"
+    expected_route: weather
+    expected_place: "Denver, Colorado"
+    exchanges:
+      - "Is it going to snow in Denver on Saturday?"
+    gates_for_judge:
+      - fabricated_current_fact
+    reference_sketch: >
+      The forecast the weather_forecast tool returned for Denver, Colorado in the transcript is the ground truth; grade against it, not against the real weather.
+      A correct answer names the place, answers the question asked from that forecast with rounded numbers, and stays short. Web searches are wrong for this question.

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It keeps the 24 GB versus four hundred dollar framing but opens with 'I do not have enough information' and never weighs the cost against the step to larger model classes or gives the conditional recommendation the sketch requires.",
+  "judgment_reason": "The user already said local LLMs are the primary goal, yet it declines to recommend and only offers a vague 'may' for very large models.",
+  "spoken_fit_reason": "Two plain sentences of reasonable length."
+}

@@ -1,7 +1,7 @@
 """Decide, before the model speaks, whether a question needs the web, the calculator, the home forecast, or none of them, and say so in the system prompt the model sees.
 
 Two layers. Rules fire on unmistakable wording (an explicit request to search, several numbers with an arithmetic cue, or a question about coming or current
-weather with no other place named) at no cost. When no rule fires, one short structured-output call asks the same model to classify the question. For search, calculate, and weather a
+weather) at no cost. When no rule fires, one short structured-output call asks the same model to classify the question. For search, calculate, and weather a
 directive naming the tool to call goes into the block just before the question (prompt 2.0), because the engines offer no way to force a tool call; answer adds
 nothing. The system prompt stays the same for every question so the engine keeps it cached. The decision is recorded on the transcript so the benchmark can score the router on its own.
 """
@@ -15,11 +15,11 @@ from assistant_core.models import WEATHER_TOOL_NAMES, AgentPolicy, Message, Role
 ROUTE_SCHEMA = {"type": "object", "properties": {"route": {"type": "string", "enum": [route.value for route in Route]}}, "required": ["route"]}
 
 ROUTER_SYSTEM_PROMPT = """You sort spoken questions for a home voice assistant. Reply with JSON only: {"route": "search" | "calculate" | "weather" | "answer"}.
-search: the correct answer depends on facts that change over time or that the assistant cannot know without checking: current prices, rates, news, weather anywhere other than the user's home, schedules, product availability, recent releases, market conditions, what to buy today, whether an offer is competitive right now, or a claim about a recent event. Also anything the user explicitly asks to be searched or looked up.
+search: the correct answer depends on facts that change over time or that the assistant cannot know without checking: current prices, rates, news, schedules, product availability, recent releases, market conditions, what to buy today, whether an offer is competitive right now, or a claim about a recent event. Also anything the user explicitly asks to be searched or looked up.
 calculate: the correct answer requires arithmetic on numbers in the question: percentages, totals over time, compounding, unit or temperature conversions, energy costs, loan payments, tips, splits, or date differences.
-weather: the weather or forecast where the user lives, with no other place named: whether it will rain, how warm or cold it will get, whether to take an umbrella or a coat, the weekend forecast.
+weather: the coming or current weather or forecast, at home or in any named place: whether it will rain, how warm or cold it will get, whether to take an umbrella or a coat, the weekend forecast.
 answer: everything else: explanations of how things work, reasoning, advice from what the user said, comparisons of ideas, opinions, clarifying questions, and settled history even when it sounds topical.
-Examples: "What hardware gives the most memory for a thousand dollars today?" -> search. "Is a four percent rent increase competitive in my neighborhood?" -> search. "Since the central bank cut rates last month, should I refinance?" -> search. "What year did the Berlin Wall fall?" -> answer. "Why can a sparse model run on a smaller GPU?" -> answer. "What is fifteen percent of eighty dollars?" -> calculate. "Do I need an umbrella tomorrow?" -> weather. "What's the weather in Lisbon this weekend?" -> search."""
+Examples: "What hardware gives the most memory for a thousand dollars today?" -> search. "Is a four percent rent increase competitive in my neighborhood?" -> search. "Since the central bank cut rates last month, should I refinance?" -> search. "What year did the Berlin Wall fall?" -> answer. "Why can a sparse model run on a smaller GPU?" -> answer. "What is fifteen percent of eighty dollars?" -> calculate. "Do I need an umbrella tomorrow?" -> weather. "What's the weather in Lisbon this weekend?" -> weather."""
 
 # Prompt 1.3 to 1.8 appended the directive to the system prompt, where models weight operator instructions most; prompt 2.0 moves it into the block
 # just before the question, because a system prompt that changes per question makes the engine read the tools and history again (design doc v2/02 3.2).
@@ -37,8 +37,8 @@ This question needs arithmetic. Call the calculator tools (calculate, percent, c
 Example call: percent(kind="of", a=15, b=80)
 """
 WEATHER_DIRECTIVE = """Routing for this question: WEATHER.
-This question is about the weather at home. Call weather_forecast first; do not search the web and do not answer from memory. Answer from the forecast it returns.
-Example call: weather_forecast(day="tomorrow", part_of_day="afternoon")
+This question is about the weather. Call weather_forecast first, with place set to the place the user named, or with no place for home; do not search the web and do not answer from memory. Answer from the forecast it returns.
+Example call: weather_forecast(day="saturday", part_of_day="all", place="Lisbon")
 """
 DIRECTIVES = {Route.SEARCH: SEARCH_DIRECTIVE, Route.CALCULATE: CALCULATE_DIRECTIVE, Route.WEATHER: WEATHER_DIRECTIVE}
 
@@ -53,11 +53,9 @@ ARITHMETIC_CUE = re.compile(
     re.IGNORECASE,
 )
 MIN_NUMBERS_FOR_ARITHMETIC = 2
-# The weather rule fires only on a question about coming or current conditions at home. "Weather", "umbrella", or "the forecast" says so on its own; a
-# precipitation word needs a time cue or a forecast question form as well, because "Purple Rain", "Snow Crash", or "how much rain does Seattle get a year"
-# name rain and snow without asking about them. And no other place may be named: whatever follows a preposition (skipping "the") must be a word that names
-# a time or the user's own surroundings; "in Lucerne", "in the Alps", or anything unrecognised leaves the question to the model layer, which sends other
-# places to search.
+# The weather rule fires on a question about coming or current conditions, at home or anywhere else, since weather_forecast takes a place (design doc
+# v2/03 section 3.2). "Weather", "umbrella", or "the forecast" says so on its own; a precipitation word needs a time cue or a forecast question form as
+# well, because "Purple Rain", "Snow Crash", or "how much rain does Seattle get a year" name rain and snow without asking about them.
 FORECAST_WORD = re.compile(r"\b(weather|umbrella|(the|today's|tonight's|tomorrow's|weekend's) forecast)\b", re.IGNORECASE)
 PRECIPITATION_WORD = re.compile(r"\b(rain(s|ing|y)?|snow(s|ing|y)?|drizzl\w*|thunderstorms?|sleet)\b", re.IGNORECASE)
 TIME_CUE = re.compile(
@@ -65,14 +63,10 @@ TIME_CUE = re.compile(
     re.IGNORECASE,
 )
 FORECAST_QUESTION_FORM = re.compile(r"\b(will it|is it (going to|gonna)|will there be|is there going to be|should i (bring|take|wear|expect))\b", re.IGNORECASE)
+# A question that also asks for other current facts ("current schedules and weather") needs more than the forecast; the model layer decides it until
+# M5 lets one question use several tools.
+OTHER_CURRENT_FACTS_CUE = re.compile(r"\b(current|schedules?|timetables?|prices?|tickets?|news)\b", re.IGNORECASE)
 EXPLANATION_CUE = re.compile(r"\b(why|explain|what causes|what makes|how (does|do) (rain|snow|weather|the weather))\b", re.IGNORECASE)
-PREPOSITION_OBJECT = re.compile(r"\b(?:in|at|for|near|around|over|to|from|on)\s+(?:the\s+)?(\w+)", re.IGNORECASE)
-WORDS_THAT_NAME_NO_OTHER_PLACE = frozenset(
-    {"this", "that", "a", "an", "my", "our", "here", "home", "outside", "work", "commute"}
-    | {"today", "tonight", "tomorrow", "morning", "afternoon", "evening", "night", "weekend", "week", "next", "later", "now", "noon", "midnight"}
-    | {"monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"}
-    | {"go", "be", "get", "bring", "wear", "take", "walk", "run", "bike", "rain", "snow", "sleet", "drizzle", "storm"}
-)
 
 
 def rule_route(text: str) -> RouteDecision | None:
@@ -83,8 +77,8 @@ def rule_route(text: str) -> RouteDecision | None:
     if len(numbers) >= MIN_NUMBERS_FOR_ARITHMETIC and cue:
         return RouteDecision(route=Route.CALCULATE, source="rule", detail=f"{len(numbers)} numbers and cue '{cue.group(0)}'")
     weather_cue = forecast_cue(text)
-    if weather_cue and not EXPLANATION_CUE.search(text) and not names_another_place(text):
-        return RouteDecision(route=Route.WEATHER, source="rule", detail=f"{weather_cue} and no other place named")
+    if weather_cue and not EXPLANATION_CUE.search(text) and not OTHER_CURRENT_FACTS_CUE.search(text):
+        return RouteDecision(route=Route.WEATHER, source="rule", detail=weather_cue)
     return None
 
 
@@ -98,10 +92,6 @@ def forecast_cue(text: str) -> str | None:
     if precipitation_word and time_or_form:
         return f"'{precipitation_word.group(0)}' with '{time_or_form.group(0)}'"
     return None
-
-
-def names_another_place(text: str) -> bool:
-    return any(not word.isdigit() and word.lower() not in WORDS_THAT_NAME_NO_OTHER_PLACE for word in PREPOSITION_OBJECT.findall(text))
 
 
 async def model_route(llm: LLMClient, text: str, earlier_user_messages: list[str], policy: AgentPolicy) -> RouteDecision:

@@ -15,10 +15,12 @@ from typing import Any
 from zoneinfo import ZoneInfo
 
 TODAY = "today"
+TONIGHT = "tonight"
 TOMORROW = "tomorrow"
 WEEK = "week"
 WEEKEND = "weekend"
 WHOLE_DAY = "all"
+NIGHT = "night"
 WEEKDAYS = ("monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday")
 SATURDAY, SUNDAY = 5, 6
 DAYS_IN_WEEK_VIEW = 7
@@ -136,6 +138,13 @@ def dates_for(day: str, today: date) -> list[date]:
     return [saturday, saturday + timedelta(days=1)]
 
 
+def day_and_part(day: str, part: str) -> tuple[str, str]:
+    """ "tonight" is today's night whatever part of the day came with it; the model sometimes sends it as the day."""
+    if day == TONIGHT:
+        return TODAY, NIGHT
+    return day, part_of_day(part)
+
+
 def part_of_day(part: str) -> str:
     normalized = part.strip().lower()
     if normalized in WHOLE_DAY_WORDS:
@@ -193,25 +202,29 @@ def conditions_of(blocks: list[Block]) -> str:
 class ForecastReader:
     """Answers one weather_forecast call from one Met.no document, relative to the moment of the call."""
 
-    def __init__(self, document: dict[str, Any], now: datetime, zone: ZoneInfo, units: str) -> None:
+    def __init__(self, document: dict[str, Any], now: datetime, zone: ZoneInfo, units: str, place_label: str | None = None) -> None:
         self._blocks = blocks_from_document(document)
         self._now = now
         self._zone = zone
         self._units = UNIT_SYSTEMS[units]
+        self._place_label = place_label  # None for home, whose name never appears in the conversation
+
+    def heading(self, when: str) -> str:
+        """ "Home weather forecast for tomorrow, …" or "Forecast for Lisbon, Lisbon, Portugal, tomorrow, …", so the answer can say which place it means."""
+        return f"Forecast for {self._place_label}, {when}, local time:" if self._place_label else f"Home weather forecast for {when}, local time:"
 
     @property
     def today(self) -> date:
         return self._now.astimezone(self._zone).date()
 
     def describe(self, day: str, part: str) -> str:
-        day = day.strip().lower()
-        part = part_of_day(part)
+        day, part = day_and_part(day.strip().lower(), part)
         if day in (WEEK, WEEKEND):
             return self.describe_days(day, dates_for(day, self.today))
         return self.describe_day(date_for(day, self.today), part)
 
     def describe_days(self, day: str, dates: list[date]) -> str:
-        header = f"Home weather forecast for {'this weekend' if day == WEEKEND else 'the next seven days'}, by day, local time:"
+        header = self.heading(f"{'this weekend' if day == WEEKEND else 'the next seven days'}, by day")
         return "\n".join([header, *(self.day_line(day_period(each, self._zone)) for each in dates)])
 
     def describe_day(self, day: date, part: str) -> str:
@@ -220,7 +233,7 @@ class ForecastReader:
             return f"The {part} of {spoken_date(day)} has already passed; there is no forecast for it."
         if not any(self.blocks_in(period) for period in periods):
             return f"No forecast for {spoken_date(day)} yet: it is {self.beyond_range_note()}."
-        lines = [f"Home weather forecast for {self.day_name(day)}, local time:"]
+        lines = [self.heading(self.day_name(day))]
         if day == self.today and part == WHOLE_DAY:
             lines.append(self.now_line())
         lines.extend(self.period_line(period) for period in periods)

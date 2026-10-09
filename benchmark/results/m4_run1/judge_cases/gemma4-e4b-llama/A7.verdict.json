@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 0,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It gives no daily kWh, monthly kWh, or dollar range at all, only noting that a price per kilowatt-hour is needed, which is the one sliver of relevant content.",
+  "judgment_reason": "The user explicitly asked it to state assumptions and estimate, but it asked for the rate instead of assuming one, failing the central point.",
+  "spoken_fit_reason": "One short plain sentence."
+}
