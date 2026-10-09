@@ -1,0 +1,58 @@
+# Every tool the harness may call, with its tier and whether its output marks the exchange untrusted (design_docs/v2/12 section 3.3, v2/03
+# section 3.1). The harness refuses any tool this file does not list, whatever the tool server advertises. Tiers: local, read_public,
+# read_private, act. Add a tool only after the checklist in v2/12 section 3.12.
+
+[limits]
+max_string_argument_chars = 300             # longer than any spoken query or page address; a longer argument is refused, not cut
+
+[tools.search_and_read]
+tier = "read_public"
+marks_untrusted = true
+
+[tools.web_search]
+tier = "read_public"
+marks_untrusted = true
+
+[tools.fetch_page]
+tier = "read_public"
+marks_untrusted = true
+
+[tools.wikipedia_lookup]
+tier = "read_public"
+marks_untrusted = true
+
+[tools.weather_forecast]
+tier = "read_public"
+marks_untrusted = false                     # numbers from Met.no, not text written by strangers
+
+[tools.calculate]
+tier = "local"
+marks_untrusted = false
+
+[tools.percent]
+tier = "local"
+marks_untrusted = false
+
+[tools.convert]
+tier = "local"
+marks_untrusted = false
+
+[tools.growth_schedule]
+tier = "local"
+marks_untrusted = false
+
+[tools.energy_cost]
+tier = "local"
+marks_untrusted = false
+
+[tools.loan_payment]
+tier = "local"
+marks_untrusted = false
+
+[tools.break_even]
+tier = "local"
+marks_untrusted = false
+
+[tools.date_math]
+tier = "local"
+marks_untrusted = false

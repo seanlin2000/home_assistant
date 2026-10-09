@@ -32,7 +32,8 @@ async def test_tool_call_speaks_filler_before_running_tool_then_answers() -> Non
     assert tools.calls[0].arguments == {"query": "fed funds rate"}
     transcript = events[-1].transcript
     assert transcript.tool_call_count == 1
-    assert transcript.tool_call_records[0].result.startswith("[1] Source")
+    assert transcript.tool_call_records[0].result.startswith('<untrusted source="search_and_read">\n[1] Source')
+    assert transcript.untrusted
     second_call_messages = llm.seen_messages[1]
     assert second_call_messages[-1].role == Role.TOOL
     assert second_call_messages[-1].tool_call_id == "call_0"
@@ -194,7 +195,7 @@ async def test_the_model_sees_the_block_before_the_question_but_the_history_keep
     llm = ScriptedLLM([text_reply("It is four percent.")])
     events = await collect(llm, FakeToolBox())
     sent_question = llm.seen_messages[0][-1].content
-    assert sent_question.startswith("Today is ") and sent_question.endswith("\nQuestion: What is the fed funds rate?")
-    assert "Today is" not in llm.seen_messages[0][0].content
+    assert sent_question.startswith("For reference, not to be read aloud: today is ") and sent_question.endswith("\nQuestion: What is the fed funds rate?")
+    assert "today is" not in llm.seen_messages[0][0].content.lower()
     transcript = events[-1].transcript
     assert transcript.conversation[0].content == "What is the fed funds rate?"

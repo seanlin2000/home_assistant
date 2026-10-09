@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 1,
+  "answer_quality_reason": "Every number is wrong: it says the one-year lease costs thirty-five thousand and the two-year lease forty-two thousand nine hundred, and calls the one-year option cheaper by seven thousand nine hundred, when the reference gives 44,100 against 87,817.80 and an 840 first-year saving for the two-year lease.",
+  "judgment_reason": "After two calculator calls were refused for passing the number 3500 instead of a string, it did not retry with a valid expression and instead confidently spoke wrong figures, and it never noted that the two options cover different lengths.",
+  "spoken_fit_reason": "It is short plain prose but opens with an irrelevant explanation of the calculator's input format before giving the answer."
+}

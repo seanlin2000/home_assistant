@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It names only 'microphone arrays, the placement of these arrays, and the processing power' as headings with no substance, leaving out beamforming, echo cancellation, wake-word handling, latency, speaker separation and privacy.",
+  "judgment_reason": "It kept to the no-product-names constraint, but deferred the actual content with 'I can elaborate on any of those areas' instead of giving the main considerations the question asked for.",
+  "spoken_fit_reason": "Two short plain sentences that would read naturally aloud."
+}

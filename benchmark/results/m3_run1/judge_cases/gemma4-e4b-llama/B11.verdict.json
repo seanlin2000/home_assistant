@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The 3.75 to 4 percent target range as of October 2026 is supported by the usfiscalclock excerpt, but it says the rate 'was raised in December two thousand twenty-five' when the excerpts say December 2025 ended a run of three cuts, and it misses the September 16, 2026 hike reported by USA Today.",
+  "judgment_reason": "Searching was correct and it chose the most recent source for the current range, but it did not reconcile the change history across the retrieved excerpts.",
+  "spoken_fit_reason": "Two plain sentences that lead with the current rate."
+}

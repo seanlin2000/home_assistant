@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It gives fifty-six degrees Fahrenheit, the only night temperature in the weather_forecast result, with the unit.",
+  "judgment_reason": "It recognized a weather question with no weather word and checked the home forecast instead of searching.",
+  "spoken_fit_reason": "One short sentence that leads with the temperature."
+}

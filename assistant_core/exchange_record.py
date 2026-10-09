@@ -20,6 +20,7 @@ class ToolCallSummary(BaseModel):
     seconds: float
     result_chars: int
     error: str | None = None
+    refused: bool = False
 
 
 class ExchangeRecord(BaseModel):
@@ -32,6 +33,7 @@ class ExchangeRecord(BaseModel):
     spoken_chars: int
     stayed_silent: bool = False  # the model answered with the silence marker, judging the speech was not meant for it
     route: RouteDecision | None = None
+    untrusted: bool = False
     model_calls: list[GenerationStats] = Field(default_factory=list)
     tool_calls: list[ToolCallSummary] = Field(default_factory=list)
     tool_call_count: int = 0
@@ -58,6 +60,7 @@ def summarize_tool_call(tool_call_record: ToolCallRecord) -> ToolCallSummary:
         seconds=tool_call_record.seconds,
         result_chars=len(tool_call_record.result),
         error=tool_call_record.error,
+        refused=tool_call_record.refused,
     )
 
 
@@ -74,6 +77,7 @@ def exchange_record_from_transcript(transcript: Transcript, source: str = "home_
         spoken_chars=len(transcript.spoken_text),
         stayed_silent=transcript.stayed_silent,
         route=transcript.route,
+        untrusted=transcript.untrusted,
         model_calls=list(transcript.model_calls),
         tool_calls=[summarize_tool_call(tool_call_record) for tool_call_record in transcript.tool_call_records],
         tool_call_count=transcript.tool_call_count,

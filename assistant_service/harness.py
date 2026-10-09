@@ -47,8 +47,14 @@ class Harness:
             tools = await self._open_tool_box(stack)
             async for event in self._answer_or_apologise(request.conversation, tools):
                 if isinstance(event, Done):
-                    self._exchange_log.append(exchange_record_from_transcript(event.transcript, source=request.source))
+                    self._record_exchange(request, event.transcript)
                 yield event
+
+    def _record_exchange(self, request: ConverseRequest, transcript: Transcript) -> None:
+        """Log the exchange, and keep the conversation's untrusted mark once any exchange of it read a stranger's text (design doc v2/12 section 3.2)."""
+        if transcript.untrusted:
+            self._state.mark_untrusted(request.conversation_id)
+        self._exchange_log.append(exchange_record_from_transcript(transcript, source=request.source))
 
     async def warm_up(self) -> None:
         """Both slots read their stable prompts, so the next question reads only its own tokens (design doc v2/02 section 3.4)."""

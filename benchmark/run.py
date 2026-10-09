@@ -27,7 +27,7 @@ from assistant_core.prompts import PROMPT_VERSION, system_prompt
 from assistant_core.router import ROUTER_SYSTEM_PROMPT
 from assistant_core.tools import McpToolBox
 from assistant_service.settings import load_harness_config
-from benchmark.mcp_process import McpServerProcess
+from benchmark.mcp_process import McpServerProcess, fixture_selected
 from benchmark.ollama_utils import delete_model, ensure_model_present, unload, warm_up
 from benchmark.records import BenchmarkConfig, Candidate, MemoryFit, Question, QuestionResult, QuestionSet, append_jsonl, load_config, load_questions, read_jsonl
 from serving.settings import load_serving_config, read_api_key
@@ -120,7 +120,8 @@ async def run_candidate(candidate: Candidate, questions: list[Question], config:
         if isinstance(llm, LlamaServerClient):
             await warm_up_llama_server(llm, toolbox)
         for question in pending:
-            result = await run_question(question, candidate, llm.model_name, in_process_exchange(llm, toolbox, policy), memory_fit)
+            async with fixture_selected(mcp_url, question.fixture):
+                result = await run_question(question, candidate, llm.model_name, in_process_exchange(llm, toolbox, policy), memory_fit)
             append_jsonl(output_path, result)
             print_result_line(question, result)
     await release_model(candidate, config, args.delete_models)
@@ -133,6 +134,9 @@ async def run_through_harness(candidate: Candidate, pending: list[Question], out
     if health.status != "ok":
         raise SystemExit(f"the harness reports {health.model_dump()}; start it with scripts/services.sh install")
     for question in pending:
+        if question.fixture:
+            console.print(f"  {question.id:<4} [dim]skipped: its fixture pages exist only on the benchmark's own tool server[/dim]")
+            continue
         conversation_id = f"benchmark-{candidate.key}-{question.id}-{uuid.uuid4().hex[:8]}"
         result = await run_question(question, candidate, candidate.model, harness_exchange(client, conversation_id), MemoryFit())
         append_jsonl(output_path, result)
