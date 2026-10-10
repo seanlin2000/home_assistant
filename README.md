@@ -91,6 +91,16 @@ uv run benchmark-manual claude-fable-5-1-manual-2 --run version_5 # replay the c
 uv run python scripts/benchmark_llm.py --run version_5 # raw tokens per second per model
 ```
 
+TriviaBench (`benchmark/triviabench/`) measures how far the search tools lift a local model on general knowledge: TriviaQA questions, balanced by topic, era,
+and difficulty, asked through the harness service with "Search the web before you answer." appended. XS is 100 questions, S is 1,000 (XS included). Answers
+are graded by TriviaQA alias matching, and each run writes a misses sheet with the queries the model ran. A closed-book Claude Opus 5.5 pass is the reference.
+
+```
+scripts/services.sh install                                                      # the harness, serving the model the candidate names
+uv run triviabench-run --size xs --candidate gemma4-e4b-harness --run trivia_1   # resumable; --force starts the candidate over
+uv run triviabench-report --run trivia_1 --size xs                               # report_xs.md and misses_xs_<candidate>.md
+```
+
 ## License
 
 See `LICENSE`.
