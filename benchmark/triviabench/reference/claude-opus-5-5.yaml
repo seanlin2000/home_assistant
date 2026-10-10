@@ -1,0 +1,3006 @@
+# Closed-book reference answers for TriviaBench, one per question in questions.yaml. They come from a run over the whole TriviaQA validation
+# split in which Claude Opus 5.5 answered without the web or tools before reading the key. reviewed_correct is the verdict after every miss
+# was reviewed by hand against the key; triviabench-report grades the answer text with the same alias matcher as every candidate as well.
+answered_by: Claude Opus 5.5 (claude-opus-5-5)
+method: 'closed book: no web, no tools, answers written before the key was read; every miss then reviewed against the key by hand'
+answers:
+- question_id: TB0001
+  answer: Connecticut
+  reviewed_correct: true
+- question_id: TB0002
+  answer: Gestapo
+  reviewed_correct: true
+- question_id: TB0003
+  answer: Somerset
+  reviewed_correct: true
+- question_id: TB0004
+  answer: Benjamin Disraeli
+  reviewed_correct: true
+- question_id: TB0005
+  answer: Harrods
+  reviewed_correct: true
+- question_id: TB0006
+  answer: O God, Our Help in Ages Past
+  reviewed_correct: true
+- question_id: TB0007
+  answer: Occam's razor
+  reviewed_correct: true
+- question_id: TB0008
+  answer: Tokyo
+  reviewed_correct: true
+- question_id: TB0009
+  answer: Theatre
+  reviewed_correct: true
+- question_id: TB0010
+  answer: Fractal geometry
+  reviewed_correct: true
+- question_id: TB0011
+  answer: Ian Rush
+  reviewed_correct: true
+- question_id: TB0012
+  answer: Lizard
+  reviewed_correct: true
+- question_id: TB0013
+  answer: Massachusetts
+  reviewed_correct: true
+- question_id: TB0014
+  answer: Little John
+  reviewed_correct: true
+- question_id: TB0015
+  answer: Thrift
+  reviewed_correct: true
+- question_id: TB0016
+  answer: Meat
+  reviewed_correct: true
+- question_id: TB0017
+  answer: P. T. Barnum
+  reviewed_correct: true
+- question_id: TB0018
+  answer: Secret Service
+  reviewed_correct: true
+- question_id: TB0019
+  answer: Manhattan
+  reviewed_correct: true
+- question_id: TB0020
+  answer: Googol
+  reviewed_correct: true
+- question_id: TB0021
+  answer: China
+  reviewed_correct: true
+- question_id: TB0022
+  answer: Harry Potter and the Deathly Hallows
+  reviewed_correct: true
+- question_id: TB0023
+  answer: 1890s
+  reviewed_correct: true
+- question_id: TB0024
+  answer: Popeye
+  reviewed_correct: true
+- question_id: TB0025
+  answer: Neil Armstrong
+  reviewed_correct: true
+- question_id: TB0026
+  answer: Honda
+  reviewed_correct: true
+- question_id: TB0027
+  answer: Guitar
+  reviewed_correct: true
+- question_id: TB0028
+  answer: Buddha
+  reviewed_correct: true
+- question_id: TB0029
+  answer: Guildford Dudley
+  reviewed_correct: true
+- question_id: TB0030
+  answer: David Hilbert
+  reviewed_correct: true
+- question_id: TB0031
+  answer: Extraordinary rendition
+  reviewed_correct: true
+- question_id: TB0032
+  answer: Patience
+  reviewed_correct: true
+- question_id: TB0033
+  answer: South Park
+  reviewed_correct: true
+- question_id: TB0034
+  answer: Venezuela
+  reviewed_correct: true
+- question_id: TB0035
+  answer: The dish
+  reviewed_correct: true
+- question_id: TB0036
+  answer: Buick
+  reviewed_correct: true
+- question_id: TB0037
+  answer: Google
+  reviewed_correct: true
+- question_id: TB0038
+  answer: Blucher
+  reviewed_correct: true
+- question_id: TB0039
+  answer: Baseball
+  reviewed_correct: true
+- question_id: TB0040
+  answer: Gottfried Leibniz
+  reviewed_correct: true
+- question_id: TB0041
+  answer: Chubby Checker
+  reviewed_correct: true
+- question_id: TB0042
+  answer: Rowan Atkinson
+  reviewed_correct: true
+- question_id: TB0043
+  answer: '303'
+  reviewed_correct: true
+- question_id: TB0044
+  answer: Purple
+  reviewed_correct: true
+- question_id: TB0045
+  answer: Cassini Division
+  reviewed_correct: true
+- question_id: TB0046
+  answer: The Mad Hatter
+  reviewed_correct: true
+- question_id: TB0047
+  answer: Mossad
+  reviewed_correct: true
+- question_id: TB0048
+  answer: Estimate
+  reviewed_correct: true
+- question_id: TB0049
+  answer: Audi
+  reviewed_correct: true
+- question_id: TB0050
+  answer: Algebra
+  reviewed_correct: true
+- question_id: TB0051
+  answer: Milk
+  reviewed_correct: true
+- question_id: TB0052
+  answer: Matilda
+  reviewed_correct: true
+- question_id: TB0053
+  answer: Chief Whip
+  reviewed_correct: true
+- question_id: TB0054
+  answer: Charlize Theron
+  reviewed_correct: true
+- question_id: TB0055
+  answer: Red Sea
+  reviewed_correct: true
+- question_id: TB0056
+  answer: Henri Paul
+  reviewed_correct: true
+- question_id: TB0057
+  answer: Diners
+  reviewed_correct: true
+- question_id: TB0058
+  answer: Sweet William
+  reviewed_correct: true
+- question_id: TB0059
+  answer: Six geese a-laying
+  reviewed_correct: true
+- question_id: TB0060
+  answer: Treaty of Brest-Litovsk
+  reviewed_correct: true
+- question_id: TB0061
+  answer: Geoffrey Chaucer
+  reviewed_correct: true
+- question_id: TB0062
+  answer: '15'
+  reviewed_correct: true
+- question_id: TB0063
+  answer: Earl of Bute
+  reviewed_correct: true
+- question_id: TB0064
+  answer: Co-operatives
+  reviewed_correct: true
+- question_id: TB0065
+  answer: Brazil
+  reviewed_correct: true
+- question_id: TB0066
+  answer: Ten-pin bowling
+  reviewed_correct: true
+- question_id: TB0067
+  answer: Steady State theory
+  reviewed_correct: true
+- question_id: TB0068
+  answer: Red and white
+  reviewed_correct: true
+- question_id: TB0069
+  answer: Blue
+  reviewed_correct: true
+- question_id: TB0070
+  answer: Watling Street
+  reviewed_correct: true
+- question_id: TB0071
+  answer: Hansard
+  reviewed_correct: true
+- question_id: TB0072
+  answer: Harry Secombe
+  reviewed_correct: true
+- question_id: TB0073
+  answer: Birds
+  reviewed_correct: false
+- question_id: TB0074
+  answer: Johan Cruyff
+  reviewed_correct: true
+- question_id: TB0075
+  answer: Federal Reserve
+  reviewed_correct: true
+- question_id: TB0076
+  answer: Gargantua
+  reviewed_correct: true
+- question_id: TB0077
+  answer: Carriage
+  reviewed_correct: true
+- question_id: TB0078
+  answer: Jelly Roll Morton
+  reviewed_correct: true
+- question_id: TB0079
+  answer: Radius
+  reviewed_correct: true
+- question_id: TB0080
+  answer: Peter Davison
+  reviewed_correct: true
+- question_id: TB0081
+  answer: First Lord of the Admiralty
+  reviewed_correct: true
+- question_id: TB0082
+  answer: Albania
+  reviewed_correct: true
+- question_id: TB0083
+  answer: Bewick's swan
+  reviewed_correct: true
+- question_id: TB0084
+  answer: David Walliams
+  reviewed_correct: true
+- question_id: TB0085
+  answer: Plymouth Rock
+  reviewed_correct: true
+- question_id: TB0086
+  answer: Miller Lite
+  reviewed_correct: true
+- question_id: TB0087
+  answer: The Blades
+  reviewed_correct: true
+- question_id: TB0088
+  answer: Conic sections
+  reviewed_correct: true
+- question_id: TB0089
+  answer: Eight maids a-milking
+  reviewed_correct: true
+- question_id: TB0090
+  answer: Macavity
+  reviewed_correct: true
+- question_id: TB0091
+  answer: Borgia
+  reviewed_correct: true
+- question_id: TB0092
+  answer: Foreign exchange
+  reviewed_correct: true
+- question_id: TB0093
+  answer: The Communist Manifesto
+  reviewed_correct: true
+- question_id: TB0094
+  answer: Leeds Rhinos
+  reviewed_correct: true
+- question_id: TB0095
+  answer: One Day in Your Life
+  reviewed_correct: true
+- question_id: TB0096
+  answer: Yuri Gagarin
+  reviewed_correct: true
+- question_id: TB0097
+  answer: Buddha
+  reviewed_correct: true
+- question_id: TB0098
+  answer: Las Vegas
+  reviewed_correct: true
+- question_id: TB0099
+  answer: John Napier
+  reviewed_correct: true
+- question_id: TB0100
+  answer: Shearers
+  reviewed_correct: true
+- question_id: TB0101
+  answer: Lou Gehrig
+  reviewed_correct: true
+- question_id: TB0102
+  answer: Mind the gap
+  reviewed_correct: true
+- question_id: TB0103
+  answer: Biscuit
+  reviewed_correct: true
+- question_id: TB0104
+  answer: Virgil
+  reviewed_correct: true
+- question_id: TB0105
+  answer: Leading lady
+  reviewed_correct: true
+- question_id: TB0106
+  answer: The Netherlands
+  reviewed_correct: true
+- question_id: TB0107
+  answer: Ruth Handler
+  reviewed_correct: true
+- question_id: TB0108
+  answer: Friends Reunited
+  reviewed_correct: true
+- question_id: TB0109
+  answer: John Nash
+  reviewed_correct: true
+- question_id: TB0110
+  answer: Pig
+  reviewed_correct: true
+- question_id: TB0111
+  answer: Steel
+  reviewed_correct: true
+- question_id: TB0112
+  answer: Amsterdam
+  reviewed_correct: true
+- question_id: TB0113
+  answer: William the Conqueror
+  reviewed_correct: true
+- question_id: TB0114
+  answer: Delta Force
+  reviewed_correct: true
+- question_id: TB0115
+  answer: Swiss
+  reviewed_correct: true
+- question_id: TB0116
+  answer: Wicked Witch of the West
+  reviewed_correct: true
+- question_id: TB0117
+  answer: Tennis
+  reviewed_correct: true
+- question_id: TB0118
+  answer: Il Trovatore
+  reviewed_correct: true
+- question_id: TB0119
+  answer: Geometry
+  reviewed_correct: true
+- question_id: TB0120
+  answer: Elizabeth I
+  reviewed_correct: true
+- question_id: TB0121
+  answer: Les Paul
+  reviewed_correct: true
+- question_id: TB0122
+  answer: Gary Mabbutt
+  reviewed_correct: true
+- question_id: TB0123
+  answer: British
+  reviewed_correct: true
+- question_id: TB0124
+  answer: Alpha
+  reviewed_correct: true
+- question_id: TB0125
+  answer: C&A
+  reviewed_correct: true
+- question_id: TB0126
+  answer: Kamikaze
+  reviewed_correct: true
+- question_id: TB0127
+  answer: Ross Kemp
+  reviewed_correct: true
+- question_id: TB0128
+  answer: The Pillow Book
+  reviewed_correct: true
+- question_id: TB0129
+  answer: Egypt
+  reviewed_correct: true
+- question_id: TB0130
+  answer: Riddick Bowe
+  reviewed_correct: true
+- question_id: TB0131
+  answer: Salvador Allende
+  reviewed_correct: true
+- question_id: TB0132
+  answer: The Earth
+  reviewed_correct: true
+- question_id: TB0133
+  answer: Space
+  reviewed_correct: true
+- question_id: TB0134
+  answer: Potsdam Conference
+  reviewed_correct: true
+- question_id: TB0135
+  answer: A feather
+  reviewed_correct: true
+- question_id: TB0136
+  answer: Winklevii
+  reviewed_correct: true
+- question_id: TB0137
+  answer: Harrods
+  reviewed_correct: true
+- question_id: TB0138
+  answer: Fibonacci
+  reviewed_correct: true
+- question_id: TB0139
+  answer: Her underwired bra
+  reviewed_correct: true
+- question_id: TB0140
+  answer: Libretto
+  reviewed_correct: true
+- question_id: TB0141
+  answer: Asgard
+  reviewed_correct: true
+- question_id: TB0142
+  answer: Jean-Baptiste Say
+  reviewed_correct: true
+- question_id: TB0143
+  answer: Real Madrid
+  reviewed_correct: true
+- question_id: TB0144
+  answer: Third Crusade
+  reviewed_correct: true
+- question_id: TB0145
+  answer: Some Like It Hot
+  reviewed_correct: true
+- question_id: TB0146
+  answer: George Washington
+  reviewed_correct: false
+- question_id: TB0147
+  answer: Sally Ride
+  reviewed_correct: true
+- question_id: TB0148
+  answer: Poincare conjecture
+  reviewed_correct: true
+- question_id: TB0149
+  answer: Motorway
+  reviewed_correct: true
+- question_id: TB0150
+  answer: Helen Sharman
+  reviewed_correct: true
+- question_id: TB0151
+  answer: Battle of the Plains of Abraham
+  reviewed_correct: true
+- question_id: TB0152
+  answer: Volleyball
+  reviewed_correct: true
+- question_id: TB0153
+  answer: Plato
+  reviewed_correct: true
+- question_id: TB0154
+  answer: Ford Granada
+  reviewed_correct: true
+- question_id: TB0155
+  answer: Let It Go
+  reviewed_correct: true
+- question_id: TB0156
+  answer: Martin Van Buren
+  reviewed_correct: true
+- question_id: TB0157
+  answer: Carousel
+  reviewed_correct: true
+- question_id: TB0158
+  answer: '97'
+  reviewed_correct: true
+- question_id: TB0159
+  answer: Isles of Scilly
+  reviewed_correct: true
+- question_id: TB0160
+  answer: Sunny Afternoon
+  reviewed_correct: true
+- question_id: TB0161
+  answer: Lion
+  reviewed_correct: true
+- question_id: TB0162
+  answer: Verona
+  reviewed_correct: true
+- question_id: TB0163
+  answer: Neptune
+  reviewed_correct: true
+- question_id: TB0164
+  answer: Langley
+  reviewed_correct: true
+- question_id: TB0165
+  answer: Fisherman
+  reviewed_correct: true
+- question_id: TB0166
+  answer: Edward VII
+  reviewed_correct: true
+- question_id: TB0167
+  answer: Croatia
+  reviewed_correct: true
+- question_id: TB0168
+  answer: MCMXCIV
+  reviewed_correct: true
+- question_id: TB0169
+  answer: The Grinch
+  reviewed_correct: true
+- question_id: TB0170
+  answer: Sheffield
+  reviewed_correct: true
+- question_id: TB0171
+  answer: Robert Walpole
+  reviewed_correct: true
+- question_id: TB0172
+  answer: William Lyons
+  reviewed_correct: true
+- question_id: TB0173
+  answer: Barbadian
+  reviewed_correct: true
+- question_id: TB0174
+  answer: Cave paintings
+  reviewed_correct: true
+- question_id: TB0175
+  answer: Kaminsky
+  reviewed_correct: true
+- question_id: TB0176
+  answer: 15th
+  reviewed_correct: true
+- question_id: TB0177
+  answer: Mozilla
+  reviewed_correct: true
+- question_id: TB0178
+  answer: John Napier
+  reviewed_correct: true
+- question_id: TB0179
+  answer: Brian Glover
+  reviewed_correct: true
+- question_id: TB0180
+  answer: Hamelin
+  reviewed_correct: true
+- question_id: TB0181
+  answer: Eurythmics
+  reviewed_correct: true
+- question_id: TB0182
+  answer: Lord Melbourne
+  reviewed_correct: true
+- question_id: TB0183
+  answer: Henry Ford
+  reviewed_correct: true
+- question_id: TB0184
+  answer: Jordan
+  reviewed_correct: true
+- question_id: TB0185
+  answer: Edmond Halley
+  reviewed_correct: true
+- question_id: TB0186
+  answer: '1215'
+  reviewed_correct: true
+- question_id: TB0187
+  answer: Imola
+  reviewed_correct: true
+- question_id: TB0188
+  answer: Sarah Ferguson
+  reviewed_correct: true
+- question_id: TB0189
+  answer: Henry Irving
+  reviewed_correct: true
+- question_id: TB0190
+  answer: Warfarin
+  reviewed_correct: true
+- question_id: TB0191
+  answer: Children's Laureate
+  reviewed_correct: true
+- question_id: TB0192
+  answer: Neil Young
+  reviewed_correct: true
+- question_id: TB0193
+  answer: Sark
+  reviewed_correct: true
+- question_id: TB0194
+  answer: Australia
+  reviewed_correct: true
+- question_id: TB0195
+  answer: Edinburgh
+  reviewed_correct: true
+- question_id: TB0196
+  answer: Football
+  reviewed_correct: true
+- question_id: TB0197
+  answer: One third
+  reviewed_correct: true
+- question_id: TB0198
+  answer: Barcelona
+  reviewed_correct: true
+- question_id: TB0199
+  answer: '1700'
+  reviewed_correct: false
+- question_id: TB0200
+  answer: Sirhan Sirhan
+  reviewed_correct: true
+- question_id: TB0201
+  answer: Battle
+  reviewed_correct: true
+- question_id: TB0202
+  answer: Binky
+  reviewed_correct: true
+- question_id: TB0203
+  answer: Adam Smith
+  reviewed_correct: true
+- question_id: TB0204
+  answer: Daniel O'Connell
+  reviewed_correct: true
+- question_id: TB0205
+  answer: Sigmund Freud
+  reviewed_correct: true
+- question_id: TB0206
+  answer: Splendor in the Grass
+  reviewed_correct: true
+- question_id: TB0207
+  answer: One
+  reviewed_correct: true
+- question_id: TB0208
+  answer: '2000'
+  reviewed_correct: true
+- question_id: TB0209
+  answer: Remus
+  reviewed_correct: true
+- question_id: TB0210
+  answer: Albert Einstein
+  reviewed_correct: true
+- question_id: TB0211
+  answer: October
+  reviewed_correct: true
+- question_id: TB0212
+  answer: Big Mac
+  reviewed_correct: true
+- question_id: TB0213
+  answer: James Callaghan
+  reviewed_correct: true
+- question_id: TB0214
+  answer: '1483'
+  reviewed_correct: true
+- question_id: TB0215
+  answer: Marillion
+  reviewed_correct: true
+- question_id: TB0216
+  answer: Benedict Cumberbatch
+  reviewed_correct: true
+- question_id: TB0217
+  answer: '720'
+  reviewed_correct: true
+- question_id: TB0218
+  answer: Falkland Islands
+  reviewed_correct: true
+- question_id: TB0219
+  answer: Pea
+  reviewed_correct: true
+- question_id: TB0220
+  answer: John Ford
+  reviewed_correct: true
+- question_id: TB0221
+  answer: Thomas Gresham
+  reviewed_correct: true
+- question_id: TB0222
+  answer: Transgender
+  reviewed_correct: true
+- question_id: TB0223
+  answer: Abdullah
+  reviewed_correct: true
+- question_id: TB0224
+  answer: Carl Sagan
+  reviewed_correct: true
+- question_id: TB0225
+  answer: OutKast
+  reviewed_correct: true
+- question_id: TB0226
+  answer: '1976'
+  reviewed_correct: true
+- question_id: TB0227
+  answer: Krypton
+  reviewed_correct: true
+- question_id: TB0228
+  answer: '32'
+  reviewed_correct: true
+- question_id: TB0229
+  answer: Surrealism
+  reviewed_correct: true
+- question_id: TB0230
+  answer: Naomi Watts
+  reviewed_correct: true
+- question_id: TB0231
+  answer: New Zealand
+  reviewed_correct: true
+- question_id: TB0232
+  answer: '13'
+  reviewed_correct: true
+- question_id: TB0233
+  answer: Bloody Sunday
+  reviewed_correct: true
+- question_id: TB0234
+  answer: Bangladesh
+  reviewed_correct: true
+- question_id: TB0235
+  answer: Olympic Games
+  reviewed_correct: true
+- question_id: TB0236
+  answer: B flat
+  reviewed_correct: true
+- question_id: TB0237
+  answer: Simon of Cyrene
+  reviewed_correct: true
+- question_id: TB0238
+  answer: Fifty Shades of Grey
+  reviewed_correct: true
+- question_id: TB0239
+  answer: Richard Attenborough
+  reviewed_correct: true
+- question_id: TB0240
+  answer: White Ford Bronco
+  reviewed_correct: true
+- question_id: TB0241
+  answer: Paris
+  reviewed_correct: true
+- question_id: TB0242
+  answer: John Flamsteed
+  reviewed_correct: true
+- question_id: TB0243
+  answer: '15'
+  reviewed_correct: true
+- question_id: TB0244
+  answer: William Gladstone
+  reviewed_correct: true
+- question_id: TB0245
+  answer: Adnams
+  reviewed_correct: true
+- question_id: TB0246
+  answer: '3'
+  reviewed_correct: true
+- question_id: TB0247
+  answer: Caligula
+  reviewed_correct: true
+- question_id: TB0248
+  answer: Katy Perry
+  reviewed_correct: true
+- question_id: TB0249
+  answer: Billy Connolly
+  reviewed_correct: true
+- question_id: TB0250
+  answer: Aristotle
+  reviewed_correct: true
+- question_id: TB0251
+  answer: Swedish
+  reviewed_correct: true
+- question_id: TB0252
+  answer: Adolf Hitler
+  reviewed_correct: true
+- question_id: TB0253
+  answer: With a wedge of hard cheese
+  reviewed_correct: true
+- question_id: TB0254
+  answer: MIX
+  reviewed_correct: true
+- question_id: TB0255
+  answer: Benjamin Disraeli
+  reviewed_correct: true
+- question_id: TB0256
+  answer: China
+  reviewed_correct: true
+- question_id: TB0257
+  answer: Tree
+  reviewed_correct: true
+- question_id: TB0258
+  answer: Casino Royale
+  reviewed_correct: true
+- question_id: TB0259
+  answer: Faversham
+  reviewed_correct: true
+- question_id: TB0260
+  answer: Jerry Mouse
+  reviewed_correct: true
+- question_id: TB0261
+  answer: Dian Fossey
+  reviewed_correct: true
+- question_id: TB0262
+  answer: Egremont
+  reviewed_correct: true
+- question_id: TB0263
+  answer: Iron Age
+  reviewed_correct: true
+- question_id: TB0264
+  answer: John Adams
+  reviewed_correct: true
+- question_id: TB0265
+  answer: Tommy Roe
+  reviewed_correct: true
+- question_id: TB0266
+  answer: Rugby union
+  reviewed_correct: true
+- question_id: TB0267
+  answer: Robert Boyle
+  reviewed_correct: true
+- question_id: TB0268
+  answer: Charlie Chaplin
+  reviewed_correct: true
+- question_id: TB0269
+  answer: Three
+  reviewed_correct: true
+- question_id: TB0270
+  answer: Denmark
+  reviewed_correct: true
+- question_id: TB0271
+  answer: Aden
+  reviewed_correct: true
+- question_id: TB0272
+  answer: Taiwan
+  reviewed_correct: true
+- question_id: TB0273
+  answer: Il Trovatore
+  reviewed_correct: true
+- question_id: TB0274
+  answer: 1973, 1974 and 1977
+  reviewed_correct: true
+- question_id: TB0275
+  answer: Kew Gardens
+  reviewed_correct: true
+- question_id: TB0276
+  answer: '3600'
+  reviewed_correct: true
+- question_id: TB0277
+  answer: Michael Johnson
+  reviewed_correct: true
+- question_id: TB0278
+  answer: Emanuel
+  reviewed_correct: true
+- question_id: TB0279
+  answer: Hindenburg
+  reviewed_correct: true
+- question_id: TB0280
+  answer: The Knight
+  reviewed_correct: true
+- question_id: TB0281
+  answer: Cabinet
+  reviewed_correct: true
+- question_id: TB0282
+  answer: Pluto
+  reviewed_correct: true
+- question_id: TB0283
+  answer: Tintoretto
+  reviewed_correct: true
+- question_id: TB0284
+  answer: Switzerland
+  reviewed_correct: true
+- question_id: TB0285
+  answer: Florence Henderson
+  reviewed_correct: true
+- question_id: TB0286
+  answer: First
+  reviewed_correct: true
+- question_id: TB0287
+  answer: New Zealand
+  reviewed_correct: true
+- question_id: TB0288
+  answer: Spice Girls
+  reviewed_correct: true
+- question_id: TB0289
+  answer: Tower of London
+  reviewed_correct: true
+- question_id: TB0290
+  answer: Elsinore
+  reviewed_correct: true
+- question_id: TB0291
+  answer: We ourselves
+  reviewed_correct: true
+- question_id: TB0292
+  answer: Film industries
+  reviewed_correct: true
+- question_id: TB0293
+  answer: Caernarfon
+  reviewed_correct: true
+- question_id: TB0294
+  answer: California condor
+  reviewed_correct: true
+- question_id: TB0295
+  answer: Shredded Wheat
+  reviewed_correct: true
+- question_id: TB0296
+  answer: Godot
+  reviewed_correct: true
+- question_id: TB0297
+  answer: Erik the Red
+  reviewed_correct: true
+- question_id: TB0298
+  answer: XIV
+  reviewed_correct: true
+- question_id: TB0299
+  answer: Jade Goody
+  reviewed_correct: false
+- question_id: TB0300
+  answer: HMS Pinafore
+  reviewed_correct: true
+- question_id: TB0301
+  answer: Peru
+  reviewed_correct: true
+- question_id: TB0302
+  answer: Peter Blake
+  reviewed_correct: true
+- question_id: TB0303
+  answer: Benjamin Franklin
+  reviewed_correct: true
+- question_id: TB0304
+  answer: Chess
+  reviewed_correct: true
+- question_id: TB0305
+  answer: Titanium
+  reviewed_correct: true
+- question_id: TB0306
+  answer: Edward III
+  reviewed_correct: true
+- question_id: TB0307
+  answer: '1296'
+  reviewed_correct: true
+- question_id: TB0308
+  answer: United States
+  reviewed_correct: true
+- question_id: TB0309
+  answer: Hufflepuff
+  reviewed_correct: true
+- question_id: TB0310
+  answer: Harold Holt
+  reviewed_correct: true
+- question_id: TB0311
+  answer: Egypt
+  reviewed_correct: true
+- question_id: TB0312
+  answer: Hereford
+  reviewed_correct: true
+- question_id: TB0313
+  answer: Benedict XVI
+  reviewed_correct: true
+- question_id: TB0314
+  answer: Kora
+  reviewed_correct: false
+- question_id: TB0315
+  answer: Aintree
+  reviewed_correct: true
+- question_id: TB0316
+  answer: Bodhidharma
+  reviewed_correct: true
+- question_id: TB0317
+  answer: '1080'
+  reviewed_correct: true
+- question_id: TB0318
+  answer: Jacqui Oatley
+  reviewed_correct: true
+- question_id: TB0319
+  answer: Stephen Hawking
+  reviewed_correct: true
+- question_id: TB0320
+  answer: Winston Churchill
+  reviewed_correct: true
+- question_id: TB0321
+  answer: Coffee house
+  reviewed_correct: true
+- question_id: TB0322
+  answer: Tanganyika and Zanzibar
+  reviewed_correct: true
+- question_id: TB0323
+  answer: King Arthur
+  reviewed_correct: true
+- question_id: TB0324
+  answer: Toby
+  reviewed_correct: true
+- question_id: TB0325
+  answer: Rita Coolidge
+  reviewed_correct: true
+- question_id: TB0326
+  answer: '8'
+  reviewed_correct: true
+- question_id: TB0327
+  answer: Detroit
+  reviewed_correct: true
+- question_id: TB0328
+  answer: Jonathan Swift
+  reviewed_correct: true
+- question_id: TB0329
+  answer: Earl of Derby
+  reviewed_correct: true
+- question_id: TB0330
+  answer: British European Airways
+  reviewed_correct: true
+- question_id: TB0331
+  answer: Henry II
+  reviewed_correct: true
+- question_id: TB0332
+  answer: Huey, Dewey and Louie
+  reviewed_correct: true
+- question_id: TB0333
+  answer: Joshua Tree
+  reviewed_correct: true
+- question_id: TB0334
+  answer: Rounders
+  reviewed_correct: true
+- question_id: TB0335
+  answer: Solidus
+  reviewed_correct: true
+- question_id: TB0336
+  answer: John Logie Baird
+  reviewed_correct: true
+- question_id: TB0337
+  answer: Harry
+  reviewed_correct: true
+- question_id: TB0338
+  answer: Dolly Parton
+  reviewed_correct: true
+- question_id: TB0339
+  answer: Benjamin Harrison
+  reviewed_correct: true
+- question_id: TB0340
+  answer: Lunar New Year
+  reviewed_correct: true
+- question_id: TB0341
+  answer: Confucius
+  reviewed_correct: true
+- question_id: TB0342
+  answer: Business jets
+  reviewed_correct: true
+- question_id: TB0343
+  answer: Los Angeles
+  reviewed_correct: true
+- question_id: TB0344
+  answer: Nowhere Boy
+  reviewed_correct: true
+- question_id: TB0345
+  answer: '59'
+  reviewed_correct: true
+- question_id: TB0346
+  answer: Xenophon
+  reviewed_correct: true
+- question_id: TB0347
+  answer: Old Kent Road
+  reviewed_correct: true
+- question_id: TB0348
+  answer: Bill of Rights
+  reviewed_correct: true
+- question_id: TB0349
+  answer: The far side of the Moon
+  reviewed_correct: true
+- question_id: TB0350
+  answer: Stan Laurel
+  reviewed_correct: true
+- question_id: TB0351
+  answer: $20
+  reviewed_correct: true
+- question_id: TB0352
+  answer: '2004'
+  reviewed_correct: true
+- question_id: TB0353
+  answer: '0'
+  reviewed_correct: true
+- question_id: TB0354
+  answer: Across the Universe
+  reviewed_correct: true
+- question_id: TB0355
+  answer: Geoffrey Chaucer
+  reviewed_correct: true
+- question_id: TB0356
+  answer: '1875'
+  reviewed_correct: true
+- question_id: TB0357
+  answer: '10001'
+  reviewed_correct: true
+- question_id: TB0358
+  answer: A star
+  reviewed_correct: true
+- question_id: TB0359
+  answer: The White House
+  reviewed_correct: true
+- question_id: TB0360
+  answer: Canada
+  reviewed_correct: true
+- question_id: TB0361
+  answer: Cambridge
+  reviewed_correct: true
+- question_id: TB0362
+  answer: Banjo
+  reviewed_correct: true
+- question_id: TB0363
+  answer: Tornado
+  reviewed_correct: true
+- question_id: TB0364
+  answer: McDonald's
+  reviewed_correct: true
+- question_id: TB0365
+  answer: Martin Scorsese
+  reviewed_correct: true
+- question_id: TB0366
+  answer: Joan of Arc
+  reviewed_correct: true
+- question_id: TB0367
+  answer: Joseph Banks
+  reviewed_correct: true
+- question_id: TB0368
+  answer: '45'
+  reviewed_correct: true
+- question_id: TB0369
+  answer: Bullnose
+  reviewed_correct: true
+- question_id: TB0370
+  answer: Ulysses S. Grant
+  reviewed_correct: true
+- question_id: TB0371
+  answer: The No. 1 Ladies' Detective Agency
+  reviewed_correct: true
+- question_id: TB0372
+  answer: Leon Baptiste
+  reviewed_correct: true
+- question_id: TB0373
+  answer: Venice
+  reviewed_correct: true
+- question_id: TB0374
+  answer: Carmen
+  reviewed_correct: true
+- question_id: TB0375
+  answer: The Greedies
+  reviewed_correct: true
+- question_id: TB0376
+  answer: Colossus of Rhodes
+  reviewed_correct: true
+- question_id: TB0377
+  answer: '6'
+  reviewed_correct: true
+- question_id: TB0378
+  answer: Jo Moore
+  reviewed_correct: true
+- question_id: TB0379
+  answer: Taco Bell
+  reviewed_correct: true
+- question_id: TB0380
+  answer: Jackson Pollock
+  reviewed_correct: true
+- question_id: TB0381
+  answer: Kaleidoscope
+  reviewed_correct: true
+- question_id: TB0382
+  answer: Augusta National Golf Club
+  reviewed_correct: true
+- question_id: TB0383
+  answer: Mungo Park
+  reviewed_correct: true
+- question_id: TB0384
+  answer: Dilbert
+  reviewed_correct: true
+- question_id: TB0385
+  answer: Botticelli
+  reviewed_correct: true
+- question_id: TB0386
+  answer: Lactic acid
+  reviewed_correct: true
+- question_id: TB0387
+  answer: US Marshals Service
+  reviewed_correct: true
+- question_id: TB0388
+  answer: Rosetta Stone
+  reviewed_correct: true
+- question_id: TB0389
+  answer: The Rats
+  reviewed_correct: true
+- question_id: TB0390
+  answer: Converse
+  reviewed_correct: true
+- question_id: TB0391
+  answer: Malaysia
+  reviewed_correct: true
+- question_id: TB0392
+  answer: Justin Bieber
+  reviewed_correct: true
+- question_id: TB0393
+  answer: Cannes
+  reviewed_correct: true
+- question_id: TB0394
+  answer: Garden of Gethsemane
+  reviewed_correct: true
+- question_id: TB0395
+  answer: XXXII
+  reviewed_correct: true
+- question_id: TB0396
+  answer: Friedrich Miescher
+  reviewed_correct: true
+- question_id: TB0397
+  answer: Robert F. Kennedy
+  reviewed_correct: true
+- question_id: TB0398
+  answer: Scunthorpe United
+  reviewed_correct: true
+- question_id: TB0399
+  answer: Wolfgang Amadeus Mozart
+  reviewed_correct: true
+- question_id: TB0400
+  answer: Model T Ford
+  reviewed_correct: true
+- question_id: TB0401
+  answer: Turkey
+  reviewed_correct: true
+- question_id: TB0402
+  answer: Cuba
+  reviewed_correct: true
+- question_id: TB0403
+  answer: Extreme close-up
+  reviewed_correct: true
+- question_id: TB0404
+  answer: 1 acre
+  reviewed_correct: true
+- question_id: TB0405
+  answer: Periodic table
+  reviewed_correct: true
+- question_id: TB0406
+  answer: Albatross
+  reviewed_correct: true
+- question_id: TB0407
+  answer: Marlene Dietrich
+  reviewed_correct: true
+- question_id: TB0408
+  answer: Dante Alighieri
+  reviewed_correct: true
+- question_id: TB0409
+  answer: Evander Holyfield
+  reviewed_correct: true
+- question_id: TB0410
+  answer: David Soul
+  reviewed_correct: true
+- question_id: TB0411
+  answer: Hanover
+  reviewed_correct: true
+- question_id: TB0412
+  answer: The White House
+  reviewed_correct: true
+- question_id: TB0413
+  answer: Harrods
+  reviewed_correct: true
+- question_id: TB0414
+  answer: Parabola
+  reviewed_correct: true
+- question_id: TB0415
+  answer: Manhattan
+  reviewed_correct: true
+- question_id: TB0416
+  answer: The Raj Quartet
+  reviewed_correct: true
+- question_id: TB0417
+  answer: Dakota
+  reviewed_correct: true
+- question_id: TB0418
+  answer: Art
+  reviewed_correct: true
+- question_id: TB0419
+  answer: Bill Clinton
+  reviewed_correct: true
+- question_id: TB0420
+  answer: British Airways
+  reviewed_correct: true
+- question_id: TB0421
+  answer: Teeth
+  reviewed_correct: true
+- question_id: TB0422
+  answer: Euripides
+  reviewed_correct: true
+- question_id: TB0423
+  answer: Coppola
+  reviewed_correct: true
+- question_id: TB0424
+  answer: Chester
+  reviewed_correct: true
+- question_id: TB0425
+  answer: Mile
+  reviewed_correct: true
+- question_id: TB0426
+  answer: Karl Marx
+  reviewed_correct: true
+- question_id: TB0427
+  answer: '1984'
+  reviewed_correct: true
+- question_id: TB0428
+  answer: '144'
+  reviewed_correct: true
+- question_id: TB0429
+  answer: Edward IV
+  reviewed_correct: true
+- question_id: TB0430
+  answer: Oxford
+  reviewed_correct: true
+- question_id: TB0431
+  answer: South Pacific
+  reviewed_correct: true
+- question_id: TB0432
+  answer: Blacksmith
+  reviewed_correct: true
+- question_id: TB0433
+  answer: L'Oreal
+  reviewed_correct: true
+- question_id: TB0434
+  answer: John Everett Millais
+  reviewed_correct: true
+- question_id: TB0435
+  answer: iPhone
+  reviewed_correct: true
+- question_id: TB0436
+  answer: Stern
+  reviewed_correct: true
+- question_id: TB0437
+  answer: Sector
+  reviewed_correct: true
+- question_id: TB0438
+  answer: Beowulf
+  reviewed_correct: true
+- question_id: TB0439
+  answer: Stirling Moss
+  reviewed_correct: true
+- question_id: TB0440
+  answer: Dara O Briain
+  reviewed_correct: true
+- question_id: TB0441
+  answer: Robert Maxwell
+  reviewed_correct: true
+- question_id: TB0442
+  answer: Seven
+  reviewed_correct: true
+- question_id: TB0443
+  answer: Karl Marx
+  reviewed_correct: true
+- question_id: TB0444
+  answer: '2240'
+  reviewed_correct: true
+- question_id: TB0445
+  answer: John
+  reviewed_correct: true
+- question_id: TB0446
+  answer: Fifth Amendment
+  reviewed_correct: true
+- question_id: TB0447
+  answer: Crosse
+  reviewed_correct: true
+- question_id: TB0448
+  answer: MSC Napoli
+  reviewed_correct: true
+- question_id: TB0449
+  answer: Frank Sinatra
+  reviewed_correct: true
+- question_id: TB0450
+  answer: Cuckoo
+  reviewed_correct: true
+- question_id: TB0451
+  answer: Iain Banks
+  reviewed_correct: true
+- question_id: TB0452
+  answer: Benjamin Franklin
+  reviewed_correct: true
+- question_id: TB0453
+  answer: Coca-Cola
+  reviewed_correct: true
+- question_id: TB0454
+  answer: Poor Clares
+  reviewed_correct: true
+- question_id: TB0455
+  answer: Selenium
+  reviewed_correct: true
+- question_id: TB0456
+  answer: The Hague
+  reviewed_correct: true
+- question_id: TB0457
+  answer: Space Cowboys
+  reviewed_correct: true
+- question_id: TB0458
+  answer: Francis Drake
+  reviewed_correct: true
+- question_id: TB0459
+  answer: Thoroughbred horse racing
+  reviewed_correct: true
+- question_id: TB0460
+  answer: Calypso
+  reviewed_correct: true
+- question_id: TB0461
+  answer: George Eastman
+  reviewed_correct: true
+- question_id: TB0462
+  answer: King Arthur
+  reviewed_correct: true
+- question_id: TB0463
+  answer: Equilateral
+  reviewed_correct: true
+- question_id: TB0464
+  answer: Hubble Space Telescope
+  reviewed_correct: true
+- question_id: TB0465
+  answer: Anne Frank
+  reviewed_correct: true
+- question_id: TB0466
+  answer: Ted Hankey
+  reviewed_correct: true
+- question_id: TB0467
+  answer: Pakistan
+  reviewed_correct: true
+- question_id: TB0468
+  answer: Spider
+  reviewed_correct: true
+- question_id: TB0469
+  answer: Mikhail Gorbachev
+  reviewed_correct: true
+- question_id: TB0470
+  answer: El Greco
+  reviewed_correct: true
+- question_id: TB0471
+  answer: Pompey
+  reviewed_correct: true
+- question_id: TB0472
+  answer: Humphrey Bogart
+  reviewed_correct: true
+- question_id: TB0473
+  answer: Abacus
+  reviewed_correct: true
+- question_id: TB0474
+  answer: China
+  reviewed_correct: true
+- question_id: TB0475
+  answer: Colleen McCullough
+  reviewed_correct: true
+- question_id: TB0476
+  answer: Shangri-La
+  reviewed_correct: true
+- question_id: TB0477
+  answer: Henrietta Maria
+  reviewed_correct: true
+- question_id: TB0478
+  answer: Martina Hingis
+  reviewed_correct: true
+- question_id: TB0479
+  answer: Switzerland
+  reviewed_correct: true
+- question_id: TB0480
+  answer: Painting
+  reviewed_correct: true
+- question_id: TB0481
+  answer: Bat
+  reviewed_correct: true
+- question_id: TB0482
+  answer: Film industry
+  reviewed_correct: true
+- question_id: TB0483
+  answer: New Zealand
+  reviewed_correct: true
+- question_id: TB0484
+  answer: The Observer
+  reviewed_correct: true
+- question_id: TB0485
+  answer: League
+  reviewed_correct: false
+- question_id: TB0486
+  answer: Java
+  reviewed_correct: true
+- question_id: TB0487
+  answer: Pantheon
+  reviewed_correct: true
+- question_id: TB0488
+  answer: Magic
+  reviewed_correct: true
+- question_id: TB0489
+  answer: Eleanor Rigby
+  reviewed_correct: true
+- question_id: TB0490
+  answer: Tuppence
+  reviewed_correct: true
+- question_id: TB0491
+  answer: Turkey
+  reviewed_correct: true
+- question_id: TB0492
+  answer: 1930s
+  reviewed_correct: true
+- question_id: TB0493
+  answer: Home Alone
+  reviewed_correct: true
+- question_id: TB0494
+  answer: Geoffrey Howe
+  reviewed_correct: true
+- question_id: TB0495
+  answer: Isaac Newton
+  reviewed_correct: true
+- question_id: TB0496
+  answer: Battle of Camlann
+  reviewed_correct: true
+- question_id: TB0497
+  answer: Prams
+  reviewed_correct: true
+- question_id: TB0498
+  answer: Leicester
+  reviewed_correct: true
+- question_id: TB0499
+  answer: '9'
+  reviewed_correct: true
+- question_id: TB0500
+  answer: Sicily
+  reviewed_correct: true
+- question_id: TB0501
+  answer: Salzburg
+  reviewed_correct: true
+- question_id: TB0502
+  answer: Basketball
+  reviewed_correct: true
+- question_id: TB0503
+  answer: John McCarthy
+  reviewed_correct: true
+- question_id: TB0504
+  answer: Henri Rousseau
+  reviewed_correct: true
+- question_id: TB0505
+  answer: Wikipedia
+  reviewed_correct: true
+- question_id: TB0506
+  answer: Kix
+  reviewed_correct: true
+- question_id: TB0507
+  answer: Charlemagne
+  reviewed_correct: true
+- question_id: TB0508
+  answer: 1/4
+  reviewed_correct: true
+- question_id: TB0509
+  answer: Woodstock
+  reviewed_correct: true
+- question_id: TB0510
+  answer: 26 miles 385 yards
+  reviewed_correct: true
+- question_id: TB0511
+  answer: Francois Mitterrand
+  reviewed_correct: true
+- question_id: TB0512
+  answer: Kill Bill
+  reviewed_correct: true
+- question_id: TB0513
+  answer: Boojum
+  reviewed_correct: true
+- question_id: TB0514
+  answer: 2/3
+  reviewed_correct: true
+- question_id: TB0515
+  answer: Hans Lippershey
+  reviewed_correct: true
+- question_id: TB0516
+  answer: Sandro Botticelli
+  reviewed_correct: true
+- question_id: TB0517
+  answer: Nikkei
+  reviewed_correct: true
+- question_id: TB0518
+  answer: Bronx Mowgli
+  reviewed_correct: true
+- question_id: TB0519
+  answer: Uncle Sam
+  reviewed_correct: true
+- question_id: TB0520
+  answer: Baseball
+  reviewed_correct: true
+- question_id: TB0521
+  answer: French
+  reviewed_correct: true
+- question_id: TB0522
+  answer: Nicholas Witchell
+  reviewed_correct: true
+- question_id: TB0523
+  answer: Wars of the Roses
+  reviewed_correct: true
+- question_id: TB0524
+  answer: Harvard
+  reviewed_correct: true
+- question_id: TB0525
+  answer: Hair
+  reviewed_correct: true
+- question_id: TB0526
+  answer: Kuwait
+  reviewed_correct: true
+- question_id: TB0527
+  answer: NASCAR
+  reviewed_correct: true
+- question_id: TB0528
+  answer: Charlie Chaplin
+  reviewed_correct: true
+- question_id: TB0529
+  answer: Grace Abounding to the Chief of Sinners
+  reviewed_correct: true
+- question_id: TB0530
+  answer: Black
+  reviewed_correct: true
+- question_id: TB0531
+  answer: Richard Wagner
+  reviewed_correct: true
+- question_id: TB0532
+  answer: '4'
+  reviewed_correct: true
+- question_id: TB0533
+  answer: The Cavern Club
+  reviewed_correct: true
+- question_id: TB0534
+  answer: '1471'
+  reviewed_correct: true
+- question_id: TB0535
+  answer: Skittles
+  reviewed_correct: true
+- question_id: TB0536
+  answer: H. H. Asquith
+  reviewed_correct: true
+- question_id: TB0537
+  answer: Popes
+  reviewed_correct: true
+- question_id: TB0538
+  answer: Peter Crouch
+  reviewed_correct: true
+- question_id: TB0539
+  answer: Sylvia Plath
+  reviewed_correct: true
+- question_id: TB0540
+  answer: Naval officer
+  reviewed_correct: true
+- question_id: TB0541
+  answer: Kabuki
+  reviewed_correct: true
+- question_id: TB0542
+  answer: Vienna
+  reviewed_correct: true
+- question_id: TB0543
+  answer: Babylon
+  reviewed_correct: true
+- question_id: TB0544
+  answer: A remainder
+  reviewed_correct: true
+- question_id: TB0545
+  answer: Nokia
+  reviewed_correct: true
+- question_id: TB0546
+  answer: Mike Tyson
+  reviewed_correct: true
+- question_id: TB0547
+  answer: Turing test
+  reviewed_correct: true
+- question_id: TB0548
+  answer: Warner Bros.
+  reviewed_correct: true
+- question_id: TB0549
+  answer: Pakistan
+  reviewed_correct: true
+- question_id: TB0550
+  answer: Istanbul
+  reviewed_correct: true
+- question_id: TB0551
+  answer: Percussion
+  reviewed_correct: true
+- question_id: TB0552
+  answer: Hungary
+  reviewed_correct: true
+- question_id: TB0553
+  answer: Ewan McGregor
+  reviewed_correct: true
+- question_id: TB0554
+  answer: Joseph Haydn
+  reviewed_correct: true
+- question_id: TB0555
+  answer: Astronomy
+  reviewed_correct: true
+- question_id: TB0556
+  answer: Less than the denominator
+  reviewed_correct: true
+- question_id: TB0557
+  answer: Kiel Canal
+  reviewed_correct: true
+- question_id: TB0558
+  answer: Harry Potter and the Prisoner of Azkaban
+  reviewed_correct: true
+- question_id: TB0559
+  answer: Ryder Cup
+  reviewed_correct: true
+- question_id: TB0560
+  answer: Marks & Spencer
+  reviewed_correct: true
+- question_id: TB0561
+  answer: Scotland
+  reviewed_correct: true
+- question_id: TB0562
+  answer: Salt
+  reviewed_correct: true
+- question_id: TB0563
+  answer: Pumpkin
+  reviewed_correct: true
+- question_id: TB0564
+  answer: Poland
+  reviewed_correct: true
+- question_id: TB0565
+  answer: Richard Wagner
+  reviewed_correct: true
+- question_id: TB0566
+  answer: Virgin
+  reviewed_correct: true
+- question_id: TB0567
+  answer: Death penalty
+  reviewed_correct: true
+- question_id: TB0568
+  answer: '43200'
+  reviewed_correct: true
+- question_id: TB0569
+  answer: Triathlon
+  reviewed_correct: true
+- question_id: TB0570
+  answer: Terms of Endearment
+  reviewed_correct: true
+- question_id: TB0571
+  answer: Pluto
+  reviewed_correct: true
+- question_id: TB0572
+  answer: '1140'
+  reviewed_correct: true
+- question_id: TB0573
+  answer: '1'
+  reviewed_correct: true
+- question_id: TB0574
+  answer: Rowing
+  reviewed_correct: true
+- question_id: TB0575
+  answer: Paul Gauguin
+  reviewed_correct: true
+- question_id: TB0576
+  answer: LSD
+  reviewed_correct: true
+- question_id: TB0577
+  answer: Trinidad
+  reviewed_correct: true
+- question_id: TB0578
+  answer: Dwight D. Eisenhower
+  reviewed_correct: true
+- question_id: TB0579
+  answer: Adam Smith
+  reviewed_correct: true
+- question_id: TB0580
+  answer: Cuneiform
+  reviewed_correct: true
+- question_id: TB0581
+  answer: 'X-Men Origins: Wolverine'
+  reviewed_correct: true
+- question_id: TB0582
+  answer: Death in the Afternoon
+  reviewed_correct: true
+- question_id: TB0583
+  answer: The Last Supper
+  reviewed_correct: true
+- question_id: TB0584
+  answer: Opossum
+  reviewed_correct: true
+- question_id: TB0585
+  answer: Football
+  reviewed_correct: true
+- question_id: TB0586
+  answer: Father of the House
+  reviewed_correct: true
+- question_id: TB0587
+  answer: Taggart
+  reviewed_correct: true
+- question_id: TB0588
+  answer: Antonio Vivaldi
+  reviewed_correct: true
+- question_id: TB0589
+  answer: '100'
+  reviewed_correct: true
+- question_id: TB0590
+  answer: Bertha
+  reviewed_correct: true
+- question_id: TB0591
+  answer: Caiaphas
+  reviewed_correct: true
+- question_id: TB0592
+  answer: Imaginary axis
+  reviewed_correct: false
+- question_id: TB0593
+  answer: C. S. Lewis
+  reviewed_correct: true
+- question_id: TB0594
+  answer: '12'
+  reviewed_correct: true
+- question_id: TB0595
+  answer: Democritus
+  reviewed_correct: true
+- question_id: TB0596
+  answer: Olympic Village
+  reviewed_correct: true
+- question_id: TB0597
+  answer: Autopsy
+  reviewed_correct: true
+- question_id: TB0598
+  answer: The Blue Danube
+  reviewed_correct: true
+- question_id: TB0599
+  answer: Warren G. Harding
+  reviewed_correct: true
+- question_id: TB0600
+  answer: Frank Gorshin
+  reviewed_correct: true
+- question_id: TB0601
+  answer: DV
+  reviewed_correct: true
+- question_id: TB0602
+  answer: Christopher Wren
+  reviewed_correct: true
+- question_id: TB0603
+  answer: Jeroboam
+  reviewed_correct: true
+- question_id: TB0604
+  answer: Ted Turner
+  reviewed_correct: true
+- question_id: TB0605
+  answer: Arctic Monkeys
+  reviewed_correct: true
+- question_id: TB0606
+  answer: Feathered dinosaurs
+  reviewed_correct: true
+- question_id: TB0607
+  answer: Emmy Awards
+  reviewed_correct: true
+- question_id: TB0608
+  answer: Chester
+  reviewed_correct: true
+- question_id: TB0609
+  answer: Thomas Jefferson
+  reviewed_correct: true
+- question_id: TB0610
+  answer: Andy Dalziel
+  reviewed_correct: true
+- question_id: TB0611
+  answer: Hundred Years' War
+  reviewed_correct: true
+- question_id: TB0612
+  answer: Skunk
+  reviewed_correct: true
+- question_id: TB0613
+  answer: Snickers
+  reviewed_correct: true
+- question_id: TB0614
+  answer: '20'
+  reviewed_correct: true
+- question_id: TB0615
+  answer: Aston Villa
+  reviewed_correct: true
+- question_id: TB0616
+  answer: Julius Caesar
+  reviewed_correct: true
+- question_id: TB0617
+  answer: Aida
+  reviewed_correct: true
+- question_id: TB0618
+  answer: Soviet Union
+  reviewed_correct: true
+- question_id: TB0619
+  answer: Jumping genes
+  reviewed_correct: true
+- question_id: TB0620
+  answer: Nepal
+  reviewed_correct: true
+- question_id: TB0621
+  answer: A Journey
+  reviewed_correct: true
+- question_id: TB0622
+  answer: Abacus
+  reviewed_correct: true
+- question_id: TB0623
+  answer: Jack Mills
+  reviewed_correct: true
+- question_id: TB0624
+  answer: Alan Greenspan
+  reviewed_correct: true
+- question_id: TB0625
+  answer: Sigmund Freud
+  reviewed_correct: true
+- question_id: TB0626
+  answer: La Marseillaise
+  reviewed_correct: true
+- question_id: TB0627
+  answer: Fat Tony
+  reviewed_correct: true
+- question_id: TB0628
+  answer: Donkey
+  reviewed_correct: true
+- question_id: TB0629
+  answer: Paolo Uccello
+  reviewed_correct: true
+- question_id: TB0630
+  answer: Ipswich Town
+  reviewed_correct: true
+- question_id: TB0631
+  answer: '6'
+  reviewed_correct: true
+- question_id: TB0632
+  answer: Frank McCourt
+  reviewed_correct: true
+- question_id: TB0633
+  answer: Motown
+  reviewed_correct: true
+- question_id: TB0634
+  answer: Antoine Lavoisier
+  reviewed_correct: true
+- question_id: TB0635
+  answer: Germany
+  reviewed_correct: true
+- question_id: TB0636
+  answer: Prague
+  reviewed_correct: true
+- question_id: TB0637
+  answer: Milwaukee
+  reviewed_correct: true
+- question_id: TB0638
+  answer: Sao Tome
+  reviewed_correct: true
+- question_id: TB0639
+  answer: Charlie Sheen
+  reviewed_correct: true
+- question_id: TB0640
+  answer: Leonid Brezhnev
+  reviewed_correct: true
+- question_id: TB0641
+  answer: Steel
+  reviewed_correct: true
+- question_id: TB0642
+  answer: '12'
+  reviewed_correct: true
+- question_id: TB0643
+  answer: Michio Kaku
+  reviewed_correct: false
+- question_id: TB0644
+  answer: Tony Bennett
+  reviewed_correct: true
+- question_id: TB0645
+  answer: New Lanark
+  reviewed_correct: true
+- question_id: TB0646
+  answer: The Rime of the Ancient Mariner
+  reviewed_correct: true
+- question_id: TB0647
+  answer: Cleopatra
+  reviewed_correct: true
+- question_id: TB0648
+  answer: Republican Party
+  reviewed_correct: true
+- question_id: TB0649
+  answer: Mickey Mouse
+  reviewed_correct: true
+- question_id: TB0650
+  answer: Basketball
+  reviewed_correct: true
+- question_id: TB0651
+  answer: Lou Gehrig
+  reviewed_correct: true
+- question_id: TB0652
+  answer: Mark Antony
+  reviewed_correct: true
+- question_id: TB0653
+  answer: Cobalt
+  reviewed_correct: true
+- question_id: TB0654
+  answer: Norwich
+  reviewed_correct: true
+- question_id: TB0655
+  answer: Julie Andrews
+  reviewed_correct: true
+- question_id: TB0656
+  answer: Darth Vader
+  reviewed_correct: true
+- question_id: TB0657
+  answer: Plutocracy
+  reviewed_correct: true
+- question_id: TB0658
+  answer: Venice
+  reviewed_correct: true
+- question_id: TB0659
+  answer: '9'
+  reviewed_correct: true
+- question_id: TB0660
+  answer: Set square
+  reviewed_correct: true
+- question_id: TB0661
+  answer: Flight of the Bumblebee
+  reviewed_correct: true
+- question_id: TB0662
+  answer: Trainspotting
+  reviewed_correct: true
+- question_id: TB0663
+  answer: Anteros
+  reviewed_correct: true
+- question_id: TB0664
+  answer: Mercury
+  reviewed_correct: true
+- question_id: TB0665
+  answer: Fiery Face
+  reviewed_correct: true
+- question_id: TB0666
+  answer: Shekel
+  reviewed_correct: true
+- question_id: TB0667
+  answer: Fianna Fail
+  reviewed_correct: true
+- question_id: TB0668
+  answer: Victor Frankenstein
+  reviewed_correct: true
+- question_id: TB0669
+  answer: Three
+  reviewed_correct: true
+- question_id: TB0670
+  answer: '225'
+  reviewed_correct: true
+- question_id: TB0671
+  answer: Queen Anne
+  reviewed_correct: true
+- question_id: TB0672
+  answer: Jeffery Deaver
+  reviewed_correct: true
+- question_id: TB0673
+  answer: Judas Iscariot
+  reviewed_correct: true
+- question_id: TB0674
+  answer: Iran
+  reviewed_correct: true
+- question_id: TB0675
+  answer: Johnny Cash
+  reviewed_correct: true
+- question_id: TB0676
+  answer: George IV
+  reviewed_correct: true
+- question_id: TB0677
+  answer: Costco
+  reviewed_correct: true
+- question_id: TB0678
+  answer: Canada
+  reviewed_correct: true
+- question_id: TB0679
+  answer: Dodo
+  reviewed_correct: true
+- question_id: TB0680
+  answer: Albert Einstein
+  reviewed_correct: true
+- question_id: TB0681
+  answer: Sinclair Lewis
+  reviewed_correct: true
+- question_id: TB0682
+  answer: Buddha
+  reviewed_correct: true
+- question_id: TB0683
+  answer: Skeg
+  reviewed_correct: true
+- question_id: TB0684
+  answer: Small Faces
+  reviewed_correct: true
+- question_id: TB0685
+  answer: '6'
+  reviewed_correct: true
+- question_id: TB0686
+  answer: Cactusville
+  reviewed_correct: true
+- question_id: TB0687
+  answer: Grimaldi
+  reviewed_correct: true
+- question_id: TB0688
+  answer: Coca-Cola
+  reviewed_correct: true
+- question_id: TB0689
+  answer: Nationalisation
+  reviewed_correct: true
+- question_id: TB0690
+  answer: Uranus
+  reviewed_correct: true
+- question_id: TB0691
+  answer: Michael Gove
+  reviewed_correct: true
+- question_id: TB0692
+  answer: '360'
+  reviewed_correct: true
+- question_id: TB0693
+  answer: Z-Cars
+  reviewed_correct: true
+- question_id: TB0694
+  answer: FA Cup
+  reviewed_correct: true
+- question_id: TB0695
+  answer: Chad McQueen
+  reviewed_correct: false
+- question_id: TB0696
+  answer: Tamagotchi
+  reviewed_correct: true
+- question_id: TB0697
+  answer: Edgehill
+  reviewed_correct: true
+- question_id: TB0698
+  answer: Quelch
+  reviewed_correct: true
+- question_id: TB0699
+  answer: Bass
+  reviewed_correct: true
+- question_id: TB0700
+  answer: England
+  reviewed_correct: true
+- question_id: TB0701
+  answer: Trapezium
+  reviewed_correct: true
+- question_id: TB0702
+  answer: Niagara
+  reviewed_correct: true
+- question_id: TB0703
+  answer: Athena
+  reviewed_correct: true
+- question_id: TB0704
+  answer: Voyeurism
+  reviewed_correct: true
+- question_id: TB0705
+  answer: Iron
+  reviewed_correct: true
+- question_id: TB0706
+  answer: Unseen Academicals
+  reviewed_correct: true
+- question_id: TB0707
+  answer: Dumbo
+  reviewed_correct: true
+- question_id: TB0708
+  answer: Violins
+  reviewed_correct: true
+- question_id: TB0709
+  answer: Taka
+  reviewed_correct: true
+- question_id: TB0710
+  answer: Sprite
+  reviewed_correct: true
+- question_id: TB0711
+  answer: Red
+  reviewed_correct: true
+- question_id: TB0712
+  answer: Westminster Abbey
+  reviewed_correct: true
+- question_id: TB0713
+  answer: Columbia
+  reviewed_correct: true
+- question_id: TB0714
+  answer: Paul Dukas
+  reviewed_correct: true
+- question_id: TB0715
+  answer: Quincy
+  reviewed_correct: true
+- question_id: TB0716
+  answer: Johannes Vermeer
+  reviewed_correct: true
+- question_id: TB0717
+  answer: Argentina
+  reviewed_correct: true
+- question_id: TB0718
+  answer: Dylan Thomas
+  reviewed_correct: true
+- question_id: TB0719
+  answer: Senet
+  reviewed_correct: true
+- question_id: TB0720
+  answer: '12345678987654321'
+  reviewed_correct: true
+- question_id: TB0721
+  answer: An embroidery
+  reviewed_correct: true
+- question_id: TB0722
+  answer: Apple tree
+  reviewed_correct: true
+- question_id: TB0723
+  answer: Martin Van Buren
+  reviewed_correct: true
+- question_id: TB0724
+  answer: LMFAO
+  reviewed_correct: true
+- question_id: TB0725
+  answer: Bridget Jones's Diary
+  reviewed_correct: true
+- question_id: TB0726
+  answer: Elizabeth Arden
+  reviewed_correct: true
+- question_id: TB0727
+  answer: Repechage
+  reviewed_correct: true
+- question_id: TB0728
+  answer: Lewis
+  reviewed_correct: true
+- question_id: TB0729
+  answer: Isosceles
+  reviewed_correct: true
+- question_id: TB0730
+  answer: General Belgrano
+  reviewed_correct: true
+- question_id: TB0731
+  answer: Jack Johnson
+  reviewed_correct: true
+- question_id: TB0732
+  answer: Helen Reddy
+  reviewed_correct: true
+- question_id: TB0733
+  answer: St Basil's Cathedral
+  reviewed_correct: true
+- question_id: TB0734
+  answer: Swiss Army knife
+  reviewed_correct: true
+- question_id: TB0735
+  answer: Glenn Close
+  reviewed_correct: true
+- question_id: TB0736
+  answer: Pyorrhea
+  reviewed_correct: true
+- question_id: TB0737
+  answer: The Owl and the Pussycat
+  reviewed_correct: true
+- question_id: TB0738
+  answer: John
+  reviewed_correct: true
+- question_id: TB0739
+  answer: Tower of London
+  reviewed_correct: true
+- question_id: TB0740
+  answer: Holiday Inn
+  reviewed_correct: true
+- question_id: TB0741
+  answer: Tungsten
+  reviewed_correct: true
+- question_id: TB0742
+  answer: Mathematics
+  reviewed_correct: true
+- question_id: TB0743
+  answer: Trina Gulliver
+  reviewed_correct: true
+- question_id: TB0744
+  answer: Jan van Eyck
+  reviewed_correct: true
+- question_id: TB0745
+  answer: Henry Campbell-Bannerman
+  reviewed_correct: true
+- question_id: TB0746
+  answer: John le Carre
+  reviewed_correct: true
+- question_id: TB0747
+  answer: Tourism
+  reviewed_correct: true
+- question_id: TB0748
+  answer: Antonio Vivaldi
+  reviewed_correct: true
+- question_id: TB0749
+  answer: Lisieux
+  reviewed_correct: true
+- question_id: TB0750
+  answer: European Council
+  reviewed_correct: true
+- question_id: TB0751
+  answer: BlackBerry
+  reviewed_correct: true
+- question_id: TB0752
+  answer: St Bartholomew's Hospital
+  reviewed_correct: true
+- question_id: TB0753
+  answer: Abacus
+  reviewed_correct: true
+- question_id: TB0754
+  answer: Man v. Food
+  reviewed_correct: true
+- question_id: TB0755
+  answer: Premium Bond
+  reviewed_correct: true
+- question_id: TB0756
+  answer: George Orwell
+  reviewed_correct: true
+- question_id: TB0757
+  answer: Churchill Downs
+  reviewed_correct: true
+- question_id: TB0758
+  answer: Meat Loaf
+  reviewed_correct: true
+- question_id: TB0759
+  answer: Thousand
+  reviewed_correct: true
+- question_id: TB0760
+  answer: Norway
+  reviewed_correct: true
+- question_id: TB0761
+  answer: Johann Sebastian Bach
+  reviewed_correct: true
+- question_id: TB0762
+  answer: In the beginning God
+  reviewed_correct: true
+- question_id: TB0763
+  answer: Barry Briggs
+  reviewed_correct: true
+- question_id: TB0764
+  answer: Pablo Picasso
+  reviewed_correct: true
+- question_id: TB0765
+  answer: Calvin Klein
+  reviewed_correct: true
+- question_id: TB0766
+  answer: Raging Bull
+  reviewed_correct: true
+- question_id: TB0767
+  answer: Andrew Johnson
+  reviewed_correct: true
+- question_id: TB0768
+  answer: Benjamin Franklin
+  reviewed_correct: true
+- question_id: TB0769
+  answer: Leprosy
+  reviewed_correct: true
+- question_id: TB0770
+  answer: '30'
+  reviewed_correct: true
+- question_id: TB0771
+  answer: Joshua
+  reviewed_correct: true
+- question_id: TB0772
+  answer: Eggs
+  reviewed_correct: true
+- question_id: TB0773
+  answer: South Africa
+  reviewed_correct: true
+- question_id: TB0774
+  answer: Royal Ascot
+  reviewed_correct: true
+- question_id: TB0775
+  answer: Brighton
+  reviewed_correct: true
+- question_id: TB0776
+  answer: Route 66
+  reviewed_correct: true
+- question_id: TB0777
+  answer: Wuthering Heights
+  reviewed_correct: true
+- question_id: TB0778
+  answer: Wigan
+  reviewed_correct: true
+- question_id: TB0779
+  answer: Florence
+  reviewed_correct: true
+- question_id: TB0780
+  answer: Claude Monet
+  reviewed_correct: true
+- question_id: TB0781
+  answer: Dick Francis
+  reviewed_correct: true
+- question_id: TB0782
+  answer: Musical scales
+  reviewed_correct: true
+- question_id: TB0783
+  answer: John Flamsteed
+  reviewed_correct: true
+- question_id: TB0784
+  answer: Microsoft
+  reviewed_correct: true
+- question_id: TB0785
+  answer: Night Court
+  reviewed_correct: true
+- question_id: TB0786
+  answer: Rudyard Kipling
+  reviewed_correct: true
+- question_id: TB0787
+  answer: Marine One
+  reviewed_correct: true
+- question_id: TB0788
+  answer: Alexander the Great
+  reviewed_correct: true
+- question_id: TB0789
+  answer: Syllogism
+  reviewed_correct: true
+- question_id: TB0790
+  answer: Iran
+  reviewed_correct: true
+- question_id: TB0791
+  answer: Kentucky Derby
+  reviewed_correct: true
+- question_id: TB0792
+  answer: Four Weddings and a Funeral
+  reviewed_correct: true
+- question_id: TB0793
+  answer: GMC
+  reviewed_correct: false
+- question_id: TB0794
+  answer: Abbey Theatre
+  reviewed_correct: true
+- question_id: TB0795
+  answer: St Basil
+  reviewed_correct: true
+- question_id: TB0796
+  answer: Spain
+  reviewed_correct: true
+- question_id: TB0797
+  answer: Secretary of State
+  reviewed_correct: true
+- question_id: TB0798
+  answer: Wars of the Roses
+  reviewed_correct: true
+- question_id: TB0799
+  answer: Legal highs
+  reviewed_correct: true
+- question_id: TB0800
+  answer: '99'
+  reviewed_correct: true
+- question_id: TB0801
+  answer: French
+  reviewed_correct: true
+- question_id: TB0802
+  answer: Theodore Roosevelt
+  reviewed_correct: true
+- question_id: TB0803
+  answer: Baseball cards
+  reviewed_correct: true
+- question_id: TB0804
+  answer: Puck
+  reviewed_correct: true
+- question_id: TB0805
+  answer: Guru Nanak
+  reviewed_correct: true
+- question_id: TB0806
+  answer: Poland
+  reviewed_correct: true
+- question_id: TB0807
+  answer: Daffodils
+  reviewed_correct: true
+- question_id: TB0808
+  answer: Gemini
+  reviewed_correct: true
+- question_id: TB0809
+  answer: Deepwater Horizon
+  reviewed_correct: true
+- question_id: TB0810
+  answer: Martin Peters
+  reviewed_correct: true
+- question_id: TB0811
+  answer: Piano
+  reviewed_correct: true
+- question_id: TB0812
+  answer: Helen of Troy
+  reviewed_correct: true
+- question_id: TB0813
+  answer: Crow
+  reviewed_correct: true
+- question_id: TB0814
+  answer: Platonic solids
+  reviewed_correct: true
+- question_id: TB0815
+  answer: George Lucas
+  reviewed_correct: true
+- question_id: TB0816
+  answer: South Africa
+  reviewed_correct: true
+- question_id: TB0817
+  answer: Income tax
+  reviewed_correct: true
+- question_id: TB0818
+  answer: Switzerland
+  reviewed_correct: true
+- question_id: TB0819
+  answer: Two
+  reviewed_correct: true
+- question_id: TB0820
+  answer: Shrek
+  reviewed_correct: true
+- question_id: TB0821
+  answer: Uncle Tom's Cabin
+  reviewed_correct: true
+- question_id: TB0822
+  answer: '0.5'
+  reviewed_correct: true
+- question_id: TB0823
+  answer: Fatima Whitbread
+  reviewed_correct: true
+- question_id: TB0824
+  answer: Denial, anger, bargaining, depression, acceptance
+  reviewed_correct: true
+- question_id: TB0825
+  answer: John
+  reviewed_correct: true
+- question_id: TB0826
+  answer: Enzo
+  reviewed_correct: true
+- question_id: TB0827
+  answer: Syriza
+  reviewed_correct: true
+- question_id: TB0828
+  answer: Furniture
+  reviewed_correct: true
+- question_id: TB0829
+  answer: '210'
+  reviewed_correct: true
+- question_id: TB0830
+  answer: 1870s
+  reviewed_correct: true
+- question_id: TB0831
+  answer: Venae cavae
+  reviewed_correct: true
+- question_id: TB0832
+  answer: Brazil
+  reviewed_correct: true
+- question_id: TB0833
+  answer: Shepherd Neame
+  reviewed_correct: true
+- question_id: TB0834
+  answer: Arthur Conan Doyle
+  reviewed_correct: true
+- question_id: TB0835
+  answer: France
+  reviewed_correct: true
+- question_id: TB0836
+  answer: Parthia
+  reviewed_correct: true
+- question_id: TB0837
+  answer: Robert F. Kennedy
+  reviewed_correct: true
+- question_id: TB0838
+  answer: Massively multiplayer online role-playing game
+  reviewed_correct: true
+- question_id: TB0839
+  answer: Oil
+  reviewed_correct: true
+- question_id: TB0840
+  answer: Croquet
+  reviewed_correct: true
+- question_id: TB0841
+  answer: Black Rod
+  reviewed_correct: true
+- question_id: TB0842
+  answer: Scotland
+  reviewed_correct: true
+- question_id: TB0843
+  answer: Sun
+  reviewed_correct: true
+- question_id: TB0844
+  answer: Thomas Chippendale
+  reviewed_correct: true
+- question_id: TB0845
+  answer: Orson Welles
+  reviewed_correct: true
+- question_id: TB0846
+  answer: Henry V
+  reviewed_correct: true
+- question_id: TB0847
+  answer: Pictures at an Exhibition
+  reviewed_correct: true
+- question_id: TB0848
+  answer: '81'
+  reviewed_correct: true
+- question_id: TB0849
+  answer: Hugh Hefner
+  reviewed_correct: true
+- question_id: TB0850
+  answer: Everest
+  reviewed_correct: true
+- question_id: TB0851
+  answer: Vietnam
+  reviewed_correct: true
+- question_id: TB0852
+  answer: Adam's rib
+  reviewed_correct: true
+- question_id: TB0853
+  answer: Edmund Cartwright
+  reviewed_correct: true
+- question_id: TB0854
+  answer: Indus River
+  reviewed_correct: true
+- question_id: TB0855
+  answer: Four
+  reviewed_correct: true
+- question_id: TB0856
+  answer: Fruit
+  reviewed_correct: true
+- question_id: TB0857
+  answer: Gold
+  reviewed_correct: true
+- question_id: TB0858
+  answer: Right-angled
+  reviewed_correct: true
+- question_id: TB0859
+  answer: Isabella
+  reviewed_correct: true
+- question_id: TB0860
+  answer: Pluto
+  reviewed_correct: true
+- question_id: TB0861
+  answer: South Pacific
+  reviewed_correct: true
+- question_id: TB0862
+  answer: M
+  reviewed_correct: true
+- question_id: TB0863
+  answer: Sony
+  reviewed_correct: true
+- question_id: TB0864
+  answer: The Oaks
+  reviewed_correct: true
+- question_id: TB0865
+  answer: Regent's Park
+  reviewed_correct: true
+- question_id: TB0866
+  answer: Herbert Hoover
+  reviewed_correct: true
+- question_id: TB0867
+  answer: Nigeria
+  reviewed_correct: true
+- question_id: TB0868
+  answer: Luke Skywalker
+  reviewed_correct: true
+- question_id: TB0869
+  answer: Red hair
+  reviewed_correct: true
+- question_id: TB0870
+  answer: Scalene
+  reviewed_correct: true
+- question_id: TB0871
+  answer: Skoda
+  reviewed_correct: true
+- question_id: TB0872
+  answer: Blue
+  reviewed_correct: true
+- question_id: TB0873
+  answer: Macbeth
+  reviewed_correct: true
+- question_id: TB0874
+  answer: Canterbury Cathedral
+  reviewed_correct: true
+- question_id: TB0875
+  answer: Ode to Joy
+  reviewed_correct: false
+- question_id: TB0876
+  answer: Muhammad Ali
+  reviewed_correct: true
+- question_id: TB0877
+  answer: Michael Foot
+  reviewed_correct: true
+- question_id: TB0878
+  answer: The Comedy of Errors
+  reviewed_correct: true
+- question_id: TB0879
+  answer: The White House
+  reviewed_correct: true
+- question_id: TB0880
+  answer: Italy
+  reviewed_correct: true
+- question_id: TB0881
+  answer: Haggis
+  reviewed_correct: true
+- question_id: TB0882
+  answer: Thomas Aquinas
+  reviewed_correct: true
+- question_id: TB0883
+  answer: Chord
+  reviewed_correct: true
+- question_id: TB0884
+  answer: Alice in Wonderland
+  reviewed_correct: true
+- question_id: TB0885
+  answer: Technetium
+  reviewed_correct: true
+- question_id: TB0886
+  answer: Pink Floyd
+  reviewed_correct: true
+- question_id: TB0887
+  answer: Cuban cigars
+  reviewed_correct: true
+- question_id: TB0888
+  answer: Neon
+  reviewed_correct: true
+- question_id: TB0889
+  answer: '1768'
+  reviewed_correct: true
+- question_id: TB0890
+  answer: Squash
+  reviewed_correct: true
+- question_id: TB0891
+  answer: Alexander the Great
+  reviewed_correct: true
+- question_id: TB0892
+  answer: '400'
+  reviewed_correct: true
+- question_id: TB0893
+  answer: Finally
+  reviewed_correct: false
+- question_id: TB0894
+  answer: Supermarine
+  reviewed_correct: true
+- question_id: TB0895
+  answer: Spike TV
+  reviewed_correct: true
+- question_id: TB0896
+  answer: Massachusetts
+  reviewed_correct: true
+- question_id: TB0897
+  answer: European Economic Community
+  reviewed_correct: true
+- question_id: TB0898
+  answer: '100'
+  reviewed_correct: true
+- question_id: TB0899
+  answer: Addis Ababa
+  reviewed_correct: true
+- question_id: TB0900
+  answer: Rodrigo Borgia
+  reviewed_correct: true
+- question_id: TB0901
+  answer: Snapdragon
+  reviewed_correct: true
+- question_id: TB0902
+  answer: Manila
+  reviewed_correct: true
+- question_id: TB0903
+  answer: Director General of MI5
+  reviewed_correct: true
+- question_id: TB0904
+  answer: Haribo
+  reviewed_correct: true
+- question_id: TB0905
+  answer: Georges Bizet
+  reviewed_correct: true
+- question_id: TB0906
+  answer: Barry and Yvonne
+  reviewed_correct: true
+- question_id: TB0907
+  answer: Alexander
+  reviewed_correct: true
+- question_id: TB0908
+  answer: Waterford
+  reviewed_correct: true
+- question_id: TB0909
+  answer: Pyrotechnics
+  reviewed_correct: true
+- question_id: TB0910
+  answer: Birmingham City
+  reviewed_correct: true
+- question_id: TB0911
+  answer: First past the post
+  reviewed_correct: true
+- question_id: TB0912
+  answer: New South Wales
+  reviewed_correct: true
+- question_id: TB0913
+  answer: Verona
+  reviewed_correct: true
+- question_id: TB0914
+  answer: The Full Monty
+  reviewed_correct: true
+- question_id: TB0915
+  answer: Travelocity
+  reviewed_correct: true
+- question_id: TB0916
+  answer: Carmen
+  reviewed_correct: true
+- question_id: TB0917
+  answer: '20'
+  reviewed_correct: true
+- question_id: TB0918
+  answer: Human
+  reviewed_correct: true
+- question_id: TB0919
+  answer: Ludwig van Beethoven
+  reviewed_correct: true
+- question_id: TB0920
+  answer: Joanne Harris
+  reviewed_correct: true
+- question_id: TB0921
+  answer: Alzheimer's disease
+  reviewed_correct: true
+- question_id: TB0922
+  answer: Pfennig
+  reviewed_correct: true
+- question_id: TB0923
+  answer: Johnny Weissmuller
+  reviewed_correct: true
+- question_id: TB0924
+  answer: Richard Lester
+  reviewed_correct: true
+- question_id: TB0925
+  answer: Raphael
+  reviewed_correct: true
+- question_id: TB0926
+  answer: Manifesto
+  reviewed_correct: true
+- question_id: TB0927
+  answer: Henry VI
+  reviewed_correct: true
+- question_id: TB0928
+  answer: X
+  reviewed_correct: true
+- question_id: TB0929
+  answer: Margaret Thatcher
+  reviewed_correct: true
+- question_id: TB0930
+  answer: Strontium
+  reviewed_correct: true
+- question_id: TB0931
+  answer: Goofy
+  reviewed_correct: true
+- question_id: TB0932
+  answer: Patience
+  reviewed_correct: true
+- question_id: TB0933
+  answer: Mo Farah
+  reviewed_correct: true
+- question_id: TB0934
+  answer: In God We Trust
+  reviewed_correct: true
+- question_id: TB0935
+  answer: Thalia
+  reviewed_correct: true
+- question_id: TB0936
+  answer: Netherlands
+  reviewed_correct: true
+- question_id: TB0937
+  answer: Edward III
+  reviewed_correct: true
+- question_id: TB0938
+  answer: '40'
+  reviewed_correct: true
+- question_id: TB0939
+  answer: Bobby Fischer
+  reviewed_correct: true
+- question_id: TB0940
+  answer: Mark Darcy
+  reviewed_correct: true
+- question_id: TB0941
+  answer: Adidas
+  reviewed_correct: true
+- question_id: TB0942
+  answer: '3.142'
+  reviewed_correct: true
+- question_id: TB0943
+  answer: Anwar Sadat
+  reviewed_correct: true
+- question_id: TB0944
+  answer: Joseph Priestley
+  reviewed_correct: true
+- question_id: TB0945
+  answer: Boston Pops Orchestra
+  reviewed_correct: true
+- question_id: TB0946
+  answer: Elizabeth Taylor
+  reviewed_correct: true
+- question_id: TB0947
+  answer: Dieu et mon droit
+  reviewed_correct: true
+- question_id: TB0948
+  answer: '13'
+  reviewed_correct: true
+- question_id: TB0949
+  answer: Raymond Benson
+  reviewed_correct: true
+- question_id: TB0950
+  answer: Cat Stevens
+  reviewed_correct: true
+- question_id: TB0951
+  answer: J. M. W. Turner
+  reviewed_correct: true
+- question_id: TB0952
+  answer: Angola
+  reviewed_correct: true
+- question_id: TB0953
+  answer: Warner Bros.
+  reviewed_correct: true
+- question_id: TB0954
+  answer: James Van Allen
+  reviewed_correct: true
+- question_id: TB0955
+  answer: Karl Marx and Friedrich Engels
+  reviewed_correct: true
+- question_id: TB0956
+  answer: Morecambe
+  reviewed_correct: true
+- question_id: TB0957
+  answer: Great Pyramid of Giza
+  reviewed_correct: true
+- question_id: TB0958
+  answer: Isosceles
+  reviewed_correct: true
+- question_id: TB0959
+  answer: '1990'
+  reviewed_correct: true
+- question_id: TB0960
+  answer: Galileo Galilei
+  reviewed_correct: true
+- question_id: TB0961
+  answer: Niger
+  reviewed_correct: true
+- question_id: TB0962
+  answer: Model T
+  reviewed_correct: true
+- question_id: TB0963
+  answer: Sue
+  reviewed_correct: true
+- question_id: TB0964
+  answer: Reform Club
+  reviewed_correct: true
+- question_id: TB0965
+  answer: Mongols
+  reviewed_correct: true
+- question_id: TB0966
+  answer: Nick Knowles
+  reviewed_correct: true
+- question_id: TB0967
+  answer: Singapore
+  reviewed_correct: true
+- question_id: TB0968
+  answer: Robert Boyle
+  reviewed_correct: true
+- question_id: TB0969
+  answer: Scalp
+  reviewed_correct: true
+- question_id: TB0970
+  answer: '364'
+  reviewed_correct: true
+- question_id: TB0971
+  answer: The Blue Boy
+  reviewed_correct: true
+- question_id: TB0972
+  answer: Beatrix Potter
+  reviewed_correct: true
+- question_id: TB0973
+  answer: Mecca
+  reviewed_correct: true
+- question_id: TB0974
+  answer: Tom Watson
+  reviewed_correct: true
+- question_id: TB0975
+  answer: George Lucas
+  reviewed_correct: true
+- question_id: TB0976
+  answer: Jeffrey Archer
+  reviewed_correct: true
+- question_id: TB0977
+  answer: 19th century
+  reviewed_correct: true
+- question_id: TB0978
+  answer: Arithmetic
+  reviewed_correct: true
+- question_id: TB0979
+  answer: Grapevines
+  reviewed_correct: true
+- question_id: TB0980
+  answer: David Lloyd George
+  reviewed_correct: true
+- question_id: TB0981
+  answer: Portugal
+  reviewed_correct: true
+- question_id: TB0982
+  answer: Canada
+  reviewed_correct: true
+- question_id: TB0983
+  answer: Songs of Experience
+  reviewed_correct: true
+- question_id: TB0984
+  answer: Gun
+  reviewed_correct: true
+- question_id: TB0985
+  answer: Uber
+  reviewed_correct: true
+- question_id: TB0986
+  answer: Sergeant Major Snudge
+  reviewed_correct: true
+- question_id: TB0987
+  answer: Surfing
+  reviewed_correct: true
+- question_id: TB0988
+  answer: Prime number
+  reviewed_correct: true
+- question_id: TB0989
+  answer: Mutiny on the Bounty
+  reviewed_correct: true
+- question_id: TB0990
+  answer: Hudson's Bay Company
+  reviewed_correct: true
+- question_id: TB0991
+  answer: Carol Vorderman
+  reviewed_correct: true
+- question_id: TB0992
+  answer: '1979'
+  reviewed_correct: true
+- question_id: TB0993
+  answer: Talk Like a Pirate Day
+  reviewed_correct: true
+- question_id: TB0994
+  answer: Law of thermodynamics
+  reviewed_correct: true
+- question_id: TB0995
+  answer: '1284'
+  reviewed_correct: true
+- question_id: TB0996
+  answer: Piccolo
+  reviewed_correct: true
+- question_id: TB0997
+  answer: Charlie Parker
+  reviewed_correct: true
+- question_id: TB0998
+  answer: '2'
+  reviewed_correct: true
+- question_id: TB0999
+  answer: Pluto
+  reviewed_correct: true
+- question_id: TB1000
+  answer: The Merchant of Venice
+  reviewed_correct: true
