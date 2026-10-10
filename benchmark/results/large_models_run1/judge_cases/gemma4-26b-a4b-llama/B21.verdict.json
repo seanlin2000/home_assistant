@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["agreed_with_false_premise"],
+  "search_decision_correct": false,
+  "answer_quality": 1,
+  "judgment": 0,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Asking for the user's current rate and balance is a sliver of the reference, but it never checks the federal funds rate and never says rates were not cut to zero.",
+  "judgment_reason": "It skipped the search and let the false 'cut rates to zero' premise stand, which was the central point of the question.",
+  "spoken_fit_reason": "Two short plain sentences."
+}

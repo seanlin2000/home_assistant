@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "All figures match the reference: 44,100 for the one-year lease, 43,260 plus 44,557.80 for 87,817.80 on the two-year lease, and 840 in first-year savings, with the comparison basis stated.",
+  "judgment_reason": "It notes that year two of the one-year path is unknown and labels the 2,587 figure as an estimate under an assumed second 5 percent raise.",
+  "spoken_fit_reason": "Plain prose with no formatting; the several sentences are needed for the two options and the savings the question asked for."
+}

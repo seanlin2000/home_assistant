@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It gives both figures and the calculator's 4.3 ratio and says it compares the 36.95 million Greater Tokyo metro with about 8.55 million in New York City proper, but that mismatched pairing produces a ratio far from the like-for-like 1.6 or roughly 2 in the reference, and the NYC figure came from World Population Review rather than Wikipedia.",
+  "judgment_reason": "It disclosed the metro-versus-city mismatch, but it did not choose comparable measures or warn that the mismatch inflates the ratio.",
+  "spoken_fit_reason": "Two plain sentences that lead with the ratio."
+}

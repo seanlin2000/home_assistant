@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It names the 3.88 percent effective rate from the H.15 and sofrrate excerpts (inside the 3.75 to 4.00 percent target range) and gives 970 dollars from the calculator.",
+  "judgment_reason": "It searched as instructed, picked the current 2026 figure over the stale 2025 page, and used the calculator for the interest.",
+  "spoken_fit_reason": "Two plain sentences that state the rate and then the interest."
+}

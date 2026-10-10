@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It replied exactly 'Can you repeat that?', the reference's best reply to the cut-off request.",
+  "judgment_reason": "It asked for clarification rather than guessing a country.",
+  "spoken_fit_reason": "The fixed four-word reply is the ideal length."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Both afternoon highs (Lisbon about 79, home around 69) match the two forecast results and the 10-degree difference is correct, but the reference asks for the difference from the calculator and none was called.",
+  "judgment_reason": "It correctly used two forecast calls and no web search, but it did the subtraction itself instead of calling the calculator.",
+  "spoken_fit_reason": "It leads with 'About 10 degrees warmer' and adds one supporting sentence."
+}

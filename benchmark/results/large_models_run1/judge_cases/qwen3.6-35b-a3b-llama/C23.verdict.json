@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The $11.61 tip and $76.11 total match the reference exactly and come from the calculator results.",
+  "judgment_reason": "It used the percent and calculate tools as expected for explicit arithmetic and did not search.",
+  "spoken_fit_reason": "One sentence giving both numbers."
+}

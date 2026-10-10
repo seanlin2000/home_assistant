@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It names Paris, Texas and summarizes the week accurately from the tool: dry through Monday with highs in the mid to upper 80s, warmer midweek, showers Wednesday and heavy rain Thursday.",
+  "judgment_reason": "It used the weather tool for the right Paris without searching.",
+  "spoken_fit_reason": "Two plain sentences that summarize the week instead of reading out each day."
+}

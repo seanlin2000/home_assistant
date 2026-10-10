@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It explicitly says ChatGPT-like quality is not realistic under 1,000, explains why from the 16 GB fit limits in the PromptQuorum excerpt, and gives a within-budget build at the calculator-checked 845 dollars, based on GPUDojo's 650 used 5060 Ti and InsiderLLM's tower and PSU prices, plus the 1,300-plus cost of the 24 GB route.",
+  "judgment_reason": "It honors the user's instruction to say plainly when requirements cannot be met, and it keeps the recommended build inside the budget, with room left for a mic and speaker.",
+  "spoken_fit_reason": "It leads with the explicit 'not realistic' verdict in plain prose, at a length that suits a multi-part build question."
+}

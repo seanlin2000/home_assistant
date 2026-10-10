@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It covers the mic array with beamforming and echo cancellation, speaker isolation, a local wake word, low latency, placement, and a mute switch, but it omits where the compute runs and network reliability from the reference.",
+  "judgment_reason": "It names no products or brands, as the constraint required, and it focuses on microphones and conversation as the user asked.",
+  "spoken_fit_reason": "Plain prose that leads with 'the microphones matter more than anything else', with no lists or markdown."
+}

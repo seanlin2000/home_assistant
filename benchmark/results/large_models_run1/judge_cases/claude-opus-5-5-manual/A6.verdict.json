@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It weighs the $400 against the step up to comfortable 27 to 32 billion parameter models and gives a conditional recommendation that turns on the user's target model sizes, as the reference requires.",
+  "judgment_reason": "It builds on the 16 versus 24 GB comparison from the first exchange without asking the user to repeat anything, and it states the conditions under which each choice wins.",
+  "spoken_fit_reason": "It leads with 'It might' and gives four short prose sentences."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It answers 'yes, but not out of the box', names the stock options Okay Nabu, Hey Jarvis, and Hey Mycroft from the Nabu Casa article, and gives the custom-firmware and openWakeWord streaming routes backed by the gist and the open-voice-pe repository.",
+  "judgment_reason": "It searched as instructed and explains why it trusted the official Nabu Casa article over community projects, which it marks as not officially supported.",
+  "spoken_fit_reason": "It leads with the answer in plain prose, and the source explanation the user requested justifies the extra sentences."
+}

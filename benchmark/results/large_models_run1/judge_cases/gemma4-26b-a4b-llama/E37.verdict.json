@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It covers both days with conditions and Sunday's rain, matching the tool, but it gives only the highs (69 and 64) rather than each day's range.",
+  "judgment_reason": "It used the home forecast tool without searching and flagged that an umbrella may be needed Sunday.",
+  "spoken_fit_reason": "Two plain sentences that summarize rather than read out the tool output."
+}

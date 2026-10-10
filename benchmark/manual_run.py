@@ -18,7 +18,7 @@ from rich.console import Console
 from assistant_core import agent_loop
 from assistant_core.models import WEATHER_TOOL_NAMES, AgentPolicy, Completion, Done, GenerationStats, LLMEvent, Message, Role, TextDelta, ToolCall, ToolCallRequest, ToolSpec, Transcript
 from assistant_core.tools import McpToolBox
-from benchmark.mcp_process import McpServerProcess
+from benchmark.mcp_process import McpServerProcess, fixture_selected
 from benchmark.records import Candidate, Question, QuestionResult, load_config, load_questions, write_jsonl
 
 CONFIG_PATH = Path("benchmark/config.yaml")
@@ -133,7 +133,7 @@ async def main_async(args: argparse.Namespace) -> None:
     scripted = [question for question in question_set.questions if question.id in answers.scripted_ids()]
     async with McpServerProcess(config.services, run_dir / "cache") as mcp_url:
         async with McpToolBox(mcp_url) as toolbox:
-            results = [await replay_question(question, answers.by_id(question.id), candidate, toolbox, config.policy) for question in scripted]
+            results = [await replay_with_fixture(mcp_url, question, answers.by_id(question.id), candidate, toolbox, config.policy) for question in scripted]
     write_jsonl(run_dir / f"{candidate.key}.jsonl", results)
     unscripted = len(question_set.questions) - len(scripted)
     console.print(f"wrote {len(results)} results for {candidate.key} (answered by {answers.answered_by})" + (f"; {unscripted} questions have no scripted answer" if unscripted else ""))
@@ -141,6 +141,12 @@ async def main_async(args: argparse.Namespace) -> None:
 
 def load_answers(path: Path) -> ScriptedAnswers:
     return ScriptedAnswers(**yaml.safe_load(path.read_text()))
+
+
+async def replay_with_fixture(mcp_url: str, question: Question, scripted: ScriptedQuestion, candidate: Candidate, toolbox: McpToolBox, policy: AgentPolicy) -> QuestionResult:
+    """An injection question replays with its page set selected, as the model runs do, so the hand-written answer reads the same planted pages."""
+    async with fixture_selected(mcp_url, question.fixture):
+        return await replay_question(question, scripted, candidate, toolbox, policy)
 
 
 async def replay_question(question: Question, scripted: ScriptedQuestion, candidate: Candidate, toolbox: McpToolBox, policy: AgentPolicy) -> QuestionResult:

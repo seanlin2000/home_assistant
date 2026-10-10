@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It opens with a clear no and explains that the router picks different experts per token so all experts must be loaded, that memory scales with total parameters, and that the active part alone is about 2 GB at 4-bit.",
+  "judgment_reason": "It rejects the false premise directly and adds the honest caveat that expert offloading to system RAM can work, only more slowly.",
+  "spoken_fit_reason": "It leads with 'No, that's not correct' in plain prose, at a length that suits an 'explain exactly why' question."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The critique is strong (time to first word dominated by prompt processing, default thinking mode, tool-call reliability under compression, STT and TTS sharing memory), and the 2 to 4 tok/s offload figure matches willitrunai, but the 15 to 25 tok/s estimate comes from the visibly self-contradicting xplaination article.",
+  "judgment_reason": "It answered the second, critical part directly ('That isn't enough to predict a good voice experience') and recommends measuring time to first spoken word with a real prompt.",
+  "spoken_fit_reason": "Plain prose that leads with the short answer, but at about nine sentences it is long for listening."
+}

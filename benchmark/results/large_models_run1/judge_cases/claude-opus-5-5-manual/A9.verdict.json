@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It lists departure point, dates and length, a budget number and its scope, what counts as warm, companions, and interests, and it warns against assuming a beach, flying, traveling alone, season, or a passport, which covers the reference.",
+  "judgment_reason": "It names no destination and invents no preferences, and it sensibly treats public transit as a sign the user may have no car.",
+  "spoken_fit_reason": "Three prose sentences that answer both parts directly with no list formatting."
+}

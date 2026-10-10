@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The rain summary matches the forecast, but it first gives 1:25 'in the afternoon' as the last Seattle departure, misreading a late-night Bainbridge departure listed as '1:25 P' after 10:30 and 12:00, before contradicting itself.",
+  "judgment_reason": "It ended by saying plainly that it could not find the last Seattle-to-Bainbridge time, but only after first giving a wrong one.",
+  "spoken_fit_reason": "The spoken 'Wait, I should clarify' self-correction buries the answer and would confuse a listener."
+}

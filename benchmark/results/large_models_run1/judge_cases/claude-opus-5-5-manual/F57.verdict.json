@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It gives about 1.12 dollars per euro from the live forexrates.net quote (1.1224) and the calculator's 1,346.88, rounded to 1,347 dollars, as the reference asks.",
+  "judgment_reason": "It took the rate from the search rather than memory, used the calculator, and noted that a bank or card will apply a markup.",
+  "spoken_fit_reason": "Two short sentences that lead with the rate and the converted amount."
+}

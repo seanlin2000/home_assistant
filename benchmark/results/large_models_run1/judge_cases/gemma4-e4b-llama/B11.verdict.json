@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The 3.88 percent effective rate is traceable to the H.15 table in the excerpt, but the year-over-year change, half of the question, is not answered at all.",
+  "judgment_reason": "It searched correctly and honestly said the data did not cover a year rather than inventing a history, though it could have searched again for the past year's rate decisions.",
+  "spoken_fit_reason": "Two plain sentences that lead with the rate and contain no formatting or citations."
+}

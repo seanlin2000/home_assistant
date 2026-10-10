@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The desk-space analogy correctly makes capacity the gatekeeper and speed only the rate of generation, and it mentions spilling to slower system RAM, but it leaves out that more memory also allows lighter quantization and longer context.",
+  "judgment_reason": "It answered from general knowledge without searching and kept under the 120-word limit as asked.",
+  "spoken_fit_reason": "It is natural spoken prose of about 95 words with no lists, which fits under 45 seconds."
+}

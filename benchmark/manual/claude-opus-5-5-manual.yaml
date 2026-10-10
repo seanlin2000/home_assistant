@@ -1,0 +1,369 @@
+# Hand-written pass by Claude Opus 5.5 on 2026-10-09, as a fresh subagent with no access to earlier answers, results, or memory.
+candidate_key: claude-opus-5-5-manual
+answered_by: Claude Opus 5.5, fresh subagent, closed book
+questions:
+  - question_id: A1
+    exchanges:
+      - answer: >-
+          Two different numbers are at play. The memory you need depends on every parameter the model has, because all of them have to be stored somewhere. The speed depends on how many parameters are read for each token. A dense 30 billion parameter model reads all 30 billion for every token, and at 4-bit that is roughly 15 to 17 gigabytes before you add the context cache, so on a 16 gigabyte card part of it spills into system RAM and every single token waits on that slow memory. A mixture-of-experts model with 30 billion total but only about 3 billion active still needs room for all 30 billion, but each token only touches a small slice. So you keep the shared layers and cache on the GPU and park the rarely used experts in system RAM, and because so little is read per token, it still runs at a usable speed. The MoE doesn't need less storage; it just tolerates having that storage somewhere slower.
+  - question_id: A2
+    exchanges:
+      - calls:
+          - {name: growth_schedule, arguments: {start: 3500, rate_percent: 5, periods: 2, per_period_multiplier: 12}}
+          - {name: growth_schedule, arguments: {start: 3500, rate_percent: 3, periods: 2, per_period_multiplier: 12}}
+          - {name: calculate, arguments: {expression: "44100 - 43260"}}
+          - {name: calculate, arguments: {expression: "90405 - 87817.80"}}
+        answer: >-
+          The one-year lease takes rent to 3,675 dollars a month, which is 44,100 dollars for the year. The two-year lease is 3,605 a month in the first year and 3,713.15 in the second, so 43,260 then 44,557.80, for 87,817.80 dollars over two years. Comparing just the first year, the two-year lease saves you 840 dollars. The one-year lease doesn't say what happens in year two, so I can only estimate the full comparison: if the landlord raised you another 5 percent at renewal, the one-year path would cost 90,405 dollars over two years, and the two-year lease would save you about 2,587 dollars. Either way, the two-year lease is the cheaper option.
+  - question_id: A3
+    exchanges:
+      - answer: >-
+          No, that's not correct. The 4 billion active parameters tell you how much work happens per token, not how much memory the model needs. The router picks different experts for each token, so every expert has to be loaded and ready, and memory scales with the total parameter count, which might be 30 billion or more. Even the active part alone is about 2 gigabytes at 4-bit, plus the context cache and runtime overhead. What a 4 gigabyte GPU can do is hold the shared layers and the cache while the experts live in system RAM. That can work, and the low active count keeps it tolerably fast, but only if you have enough system RAM to hold the whole model, and it will be noticeably slower than running fully on the GPU.
+  - question_id: A4
+    exchanges:
+      - answer: >-
+          The most common explanation is simply normal aging: many plants shed their oldest lower leaves as they put energy into new growth, especially if it's only a leaf or two at a time. The next most likely is a nutrient shortage, often nitrogen, where the plant pulls mobile nutrients out of old leaves to feed the new ones. Other possibilities are the top growth shading the lower leaves, overwatering or a root problem, or a plant that has outgrown its pot. Before deciding, I'd want to know what kind of plant it is, how many leaves it's losing and how quickly, whether the yellowing is even or patchy between the veins, how often you water and whether the soil stays wet, when it was last fed or repotted, and how much light the lower leaves get.
+  - question_id: A5
+    exchanges:
+      - answer: >-
+          In a 500 square foot room, the microphones matter more than anything else. Look for an array of at least two to four microphones so the device can beamform toward your voice, paired with good echo cancellation so it can hear you while it's talking, which is what makes natural back-and-forth and interrupting possible. Noise suppression and automatic gain help with fans, traffic, and a TV. Keep the speaker acoustically isolated from the microphones, since vibration through the case ruins echo cancellation. Run the wake word locally and keep the speech pipeline fast, because latency is what makes conversation feel natural. Place it centrally, around head height, away from walls, corners, and noisy appliances. And plan for a physical mute switch and clear light or sound feedback so you know when it's listening.
+  - question_id: A6
+    exchanges:
+      - answer: >-
+          For a local LLM, I'd lean toward the 24 gigabyte machine. Memory decides which models fit at all. With 16 gigabytes you can comfortably run models up to about 14 billion parameters, or squeeze a 27 to 32 billion parameter model in at around 3 or 4-bit with a short context. With 24 gigabytes those larger models fit at a proper 4-bit with room for longer conversations and speech models alongside. If the price gap is small, take the 24.
+      - answer: >-
+          It might. Four hundred dollars buys you one real step up in model size: 27 to 32 billion parameter models running comfortably instead of squeezed, which is a noticeable quality jump. If that's what you want to run, or you plan to keep the machine a few years, the extra money is worth it. If you'll mostly run models around 8 to 14 billion parameters, or mixture-of-experts models that can spill into system RAM, the 16 gigabyte machine does that well and I'd keep the 400 dollars.
+  - question_id: A7
+    exchanges:
+      - calls:
+          - {name: energy_cost, arguments: {watts: 300, hours_per_day: 1, idle_watts: 50, price_per_kwh: 0.30, days: 30}}
+          - {name: energy_cost, arguments: {watts: 300, hours_per_day: 0.25, idle_watts: 50, price_per_kwh: 0.30, days: 30}}
+        answer: >-
+          Roughly 11 to 13 dollars a month, under a few assumptions. I'm assuming the computer stays on all day, idling at 50 watts when it isn't working, and an electricity price of about 30 cents a kilowatt hour, roughly what New York households pay. If the full hour you spend with it were spent at 300 watts, that's about 1.45 kilowatt hours a day, 43.5 a month, or about 13 dollars. In practice the model only runs while it's generating replies, so if only about 15 minutes of that hour are real load, it's closer to 11.40 dollars. Notice that idling all day costs more than the inference itself, so letting it sleep when you're not using it is the biggest saving.
+  - question_id: A8
+    exchanges:
+      - answer: >-
+          I'd recommend the router design. Most things you say to a home assistant, like timers, lights, weather, and simple facts, have exact answers that deterministic tools handle instantly and reliably, without the risk of a model inventing something. That makes those requests faster, cheaper to run, and predictable, and it frees the larger model to spend its time on questions that actually need reasoning. A single large model is simpler to build and handles odd phrasing gracefully, but it adds latency and some unpredictability to every request. The router's main risk is misclassifying a request, so make it fall back to the large model whenever it isn't confident.
+  - question_id: A9
+    exchanges:
+      - answer: >-
+          I'd still need to know where you're starting from, when and for how long you want to go, what "not too expensive" means to you as an actual number and whether that covers flights, lodging, or the whole trip, how warm counts as warm, who's coming, and what you want to do there, whether that's beaches, a city, or hiking. I'd avoid assuming you want a beach, that you'll fly, that you're traveling alone, what season it is where you're going, or that you're willing to go abroad or have a passport. I'd also avoid treating good public transportation as just a nice extra, since it may mean you won't have a car at all.
+  - question_id: A10
+    exchanges:
+      - answer: >-
+          A language model has to fit in memory before speed even matters. Each word it generates means reading through all of its weights, so they need to sit in the GPU's fast memory. If the model doesn't fit, the overflow spills into much slower system memory, and a fast GPU ends up waiting on it, often running five or ten times slower. A slower card with enough memory keeps everything in one place and stays usable. Memory capacity decides which models you can run at all, while speed only decides how fast they run once they fit. So when choosing hardware, buy enough memory first, then the fastest card you can afford.
+  - question_id: A11
+    exchanges:
+      - answer: >-
+          The Berlin Wall fell in 1989, on November 9th.
+  - question_id: B11
+    exchanges:
+      - queries:
+          - "federal funds rate target range FOMC September 2026"
+        answer: >-
+          The federal funds rate is now 3.75 to 4 percent. The Fed raised it a quarter point on September 16th, its first hike since 2023, because of stubborn inflation. Over the past year it has moved down and then back up. A year ago it was 4 to 4.25 percent, and the Fed cut three times in late 2025 to 3.5 to 3.75. It held there through the first five meetings of 2026 before September's increase. Most officials expect at least one more hike this year, with the next meeting on October 28th.
+  - question_id: B12
+    exchanges:
+      - queries:
+          - "best GPU VRAM per dollar local LLM 2026 under $1000 build"
+          - "used RTX 3090 local LLM build total cost 2026"
+          - "RTX 5060 Ti 16GB price October 2026"
+        calls:
+          - {name: calculate, arguments: {expression: "650 + 150 + 45"}}
+        answer: >-
+          At a firm 1,000 dollars total, 16 gigabytes of video memory is the realistic ceiling right now. The usual value pick, a used RTX 3090 with 24 gigabytes, has jumped to around 1,200 to 1,400 dollars on its own, so a full system with one runs 1,300 to 1,500. Build guides from earlier this year put a new RTX 5060 Ti 16 gigabyte system just under 1,000, but that card has since climbed to about 650 dollars used and 780 new. A cheaper way to get 16 gigabytes is that card bought used, put in a used office tower with a new power supply, which comes to about 845 dollars. If 12 gigabytes is enough, a used office tower with a used RTX 3060 costs about 475. Prices are moving every week because of the memory shortage, so check listings before you buy.
+  - question_id: B13
+    exchanges:
+      - calls:
+          - {name: weather_forecast, arguments: {day: "tomorrow", place: "Lucerne, Switzerland"}}
+        queries:
+          - "Lucerne day trip public transport Pilatus Rigi October 2026 schedule"
+        answer: >-
+          Tomorrow looks wet in Lucerne: rain in the morning, scattered showers in the afternoon, heavier showers in the evening, with temperatures in the mid 50s to low 60s. That matters because the summit views are the whole point of Pilatus and Rigi, and they'll likely be in cloud. If you still want a mountain, the full Pilatus Golden Round Trip is still running, with boats from Lucerne to Alpnachstad until October 18th. On a Saturday there are departures at 8:38, 9:38, and 10:38, then the cogwheel railway up. Rigi, by boat to Vitznau and its cogwheel train, is the other classic. Check the summit webcams in the morning before buying tickets. If it's clouded in, I'd pick something that's scenic in the rain instead, like a covered lake cruise or the Luzern to Interlaken train over the Brünig Pass.
+  - question_id: B14
+    exchanges:
+      - calls:
+          - {name: search_and_read, arguments: {query: "why NVIDIA GPU prices rising 2026 memory shortage supply", time_range: "month"}}
+        answer: >-
+          The main thing that changed is memory, not the GPU chips themselves. The AI data center buildout is swallowing the world's memory production, so manufacturers like SK hynix, Samsung, and Micron have moved their factories toward high-margin server and AI memory. That has cut output of the GDDR6 and GDDR7 memory graphics cards use. Memory contract prices have climbed all through 2026, and the fixed-price memory deals card makers relied on expired at the end of 2025, so the higher costs flowed straight through. Card makers responded with price increases and production cuts, hitting the highest-memory cards hardest, and scalping made it worse. An RTX 5090 that launched at 1,999 dollars has been seen at 4,000 to 5,000. Micron said on October 1st that demand will outrun supply into 2028, so analysts don't expect real relief before then.
+  - question_id: B15
+    exchanges:
+      - queries:
+          - "RTX 5060 Ti 16GB price October 2026"
+          - "used RTX 4060 Ti 16GB price October 2026"
+          - "used RTX A4000 16GB price 2026"
+        answer: >-
+          Honestly, a 16 gigabyte NVIDIA card under 500 dollars is hard to find right now. The memory shortage has pushed prices up: the RTX 5060 Ti 16 gigabyte, the usual pick, is around 650 dollars used and 780 or more new. Your best bet is a used RTX 4060 Ti 16 gigabyte. A September roundup put those at roughly 380 to 470 dollars, but current eBay asking prices start around 650, so you'd have to be patient and hunt for a deal. It's also slower than newer cards because of its narrow memory bus. The only thing reliably under budget is an old Tesla P100 datacenter card, at about 120 dollars, but it has no fan or display output and is a much older generation, so I'd only suggest it if you're comfortable tinkering.
+  - question_id: B16
+    exchanges:
+      - queries:
+          - "Long Island City rent market report September 2026"
+          - "Queens rent year over year increase 2026 Long Island City median rent"
+        answer: >-
+          A 4 percent increase looks roughly at market, maybe slightly above it. The listing data I found shows Long Island City rents up only about 1 to 4 percent over the past year: RentCafe puts the average near 4,800 dollars, up about 1.3 percent, and another estimate puts it up about 3.9 percent. Month to month, LIC rents have been basically flat. Queens as a whole rose about 3 to 4 percent. So 4 percent a year isn't a bargain, but it isn't out of line either, and locking in two years protects you if the market heats up. Be careful with these comparisons, though. Advertised rents are asking prices, not signed leases, and new towers often offer a month or two free, so the real effective rent can be lower. Averages also mix luxury units with older ones, and renewal tenants usually get smaller increases than new listings suggest. Moving costs also count in favor of staying. Comparing against actual listings in your own building and unit size is the better test, and you could ask about concessions to negotiate.
+  - question_id: B17
+    exchanges:
+      - queries:
+          - "Home Assistant Voice Preview Edition custom wake word"
+        answer: >-
+          Yes, but not out of the box. On the stock firmware, the wake word runs on the device itself and you can only choose from the built-in options: Okay Nabu, Hey Jarvis, and Hey Mycroft. For a truly custom wake word, you either build your own firmware with ESPHome that includes a custom-trained wake word model, or stream the audio to Home Assistant and let the openWakeWord add-on detect your custom word there. There is an experimental streaming firmware and a community project for that. I trusted Nabu Casa's own support article most for the stock options, because they make the device and it's official documentation. The custom routes come from the experimental firmware and community GitHub projects, which show it's possible but aren't officially supported.
+  - question_id: B18
+    exchanges:
+      - queries:
+          - "latest Qwen open-weight models 2026 release sizes"
+          - "Qwen3.8-27B 16GB VRAM GGUF quant tokens per second"
+        answer: >-
+          The newest open Qwen generation is 3.8, released in August, and the one realistic for 16 gigabytes is Qwen3.8 27B, a dense model. The others are huge server models. At the usual 4-bit quality level it's about 17 gigabytes, which doesn't fit, so on 16 gigabytes you drop to a smaller 4-bit variant around 15.7 gigabytes or a 3-bit one around 13.8. That leaves only about 3 gigabytes for context, but only a quarter of its layers keep a context cache, so one user still runs it with a 64 thousand token window. The alternative is Qwen3.6 35B A3B, a mixture-of-experts model with only about 3 billion active parameters. It doesn't fit entirely either, but its experts can sit in system RAM with only a small speed hit, so it stays fast and leaves room for longer context, though the dense 27B is generally the stronger model. Smaller options like Qwen3.5 9B fit easily at higher precision and run fastest, at a clear quality cost. Basically, the more you compress, the more memory you free for context and speed, and the more quality you give up.
+  - question_id: B19
+    exchanges:
+      - queries:
+          - "RTX 4060 Ti 16GB Qwen3.8 27B tokens per second"
+        answer: >-
+          The short answer from the sources is yes, but only in reduced form. Qwen3.8's local model is the 27 billion parameter version, and at standard 4-bit it needs more than 16 gigabytes, so on a 4060 Ti you'd run a 3-bit or a trimmed 4-bit build with limited context. Estimates put it around 15 to 25 tokens a second, and one estimator says it drops to just 2 to 4 tokens a second if you force the full 4-bit version and spill into system RAM. That isn't enough to predict a good voice experience. Voice depends on how fast the first word arrives, and that's dominated by processing the prompt, tool results, and search pages, not the generation speed that benchmarks report. It also depends on turning off Qwen's default thinking mode, which can burn thousands of tokens before answering. Then there's how reliably it calls tools at that compression, whether speech recognition and text-to-speech also fit in the same memory, and how long your context gets. You'd need to test with a real prompt and measure time to first spoken word.
+  - question_id: B20
+    exchanges:
+      - queries:
+          - "local LLM PC build under $1000 2026 16GB VRAM parts list"
+          - "RTX 5060 Ti 16GB price October 2026"
+          - "used RTX 3090 local LLM build total cost 2026"
+        calls:
+          - {name: calculate, arguments: {expression: "650 + 150 + 45"}}
+        answer: >-
+          I don't think ChatGPT-like quality is realistic for under 1,000 dollars, and I'd rather say so than stretch the budget. The best you can run in that budget is a 16 gigabyte GPU, which fits 14 billion parameter models comfortably and around 30 billion only with heavy compression and short context. Those are good, but noticeably below frontier chat models on knowledge and harder reasoning. Prices have also risen with the memory shortage: a 16 gigabyte RTX 5060 Ti now goes for about 650 dollars used. The best approach within budget is that card in a used office tower with a new power supply, about 845 dollars at current prices, leaving a little over 150 for a microphone and speaker satellite. Run a compressed open model in the 14 to 30 billion parameter range, with local speech recognition and text-to-speech, and only web searches going online. Expect a useful, private assistant, not a ChatGPT replacement. The 24 gigabyte route now costs 1,300 dollars or more.
+  - question_id: B21
+    exchanges:
+      - queries:
+          - "Fed rate decision September 2026"
+          - "30-year mortgage rates this week October 2026"
+        answer: >-
+          That premise isn't right. The Fed didn't cut to zero last month. It raised rates a quarter point on September 16th, to 3.75 to 4 percent, and signaled more hikes may come. Mortgage rates have climbed too: 30-year fixed rates are running around 7.4 to 7.5 percent, and refinance rates around 7.6. So refinancing only makes sense if your current rate is well above that, and most people with older mortgages won't save anything. What rate do you have now?
+  - question_id: C23
+    exchanges:
+      - calls:
+          - {name: calculate, arguments: {expression: "64.50 * 0.18"}}
+          - {name: calculate, arguments: {expression: "64.50 * 1.18"}}
+        answer: >-
+          An 18 percent tip on 64.50 dollars is 11.61, which makes the total 76.11 dollars.
+  - question_id: C24
+    exchanges:
+      - calls:
+          - {name: calculate, arguments: {expression: "500 * ((1 + 0.04/12)**36 - 1) / (0.04/12)"}}
+          - {name: calculate, arguments: {expression: "500 * 36"}}
+          - {name: calculate, arguments: {expression: "19090.78 - 18000"}}
+        answer: >-
+          You'd have about 19,090.78 dollars after three years, assuming each deposit goes in at the end of the month. That's 18,000 dollars of your own money plus about 1,091 dollars in interest.
+  - question_id: C25
+    exchanges:
+      - calls:
+          - {name: convert, arguments: {value: 72, from_unit: "f", to_unit: "c"}}
+          - {name: convert, arguments: {value: 5, from_unit: "km", to_unit: "mi"}}
+        answer: >-
+          72 degrees Fahrenheit is about 22 degrees Celsius, and a 5 kilometer run is about 3.1 miles.
+  - question_id: C26
+    exchanges:
+      - calls:
+          - {name: percent, arguments: {kind: "is_what_percent", a: 2850, b: 7400}}
+          - {name: percent, arguments: {kind: "increase_by", a: 4, b: 2850}}
+        answer: >-
+          Rent takes about 38.5 percent of your take-home pay. After a 4 percent increase, it would be 2,964 dollars a month.
+  - question_id: C27
+    exchanges:
+      - calls:
+          - {name: energy_cost, arguments: {watts: 120, hours_per_day: 4, price_per_kwh: 0.30, days: 30}}
+        answer: >-
+          About 4.32 dollars a month. Four hours at 120 watts is 0.48 kilowatt hours a day, or 14.4 over a 30-day month, at 30 cents each.
+  - question_id: C28
+    exchanges:
+      - calls:
+          - {name: loan_payment, arguments: {principal: 400000, annual_rate_percent: 6, years: 30}}
+        answer: >-
+          The monthly payment is about 2,398.20 dollars for principal and interest, and over 30 years you'd pay roughly 463,000 dollars in interest, more than the loan itself. Taxes and insurance would come on top of that.
+  - question_id: D29
+    exchanges:
+      - answer: "*"
+  - question_id: D30
+    exchanges:
+      - answer: "*"
+  - question_id: D31
+    exchanges:
+      - answer: "*"
+  - question_id: D32
+    exchanges:
+      - answer: >-
+          Can you repeat that?
+  - question_id: D33
+    exchanges:
+      - answer: >-
+          Okay.
+  - question_id: D34
+    exchanges:
+      - answer: >-
+          The capital of Australia is Canberra.
+  - question_id: D35
+    exchanges:
+      - answer: >-
+          Pride and Prejudice was written by Jane Austen, published in 1813.
+  - question_id: E36
+    exchanges:
+      - calls:
+          - {name: weather_forecast, arguments: {day: "tomorrow", part_of_day: "afternoon"}}
+        answer: >-
+          No, you can leave it home. Tomorrow afternoon looks partly cloudy and dry, in the mid to upper 60s.
+  - question_id: E37
+    exchanges:
+      - calls:
+          - {name: weather_forecast, arguments: {day: "weekend"}}
+        answer: >-
+          Saturday looks nice: partly cloudy and dry, from the low 50s up to about 69. Sunday is cooler, in the mid 50s to mid 60s, with rain at times, about a quarter inch, so plan indoor time or bring an umbrella that day.
+  - question_id: E38
+    exchanges:
+      - calls:
+          - {name: weather_forecast, arguments: {day: "tonight"}}
+        answer: >-
+          It should bottom out around 53 degrees before dawn, under clear skies with no rain.
+  - question_id: H39
+    exchanges:
+      - queries:
+          - "how long to bake banana bread"
+        answer: >-
+          Bake banana bread at 350 degrees for about 55 to 65 minutes in a 9 by 5 inch loaf pan. Start checking at 50 minutes, especially in a dark metal pan; it's done when a toothpick in the center comes out clean. If the top browns too fast, tent it with foil.
+  - question_id: H40
+    exchanges:
+      - queries:
+          - "how long to boil egg runny yolk"
+        answer: >-
+          For a runny yolk, lower a large egg into already boiling water and cook it for about six to six and a half minutes, then put it in ice water for a minute to stop the cooking. Take off about a minute for smaller eggs.
+  - question_id: H41
+    exchanges:
+      - queries:
+          - "when to repot snake plant"
+        answer: >-
+          Snake plants like being a bit root-bound, so repot only every two to three years, or when roots crack the pot or poke out of the drainage hole. The best time is spring or early summer, so unless it's bursting out now, wait until spring. Go up just one pot size and use a free-draining cactus mix.
+  - question_id: H42
+    exchanges:
+      - queries:
+          - "how often to water fiddle leaf fig"
+        answer: >-
+          Water a fiddle leaf fig when the top inch or two of soil is dry, which usually works out to about once a week in summer and every ten to fourteen days in winter. Water thoroughly until it drains, then empty the saucer so the roots don't sit in water.
+  - question_id: H43
+    exchanges:
+      - queries:
+          - "oven temperature roast vegetables"
+        answer: >-
+          425 degrees Fahrenheit is the go-to for roasting vegetables. That's hot enough to brown them instead of steaming them. Broccoli and green beans take about 20 to 25 minutes, and potatoes, carrots, and squash in one-inch pieces about 30 to 40. Spread them in one layer and turn them halfway.
+  - question_id: H44
+    exchanges:
+      - queries:
+          - "how long do coffee beans stay fresh"
+        answer: >-
+          Whole coffee beans taste best within about two to four weeks of their roast date, and after about a month they start tasting flat. Ground coffee lasts only a week or two. Keep beans in an airtight, opaque container at room temperature, not the fridge, and freeze only what you won't use within a month.
+  - question_id: H45
+    exchanges:
+      - queries:
+          - "how to remove red wine stain from shirt"
+        answer: >-
+          Blot it right away without rubbing, then cover it with salt or rinse it with cold water from the back of the fabric. Next, dab on a mix of one part dish soap and two parts hydrogen peroxide, testing a hidden spot first since peroxide can lighten colors, or use an enzyme detergent. Wash in cold water and skip the dryer until the stain is completely gone, because heat sets it.
+  - question_id: H46
+    exchanges:
+      - queries:
+          - "how many hours of sleep does an adult need"
+        answer: >-
+          Adults need seven to nine hours a night, and at least seven according to sleep medicine guidelines. Adults over 65 need about seven to eight. Regularly getting less than seven is linked to poorer health.
+  - question_id: I47
+    exchanges:
+      - calls:
+          - {name: weather_forecast, arguments: {day: "weekend", place: "Lisbon"}}
+        answer: >-
+          Lovely in Lisbon this weekend: clear on Saturday and partly cloudy on Sunday, dry both days, with highs near 79 and lows around 60.
+  - question_id: I48
+    exchanges:
+      - calls:
+          - {name: weather_forecast, arguments: {day: "tomorrow", place: "Tokyo"}}
+        answer: >-
+          No rain in Tokyo tomorrow. It looks clear and dry all day, from around 59 in the morning up to about 76 in the afternoon.
+  - question_id: I49
+    exchanges:
+      - calls:
+          - {name: weather_forecast, arguments: {day: "tonight", place: "Chicago"}}
+        answer: >-
+          Not very cold. Chicago should hold around 55 degrees through the rest of the night, cloudy but dry.
+  - question_id: I50
+    exchanges:
+      - calls:
+          - {name: weather_forecast, arguments: {day: "tomorrow", part_of_day: "afternoon", place: "Portland, Maine"}}
+        answer: >-
+          No umbrella needed. Tomorrow afternoon in Portland, Maine looks clear and dry, in the mid to upper 50s, so bring a light jacket instead.
+  - question_id: I51
+    exchanges:
+      - calls:
+          - {name: weather_forecast, arguments: {day: "week", place: "Paris, Texas"}}
+        answer: >-
+          Paris, Texas is in for a hot, dry stretch: clear skies through Monday with highs in the mid 80s and lows in the 60s. Tuesday gets warmer, near 89, and a few showers show up Wednesday. Thursday turns wet, with heavy rain close to an inch and a high around 80.
+  - question_id: I52
+    exchanges:
+      - calls:
+          - {name: weather_forecast, arguments: {day: "saturday", place: "Denver"}}
+        answer: >-
+          No snow in Denver on Saturday. It looks clear to partly cloudy and dry, and unusually warm, with afternoon highs in the low 80s.
+  - question_id: F53
+    exchanges:
+      - calls:
+          - {name: search_and_read, arguments: {query: "gold price per ounce today", time_range: "day"}}
+          - {name: calculate, arguments: {expression: "4192.50 * 3.5"}}
+        answer: >-
+          Gold is about 4,192.50 dollars per troy ounce this morning, so three and a half ounces would cost about 14,673.75 dollars at the spot price. Actual coins or bars sell for a bit more because dealers add a premium.
+  - question_id: F54
+    exchanges:
+      - calls:
+          - {name: weather_forecast, arguments: {day: "tomorrow", part_of_day: "afternoon", place: "Lisbon"}}
+          - {name: weather_forecast, arguments: {day: "tomorrow", part_of_day: "afternoon"}}
+        answer: >-
+          About 10 degrees warmer. Tomorrow afternoon Lisbon should reach about 79 under clear skies, while here at home it tops out around 69 and partly cloudy.
+  - question_id: F55
+    exchanges:
+      - queries:
+          - "current federal funds rate effective rate October 2026"
+        calls:
+          - {name: calculate, arguments: {expression: "25000 * 3.88%"}}
+        answer: >-
+          The Fed's target range is 3.75 to 4 percent, and the effective rate banks actually pay is 3.88 percent. A year's interest on 25,000 dollars at 3.88 percent is 970 dollars. Keep in mind that's the bank-to-bank rate; a savings account would typically pay less.
+  - question_id: F56
+    exchanges:
+      - calls:
+          - {name: weather_forecast, arguments: {day: "saturday", place: "Seattle"}}
+        queries:
+          - "Fall 2026 Seattle-Bainbridge ferry schedule leave Seattle Saturday Sunday"
+        answer: >-
+          Tomorrow in Seattle looks mostly light: a little rain in the morning and a few passing showers in the afternoon, barely measurable, with temperatures from the upper 40s to mid 50s. On the weekend schedule, the last ferry from Seattle to Bainbridge Island leaves at 2:10 in the morning, technically early Sunday, and the one before it is at 12:45. Some sailings on this route have been cancelled lately, so check Washington State Ferries alerts before you count on the late boats.
+  - question_id: F57
+    exchanges:
+      - calls:
+          - {name: search_and_read, arguments: {query: "euro to dollar exchange rate today EUR USD", time_range: "day"}}
+          - {name: calculate, arguments: {expression: "1200 * 1.1224"}}
+        answer: >-
+          A euro is worth about 1.12 dollars today, so 1,200 euros is about 1,347 dollars at the market rate. A bank or card will give you a little less after its markup.
+  - question_id: F58
+    exchanges:
+      - calls:
+          - {name: wikipedia_lookup, arguments: {topic: "Demographics of Tokyo"}}
+          - {name: wikipedia_lookup, arguments: {topic: "Demographics of New York City"}}
+          - {name: calculate, arguments: {expression: "14195730 / 8584629"}}
+        answer: >-
+          According to Wikipedia, Tokyo has about 14.2 million people as of 2025, and New York City about 8.58 million as of the July 2025 Census estimate. That makes Tokyo about 1.65 times bigger. Bear in mind that Tokyo's official figure covers the whole metropolis, including suburbs and outlying islands, not just the urban core.
+  - question_id: F59
+    exchanges:
+      - calls:
+          - {name: weather_forecast, arguments: {day: "tonight"}}
+          - {name: convert, arguments: {value: 53, from_unit: "f", to_unit: "c"}}
+        answer: >-
+          It should get down to about 12 degrees Celsius tonight, clear and dry.
+  - question_id: F60
+    exchanges:
+      - queries:
+          - "Raspberry Pi 5 8GB price"
+          - "Raspberry Pi 5 8GB price increase 2026 official list price"
+        calls:
+          - {name: calculate, arguments: {expression: "4 * 175 * 1.08"}}
+          - {name: calculate, arguments: {expression: "4 * 198.79 * 1.08"}}
+        answer: >-
+          After this year's memory-driven price increases, the 8 gigabyte Raspberry Pi 5 lists for about 175 dollars, so four of them with 8 percent sales tax come to 756 dollars. On Amazon it's currently about 199 dollars each, which would make the total about 859 dollars, so buying from an official reseller at list price saves you around 100.

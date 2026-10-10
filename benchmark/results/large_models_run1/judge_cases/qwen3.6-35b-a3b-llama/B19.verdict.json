@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It correctly reports that Qwen3.8-27B at Q4_K_M (16.5 to 18.1 GB) overflows the card and that offload drops speed to a few tokens per second, but it calls 4.1 tok/s the best case when localmodel.run estimated about 11, omits the Q3_K_M option that fits in 13.2 GB, and says little about what else voice needs beyond decode speed.",
+  "judgment_reason": "It did question whether 'can run' predicts a good voice experience, but it treated the sites' estimated speeds as measured figures and asserted a 20 to 30 tok/s threshold without saying it was an assumption.",
+  "spoken_fit_reason": "It opens with process narration ('Now let me calculate...') and runs four paragraphs with quantization jargon before being cut by the word cap, though the verdict comes early."
+}

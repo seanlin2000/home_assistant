@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It states the 1.1205 Oct 9 reference rate from the search and the calculator's $1,344.60 for 1,200 euros.",
+  "judgment_reason": "It searched for today's rate rather than using memory and used the calculator for the conversion.",
+  "spoken_fit_reason": "Two plain sentences with the figures written out for speech."
+}

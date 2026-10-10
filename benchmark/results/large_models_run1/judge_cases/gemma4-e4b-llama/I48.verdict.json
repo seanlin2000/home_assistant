@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It says no rain is expected in Tokyo tomorrow, with clear skies and about 61 to 76 degrees, consistent with the tool's all-dry forecast.",
+  "judgment_reason": "It used the forecast tool for Tokyo and did not search.",
+  "spoken_fit_reason": "Two plain sentences that lead with the yes-or-no answer."
+}

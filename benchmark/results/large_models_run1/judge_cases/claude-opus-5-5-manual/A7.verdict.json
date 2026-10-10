@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It matches the reference's 1.45 kWh a day and 43.5 kWh a month, about 13 dollars at 30 cents, and adds a calculator-backed lower case of about 11.36 for 15 minutes of real load.",
+  "judgment_reason": "It names its assumptions explicitly (always on, 50 W idle, 30 cents per kWh) and notes that the machine is probably not at 300 W for the whole hour, as the user asked.",
+  "spoken_fit_reason": "It leads with 'Roughly 11 to 13 dollars a month' and continues in plain prose with no formatting."
+}

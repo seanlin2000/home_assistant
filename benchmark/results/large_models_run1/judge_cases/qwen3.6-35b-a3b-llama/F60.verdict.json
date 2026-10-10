@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It states the $120 unit price it used and the calculator's $480, $38.40 tax, and $518.40 total, but the $120 excerpt from Raspberry Pi refers to the board 'with up to 16GB' rather than clearly the 8 GB model, and it ignores the $198.79 Amazon price that was also retrieved.",
+  "judgment_reason": "It used the calculator correctly, but it presented an ambiguous figure as 'the official price' for the 8 GB model without noting that retail prices varied widely.",
+  "spoken_fit_reason": "Four short sentences that walk through the price, subtotal, tax, and total in plain speech."
+}

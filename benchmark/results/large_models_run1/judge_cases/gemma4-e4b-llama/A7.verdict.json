@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The energy figure of 1.45 kWh a day (43.5 kWh a month) is correct, but the assumed rate of 'one dollar per kilowatt-hour' is unrealistic, so the $43.50 spoken cost overstates a typical bill several times over.",
+  "judgment_reason": "It stated the rate and month-length assumptions, but it silently assumed a full hour at 300 W even though the user explicitly asked it to state the time-under-load assumption, and it chose an implausible rate.",
+  "spoken_fit_reason": "The final reply is one short sentence that leads with the cost and contains no formatting."
+}

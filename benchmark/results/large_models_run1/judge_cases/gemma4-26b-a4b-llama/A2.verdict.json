@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The totals of 44,100 and 87,817.80 are right, but it calls the one-year lease cheaper and quotes savings of 4,369.80, which matches none of its own tool results (its 88,657.80 versus 87,817.80 comparison gives 840 in favor of the two-year lease).",
+  "judgment_reason": "It named an assumption about renewing at 5 percent, but then drew the opposite conclusion from its own numbers after hitting the tool-call limit with repeated calculations.",
+  "spoken_fit_reason": "Three plain sentences that lead with the two totals, which suits being read aloud."
+}

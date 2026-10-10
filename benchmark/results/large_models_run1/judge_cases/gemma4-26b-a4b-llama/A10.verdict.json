@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It correctly explains that a model which does not fit either will not run or spills to slower system RAM, so capacity comes before speed, but it leaves out that more memory also allows lighter quantization and longer context.",
+  "judgment_reason": "It answered from knowledge without searching, which suited a stable conceptual question.",
+  "spoken_fit_reason": "The prose and workbench analogy sound natural aloud, but at roughly 125 words it runs a little past the 120-word, 45-second target."
+}

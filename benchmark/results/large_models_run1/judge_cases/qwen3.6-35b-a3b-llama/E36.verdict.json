@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "'No umbrella needed', 'dry and partly cloudy', and 'mid to upper sixties' all match the tool's afternoon forecast of 66 to 69°F, partly cloudy, and dry.",
+  "judgment_reason": "It checked the home forecast for the right day and part of day and did not search the web.",
+  "spoken_fit_reason": "Two short sentences that lead with the yes-or-no answer."
+}

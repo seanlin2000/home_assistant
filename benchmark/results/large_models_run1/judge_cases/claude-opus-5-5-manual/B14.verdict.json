@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It synthesizes the causal chain across sources (AI demand pulling memory makers toward server memory, reduced GDDR6 and limited GDDR7 output, fixed-price contracts expiring at the end of 2025, production cuts on high-VRAM cards), and each claim, including the 5090's 1,999 to 4,000-5,000 rise and Micron's October 1 outlook, traces to an excerpt.",
+  "judgment_reason": "It answers the 'what changed' question the user asked rather than reciting prices, and uses only one illustrative price, from the excerpts.",
+  "spoken_fit_reason": "It leads with 'the main thing that changed is memory' and continues in plain prose, at a length justified by an explanation request."
+}

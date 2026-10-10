@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The rain part matches the forecast (light rain in the morning and afternoon, 48 to 56°F), but the ferry times are wrong: '11:35 at night' appears in no excerpt (the live page lists 11:25 pm and then 1:35 am), and the weekend 'midnight' comes from the Leave Bainbridge Island list, the opposite direction.",
+  "judgment_reason": "It stated ferry times as verified without noticing that tomorrow is Saturday, that the sources conflict, or that the timetable it read ran in the other direction.",
+  "spoken_fit_reason": "Three plain sentences that answer both parts in order."
+}

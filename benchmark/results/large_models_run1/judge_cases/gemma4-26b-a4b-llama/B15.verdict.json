@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It picks the RTX 5060 Ti 16GB on its $429 MSRP and calls street prices 'a bit high', while the GPCB excerpt says the 9060 XT is the only major 16 GB card still under $500 and costs about $300 less than the 5060 Ti.",
+  "judgment_reason": "It softened clear evidence that its main pick is over the $500 limit, and its fallback, a used 4060 Ti 16GB that 'should definitely fall under' $500, is not priced anywhere in the excerpts.",
+  "spoken_fit_reason": "Three plain sentences that lead with the pick."
+}

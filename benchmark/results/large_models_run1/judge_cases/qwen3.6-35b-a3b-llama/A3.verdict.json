@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It gives a clear 'No' and correctly says the entire model must be loaded, but then muddles things with '4 billion activations', optimizer states, and a '4-billion-parameter MoE model' needing 16 to 24 GB, never tying the memory need to total parameters.",
+  "judgment_reason": "It correctly rejected the false premise without searching, but it asserted an invented 16 to 24 GB requirement without stating the assumption.",
+  "spoken_fit_reason": "It leads with the answer in two short paragraphs, but the markdown asterisks around *activates* are a formatting slip."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It recommends the router design and correctly cites latency, cost and deterministic reliability, but it never names the router's costs (routing errors, more moving parts) or when a single large model is fine.",
+  "judgment_reason": "Not searching was right and the recommendation is reasoned, but it is not conditioned on when the simpler single-model design would be preferable.",
+  "spoken_fit_reason": "It opens with an irrelevant date and 'That is a fascinating question', then runs three dense paragraphs with dashes until the word cap cut it off."
+}
