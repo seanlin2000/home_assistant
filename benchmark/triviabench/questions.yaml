@@ -13,7 +13,10 @@
 # and backfills by the same rule from the counts of the 992 kept, under new ids TB1001 on, so results on kept ids stay comparable.
 # question: TriviaQA's text, with the CSV escaping some questions carry undone (outer quotes dropped, doubled quotes single).
 # answers: the TriviaQA value first, then its aliases. year: negative for BC, null when no year applies.
-version: '1.1'
+# Version 1.2 removes 31 more after a review of all 1,000: twelve that repeat another question's fact; twelve with a wrong, doubtful, or
+# range-only key or two defensible answers; and seven whose answer is in the question (multiple choice), which the grader cannot tell from
+# an echo. Each replacement comes from the same (topic, era, difficulty) cell where one is left, under ids TB1009 on.
+version: '1.2'
 search_instruction: Search the web before you answer.
 questions:
 - id: TB0001
@@ -2023,40 +2026,6 @@ questions:
   era: 2000 on
   difficulty: 3
   in_xs: true
-- id: TB0073
-  triviaqa_id: qw_9282
-  question: The Jurassic period is known for the appearance on earth of what?
-  answers:
-  - Dinosaurs
-  - Non-avian dinosaur
-  - Ornithoscelida
-  - Dinosauria
-  - The death of the dinosaurs
-  - Pachypodes
-  - Non-avian dinosaurs
-  - Dinosaurian
-  - Dinasour
-  - Triassic dinosaurs
-  - Phytodinosaur
-  - Dinosur
-  - Dinosuar
-  - Dinosaurology
-  - Discovery of dinosaurs
-  - Pachypodosauria
-  - Pandinosauria
-  - Dinosaur
-  - Jurassic dinosaurs
-  - Dinosoor
-  - Dinosor
-  - Herbivore dinosaurs
-  - Death of the dinosaurs
-  - Dinosour
-  - Phytodinosauria
-  topic: Science
-  year: -150000000
-  era: before 1500
-  difficulty: 1
-  in_xs: true
 - id: TB0074
   triviaqa_id: odql_193
   question: Who was European Footballer of the Year for 1973 and 1974?
@@ -3091,23 +3060,6 @@ questions:
   year: 1987
   era: 1980-1999
   difficulty: 3
-  in_xs: false
-- id: TB0123
-  triviaqa_id: qw_769
-  question: If you were from the Cayman Islands, which is part of the British West Indies, what sort of passport would you have?
-  answers:
-  - British
-  - Great British
-  - British (language)
-  - Britsih
-  - Pretannic
-  - British (disambiguation)
-  - Brittish
-  - British language (disambiguation)
-  topic: Politics
-  year: null
-  era: timeless
-  difficulty: 1
   in_xs: false
 - id: TB0124
   triviaqa_id: qb_9198
@@ -4732,17 +4684,6 @@ questions:
   era: 1980-1999
   difficulty: 1
   in_xs: false
-- id: TB0199
-  triviaqa_id: qf_1440
-  question: Being developed from earlier keyboard instruments, what year was the piano invented?
-  answers:
-  - '1709'
-  - one thousand, seven hundred and nine
-  topic: Music
-  year: 1700
-  era: 1500-1799
-  difficulty: 3
-  in_xs: false
 - id: TB0200
   triviaqa_id: qz_3041
   question: Who killed Robert F Kennedy?
@@ -4757,20 +4698,6 @@ questions:
   topic: History
   year: 1968
   era: 1950-1979
-  difficulty: 2
-  in_xs: false
-- id: TB0201
-  triviaqa_id: qz_3154
-  question: Which town in East Sussex now stands on the site of the battle of Hastings?
-  answers:
-  - Battle
-  - Battle Of
-  - Battles
-  - Skirmishes
-  - Decisive Battle
-  topic: Misc
-  year: 1066
-  era: before 1500
   difficulty: 2
   in_xs: false
 - id: TB0202
@@ -4993,16 +4920,6 @@ questions:
   year: 1912
   era: 1900-1949
   difficulty: 3
-  in_xs: false
-- id: TB0214
-  triviaqa_id: sfq_8887
-  question: Give any year in the life of the painter Raphael.
-  answers:
-  - 1483-1520
-  topic: Misc
-  year: 1483
-  era: before 1500
-  difficulty: 2
   in_xs: false
 - id: TB0215
   triviaqa_id: qz_2423
@@ -6336,22 +6253,6 @@ questions:
   era: timeless
   difficulty: 1
   in_xs: false
-- id: TB0273
-  triviaqa_id: sfq_14257
-  question: In which opera would you find the "Anvil Chorus"?
-  answers:
-  - IL TROVATORE
-  - Dei miei bollenti spiriti
-  - II Trovatore
-  - Azucena (gypsy)
-  - Le trouvère
-  - The Troubador
-  - Leonora (Il trovatore)
-  topic: Music
-  year: 1853
-  era: 1800-1899
-  difficulty: 3
-  in_xs: false
 - id: TB0274
   triviaqa_id: bb_8330
   question: In which three years did Red Rum win the Grand National?
@@ -7428,20 +7329,6 @@ questions:
   year: 2013
   era: 2000 on
   difficulty: 1
-  in_xs: false
-- id: TB0314
-  triviaqa_id: sfq_5255
-  question: Which musical instrument can have 21, 22, or 23 strings?
-  answers:
-  - Sitar
-  - Sitars
-  - Sitarist
-  - Cetar
-  - Zitare
-  topic: Music
-  year: null
-  era: timeless
-  difficulty: 2
   in_xs: false
 - id: TB0315
   triviaqa_id: qw_3596
@@ -9492,17 +9379,6 @@ questions:
   era: 1800-1899
   difficulty: 1
   in_xs: false
-- id: TB0406
-  triviaqa_id: qf_3452
-  question: In the early 2000's The Birds Eye brand had a make-over, losing it's famous logo in favour of the now familiar red eye logo. What was the old logo, was it A- Albatross, B - Whale or C - Shark?
-  answers:
-  - A - Albatross
-  - The Albatross
-  topic: Finance
-  year: 2002
-  era: 2000 on
-  difficulty: 3
-  in_xs: false
 - id: TB0407
   triviaqa_id: qf_221
   question: The German film 'The Blue Angel' launched the career of which famous actress?
@@ -9625,22 +9501,6 @@ questions:
   year: null
   era: timeless
   difficulty: 1
-  in_xs: false
-- id: TB0413
-  triviaqa_id: qz_4085
-  question: Where in London were the first escalators installed in 1898?
-  answers:
-  - Harrods
-  - Princess Diana and Dodi Fayed Memorial
-  - Harrods Group
-  - Harrod's
-  - Harrods Food Hall
-  - Harrod’s
-  - Harrods Department Store
-  topic: Misc
-  year: 1898
-  era: 1800-1899
-  difficulty: 3
   in_xs: false
 - id: TB0414
   triviaqa_id: qw_3641
@@ -10269,28 +10129,6 @@ questions:
   era: 1900-1949
   difficulty: 3
   in_xs: false
-- id: TB0443
-  triviaqa_id: qw_3519
-  question: Which German social economist of Jewish descent, expelled from Germany and France, co-wrote in London "The Communist Manifesto" and "Das Kapital"?
-  answers:
-  - Karl Marx
-  - Karl Heinrich Marx
-  - K. H. Marx
-  - Marx, Karl
-  - K Marx
-  - Carl Heinrich Marx
-  - Carl Marks
-  - K. Marx
-  - Karol Marks
-  - Carl Marx
-  - Father of Communism
-  - Karl Marks
-  - Marx
-  topic: Politics
-  year: 1848
-  era: 1800-1899
-  difficulty: 1
-  in_xs: false
 - id: TB0444
   triviaqa_id: qb_1036
   question: How many pounds are in a UK (long) ton?
@@ -10403,26 +10241,6 @@ questions:
   year: 1950
   era: 1950-1979
   difficulty: 1
-  in_xs: false
-- id: TB0450
-  triviaqa_id: qf_1637
-  question: In the cartoon, what kind of bird is the roadrunner?
-  answers:
-  - (a
-  - Statically Linked Library
-  - Static executable
-  - Static archive
-  - Static binary
-  - Static linking
-  - Static compilation
-  - .lib
-  - Static libraries
-  - .a
-  - Static Library
-  topic: Entertainment
-  year: 1949
-  era: 1900-1949
-  difficulty: 2
   in_xs: false
 - id: TB0451
   triviaqa_id: dpql_6116
@@ -12491,16 +12309,6 @@ questions:
   era: 1950-1979
   difficulty: 1
   in_xs: false
-- id: TB0534
-  triviaqa_id: sfq_1735
-  question: Give a year in the life of German painter Albrecht Durer.
-  answers:
-  - 1471-1528
-  topic: Misc
-  year: 1471
-  era: before 1500
-  difficulty: 2
-  in_xs: false
 - id: TB0535
   triviaqa_id: qf_2054
   question: Which Sweets were advertised with the slogan ' Taste the Rainbow'?
@@ -13425,16 +13233,6 @@ questions:
   era: 2000 on
   difficulty: 2
   in_xs: false
-- id: TB0572
-  triviaqa_id: sfq_5888
-  question: Give a year in the reign of King Stephen.
-  answers:
-  - 1135-1154
-  topic: History
-  year: 1140
-  era: before 1500
-  difficulty: 3
-  in_xs: false
 - id: TB0573
   triviaqa_id: bb_6461
   question: What is four-fifths divided by four-fifths?
@@ -13571,18 +13369,6 @@ questions:
   year: 1890
   era: 1800-1899
   difficulty: 3
-  in_xs: false
-- id: TB0579
-  triviaqa_id: odql_12839
-  question: Which political philosopher wrote "The Theory of Moral Sentiments" and "An Inquiry into the Nature and Causes of the Wealth of Nations"?
-  answers:
-  - Adam Smith
-  - Vile maxim
-  - A Smith
-  topic: Finance
-  year: 1776
-  era: 1500-1799
-  difficulty: 1
   in_xs: false
 - id: TB0580
   triviaqa_id: sfq_24225
@@ -13833,73 +13619,6 @@ questions:
   year: 33
   era: before 1500
   difficulty: 2
-  in_xs: false
-- id: TB0592
-  triviaqa_id: qw_10155
-  question: On the Cartesian Plane where is the unit usually represented as i or j?
-  answers:
-  - Vertical axis
-  - First quadrant
-  - 3-D coordinate system
-  - Cartesian plain
-  - Rectangular coord
-  - Euclidian coordinate system
-  - Right-handed coordinate system
-  - Cartesian co-ordinates
-  - Rectangular coordinate plane
-  - Y axis
-  - Rectangular coordinate system
-  - Rectangular Coordinates
-  - Cartesian chart
-  - Applicate
-  - Axis (mathematics)
-  - Right-handed system
-  - 3d Cartesian Coordinate System
-  - Cartesian orthogonal coordinate system
-  - Z-axis
-  - Cartesian planes
-  - Quadrant (analytic geometry)
-  - Z axis
-  - 3D coordinate system
-  - Cartesian dimensions
-  - Left-handed coordinate system
-  - 3-dimensional coordinate system
-  - Cartesian coordinates
-  - Cartesian plane
-  - 3-D graph
-  - Coordinate axes
-  - X,y coordinates
-  - Cartesian coordinate
-  - Abscisse
-  - Horizontal axis
-  - Y-axis
-  - Cartesian co-ordinate system
-  - Position coordinate
-  - Cartesian Coordinate System
-  - First quadrants
-  - Cartesian-coordinate system
-  - 3-D Cartesian Coordinate System
-  - Z-coordinate
-  - X axis
-  - X-y plane
-  - Cartesian coordinate systems
-  - Cartesian space
-  - Rectangular coords
-  - Cartesian co-ordinator
-  - Xy plane
-  - 3 dimensional coordinate system
-  - X-axis
-  - 3d coordinates
-  - History of the Cartesian coordinate system
-  - Cartesian coordinate plane
-  - Cartesian equation
-  - Xy-coordinate system
-  - Coordinate plane
-  - Cartesian dimension
-  topic: Math
-  year: null
-  era: timeless
-  difficulty: 3
   in_xs: false
 - id: TB0593
   triviaqa_id: sfq_9841
@@ -15052,37 +14771,6 @@ questions:
   era: timeless
   difficulty: 1
   in_xs: false
-- id: TB0643
-  triviaqa_id: sfq_13219
-  question: Whose 1995 best seller argues that our universe is part of a super universe?
-  answers:
-  - STEPHEN HAWKING
-  - Stephen Hawkings
-  - Isobel Hawking
-  - Stephen hawkin
-  - S. W. Hawking
-  - Steven W. Hawking
-  - S.W. Hawking
-  - Steven Hawkins
-  - Steve Hawking
-  - Stephen hawkins
-  - Hawking, Stephen
-  - Steven Hawking
-  - Frank Hawking
-  - Stephan hawking
-  - Hawking, Stephen William
-  - Stephen Hawking Space
-  - Top-down cosmology
-  - Steven Hawkings
-  - Stephen William Hawking
-  - Steven hawkin
-  - Stephen W. Hawking
-  - Steveen Hawking
-  topic: Science
-  year: 1995
-  era: 1980-1999
-  difficulty: 3
-  in_xs: false
 - id: TB0644
   triviaqa_id: qf_323
   question: By what name is singer 'Anthony Dominic Benevetto' better known?
@@ -15462,16 +15150,6 @@ questions:
   era: 2000 on
   difficulty: 2
   in_xs: false
-- id: TB0665
-  triviaqa_id: qz_2718
-  question: 'Was James II known as: James The Bald, Fiery Face, or The Red King?'
-  answers:
-  - Fiery Face
-  topic: History
-  year: 1437
-  era: before 1500
-  difficulty: 3
-  in_xs: false
 - id: TB0666
   triviaqa_id: sfq_16679
   question: What is the currency of Israel?
@@ -15813,34 +15491,6 @@ questions:
   era: 1500-1799
   difficulty: 1
   in_xs: false
-- id: TB0680
-  triviaqa_id: qz_2018
-  question: Which scientist was Time magazine's "Person of the 20th Century"?
-  answers:
-  - Albert Einstein
-  - Albert Enstien
-  - A Tribute to Einstein
-  - Albert Einstien
-  - Einstein (physicist)
-  - Einsetein
-  - Albert Einstin
-  - Einstien
-  - Albert Eienstein
-  - Einstein, Albert
-  - Albert Enstein
-  - Einsteinian
-  - Alber Enstien
-  - Albert Einstein's
-  - Einstein
-  - Einstien, Albert
-  - A. Einstein
-  - Al Einstein
-  - Alber Einstein
-  topic: Science
-  year: 1999
-  era: 1980-1999
-  difficulty: 2
-  in_xs: false
 - id: TB0681
   triviaqa_id: sfq_1233
   question: Who wrote the book 'Elmer Gantry'?
@@ -15961,17 +15611,6 @@ questions:
   year: 1965
   era: 1950-1979
   difficulty: 2
-  in_xs: false
-- id: TB0685
-  triviaqa_id: qw_2164
-  question: What is the median of 1, 3, 5, 6, 7, 9 and 25?
-  answers:
-  - '6'
-  - six
-  topic: Math
-  year: null
-  era: timeless
-  difficulty: 1
   in_xs: false
 - id: TB0686
   triviaqa_id: qf_423
@@ -18011,19 +17650,6 @@ questions:
   era: timeless
   difficulty: 1
   in_xs: false
-- id: TB0783
-  triviaqa_id: sfq_6781
-  question: Who was the first Astronomer Royal?
-  answers:
-  - John Flamsteed
-  - Flamsteed
-  - Historia Coelestis Britannica
-  - Flamsteedian
-  topic: Science
-  year: 1675
-  era: 1500-1799
-  difficulty: 3
-  in_xs: false
 - id: TB0784
   triviaqa_id: bb_5100
   question: Satya Nadella, boss of which vast corporation, apologised in 2014 for suggesting female workers should rely on faith and karma instead of asking for a pay rise?
@@ -18293,23 +17919,6 @@ questions:
   era: 1980-1999
   difficulty: 1
   in_xs: false
-- id: TB0793
-  triviaqa_id: sfq_9630
-  question: Which car manufacturer produces the Jimmy model?
-  answers:
-  - SUZUKI
-  - An Suzuki
-  - Suzuki Ann
-  - Suzuki An
-  - Suzuki Anna
-  - Anne Suzuki
-  - Suzuki Anne
-  - Ann Suzuki
-  topic: Finance
-  year: 1970
-  era: 1950-1979
-  difficulty: 3
-  in_xs: false
 - id: TB0794
   triviaqa_id: odql_11128
   question: '''The Playboy Riots'' occurred during and following the opening in 1907 of ''The Playboy Of The Western World'' by J.M. Synge, at which Dublin theatre?'
@@ -18409,23 +18018,6 @@ questions:
   year: 1973
   era: 1950-1979
   difficulty: 2
-  in_xs: false
-- id: TB0798
-  triviaqa_id: qw_6374
-  question: What name was given to the English Civil war in the 15th century between the rival houses of Lancaster and York?
-  answers:
-  - Wars of the Roses
-  - War of the roses
-  - The war of the roses
-  - War of roses
-  - Wars of Roses
-  - Rebellion of 1483
-  - Wars of the Cousins
-  - The Wars of the Roses
-  topic: History
-  year: 1455
-  era: before 1500
-  difficulty: 1
   in_xs: false
 - id: TB0799
   triviaqa_id: bb_3281
@@ -19215,58 +18807,6 @@ questions:
   year: 1981
   era: 1980-1999
   difficulty: 1
-  in_xs: false
-- id: TB0836
-  triviaqa_id: bt_1545
-  question: The Arsacid Dynasty ruled which country from 250 B.C. until 224 A.D.
-  answers:
-  - Persia
-  - Irān
-  - Historical names of Iran
-  - Persia (Iran)
-  - Iran (Islamic Republic of)
-  - Iran, Islamic Republic of
-  - ISO 3166-1:IR
-  - Shi'ite Republic of Iran
-  - Jomhūrī-ye Eslāmī-ye Īrān
-  - Iran blockade
-  - Iran consumption expenditure
-  - IRan
-  - Naval blockade of iran
-  - The Islamic Republic of Iran
-  - Jomhuri Ye Islami Ye Iran
-  - Irãn
-  - جمهوری اسلامی ايران
-  - Irán
-  - Iran (Persia)
-  - Iranian Republic
-  - La Perse
-  - Islamic Republic of Persia
-  - إيران
-  - ایران
-  - Islamic State of Iran
-  - Irañ
-  - Irân
-  - Jomhuri-ye Eslami-ye Iran
-  - جمهوری اسلامی ایران
-  - I.R. of Iran
-  - Islamic republic of Iran
-  - IR of Iran
-  - What language do they speak in Persia%3F
-  - Persian State of Iran
-  - Shia Republic of Iran
-  - I.R.Iran
-  - Jomhuri-ye Eslāmi-ye Irān
-  - IR Iran
-  - Persian Region
-  - I.R. Iran
-  - Republic of Iran
-  - Islamic Iran
-  - Islamic Govermnet of Iran
-  topic: History
-  year: -250
-  era: before 1500
-  difficulty: 3
   in_xs: false
 - id: TB0837
   triviaqa_id: odql_12768
@@ -20299,38 +19839,6 @@ questions:
   era: 1500-1799
   difficulty: 3
   in_xs: false
-- id: TB0879
-  triviaqa_id: bb_9418
-  question: What would you find at 1600 Pennsylvania Avenue, Washington?
-  answers:
-  - The White House
-  - White House
-  - 202.456.1111
-  - 1600 Pennsylvania Ave.
-  - White House solar panels
-  - '@WhiteHouse'
-  - 202-456-1111
-  - '20500'
-  - White house tours
-  - The Whitehouse
-  - +1.202.456.1111
-  - Whiskey Hotel
-  - White Home
-  - +1.202-456-1111
-  - 1600 Pennsylvania Avenue
-  - United States White House
-  - US White House
-  - 1600 Pennsylvania
-  - 1600 Pennsylvania Avenue NW
-  - 1600 Pennsylvania Ave
-  - White House, District of Columbia
-  - White House Complex
-  - 202-456-1414
-  topic: Politics
-  year: 1800
-  era: 1800-1899
-  difficulty: 1
-  in_xs: false
 - id: TB0880
   triviaqa_id: qb_1340
   question: Which national team beat Hungary 4-2 to win the 1938 FIFA World Cup?
@@ -20578,46 +20086,6 @@ questions:
   topic: Sports
   year: 1985
   era: 1980-1999
-  difficulty: 2
-  in_xs: false
-- id: TB0891
-  triviaqa_id: sfq_10466
-  question: Who, according to legend, cut the Gordian Knot?
-  answers:
-  - Alexander the Great
-  - Μέγας Ἀλέξανδρος
-  - Alexandrian period
-  - Αλέξανδρος ο Μέγας
-  - Iskander the Accursed
-  - Alexander Magnus
-  - Alexander of Macedonia
-  - Alexander Macedonian
-  - Megas aleksandros
-  - Great Alexander
-  - Sikandar Mahan
-  - Sikunder
-  - Alexnader the great
-  - Alexandrian Empire
-  - Alexandrian era
-  - Alexandros the Great
-  - Letter to Darius III
-  - Aleksander the Great
-  - Ἀλέξανδρος ὁ Μέγας
-  - Alexander the graet
-  - Alexandros III of Macedon
-  - Alexander III of Macedon
-  - Letter to Darius II
-  - Alex the great
-  - Alexander the Macedonian
-  - Sikandar-e-Azam
-  - Alexander-the-great
-  - Iskandar Zulkarnain
-  - Aleksandar ī Hrōmāyīg
-  - Aléxandros ho Mégas
-  - AlexanderTheGreat
-  topic: History
-  year: -333
-  era: before 1500
   difficulty: 2
   in_xs: false
 - id: TB0892
@@ -21075,26 +20543,6 @@ questions:
   era: 1950-1979
   difficulty: 3
   in_xs: false
-- id: TB0913
-  triviaqa_id: sfq_2505
-  question: In which city is the majority of Shakespeare's Romeo and Juliet set?
-  answers:
-  - Verona
-  - San Michele Extra
-  - UN/LOCODE:ITVRN
-  - Commune of Verona
-  - Waelsch-Bern
-  - Walsch-Bern
-  - Vetona
-  - City of Verona
-  - Verona, Italy
-  - Welschbern
-  - Wälsch-Bern
-  topic: Literature
-  year: 1597
-  era: 1500-1799
-  difficulty: 1
-  in_xs: false
 - id: TB0914
   triviaqa_id: tc_1176
   question: Which Oscar-nominated film had You Sexy Thing as its theme song?
@@ -21522,20 +20970,6 @@ questions:
   year: 1932
   era: 1900-1949
   difficulty: 2
-  in_xs: false
-- id: TB0932
-  triviaqa_id: sfq_16651
-  question: Which Gilbert and Sullivan opera has the alternate title 'Bunthome's Bride'?
-  answers:
-  - Patience
-  - Patiently
-  - Patiency
-  - Impatience
-  - Patience (character trait)
-  topic: Music
-  year: 1881
-  era: 1800-1899
-  difficulty: 3
   in_xs: false
 - id: TB0933
   triviaqa_id: sfq_25185
@@ -22254,20 +21688,6 @@ questions:
   era: 1980-1999
   difficulty: 2
   in_xs: false
-- id: TB0968
-  triviaqa_id: sfq_2286
-  question: In physics, whose law states that "for a fixed mass of gas at a constant temperature the product of the pressure and volume is constant"?
-  answers:
-  - (Robert) Boyle
-  - Boylean
-  - Robert Boyle
-  - Sir Robert Boyle
-  - The Hon Robert Boyle
-  topic: Science
-  year: 1662
-  era: 1500-1799
-  difficulty: 1
-  in_xs: false
 - id: TB0969
   triviaqa_id: qw_7782
   question: What word means to sell scarce shares or tickets at a quick profit?
@@ -22415,30 +21835,6 @@ questions:
   year: 1999
   era: 1980-1999
   difficulty: 3
-  in_xs: false
-- id: TB0977
-  triviaqa_id: qf_3671
-  question: 'When was basketball invented: 17th, 18th or 19th century?'
-  answers:
-  - 19th century
-  - 19th century AD
-  - Early 19th Century
-  - XIX century
-  - Nineteenth-century
-  - 19th-century
-  - Ninteenth Century
-  - Late 19th century
-  - Year in Review 19th Century
-  - Nighteenth century
-  - Nineteenth century
-  - 19th centuries
-  - Mid-19th century
-  - Ottocento
-  - 19 century
-  topic: Sports
-  year: 1891
-  era: 1800-1899
-  difficulty: 2
   in_xs: false
 - id: TB0978
   triviaqa_id: tc_2758
@@ -22843,55 +22239,6 @@ questions:
   era: 1900-1949
   difficulty: 2
   in_xs: false
-- id: TB0998
-  triviaqa_id: bb_403
-  question: What number has the square root (to the nearest four decimal places) of 1.4142? 1; 2; 3; or 4?
-  answers:
-  - '2'
-  - two
-  topic: Math
-  year: null
-  era: timeless
-  difficulty: 1
-  in_xs: false
-- id: TB0999
-  triviaqa_id: bb_9114
-  question: What (as at 2010) is the tenth-largest body directly orbiting the Sun?
-  answers:
-  - Pluto
-  - 134340 Pluto.
-  - (134340) Pluto
-  - Dwarf planet Pluto
-  - Pluto (Planet)
-  - Planet Pluto
-  - 1930 BD
-  - Physical characteristics of Pluto
-  - The Pluto debate
-  - 134340 Pluto
-  - Classification of Pluto
-  - Pluto debate
-  - Asteroid 134340
-  - Pluto (astronomy)
-  - ♇
-  - Sol-9
-  - Pluto system
-  - Astronomy Pluto
-  - 134340Pluto
-  - Sol j
-  - Sun j
-  - 134340 Pluto (dwarf planet)
-  - Pluto (dwarf planet)
-  - Pluto planetary status controversy
-  - Pluton (planet)
-  - Plutoing
-  - Pluto Planet Day
-  - Pluto (planetoid)
-  - '134340'
-  topic: Science
-  year: 2010
-  era: 2000 on
-  difficulty: 3
-  in_xs: false
 - id: TB1000
   triviaqa_id: qb_4664
   question: The name Jessica was invented by William Shakespeare for which of his plays?
@@ -23143,4 +22490,589 @@ questions:
   year: null
   era: timeless
   difficulty: 2
+  in_xs: false
+- id: TB1009
+  triviaqa_id: sfq_21879
+  question: The Elgin Marbles were originally part of which building?
+  answers:
+  - Parthenon
+  - Temple of Athena
+  - Parthenoi
+  - The Parthenon
+  - Doric Parthenon
+  - Parthanon
+  - The Parthenon, Greece
+  topic: History
+  year: -438
+  era: before 1500
+  difficulty: 1
+  in_xs: true
+- id: TB1010
+  triviaqa_id: qw_11526
+  question: Where is the Australian parliament based?
+  answers:
+  - Canberra
+  - Canberra (Australia)
+  - Canberra, Australian Capital Territory
+  - Canberra, Australia
+  - Capital of Australia
+  - Canberra, AU-ACT
+  - Canberra, ACT
+  - Canberran
+  - UN/LOCODE:AUCBR
+  - Limestone Plains
+  topic: Politics
+  year: null
+  era: timeless
+  difficulty: 1
+  in_xs: false
+- id: TB1011
+  triviaqa_id: wh_2164
+  question: In 1703, Isaac Newton succeeded which of his rivals as President of the Royal Society ?
+  answers:
+  - ROBERT HOOKE
+  - Robert Hook
+  - Hooke, Robert
+  topic: Science
+  year: 1703
+  era: 1500-1799
+  difficulty: 3
+  in_xs: false
+- id: TB1012
+  triviaqa_id: odql_7578
+  question: Which of the 'Seven Wonders Of The World' stood at Halicarnassus?
+  answers:
+  - MAUSOLEUM OF MAUSSOLLOS
+  - Grave of Mausolus
+  - Grave of Maussollos at Halicarnassus
+  - Mausoleum of Mausolus
+  - Mausoleum at Halicarnassus
+  - Grave of Mausolus at Halicarnassus
+  - The mausoleum at halicarnassus
+  - Mausoleum of Halicarnassus
+  - Tomb of Mausolus
+  - Grave of Maussollos
+  - Mausoleum of Maussollos at Halicarnassus
+  topic: History
+  year: -350
+  era: before 1500
+  difficulty: 2
+  in_xs: false
+- id: TB1013
+  triviaqa_id: odql_5305
+  question: By what more familiar name do we know the 'Angevin Dynasty' of English kings?
+  answers:
+  - PLANTAGENETS
+  - House of Plantagenet
+  - House of Plantaganet
+  - Plantagenêt
+  - Plantegenet
+  - Plantagenet dynasty
+  - The plantagenets
+  - Plantaganet
+  - House of Plantagenets
+  - Anglo-Angevin
+  - Plantagenet Kings of England
+  - The plantagenats
+  - Plantaganets
+  - The Plantagenet
+  - List of members of the House of Plantagenet
+  - House of Plantaganets
+  - Plantagenet
+  - Plantagenet times
+  - List of members of the House of Plantegenet
+  topic: History
+  year: 1154
+  era: before 1500
+  difficulty: 2
+  in_xs: false
+- id: TB1014
+  triviaqa_id: sfq_22841
+  question: Who composed the opera The Huguenots?
+  answers:
+  - GIACOMO MEYERBEER
+  - Meyerbeer
+  - Yakov Liebmann Beer
+  - Jakob Liebmann Meyer Beer
+  - Jakob Liebmann Beer
+  - Jakob Meyer Beer
+  - Jacob Liebmann Beer
+  topic: Music
+  year: 1836
+  era: 1800-1899
+  difficulty: 3
+  in_xs: false
+- id: TB1015
+  triviaqa_id: dpql_5238
+  question: What is the first name of the renowned cellist who is Andrew Lloyd Webber’s brother?
+  answers:
+  - JULIAN
+  - Julijan
+  topic: Music
+  year: null
+  era: timeless
+  difficulty: 2
+  in_xs: false
+- id: TB1016
+  triviaqa_id: qw_2752
+  question: In June 2009, General Motors announced that it would sell which of its brands to Tengzhong Heavy Industrial Machinery, based in China?
+  answers:
+  - Hummer
+  topic: Finance
+  year: 2009
+  era: 2000 on
+  difficulty: 3
+  in_xs: false
+- id: TB1017
+  triviaqa_id: wh_2605
+  question: Which Scottish University was established as the world's first Mechanics Institute in 1821 ?
+  answers:
+  - HERIOT-WATT
+  - Heriot–Watt University
+  - Edinburgh School of Arts
+  - Heriot-Watt College
+  - Watt Institution and School of Arts
+  - Heriot watt university
+  - Heriot Watt
+  - Herriot Watt University
+  - Heriot-Watt University
+  - Heriot-Watt Institution
+  topic: Misc
+  year: 1821
+  era: 1800-1899
+  difficulty: 3
+  in_xs: false
+- id: TB1018
+  triviaqa_id: odql_12340
+  question: Which animal is the emblem of the USA.'s Republican Party?
+  answers:
+  - Elephant
+  - Elephantinely
+  - Elephant tusks
+  - Rogue Elephant
+  - 🐘
+  - Elephant hunting
+  - Elephantineness
+  - Elephant hunter
+  - Baby elephants
+  - Brown elephants
+  - Elephan
+  - פיל
+  - Elephant population
+  - Elephant evolution
+  - Elefonts
+  - Evolution of elephants
+  - Elephants
+  - Mating elephants
+  - Elaphant
+  - Elephant rage
+  - Gestation period for elephants
+  - Elephant tusk
+  - Sexual behavior of elephants
+  topic: Politics
+  year: 1874
+  era: 1800-1899
+  difficulty: 1
+  in_xs: false
+- id: TB1019
+  triviaqa_id: qw_12302
+  question: Which 1944 musical film, directed by Vincente Minnelli, starred Judy Garland, Mary Astor, Leon Ames, Marjorie Main and Margaret O'Brien who were going to the Louisianna Purchase Exposition of 1904?
+  answers:
+  - Meet Me In St. Louis
+  - Meet Me in St Louis
+  - Meet Me in St. Louis (film)
+  topic: Entertainment
+  year: 1944
+  era: 1900-1949
+  difficulty: 2
+  in_xs: false
+- id: TB1020
+  triviaqa_id: qf_2276
+  question: Who was the first emperor of Rome?
+  answers:
+  - Augustus
+  - GAIVS•IVLIVS•CAESAR•OCTAVIANVS
+  - Julius Caesar Octavianus
+  - Gaius Julius Caesar Octavianus
+  - GAIVS*IVLIVS*CAESAR*OCTAVIANVS
+  - Ceasar Augustus
+  - Gaius Octavius Thurinus
+  - Augustus Octavian Caesar
+  - Octavious
+  - Agustus
+  - Octavian Caesar
+  - Caesar Octavian
+  - IMPERATOR•CAESAR•DIVI•FILIVS•AVGVSTVS
+  - Avgvstvs
+  - Octavianus
+  - Octavian Augustus
+  - Augustus Ceasar
+  - Augusts Caesar
+  - Coinage reform of Augustus
+  - Augustus Caesar
+  - Emperor Augustus
+  - Emperor Augustus of Rome
+  - Gaius Julius Caesar Augustus
+  - IMPERATOR*CAESAR*DIVI*FILIVS*AVGVSTVS
+  - Octavius Caesar
+  - Roman Emperor Augustus
+  - Augustus, Emperor of Rome
+  - Octavius
+  - Octavian
+  - Gaius Julius Caesar Octavanius Augustus
+  - Augustan reform
+  - Caesar Octavianus
+  - Gaius Octavius Augustus
+  - Octavianus Augustus
+  - Cæsar Augustus
+  - Octavian Augustus Caesar
+  - Caesar Augustus
+  topic: History
+  year: -27
+  era: before 1500
+  difficulty: 2
+  in_xs: false
+- id: TB1021
+  triviaqa_id: odql_5986
+  question: '''Stane Street'' was a Roman road that linked London to which city?'
+  answers:
+  - CHICHESTER
+  - Chichester Festivities
+  - Chichester Conservation Area
+  - Chichester, Sussex
+  - Chichester, England
+  - Central C of E Junior School
+  - Chichester, West Sussex
+  - COFEJS
+  - Kingsham Primary School
+  - Chichester (city)
+  topic: History
+  year: 50
+  era: before 1500
+  difficulty: 3
+  in_xs: false
+- id: TB1022
+  triviaqa_id: qg_3321
+  question: What noted English chemist and physicist, born on Sept 22, 1791, is responsible for the electromagnet and has the SI unit of capacitance named for him?
+  answers:
+  - Michael Faraday
+  - Michael farraday
+  - M. Faraday
+  - Michael Farady
+  - Faradic
+  - Faradayan
+  - Faraday death
+  - Micheal Faraday
+  topic: Science
+  year: 1791
+  era: 1500-1799
+  difficulty: 1
+  in_xs: false
+- id: TB1023
+  triviaqa_id: odql_6789
+  question: What may be described as a 'red earthworm with rings of a brighter colour, often found in manure and used as fishing bait?
+  answers:
+  - BRANDLING
+  topic: Science
+  year: null
+  era: timeless
+  difficulty: 3
+  in_xs: false
+- id: TB1024
+  triviaqa_id: qg_1750
+  question: 'What does the DSM-IV define as: A pervasive pattern of excessive emotionality and attention seeking, beginning by early adulthood and present in a variety of contexts, as indicated by five (or more) of the following: (1) is uncomfortable in situations in which he or she is not the center of attention (2) interaction with others is often characterized by inappropriate sexually seductive or provocative behavior (3) displays rapidly shifting and shallow expression of emotions (4) consistently uses physical appearance to draw attention to self (5) has a style of speech that is excessively impressionistic and lacking in detail (6) shows self-dramatization, theatricality, and exaggerated expression of emotion (7) is suggestible, i.e., easily influenced by others or circumstances (8) considers relationships to be more intimate than they actually are'
+  answers:
+  - Histrionic Personality Disorder
+  - Hysterical personality disorder
+  - Histrionic personality
+  - Histrionia
+  topic: Science
+  year: 1994
+  era: 1980-1999
+  difficulty: 3
+  in_xs: false
+- id: TB1025
+  triviaqa_id: sfq_22539
+  question: Eleanor of Provence was the wife of which long-reigning English king?
+  answers:
+  - HENRY III
+  - Enrique III
+  - Heinrich III
+  - Hendrik III
+  - Henry the Third
+  - Henry 3
+  - Henry III (disambiguation)
+  - Enrico III
+  - King Henry III
+  topic: History
+  year: 1236
+  era: before 1500
+  difficulty: 3
+  in_xs: false
+- id: TB1026
+  triviaqa_id: wh_991
+  question: Which microprocessor was introduced by Intel in 1993?
+  answers:
+  - PENTIUM
+  - Intel Pentium Processor
+  - Pentium (disambiguation)
+  - Pentium processor
+  - Pentium brand
+  - Pentium family
+  - Pentium E
+  - Intel Pentium
+  - Pentium (brand)
+  - Pentium (trademark)
+  topic: Science
+  year: 1993
+  era: 1980-1999
+  difficulty: 2
+  in_xs: false
+- id: TB1027
+  triviaqa_id: jp_2203
+  question: What is the American name for the board game known in England as "draughts"?
+  answers:
+  - Checkers
+  - ⛁
+  - ⛀
+  - ⛃
+  - ⛂
+  - Draughts (game)
+  - Draughts
+  topic: Misc
+  year: null
+  era: timeless
+  difficulty: 1
+  in_xs: false
+- id: TB1028
+  triviaqa_id: qw_7108
+  question: What is the name of the system of stellar designation in which a specific star is identified by a Greek letter (then Latin letters in lower-case then upper-case), followed by the genitive form of its parent constellation's Latin name (e.g. Tauri)?
+  answers:
+  - Bayer designation
+  - Bayer's Name
+  - Bayer letters
+  - Bayer designations
+  - Bayer classification
+  - Bayer letter
+  topic: Science
+  year: 1603
+  era: 1500-1799
+  difficulty: 3
+  in_xs: false
+- id: TB1029
+  triviaqa_id: sfq_6147
+  question: In which year was the 50p coin introduced into circulation in Britain?
+  answers:
+  - '1969'
+  - one thousand, nine hundred and sixty-nine
+  topic: Finance
+  year: 1969
+  era: 1950-1979
+  difficulty: 3
+  in_xs: false
+- id: TB1030
+  triviaqa_id: jp_1058
+  question: What gladiator famously led a slave revolt against Rome?
+  answers:
+  - Spartacus
+  - Sparticus
+  - Spartacus (person)
+  - Spartakus
+  - Espartaco
+  topic: History
+  year: -73
+  era: before 1500
+  difficulty: 1
+  in_xs: false
+- id: TB1031
+  triviaqa_id: odql_11550
+  question: Which principality was established in 1278 by the Treaty of Joint Suzerainty?
+  answers:
+  - ANDORRA
+  - Military of Andorra
+  - Principado de Andorra
+  - Valles de Andorra
+  - The Principality of Andorra
+  - Name of Andorra
+  - Health in Andorra
+  - Religion in Andorra
+  - Protestantism in Andorra
+  - The weather in Andorra
+  - Andorre
+  - Principauté d'Andorre
+  - Hinduism in Andorra
+  - Andorra/Military
+  - Andorran Navy
+  - Principaute d'Andorre
+  - Principat d'Andorra
+  - Principality of Andorra
+  - ISO 3166-1:AD
+  topic: History
+  year: 1278
+  era: before 1500
+  difficulty: 3
+  in_xs: false
+- id: TB1032
+  triviaqa_id: qb_4594
+  question: What is the nickname of the great bell of the clock at the north end of the Palace of Westminster in London?
+  answers:
+  - Big Ben
+  - Westminster Clock Tower
+  - Big Ben/version 2
+  - The Tower of Big Ben
+  - Great Clock of Westminster
+  - Palace of Westminster Clock Tower, Great Clock of Westminster
+  - Palace of Westminster Clock Tower
+  - Westminster Clock
+  - Big Ben (bell)
+  - Clock Tower, Palace of Westminster
+  - Great Bell of Westminster
+  - Clock Tower (Westminster)
+  - Elizabeth Tower
+  - Elizabeth Tower, Palace of Westminster
+  - Big Ben, London
+  - The Elizabeth Tower
+  - Big-ben
+  topic: Misc
+  year: 1859
+  era: 1800-1899
+  difficulty: 1
+  in_xs: false
+- id: TB1033
+  triviaqa_id: tb_1315
+  question: What battle of the Middle Ages fought on Saint Crispin's Day has been immortalized by a speech that references the day in a Shakespearean history play?
+  answers:
+  - Battle of Agincourt (1415)
+  - The Battle of Agincourt
+  - Battle of Agincourt
+  - Battle Agincourt
+  - Battle of Azincourt
+  topic: History
+  year: 1415
+  era: before 1500
+  difficulty: 2
+  in_xs: false
+- id: TB1034
+  triviaqa_id: wh_3323
+  question: 'Which Shakespeare play features the line: " The play''s the thing / Wherein I''ll catch the conscience of the king. " ?'
+  answers:
+  - HAMLET
+  - The Hamlet
+  - The Hamlet (novel)
+  - Snopes Family
+  - Flem Snopes
+  topic: Literature
+  year: 1600
+  era: 1500-1799
+  difficulty: 1
+  in_xs: false
+- id: TB1035
+  triviaqa_id: sfq_22033
+  question: Which musician and composer said 'Wagner has wonderful moments, and dreadful quarters of an hour'?
+  answers:
+  - GIOACHINO ROSSINI
+  - Gioachino Antonio Rossini
+  - Gioacchino Rossini
+  - Giovacchino Rossini
+  - Giacomo Rossini
+  - Ballets to the music of Gioachino Rossini
+  - G. Rossini
+  - Gioacchino Antonio Rossini
+  - Gioacchimo Rossini
+  - Rossini
+  - Giacchino Rossini
+  - Giachino Rossini
+  topic: Music
+  year: 1867
+  era: 1800-1899
+  difficulty: 3
+  in_xs: false
+- id: TB1036
+  triviaqa_id: qw_9723
+  question: The Royal Navy introduced limes to the standard diet for crewmen to prevent what?
+  answers:
+  - Scurvy
+  - Scruvy
+  - Scorbut
+  - Cheadle's disease
+  - Scorbutic anaemia
+  - Anti-scorbutic
+  - Avitaminosis C
+  - Scorbutus
+  - Vitamin C deficiency
+  - Antiscorbutic
+  - Moeller's disease
+  - Scurvey
+  - Scorbutic
+  - Ascorbic acid deficiency
+  topic: Science
+  year: 1795
+  era: 1500-1799
+  difficulty: 1
+  in_xs: false
+- id: TB1037
+  triviaqa_id: sfq_15616
+  question: For which county did W G Grace play cricket for most of his career?
+  answers:
+  - Gloucestershire
+  - Gloucestershire, England
+  - County of Gloucester
+  - Gloucestershire (traditional)
+  - Gloucestershire (administrative)
+  - Gloucestershire (rump)
+  - Windsoredge
+  - Glouchestershire
+  - Glos.
+  - Gloucestershire, United Kingdom
+  - Glocs
+  topic: Sports
+  year: 1870
+  era: 1800-1899
+  difficulty: 2
+  in_xs: false
+- id: TB1038
+  triviaqa_id: jp_1572
+  question: What's the English version of "L'Chaim", "Prost" or "Skal"?
+  answers:
+  - Cheers
+  - Charles-Burrows-Charles Productions
+  - Charles-Burrows-Charles
+  - Cheers (TV show)
+  - Charles/Burrows/Charles Productions
+  - Cheers (TV series)
+  - Cheers characters
+  - Melville's
+  - Charles Burrows Charles Productions
+  topic: Misc
+  year: null
+  era: timeless
+  difficulty: 1
+  in_xs: false
+- id: TB1039
+  triviaqa_id: sfq_10360
+  question: What name has been given to the previously unknown species of man found in Russia 2010?
+  answers:
+  - Denisovans
+  - Denisovian
+  - Homo sapiens denisovan
+  - H. sapiens denisovan
+  - Homo sapiens denisova
+  - Denisovians
+  - Homo sp. Altai
+  - Woman X
+  - Denisova hominin
+  - Denisova hominid
+  - Homo Denisovan
+  - Homo Denisova
+  - Denisova hominine
+  - Denisovan
+  - Homo denisovensis
+  - H. denisovan
+  - H. denisova
+  - H. sapiens denisova
+  - Homo sapiens ssp. Denisova
+  topic: Science
+  year: 2010
+  era: 2000 on
+  difficulty: 3
   in_xs: false

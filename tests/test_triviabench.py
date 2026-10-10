@@ -96,9 +96,16 @@ def test_trivia_set_spreads_over_every_topic_era_and_difficulty() -> None:
 
 
 def test_no_question_points_at_options_triviaqa_dropped() -> None:
-    """TriviaQA kept some multiple-choice stems without their choices ("Which is the longest length below?"); version 1.1 removed them."""
-    stems_without_choices = [question.id for question in TRIVIA_SET.questions if re.search(r"\b(of these|below)\b", question.question, re.IGNORECASE)]
-    assert stems_without_choices == []
+    """TriviaQA kept some multiple-choice stems without their choices ("Which is the longest length below?"), and some accept any of a list the key
+    names only one of ("Name any planet"); versions 1.1 and 1.2 removed them."""
+    unfair_wording = re.compile(r"\b(of these|below|name any|give a year|give an example|any of the)\b", re.IGNORECASE)
+    assert [question.id for question in TRIVIA_SET.questions if unfair_wording.search(question.question)] == []
+
+
+def test_no_question_contains_its_own_answer() -> None:
+    """A question that names its answer (a choice list, "the town on the site of the battle of Hastings") can only be graded on an exact reply."""
+    containing = [question.id for question in TRIVIA_SET.questions if re.search(rf"(^| ){re.escape(normalize_answer(question.answers[0]))}( |$)", normalize_answer(question.question))]
+    assert containing == []
 
 
 def test_every_question_has_a_reference_answer() -> None:

@@ -220,9 +220,6 @@ answers:
 - question_id: TB0072
   answer: Harry Secombe
   reviewed_correct: true
-- question_id: TB0073
-  answer: Birds
-  reviewed_correct: false
 - question_id: TB0074
   answer: Johan Cruyff
   reviewed_correct: true
@@ -369,9 +366,6 @@ answers:
   reviewed_correct: true
 - question_id: TB0122
   answer: Gary Mabbutt
-  reviewed_correct: true
-- question_id: TB0123
-  answer: British
   reviewed_correct: true
 - question_id: TB0124
   answer: Alpha
@@ -592,14 +586,8 @@ answers:
 - question_id: TB0198
   answer: Barcelona
   reviewed_correct: true
-- question_id: TB0199
-  answer: '1700'
-  reviewed_correct: false
 - question_id: TB0200
   answer: Sirhan Sirhan
-  reviewed_correct: true
-- question_id: TB0201
-  answer: Battle
   reviewed_correct: true
 - question_id: TB0202
   answer: Binky
@@ -636,9 +624,6 @@ answers:
   reviewed_correct: true
 - question_id: TB0213
   answer: James Callaghan
-  reviewed_correct: true
-- question_id: TB0214
-  answer: '1483'
   reviewed_correct: true
 - question_id: TB0215
   answer: Marillion
@@ -814,9 +799,6 @@ answers:
 - question_id: TB0272
   answer: Taiwan
   reviewed_correct: true
-- question_id: TB0273
-  answer: Il Trovatore
-  reviewed_correct: true
 - question_id: TB0274
   answer: 1973, 1974 and 1977
   reviewed_correct: true
@@ -934,9 +916,6 @@ answers:
 - question_id: TB0313
   answer: Benedict XVI
   reviewed_correct: true
-- question_id: TB0314
-  answer: Kora
-  reviewed_correct: false
 - question_id: TB0315
   answer: Aintree
   reviewed_correct: true
@@ -1210,9 +1189,6 @@ answers:
 - question_id: TB0405
   answer: Periodic table
   reviewed_correct: true
-- question_id: TB0406
-  answer: Albatross
-  reviewed_correct: true
 - question_id: TB0407
   answer: Marlene Dietrich
   reviewed_correct: true
@@ -1230,9 +1206,6 @@ answers:
   reviewed_correct: true
 - question_id: TB0412
   answer: The White House
-  reviewed_correct: true
-- question_id: TB0413
-  answer: Harrods
   reviewed_correct: true
 - question_id: TB0414
   answer: Parabola
@@ -1321,9 +1294,6 @@ answers:
 - question_id: TB0442
   answer: Seven
   reviewed_correct: true
-- question_id: TB0443
-  answer: Karl Marx
-  reviewed_correct: true
 - question_id: TB0444
   answer: '2240'
   reviewed_correct: true
@@ -1341,9 +1311,6 @@ answers:
   reviewed_correct: true
 - question_id: TB0449
   answer: Frank Sinatra
-  reviewed_correct: true
-- question_id: TB0450
-  answer: Cuckoo
   reviewed_correct: true
 - question_id: TB0451
   answer: Iain Banks
@@ -1591,9 +1558,6 @@ answers:
 - question_id: TB0533
   answer: The Cavern Club
   reviewed_correct: true
-- question_id: TB0534
-  answer: '1471'
-  reviewed_correct: true
 - question_id: TB0535
   answer: Skittles
   reviewed_correct: true
@@ -1702,9 +1666,6 @@ answers:
 - question_id: TB0571
   answer: Pluto
   reviewed_correct: true
-- question_id: TB0572
-  answer: '1140'
-  reviewed_correct: true
 - question_id: TB0573
   answer: '1'
   reviewed_correct: true
@@ -1722,9 +1683,6 @@ answers:
   reviewed_correct: true
 - question_id: TB0578
   answer: Dwight D. Eisenhower
-  reviewed_correct: true
-- question_id: TB0579
-  answer: Adam Smith
   reviewed_correct: true
 - question_id: TB0580
   answer: Cuneiform
@@ -1762,9 +1720,6 @@ answers:
 - question_id: TB0591
   answer: Caiaphas
   reviewed_correct: true
-- question_id: TB0592
-  answer: Imaginary axis
-  reviewed_correct: false
 - question_id: TB0593
   answer: C. S. Lewis
   reviewed_correct: true
@@ -1912,9 +1867,6 @@ answers:
 - question_id: TB0642
   answer: '12'
   reviewed_correct: true
-- question_id: TB0643
-  answer: Michio Kaku
-  reviewed_correct: false
 - question_id: TB0644
   answer: Tony Bennett
   reviewed_correct: true
@@ -1978,9 +1930,6 @@ answers:
 - question_id: TB0664
   answer: Mercury
   reviewed_correct: true
-- question_id: TB0665
-  answer: Fiery Face
-  reviewed_correct: true
 - question_id: TB0666
   answer: Shekel
   reviewed_correct: true
@@ -2023,9 +1972,6 @@ answers:
 - question_id: TB0679
   answer: Dodo
   reviewed_correct: true
-- question_id: TB0680
-  answer: Albert Einstein
-  reviewed_correct: true
 - question_id: TB0681
   answer: Sinclair Lewis
   reviewed_correct: true
@@ -2037,9 +1983,6 @@ answers:
   reviewed_correct: true
 - question_id: TB0684
   answer: Small Faces
-  reviewed_correct: true
-- question_id: TB0685
-  answer: '6'
   reviewed_correct: true
 - question_id: TB0686
   answer: Cactusville
@@ -2329,9 +2272,6 @@ answers:
 - question_id: TB0782
   answer: Musical scales
   reviewed_correct: true
-- question_id: TB0783
-  answer: John Flamsteed
-  reviewed_correct: true
 - question_id: TB0784
   answer: Microsoft
   reviewed_correct: true
@@ -2359,9 +2299,6 @@ answers:
 - question_id: TB0792
   answer: Four Weddings and a Funeral
   reviewed_correct: true
-- question_id: TB0793
-  answer: GMC
-  reviewed_correct: false
 - question_id: TB0794
   answer: Abbey Theatre
   reviewed_correct: true
@@ -2373,9 +2310,6 @@ answers:
   reviewed_correct: true
 - question_id: TB0797
   answer: Secretary of State
-  reviewed_correct: true
-- question_id: TB0798
-  answer: Wars of the Roses
   reviewed_correct: true
 - question_id: TB0799
   answer: Legal highs
@@ -2487,9 +2421,6 @@ answers:
   reviewed_correct: true
 - question_id: TB0835
   answer: France
-  reviewed_correct: true
-- question_id: TB0836
-  answer: Parthia
   reviewed_correct: true
 - question_id: TB0837
   answer: Robert F. Kennedy
@@ -2617,9 +2548,6 @@ answers:
 - question_id: TB0878
   answer: The Comedy of Errors
   reviewed_correct: true
-- question_id: TB0879
-  answer: The White House
-  reviewed_correct: true
 - question_id: TB0880
   answer: Italy
   reviewed_correct: true
@@ -2652,9 +2580,6 @@ answers:
   reviewed_correct: true
 - question_id: TB0890
   answer: Squash
-  reviewed_correct: true
-- question_id: TB0891
-  answer: Alexander the Great
   reviewed_correct: true
 - question_id: TB0892
   answer: '400'
@@ -2719,9 +2644,6 @@ answers:
 - question_id: TB0912
   answer: New South Wales
   reviewed_correct: true
-- question_id: TB0913
-  answer: Verona
-  reviewed_correct: true
 - question_id: TB0914
   answer: The Full Monty
   reviewed_correct: true
@@ -2775,9 +2697,6 @@ answers:
   reviewed_correct: true
 - question_id: TB0931
   answer: Goofy
-  reviewed_correct: true
-- question_id: TB0932
-  answer: Patience
   reviewed_correct: true
 - question_id: TB0933
   answer: Mo Farah
@@ -2881,9 +2800,6 @@ answers:
 - question_id: TB0967
   answer: Singapore
   reviewed_correct: true
-- question_id: TB0968
-  answer: Robert Boyle
-  reviewed_correct: true
 - question_id: TB0969
   answer: Scalp
   reviewed_correct: true
@@ -2907,9 +2823,6 @@ answers:
   reviewed_correct: true
 - question_id: TB0976
   answer: Jeffrey Archer
-  reviewed_correct: true
-- question_id: TB0977
-  answer: 19th century
   reviewed_correct: true
 - question_id: TB0978
   answer: Arithmetic
@@ -2971,12 +2884,6 @@ answers:
 - question_id: TB0997
   answer: Charlie Parker
   reviewed_correct: true
-- question_id: TB0998
-  answer: '2'
-  reviewed_correct: true
-- question_id: TB0999
-  answer: Pluto
-  reviewed_correct: true
 - question_id: TB1000
   answer: The Merchant of Venice
   reviewed_correct: true
@@ -3003,4 +2910,97 @@ answers:
   reviewed_correct: true
 - question_id: TB1008
   answer: France
+  reviewed_correct: true
+- question_id: TB1009
+  answer: The Parthenon
+  reviewed_correct: true
+- question_id: TB1010
+  answer: Canberra
+  reviewed_correct: true
+- question_id: TB1011
+  answer: Robert Hooke
+  reviewed_correct: true
+- question_id: TB1012
+  answer: Mausoleum
+  reviewed_correct: true
+- question_id: TB1013
+  answer: Plantagenets
+  reviewed_correct: true
+- question_id: TB1014
+  answer: Giacomo Meyerbeer
+  reviewed_correct: true
+- question_id: TB1015
+  answer: Julian
+  reviewed_correct: true
+- question_id: TB1016
+  answer: Hummer
+  reviewed_correct: true
+- question_id: TB1017
+  answer: Heriot-Watt University
+  reviewed_correct: true
+- question_id: TB1018
+  answer: Elephant
+  reviewed_correct: true
+- question_id: TB1019
+  answer: Meet Me in St. Louis
+  reviewed_correct: true
+- question_id: TB1020
+  answer: Augustus
+  reviewed_correct: true
+- question_id: TB1021
+  answer: Chichester
+  reviewed_correct: true
+- question_id: TB1022
+  answer: Michael Faraday
+  reviewed_correct: true
+- question_id: TB1023
+  answer: Brandling
+  reviewed_correct: true
+- question_id: TB1024
+  answer: Histrionic personality disorder
+  reviewed_correct: true
+- question_id: TB1025
+  answer: Henry III
+  reviewed_correct: true
+- question_id: TB1026
+  answer: Pentium
+  reviewed_correct: true
+- question_id: TB1027
+  answer: Checkers
+  reviewed_correct: true
+- question_id: TB1028
+  answer: Bayer designation
+  reviewed_correct: true
+- question_id: TB1029
+  answer: '1969'
+  reviewed_correct: true
+- question_id: TB1030
+  answer: Spartacus
+  reviewed_correct: true
+- question_id: TB1031
+  answer: Andorra
+  reviewed_correct: true
+- question_id: TB1032
+  answer: Big Ben
+  reviewed_correct: true
+- question_id: TB1033
+  answer: Battle of Agincourt
+  reviewed_correct: true
+- question_id: TB1034
+  answer: Hamlet
+  reviewed_correct: true
+- question_id: TB1035
+  answer: Gioachino Rossini
+  reviewed_correct: true
+- question_id: TB1036
+  answer: Scurvy
+  reviewed_correct: true
+- question_id: TB1037
+  answer: Gloucestershire
+  reviewed_correct: true
+- question_id: TB1038
+  answer: Cheers
+  reviewed_correct: true
+- question_id: TB1039
+  answer: Denisovans
   reviewed_correct: true
