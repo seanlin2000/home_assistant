@@ -1,5 +1,6 @@
 """TriviaBench: the alias grader reads spoken answers fairly, the question set keeps its shape, and the runner and report handle partial and failed runs."""
 
+import re
 from collections.abc import AsyncIterator
 from pathlib import Path
 
@@ -92,6 +93,12 @@ def test_trivia_set_spreads_over_every_topic_era_and_difficulty() -> None:
         assert {question.topic for question in questions} == set(Topic)
         assert {question.era for question in questions} == set(Era)
         assert {question.difficulty for question in questions} == set(Difficulty)
+
+
+def test_no_question_points_at_options_triviaqa_dropped() -> None:
+    """TriviaQA kept some multiple-choice stems without their choices ("Which is the longest length below?"); version 1.1 removed them."""
+    stems_without_choices = [question.id for question in TRIVIA_SET.questions if re.search(r"\b(of these|below)\b", question.question, re.IGNORECASE)]
+    assert stems_without_choices == []
 
 
 def test_every_question_has_a_reference_answer() -> None:

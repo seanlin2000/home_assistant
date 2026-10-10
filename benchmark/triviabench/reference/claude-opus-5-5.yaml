@@ -439,9 +439,6 @@ answers:
 - question_id: TB0145
   answer: Some Like It Hot
   reviewed_correct: true
-- question_id: TB0146
-  answer: George Washington
-  reviewed_correct: false
 - question_id: TB0147
   answer: Sally Ride
   reviewed_correct: true
@@ -534,9 +531,6 @@ answers:
   reviewed_correct: true
 - question_id: TB0177
   answer: Mozilla
-  reviewed_correct: true
-- question_id: TB0178
-  answer: John Napier
   reviewed_correct: true
 - question_id: TB0179
   answer: Brian Glover
@@ -858,9 +852,6 @@ answers:
   reviewed_correct: true
 - question_id: TB0285
   answer: Florence Henderson
-  reviewed_correct: true
-- question_id: TB0286
-  answer: First
   reviewed_correct: true
 - question_id: TB0287
   answer: New Zealand
@@ -1456,9 +1447,6 @@ answers:
 - question_id: TB0484
   answer: The Observer
   reviewed_correct: true
-- question_id: TB0485
-  answer: League
-  reviewed_correct: false
 - question_id: TB0486
   answer: Java
   reviewed_correct: true
@@ -1632,9 +1620,6 @@ answers:
   reviewed_correct: true
 - question_id: TB0543
   answer: Babylon
-  reviewed_correct: true
-- question_id: TB0544
-  answer: A remainder
   reviewed_correct: true
 - question_id: TB0545
   answer: Nokia
@@ -1866,9 +1851,6 @@ answers:
   reviewed_correct: true
 - question_id: TB0621
   answer: A Journey
-  reviewed_correct: true
-- question_id: TB0622
-  answer: Abacus
   reviewed_correct: true
 - question_id: TB0623
   answer: Jack Mills
@@ -2259,9 +2241,6 @@ answers:
   reviewed_correct: true
 - question_id: TB0752
   answer: St Bartholomew's Hospital
-  reviewed_correct: true
-- question_id: TB0753
-  answer: Abacus
   reviewed_correct: true
 - question_id: TB0754
   answer: Man v. Food
@@ -2875,9 +2854,6 @@ answers:
 - question_id: TB0957
   answer: Great Pyramid of Giza
   reviewed_correct: true
-- question_id: TB0958
-  answer: Isosceles
-  reviewed_correct: true
 - question_id: TB0959
   answer: '1990'
   reviewed_correct: true
@@ -3003,4 +2979,28 @@ answers:
   reviewed_correct: true
 - question_id: TB1000
   answer: The Merchant of Venice
+  reviewed_correct: true
+- question_id: TB1001
+  answer: The Hague
+  reviewed_correct: true
+- question_id: TB1002
+  answer: Horse racing
+  reviewed_correct: true
+- question_id: TB1003
+  answer: Psalms
+  reviewed_correct: true
+- question_id: TB1004
+  answer: The British monarch
+  reviewed_correct: true
+- question_id: TB1005
+  answer: Bank of England
+  reviewed_correct: true
+- question_id: TB1006
+  answer: Oliver!
+  reviewed_correct: true
+- question_id: TB1007
+  answer: Edward III
+  reviewed_correct: true
+- question_id: TB1008
+  answer: France
   reviewed_correct: true

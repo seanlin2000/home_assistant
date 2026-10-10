@@ -9,9 +9,11 @@
 #   is for a well-read adult) and time_sensitive by ten Claude Opus 5.5 subagents. Difficulty is a model's judgement, not a measured pass rate.
 # - Selection: greedy and seeded. Each pick takes a question from the (topic, era, difficulty) cell furthest behind its targets: topics equal
 #   (Math capped at what the pool has), 20% timeless and the rest spread evenly over seven eras, and difficulty 30% easy, 40% medium, 30% hard.
+# Version 1.1 removes eight questions from 1.0 (two that point at options TriviaQA dropped, two with a broken or open-ended key, four repeats)
+# and backfills by the same rule from the counts of the 992 kept, under new ids TB1001 on, so results on kept ids stay comparable.
 # question: TriviaQA's text, with the CSV escaping some questions carry undone (outer quotes dropped, doubled quotes single).
 # answers: the TriviaQA value first, then its aliases. year: negative for BC, null when no year applies.
-version: '1.0'
+version: '1.1'
 search_instruction: Search the web before you answer.
 questions:
 - id: TB0001
@@ -3558,28 +3560,6 @@ questions:
   era: 1950-1979
   difficulty: 1
   in_xs: false
-- id: TB0146
-  triviaqa_id: qw_1193
-  question: Who was the first of these to become US President?
-  answers:
-  - James Madison
-  - Father of the Constitution
-  - Jimmy Madison
-  - President Madison
-  - James Madison, Jun.
-  - Presidency of James Madison
-  - 4th President of the United States
-  - James Madison, Jr.
-  - Nelly Conway Madison
-  - President James Madison
-  - Fourth President of the United States
-  - Madison, James
-  - Madison Administration
-  topic: Politics
-  year: 1789
-  era: 1500-1799
-  difficulty: 3
-  in_xs: false
 - id: TB0147
   triviaqa_id: sfq_14462
   question: Who was the first female American astronaut?
@@ -4253,27 +4233,6 @@ questions:
   topic: Science
   year: 2013
   era: 2000 on
-  difficulty: 2
-  in_xs: false
-- id: TB0178
-  triviaqa_id: dpql_3061
-  question: Which Scottish mathematician discovered logarithms?
-  answers:
-  - John NAPIER
-  - Napier, John
-  - John Neper of Merchiston
-  - Joannis Neperi
-  - Marvellous Merchiston
-  - John Nepair of Merchiston
-  - Mirifici Logarithmorum Canonis Descriptio
-  - John Napier of Merchiston
-  - Joanne Nepero
-  - Napierian
-  - John Nepair
-  - John Neper
-  topic: Math
-  year: 1614
-  era: 1500-1799
   difficulty: 2
   in_xs: false
 - id: TB0179
@@ -6614,16 +6573,6 @@ questions:
   year: 1982
   era: 1980-1999
   difficulty: 3
-  in_xs: false
-- id: TB0286
-  triviaqa_id: odql_8447
-  question: Give an example of an 'ordinal number'?
-  answers:
-  - FIRST, SECOND, THIRD etc
-  topic: Math
-  year: null
-  era: timeless
-  difficulty: 1
   in_xs: false
 - id: TB0287
   triviaqa_id: qw_3004
@@ -11428,25 +11377,6 @@ questions:
   era: 1500-1799
   difficulty: 2
   in_xs: false
-- id: TB0485
-  triviaqa_id: qg_1295
-  question: Which is the longest length below?
-  answers:
-  - Rod
-  - R. O. D
-  - R.O.D (disambiguation)
-  - Wooden wire
-  - RO D
-  - R.o.d.
-  - R.O.D
-  - R O D
-  - Rods
-  - Rod (disambiguation)
-  topic: Math
-  year: null
-  era: timeless
-  difficulty: 3
-  in_xs: false
 - id: TB0486
   triviaqa_id: wh_4018
   question: Which major computer language shares it's name with an Indonesian Island ?
@@ -12743,20 +12673,6 @@ questions:
   year: -600
   era: before 1500
   difficulty: 1
-  in_xs: false
-- id: TB0544
-  triviaqa_id: qw_722
-  question: If you divide a prime number by 4, the answer must result in ?
-  answers:
-  - A fraction
-  - Fraction (quantity)
-  - Fraction (disambiguation)
-  - Fraction
-  - Fractional
-  topic: Math
-  year: null
-  era: timeless
-  difficulty: 2
   in_xs: false
 - id: TB0545
   triviaqa_id: bb_7174
@@ -14673,32 +14589,6 @@ questions:
   year: 2010
   era: 2000 on
   difficulty: 2
-  in_xs: false
-- id: TB0622
-  triviaqa_id: bt_4036
-  question: What is the ancient counting frame using wires and beads called
-  answers:
-  - Abacus
-  - Abacus Calculation
-  - Russian abacus
-  - Abaci
-  - Nepohualtzintzin
-  - Abacus (Aztec)
-  - Cranmer abacus
-  - Abacuses
-  - Counting frame
-  - Abacist
-  - Abacus (mathematics)
-  - Abacists
-  - Bead frame
-  - Abacus arithmetic
-  - Counting frames
-  - Abbacus
-  - Reckoning frame
-  topic: Math
-  year: null
-  era: timeless
-  difficulty: 1
   in_xs: false
 - id: TB0623
   triviaqa_id: bt_2403
@@ -17454,32 +17344,6 @@ questions:
   year: 1123
   era: before 1500
   difficulty: 3
-  in_xs: false
-- id: TB0753
-  triviaqa_id: qb_60
-  question: Which ‘A’ is a calculating frame with sliding balls on wires?
-  answers:
-  - Abacus
-  - Abacus Calculation
-  - Russian abacus
-  - Abaci
-  - Nepohualtzintzin
-  - Abacus (Aztec)
-  - Cranmer abacus
-  - Abacuses
-  - Counting frame
-  - Abacist
-  - Abacus (mathematics)
-  - Abacists
-  - Bead frame
-  - Abacus arithmetic
-  - Counting frames
-  - Abbacus
-  - Reckoning frame
-  topic: Math
-  year: null
-  era: timeless
-  difficulty: 1
   in_xs: false
 - id: TB0754
   triviaqa_id: qb_3103
@@ -22192,20 +22056,6 @@ questions:
   era: before 1500
   difficulty: 2
   in_xs: false
-- id: TB0958
-  triviaqa_id: qg_886
-  question: An equilateral triangle has all 3 sides of the same length. What type of triangle only has 2 sides of equal length?
-  answers:
-  - Isosceles triangle
-  - Isoceles
-  - Isoceles triangle
-  - Isosceles triange
-  - Isosceles
-  topic: Math
-  year: null
-  era: timeless
-  difficulty: 1
-  in_xs: false
 - id: TB0959
   triviaqa_id: sfq_13367
   question: In which year did Nick Faldo win both the Open and the US Masters Championships?
@@ -23068,5 +22918,229 @@ questions:
   topic: Literature
   year: 1596
   era: 1500-1799
+  difficulty: 2
+  in_xs: false
+- id: TB1001
+  triviaqa_id: tc_2544
+  question: In which Netherlands city does the United Nations International Court of Justice sit?
+  answers:
+  - The Hague
+  - Hague, Netherlands
+  - The Hauge
+  - UN/LOCODE:NLHAG
+  - '''s-Gravenhage'
+  - The haig
+  - Hague, The
+  - Den hague
+  - S%60Gravenshage
+  - Lahey
+  - S-Gravenhage
+  - '''s Gravenhage'
+  - Hague
+  - Den Hagg
+  - ’s-Gravenhage
+  - Den Haag
+  - The Hague, Netherlands
+  - Gravenhage
+  - The Hague, The Netherlands
+  - Municipality of The Hague
+  topic: Politics
+  year: null
+  era: timeless
+  difficulty: 1
+  in_xs: false
+- id: TB1002
+  triviaqa_id: sfq_18637
+  question: What is commonly known as the 'sport of kings'?
+  answers:
+  - Horse Racing
+  - Scratch sheet
+  - Race horse
+  - Pony racing
+  - Racing horse
+  - Racing industry
+  - Horse racing in Japan
+  - Horse-racing
+  - Keiba
+  - 🏇
+  - Horse racing venue
+  - Racing on horseback
+  - Quarter-Horse Racing
+  - Horse race
+  - Horse races
+  - Racehorses
+  - Horse-race
+  - Racehorse
+  - Turf patron
+  - Horserace
+  - Horseracing
+  topic: Sports
+  year: null
+  era: timeless
+  difficulty: 1
+  in_xs: false
+- id: TB1003
+  triviaqa_id: qb_7038
+  question: The shortest chapter in the Bible is in which book?
+  answers:
+  - Psalms 117
+  topic: Misc
+  year: null
+  era: timeless
+  difficulty: 3
+  in_xs: false
+- id: TB1004
+  triviaqa_id: qb_2823
+  question: Who always holds the title of the Supreme Governor of the Church of England?
+  answers:
+  - The British monarch
+  - Crown of the United Kingdom
+  - English monarchy
+  - King of United Kingdom
+  - King of the United Kingdom
+  - British Throne
+  - UK Monarchy
+  - Monarchy of the United Kingdom of Great Britain and Northern Ireland
+  - Monarch of the UK
+  - The British monarchy
+  - British Monarch
+  - Crown Establishment
+  - British sovereign
+  - British Queen
+  - Monarchy of the uk
+  - King of Great Britain and Ireland
+  - Co-sovereigns of Scotland
+  - History of the English monarchy
+  - Monarchy in Britain
+  - Queen of Britain
+  - Monarchy in the United Kingdom
+  - History of the British monarchy
+  - Queen of Gibraltar
+  - Monarchy of Great Britain
+  - Monarchy of the United Kingdom
+  - United Kingdom monarchy
+  - Queen of the United Kingdom
+  - UK Queen
+  - Queen of United Kingdom
+  - British Monarchy
+  - Monarchy of England
+  - Queen of the United Kingdom of Great Britain and Northern Ireland
+  - King of Britain
+  - Queen of Great Britain and Ireland
+  - Crown of Great Britain
+  - Co-sovereigns of England
+  - Queen Mother (Scotland)
+  - British Monarchs
+  - Sovereign of the United Kingdom
+  - English royals
+  - King and Queen of the United Kingdom
+  - Monarchy of United Kingdom
+  - Monarchy of Gibraltar
+  - Monarch of the United Kingdom
+  topic: Politics
+  year: null
+  era: timeless
+  difficulty: 1
+  in_xs: false
+- id: TB1005
+  triviaqa_id: wh_3240
+  question: Which institution is known as 'The Old Lady of Threadneedle Street"?
+  answers:
+  - THE BANK OF ENGLAND
+  - UK Central Bank
+  - Governor and Company of the Bank of England
+  - National bank of Guernsey
+  - Bank of England
+  - National bank of Jersey
+  - Central bank of Great Britain
+  - The Old Lady of Threadneedle Street
+  - National bank of Gibraltar
+  - Central bank of the United Kingdom
+  - Old Lady of Threadneedle Street
+  - Asset Purchase Facility
+  - National bank of the United Kingdom
+  - BoE
+  - National bank of England
+  - National bank of Wales
+  - National bank of the Isle of Man
+  - National bank of Northern Ireland
+  topic: Finance
+  year: 1694
+  era: 1500-1799
+  difficulty: 2
+  in_xs: false
+- id: TB1006
+  triviaqa_id: qw_1853
+  question: The song "Consider Yourself" is from what musical?
+  answers:
+  - Oliver!
+  - Oliver! (musical)
+  - Oliver (musical)
+  topic: Entertainment
+  year: 1960
+  era: 1950-1979
+  difficulty: 1
+  in_xs: false
+- id: TB1007
+  triviaqa_id: qb_7768
+  question: Philippa of Hainault was the wife of which English monarch?
+  answers:
+  - King Edward III
+  - Edward III of England
+  - Edward III
+  - Edward 3
+  - King of England III
+  - Edward III, King of the English
+  - King Edward III of Windsor
+  - Edward III of Windsor
+  - King Edward III of England
+  - Eduard III
+  - Edward III Plantagenet
+  - Edward III, King of England
+  - Edward of Windsor
+  - Edward III Plantagenet of Windsor
+  - Edward III (England)
+  - Edward the Third
+  topic: History
+  year: 1328
+  era: before 1500
+  difficulty: 3
+  in_xs: false
+- id: TB1008
+  triviaqa_id: qb_606
+  question: The Hotel Matignon is the official residence of the Prime Minister of which European country?
+  answers:
+  - France
+  - La Republique francaise
+  - Franciaország
+  - La Republique française
+  - Belle France
+  - Republique française
+  - Ranska
+  - Franciaorszag
+  - French Republic
+  - République francaise
+  - République française
+  - ISO 3166-1:FR
+  - Frankreich
+  - France (country)
+  - Etymology of France
+  - La République française
+  - People of France
+  - Republic of France
+  - Fracne
+  - Le France
+  - The French Republic
+  - Republique francaise
+  - The Republic of France
+  - La République francaise
+  - La France
+  - Rain in France
+  - Frakkland
+  - Climate of France
+  - Franse
+  topic: Politics
+  year: null
+  era: timeless
   difficulty: 2
   in_xs: false
