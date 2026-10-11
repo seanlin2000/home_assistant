@@ -1,10 +1,10 @@
-// The exchange dashboard page (design doc v2/13). It polls the day list every two seconds; when the newest day gains an exchange, the list
-// refreshes and, while "Open new exchanges" is ticked, the new exchange opens.
+// The exchange dashboard page (design doc v2/13). It polls the day list every two seconds; when the newest day gains an exchange, the sidebar
+// refreshes and, while "Open new exchanges" is on (or the page is waiting for the answer to a typed question), the new exchange opens.
 
 const POLL_MS = 2000;
-const CONVERSATION_QUIET_MS = 5 * 60 * 1000;
 const SHORT_RESULT_CHARS = 600;
-const state = { openNextArrival: false, days: [], day: null, summaries: [], selected: null, detail: null, drawerCard: null, drawerTab: "sources" };
+const state = { openNextArrival: false, asking: false, live: null, days: [], day: null, summaries: [], selected: null, detail: null, drawerCard: null, drawerTab: "sources" };
+const chat = { id: newConversationId(), history: [] };
 
 const $ = (id) => document.getElementById(id);
 
@@ -38,7 +38,7 @@ const argumentText = (args) => Object.entries(args).map(([key, value]) => `${key
 async function poll() {
   try {
     const [days, latest] = await Promise.all([getJson("/api/days"), getJson("/api/latest")]);
-    $("model").textContent = latest ? `model: ${latest.model}` : "";
+    $("model").textContent = latest ? latest.model : "";
     setStatus("live", "live");
     await takeDays(days);
   } catch (error) {
@@ -58,11 +58,17 @@ async function takeDays(days) {
   const grew = state.days.length > 0 && newest && (!before || before.exchanges < newest.exchanges);
   state.days = days;
   renderDayPicker();
+  if (state.day === null) return newest && openDay(firstDay(days));
+  if (!grew) return;
+  const follow = state.openNextArrival || $("follow").checked;
+  state.openNextArrival = false;
+  if (follow) await openDay(newest.day, { openLatest: true });
+  else if (state.day === newest.day) await openDay(newest.day, { keepSelection: true });
+}
+
+function firstDay(days) {
   const fromHash = selectionFromHash();
-  if (state.day === null && newest) await openDay(fromHash && days.some((day) => day.day === fromHash.day) ? fromHash.day : newest.day);
-  else if (grew && ($("follow").checked || state.openNextArrival)) await openDay(newest.day, { openLatest: true });
-  if (grew) state.openNextArrival = false;
-  else if (grew && state.day === newest.day) await openDay(newest.day, { keepSelection: true });
+  return fromHash && days.some((day) => day.day === fromHash.day) ? fromHash.day : days[0].day;
 }
 
 async function openDay(day, { openLatest = false, keepSelection = false } = {}) {
@@ -71,9 +77,10 @@ async function openDay(day, { openLatest = false, keepSelection = false } = {}) 
   state.summaries = await getJson(`/api/days/${day}/exchanges`);
   renderDayPicker();
   renderList(previousCount);
+  if (keepSelection) return;
   const fromHash = selectionFromHash();
-  if (openLatest || (!keepSelection && !fromHash)) await openExchange(day, state.summaries.length - 1);
-  else if (fromHash && !keepSelection && fromHash.day === day) await openExchange(fromHash.day, fromHash.index);
+  if (!openLatest && fromHash && fromHash.day === day) await openExchange(fromHash.day, fromHash.index);
+  else await openExchange(day, state.summaries.length - 1);
 }
 
 function selectionFromHash() {
@@ -82,19 +89,42 @@ function selectionFromHash() {
 }
 
 async function openExchange(day, index) {
-  if (index < 0) return renderEmpty();
+  if (index < 0) return renderEmptyDay();
   closeDrawer();
+  closeSidebar();
+  state.live = null;
   state.selected = { day, index };
   history.replaceState(null, "", `#/${day}/${index}`);
   renderList();
   state.detail = await getJson(`/api/days/${day}/exchanges/${index}`);
+  continueConversationOf(state.detail);
   renderExchange(state.detail);
 }
 
-function renderEmpty() {
-  $("exchange").replaceChildren(el("p", { class: "empty" }, "No exchanges on this day yet. New ones appear about a second after the answer ends."));
+function startNewChat() {
+  closeDrawer();
+  closeSidebar();
+  state.live = null;
+  state.selected = null;
+  state.detail = null;
+  history.replaceState(null, "", location.pathname);
+  chat.id = newConversationId();
+  chat.history = [];
+  renderList();
+  renderGreeting();
+  $("ask-input").focus();
 }
 
+
+function renderGreeting() {
+  $("thread").replaceChildren(
+    el("div", { class: "greeting" }, el("h2", {}, "What can I help with?"), el("p", {}, "Ask Jarvis a question to watch it answer: each tool it calls, what the tools returned, and how long every step took.")),
+  );
+}
+
+function renderEmptyDay() {
+  $("thread").replaceChildren(el("div", { class: "greeting" }, el("h2", {}, "Nothing yet"), el("p", {}, "No exchanges on this day yet. New ones appear about a second after the answer ends.")));
+}
 
 function renderDayPicker() {
   const picker = $("day");
@@ -108,38 +138,94 @@ function renderList(previousCount = null) {
 
 function listRow(summary, index, fresh) {
   const selected = state.selected && state.selected.day === summary.day && state.selected.index === index;
+  const meta = [localTime(summary.recorded_at), seconds(summary.total_seconds), summary.route, ...summary.tools].filter(Boolean).join(" · ");
   return el(
     "button",
-    { class: `row${selected ? " selected" : ""}${fresh ? " fresh" : ""}`, type: "button", onclick: () => openExchange(summary.day, index) },
-    el("div", { class: "row-top" }, el("span", {}, localTime(summary.recorded_at)), summary.route && el("span", { class: "pill" }, summary.route), summary.failed && el("span", { class: "flag" }, "⚠"), el("span", { class: "seconds" }, seconds(summary.total_seconds))),
+    { class: `row${selected ? " selected" : ""}${fresh ? " fresh" : ""}`, type: "button", title: summary.user_text, onclick: () => openExchange(summary.day, index) },
     el("div", { class: "row-text" }, summary.user_text || "(no question)"),
-    summary.tools.length > 0 && el("div", { class: "row-tools" }, summary.tools.join(" · ")),
+    el("div", { class: "row-meta" }, summary.failed && el("span", { class: "flag" }, "⚠ "), meta),
   );
 }
 
 
 function renderExchange(detail) {
   const record = detail.record;
-  $("exchange").replaceChildren(
-    el("div", { class: "head" }, el("h2", {}, record.user_text || "(no question)"), el("div", { class: "meta" }, metaPills(detail))),
+  const thread = el(
+    "div",
+    { class: "thread-inner" },
+    earlierMessages(detail.earlier_messages),
+    detail.earlier_messages.length > 0 && el("div", { class: "divider" }, `this exchange · ${localTime(record.recorded_at)}`),
+    userTurn(record.user_text, questionNotes(detail)),
+    assistantTurn(detail),
+  );
+  $("thread").replaceChildren(thread);
+  $("thread").scrollTop = 0;
+}
+
+function earlierMessages(messages) {
+  return spokenMessages(messages).map((message) => (message.role === "user" ? userTurn(message.content, [], "earlier") : el("div", { class: "answer earlier" }, message.content)));
+}
+
+function spokenMessages(messages) {
+  return messages.filter((message) => message.role === "user" || (message.role === "assistant" && message.content));
+}
+
+function userTurn(text, notes, extraClass = "") {
+  return el("div", { class: `user-turn ${extraClass}` }, el("div", { class: "bubble" }, text || "(no question)"), notes.map((note) => el("div", { class: "under-bubble" }, note)));
+}
+
+function questionNotes(detail) {
+  const record = detail.record;
+  const notes = [record.source === "home_assistant" ? `🎤 spoken · ${localTime(record.recorded_at)}` : `typed · ${record.source} · ${localTime(record.recorded_at)}`];
+  if (detail.speech && detail.speech.heard && wordsOnly(detail.speech.heard) !== wordsOnly(record.user_text)) notes.push(`Whisper heard: “${detail.speech.heard}”`);
+  return notes;
+}
+
+function assistantTurn(detail) {
+  const record = detail.record;
+  return el(
+    "div",
+    { class: "assistant-turn" },
+    record.route && el("div", { class: "activity" }, `↪ router chose ${record.route.route}${record.route.also.length ? ` then ${record.route.also.join(", ")}` : ""} (${record.route.source}${record.route.detail ? `: ${record.route.detail}` : ""})`),
+    detail.filler_text && el("div", { class: "activity filler" }, `🔊 “${detail.filler_text}”`, el("span", { class: "time" }, `spoken at ${seconds(record.time_to_first_spoken_seconds)} while the tools ran`)),
+    detail.turns.map(turnElements),
+    answerElement(record),
+    sourceChips(detail),
+    el("div", { class: "meta" }, metaBadges(detail)),
     timingCard(detail),
-    conversationCard(detail),
+    detail.system_prompt && fold(`System prompt (${detail.system_prompt.length} chars)`, detail.system_prompt),
+    !detail.has_trace && el("div", { class: "note-line" }, "The full tool text for this exchange is gone (no trace kept, or older than 14 days); sizes and times remain."),
   );
 }
 
-function metaPills(detail) {
-  const record = detail.record;
-  const pills = [
-    el("span", { class: "pill" }, localTime(record.recorded_at)),
-    el("span", { class: "pill", title: "the model that answered this exchange" }, `model: ${record.model}`),
-    el("span", { class: "pill" }, `total ${seconds(record.total_seconds)}`),
-    el("span", { class: "pill" }, `first word ${seconds(record.time_to_first_spoken_seconds)}`),
-    el("span", { class: "pill" }, `${record.model_calls.length} model calls · ${record.tool_calls.length} tool calls`),
-    record.source !== "home_assistant" && el("span", { class: "pill" }, record.source),
-    record.untrusted && el("span", { class: "pill warn" }, "read untrusted text"),
+function turnElements(turn) {
+  return [
+    turn.thinking && fold(`💭 Thought for ${turn.thinking.split(/\s+/).length} words`, turn.thinking),
+    turn.text.trim() && el("div", { class: "said-beside" }, el("span", { class: "label" }, "written beside the tool calls"), turn.text),
+    turn.tools.map(toolCard),
   ];
-  for (const flag of failureFlags(record)) pills.push(el("span", { class: "pill bad" }, flag));
-  return pills;
+}
+
+function answerElement(record) {
+  if (record.stayed_silent) return el("div", { class: "answer silent" }, "🔇 Stayed silent: the model judged the speech was not meant for it.");
+  return el("div", { class: "answer" }, record.final_answer || "(empty)");
+}
+
+function fold(title, text) {
+  return el("details", { class: "fold" }, el("summary", {}, title), el("pre", {}, text));
+}
+
+function metaBadges(detail) {
+  const record = detail.record;
+  const badges = [
+    el("span", { title: "the model that answered this exchange" }, record.model),
+    el("span", {}, `total ${seconds(record.total_seconds)}`),
+    el("span", {}, `first word ${seconds(record.time_to_first_spoken_seconds)}`),
+    el("span", {}, `${record.model_calls.length} model calls · ${record.tool_calls.length} tool calls`),
+    el("span", {}, `${record.spoken_chars} chars spoken`),
+    record.untrusted && el("span", { class: "badge warn" }, "read untrusted text"),
+  ];
+  return [...badges, ...failureFlags(record).map((flag) => el("span", { class: "badge bad" }, flag))];
 }
 
 function failureFlags(record) {
@@ -154,10 +240,68 @@ function failureFlags(record) {
 }
 
 
+function sourceChips(detail) {
+  const cards = detail.turns.flatMap((turn) => turn.tools).filter((card) => card.evidence);
+  const chips = cards.flatMap((card) => card.evidence.sources.filter((source) => source.starred).map((source) => sourceChip(card, source)));
+  return chips.length > 0 && el("div", { class: "source-chips" }, chips);
+}
+
+function sourceChip(card, source) {
+  const label = source.site || source.title;
+  return el("button", { type: "button", class: "chip", title: `${source.title}: holds most of the answer's distinctive words`, onclick: () => openDrawer(card, source) }, el("span", { class: "star" }, "★"), el("span", {}, label));
+}
+
+function toolCard(card) {
+  const badges = [card.refused && el("span", { class: "badge bad" }, "refused"), card.repeated && el("span", { class: "badge warn" }, "repeat"), card.error && el("span", { class: "badge bad" }, card.error)];
+  const opens = card.result !== null;
+  const head = el(
+    "div",
+    { class: `tool-head${opens ? " opens" : ""}`, onclick: opens ? () => openDrawer(card) : undefined, title: opens ? "Open the full text" : undefined },
+    el("span", { class: "tool-icon" }, "🔧"),
+    el("span", { class: "tool-name" }, card.name),
+    el("span", { class: "tool-args", title: argumentText(card.arguments) }, argumentText(card.arguments)),
+    badges,
+    el("span", { class: "tool-stats" }, `${seconds(card.seconds)} · ${kilo(card.result_chars)}`),
+    opens && el("span", { class: "tool-open" }, "full text ›"),
+  );
+  return el("div", { class: `tool-card${card.error || card.refused ? " failed" : ""}` }, head, opens && toolBody(card));
+}
+
+function toolBody(card) {
+  const evidence = card.evidence;
+  const numbered = evidence && evidence.sources.some((source) => source.rank !== null);
+  if (numbered) return el("div", { class: "tool-body" }, evidence.header && el("div", { class: "tool-header-line" }, evidence.header), evidence.sources.map(sourceRow));
+  const text = evidence ? evidence.sources.map((source) => source.text).join("\n") : card.result;
+  const shown = text.length > SHORT_RESULT_CHARS ? `${text.slice(0, SHORT_RESULT_CHARS)}…` : text;
+  return el("div", { class: "tool-body" }, el("pre", {}, shown));
+}
+
+function sourceRow(source) {
+  const coverage = el("div", { class: "coverage", title: `${Math.round(source.coverage * 100)}% of the answer's words` }, el("i", { style: `width:${source.coverage * 100}%` }));
+  return el(
+    "div",
+    { class: `source-row${source.read ? "" : " unread"}` },
+    el("span", { class: "rank" }, source.rank),
+    el("span", { class: "site" }, source.site || ""),
+    el("span", { class: "title", title: source.title }, source.title + (source.read ? "" : " (snippet only)")),
+    coverage,
+    el("span", { class: "size" }, kilo(source.text.length)),
+    el("span", { class: "star", title: source.starred ? "holds most of the answer's distinctive words" : "" }, source.starred ? "★" : ""),
+  );
+}
+
+
 function timingCard(detail) {
   const timeline = detail.timeline;
   const note = [timeline.approximate ? "approximate: this exchange was recorded before steps were timestamped" : "", detail.speech ? "" : "speech timings not available"].filter(Boolean).join(" · ");
-  return el("section", { class: "card" }, el("div", { class: "card-title" }, "Timing", note && el("span", { class: "note" }, note)), timelineGrid(timeline), timelineLegend());
+  return el(
+    "details",
+    { class: "fold timing", open: true },
+    el("summary", {}, `Timing · ${seconds(timeline.total_seconds)} total, first word at ${seconds(timeline.first_spoken_seconds)}`),
+    note && el("div", { class: "timing-note" }, note),
+    timelineGrid(timeline),
+    timelineLegend(),
+  );
 }
 
 function timelineGrid(timeline) {
@@ -243,104 +387,27 @@ function attachTooltip(node, textFor) {
 }
 
 
-function conversationCard(detail) {
-  const record = detail.record;
-  const chat = el("div", { class: "chat" });
-  if (detail.earlier_messages.length) chat.append(earlierFold(detail.earlier_messages));
-  chat.append(el("div", { class: "bubble user" }, el("span", { class: "who" }, "🎤 question"), record.user_text));
-  if (detail.speech && detail.speech.heard && wordsOnly(detail.speech.heard) !== wordsOnly(record.user_text)) chat.append(el("div", { class: "note-line" }, `Whisper heard: “${detail.speech.heard}”`));
-  if (record.route) chat.append(el("div", { class: "note-line" }, `router → ${record.route.route}${record.route.also.length ? ` then ${record.route.also.join(", ")}` : ""} (${record.route.source}${record.route.detail ? `: ${record.route.detail}` : ""})`));
-  if (detail.filler_text) chat.append(el("div", { class: "bubble agent filler" }, el("span", { class: "who" }, `🔊 filler at ${seconds(record.time_to_first_spoken_seconds)}`), detail.filler_text));
-  detail.turns.forEach((turn) => chat.append(...turnElements(turn)));
-  chat.append(answerBubble(record));
-  const extras = [detail.system_prompt && fold(`System prompt (${detail.system_prompt.length} chars)`, detail.system_prompt), !detail.has_trace && el("div", { class: "note-line" }, "The full tool text for this exchange is gone (no trace kept, or older than 14 days); sizes and times remain.")];
-  return el("section", { class: "card" }, el("div", { class: "card-title" }, "Conversation"), chat, ...extras.filter(Boolean));
-}
-
-function earlierFold(messages) {
-  const shown = messages.filter((message) => message.role === "user" || (message.role === "assistant" && message.content));
-  const bubbles = shown.map((message) => el("div", { class: `bubble ${message.role === "user" ? "user" : "agent"} earlier` }, message.content));
-  const details = el("details", { class: "fold" }, el("summary", {}, `${shown.length} earlier messages in this conversation`), el("div", { class: "chat" }, bubbles));
-  return details;
-}
-
-function fold(title, text) {
-  return el("details", { class: "fold" }, el("summary", {}, title), el("pre", {}, text));
-}
-
-function turnElements(turn) {
-  const elements = [];
-  if (turn.thinking) elements.push(fold(`💭 thinking (${turn.thinking.split(/\s+/).length} words)`, turn.thinking));
-  if (turn.text.trim()) elements.push(el("div", { class: "bubble agent" }, el("span", { class: "who" }, "written beside the tool calls"), turn.text));
-  for (const card of turn.tools) elements.push(toolCard(card));
-  return elements;
-}
-
-function answerBubble(record) {
-  if (record.stayed_silent) return el("div", { class: "bubble agent silent" }, el("span", { class: "who" }, "🔇 stayed silent"), "The model judged the speech was not meant for it.");
-  return el("div", { class: "bubble agent" }, el("span", { class: "who" }, `🔊 answer from ${record.model} · ${record.spoken_chars} chars spoken`), record.final_answer || "(empty)");
-}
-
-
-function toolCard(card) {
-  const badges = [card.refused && el("span", { class: "pill bad" }, "refused"), card.repeated && el("span", { class: "pill warn" }, "repeat"), card.error && el("span", { class: "pill bad" }, card.error)];
-  const opens = card.result !== null;
-  const head = el(
-    "div",
-    { class: "tool-head", onclick: opens ? () => openDrawer(card) : undefined, title: opens ? "Open the full text" : undefined },
-    el("span", {}, "🔧"),
-    el("span", { class: "tool-name" }, card.name),
-    el("span", { class: "tool-args", title: argumentText(card.arguments) }, argumentText(card.arguments)),
-    badges,
-    el("span", { class: "tool-stats" }, `${seconds(card.seconds)} · ${kilo(card.result_chars)}`),
-    opens && el("span", { class: "tool-open" }, "full text ›"),
-  );
-  return el("div", { class: `tool-card${card.error || card.refused ? " failed" : ""}` }, head, opens && toolBody(card));
-}
-
-function toolBody(card) {
-  const evidence = card.evidence;
-  const numbered = evidence && evidence.sources.some((source) => source.rank !== null);
-  if (numbered) return el("div", { class: "tool-body" }, evidence.header && el("div", { class: "tool-header-line" }, evidence.header), evidence.sources.map(sourceRow));
-  const text = evidence ? evidence.sources.map((source) => source.text).join("\n") : card.result;
-  const shown = text.length > SHORT_RESULT_CHARS ? `${text.slice(0, SHORT_RESULT_CHARS)}…` : text;
-  return el("div", { class: "tool-body" }, el("pre", {}, shown));
-}
-
-function sourceRow(source) {
-  const coverage = el("div", { class: "coverage", title: `${Math.round(source.coverage * 100)}% of the answer's words` }, el("i", { style: `width:${source.coverage * 100}%` }));
-  return el(
-    "div",
-    { class: `source-row${source.read ? "" : " unread"}` },
-    el("span", { class: "rank" }, source.rank),
-    el("span", { class: "site" }, source.site || ""),
-    el("span", { class: "title", title: source.title }, source.title + (source.read ? "" : " (snippet only)")),
-    coverage,
-    el("span", { class: "size" }, kilo(source.text.length)),
-    el("span", { class: "star", title: source.starred ? "holds most of the answer's distinctive words" : "" }, source.starred ? "★" : ""),
-  );
-}
-
-
-function openDrawer(card) {
+function openDrawer(card, source = null) {
   state.drawerCard = card;
+  state.drawerTab = "sources";
   $("drawer").hidden = false;
   $("drawer-title").textContent = `${card.name}(${argumentText(card.arguments)})`;
   renderDrawer();
+  if (source && source.rank !== null) document.getElementById(`source-${source.rank}`)?.scrollIntoView();
 }
 
 function renderDrawer() {
   const card = state.drawerCard;
   for (const tab of document.querySelectorAll(".tab")) tab.classList.toggle("active", tab.dataset.tab === state.drawerTab);
   const body = $("drawer-body");
-  if (state.drawerTab === "raw") return body.replaceChildren(el("pre", { class: "raw" }, card.result));
+  body.scrollTop = 0;
+  if (state.drawerTab === "raw" || !card.evidence) return body.replaceChildren(el("pre", { class: "raw" }, card.result));
   const evidence = card.evidence;
   const pattern = termPattern(evidence.terms);
   const terms = el("div", { class: "terms" }, evidence.terms.length ? ["Answer words looked for: ", evidence.terms.map((term) => el("mark", {}, term))] : "The answer has no words the question did not already use.");
   const header = evidence.header && el("div", { class: "tool-header-line" }, evidence.header);
   const footer = evidence.footer && el("div", { class: "tool-header-line" }, `Closing note to the model: ${evidence.footer}`);
   body.replaceChildren(...[terms, header, ...evidence.sources.map((source) => drawerSource(source, pattern)), footer].filter(Boolean));
-  body.scrollTop = 0;
 }
 
 function drawerSource(source, pattern) {
@@ -349,7 +416,7 @@ function drawerSource(source, pattern) {
   text.innerHTML = highlighted(source.text, pattern);
   return el(
     "div",
-    { class: "source" },
+    { class: "source", id: source.rank !== null ? `source-${source.rank}` : undefined },
     el("h3", {}, source.rank !== null ? `[${source.rank}] ` : "", source.title),
     source.url && el("a", { href: source.url, target: "_blank", rel: "noreferrer noopener" }, source.url),
     el("div", { class: "source-meta" }, meta),
@@ -378,35 +445,37 @@ function closeDrawer() {
 }
 
 
-const chat = { id: newConversationId(), history: [], lastAsked: 0 };
-
 function newConversationId() {
   return `dashboard-${Date.now().toString(36)}`;
 }
 
-function startNewConversation() {
-  chat.id = newConversationId();
-  chat.history = [];
-  showLive([el("span", {}, "New conversation.")]);
+// A question typed while an exchange is open continues that exchange's conversation, as a follow-up spoken to the speaker would.
+function continueConversationOf(detail) {
+  const record = detail.record;
+  const earlier = spokenMessages(detail.earlier_messages).map((message) => ({ role: message.role, content: message.content }));
+  chat.id = record.conversation_id || newConversationId();
+  chat.history = [...earlier, { role: "user", content: record.user_text }, { role: "assistant", content: record.final_answer }];
 }
 
 async function askQuestion(event) {
   event.preventDefault();
   const question = $("ask-input").value.trim();
-  if (!question) return;
-  if (Date.now() - chat.lastAsked > CONVERSATION_QUIET_MS) startNewConversation();
-  chat.lastAsked = Date.now();
+  if (!question || state.asking) return;
   $("ask-input").value = "";
+  fitComposer();
   setAsking(true);
+  state.openNextArrival = true;
   const conversation = [...chat.history, { role: "user", content: question }];
   const answer = await streamAnswer({ conversation_id: chat.id, conversation });
-  if (answer !== null) chat.history = [...conversation, { role: "assistant", content: answer }];
-  state.openNextArrival = answer !== null;
+  if (answer === null) state.openNextArrival = false;
+  else chat.history = [...conversation, { role: "assistant", content: answer }];
   setAsking(false);
 }
 
 async function streamAnswer(request) {
-  const live = { question: question(request), steps: [], answer: "" };
+  const live = { question: request.conversation[request.conversation.length - 1].content, steps: [], answer: "", model: null, done: false, error: null };
+  state.live = live;
+  $("live-turn")?.removeAttribute("id");
   renderLive(live);
   try {
     const response = await fetch("/api/ask", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(request) });
@@ -418,8 +487,6 @@ async function streamAnswer(request) {
   renderLive(live);
   return live.error ? null : live.answer;
 }
-
-const question = (request) => request.conversation[request.conversation.length - 1].content;
 
 async function readLines(response, onLine) {
   const reader = response.body.getReader();
@@ -436,38 +503,103 @@ async function readLines(response, onLine) {
 }
 
 function takeEvent(live, event) {
-  if (event.event === "filler") live.steps.push(`🔊 ${event.text}`);
-  else if (event.event === "tool_started") live.steps.push(`🔧 ${event.call.name}(${argumentText(event.call.arguments)})`);
-  else if (event.event === "tool_finished") live.steps.push(`   done in ${seconds(event.seconds)}${event.error ? ` (${event.error})` : ""}`);
+  if (event.event === "filler") live.steps.push({ kind: "filler", text: `🔊 “${event.text}”` });
+  else if (event.event === "tool_started") live.steps.push({ kind: "tool", text: `🔧 ${event.call.name}(${argumentText(event.call.arguments)})`, time: "running…" });
+  else if (event.event === "tool_finished") finishToolStep(live, event);
   else if (event.event === "answer") live.answer += event.text;
   else if (event.event === "error") live.error = event.message;
-  else if (event.event === "done") live.done = true;
+  else if (event.event === "done") finishLive(live, event.transcript);
   renderLive(live);
 }
 
-function renderLive(live) {
-  const lines = [el("div", {}, `🎤 ${live.question}`), ...live.steps.map((step) => el("div", {}, step))];
-  if (live.answer) lines.push(el("div", { class: "answer" }, `🔊 ${live.answer}`));
-  if (live.error) lines.push(el("div", { class: "error" }, `Not answered: ${live.error}`));
-  else if (!live.done) lines.push(el("div", {}, "…"));
-  showLive(lines);
+function finishToolStep(live, event) {
+  const step = live.steps.find((candidate) => candidate.kind === "tool" && candidate.time === "running…");
+  if (step) step.time = `${seconds(event.seconds)}${event.error ? ` · ${event.error}` : ""}`;
 }
 
-function showLive(lines) {
-  const box = $("ask-live");
-  box.hidden = false;
-  box.replaceChildren(...lines);
-  box.scrollTop = box.scrollHeight;
+function finishLive(live, transcript) {
+  live.done = true;
+  live.model = transcript.model;
+  live.total = transcript.total_seconds;
+}
+
+// The live turn is drawn under whatever the thread already shows, until the recorded exchange arrives and replaces it (state.live is then cleared).
+function renderLive(live) {
+  if (state.live !== live) return;
+  const box = liveBox();
+  box.replaceChildren(userTurn(live.question, ["typed · dashboard · now"]), liveAssistantTurn(live));
+  $("thread").scrollTop = $("thread").scrollHeight;
+}
+
+function liveBox() {
+  const existing = $("live-turn");
+  if (existing) return existing;
+  let inner = $("thread").querySelector(".thread-inner");
+  if (!inner) {
+    inner = el("div", { class: "thread-inner" });
+    $("thread").replaceChildren(inner);
+  }
+  const box = el("div", { id: "live-turn", class: "live-turn" });
+  inner.append(box);
+  return box;
+}
+
+function liveAssistantTurn(live) {
+  const steps = live.steps.map((step) => el("div", { class: `activity ${step.kind}` }, step.text, step.time && el("span", { class: "time" }, step.time)));
+  const answer = live.answer || live.done ? el("div", { class: "answer" }, live.answer || "(empty)", !live.done && el("span", { class: "cursor" })) : !live.error && el("div", { class: "answer" }, el("span", { class: "cursor" }));
+  const footer = live.done && el("div", { class: "meta" }, el("span", {}, live.model), el("span", {}, `total ${seconds(live.total)}`), el("span", {}, "the full record opens in a moment"));
+  const error = live.error && el("div", { class: "activity error" }, `Not answered: ${live.error}`);
+  return el("div", { class: "assistant-turn" }, steps, answer, error, footer);
 }
 
 function setAsking(asking) {
-  $("ask-send").disabled = asking;
-  $("ask-input").disabled = asking;
+  state.asking = asking;
+  updateSendButton();
   if (!asking) $("ask-input").focus();
 }
 
-$("ask").addEventListener("submit", askQuestion);
-$("ask-new").addEventListener("click", startNewConversation);
+function updateSendButton() {
+  $("ask-send").disabled = state.asking || !$("ask-input").value.trim();
+}
+
+function fitComposer() {
+  const input = $("ask-input");
+  input.style.height = "auto";
+  input.style.height = `${input.scrollHeight}px`;
+  updateSendButton();
+}
+
+function sendOnEnter(event) {
+  if (event.key !== "Enter" || event.shiftKey || event.isComposing) return;
+  event.preventDefault();
+  $("composer").requestSubmit();
+}
+
+
+function openSidebar() {
+  $("sidebar").classList.add("open");
+  $("scrim").hidden = false;
+}
+
+function closeSidebar() {
+  $("sidebar").classList.remove("open");
+  $("scrim").hidden = true;
+}
+
+function stepThroughExchanges(event) {
+  if (event.key === "Escape") return closeDrawer();
+  if (!state.selected || ["SELECT", "INPUT", "TEXTAREA"].includes(event.target.tagName)) return;
+  const step = { j: -1, ArrowDown: -1, k: 1, ArrowUp: 1 }[event.key];
+  const index = state.selected.index + (step || 0);
+  if (step && index >= 0 && index < state.summaries.length) openExchange(state.selected.day, index);
+}
+
+$("composer").addEventListener("submit", askQuestion);
+$("ask-input").addEventListener("input", fitComposer);
+$("ask-input").addEventListener("keydown", sendOnEnter);
+$("new-chat").addEventListener("click", startNewChat);
+$("sidebar-toggle").addEventListener("click", openSidebar);
+$("scrim").addEventListener("click", closeSidebar);
 $("drawer-close").addEventListener("click", closeDrawer);
 for (const tab of document.querySelectorAll(".tab")) {
   tab.addEventListener("click", () => {
@@ -476,12 +608,7 @@ for (const tab of document.querySelectorAll(".tab")) {
   });
 }
 $("day").addEventListener("change", (event) => openDay(event.target.value));
-document.addEventListener("keydown", (event) => {
-  if (event.key === "Escape") closeDrawer();
-  if (!state.selected || ["SELECT", "INPUT"].includes(event.target.tagName)) return;
-  const step = { j: -1, ArrowDown: -1, k: 1, ArrowUp: 1 }[event.key];
-  const index = state.selected.index + (step || 0);
-  if (step && index >= 0 && index < state.summaries.length) openExchange(state.selected.day, index);
-});
+document.addEventListener("keydown", stepThroughExchanges);
 
+renderGreeting();
 poll();

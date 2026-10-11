@@ -25,18 +25,22 @@ The page answers the home network only. Each exchange appears about a second aft
  └───────────────────────────────────────────────────────────────────────────────────┘
 
  ONE EXCHANGE ON THE PAGE
- ┌─ list ──────────────┬─ 20:41:07  "Who won the World Series in 1995?" ───── 6.8s ─┐
- │ ▸20:41 Who won… 6.8s│  TIMING  speech→text ███                                   │
- │  20:38 What's 17…1.9s│          router         ▌                                  │
- │                     │          model #1        ▓▓░        ▓ reading the prompt    │
- │                     │          search_and_read    ██████   ░ writing              │
- │                     │          model #2                ▓▓▓░░░                     │
- │                     │  🎤 Who won the World Series in 1995?                       │
- │                     │                          🔊 Let me look that up.   filler    │
- │                     │  🔧 search_and_read "1995 World Series winner"  2.4s  [▸]   │
- │                     │      1 mlb.com  Braves win 1995 World Series  ★             │
- │                     │                          🔊 The Atlanta Braves, …          │
- └─────────────────────┴────────────────────────────────────────────────────────────┘
+ ┌─ sidebar ────────────┬─ gemma-4-e4b ──────────────────────────────────────────────────┐
+ │ ✎ New chat           │                        ┌───────────────────────────────────┐   │
+ │ Day (UTC) 2026-10-11 │                        │ Who won the World Series in 1995? │   │
+ │ ▸Who won the World…  │                        └───────────────────────────────────┘   │
+ │  20:41 · 6.8s        │                                    🎤 spoken · 20:41:07        │
+ │ What's 17 percent…   │ ↪ router chose search                                          │
+ │  20:38 · 1.9s        │ 🔊 "Let me look that up."  spoken at 1.66s                     │
+ │                      │ 🔧 search_and_read "1995 World Series winner" 2.4s full text › │
+ │                      │     1 mlb.com  Braves win 1995 World Series          ★         │
+ │                      │ The Atlanta Braves won the World Series in 1995, …             │
+ │                      │ (★ mlb.com)  gemma-4-e4b · total 6.8s · first word 1.66s       │
+ │                      │ Timing ›  router ▌  model #1 ▓▓░  search_and_read ██████ …     │
+ │ ● open new exchanges │ ┌────────────────────────────────────────────────────────────┐ │
+ │ ● live               │ │ Ask Jarvis anything                                    (↑) │ │
+ │                      │ └────────────────────────────────────────────────────────────┘ │
+ └──────────────────────┴────────────────────────────────────────────────────────────────┘
 ```
 
 ## 3. How it works, step by step
@@ -65,11 +69,11 @@ Each model call has prompt tokens, cached tokens, the seconds spent reading the 
 
 The page asks for the list of days every two seconds. When the newest day gains an exchange, the list refreshes and, while "Open new exchanges as they arrive" is ticked, the new exchange opens. Each exchange's address (`#/day/line`) can be bookmarked or shared on the home network.
 
-The top bar names the model that answered the newest exchange, which is the model the harness is serving now; each exchange names its own model in its header and on its answer, so a model swap shows up exchange by exchange.
+The page is laid out like a chat app: exchanges in a sidebar, the open exchange as a conversation in the middle, and the question box at the bottom. The header names the model that answered the newest exchange, which is the model the harness is serving now; each exchange names its own model under its answer, so a model swap shows up exchange by exchange.
 
 ### 3.7 The chat box
 
-Typing a question is the quickest way to test a change to the harness without speaking to the puck. The page posts the question and the conversation so far to the dashboard, which passes it to the harness with the harness's API key, read from disk on the Mac, so the browser never holds it. The harness's events come back line by line. Questions follow on from each other for five quiet minutes, as Home Assistant's do, or until "New conversation". They are logged with the source `dashboard`, so they can be told apart from spoken ones. A request carrying another site's `Origin` is refused, so a page elsewhere cannot ask questions through the dashboard.
+Typing a question is the quickest way to test a change to the harness without speaking to the puck. The page posts the question and the conversation so far to the dashboard, which passes it to the harness with the harness's API key, read from disk on the Mac, so the browser never holds it. The harness's events come back line by line. A question typed while an exchange is open is a follow-up to it: it carries that exchange's conversation, as a follow-up spoken to the puck would. "New chat" starts an empty conversation. The answer streams into the conversation, and the recorded exchange replaces it when it reaches the log about a second later. They are logged with the source `dashboard`, so they can be told apart from spoken ones. A request carrying another site's `Origin` is refused, so a page elsewhere cannot ask questions through the dashboard.
 
 ### 3.8 Opening it
 
