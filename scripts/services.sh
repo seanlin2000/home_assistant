@@ -5,6 +5,7 @@
 #   scripts/services.sh start|stop   load/unload the agents
 #   scripts/services.sh restart NAME restart one agent (ollama|llama|mcp|harness|dashboard|whisper|kokoro|health)
 #   scripts/services.sh status       show what is listening on each port and the last health snapshot
+#   scripts/services.sh dashboard    start the exchange dashboard if it is not running and open it in the browser
 #   scripts/services.sh logs NAME    tail a service log (whisper|kokoro|mcp|harness|dashboard|ollama|llama|health)
 #   scripts/services.sh uninstall    unload and remove the agents
 #
@@ -24,7 +25,7 @@ UNLOAD_TIMEOUT_SECONDS="${UNLOAD_TIMEOUT_SECONDS:-30}"
 OLLAMA_BIN="$(command -v ollama || echo /opt/homebrew/bin/ollama)"
 
 usage() {
-    sed -n '2,13p' "$0"
+    sed -n '2,14p' "$0"
     exit 1
 }
 
@@ -229,12 +230,36 @@ status() {
     fi
 }
 
+open_dashboard() {
+    # Before install has written its agent, the dashboard runs in this terminal instead, so the command works on a fresh checkout too.
+    local url="http://localhost:8775" lan_address
+    if [[ ! -f "$(plist_path dashboard)" ]]; then
+        echo "no dashboard agent yet (scripts/services.sh install adds one); running it here until Ctrl-C"
+        (sleep 2 && open "$url") &
+        exec "$PROJECT_DIR/.venv/bin/exchange-dashboard"
+    fi
+    agent_loaded dashboard || launchctl bootstrap "gui/$(id -u)" "$(plist_path dashboard)"
+    local half_seconds=0
+    until lsof -nP -iTCP:8775 -sTCP:LISTEN >/dev/null 2>&1; do
+        if ((half_seconds >= 20)); then
+            echo "the dashboard is not listening on 8775 after 10 s; see scripts/services.sh logs dashboard" >&2
+            return 1
+        fi
+        sleep 0.5
+        half_seconds=$((half_seconds + 1))
+    done
+    lan_address="$(ipconfig getifaddr en0 2>/dev/null || true)"
+    echo "dashboard: $url${lan_address:+ (from another computer at home: http://$lan_address:8775)}"
+    open "$url"
+}
+
 case "${1:-}" in
 install) install_agents ;;
 start) start_agents ;;
 stop) stop_agents ;;
 restart) restart_agent "${2:-}" ;;
 status) status ;;
+dashboard) open_dashboard ;;
 logs) tail -n 50 -f "$LOG_DIR/${2:?service name}.log" ;;
 uninstall)
     stop_agents

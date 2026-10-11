@@ -162,6 +162,7 @@ async def test_the_api_lists_a_day_and_opens_an_exchange_with_its_trace_and_spee
     day = record.recorded_at[:10]
     async with client_for(store) as client:
         assert (await client.get("/api/days")).json() == [{"day": day, "exchanges": 2}]
+        assert (await client.get("/api/latest")).json()["user_text"] == "older"
         assert [summary["user_text"] for summary in (await client.get(f"/api/days/{day}/exchanges")).json()] == [QUESTION, "older"]
         detail = (await client.get(f"/api/days/{day}/exchanges/0")).json()
     assert detail["has_trace"] and detail["filler_text"] == "Let me look that up."
@@ -169,6 +170,7 @@ async def test_the_api_lists_a_day_and_opens_an_exchange_with_its_trace_and_spee
     assert detail["turns"][0]["thinking"] == "A past result; search."
     assert detail["turns"][0]["tools"][0]["evidence"]["sources"][0]["starred"]
     assert detail["speech"]["heard"] == QUESTION
+    assert detail["summary"]["model"] == "small"
 
 
 async def test_an_exchange_without_a_trace_still_shows_its_tool_calls(tmp_path: Path) -> None:

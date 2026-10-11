@@ -93,7 +93,7 @@ def model_bar(index: int, stats: GenerationStats, start: float) -> Bar:
 
 
 def token_counts(stats: GenerationStats) -> str:
-    parts = [f"{stats.prompt_tokens} prompt tokens" if stats.prompt_tokens is not None else ""]
+    parts = [stats.model, f"{stats.prompt_tokens} prompt tokens" if stats.prompt_tokens is not None else ""]
     parts.append(f"{stats.cached_prompt_tokens} cached" if stats.cached_prompt_tokens else "")
     parts.append(f"{stats.output_tokens} written" if stats.output_tokens is not None else "")
     parts.append(f"stopped: {stats.stop_reason}" if stats.stop_reason else "")

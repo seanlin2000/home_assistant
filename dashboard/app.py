@@ -25,6 +25,10 @@ def build_app(store: ExchangeStore, allowed_hosts: list[str], lifespan: Callable
     async def days(_request: Request) -> Response:
         return JSONResponse([day.model_dump() for day in store.days()])
 
+    async def latest(_request: Request) -> Response:
+        newest = store.latest()
+        return JSONResponse(newest.model_dump() if newest else None)
+
     async def exchanges(request: Request) -> Response:
         day = day_in(request)
         return JSONResponse([summary.model_dump() for summary in store.summaries(day)]) if day else not_found()
@@ -40,6 +44,7 @@ def build_app(store: ExchangeStore, allowed_hosts: list[str], lifespan: Callable
     routes = [
         Route("/", index),
         Route("/api/days", days),
+        Route("/api/latest", latest),
         Route("/api/days/{day}/exchanges", exchanges),
         Route("/api/days/{day}/exchanges/{index:int}", exchange),
         Mount("/static", StaticFiles(directory=STATIC_DIR), name="static"),

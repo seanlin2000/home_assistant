@@ -36,7 +36,8 @@ const argumentText = (args) => Object.entries(args).map(([key, value]) => `${key
 
 async function poll() {
   try {
-    const days = await getJson("/api/days");
+    const [days, latest] = await Promise.all([getJson("/api/days"), getJson("/api/latest")]);
+    $("model").textContent = latest ? `model: ${latest.model}` : "";
     setStatus("live", "live");
     await takeDays(days);
   } catch (error) {
@@ -128,7 +129,7 @@ function metaPills(detail) {
   const record = detail.record;
   const pills = [
     el("span", { class: "pill" }, localTime(record.recorded_at)),
-    el("span", { class: "pill" }, record.model),
+    el("span", { class: "pill", title: "the model that answered this exchange" }, `model: ${record.model}`),
     el("span", { class: "pill" }, `total ${seconds(record.total_seconds)}`),
     el("span", { class: "pill" }, `first word ${seconds(record.time_to_first_spoken_seconds)}`),
     el("span", { class: "pill" }, `${record.model_calls.length} model calls · ${record.tool_calls.length} tool calls`),
@@ -275,7 +276,7 @@ function turnElements(turn) {
 
 function answerBubble(record) {
   if (record.stayed_silent) return el("div", { class: "bubble agent silent" }, el("span", { class: "who" }, "🔇 stayed silent"), "The model judged the speech was not meant for it.");
-  return el("div", { class: "bubble agent" }, el("span", { class: "who" }, `🔊 answer · ${record.spoken_chars} chars spoken`), record.final_answer || "(empty)");
+  return el("div", { class: "bubble agent" }, el("span", { class: "who" }, `🔊 answer from ${record.model} · ${record.spoken_chars} chars spoken`), record.final_answer || "(empty)");
 }
 
 

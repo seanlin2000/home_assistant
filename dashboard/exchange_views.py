@@ -25,6 +25,7 @@ class ExchangeSummary(BaseModel):
     index: int  # the line in the day's record file, which never changes because the file only grows
     recorded_at: str
     source: str
+    model: str
     user_text: str
     final_answer: str
     total_seconds: float
@@ -87,6 +88,15 @@ class ExchangeStore:
         """Every day with exchanges, newest first."""
         return [DaySummary(day=day.isoformat(), exchanges=line_count(path)) for day, path in reversed(self._records.day_files())]
 
+    def latest(self) -> ExchangeSummary | None:
+        """The newest exchange, whose model the page shows as the one the harness is running now."""
+        day_files = self._records.day_files()
+        if not day_files:
+            return None
+        day = day_files[-1][0]
+        records = self._records.read_day(day)
+        return summarize(day, len(records) - 1, records[-1]) if records else None
+
     def summaries(self, day: date) -> list[ExchangeSummary]:
         return [summarize(day, index, record) for index, record in enumerate(self._records.read_day(day))]
 
@@ -120,6 +130,7 @@ def summarize(day: date, index: int, record: ExchangeRecord) -> ExchangeSummary:
         index=index,
         recorded_at=record.recorded_at,
         source=record.source,
+        model=record.model,
         user_text=record.user_text,
         final_answer=record.final_answer,
         total_seconds=record.total_seconds,

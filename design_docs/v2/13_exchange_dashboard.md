@@ -65,6 +65,12 @@ Each model call has prompt tokens, cached tokens, the seconds spent reading the 
 
 The page asks for the list of days every two seconds. When the newest day gains an exchange, the list refreshes and, while "Open new exchanges as they arrive" is ticked, the new exchange opens. Each exchange's address (`#/day/line`) can be bookmarked or shared on the home network.
 
+The top bar names the model that answered the newest exchange, which is the model the harness is serving now; each exchange names its own model in its header and on its answer, so a model swap shows up exchange by exchange.
+
+### 3.7 Opening it
+
+`scripts/services.sh install` adds the dashboard as a launchd agent beside the harness. `scripts/services.sh dashboard` starts that agent if it is not running and opens the page; before install has written the agent, it runs the dashboard in the terminal instead. From another computer at home, the page is at the Mac's address on port 8775, which the command prints.
+
 ## 4. Packages and what they do for the business logic
 
 | Package | What it does here |
