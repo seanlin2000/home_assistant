@@ -53,7 +53,7 @@ def pipeline_events() -> list[dict]:
         {"type": "stt-start", "timestamp": "2026-09-07T12:00:00+00:00", "data": {"engine": "stt.mlx_whisper"}},
         {"type": "stt-vad-end", "timestamp": "2026-09-07T12:00:03+00:00", "data": {}},
         {"type": "stt-end", "timestamp": "2026-09-07T12:00:04+00:00", "data": {"stt_output": {"text": "what is twelve percent of 250"}}},
-        {"type": "intent-start", "timestamp": "2026-09-07T12:00:04+00:00", "data": {}},
+        {"type": "intent-start", "timestamp": "2026-09-07T12:00:04+00:00", "data": {"intent_input": "what is twelve percent of 250", "conversation_id": "conv-1"}},
         {"type": "intent-end", "timestamp": "2026-09-07T12:00:09+00:00", "data": {"intent_output": {"response": {"speech": {"plain": {"speech": "It is 30."}}}}}},
         {"type": "tts-start", "timestamp": "2026-09-07T12:00:09+00:00", "data": {}},
         {"type": "tts-end", "timestamp": "2026-09-07T12:00:10+00:00", "data": {}},
@@ -115,6 +115,7 @@ def test_pipeline_summary_reads_stage_timings_and_errors() -> None:
     assert run.stt_text == "what is twelve percent of 250"
     assert (run.stt_seconds, run.agent_seconds, run.tts_seconds, run.total_seconds) == (1.0, 5.0, 1.0, 10.0)
     assert run.agent_said == "It is 30."
+    assert (run.intent_input, run.conversation_id, run.intent_started_at) == ("what is twelve percent of 250", "conv-1", "2026-09-07T12:00:04+00:00")
     assert run.error == "stt-no-text-recognized: No text recognized"
 
 
