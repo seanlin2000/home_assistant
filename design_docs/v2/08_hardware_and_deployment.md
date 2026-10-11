@@ -73,6 +73,7 @@ Each port is bound to the narrowest address that still works. A service bound to
 | 10300 | Whisper | The network | Home Assistant | Nothing; the Wyoming protocol has no authentication. Unchanged from v1 |
 | 8770 | The harness | The network | Home Assistant | An API key, a list of allowed host names, and refusal of browser requests (doc 12 §3.9) |
 | 10210 | Kokoro | The network | Home Assistant | Nothing, as for Whisper |
+| 8775 | The exchange dashboard (doc 13) | The network | A browser on the home network | A list of allowed host names and refusal of other sites' pages; it is read-only and has no key |
 | 22 | SSH | The network | Your laptop | Keys only, one user (v1/10 §3.9) |
 | 8090 | llama-server | `127.0.0.1` | The harness, the benchmark | An API key |
 | 8765 | The tool server | `127.0.0.1` | The harness, the benchmark | Its existing host-name check |
@@ -81,7 +82,7 @@ Each port is bound to the narrowest address that still works. A service bound to
 
 Whisper and Kokoro stay open to the network because Home Assistant runs in its own VM with its own address, so it cannot reach the Mac's `127.0.0.1`. Anyone on the home network could send them audio or text. That was already true in v1, and they hold no data.
 
-The harness's port, 8770, is new. Nothing else in the project uses it.
+The harness's port, 8770, is new. Nothing else in the project uses it. So is the dashboard's, 8775: anyone on the home network can read the last 14 days of questions and the pages the tools read, and nothing outside it can, as long as the router forwards no ports to the Mac.
 
 ### 3.3 The memory budget
 

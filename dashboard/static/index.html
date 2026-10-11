@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Exchanges</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <h1>Exchanges</h1>
+    <label class="day-picker">Day (UTC) <select id="day"></select></label>
+    <label class="follow"><input type="checkbox" id="follow" checked> Open new exchanges as they arrive</label>
+    <span id="status" class="status" role="status">connecting…</span>
+  </header>
+  <div class="layout">
+    <nav id="list" class="list" aria-label="Exchanges on this day"></nav>
+    <main id="exchange" class="exchange"><p class="empty">Pick an exchange on the left. New ones appear about a second after the answer ends.</p></main>
+  </div>
+  <aside id="drawer" class="drawer" hidden aria-label="Full tool result">
+    <div class="drawer-head">
+      <div id="drawer-title" class="drawer-title"></div>
+      <div class="drawer-tabs">
+        <button type="button" data-tab="sources" class="tab active">Sources</button>
+        <button type="button" data-tab="raw" class="tab">Raw text the model read</button>
+      </div>
+      <button type="button" id="drawer-close" class="close" aria-label="Close">×</button>
+    </div>
+    <div id="drawer-body" class="drawer-body"></div>
+  </aside>
+  <div id="tooltip" class="tooltip" hidden></div>
+  <script src="/static/app.js"></script>
+</body>
+</html>

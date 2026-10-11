@@ -20,9 +20,11 @@ from dotenv import load_dotenv
 from pydantic import BaseModel, Field
 
 from ops.ha_client import HomeAssistant
+from utils.daily_log_utils import DailyLog
 from utils.jsonl_utils import append_jsonl, read_jsonl
 
 PROJECT_DIR = Path(__file__).resolve().parent.parent
+PIPELINE_RUN_RETENTION_DAYS = 14
 
 
 class PipelineRun(BaseModel):
@@ -37,7 +39,17 @@ class PipelineRun(BaseModel):
     total_seconds: float | None = None
     agent_said: str | None = None
     error: str | None = None
+    intent_input: str | None = None  # the text handed to the agent, which the dashboard matches to an exchange's question
+    conversation_id: str | None = None
+    intent_started_at: str | None = None
     raw_events: list[dict[str, Any]] = Field(default_factory=list)
+
+
+class PipelineRunLog(DailyLog[PipelineRun]):
+    """The runs the exchange dashboard collects on the Mac for their speech timings (design doc v2/13 section 3.3)."""
+
+    def __init__(self, directory: Path) -> None:
+        super().__init__(directory, PipelineRun, PIPELINE_RUN_RETENTION_DAYS)
 
 
 def seconds_between(start: str, end: str) -> float:
@@ -57,6 +69,9 @@ def summarize(pipeline: str, run_id: str, events: list[dict[str, Any]]) -> Pipel
         run.stt_text = (by_type["stt-end"].get("data") or {}).get("stt_output", {}).get("text")
         speech_end = when("stt-vad-end") or when("stt-start")
         run.stt_seconds = seconds_between(speech_end, when("stt-end")) if speech_end else None
+    if "intent-start" in by_type:
+        intent = by_type["intent-start"].get("data") or {}
+        run.intent_input, run.conversation_id, run.intent_started_at = intent.get("intent_input"), intent.get("conversation_id"), when("intent-start")
     if "intent-start" in by_type and "intent-end" in by_type:
         run.agent_seconds = seconds_between(when("intent-start"), when("intent-end"))
         output = (by_type["intent-end"].get("data") or {}).get("intent_output") or {}

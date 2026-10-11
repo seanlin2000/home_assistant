@@ -129,11 +129,13 @@ async def run(conversation: list[Message], llm: LLMClient, tools: ToolBox, polic
     tool_specs = await load_tool_specs(tools, transcript)
     directive = None
     if policy.route_questions and tool_specs:
+        route_started = seconds_since(started)
         transcript.route = route_to_offered_tools(await decide_route(llm, conversation, policy), tool_specs)
+        transcript.route.started_seconds = route_started
         directive = directive_for(transcript.route)
     spoken_question = put_block_before_question(messages, per_question_block(date.today(), directive, memory.get_context(conversation)))
     max_tool_rounds = tool_round_cap(transcript.route, policy.max_tool_rounds)
-    runner = ToolCallRunner(tools, policy)
+    runner = ToolCallRunner(tools, policy, started)
     for round_index in range(max_tool_rounds + 1):
         reply = ModelReply()
         async for event in stream_model_reply(llm, messages, tool_specs, policy, reply, cap, transcript, started):
@@ -221,6 +223,7 @@ async def load_tool_specs(tools: ToolBox, transcript: Transcript) -> list:
 async def stream_model_reply(
     llm: LLMClient, messages: list[Message], tool_specs: list, policy: AgentPolicy, reply: ModelReply, cap: SpokenAnswerCap, transcript: Transcript, started: float
 ) -> AsyncIterator[AgentEvent]:
+    call_started = seconds_since(started)
     async for event in llm.chat(messages, tool_specs, policy):
         if isinstance(event, TextDelta):
             reply.text_parts.append(event.text)
@@ -232,11 +235,13 @@ async def stream_model_reply(
         elif isinstance(event, ToolCallRequest):
             if transcript.time_to_first_spoken_seconds is None:  # one filler per exchange, however many tool rounds follow
                 mark_first_spoken(transcript, started)
-                yield FillerSpoken(text=filler_for(event.call.name, policy))
+                transcript.filler_text = filler_for(event.call.name, policy)
+                yield FillerSpoken(text=transcript.filler_text)
             reply.tool_calls.append(event.call)
         elif isinstance(event, MalformedToolCall):
             reply.malformed.append(event.raw)
         elif isinstance(event, Completion):
+            event.stats.started_seconds = call_started
             reply.completion = event
     leftover = reply.speech_hold.leftover()
     spoken = cap.admit(leftover) if leftover else ""
@@ -259,6 +264,11 @@ def filler_for(tool_name: str, policy: AgentPolicy) -> str:
 def mark_first_spoken(transcript: Transcript, started: float) -> None:
     if transcript.time_to_first_spoken_seconds is None:
         transcript.time_to_first_spoken_seconds = time.perf_counter() - started
+
+
+def seconds_since(started: float) -> float:
+    """Where a step starts on the exchange's timeline, which the exchange dashboard draws (design doc v2/13 section 3.2)."""
+    return time.perf_counter() - started
 
 
 def record_model_reply(transcript: Transcript, reply: ModelReply, messages: list[Message]) -> None:
@@ -284,17 +294,20 @@ async def execute_tool_calls(runner: "ToolCallRunner", calls: list[ToolCall], ro
 class ToolCallRunner:
     """Runs the calls of one model turn at the same time, and answers a call already made for this question from its first result instead of the network."""
 
-    def __init__(self, tools: ToolBox, policy: AgentPolicy) -> None:
+    def __init__(self, tools: ToolBox, policy: AgentPolicy, exchange_started: float) -> None:
         self._tools = tools
         self._policy = policy
+        self._exchange_started = exchange_started
         self._first_results: dict[str, ToolCallRecord] = {}
 
     async def run_turn(self, calls: list[ToolCall], round_index: int) -> list[ToolCallRecord]:
-        """One record per call, in the order the model asked."""
+        """One record per call, in the order the model asked. The calls of a turn start together, so they share the turn's start."""
+        turn_started = seconds_since(self._exchange_started)
         records = await asyncio.gather(*(execute_one_call(self._tools, call, round_index, self._policy) for call in self._calls_not_yet_made(calls)))
         ran_now = {record.call.id: record for record in records}
         self._first_results.update({call_key(record.call): record for record in records})
-        return [ran_now.get(call.id) or repeat_of(self._first_results[call_key(call)], call, round_index) for call in calls]
+        answered = [ran_now.get(call.id) or repeat_of(self._first_results[call_key(call)], call, round_index) for call in calls]
+        return [record.model_copy(update={"started_seconds": turn_started}) for record in answered]
 
     def _calls_not_yet_made(self, calls: list[ToolCall]) -> list[ToolCall]:
         """The first of each distinct call in this turn that no earlier turn of the question made, in the order the model asked."""

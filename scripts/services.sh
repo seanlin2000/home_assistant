@@ -1,29 +1,30 @@
 #!/usr/bin/env bash
 # Install, start, stop, and inspect the native macOS services that Home Assistant talks to over the LAN.
 #
-#   scripts/services.sh install      write launchd agents for whisper, kokoro, ollama, the harness (LAN), llama-server and mcp (127.0.0.1), and the health check, and load them
+#   scripts/services.sh install      write launchd agents for whisper, kokoro, ollama, the harness and the exchange dashboard (LAN), llama-server and mcp (127.0.0.1), and the health check, and load them
 #   scripts/services.sh start|stop   load/unload the agents
-#   scripts/services.sh restart NAME restart one agent (ollama|llama|mcp|harness|whisper|kokoro|health)
+#   scripts/services.sh restart NAME restart one agent (ollama|llama|mcp|harness|dashboard|whisper|kokoro|health)
 #   scripts/services.sh status       show what is listening on each port and the last health snapshot
-#   scripts/services.sh logs NAME    tail a service log (whisper|kokoro|mcp|harness|ollama|llama|health)
+#   scripts/services.sh logs NAME    tail a service log (whisper|kokoro|mcp|harness|dashboard|ollama|llama|health)
 #   scripts/services.sh uninstall    unload and remove the agents
 #
-# Ports: Whisper 10300, Kokoro 10210, the harness 8770 (with an API key) and Ollama 11434 bind 0.0.0.0 so the VM can reach them. llama-server
-# 127.0.0.1:8090 (with an API key, from config/serving.toml) and the tool server 127.0.0.1:8765 answer only this Mac (design_docs/v2/08 section 3.2).
+# Ports: Whisper 10300, Kokoro 10210, the harness 8770 (with an API key) and Ollama 11434 bind 0.0.0.0 so the VM can reach them, and the read-only
+# exchange dashboard 8775 does so a laptop on the home network can open it. llama-server 127.0.0.1:8090 (with an API key, from config/serving.toml)
+# and the tool server 127.0.0.1:8765 answer only this Mac (design_docs/v2/08 section 3.2).
 set -euo pipefail
 
 PROJECT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 AGENTS_DIR="$HOME/Library/LaunchAgents"
 LOG_DIR="$HOME/Library/Logs/studio-assistant"
 PREFIX="com.studio-assistant"
-SERVICES=(ollama llama mcp harness whisper kokoro health)
+SERVICES=(ollama llama mcp harness dashboard whisper kokoro health)
 APP_SUPPORT_DIR="$HOME/Library/Application Support/studio-assistant"
 HEALTH_INTERVAL_SECONDS="${HEALTH_INTERVAL_SECONDS:-300}"
 UNLOAD_TIMEOUT_SECONDS="${UNLOAD_TIMEOUT_SECONDS:-30}"
 OLLAMA_BIN="$(command -v ollama || echo /opt/homebrew/bin/ollama)"
 
 usage() {
-    sed -n '2,11p' "$0"
+    sed -n '2,13p' "$0"
     exit 1
 }
 
@@ -143,6 +144,10 @@ install_agents() {
     ENV_KEYS=(HARNESS_ALLOWED_HOSTS)
     ENV_VALUES=("${HARNESS_ALLOWED_HOSTS:-${lan_address:+$lan_address:8770,}localhost:8770,127.0.0.1:8770}")
     write_plist harness "$PROJECT_DIR/.venv/bin/assistant-service"
+    # The exchange dashboard is read-only and has no key, so it too answers only requests that name this machine (design_docs/v2/13).
+    ENV_KEYS=(DASHBOARD_ALLOWED_HOSTS)
+    ENV_VALUES=("${DASHBOARD_ALLOWED_HOSTS:-${lan_address:+$lan_address:8775,}localhost:8775,127.0.0.1:8775}")
+    write_plist dashboard "$PROJECT_DIR/.venv/bin/exchange-dashboard"
     ENV_KEYS=() ENV_VALUES=()
     write_plist whisper "$PROJECT_DIR/.venv/bin/wyoming-mlx-whisper" --uri tcp://0.0.0.0:10300 --model mlx-community/whisper-large-v3-turbo --language en
     write_plist kokoro "$PROJECT_DIR/.venv/bin/kokoro-server" --uri tcp://0.0.0.0:10210 --voice bm_fable --data-dir "$HOME/.cache/wyoming-kokoro" --streaming --device cpu
@@ -208,7 +213,7 @@ status() {
     for name in "${SERVICES[@]}"; do
         agent_loaded "$name" || echo "$name: agent NOT loaded"
     done
-    local ports=("ollama:11434" "llama:8090" "mcp:8765" "harness:8770" "whisper:10300" "kokoro:10210")
+    local ports=("ollama:11434" "llama:8090" "mcp:8765" "harness:8770" "dashboard:8775" "whisper:10300" "kokoro:10210")
     for entry in "${ports[@]}"; do
         local name="${entry%%:*}" port="${entry##*:}"
         if lsof -nP -iTCP:"$port" -sTCP:LISTEN >/dev/null 2>&1; then
