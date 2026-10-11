@@ -1,1 +1,1 @@
-"""The exchange dashboard: a read-only web page over the harness's exchange records and traces (design doc v2/13)."""
+"""The exchange dashboard: a web page over the harness's exchange records and traces, with a chat box that asks the harness (design doc v2/13)."""

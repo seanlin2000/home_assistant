@@ -2,8 +2,9 @@
 // refreshes and, while "Open new exchanges" is ticked, the new exchange opens.
 
 const POLL_MS = 2000;
+const CONVERSATION_QUIET_MS = 5 * 60 * 1000;
 const SHORT_RESULT_CHARS = 600;
-const state = { days: [], day: null, summaries: [], selected: null, detail: null, drawerCard: null, drawerTab: "sources" };
+const state = { openNextArrival: false, days: [], day: null, summaries: [], selected: null, detail: null, drawerCard: null, drawerTab: "sources" };
 
 const $ = (id) => document.getElementById(id);
 
@@ -59,7 +60,8 @@ async function takeDays(days) {
   renderDayPicker();
   const fromHash = selectionFromHash();
   if (state.day === null && newest) await openDay(fromHash && days.some((day) => day.day === fromHash.day) ? fromHash.day : newest.day);
-  else if (grew && $("follow").checked) await openDay(newest.day, { openLatest: true });
+  else if (grew && ($("follow").checked || state.openNextArrival)) await openDay(newest.day, { openLatest: true });
+  if (grew) state.openNextArrival = false;
   else if (grew && state.day === newest.day) await openDay(newest.day, { keepSelection: true });
 }
 
@@ -376,6 +378,96 @@ function closeDrawer() {
 }
 
 
+const chat = { id: newConversationId(), history: [], lastAsked: 0 };
+
+function newConversationId() {
+  return `dashboard-${Date.now().toString(36)}`;
+}
+
+function startNewConversation() {
+  chat.id = newConversationId();
+  chat.history = [];
+  showLive([el("span", {}, "New conversation.")]);
+}
+
+async function askQuestion(event) {
+  event.preventDefault();
+  const question = $("ask-input").value.trim();
+  if (!question) return;
+  if (Date.now() - chat.lastAsked > CONVERSATION_QUIET_MS) startNewConversation();
+  chat.lastAsked = Date.now();
+  $("ask-input").value = "";
+  setAsking(true);
+  const conversation = [...chat.history, { role: "user", content: question }];
+  const answer = await streamAnswer({ conversation_id: chat.id, conversation });
+  if (answer !== null) chat.history = [...conversation, { role: "assistant", content: answer }];
+  state.openNextArrival = answer !== null;
+  setAsking(false);
+}
+
+async function streamAnswer(request) {
+  const live = { question: question(request), steps: [], answer: "" };
+  renderLive(live);
+  try {
+    const response = await fetch("/api/ask", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(request) });
+    if (!response.ok) throw new Error((await response.json()).error || response.status);
+    await readLines(response, (line) => takeEvent(live, JSON.parse(line)));
+  } catch (error) {
+    live.error = String(error.message || error);
+  }
+  renderLive(live);
+  return live.error ? null : live.answer;
+}
+
+const question = (request) => request.conversation[request.conversation.length - 1].content;
+
+async function readLines(response, onLine) {
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder();
+  let buffered = "";
+  for (;;) {
+    const { value, done } = await reader.read();
+    if (done) break;
+    buffered += decoder.decode(value, { stream: true });
+    const lines = buffered.split("\n");
+    buffered = lines.pop();
+    lines.filter((line) => line.trim()).forEach(onLine);
+  }
+}
+
+function takeEvent(live, event) {
+  if (event.event === "filler") live.steps.push(`🔊 ${event.text}`);
+  else if (event.event === "tool_started") live.steps.push(`🔧 ${event.call.name}(${argumentText(event.call.arguments)})`);
+  else if (event.event === "tool_finished") live.steps.push(`   done in ${seconds(event.seconds)}${event.error ? ` (${event.error})` : ""}`);
+  else if (event.event === "answer") live.answer += event.text;
+  else if (event.event === "error") live.error = event.message;
+  else if (event.event === "done") live.done = true;
+  renderLive(live);
+}
+
+function renderLive(live) {
+  const lines = [el("div", {}, `🎤 ${live.question}`), ...live.steps.map((step) => el("div", {}, step))];
+  if (live.answer) lines.push(el("div", { class: "answer" }, `🔊 ${live.answer}`));
+  if (live.error) lines.push(el("div", { class: "error" }, `Not answered: ${live.error}`));
+  else if (!live.done) lines.push(el("div", {}, "…"));
+  showLive(lines);
+}
+
+function showLive(lines) {
+  const box = $("ask-live");
+  box.hidden = false;
+  box.replaceChildren(...lines);
+  box.scrollTop = box.scrollHeight;
+}
+
+function setAsking(asking) {
+  $("ask-send").disabled = asking;
+  $("ask-input").disabled = asking;
+  if (!asking) $("ask-input").focus();
+}
+
+$("ask").addEventListener("submit", askQuestion);
+$("ask-new").addEventListener("click", startNewConversation);
 $("drawer-close").addEventListener("click", closeDrawer);
 for (const tab of document.querySelectorAll(".tab")) {
   tab.addEventListener("click", () => {
@@ -386,7 +478,7 @@ for (const tab of document.querySelectorAll(".tab")) {
 $("day").addEventListener("change", (event) => openDay(event.target.value));
 document.addEventListener("keydown", (event) => {
   if (event.key === "Escape") closeDrawer();
-  if (!state.selected || event.target.tagName === "SELECT") return;
+  if (!state.selected || ["SELECT", "INPUT"].includes(event.target.tagName)) return;
   const step = { j: -1, ArrowDown: -1, k: 1, ArrowUp: 1 }[event.key];
   const index = state.selected.index + (step || 0);
   if (step && index >= 0 && index < state.summaries.length) openExchange(state.selected.day, index);

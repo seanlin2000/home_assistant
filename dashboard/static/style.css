@@ -71,7 +71,18 @@ button { font: inherit; color: inherit; }
 
 .layout { display: grid; grid-template-columns: 320px minmax(0, 1fr); height: calc(100vh - 49px); }
 .list { overflow-y: auto; border-right: 1px solid var(--border); background: var(--panel); }
-.exchange { overflow-y: auto; padding: 20px 28px 60px; }
+.main-column { display: flex; flex-direction: column; min-height: 0; min-width: 0; }
+.exchange { flex: 1; overflow-y: auto; padding: 20px 28px 60px; }
+.ask { border-top: 1px solid var(--border); background: var(--panel); padding: 10px 28px 12px; }
+.ask-row { display: flex; gap: 8px; }
+.ask input { flex: 1; min-width: 0; font: inherit; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--ink); }
+.ask input:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
+.ask button { font: inherit; padding: 6px 14px; border-radius: 8px; border: 0; background: var(--accent); color: #fff; cursor: pointer; }
+.ask button.quiet { background: none; color: var(--ink-2); border: 1px solid var(--border); }
+.ask button:disabled { opacity: .5; cursor: default; }
+.ask-live { font-size: 13px; color: var(--ink-2); margin-bottom: 8px; max-height: 120px; overflow-y: auto; white-space: pre-wrap; }
+.ask-live .answer { color: var(--ink); }
+.ask-live .error { color: var(--bad); }
 .empty { color: var(--ink-3); }
 
 .row { display: block; width: 100%; text-align: left; border: 0; border-bottom: 1px solid var(--border); background: none; padding: 9px 14px; cursor: pointer; }
@@ -176,6 +187,8 @@ mark { background: var(--mark); color: inherit; border-radius: 2px; padding: 0 1
   .layout { grid-template-columns: 1fr; height: auto; }
   .list { max-height: 40vh; border-right: 0; border-bottom: 1px solid var(--border); }
   .exchange { padding: 16px; }
+  .ask { padding: 10px 16px; }
+  .ask button.quiet { display: none; }
   .timeline { grid-template-columns: 110px minmax(0, 1fr) 44px; }
   .follow { display: none; }
   .source-row { grid-template-columns: 22px minmax(0, 1fr) 72px 16px; }

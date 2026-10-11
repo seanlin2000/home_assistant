@@ -16,7 +16,17 @@
   </header>
   <div class="layout">
     <nav id="list" class="list" aria-label="Exchanges on this day"></nav>
-    <main id="exchange" class="exchange"><p class="empty">Pick an exchange on the left. New ones appear about a second after the answer ends.</p></main>
+    <div class="main-column">
+      <main id="exchange" class="exchange"><p class="empty">Pick an exchange on the left. New ones appear about a second after the answer ends.</p></main>
+      <form id="ask" class="ask" autocomplete="off">
+        <div id="ask-live" class="ask-live" hidden></div>
+        <div class="ask-row">
+          <input id="ask-input" type="text" placeholder="Ask the assistant, as if you had said it to the puck…" aria-label="Question">
+          <button type="submit" id="ask-send">Ask</button>
+          <button type="button" id="ask-new" class="quiet" title="Start a new conversation; otherwise questions follow on from the last five minutes">New conversation</button>
+        </div>
+      </form>
+    </div>
   </div>
   <aside id="drawer" class="drawer" hidden aria-label="Full tool result">
     <div class="drawer-head">

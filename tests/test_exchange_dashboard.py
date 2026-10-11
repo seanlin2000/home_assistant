@@ -2,6 +2,7 @@
 API serves a day's exchanges only to names of this Mac (design doc v2/13)."""
 
 import json
+from collections.abc import AsyncIterator
 from datetime import datetime, timedelta
 from pathlib import Path
 
@@ -10,9 +11,9 @@ import pytest
 
 from assistant_core.converse_protocol import ConverseRequest
 from assistant_core.exchange_record import ExchangeRecord, exchange_record_from_transcript
-from assistant_core.models import GenerationStats, Message, Role, RouteDecision, ToolCall, ToolCallRecord, Transcript
+from assistant_core.models import AgentEvent, AnswerDelta, Done, FillerSpoken, GenerationStats, Message, Role, RouteDecision, ToolCall, ToolCallRecord, Transcript
 from assistant_service.exchange_log import ExchangeArchive, ExchangeLog, TraceLog
-from dashboard.app import build_app
+from dashboard.app import Converse, build_app
 from dashboard.evidence import distinctive_terms, tool_evidence
 from dashboard.exchange_views import ExchangeStore
 from dashboard.pipeline_collector import PipelineRunCollector
@@ -153,8 +154,8 @@ def seeded_store(tmp_path: Path) -> tuple[ExchangeStore, ExchangeRecord]:
     return ExchangeStore(records, traces, runs), record
 
 
-def client_for(store: ExchangeStore) -> httpx.AsyncClient:
-    return httpx.AsyncClient(transport=httpx.ASGITransport(app=build_app(store, ALLOWED_HOSTS)), base_url="http://mac.lan:8775")
+def client_for(store: ExchangeStore, converse: Converse | None = None) -> httpx.AsyncClient:
+    return httpx.AsyncClient(transport=httpx.ASGITransport(app=build_app(store, ALLOWED_HOSTS, converse=converse)), base_url="http://mac.lan:8775")
 
 
 async def test_the_api_lists_a_day_and_opens_an_exchange_with_its_trace_and_speech(tmp_path: Path) -> None:
@@ -214,3 +215,44 @@ async def test_a_collector_failure_is_logged_once_until_it_recovers(tmp_path: Pa
     for _ in range(3):
         await collector.collect_logging_failures()
     assert [record.getMessage() for record in caplog.records] == ["pipeline runs not collected: OSError: no route to host"]
+
+
+class RecordingHarness:
+    """Stands in for HarnessClient.converse: answers with a filler and one word, or fails as an unreachable harness does."""
+
+    def __init__(self, reachable: bool) -> None:
+        self.reachable = reachable
+        self.requests: list[ConverseRequest] = []
+
+    async def converse(self, request: ConverseRequest) -> AsyncIterator[AgentEvent]:
+        self.requests.append(request)
+        if not self.reachable:
+            raise httpx.ConnectError("connection refused")
+        yield FillerSpoken(text="One moment.")
+        yield AnswerDelta(text="Canberra.")
+        yield Done(transcript=Transcript(model="small", system_prompt="", conversation=request.conversation, final_answer="Canberra."))
+
+
+ASKED = {"conversation_id": "dashboard-1", "conversation": [{"role": "user", "content": "Capital of Australia?"}], "source": "home_assistant"}
+
+
+async def test_the_chat_box_streams_the_harness_events_and_labels_the_exchange(tmp_path: Path) -> None:
+    harness = RecordingHarness(reachable=True)
+    async with client_for(seeded_store(tmp_path)[0], harness.converse) as client:
+        response = await client.post("/api/ask", json=ASKED, headers={"origin": "http://mac.lan:8775"})
+    assert [json.loads(line)["event"] for line in response.text.splitlines()] == ["filler", "answer", "done"]
+    assert harness.requests[0].source == "dashboard"
+
+
+async def test_an_unreachable_harness_ends_the_stream_with_its_reason(tmp_path: Path) -> None:
+    async with client_for(seeded_store(tmp_path)[0], RecordingHarness(reachable=False).converse) as client:
+        response = await client.post("/api/ask", json=ASKED)
+    assert json.loads(response.text.splitlines()[-1]) == {"event": "error", "message": "ConnectError: connection refused"}
+
+
+async def test_the_chat_box_is_off_without_the_harness_key_and_refuses_other_sites(tmp_path: Path) -> None:
+    store = seeded_store(tmp_path)[0]
+    async with client_for(store) as client:
+        assert (await client.post("/api/ask", json=ASKED)).status_code == 503
+    async with client_for(store, RecordingHarness(reachable=True).converse) as client:
+        assert (await client.post("/api/ask", json=ASKED, headers={"origin": "http://evil.example"})).status_code == 421

@@ -6,6 +6,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 from pydantic import BaseModel
 
+from assistant_service.settings import load_harness_config
 from utils.http_access_utils import allowed_hosts_from_environment
 
 PROJECT_DIR = Path(__file__).resolve().parent.parent
@@ -24,6 +25,16 @@ class HomeAssistantAccess(BaseModel):
 
 def allowed_hosts() -> list[str]:
     return allowed_hosts_from_environment(ALLOWED_HOSTS_VARIABLE, DASHBOARD_PORT)
+
+
+def harness_url() -> str:
+    return f"http://127.0.0.1:{load_harness_config().service.port}"
+
+
+def harness_key() -> str | None:
+    """The harness's API key, which the chat box's questions carry; the browser never sees it. None turns the chat box off."""
+    path = load_harness_config().service.api_key_path
+    return path.read_text().strip() if path.exists() else None
 
 
 def home_assistant_access() -> HomeAssistantAccess | None:

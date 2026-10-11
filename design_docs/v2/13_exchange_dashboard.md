@@ -6,7 +6,7 @@ Status: building
 
 One web page that shows what happened in each exchange: the question as Whisper heard it, the route the router chose, every model call and tool call with what it returned, the spoken answer, and how long each step took. Before this page, the question lived in Home Assistant's pipeline debug view, the tool calls and timings in the harness's exchange log, and the answer in both, each read with a different script in a different terminal tab. The point of the page is intuition for improving the harness and the tools: whether a search found the answer, whether the model used what it found, and where the seconds before the first spoken word went.
 
-The page is read-only and answers the home network only. Each exchange appears about a second after it finishes; nothing streams token by token. Benchmark and TriviaBench runs come in a later change, on the same page.
+The page answers the home network only. Each exchange appears about a second after it finishes. A chat box at the bottom sends a typed question to the harness, as Home Assistant would, and shows the filler, tool calls, and answer as they stream; the finished exchange then opens like any other. Benchmark and TriviaBench runs come in a later change, on the same page.
 
 ## 2. Diagram
 
@@ -67,7 +67,11 @@ The page asks for the list of days every two seconds. When the newest day gains 
 
 The top bar names the model that answered the newest exchange, which is the model the harness is serving now; each exchange names its own model in its header and on its answer, so a model swap shows up exchange by exchange.
 
-### 3.7 Opening it
+### 3.7 The chat box
+
+Typing a question is the quickest way to test a change to the harness without speaking to the puck. The page posts the question and the conversation so far to the dashboard, which passes it to the harness with the harness's API key, read from disk on the Mac, so the browser never holds it. The harness's events come back line by line. Questions follow on from each other for five quiet minutes, as Home Assistant's do, or until "New conversation". They are logged with the source `dashboard`, so they can be told apart from spoken ones. A request carrying another site's `Origin` is refused, so a page elsewhere cannot ask questions through the dashboard.
+
+### 3.8 Opening it
 
 `scripts/services.sh install` adds the dashboard as a launchd agent beside the harness. `scripts/services.sh dashboard` starts that agent if it is not running and opens the page; before install has written the agent, it runs the dashboard in the terminal instead. From another computer at home, the page is at the Mac's address on port 8775, which the command prints.
 
@@ -91,7 +95,8 @@ The top bar names the model that answered the newest exchange, which is the mode
 ## 6. Failure modes
 
 - **Home Assistant is down or unreachable.** The page still shows every exchange; the speech bars read "not available".
-- **The dashboard crashes.** Nothing else notices: it only reads files the harness writes.
+- **The dashboard crashes.** Nothing else notices: it only reads files the harness writes, and the harness answers Home Assistant directly.
+- **The harness is down when a question is typed.** The chat box shows why the question went unanswered (connection refused, timeout) instead of waiting.
 - **A trace is missing** (an exchange from before this change, or older than 14 days). The page shows the record's summary, with tool calls as names, arguments, sizes, and times, and says the full text is gone.
 - **Two pipeline runs could match one exchange** (the same question asked twice in two minutes). The run matching on both conversation id and question wins; between equals, the closer start time does.
 

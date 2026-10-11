@@ -9,7 +9,7 @@
 #   scripts/services.sh logs NAME    tail a service log (whisper|kokoro|mcp|harness|dashboard|ollama|llama|health)
 #   scripts/services.sh uninstall    unload and remove the agents
 #
-# Ports: Whisper 10300, Kokoro 10210, the harness 8770 (with an API key) and Ollama 11434 bind 0.0.0.0 so the VM can reach them, and the read-only
+# Ports: Whisper 10300, Kokoro 10210, the harness 8770 (with an API key) and Ollama 11434 bind 0.0.0.0 so the VM can reach them, and the
 # exchange dashboard 8775 does so a laptop on the home network can open it. llama-server 127.0.0.1:8090 (with an API key, from config/serving.toml)
 # and the tool server 127.0.0.1:8765 answer only this Mac (design_docs/v2/08 section 3.2).
 set -euo pipefail
@@ -145,7 +145,8 @@ install_agents() {
     ENV_KEYS=(HARNESS_ALLOWED_HOSTS)
     ENV_VALUES=("${HARNESS_ALLOWED_HOSTS:-${lan_address:+$lan_address:8770,}localhost:8770,127.0.0.1:8770}")
     write_plist harness "$PROJECT_DIR/.venv/bin/assistant-service"
-    # The exchange dashboard is read-only and has no key, so it too answers only requests that name this machine (design_docs/v2/13).
+    # The exchange dashboard has no key of its own (its chat box uses the harness's, server side), so it too answers only requests that name this
+    # machine and refuses other sites' pages (design_docs/v2/13).
     ENV_KEYS=(DASHBOARD_ALLOWED_HOSTS)
     ENV_VALUES=("${DASHBOARD_ALLOWED_HOSTS:-${lan_address:+$lan_address:8775,}localhost:8775,127.0.0.1:8775}")
     write_plist dashboard "$PROJECT_DIR/.venv/bin/exchange-dashboard"
