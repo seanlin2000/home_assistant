@@ -10,7 +10,7 @@ from collections import OrderedDict
 from collections.abc import AsyncIterator, Callable
 from typing import Any, Protocol
 
-from assistant_core.models import AgentEvent, AnswerDelta, Done, FillerSpoken, Message, Role, Transcript
+from assistant_core.models import AgentEvent, AnswerDelta, Done, FillerSpoken, Message, Role, ToolCall, ToolStarted, Transcript
 from assistant_core.prompts import ACKNOWLEDGEMENT_REPLY
 
 _LOGGER = logging.getLogger(__name__)
@@ -38,9 +38,14 @@ def chat_log_to_conversation(contents: list[Any]) -> list[Message]:
     return conversation
 
 
-async def agent_events_to_deltas(events: AsyncIterator[AgentEvent], on_done: Callable[[Transcript], None] | None = None) -> AsyncIterator[dict[str, Any]]:
+async def agent_events_to_deltas(
+    events: AsyncIterator[AgentEvent], as_external_tool_call: Callable[[ToolCall], Any], on_done: Callable[[Transcript], None] | None = None
+) -> AsyncIterator[dict[str, Any]]:
     """Turn the agent's event stream into one streamed assistant message: filler sentence first, then the answer as it arrives.
-    A reply that stayed silent on purpose streams no content at all; only an accidental empty reply gets the spoken fallback."""
+    A reply that stayed silent on purpose streams no content at all; only an accidental empty reply gets the spoken fallback.
+
+    Each tool call goes into the message too, marked as already run by the harness. Home Assistant starts speaking a streamed reply only once it passes
+    60 characters, or when a tool call follows some text; the filler is shorter than that, so without the call it would wait for the whole answer."""
     yield {"role": "assistant"}
     spoke = False
     stayed_silent = False
@@ -51,6 +56,8 @@ async def agent_events_to_deltas(events: AsyncIterator[AgentEvent], on_done: Cal
         elif isinstance(event, AnswerDelta):
             spoke = True
             yield {"content": event.text}
+        elif isinstance(event, ToolStarted):
+            yield {"tool_calls": [as_external_tool_call(event.call)]}
         elif isinstance(event, Done):
             stayed_silent = event.transcript.stayed_silent
             log_transcript(event.transcript)

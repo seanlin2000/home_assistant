@@ -11,13 +11,14 @@ import httpx
 from homeassistant.components import conversation
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
+from homeassistant.helpers import llm
 from homeassistant.helpers.device_registry import DeviceEntryType, DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.httpx_client import get_async_client
 
 from assistant_core.converse_protocol import ConverseRequest
 from assistant_core.harness_client import HarnessClient
-from assistant_core.models import AgentEvent, Transcript
+from assistant_core.models import AgentEvent, ToolCall, Transcript
 
 from . import adapter
 from .const import CONF_CONTINUE_CONVERSATION, CONF_HARNESS_API_KEY, CONF_HARNESS_URL, CONF_MAX_FOLLOW_UPS, DEFAULT_CONTINUE_CONVERSATION, DEFAULT_MAX_FOLLOW_UPS, DOMAIN
@@ -89,6 +90,11 @@ class StudioAssistantEntity(conversation.ConversationEntity):
 
     async def _stream_events(self, chat_log: conversation.ChatLog, events: AsyncIterator[AgentEvent]) -> Transcript:
         finished: list[Transcript] = []
-        async for _content in chat_log.async_add_delta_content_stream(self.entity_id, adapter.agent_events_to_deltas(events, on_done=finished.append)):
+        async for _content in chat_log.async_add_delta_content_stream(self.entity_id, adapter.agent_events_to_deltas(events, run_by_harness, on_done=finished.append)):
             pass
         return finished[-1]
+
+
+def run_by_harness(call: ToolCall) -> llm.ToolInput:
+    """External, so Home Assistant records the call without trying to run it."""
+    return llm.ToolInput(tool_name=call.name, tool_args=call.arguments, id=call.id, external=True)
