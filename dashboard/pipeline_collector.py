@@ -20,7 +20,7 @@ class PipelineRunCollector:
         self._last_failure: str | None = None
 
     async def collect(self) -> int:
-        """Append the runs not seen before and return how many there were."""
+        """Append the runs that finished since the last poll and return how many there were."""
         if self._known is None:
             self._known = self.kept_run_ids()
         new_runs = await self._pull_new_runs(self._known)
@@ -30,8 +30,9 @@ class PipelineRunCollector:
         return len(new_runs)
 
     def kept_run_ids(self) -> set[str]:
+        """A run kept before it finished is not counted, so it is pulled again whole while Home Assistant still remembers it."""
         since = datetime.now(UTC).date() - timedelta(days=PIPELINE_RUN_RETENTION_DAYS)
-        return {run.run_id for run in self._log.read_since(since)}
+        return {run.run_id for run in self._log.read_since(since) if run.is_finished}
 
     async def collect_forever(self, interval_seconds: float) -> None:
         while True:
