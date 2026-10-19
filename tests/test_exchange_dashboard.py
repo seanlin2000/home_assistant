@@ -184,6 +184,20 @@ async def test_an_exchange_without_a_trace_still_shows_its_tool_calls(tmp_path: 
     assert missing.status_code == 404
 
 
+async def test_an_exchange_lists_the_earlier_exchanges_of_its_conversation(tmp_path: Path) -> None:
+    store, record = seeded_store(tmp_path)
+    day = record.recorded_at[:10]
+    append_jsonl(
+        ExchangeLog(tmp_path / "exchanges").path_for(datetime.fromisoformat(record.recorded_at).date()),
+        recorded("conv-1", record.recorded_at).model_copy(update={"user_text": "And who did they beat?"}),
+    )
+    async with client_for(store) as client:
+        follow_up = (await client.get(f"/api/days/{day}/exchanges/2")).json()
+        unrelated = (await client.get(f"/api/days/{day}/exchanges/1")).json()
+    assert [(summary["day"], summary["index"], summary["user_text"]) for summary in follow_up["earlier_exchanges"]] == [(day, 0, QUESTION)]
+    assert unrelated["earlier_exchanges"] == []
+
+
 async def test_other_host_names_and_other_sites_pages_are_turned_away(tmp_path: Path) -> None:
     store, _record = seeded_store(tmp_path)
     async with client_for(store) as client:

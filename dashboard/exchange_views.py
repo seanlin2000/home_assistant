@@ -4,7 +4,7 @@ one is kept, and its Home Assistant pipeline run when one matches (design doc v2
 from datetime import date, timedelta
 from pathlib import Path
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from assistant_core.exchange_record import ExchangeRecord, ExchangeTrace, ToolCallSummary
 from assistant_core.models import Message, Role, ToolCallRecord, Transcript
@@ -76,6 +76,7 @@ class ExchangeDetail(BaseModel):
     turns: list[Turn]
     timeline: Timeline
     speech: SpeechRun | None = None
+    earlier_exchanges: list[ExchangeSummary] = Field(default_factory=list)  # the exchanges before this one in its conversation, oldest first
 
 
 class ExchangeStore:
@@ -107,7 +108,16 @@ class ExchangeStore:
         record = records[index]
         trace = self.trace_for(record, day)
         run = matching_run(record, self.runs_around(day))
-        return detail_from(summarize(day, index, record), record, trace, run)
+        earlier = self.earlier_in_conversation(day, records[:index], record)
+        return detail_from(summarize(day, index, record), record, trace, run).model_copy(update={"earlier_exchanges": earlier})
+
+    def earlier_in_conversation(self, day: date, earlier_that_day: list[ExchangeRecord], record: ExchangeRecord) -> list[ExchangeSummary]:
+        """The exchanges that share this one's conversation id: earlier lines of its day, and the day before, since a conversation can cross midnight UTC."""
+        if not record.conversation_id:
+            return []
+        previous_day = day - timedelta(days=1)
+        days = [(previous_day, self._records.read_day(previous_day)), (day, earlier_that_day)]
+        return [summarize(each_day, index, earlier) for each_day, records in days for index, earlier in enumerate(records) if earlier.conversation_id == record.conversation_id]
 
     def trace_for(self, record: ExchangeRecord, day: date) -> ExchangeTrace | None:
         """A trace is written right after its record, so it is in the same day's file, or the next one when the record was the last before midnight UTC."""

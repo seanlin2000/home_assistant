@@ -71,6 +71,8 @@ The page asks for the list of days every two seconds. When the newest day gains 
 
 The page is laid out like a chat app: exchanges in a sidebar, the open exchange as a conversation in the middle, and the question box at the bottom. The header names the model that answered the newest exchange, which is the model the harness is serving now; each exchange names its own model under its answer, so a model swap shows up exchange by exchange.
 
+Above the open exchange sit the earlier questions of its conversation, found by conversation id on that day and the day before. Each shows only its answer until it is clicked; it then opens its own steps and timing chart in place, so a follow-up can be compared with the question before it without leaving the conversation.
+
 ### 3.7 The chat box
 
 Typing a question is the quickest way to test a change to the harness without speaking to the puck. The page posts the question and the conversation so far to the dashboard, which passes it to the harness with the harness's API key, read from disk on the Mac, so the browser never holds it. The harness's events come back line by line. A question typed while an exchange is open is a follow-up to it: it carries that exchange's conversation, as a follow-up spoken to the puck would. "New chat" starts an empty conversation. The answer streams into the conversation, and the recorded exchange replaces it when it reaches the log about a second later. They are logged with the source `dashboard`, so they can be told apart from spoken ones. A request carrying another site's `Origin` is refused, so a page elsewhere cannot ask questions through the dashboard.

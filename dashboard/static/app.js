@@ -150,11 +150,12 @@ function listRow(summary, index, fresh) {
 
 function renderExchange(detail) {
   const record = detail.record;
+  const earlier = earlierTurns(detail);
   const thread = el(
     "div",
     { class: "thread-inner" },
-    earlierMessages(detail.earlier_messages),
-    detail.earlier_messages.length > 0 && el("div", { class: "divider" }, `this exchange · ${localTime(record.recorded_at)}`),
+    earlier,
+    earlier.length > 0 && el("div", { class: "divider" }, `this exchange · ${localTime(record.recorded_at)}`),
     userTurn(record.user_text, questionNotes(detail)),
     assistantTurn(detail),
   );
@@ -162,8 +163,43 @@ function renderExchange(detail) {
   $("thread").scrollTop = 0;
 }
 
-function earlierMessages(messages) {
-  return spokenMessages(messages).map((message) => (message.role === "user" ? userTurn(message.content, [], "earlier") : el("div", { class: "answer earlier" }, message.content)));
+// Earlier questions in this conversation. One that has its own exchange record opens its steps and timing in place when clicked.
+function earlierTurns(detail) {
+  const unmatched = [...detail.earlier_exchanges];
+  const pairs = questionAnswerPairs(detail.earlier_messages);
+  const shown = pairs.length ? pairs : unmatched.map((summary) => ({ question: summary.user_text, answer: summary.final_answer }));
+  return shown.map((pair) => earlierTurn(pair, takeMatching(unmatched, pair.question)));
+}
+
+function questionAnswerPairs(messages) {
+  const pairs = [];
+  for (const message of spokenMessages(messages)) {
+    if (message.role === "user") pairs.push({ question: message.content, answer: "" });
+    else if (pairs.length) pairs[pairs.length - 1].answer = message.content;
+  }
+  return pairs;
+}
+
+function takeMatching(summaries, question) {
+  const index = summaries.findIndex((summary) => wordsOnly(summary.user_text) === wordsOnly(question));
+  return index < 0 ? null : summaries.splice(index, 1)[0];
+}
+
+function earlierTurn(pair, summary) {
+  const answer = el("div", { class: "answer earlier" }, pair.answer || "(no answer)");
+  if (!summary) return el("div", { class: "earlier-exchange" }, userTurn(pair.question, [], "earlier"), answer);
+  const hint = el("span", { class: "expand-hint" }, "Show steps and timing ›");
+  const question = userTurn(pair.question, [el("span", {}, `${localTime(summary.recorded_at)} · ${seconds(summary.total_seconds)} · `, hint)], "earlier opens");
+  const turn = el("div", { class: "earlier-exchange" }, question, answer);
+  question.addEventListener("click", () => toggleEarlier(turn, summary));
+  return turn;
+}
+
+async function toggleEarlier(turn, summary) {
+  const opening = !turn.classList.contains("expanded");
+  if (opening && !turn.querySelector(".assistant-turn")) turn.append(assistantTurn(await getJson(`/api/days/${summary.day}/exchanges/${summary.index}`)));
+  turn.classList.toggle("expanded", opening);
+  turn.querySelector(".expand-hint").textContent = opening ? "Hide steps and timing" : "Show steps and timing ›";
 }
 
 function spokenMessages(messages) {
