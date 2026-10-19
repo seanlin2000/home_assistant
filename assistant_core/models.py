@@ -27,6 +27,7 @@ class RouteDecision(BaseModel):
     seconds: float = 0.0
     also: list[Route] = Field(default_factory=list)  # further tool families, in the order to use them (design doc v2/04 section 3.3)
     plan: str = ""  # one sentence on how the tools fit together, when there is more than one
+    started_seconds: float | None = None  # from the start of the exchange; None in records written before it was kept
 
     @property
     def tool_routes(self) -> list[Route]:
@@ -107,6 +108,7 @@ class GenerationStats(BaseModel):
     load_seconds: float | None = None
     stop_reason: str | None = None
     slot: int | None = None  # the llama-server slot the request was pinned to; None on Ollama
+    started_seconds: float | None = None  # from the start of the exchange; None in records written before it was kept
 
 
 class TextDelta(BaseModel):
@@ -155,6 +157,7 @@ class ToolCallRecord(BaseModel):
     error: str | None = None
     refused: bool = False  # the guards stopped it before it ran; result holds the sentence the model read instead
     repeated: bool = False  # the same call ran earlier in this question; result is that call's result, not a new one
+    started_seconds: float | None = None  # from the start of the exchange; None in records written before it was kept
 
 
 class Transcript(BaseModel):
@@ -165,6 +168,7 @@ class Transcript(BaseModel):
     model_calls: list[GenerationStats] = Field(default_factory=list)
     malformed_tool_calls: list[str] = Field(default_factory=list)
     spoken_text: str = ""
+    filler_text: str = ""  # the phrase spoken while the first tools ran
     final_answer: str = ""
     truncated: bool = False
     tool_call_count: int = 0

@@ -12,7 +12,7 @@ from assistant_core.harness_client import HarnessClient
 from assistant_core.models import AgentEvent, AgentPolicy, AnswerDelta, Done, LLMEvent, Message, Role, ToolSpec
 from assistant_service.app import AccessRules, build_app
 from assistant_service.conversation_state import ConversationState
-from assistant_service.exchange_log import ExchangeLog
+from assistant_service.exchange_log import ExchangeArchive, ExchangeLog, TraceLog
 from assistant_service.harness import MODEL_UNREACHABLE_ANSWER, Harness
 from assistant_service.settings import ALLOWED_HOSTS_VARIABLE, load_harness_config
 from serving.settings import load_serving_config
@@ -38,7 +38,7 @@ def harness_with(llm: ScriptedLLM, tmp_path: Path) -> Harness:
         tool_server_url=UNREACHABLE_TOOL_SERVER,
         policy=AgentPolicy(),
         state=ConversationState(tmp_path / "state.sqlite3"),
-        exchange_log=ExchangeLog(tmp_path / "exchanges"),
+        archive=ExchangeArchive(ExchangeLog(tmp_path / "exchanges"), TraceLog(tmp_path / "traces")),
         quiet_minutes=5,
     )
 
@@ -121,6 +121,16 @@ async def test_every_exchange_is_logged_with_its_source(tmp_path: Path) -> None:
     [event async for event in harness.converse(ConverseRequest(conversation_id="c", conversation=QUESTION, source="benchmark"))]
     records = ExchangeLog(tmp_path / "exchanges").read_since(date.min)
     assert [(record.source, record.final_answer) for record in records] == [("benchmark", "About 330 metres.")]
+
+
+async def test_every_exchange_keeps_a_trace_under_the_record_id(tmp_path: Path) -> None:
+    harness = harness_with(ScriptedLLM([text_reply("About 330 metres.")]), tmp_path)
+    await collect(harness, conversation_id="conversation-7")
+    [record] = ExchangeLog(tmp_path / "exchanges").read_since(date.min)
+    [trace] = TraceLog(tmp_path / "traces").read_since(date.min)
+    assert record.exchange_id and trace.exchange_id == record.exchange_id
+    assert (record.conversation_id, trace.conversation_id) == ("conversation-7", "conversation-7")
+    assert trace.transcript.final_answer == "About 330 metres."
 
 
 async def test_conversations_quiet_for_five_minutes_are_forgotten(tmp_path: Path) -> None:

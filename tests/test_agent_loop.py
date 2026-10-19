@@ -259,3 +259,14 @@ async def test_a_tool_call_written_as_text_is_never_spoken_and_is_asked_again() 
 async def test_a_reply_that_starts_with_markup_but_is_not_a_tool_call_is_spoken_at_its_end() -> None:
     events = await collect(ScriptedLLM([text_reply("<3 thanks, ", "glad to help.")]), FakeToolBox())
     assert "".join(spoken_deltas(events)) == "<3 thanks, glad to help."
+
+
+async def test_every_step_is_stamped_with_its_start_in_the_exchange() -> None:
+    """The dashboard draws each step where it ran (design doc v2/13 section 3.2); calls of one turn start together."""
+    events = await collect(ScriptedLLM([several_tool_calls_reply("gold price", "silver price"), text_reply("Done.")]), SlowToolBox())
+    transcript = events[-1].transcript
+    first_call, second_call = transcript.model_calls
+    gold, silver = transcript.tool_call_records
+    assert transcript.route.started_seconds <= first_call.started_seconds <= gold.started_seconds
+    assert gold.started_seconds == silver.started_seconds
+    assert second_call.started_seconds >= gold.started_seconds + gold.seconds

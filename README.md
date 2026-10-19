@@ -66,6 +66,7 @@ Services on the Mac are launchd agents; the health check is a fifth agent that r
 ```
 scripts/services.sh install                    # write and load the agents (HEALTH_CHECK_FLAGS=--no-remediate on the laptop)
 scripts/services.sh status                     # ports plus the last health snapshot
+scripts/services.sh dashboard                  # start the exchange dashboard if needed and open it (port 8775)
 uv run python scripts/health_check.py --dry-run   # probe everything and say what the policy would do
 uv run python scripts/ops_report.py --days 1 ~/Library/Logs/studio-assistant   # this machine's exchanges, health, Ollama speeds
 ```
