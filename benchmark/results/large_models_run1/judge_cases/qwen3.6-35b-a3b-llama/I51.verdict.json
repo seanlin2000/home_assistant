@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It names Paris, Texas and accurately summarizes the week from the tool: clear through Monday with highs in the mid to upper eighties and lows in the sixties, a trace on Tuesday, about 0.2 inch Wednesday, and nearly an inch of heavy rain Thursday.",
+  "judgment_reason": "It used the forecast for the small Texas town rather than the French capital and did not search.",
+  "spoken_fit_reason": "A short spoken summary of a seven-day forecast without reading every line."
+}

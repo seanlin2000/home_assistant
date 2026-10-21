@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 0,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The expected reply was the silence marker, but it said 'Okay.' out loud to a conversation between people in the room.",
+  "judgment_reason": "It wrongly treated overheard conversation as addressed to it, though its reply does not end in a question that would invite more back-and-forth.",
+  "spoken_fit_reason": "The reply is a single brief word, but anything spoken here is an interruption."
+}

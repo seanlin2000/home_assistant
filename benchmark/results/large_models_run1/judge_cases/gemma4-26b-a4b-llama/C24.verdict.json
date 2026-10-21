@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It speaks 19,478.78 with 1,478.78 in interest, which comes from compounding a year's deposits at 4 percent annually, not the roughly 19,091 the reference gives for monthly compounding; only the 18,000-in-deposits split is right.",
+  "judgment_reason": "It did not search, which was right, but it set the growth tool up for yearly growth on $6,000 lots and ignored the stated monthly compounding.",
+  "spoken_fit_reason": "Two plain sentences that lead with the total."
+}

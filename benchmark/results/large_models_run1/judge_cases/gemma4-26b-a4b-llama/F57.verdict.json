@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It states the 1.1220 rate from the Trading Economics excerpt dated October 9 and gives the calculator's $1,346.40 for 1,200 euros.",
+  "judgment_reason": "It searched for a live rate instead of using memory and used the calculator for the conversion.",
+  "spoken_fit_reason": "Two short sentences that lead with the rate."
+}

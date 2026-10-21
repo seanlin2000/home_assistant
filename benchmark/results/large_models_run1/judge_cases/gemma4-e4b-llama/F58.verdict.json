@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It uses Tokyo's 'city proper' figure of over 14 million and New York City's 8,584,629 from the retrieved Wikipedia text and gives the calculator's ratio of about 1.63, matching the reference's roughly 1.6.",
+  "judgment_reason": "It used Wikipedia as asked, named the city-proper measure rather than mixing it with a metro figure, and used the calculator for the division.",
+  "spoken_fit_reason": "Plain prose, but four sentences that state the 1.63 ratio twice make it longer than needed."
+}

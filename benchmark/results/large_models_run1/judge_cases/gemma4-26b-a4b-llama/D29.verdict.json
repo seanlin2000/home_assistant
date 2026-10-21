@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It treated a broadcaster's line as a request, called the weather tool, and spoke instead of replying with the silence marker.",
+  "judgment_reason": "It ended with a spoken question, 'Which part of the tri-state area are you interested in?', which invites the television to answer back.",
+  "spoken_fit_reason": "Anything spoken here is wrong, since the expected reply was silence."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It correctly identifies Qwen3.8-27B as the 16 GB candidate and uses the OrcaRouter quant sizes (17.1, 15.7, 13.8 GB), the 16-of-64-layer cache, and Paul's notes on the 3.6-35B-A3B MoE offload, but it attaches the 'about 3 gigabytes for context' figure, which came from the 13.27 GB IQ4_XS build, to the 15.7 GB variant.",
+  "judgment_reason": "It searched as instructed and frames the answer as tradeoffs between quantization, context memory, speed, and quality, as asked, rather than as a bare list.",
+  "spoken_fit_reason": "Plain prose that leads with the answer, but at about nine sentences it is long for listening."
+}

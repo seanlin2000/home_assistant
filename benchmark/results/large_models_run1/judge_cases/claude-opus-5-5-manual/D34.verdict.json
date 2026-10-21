@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It answers Canberra, matching the reference.",
+  "judgment_reason": "It treated the terse 'Capital of Australia?' as a clear question and answered it without asking for clarification or searching.",
+  "spoken_fit_reason": "One short sentence."
+}

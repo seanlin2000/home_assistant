@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The final reply is the silence marker '*' alone, which the reference names as correct for a television host's line.",
+  "judgment_reason": "It recognized the broadcast teaser as not addressed to it and neither searched for nor offered a forecast.",
+  "spoken_fit_reason": "Nothing was spoken, which is the ideal outcome for overheard television."
+}

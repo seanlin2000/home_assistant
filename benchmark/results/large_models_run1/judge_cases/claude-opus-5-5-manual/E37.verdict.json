@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It covers Saturday (partly cloudy, dry, low 50s to 69) and Sunday (mid 50s to mid 60s, rain at times, about a quarter inch), matching the tool's 53-69°F dry and 56-64°F with 0.26 in.",
+  "judgment_reason": "It used the home forecast tool, did not search, and added practical umbrella advice for Sunday.",
+  "spoken_fit_reason": "Two prose sentences that summarize the weekend rather than reading every line of the tool output."
+}

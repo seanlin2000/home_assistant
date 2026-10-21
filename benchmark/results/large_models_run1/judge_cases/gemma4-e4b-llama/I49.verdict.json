@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It names Chicago and gives 56 degrees overnight, cloudy and dry, matching the tool result.",
+  "judgment_reason": "It called the forecast for Chicago tonight and did not search.",
+  "spoken_fit_reason": "One plain sentence with the place and temperature."
+}

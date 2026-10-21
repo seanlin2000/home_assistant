@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["agreed_with_false_premise"],
+  "search_decision_correct": false,
+  "answer_quality": 1,
+  "judgment": 0,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It never checks or corrects the claim that the Fed cut rates to zero and only asks for loan details; asking for the current rate is the only sliver of the reference's refinance logic.",
+  "judgment_reason": "It neither searched nor pushed back on the false premise, which was the central point of the question, and it implicitly accepted it by moving on to refinancing details.",
+  "spoken_fit_reason": "A single short plain sentence that would read cleanly aloud."
+}

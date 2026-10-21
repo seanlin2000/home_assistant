@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It says the RTX 4050/4060/5050 laptops have 'sixteen gigabytes of VRAM' when the excerpt says 8 GB VRAM and 16 GB RAM, and it invents an RTX 5060 Ti laptop with 16 GB VRAM, while missing the excerpt's in-budget answer, a roughly $1,000 desktop built around an RTX 5060 Ti 16GB.",
+  "judgment_reason": "Searching was right and it flagged that the 3090 build might exceed the budget, but it then pointed the user to hardware configurations the sources do not support.",
+  "spoken_fit_reason": "Plain prose, but two paragraphs that hedge between options are long for a spoken reply."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The $6.52 figure matches the reference's 1.45 kWh per day at 15 cents per kWh, and it states the rate and the one-hour-at-300-W split, but it gives only a single rate rather than a range.",
+  "judgment_reason": "It named its assumptions, but even though the user explicitly asked it not to pretend to know the time under load, it never noted that the machine is probably not at 300 W for the whole hour.",
+  "spoken_fit_reason": "Three plain sentences that lead with the cost."
+}

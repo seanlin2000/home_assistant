@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It correctly says a model that does not fit 'cannot run at all, regardless of how fast the GPU is' and that spilling to system memory slows generation, but it omits that more VRAM allows less aggressive quantization.",
+  "judgment_reason": "It answered directly without searching and kept well within the 120-word, under-45-seconds request.",
+  "spoken_fit_reason": "Three plain sentences of about 75 words that lead with the point and have no lists."
+}

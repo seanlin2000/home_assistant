@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It calls the claim 'an oversimplification and likely incorrect' and mentions total parameters, but never explains that all experts must stay resident because tokens route to different experts, and it wrongly cites 'gradients' as an inference memory factor.",
+  "judgment_reason": "It pushes back on the false premise rather than accepting it, but the hedged 'likely incorrect' falls short of the clear no the question warranted.",
+  "spoken_fit_reason": "Two plain-prose sentences that lead with the verdict on the claim and contain no formatting."
+}

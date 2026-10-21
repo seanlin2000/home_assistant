@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It opens by naming the 10 GB used RTX 3080 as the 'best option for a 16 GB NVIDIA GPU', calls the 4060 Ti 16GB 'used' when the source lists it as the best new card at about $450, and says the RX 9060 XT goes for 'around four thirty', a price in no excerpt (the excerpt gives its MSRP as $349).",
+  "judgment_reason": "It led with a card that misses the stated 16 GB requirement and drifted to AMD, though it did flag the 3080's 10 GB and the 5060 Ti selling above MSRP.",
+  "spoken_fit_reason": "A single dense paragraph that buries the actual 16 GB pick behind a non-qualifying card, though it is plain prose."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "'Around fifty-four degrees' matches the tool's overnight low of 54°F.",
+  "judgment_reason": "It recognized a home weather question without a weather word, checked the forecast for tonight, and did not search.",
+  "spoken_fit_reason": "A single short sentence with the number."
+}

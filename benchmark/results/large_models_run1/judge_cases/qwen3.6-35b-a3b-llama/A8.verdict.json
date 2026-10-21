@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It recommends the router for speed, cost, and deterministic reliability, but it never names the router's costs (routing errors, more moving parts) or when a single large model is fine, which the reference requires.",
+  "judgment_reason": "The recommendation is reasoned, but the privacy point assumes the large model runs in the cloud, which the question never said, and the answer presents only one side of the trade-off.",
+  "spoken_fit_reason": "A brief plain-prose answer that leads with the recommendation."
+}

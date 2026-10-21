@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The 53 degrees Fahrenheit low matches the home forecast and 'about eleven point seven degrees Celsius' is numerically correct, but it was not rounded to the degree as the reference asks.",
+  "judgment_reason": "It correctly checked the home forecast without searching, but did the Celsius conversion in its head instead of calling the convert tool.",
+  "spoken_fit_reason": "One plain sentence that gives the Fahrenheit and Celsius figures."
+}

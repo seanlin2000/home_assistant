@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It combines the HBM shortage, the 30 to 40 percent RTX 50-series production cut, CoWoS packaging limits and demand spillover from data centers into a causal story that traces to the excerpts, though CoWoS mainly limits data-center parts rather than consumer cards.",
+  "judgment_reason": "Searching suited a question about recent market changes, and the answer explains causes as asked instead of only listing prices.",
+  "spoken_fit_reason": "Six paragraphs with a 'three primary drivers' list structure ran past the word cap and cut off mid-number."
+}

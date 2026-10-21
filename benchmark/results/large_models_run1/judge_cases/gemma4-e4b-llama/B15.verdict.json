@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It misses the one in-budget 16 GB NVIDIA card in the excerpts, the RTX 4060 Ti 16GB at $499 or $449 on sale, and instead suggests an 8 GB RTX 3070 Ti and a used RTX 5060 Ti 16GB whose under-$500 used availability no source supports.",
+  "judgment_reason": "It acknowledges the 5060 Ti 16GB is over $500 and the 3070 Ti has only 8 GB, but it still steers the user toward options that fail the stated 16 GB and budget requirements instead of saying plainly what fits.",
+  "spoken_fit_reason": "Plain prose with no formatting, but the meandering three-sentence reply buries any clear recommendation."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It states the 175 dollar list price, supported by the Pricer snippet and the 125 plus 50 hike history, and the calculator's 756 total, and it adds the Amazon 198.79 case at 858.77 from the price-history excerpt.",
+  "judgment_reason": "It searched as instructed, reconciled the list price with the retail price instead of picking one silently, and used the calculator for both totals.",
+  "spoken_fit_reason": "Two prose sentences that lead with the list price and total."
+}

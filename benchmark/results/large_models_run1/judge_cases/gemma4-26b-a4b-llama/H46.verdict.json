@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 4,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Seven to nine hours is correct and matches the reference, but it comes from memory rather than the search the user asked for.",
+  "judgment_reason": "The user said 'Look up', and the assistant answered without searching at all.",
+  "spoken_fit_reason": "Two plain sentences that lead with the answer."
+}

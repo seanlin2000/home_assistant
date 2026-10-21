@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It corrects the premise with the September 16 hike to 3.75 to 4 percent from the Fed and CNBC excerpts, cites 30-year rates of 7.4 to 7.5 and refinance rates near 7.6 from LendingTree and Zillow, and gives the core refinance logic.",
+  "judgment_reason": "It rejects the false premise up front, searched to verify it, and asks for the user's current rate, the one piece of information needed.",
+  "spoken_fit_reason": "It leads with 'That premise isn't right' in short prose sentences and ends with a single focused question."
+}

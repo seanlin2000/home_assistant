@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It states the $198.79 unit price from the pricehistory excerpt and gives the calculator's total of 858.77 for four with 8 percent tax.",
+  "judgment_reason": "It searched as instructed and used the calculator for the total, though it could have noted that retailer prices vary widely.",
+  "spoken_fit_reason": "Two plain sentences that give the unit price and then the total."
+}
