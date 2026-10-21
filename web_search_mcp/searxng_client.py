@@ -1,4 +1,5 @@
 import asyncio
+import logging
 import time
 from collections.abc import Awaitable, Callable
 
@@ -8,6 +9,7 @@ from pydantic import BaseModel
 from web_search_mcp.query_cache import QueryCache
 from web_search_mcp.settings import SearchSettings
 
+_LOGGER = logging.getLogger(__name__)
 TIME_RANGES = frozenset({"day", "week", "month", "year"})  # SearXNG's time_range values: only results published within that span
 
 
@@ -63,7 +65,20 @@ class SearxngClient:
         async with httpx.AsyncClient(timeout=self._settings.fetch_timeout_seconds + 4) as client:
             response = await client.get(f"{self._settings.searxng_url}/search", params=params)
         response.raise_for_status()
-        return [to_search_result(item) for item in response.json().get("results", [])]
+        reply = response.json()
+        warn_about_unresponsive_engines(reply.get("unresponsive_engines", []))
+        return [to_search_result(item) for item in reply.get("results", [])]
+
+
+def warn_about_unresponsive_engines(unresponsive: list[list[str]]) -> None:
+    """Search quietly narrows to the engines that still answer, so without this line a blocked or broken engine shows only as worse answers."""
+    if unresponsive:
+        _LOGGER.warning("SearXNG engines not answering: %s", describe_unresponsive_engines(unresponsive))
+
+
+def describe_unresponsive_engines(unresponsive: list[list[str]]) -> str:
+    """SearXNG names each silent engine with its reason, as [name, reason] pairs: "brave (too many requests)"."""
+    return ", ".join(f"{name} ({reason})" for name, reason in unresponsive)
 
 
 def to_search_result(item: dict) -> SearchResult:

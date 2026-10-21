@@ -1,6 +1,8 @@
 services:
   searxng:
-    image: searxng/searxng:latest
+    # Pinned by digest (design_docs/v2/12 section 3.10): `latest` was pulled once and never again, so the scrapers went stale while the
+    # engines changed their pages. To upgrade, run the new tag beside this one and compare which engines answer before moving the pin.
+    image: searxng/searxng:2026.10.2-19ffbcd30@sha256:c642712fcedcdaa78fac44f71eada86aff510745826ba1bd1a368211fea2ce7f
     container_name: studio-searxng
     restart: unless-stopped
     ports:
