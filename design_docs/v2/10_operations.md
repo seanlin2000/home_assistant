@@ -115,6 +115,7 @@ The health check is still one launchd agent that runs every five minutes, checks
 | Part | Probe | Healthy when |
 |---|---|---|
 | llama-server | `GET /health` | 200. A 503 means the model is still loading: recorded, but not counted as a failure for the first five minutes after a start |
+| llama-server's slots | `GET /slots`, with its key | Recorded, not counted as a failure: the slots working on a request, with the request's id and the tokens written so far. A slot that is still on the same request with no new token at the next check is stuck (step 4) |
 | The harness | `GET /health`, with its key | 200. Its answer also says whether it can reach llama-server and the tool server |
 | The tool server | `GET /healthz`, as in v1 | It lists the tools the harness depends on |
 | Whisper, Kokoro, Home Assistant, the VM | As in v1 | As in v1 |
@@ -132,12 +133,14 @@ The health check is still one launchd agent that runs every five minutes, checks
 | When | It does | And then waits at least |
 |---|---|---|
 | A service has failed 2 checks since it last answered: llama-server, the harness, the tool server, Whisper or Kokoro | Restarts that service with `launchctl kickstart -k` | 30 minutes before restarting the same service again |
+| A llama-server slot is stuck: on the same request, with no new token, at two checks in a row | Restarts llama-server with `launchctl kickstart -k` | The same 30 minutes as any llama-server restart |
+| It is between 4 and 6 a.m. local time, nobody has talked to the assistant for 10 minutes, and llama-server has not been restarted today | Restarts llama-server | Until the next day; any restart that day counts, and a night busy through the whole window goes without |
 | SearXNG has failed 2 checks | `scripts/searxng.sh up` | 30 minutes |
 | The VM is stopped | Starts it | 30 minutes |
 | Home Assistant has failed 5 checks while the VM runs | Stops and starts the VM | 2 hours |
 | A deploy is running (the maintenance flag is set) | Nothing | |
 
-These are v1's rules with the two new services added. The waits stop a part that is truly broken from being restarted every five minutes; the report shows the pattern, and a person decides. When llama-server is restarted, the harness warms it again by itself (3.1).
+These are v1's rules with the two new services added, plus two for llama-server that its `/health` cannot see. A slot can stay busy and silent while `/health` answers 200, so the failure count never rises: on 2026-10-20 two requests pinned to one slot hung it until the client gave up, and answers stayed worse until a restart. The daily restart clears damage of that kind that builds up too slowly for a check to notice. The waits stop a part that is truly broken from being restarted every five minutes; the report shows the pattern, and a person decides. When llama-server is restarted, the harness warms it again by itself (3.1).
 
 **5. Write the snapshot.** The results, the counts, and every restart go into `health.json` (the latest) and `health.jsonl` (the history), as in v1.
 
