@@ -136,6 +136,39 @@ def test_a_turn_that_is_only_the_filler_is_kept_as_it_was() -> None:
     assert agent_loop.without_replayed_fillers([filler_only], AgentPolicy()) == [filler_only]
 
 
+def spoken_exchanges(count: int) -> list[Message]:
+    return [message for number in range(1, count + 1) for message in (Message(role=Role.USER, content=f"Question {number}?"), Message(role=Role.ASSISTANT, content=f"Answer {number}."))]
+
+
+async def test_only_the_last_few_exchanges_reach_the_model_and_the_transcript() -> None:
+    llm = ScriptedLLM([text_reply("Answer 6.")])
+    conversation = [*spoken_exchanges(5), Message(role=Role.USER, content="Question 6?")]
+    events = [event async for event in agent_loop.run(conversation, llm, FakeToolBox(), AgentPolicy(history_exchanges=2))]
+    sent = llm.seen_messages[0]
+    assert [message.content for message in sent[1:-1]] == ["Question 4?", "Answer 4.", "Question 5?", "Answer 5."]
+    assert sent[-1].content.endswith("Question: Question 6?")
+    assert [message.content for message in events[-1].transcript.conversation] == ["Question 4?", "Answer 4.", "Question 5?", "Answer 5.", "Question 6?", "Answer 6."]
+
+
+def test_an_exchange_keeps_its_tool_turns_and_the_window_starts_at_a_question() -> None:
+    call = ToolCall(id="call_1", name="search_and_read", arguments={"query": "bay bridge"})
+    looked_up = [
+        Message(role=Role.USER, content="When was the Bay Bridge built?"),
+        Message(role=Role.ASSISTANT, content="", tool_calls=[call]),
+        Message(role=Role.TOOL, content="Opened in 1936.", tool_call_id="call_1", tool_name="search_and_read"),
+        Message(role=Role.ASSISTANT, content="It opened in 1936."),
+    ]
+    conversation = [*spoken_exchanges(3), *looked_up, Message(role=Role.USER, content="And the Golden Gate?")]
+    windowed = agent_loop.within_history_window(conversation, AgentPolicy(history_exchanges=1))
+    assert windowed == [*looked_up, conversation[-1]]
+
+
+def test_a_conversation_within_the_window_is_replayed_whole() -> None:
+    conversation = [*spoken_exchanges(3), Message(role=Role.USER, content="Question 4?")]
+    assert agent_loop.within_history_window(conversation, AgentPolicy(history_exchanges=3)) == conversation
+    assert agent_loop.within_history_window(conversation, AgentPolicy(history_exchanges=0)) == [conversation[-1]]
+
+
 async def test_calculator_call_speaks_the_math_filler_not_the_web_one() -> None:
     llm = ScriptedLLM([tool_reply("18% of 245", tool_name="percent"), text_reply("Forty-four dollars and ten cents.")])
     policy = AgentPolicy(filler_phrases=["Checking the web."], calculate_filler_phrases=["Doing the math."])
