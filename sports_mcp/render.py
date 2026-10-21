@@ -8,14 +8,28 @@ from collections.abc import Iterable
 from dataclasses import dataclass
 from datetime import date
 
-from sports_mcp.espn_records import FoundPlayer, Game, LoggedGame, PlayerSeasons, Roster, RosterPlayer, StatCategory, TeamLine
+from sports_mcp.espn_records import (
+    FINISHED,
+    NOT_PLAYED,
+    BoxScore,
+    BoxScoreSide,
+    BoxScoreTable,
+    FoundPlayer,
+    Game,
+    LoggedGame,
+    PlayerSeasons,
+    Roster,
+    RosterPlayer,
+    StatCategory,
+    TeamLine,
+    box_score_columns,
+)
+from sports_mcp.game_finder import MOST_SEASONS_AWAY
 from sports_mcp.leagues import League
 from sports_mcp.teams import Team
 from utils.text_utils import clip_to_whole_lines, word_count
 
 CUT_NOTE = "(The rest was cut to keep this short; a narrower question, such as fewer seasons, hears it.)"
-NOT_PLAYED = "pre"
-FINISHED = "post"
 THREES = "threePointFieldGoalsMade-threePointFieldGoalsAttempted"
 PASSING_ATTEMPTS = "passingAttempts"
 
@@ -179,6 +193,39 @@ def team_record(team: Team, games: list[Game]) -> str:
 
 def win_loss(wins: int, losses: int, ties: int) -> str:
     return f"{wins}-{losses}" + (f"-{ties}" if ties else "")
+
+
+def box_score_text(league: League, game: Game, box_score: BoxScore | None, asked_day: date | None) -> str:
+    """Both teams' totals first, then each table with the away team's players before the home team's, so a cut drops the least-used players."""
+    lines = [f"{league.label} box score: {dated_game_line(game)}"]
+    if asked_day is not None and asked_day != game.day:
+        days_away = abs((game.day - asked_day).days)
+        lines.append(f"No game matched {asked_day:%Y-%m-%d} itself; this is the closest one, {days_away} day{'' if days_away == 1 else 's'} away.")
+    if box_score is None:
+        return "\n".join([*lines, "This game has not been played yet, so it has no box score."])
+    lines.extend(f"{side.team} team totals: {', '.join(side.team_stats)}" for side in box_score.sides if side.team_stats)
+    if not box_score.has_players:
+        return "\n".join([*lines, "ESPN has no player statistics for this game, only the score."])
+    for side, table in tables_in_order(league, box_score):
+        lines.extend(box_score_table_lines(side, table))
+    lines.extend(f"{side.abbreviation} did not play: {', '.join(side.did_not_play)}" for side in box_score.sides if side.did_not_play)
+    return "\n".join(lines)
+
+
+def tables_in_order(league: League, box_score: BoxScore) -> list[tuple[BoxScoreSide, BoxScoreTable]]:
+    """Passing for both teams, then rushing for both, and so on; ESPN lists the away team first, and the stable sort keeps it so."""
+    order = {columns.title: index for index, columns in enumerate(box_score_columns(league))}
+    return sorted(((side, table) for side in box_score.sides for table in side.tables), key=lambda pair: order[pair[1].title])
+
+
+def box_score_table_lines(side: BoxScoreSide, table: BoxScoreTable) -> list[str]:
+    header = f"{side.abbreviation} {table.title.lower()}: " + " | ".join(["player", *table.labels])
+    return [header, *(" | ".join([row.player, *row.stats]) for row in table.rows)]
+
+
+def no_game_text(league: League, team: Team, opponent: Team | None, day: date) -> str:
+    against = f" against the {opponent.display_name}" if opponent else ""
+    return f"{league.label}: ESPN lists no game of the {team.display_name}{against} within {MOST_SEASONS_AWAY} seasons of {day:%Y-%m-%d}."
 
 
 def roster_text(league: League, team: Team, roster: Roster) -> str:

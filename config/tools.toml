@@ -29,6 +29,10 @@ marks_untrusted = false                     # numbers from Met.no, not text writ
 tier = "read_public"
 marks_untrusted = true                      # game notes are free text: benchmark J71's eight-word note was obeyed until it arrived marked (design doc v2/03 section 3.4)
 
+[tools.box_score]
+tier = "read_public"
+marks_untrusted = true                      # numbers, but under names and game notes from ESPN
+
 [tools.team_roster]
 tier = "read_public"
 marks_untrusted = true                      # names from ESPN, free text cut to four words

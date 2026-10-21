@@ -4,13 +4,14 @@ ESPN does not document these answers, so every reader here takes only the fields
 client reports as ESPN not answering. Every name and note goes through sports_mcp.names on the way in.
 """
 
+from dataclasses import dataclass
 from datetime import date, datetime
 from typing import Any
 
 from pydantic import BaseModel
 
 from sports_mcp.leagues import LEAGUE_TIMEZONE, League
-from sports_mcp.names import cleaned_name, cleaned_note
+from sports_mcp.names import cleaned_name, cleaned_note, cleaned_stat
 
 PLAYOFFS_SEASON_TYPE = 3
 NBA_LEADER_STAT = "points"
@@ -25,6 +26,8 @@ NFL_ROSTER_GROUPS = {
 SKIPPED_SEASON_TYPES = ("Preseason", "All-Star")
 PLAYOFF_SEASON_TYPE_NAME = "Postseason"
 EVENT_CATEGORY = "event"
+NOT_PLAYED = "pre"  # a game's state, as ESPN names it
+FINISHED = "post"
 
 
 class EspnShapeError(ValueError):
@@ -34,6 +37,7 @@ class EspnShapeError(ValueError):
 class TeamLine(BaseModel):
     name: str
     abbreviation: str
+    espn_id: str = ""
     score: str = ""
     winner: bool = False
     leader: str = ""  # the NBA's top scorer, such as "LeBron James 27"
@@ -112,6 +116,86 @@ class LoggedGame(BaseModel):
     stats: dict[str, str]
 
 
+class BoxScoreRow(BaseModel):
+    player: str
+    stats: list[str]
+
+
+class BoxScoreTable(BaseModel):
+    title: str  # "Passing", or "Players" for the NBA's one table
+    labels: list[str]
+    rows: list[BoxScoreRow]
+
+
+class BoxScoreSide(BaseModel):
+    team: str
+    abbreviation: str
+    tables: list[BoxScoreTable]
+    did_not_play: list[str] = []  # "Draymond Green (lower back injury management)"
+    team_stats: list[str] = []  # "375 total yards"
+
+
+class BoxScore(BaseModel):
+    sides: list[BoxScoreSide]  # away team first, as ESPN lists them
+
+    @property
+    def has_players(self) -> bool:
+        return any(table.rows for side in self.sides for table in side.tables)
+
+
+@dataclass(frozen=True)
+class BoxScoreColumns:
+    """One table of a box score: the ESPN group, the stats kept from it and what each is called, and how many players are kept."""
+
+    group: str | None  # ESPN's group name; None for the NBA's single, unnamed group
+    title: str
+    stats: tuple[tuple[str, str], ...]  # (ESPN key, label)
+    most_players: int = 20
+
+
+NBA_BOX_SCORE = (
+    BoxScoreColumns(
+        None,
+        "Players",
+        (
+            ("minutes", "MIN"),
+            ("points", "PTS"),
+            ("fieldGoalsMade-fieldGoalsAttempted", "FG"),
+            ("threePointFieldGoalsMade-threePointFieldGoalsAttempted", "3PT"),
+            ("freeThrowsMade-freeThrowsAttempted", "FT"),
+            ("rebounds", "REB"),
+            ("assists", "AST"),
+            ("steals", "STL"),
+            ("blocks", "BLK"),
+            ("turnovers", "TO"),
+            ("plusMinus", "+/-"),
+        ),
+    ),
+)
+NFL_BOX_SCORE = (
+    BoxScoreColumns(
+        "passing",
+        "Passing",
+        (("completions/passingAttempts", "C/ATT"), ("passingYards", "YDS"), ("passingTouchdowns", "TD"), ("interceptions", "INT"), ("sacks-sackYardsLost", "SACKS"), ("QBRating", "RTG")),
+    ),
+    BoxScoreColumns("rushing", "Rushing", (("rushingAttempts", "CAR"), ("rushingYards", "YDS"), ("rushingTouchdowns", "TD"), ("longRushing", "LONG"))),
+    BoxScoreColumns("receiving", "Receiving", (("receptions", "REC"), ("receivingTargets", "TGTS"), ("receivingYards", "YDS"), ("receivingTouchdowns", "TD"), ("longReception", "LONG"))),
+    BoxScoreColumns("defensive", "Defense", (("totalTackles", "TOT"), ("sacks", "SACKS"), ("tacklesForLoss", "TFL"), ("passesDefended", "PD")), most_players=6),  # of about 18
+    BoxScoreColumns("interceptions", "Interceptions", (("interceptions", "INT"), ("interceptionYards", "YDS"), ("interceptionTouchdowns", "TD"))),
+    BoxScoreColumns("kicking", "Kicking", (("fieldGoalsMade/fieldGoalAttempts", "FG"), ("longFieldGoalMade", "LONG"), ("extraPointsMade/extraPointAttempts", "XP"), ("totalKickingPoints", "PTS"))),
+)
+NBA_TEAM_STATS = (("fieldGoalPct", "field goal %"), ("threePointFieldGoalPct", "3-point %"), ("totalRebounds", "rebounds"), ("assists", "assists"), ("totalTurnovers", "turnovers"))
+NFL_TEAM_STATS = (
+    ("totalYards", "total yards"),
+    ("netPassingYards", "passing yards"),
+    ("rushingYards", "rushing yards"),
+    ("turnovers", "turnovers"),
+    ("thirdDownEff", "third downs"),
+    ("totalPenaltiesYards", "penalties-yards"),
+    ("possessionTime", "possession"),
+)
+
+
 def read_games(body: dict[str, Any]) -> list[Game]:
     """The games of a scoreboard or a team schedule."""
     try:
@@ -151,6 +235,7 @@ def read_team_line(side: dict[str, Any]) -> TeamLine:
     return TeamLine(
         name=cleaned_name(team.get("displayName") or f"{team.get('location', '')} {team.get('name', '')}"),
         abbreviation=cleaned_name(team.get("abbreviation", "")),
+        espn_id=str(team.get("id", "")),
         score=str(score.get("displayValue", "") if isinstance(score, dict) else score),
         winner=bool(side.get("winner")),
         leader=read_nba_leader(side),
@@ -279,3 +364,57 @@ def read_logged_game(event: dict[str, Any], stats: dict[str, str], playoffs: boo
         opponent_score=str(opponent_score),
         stats=stats,
     )
+
+
+def read_box_score(body: dict[str, Any], league: League) -> BoxScore:
+    """Both teams' players and team totals from a game's summary. ESPN has no players for older games (NBA games of 1985 have none, of 1996 do); their tables are then empty."""
+    try:
+        box_score = body["boxscore"]
+        totals_by_team = {str(side["team"]["id"]): side.get("statistics", []) for side in box_score.get("teams", [])}
+        return BoxScore(sides=[read_box_score_side(side, totals_by_team.get(str(side["team"]["id"]), []), league) for side in box_score.get("players", [])])
+    except (KeyError, IndexError, TypeError) as error:
+        raise EspnShapeError(f"box score: {type(error).__name__} {error}") from error
+
+
+def read_box_score_side(side: dict[str, Any], team_totals: list[dict[str, Any]], league: League) -> BoxScoreSide:
+    groups = side.get("statistics", [])
+    tables = [table for wanted in box_score_columns(league) if (group := box_score_group(groups, wanted)) is not None and (table := read_box_score_table(group, wanted)).rows]
+    return BoxScoreSide(
+        team=cleaned_name(side["team"].get("displayName", "")),
+        abbreviation=cleaned_name(side["team"].get("abbreviation", "")),
+        tables=tables,
+        did_not_play=[did_not_play(athlete) for group in groups[:1] for athlete in group.get("athletes", []) if athlete.get("didNotPlay")],
+        team_stats=read_team_stats(team_totals, NBA_TEAM_STATS if league is League.NBA else NFL_TEAM_STATS),
+    )
+
+
+def box_score_columns(league: League) -> tuple[BoxScoreColumns, ...]:
+    return NBA_BOX_SCORE if league is League.NBA else NFL_BOX_SCORE
+
+
+def box_score_group(groups: list[dict[str, Any]], wanted: BoxScoreColumns) -> dict[str, Any] | None:
+    if wanted.group is None:
+        return groups[0] if groups else None
+    return next((group for group in groups if group.get("name") == wanted.group), None)
+
+
+def read_box_score_table(group: dict[str, Any], wanted: BoxScoreColumns) -> BoxScoreTable:
+    """The kept stats of every player who played, in ESPN's order (starters first, the most-used first), up to the table's limit."""
+    keys = group.get("keys", [])
+    present = [(key, label) for key, label in wanted.stats if key in keys]
+    rows = [
+        BoxScoreRow(player=cleaned_name(athlete["athlete"]["displayName"]), stats=[cleaned_stat(athlete["stats"][keys.index(key)]) for key, _ in present])
+        for athlete in group.get("athletes", [])
+        if athlete.get("stats") and not athlete.get("didNotPlay")
+    ]
+    return BoxScoreTable(title=wanted.title, labels=[label for _, label in present], rows=rows[: wanted.most_players])
+
+
+def did_not_play(athlete: dict[str, Any]) -> str:
+    reason = cleaned_note(athlete.get("reason", "")).lower()
+    return cleaned_name(athlete["athlete"]["displayName"]) + (f" ({reason})" if reason else "")
+
+
+def read_team_stats(team_totals: list[dict[str, Any]], wanted: tuple[tuple[str, str], ...]) -> list[str]:
+    values = {total.get("name"): cleaned_stat(total.get("displayValue", "")) for total in team_totals}
+    return [f"{values[key]} {label}" for key, label in wanted if values.get(key)]

@@ -29,7 +29,7 @@ QUESTIONS = load_questions(Path("benchmark/questions.yaml"))
 
 
 def test_question_set_shape() -> None:
-    assert len(QUESTIONS.questions) == 71
+    assert len(QUESTIONS.questions) == 75
     assert {question.id for question in QUESTIONS.questions if question.route.value == "weather"} == {"E36", "E37", "E38", "I47", "I48", "I49", "I50", "I51", "I52", "F54", "F59"}
     assert QUESTIONS.by_id("B13").route.value == "search"
     assert QUESTIONS.by_id("C23").route.value == "calculate" and QUESTIONS.by_id("B11").route.value == "search" and QUESTIONS.by_id("A1").route.value == "answer"
@@ -48,7 +48,7 @@ def test_the_sports_heading_is_read_under_the_untrusted_tag_the_harness_wraps_it
 
 def test_category_d_questions_declare_their_expected_reply() -> None:
     category_d = [question for question in QUESTIONS.questions if question.category == Category.D]
-    assert QUESTIONS.version == "2.3"
+    assert QUESTIONS.version == "2.4"
     assert [question.id for question in category_d] == ["D29", "D30", "D31", "D32", "D33", "D34", "D35"]
     assert [question.expected_reply for question in category_d] == [ExpectedReply.SILENT] * 3 + [ExpectedReply.CLARIFY, ExpectedReply.ACKNOWLEDGE, None, None]
     assert all(question.route.value == "answer" and not question.should_search for question in category_d)
