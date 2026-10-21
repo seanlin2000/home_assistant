@@ -26,13 +26,14 @@ from assistant_service.exchange_log import ExchangeLog, TraceLog
 from assistant_service.settings import load_harness_config
 from ops import paths
 from ops.pipeline_runs import PipelineRunLog
-from serving.settings import read_api_key
+from serving.settings import load_serving_config, read_api_key
 from utils.jsonl_utils import append_jsonl
 from web_search_mcp.searxng_client import describe_unresponsive_engines
 
 LAUNCHD_PREFIX = "com.studio-assistant"
 LAUNCHD_SERVICES = ("ollama", "llama", "mcp", "harness", "whisper", "kokoro")
 LLAMA_SERVER_PROCESS = "llama-server"
+LLAMA_RESTART_KEY = "kickstart:llama"
 DEFAULT_VM_NAME = "Home Assistant"
 PROJECT_DIR = Path(__file__).resolve().parent.parent
 SNAPSHOT_HISTORY_DAYS = 90
@@ -53,10 +54,19 @@ class Memory(BaseModel):
     resident_model_mb: float | None = None
 
 
+class LlamaSlot(BaseModel):
+    """A llama-server slot that was working on a request when the health check looked."""
+
+    slot: int
+    task: int
+    decoded: int  # tokens written so far for that request
+
+
 class Snapshot(BaseModel):
     checked_at: str
     checks: dict[str, Check]
     memory: Memory = Field(default_factory=Memory)
+    llama_busy_slots: list[LlamaSlot] = Field(default_factory=list)
     maintenance: bool = False
     full: bool = False
     actions: list[str] = Field(default_factory=list)  # what this run did to the machine, in order
@@ -73,6 +83,8 @@ class State(BaseModel):
     consecutive_failures: dict[str, int] = Field(default_factory=dict)
     last_action_at: dict[str, float] = Field(default_factory=dict)  # action key -> unix time
     last_housekeeping_day: str | None = None
+    llama_busy_slots: list[LlamaSlot] = Field(default_factory=list)  # what the last run saw, to tell a stuck request from a slow one
+    last_daily_restart_day: str | None = None  # local date of the last llama-server restart
 
 
 class Policy(BaseModel):
@@ -83,6 +95,16 @@ class Policy(BaseModel):
     vm_start_cooldown_seconds: float = 30 * 60
     ha_failures: int = 5
     vm_restart_cooldown_seconds: float = 2 * 60 * 60
+    daily_restart_hour: int = 4  # local time
+    daily_restart_window_hours: int = 2  # a night busy all through the window skips that day's restart rather than restart in the day
+    daily_restart_quiet_seconds: float = 10 * 60  # nobody has talked to the assistant for this long
+
+
+class LlamaWatch(BaseModel):
+    """What this run found about llama-server beyond /health, for the policy."""
+
+    stuck_slots: list[LlamaSlot] = Field(default_factory=list)
+    daily_restart_due: bool = False
 
 
 class Action(BaseModel):
@@ -98,6 +120,7 @@ class Action(BaseModel):
 class Settings(BaseModel):
     ollama_url: str = "http://127.0.0.1:11434"
     llama_server_url: str = "http://127.0.0.1:8090"
+    llama_key_path: Path = Field(default_factory=lambda: load_serving_config().server.api_key_path)
     mcp_url: str = "http://127.0.0.1:8765"
     harness_url: str = "http://127.0.0.1:8770"
     harness_key_path: Path = Field(default_factory=lambda: load_harness_config().service.api_key_path)
@@ -168,6 +191,26 @@ async def check_llama_server(client: httpx.AsyncClient, settings: Settings) -> C
     if response.status_code != httpx.codes.OK:
         return Check(ok=False, detail=f"HTTP {response.status_code}")
     return Check(ok=True, detail="model loaded")
+
+
+async def read_busy_llama_slots(client: httpx.AsyncClient, settings: Settings) -> list[LlamaSlot]:
+    """The slots working on a request. /slots needs llama-server's key; a server that does not answer has no busy slots, and its /health check says why."""
+    try:
+        response = await client.get(f"{settings.llama_server_url}/slots", headers={"authorization": f"Bearer {read_api_key(settings.llama_key_path)}"})
+        return busy_slots(response.json()) if response.status_code == httpx.codes.OK else []
+    except (httpx.HTTPError, OSError, ValueError, KeyError, TypeError):
+        return []
+
+
+def busy_slots(reply: list[dict]) -> list[LlamaSlot]:
+    return [LlamaSlot(slot=slot["id"], task=slot["id_task"], decoded=decoded_tokens(slot)) for slot in reply if slot.get("is_processing")]
+
+
+def decoded_tokens(slot: dict) -> int:
+    """llama-server reports the tokens written so far under next_token, as one object or a list of one."""
+    next_token = slot.get("next_token") or [{}]
+    first = next_token[0] if isinstance(next_token, list) else next_token
+    return int(first.get("n_decoded", 0))
 
 
 async def check_mcp(client: httpx.AsyncClient, settings: Settings) -> Check:
@@ -311,7 +354,7 @@ def update_failure_counts(state: State, checks: dict[str, Check]) -> State:
     return state.model_copy(update={"consecutive_failures": counts})
 
 
-def decide_actions(checks: dict[str, Check], state: State, policy: Policy, now: float, maintenance: bool) -> list[Action]:
+def decide_actions(checks: dict[str, Check], state: State, policy: Policy, now: float, maintenance: bool, llama_watch: LlamaWatch | None = None) -> list[Action]:
     """The policy table from design doc 10 §3.5. `state` must already hold this run's failure counts."""
     if maintenance:
         return []
@@ -331,7 +374,34 @@ def decide_actions(checks: dict[str, Check], state: State, policy: Policy, now: 
         actions.append(Action(kind="vm_start", target="vm", reason=f"vm is {vm_check.detail}"))
     elif vm_check is not None and vm_check.ok and failures.get("home_assistant", 0) >= policy.ha_failures and cooled("vm_restart:vm", policy.vm_restart_cooldown_seconds):
         actions.append(Action(kind="vm_restart", target="vm", reason=f"home assistant failed {failures['home_assistant']} checks while the vm runs"))
+    restart = llama_restart(checks.get("llama"), llama_watch or LlamaWatch())
+    if restart is not None and cooled(LLAMA_RESTART_KEY, policy.agent_cooldown_seconds) and LLAMA_RESTART_KEY not in {action.key for action in actions}:
+        actions.append(restart)
     return actions
+
+
+def llama_restart(llama: Check | None, watch: LlamaWatch) -> Action | None:
+    """llama-server keeps answering /health while a slot is stuck, so its failure count never rises; a stuck slot, or the day's refresh, restarts it."""
+    if llama is None or not llama.ok:
+        return None
+    if watch.stuck_slots:
+        return Action(kind="kickstart", target="llama", reason=f"slot {watch.stuck_slots[0].slot} made no progress on one request since the last check")
+    if watch.daily_restart_due:
+        return Action(kind="kickstart", target="llama", reason="daily refresh while nobody is talking to the assistant")
+    return None
+
+
+def stuck_llama_slots(previous: list[LlamaSlot], current: list[LlamaSlot]) -> list[LlamaSlot]:
+    """A slot still on the same request with no new token a whole check interval later, when a spoken request takes seconds (design doc v2/10 §3.4)."""
+    return [slot for slot in current if slot in previous]
+
+
+def daily_restart_due(state: State, policy: Policy, local_now: datetime, last_exchange_at: float | None) -> bool:
+    """Once a day, in the early-morning window, at the first check that finds nobody has talked to the assistant for a while."""
+    in_window = policy.daily_restart_hour <= local_now.hour < policy.daily_restart_hour + policy.daily_restart_window_hours
+    if not in_window or state.last_daily_restart_day == local_now.date().isoformat():
+        return False
+    return last_exchange_at is None or local_now.timestamp() - last_exchange_at >= policy.daily_restart_quiet_seconds
 
 
 def execute(action: Action, settings: Settings) -> str:
@@ -408,6 +478,12 @@ def housekeeping(today: date | None = None) -> list[str]:
 # ---------------------------------------------------------------- one run
 
 
+def last_exchange_at() -> float | None:
+    """When the assistant last answered anyone: the newest exchange day file's modification time."""
+    day_files = ExchangeLog(paths.exchanges_dir()).day_files()
+    return day_files[-1][1].stat().st_mtime if day_files else None
+
+
 def load_state() -> State:
     path = paths.health_state()
     if path.exists():
@@ -432,17 +508,24 @@ async def run_once(settings: Settings, policy: Policy | None = None, remediate: 
     policy = policy or Policy()
     paths.log_dir().mkdir(parents=True, exist_ok=True)
     checks = await run_checks(settings, full=full)
+    async with httpx.AsyncClient(timeout=settings.probe_timeout_seconds) as client:
+        busy = await read_busy_llama_slots(client, settings)
     maintenance = paths.maintenance_flag().exists()
     state = update_failure_counts(load_state(), checks)
     now = time.time()
-    snapshot = Snapshot(checked_at=datetime.now(UTC).isoformat(timespec="seconds"), checks=checks, memory=read_memory(settings), maintenance=maintenance, full=full)
-    actions = decide_actions(checks, state, policy, now, maintenance) if remediate else []
+    local_now = datetime.now().astimezone()
+    snapshot = Snapshot(checked_at=datetime.now(UTC).isoformat(timespec="seconds"), checks=checks, memory=read_memory(settings), llama_busy_slots=busy, maintenance=maintenance, full=full)
+    watch = LlamaWatch(stuck_slots=stuck_llama_slots(state.llama_busy_slots, busy), daily_restart_due=daily_restart_due(state, policy, local_now, last_exchange_at()))
+    actions = decide_actions(checks, state, policy, now, maintenance, watch) if remediate else []
     for action in actions:
         if dry_run:
             snapshot.actions.append(f"would run {action.key} ({action.reason})")
             continue
         snapshot.actions.append(execute(action, settings))
         state.last_action_at[action.key] = now
+        if action.key == LLAMA_RESTART_KEY:
+            state.last_daily_restart_day = local_now.date().isoformat()  # any restart today is the day's refresh
+    state.llama_busy_slots = [] if LLAMA_RESTART_KEY in {action.key for action in actions} else busy  # a restarted server starts its task count over
     today = datetime.now(UTC).date()
     if state.last_housekeeping_day != today.isoformat() and not dry_run:
         snapshot.housekeeping = housekeeping(today)

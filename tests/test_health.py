@@ -1,20 +1,21 @@
 """The health policy is a pure function; these tests pin the thresholds and cooldowns from design doc 10 §3.5 and the housekeeping from §3.6."""
 
 import json
-from datetime import date
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
 import httpx
 import pytest
 
 from ops import health, paths
-from ops.health import Action, Check, Policy, State
+from ops.health import Action, Check, LlamaSlot, LlamaWatch, Policy, State
 
 OK = Check(ok=True)
 DOWN = Check(ok=False, detail="refused")
 VM_UP = Check(ok=True, detail="started")
 VM_DOWN = Check(ok=False, detail="stopped")
 NOW = 1_000_000.0
+PACIFIC = timezone(timedelta(hours=-7))
 
 
 def healthy_checks() -> dict[str, Check]:
@@ -159,3 +160,79 @@ def test_full_searxng_check_passes_on_one_engine_but_says_there_is_no_fallback()
     assert health.engines_answering_check(one_engine) == Check(ok=True, detail="2 results from duckduckgo (no fallback); not answering: brave (too many requests)")
     assert health.engines_answering_check(no_engine) == Check(ok=False, detail="0 results from no engine; not answering: brave (too many requests), duckduckgo (CAPTCHA)")
     assert health.engines_answering_check(two_engines) == Check(ok=True, detail="2 results from brave, duckduckgo")
+
+
+def test_a_slot_on_the_same_request_with_no_new_token_since_the_last_check_is_stuck() -> None:
+    previous = [LlamaSlot(slot=0, task=41, decoded=0), LlamaSlot(slot=1, task=7, decoded=12)]
+    current = [LlamaSlot(slot=0, task=41, decoded=0), LlamaSlot(slot=1, task=7, decoded=30)]
+    assert health.stuck_llama_slots(previous, current) == [LlamaSlot(slot=0, task=41, decoded=0)]
+    assert health.stuck_llama_slots(previous, [LlamaSlot(slot=0, task=42, decoded=0)]) == []
+    assert health.stuck_llama_slots([], current) == []
+
+
+def test_a_stuck_slot_restarts_llama_server_once_per_cooldown_even_though_its_health_check_passes() -> None:
+    checks = healthy_checks() | {"llama": OK}
+    stuck = LlamaWatch(stuck_slots=[LlamaSlot(slot=0, task=41, decoded=0)])
+    state = after_failures(checks, 3)
+    assert keys(health.decide_actions(checks, state, Policy(), NOW, maintenance=False, llama_watch=stuck)) == ["kickstart:llama"]
+    state.last_action_at["kickstart:llama"] = NOW - 10 * 60
+    assert health.decide_actions(checks, state, Policy(), NOW, maintenance=False, llama_watch=stuck) == []
+    assert health.decide_actions(checks, State(), Policy(), NOW, maintenance=True, llama_watch=stuck) == []
+
+
+def test_a_failing_llama_server_is_restarted_once_not_twice() -> None:
+    checks = healthy_checks() | {"llama": DOWN}
+    watch = LlamaWatch(stuck_slots=[LlamaSlot(slot=0, task=41, decoded=0)], daily_restart_due=True)
+    assert keys(health.decide_actions(checks, after_failures(checks, 2), Policy(), NOW, maintenance=False, llama_watch=watch)) == ["kickstart:llama"]
+
+
+def test_the_daily_refresh_runs_once_between_four_and_six_am_when_the_assistant_is_quiet() -> None:
+    policy = Policy()
+    four_am = datetime(2026, 10, 21, 4, 5, tzinfo=PACIFIC)
+    quiet_since = four_am.timestamp() - 11 * 60
+    assert health.daily_restart_due(State(), policy, four_am.replace(hour=3), quiet_since) is False
+    assert health.daily_restart_due(State(), policy, four_am.replace(hour=5, minute=55), quiet_since) is True
+    assert health.daily_restart_due(State(), policy, four_am.replace(hour=6), quiet_since) is False
+    assert health.daily_restart_due(State(), policy, four_am.replace(hour=20), quiet_since) is False
+    assert health.daily_restart_due(State(), policy, four_am, four_am.timestamp() - 2 * 60) is False
+    assert health.daily_restart_due(State(), policy, four_am, quiet_since) is True
+    assert health.daily_restart_due(State(), policy, four_am, None) is True
+    assert health.daily_restart_due(State(last_daily_restart_day="2026-10-21"), policy, four_am, quiet_since) is False
+
+
+def test_the_daily_refresh_restarts_only_a_llama_server_that_is_up() -> None:
+    watch = LlamaWatch(daily_restart_due=True)
+    for llama, expected in ((OK, ["kickstart:llama"]), (Check(ok=None, detail="loading the model"), [])):
+        checks = healthy_checks() | {"llama": llama}
+        assert keys(health.decide_actions(checks, after_failures(checks, 1), Policy(), NOW, maintenance=False, llama_watch=watch)) == expected
+
+
+async def test_busy_slots_are_read_with_the_key_and_a_server_that_does_not_answer_has_none(tmp_path: Path) -> None:
+    key_path = tmp_path / "llama.key"
+    key_path.write_text("secret\n")
+    seen = {}
+    reply = [
+        {"id": 0, "id_task": 41, "is_processing": True, "next_token": [{"has_next_token": True, "n_decoded": 0}]},
+        {"id": 1, "id_task": -1, "is_processing": False, "next_token": [{"n_decoded": 0}]},
+    ]
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        seen["authorization"] = request.headers["authorization"]
+        return httpx.Response(200, json=reply)
+
+    settings = health.Settings(llama_key_path=key_path)
+    async with httpx.AsyncClient(transport=httpx.MockTransport(handler)) as client:
+        assert await health.read_busy_llama_slots(client, settings) == [LlamaSlot(slot=0, task=41, decoded=0)]
+    assert seen["authorization"] == "Bearer secret"
+    async with httpx.AsyncClient(transport=httpx.MockTransport(lambda request: httpx.Response(401))) as client:
+        assert await health.read_busy_llama_slots(client, settings) == []
+
+
+def test_the_last_exchange_is_the_newest_day_file(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("STUDIO_LOG_DIR", str(tmp_path))
+    assert health.last_exchange_at() is None
+    paths.exchanges_dir().mkdir()
+    (paths.exchanges_dir() / "2026-10-20.jsonl").write_text("{}\n")
+    newest = paths.exchanges_dir() / "2026-10-21.jsonl"
+    newest.write_text("{}\n")
+    assert health.last_exchange_at() == newest.stat().st_mtime
