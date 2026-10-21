@@ -115,6 +115,14 @@ button { font: inherit; color: inherit; }
 .bubble { background: var(--bubble-user); padding: 10px 18px; border-radius: 22px; white-space: pre-wrap; overflow-wrap: anywhere; }
 .under-bubble { font-size: 12px; color: var(--ink-3); padding-right: 6px; text-align: right; }
 .earlier { opacity: .75; }
+.earlier-exchange { display: flex; flex-direction: column; gap: 22px; }
+.earlier-exchange.expanded .earlier { opacity: 1; }
+.earlier-exchange > .assistant-turn, .earlier-exchange.expanded > .answer { display: none; }
+.earlier-exchange.expanded > .assistant-turn { display: flex; }
+.user-turn.opens .bubble { cursor: pointer; }
+.user-turn.opens .bubble:hover { background: var(--hover); }
+.user-turn.opens .under-bubble { cursor: pointer; }
+.expand-hint { color: var(--link); }
 .divider { display: flex; align-items: center; gap: 12px; font-size: 12px; color: var(--ink-3); }
 .divider::before, .divider::after { content: ""; flex: 1; height: 1px; background: var(--border); }
 
