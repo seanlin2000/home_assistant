@@ -121,7 +121,7 @@ class SpokenAnswerCap:
 
 async def run(conversation: list[Message], llm: LLMClient, tools: ToolBox, policy: AgentPolicy, memory: ConversationMemory | None = None) -> AsyncIterator[AgentEvent]:
     started = time.perf_counter()
-    conversation = without_replayed_fillers(conversation, policy)
+    conversation = within_history_window(without_replayed_fillers(conversation, policy), policy)
     memory = memory or NoMemory()
     tools = GuardedToolBox(tools, load_tool_table(), conversation)
     messages = [Message(role=Role.SYSTEM, content=system_prompt()), *conversation]
@@ -180,6 +180,16 @@ def without_leading_filler(message: Message, fillers: list[str]) -> Message:
         if message.content.startswith(filler) and answer:
             return message.model_copy(update={"content": answer})
     return message
+
+
+def within_history_window(conversation: list[Message], policy: AgentPolicy) -> list[Message]:
+    """The current question and the last few exchanges before it, each one a question and the replies after it. Home Assistant replays every earlier
+    answer as bare text, and the longer that run of tool-less answers grows, the more the model answers from it instead of calling a tool."""
+    question_indexes = [index for index, message in enumerate(conversation) if message.role == Role.USER]
+    questions_kept = policy.history_exchanges + 1
+    if len(question_indexes) <= questions_kept:
+        return list(conversation)
+    return conversation[question_indexes[-questions_kept] :]
 
 
 def reply_is_empty(reply: ModelReply) -> bool:  # deslop: allow-comments

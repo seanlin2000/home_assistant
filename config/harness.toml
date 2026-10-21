@@ -14,3 +14,4 @@ temperature = 0.7
 word_budget = 200
 max_tool_rounds = 4
 tool_timeout_seconds = 60.0
+history_exchanges = 3                       # earlier exchanges replayed with each question; with more, the model answers from them instead of calling a tool
