@@ -18,6 +18,7 @@ class SportsSettings(BaseModel):
     timeout_seconds: float = 10.0
     requests_at_a_time: int = 4  # a matchup reads dozens of game logs; four at a time took 1.2 s for Brady against Manning
     max_words: int = 600  # about 800 tokens, well inside a tool result's allowance (design doc v2/04)
+    box_score_max_words: int = 900  # a whole NBA box score is about 700 words, a third of them the | between figures; still inside the allowance
     cache_dir: str | None = str(DEFAULT_CACHE_DIR)  # unlike the other tools, kept in the product: most of what sports reads never changes
     fixtures_dir: str | None = None  # recorded ESPN responses, set only by the benchmark (design doc v2/01 section 3.3)
     today: date | None = None  # the day the recordings were made, so "today's game" asks for a recorded scoreboard; set only by the benchmark
@@ -25,7 +26,7 @@ class SportsSettings(BaseModel):
 
 
 def sports_settings_from_environment() -> SportsSettings:
-    """SPORTS_CACHE_DIR, SPORTS_FIXTURES_DIR, SPORTS_TODAY, SPORTS_TIMEOUT_SECONDS, SPORTS_REQUESTS_AT_A_TIME, and SPORTS_MAX_WORDS override the defaults; an empty value counts as unset."""
+    """SPORTS_CACHE_DIR, SPORTS_FIXTURES_DIR, SPORTS_TODAY, SPORTS_TIMEOUT_SECONDS, SPORTS_REQUESTS_AT_A_TIME, SPORTS_MAX_WORDS, and SPORTS_BOX_SCORE_MAX_WORDS override the defaults; an empty value counts as unset."""
     overrides = {key.removeprefix("SPORTS_").lower(): value for key, value in os.environ.items() if key.startswith("SPORTS_") and value.strip()}
     return SportsSettings(**overrides)
 

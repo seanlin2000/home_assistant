@@ -32,7 +32,7 @@ ROUTER_SYSTEM_PROMPT = """You sort spoken questions for a home voice assistant. 
 search: the correct answer depends on facts that change over time or that the assistant cannot know without checking: current prices, rates, news, schedules, product availability, recent releases, market conditions, what to buy today, whether an offer is competitive right now, or a claim about a recent event. Also anything the user explicitly asks to be searched or looked up.
 calculate: the correct answer requires arithmetic on numbers in the question: percentages, totals over time, compounding, unit or temperature conversions, energy costs, loan payments, tips, splits, or date differences.
 weather: the coming or current weather or forecast, at home or in any named place: whether it will rain, how warm or cold it will get, whether to take an umbrella or a coat, the weekend forecast.
-sports: NBA or NFL game scores (live, recent, or long past), a team's roster, a player's season or career statistics, or how a player or team did against another. Other leagues and sports are search.
+sports: NBA or NFL game scores (live, recent, or long past), how a player did in one game, a team's roster, a player's season or career statistics, or how a player or team did against another. Other leagues and sports are search.
 answer: everything else: explanations of how things work, reasoning, advice from what the user said, comparisons of ideas, opinions, clarifying questions, and settled history even when it sounds topical.
 Examples: "What hardware gives the most memory for a thousand dollars today?" -> search. "Is a four percent rent increase competitive in my neighborhood?" -> search. "Since the central bank cut rates last month, should I refinance?" -> search. "What year did the Berlin Wall fall?" -> answer. "Why can a sparse model run on a smaller GPU?" -> answer. "What is fifteen percent of eighty dollars?" -> calculate. "Do I need an umbrella tomorrow?" -> weather. "What's the weather in Lisbon this weekend?" -> weather. "Who won the 49ers game last night?" -> sports. "How many threes did Steph Curry make each season?" -> sports. "What's Tom Brady's record against Peyton Manning?" -> sports. "Who won the World Cup in 2022?" -> search.
 also: only when the question needs a second or third kind of tool after the first, in the order to use them; otherwise leave it out. plan: when also is given, one short sentence on how to use the tools together; otherwise leave it out.
@@ -60,7 +60,7 @@ This question is about the weather. Call weather_forecast first, with place set 
 Example call: weather_forecast(day="saturday", part_of_day="all", place="Lisbon")
 """
 SPORTS_DIRECTIVE = """Routing for this question: SPORTS.
-This question is about NBA or NFL scores, rosters, or statistics. Call game_scores for scores, team_roster for a roster, player_stats for a player's seasons, or player_matchup for a head-to-head; do not search the web and do not answer from memory. Answer from the numbers the tool returns.
+This question is about NBA or NFL scores, rosters, or statistics. Call game_scores for scores, box_score for one game's player statistics, team_roster for a roster, player_stats for a player's seasons, or player_matchup for a head-to-head; do not search the web and do not answer from memory. Answer from the numbers the tool returns.
 Example call: player_stats(league="nba", player="Stephen Curry", from_season=2011, to_season=2025)
 """
 DIRECTIVES = {Route.SEARCH: SEARCH_DIRECTIVE, Route.CALCULATE: CALCULATE_DIRECTIVE, Route.WEATHER: WEATHER_DIRECTIVE, Route.SPORTS: SPORTS_DIRECTIVE}
@@ -106,7 +106,7 @@ SPORTS_STATISTIC = re.compile(
     re.IGNORECASE,
 )
 SPORTS_LEAGUE = re.compile(r"\b(nba|nfl)\b", re.IGNORECASE)
-SPORTS_ASK = re.compile(r"\b(scores?|won|win|beat|lost|roster|stats|statistics|record|standings|career|season)\b", re.IGNORECASE)
+SPORTS_ASK = re.compile(r"\b(scores?|box score|stat line|won|win|beat|lost|roster|stats|statistics|record|standings|career|season)\b", re.IGNORECASE)
 
 
 def rule_route(text: str) -> RouteDecision | None:

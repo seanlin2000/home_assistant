@@ -1,6 +1,6 @@
-"""Expose NBA and NFL scores, rosters, statistics and head-to-heads from ESPN as MCP tools on an existing server, so the agent sees one tool list.
+"""Expose NBA and NFL scores, box scores, rosters, statistics and head-to-heads from ESPN as MCP tools on an existing server, so the agent sees one tool list.
 
-Four tools rather than one, split by the kind of question, so a small model picks by what was asked (design doc v2/03 section 3.4). Every failure is
+Five tools rather than one, split by the kind of question, so a small model picks by what was asked (design doc v2/03 section 3.4). Every failure is
 one sentence telling the model what to do next, never an exception, as the weather and Wikipedia tools do.
 """
 
@@ -14,7 +14,7 @@ import httpx
 from mcp.server.mcpserver import MCPServer
 from pydantic import Field
 
-from sports_mcp.answers import day_scores, player_against_player, player_against_team, player_stats, recent_team_scores, season_scores, team_roster
+from sports_mcp.answers import day_scores, game_box_score, player_against_player, player_against_team, player_stats, recent_team_scores, season_scores, team_roster
 from sports_mcp.cache import SportsCache
 from sports_mcp.espn_client import EspnSession, EspnUnavailable
 from sports_mcp.espn_records import FoundPlayer
@@ -25,6 +25,7 @@ from sports_mcp.settings import SportsSettings, sports_today
 from sports_mcp.teams import Team, find_teams
 
 GAME_SCORES_TOOL_NAME = "game_scores"
+BOX_SCORE_TOOL_NAME = "box_score"
 TEAM_ROSTER_TOOL_NAME = "team_roster"
 PLAYER_STATS_TOOL_NAME = "player_stats"
 PLAYER_MATCHUP_TOOL_NAME = "player_matchup"
@@ -50,13 +51,18 @@ def register_sports_tools(server: MCPServer, settings: SportsSettings, transport
     cache = SportsCache(settings.cache_dir)
     transport = transport or (FixtureTransport(Path(settings.fixtures_dir)) if settings.fixtures_dir else None)
 
-    async def answered(ask: Ask) -> str:
-        return await answered_from_espn(EspnSession(settings, cache, sports_today(settings), transport), ask, settings.max_words)
+    async def answered(ask: Ask, max_words: int = settings.max_words) -> str:
+        return await answered_from_espn(EspnSession(settings, cache, sports_today(settings), transport), ask, max_words)
 
     @server.tool(name=GAME_SCORES_TOOL_NAME)
     async def game_scores(league: LeagueName, team: TeamName = "", date: DayText = "", season: int | None = None, playoffs: bool = False) -> str:
         """NBA or NFL game scores: live, final, or scheduled, with the quarter and clock, the playoff series, and the top players. team: as the user said it, e.g. "Warriors" or "49ers". With only a team: its game today, its last game, and its next game. date: YYYY-MM-DD, worked out from today's date, for every game that day, or only that team's when a team is given. season: the year the season started (the 2015-16 NBA season is 2015) for every game the team played that season; playoffs: true for its playoff games instead."""
         return await answered(lambda espn: scores_answer(espn, League(league), team, date, season, playoffs))
+
+    @server.tool(name=BOX_SCORE_TOOL_NAME)
+    async def box_score(league: LeagueName, team: TeamName, opponent: TeamName = "", date: DayText = "") -> str:
+        """One NBA or NFL game's box score: each player's statistics (NBA: minutes, points, shooting, rebounds, assists; NFL: passing, rushing, receiving, tackles, kicking) and both teams' totals. team: as the user said it, e.g. "49ers". With only a team: its last game. opponent: the other team, e.g. "Seahawks", for the last game the two played. date: YYYY-MM-DD, worked out from today's date, for the team's game closest to that day, or with an opponent, the two teams' game closest to it."""
+        return await answered(lambda espn: box_score_answer(espn, League(league), team, opponent, date), settings.box_score_max_words)
 
     @server.tool(name=TEAM_ROSTER_TOOL_NAME)
     async def roster(league: LeagueName, team: TeamName) -> str:
@@ -97,6 +103,15 @@ async def scores_answer(espn: EspnSession, league: League, team_name: str, day_t
     if season is not None or playoffs:
         return await season_scores(espn, league, team, checked_season(league, season, espn.today), playoffs)
     return await recent_team_scores(espn, league, team)
+
+
+async def box_score_answer(espn: EspnSession, league: League, team_name: str, opponent_name: str, day_text: str) -> str:
+    team = one_team(league, team_name)
+    opponent = one_team(league, opponent_name) if opponent_name.strip() else None
+    if opponent == team:
+        raise SportsRequestError(f"the team and the opponent are both the {team.display_name}; ask the user which other team they mean.")
+    day = spoken_day(day_text, espn.today) if day_text.strip() else None
+    return await game_box_score(espn, league, team, opponent, day)
 
 
 async def stats_answer(espn: EspnSession, league: League, player_name: str, from_season: int | None, to_season: int | None) -> str:

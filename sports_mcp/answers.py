@@ -8,11 +8,11 @@ import asyncio
 from datetime import date
 
 from sports_mcp.espn_client import EspnSession
-from sports_mcp.espn_records import FoundPlayer, Game, LoggedGame
+from sports_mcp.espn_records import FINISHED, NOT_PLAYED, FoundPlayer, LoggedGame
+from sports_mcp.game_finder import closest_game, game_near_day, last_meeting, plays_in, whole_season
 from sports_mcp.leagues import League
 from sports_mcp.render import (
-    FINISHED,
-    NOT_PLAYED,
+    box_score_text,
     day_heading,
     games_text,
     matchup_text,
@@ -47,16 +47,22 @@ async def recent_team_scores(session: EspnSession, league: League, team: Team) -
     return team_games_text(league, team, today, around_today)
 
 
-async def whole_season(session: EspnSession, league: League, team: Team, start_year: int) -> list[Game]:
-    return await session.schedule(league, team, start_year, playoffs=False) + await session.schedule(league, team, start_year, playoffs=True)
-
-
 async def season_scores(session: EspnSession, league: League, team: Team, start_year: int, playoffs: bool) -> str:
     return season_games_text(league, team, start_year, playoffs, await session.schedule(league, team, start_year, playoffs))
 
 
-def plays_in(team: Team, game: Game) -> bool:
-    return team.abbreviation in (game.home.abbreviation, game.away.abbreviation)
+async def game_box_score(session: EspnSession, league: League, team: Team, opponent: Team | None, day: date | None) -> str:
+    """With a day, the game closest to it; with only an opponent, the two teams' last meeting; with neither, the team's last game."""
+    if day is not None:
+        game = await closest_game(session, league, team, opponent, day)
+    elif opponent is not None:
+        game = await last_meeting(session, league, team, opponent)
+    else:
+        game = await game_near_day(session, league, team, session.today)
+    if game is None:
+        return no_game_text(league, team, opponent, day or session.today)
+    box_score = None if game.state == NOT_PLAYED else await session.box_score(league, game)
+    return box_score_text(league, game, box_score, day)
 
 
 async def team_roster(session: EspnSession, league: League, team: Team) -> str:

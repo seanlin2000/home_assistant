@@ -1,4 +1,4 @@
-"""Reads ESPN's public JSON for the sports tools: scoreboards, team schedules, rosters, player search, season statistics and game logs.
+"""Reads ESPN's public JSON for the sports tools: scoreboards, team schedules, box scores, rosters, player search, season statistics and game logs.
 
 The hosts are fixed by settings, not chosen by the model, so requests skip the public-address guard that fetch_page applies, as the Wikipedia and
 Met.no clients do; a redirect is refused instead of followed. ESPN publishes no rate limit, so the client sends at most a few requests at a time,
@@ -16,12 +16,15 @@ from pydantic import TypeAdapter
 
 from sports_mcp.cache import CURRENT_SEASON_SECONDS, FOREVER, LIVE_SECONDS, ROSTER_SECONDS, SCHEDULE_SECONDS, SportsCache
 from sports_mcp.espn_records import (
+    FINISHED,
+    BoxScore,
     EspnShapeError,
     FoundPlayer,
     Game,
     LoggedGame,
     PlayerSeasons,
     Roster,
+    read_box_score,
     read_found_player,
     read_game_log,
     read_games,
@@ -77,6 +80,12 @@ class EspnSession:
         url = f"{self._settings.site_base_url}/{league.espn_path}/teams/{team.espn_id}/schedule"
         params = {"season": league.espn_season(start_year), "seasontype": season_type}
         return await self._kept(f"schedule:{league}:{team.espn_id}:{start_year}:{season_type}", keep, TypeAdapter(list[Game]), lambda: self._read(url, params, read_games))
+
+    async def box_score(self, league: League, game: Game) -> BoxScore:
+        """Kept forever once the game is over and two days old, as a past scoreboard is; until then, as briefly as a live score."""
+        keep = FOREVER if game.state == FINISHED and game.day < self._today - timedelta(days=1) else LIVE_SECONDS
+        url = f"{self._settings.site_base_url}/{league.espn_path}/summary"
+        return await self._kept(f"boxscore:{league}:{game.event_id}", keep, TypeAdapter(BoxScore), lambda: self._read(url, {"event": game.event_id}, lambda body: read_box_score(body, league)))
 
     async def roster(self, league: League, team: Team) -> Roster:
         url = f"{self._settings.site_base_url}/{league.espn_path}/teams/{team.espn_id}/roster"

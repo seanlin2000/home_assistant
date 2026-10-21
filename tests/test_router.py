@@ -57,7 +57,12 @@ def test_weather_rule_fires_for_home_and_named_places_and_not_for_explanations()
 def test_sports_rule_fires_on_statistics_rosters_and_league_questions_and_not_on_other_rosters() -> None:
     fired = {question.id for question in QUESTIONS.questions if (decision := rule_route(question.exchanges[-1])) and decision.route == Route.SPORTS}
     assert {"J64", "J70"} <= fired
-    for sports in ("Who won the NFL game last night?", "How many three pointers did Curry make in 2016?", "What's Brady's record against the Colts?"):
+    for sports in (
+        "Who won the NFL game last night?",
+        "How many three pointers did Curry make in 2016?",
+        "What's Brady's record against the Colts?",
+        "LeBron's stat line in game 7 of the 2016 NBA Finals?",
+    ):
         assert rule_route(sports).tool_routes == [Route.SPORTS], sports
     for not_sports in ("Who is on the cleaning roster this week?", "What is the average temperature in July?"):
         assert rule_route(not_sports) is None, not_sports

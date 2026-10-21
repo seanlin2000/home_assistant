@@ -1,5 +1,5 @@
-"""The sports tools: scores live and past, rosters, season statistics, head-to-heads worked out from two game logs, the team and player lookups, the
-cache's keep times, the cleaning of ESPN's text, and the fixed replies when ESPN cannot help. The recordings are category J's own
+"""The sports tools: scores live and past, box scores and the game search behind them, rosters, season statistics, head-to-heads worked out from two
+game logs, the team and player lookups, the cache's keep times, the cleaning of ESPN's text, and the fixed replies when ESPN cannot help. The recordings are category J's own
 (benchmark/fixtures/sports/, ESPN answers recorded 2026-10-20 by benchmark/record_sports_fixtures.py), served by the same transport the benchmark uses,
 so these tests also prove the benchmark's recordings answer every call it expects."""
 
@@ -21,13 +21,15 @@ from benchmark.records import Category, load_questions
 from sports_mcp.answers import faced_each_other
 from sports_mcp.cache import FOREVER, LIVE_SECONDS, SCHEDULE_SECONDS, SportsCache
 from sports_mcp.espn_client import EspnSession
-from sports_mcp.espn_records import FoundPlayer, LoggedGame, read_player_seasons
+from sports_mcp.espn_records import BoxScore, FoundPlayer, Game, LoggedGame, TeamLine, read_box_score, read_player_seasons
 from sports_mcp.fixtures import FixtureTransport, fixture_file_name
+from sports_mcp.game_finder import closest_game, plays_in
 from sports_mcp.leagues import League
 from sports_mcp.names import cleaned_name, cleaned_note
 from sports_mcp.register import SERVICE_DOWN_MESSAGE, checked_season, register_sports_tools, spoken_day
+from sports_mcp.render import CUT_NOTE, box_score_text
 from sports_mcp.settings import SportsSettings, sports_settings_from_environment
-from sports_mcp.teams import find_teams
+from sports_mcp.teams import Team, find_teams
 from utils.text_utils import clip_to_whole_lines
 
 RECORDED_ON = date.fromisoformat(SPORTS_RECORDED_ON)
@@ -110,6 +112,89 @@ async def test_a_playoff_season_gives_the_record_first_and_the_games_newest_firs
     assert lines[0] == "NBA: Golden State Warriors 2015-16 playoffs"
     assert lines[1] == "Record: 15-9 in 24 finished games. Games, newest first:"
     assert lines[2].startswith("Sun 2016-06-19 | Final | Cleveland Cavaliers 93 at Golden State Warriors 89")
+
+
+async def test_a_box_score_with_only_a_team_is_its_last_game() -> None:
+    reply = await ask("box_score", league="nfl", team="Niners")
+    assert reply.startswith("NFL box score: Mon 2026-10-19 | Final | Washington Commanders 17 at San Francisco 49ers 23")
+    assert "San Francisco 49ers team totals: 375 total yards, 249 passing yards, 126 rushing yards" in reply
+    assert "SF passing: player | C/ATT | YDS | TD | INT | SACKS | RTG\nBrock Purdy | 21/29 | 264 | 1 | 0 | 2-15 | 111.9" in reply
+    assert "No game matched" not in reply
+
+
+async def test_a_box_score_for_two_teams_is_their_last_meeting_whichever_is_named_first() -> None:
+    warriors_first = await ask("box_score", league="nba", team="Warriors", opponent="Cavaliers")
+    assert warriors_first.startswith("NBA box score: Thu 2026-04-02 | Final | Cleveland Cavaliers 118 at Golden State Warriors 111")
+    assert "Donovan Mitchell | " in warriors_first and "GS did not play: " in warriors_first
+    assert (await ask("box_score", league="nba", team="Cavs", opponent="Golden State")).split("\n")[2:] == warriors_first.split("\n")[2:]
+
+
+async def test_a_box_score_for_a_day_without_a_game_is_the_closest_game_and_says_so() -> None:
+    reply = await ask("box_score", league="nfl", team="49ers", date="2026-10-13")
+    assert reply.split("\n")[:2] == [
+        "NFL box score: Sun 2026-10-11 | Final | San Francisco 49ers 32 at Seattle Seahawks 29",
+        "No game matched 2026-10-13 itself; this is the closest one, 2 days away.",
+    ]
+    assert "Christian McCaffrey | 11 | 68 | 1 | 13" in reply
+
+
+async def test_a_box_score_for_two_teams_and_a_day_is_their_meeting_closest_to_it() -> None:
+    reply = await ask("box_score", league="nba", team="Cavaliers", opponent="Warriors", date="2016-06-18")
+    assert reply.startswith("NBA box score: Sun 2016-06-19 | Final | Cleveland Cavaliers 93 at Golden State Warriors 89 | NBA FINALS - GAME 7")
+    assert "LeBron James | 47 | 27 | 9-24 | 1-5 | 8-10 | 11 | 11 | 2 | 3 | 5 | +4" in reply
+    assert len(reply.split()) <= SportsSettings().box_score_max_words and CUT_NOTE not in reply
+
+
+async def test_a_box_score_for_a_coming_day_is_the_game_not_yet_played() -> None:
+    reply = await ask("box_score", league="nba", team="Warriors", date="2026-10-30")
+    assert reply.endswith("This game has not been played yet, so it has no box score.")
+    assert "Los Angeles Lakers at Golden State Warriors" in reply
+
+
+async def test_a_box_score_asks_for_another_team_when_both_are_the_same() -> None:
+    reply = await ask("box_score", league="nba", team="Warriors", opponent="Dubs")
+    assert reply == "Sports error: the team and the opponent are both the Golden State Warriors; ask the user which other team they mean."
+
+
+def test_an_old_game_without_players_says_espn_has_only_the_score() -> None:
+    box_score = read_box_score({"boxscore": {"teams": [], "players": [{"team": {"id": "13", "displayName": "Los Angeles Lakers", "abbreviation": "LAL"}}]}}, League.NBA)
+    reply = box_score_text(League.NBA, scheduled_game("1", date(1985, 6, 9), "post", away="LAL"), box_score, None)
+    assert reply.endswith("ESPN has no player statistics for this game, only the score.")
+
+
+def scheduled_game(event_id: str, day: date, state: str, away: str = "SF", away_id: str = "25") -> Game:
+    return Game(event_id=event_id, day=day, state=state, status="", home=TeamLine(name="Home", abbreviation="HOM", espn_id="99"), away=TeamLine(name="Away", abbreviation=away, espn_id=away_id))
+
+
+class StubSchedules:
+    """An EspnSession stand-in whose team plays the given games, each season's regular season only."""
+
+    def __init__(self, today: date, games: list[Game]) -> None:
+        self.today = today
+        self.games = games
+        self.seasons_read: list[int] = []
+
+    async def schedule(self, league: League, team: Team, start_year: int, playoffs: bool) -> list[Game]:
+        self.seasons_read += [] if playoffs else [start_year]
+        return [] if playoffs else [game for game in self.games if league.current_season(game.day) == start_year]
+
+
+async def test_the_closest_game_is_the_earlier_of_two_as_near_and_skips_a_game_not_yet_played_unless_the_day_is_coming() -> None:
+    niners = find_teams(League.NFL, "49ers")[0]
+    games = [scheduled_game("before", date(2026, 10, 8), "post"), scheduled_game("after", date(2026, 10, 14), "post"), scheduled_game("next", date(2026, 10, 25), "pre")]
+    session = StubSchedules(date(2026, 10, 20), games)
+    assert (await closest_game(session, League.NFL, niners, None, date(2026, 10, 11))).event_id == "before"  # type: ignore[arg-type, union-attr]
+    assert (await closest_game(session, League.NFL, niners, None, date(2026, 10, 20))).event_id == "after"  # type: ignore[arg-type, union-attr]
+    assert (await closest_game(session, League.NFL, niners, None, date(2026, 10, 24))).event_id == "next"  # type: ignore[arg-type, union-attr]
+
+
+async def test_a_last_meeting_years_back_is_found_by_reading_older_seasons_one_ring_at_a_time() -> None:
+    niners, raiders = find_teams(League.NFL, "49ers")[0], find_teams(League.NFL, "Raiders")[0]
+    meeting = scheduled_game("2018", date(2018, 11, 1), "post", away="OAK", away_id=raiders.espn_id)  # the Raiders under their Oakland abbreviation
+    session = StubSchedules(date(2026, 10, 20), [meeting, scheduled_game("2026", date(2026, 10, 11), "post")])
+    assert (await closest_game(session, League.NFL, niners, raiders, session.today)).event_id == "2018"  # type: ignore[arg-type, union-attr]
+    assert session.seasons_read == [2026, 2025, 2024, 2023, 2022, 2021, 2020, 2019, 2018, 2017]  # one season past the meeting, then no further
+    assert plays_in(raiders, meeting)
 
 
 async def test_an_nba_roster_lists_every_player() -> None:
@@ -279,12 +364,19 @@ async def test_each_answer_is_kept_for_as_long_as_its_kind_can_change() -> None:
         await espn.scoreboard(League.NBA, RECORDED_ON)
         await espn.schedule(League.NBA, warriors, 2015, playoffs=True)
         await espn.schedule(League.NBA, knicks, 2026, playoffs=False)
+        game_7 = max(await espn.schedule(League.NBA, warriors, 2015, playoffs=True), key=lambda game: game.day)
+        await espn.box_score(League.NBA, game_7)
     assert kept.keep_seconds == {
         "scores:nba:2016-06-19": FOREVER,
         "scores:nba:2026-10-20": LIVE_SECONDS,
         "schedule:nba:9:2015:3": FOREVER,
         "schedule:nba:18:2026:2": SCHEDULE_SECONDS,
+        f"boxscore:nba:{game_7.event_id}": FOREVER,
     }
+    kept_today = KeptValues()
+    async with EspnSession(settings, kept_today, RECORDED_ON, FixtureTransport(SPORTS_FIXTURES_DIR)) as espn:  # type: ignore[arg-type]
+        await espn.box_score(League.NBA, game_7.model_copy(update={"day": RECORDED_ON}))  # a game of today's, whose figures may still change
+    assert kept_today.keep_seconds == {f"boxscore:nba:{game_7.event_id}": LIVE_SECONDS}
 
 
 async def test_a_kept_answer_is_not_asked_for_again(tmp_path: Any) -> None:
@@ -336,6 +428,6 @@ def test_sports_tools_speak_the_numbers_filler() -> None:
 
 def test_every_category_j_question_is_pinned_to_the_recording_day() -> None:
     questions = [question for question in load_questions(SPORTS_FIXTURES_DIR.parent.parent / "questions.yaml").questions if question.category == Category.J]
-    assert len(questions) == 11
+    assert len(questions) == 15
     assert {question.today for question in questions} == {RECORDED_ON}
     assert all(question.required_tools == [Route.SPORTS] and question.needs_benchmark_tool_server for question in questions)
