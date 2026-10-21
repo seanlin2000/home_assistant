@@ -216,7 +216,7 @@ Nobody sits at this Mac, so a power cut must end with the assistant answering ag
     - A VM that is running while Home Assistant has failed five checks in a row is stopped and started, at most once every two hours.
     - Home Assistant then needs a few minutes to boot and answer on port 80.
 
-On the prototype MacBook the health check is installed with `HEALTH_CHECK_FLAGS="--no-remediate"`, so it only records, and the VM stays stopped until you start it. [Operations](10_operations.md#the-health-check) covers the rest of the health check and the maintenance flag that pauses it during a deploy.
+On the prototype MacBook the health check is installed with `HEALTH_CHECK_FLAGS="--leave-vm"`, so it restarts a failed service but never the VM, which stays stopped until you start it. [Operations](10_operations.md#the-health-check) covers the rest of the health check and the maintenance flag that pauses it during a deploy.
 
 The bootstrap sets the login items and the power settings in these steps:
 
