@@ -39,6 +39,7 @@ class AnswerSettings(StrictModel):
     word_budget: int
     max_tool_rounds: int
     tool_timeout_seconds: float
+    history_exchanges: int
 
 
 class HarnessConfig(StrictModel):
@@ -57,6 +58,7 @@ class HarnessConfig(StrictModel):
             word_budget=self.answer.word_budget,
             max_tool_rounds=self.answer.max_tool_rounds,
             tool_timeout_seconds=self.answer.tool_timeout_seconds,
+            history_exchanges=self.answer.history_exchanges,
             context_tokens=model.conversation_tokens,
             max_output_tokens=model.sampling.max_output_tokens,
         )
