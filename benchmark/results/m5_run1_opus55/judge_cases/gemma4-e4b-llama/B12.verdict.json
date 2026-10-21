@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The used RTX 3090 with 24 GB that it recommends is supported by several excerpts, but it gives no price, ignores that promptquorum and llmconfigurator put a 3090 build at $1,240 to over $1,300 while compute-market claims $960 to $1,000, and never mentions the 16 GB fallback.",
+  "judgment_reason": "It glossed over the $1,000 budget by never saying whether a 3090 build fits it, even though the retrieved sources disagree on that point.",
+  "spoken_fit_reason": "Two plain sentences that lead with the recommendation and contain no formatting."
+}

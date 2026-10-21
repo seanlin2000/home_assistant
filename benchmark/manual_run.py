@@ -16,7 +16,22 @@ from pydantic import BaseModel, Field
 from rich.console import Console
 
 from assistant_core import agent_loop
-from assistant_core.models import WEATHER_TOOL_NAMES, AgentPolicy, Completion, Done, GenerationStats, LLMEvent, Message, Role, TextDelta, ToolCall, ToolCallRequest, ToolSpec, Transcript
+from assistant_core.models import (
+    SPORTS_TOOL_NAMES,
+    WEATHER_TOOL_NAMES,
+    AgentPolicy,
+    Completion,
+    Done,
+    GenerationStats,
+    LLMEvent,
+    Message,
+    Role,
+    TextDelta,
+    ToolCall,
+    ToolCallRequest,
+    ToolSpec,
+    Transcript,
+)
 from assistant_core.tools import McpToolBox
 from benchmark.mcp_process import McpServerProcess
 from benchmark.records import Candidate, Question, QuestionResult, load_config, load_questions, write_jsonl
@@ -47,6 +62,8 @@ class ScriptedExchange(BaseModel):
             return "search"
         if any(call.name in WEATHER_TOOL_NAMES for call in self.calls):
             return "weather"
+        if any(call.name in SPORTS_TOOL_NAMES for call in self.calls):
+            return "sports"
         return "calculate" if self.calls else "answer"
 
 

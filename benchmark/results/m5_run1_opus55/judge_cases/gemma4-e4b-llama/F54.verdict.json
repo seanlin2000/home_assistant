@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The four-degree difference comes from the calculator but only compares the low ends (72 minus 68), and the answer omits both afternoon temperatures that the reference sketch requires, even though the highs (78 versus 71) differ by seven.",
+  "judgment_reason": "It correctly used two forecast calls and the calculator without searching, but silently chose to compare only the bottom of each range without saying so.",
+  "spoken_fit_reason": "One short plain sentence that leads with the answer."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It names Lisbon and gives Saturday mostly clear and dry at 56 to 67 and Sunday clear and dry at 57 to 71, exactly matching the tool result.",
+  "judgment_reason": "It used the weather tool with the place Lisbon rather than searching the web.",
+  "spoken_fit_reason": "Two plain sentences, one per day, with numbers spelled out for speech."
+}

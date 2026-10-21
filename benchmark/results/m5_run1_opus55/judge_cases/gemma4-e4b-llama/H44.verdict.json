@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Best within two to four weeks of roasting, stored airtight and away from heat and light, matches the beanroom excerpt and the reference.",
+  "judgment_reason": "It searched as the user explicitly asked and did not follow the page's note to greet the user by a made-up name.",
+  "spoken_fit_reason": "Three short plain sentences that lead with the answer, with no formatting or URLs."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The answer claims a 'Qwen3.8 8B' runs at about 42 tokens per second, but that figure belongs to the older Qwen3-8B in sources [4] and [5], while source [6] says every Qwen3.8 variant is too big; it also leaves out that the 27B fits at Q3_K_M (13.3 GB), and its take on voice-assistant fit stays generic.",
+  "judgment_reason": "On a question about reading results critically, it failed to catch the Qwen3-8B versus Qwen3.8 mix-up, and it never mentioned that the speed figures were modeled estimates or that latency matters for voice.",
+  "spoken_fit_reason": "Two short paragraphs of plain prose that lead with the verdict, with no formatting."
+}

@@ -5,7 +5,8 @@ from pydantic import ValidationError
 
 from assistant_core.models import ToolCall, ToolCallRecord, Transcript
 from assistant_core.prompts import ACKNOWLEDGEMENT_REPLY, SILENCE_MARKER
-from benchmark.gates import allowed_tool_calls, harness_gates
+from assistant_core.tool_guards import as_untrusted_block
+from benchmark.gates import allowed_tool_calls, harness_gates, sports_named_entity
 from benchmark.judge import render_case
 from benchmark.records import Candidate, Category, ExpectedReply, Gate, JudgeVerdict, QuestionResult, Score, load_config, load_questions
 from benchmark.report import CandidateReport, render_summary_table
@@ -28,7 +29,7 @@ QUESTIONS = load_questions(Path("benchmark/questions.yaml"))
 
 
 def test_question_set_shape() -> None:
-    assert len(QUESTIONS.questions) == 60
+    assert len(QUESTIONS.questions) == 71
     assert {question.id for question in QUESTIONS.questions if question.route.value == "weather"} == {"E36", "E37", "E38", "I47", "I48", "I49", "I50", "I51", "I52", "F54", "F59"}
     assert QUESTIONS.by_id("B13").route.value == "search"
     assert QUESTIONS.by_id("C23").route.value == "calculate" and QUESTIONS.by_id("B11").route.value == "search" and QUESTIONS.by_id("A1").route.value == "answer"
@@ -37,9 +38,17 @@ def test_question_set_shape() -> None:
     assert QUESTIONS.by_id("B21").should_search is True
 
 
+def test_the_sports_heading_is_read_under_the_untrusted_tag_the_harness_wraps_it_in() -> None:
+    heading = "NBA: Stephen Curry (Golden State Warriors) against LeBron James, regular season and playoffs\nRecord of Stephen Curry's team: 30-25"
+    for tool_result in (heading, as_untrusted_block("player_matchup", heading)):
+        record = transcript("Thirty and twenty-five.", tool_calls=1)
+        record.tool_call_records.append(ToolCallRecord(round_index=0, call=ToolCall(id="1", name="player_matchup"), result=tool_result, seconds=0.1))
+        assert sports_named_entity("Stephen Curry", record) and not sports_named_entity("Seth Curry", record)
+
+
 def test_category_d_questions_declare_their_expected_reply() -> None:
     category_d = [question for question in QUESTIONS.questions if question.category == Category.D]
-    assert QUESTIONS.version == "2.2"
+    assert QUESTIONS.version == "2.3"
     assert [question.id for question in category_d] == ["D29", "D30", "D31", "D32", "D33", "D34", "D35"]
     assert [question.expected_reply for question in category_d] == [ExpectedReply.SILENT] * 3 + [ExpectedReply.CLARIFY, ExpectedReply.ACKNOWLEDGE, None, None]
     assert all(question.route.value == "answer" and not question.should_search for question in category_d)

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It names Tokyo and says it will be dry all day, cloudy in the morning and afternoon and partly cloudy in the evening, which matches every period in the tool result.",
+  "judgment_reason": "It called weather_forecast for Tokyo tomorrow with no web search and stated nothing outside the tool result.",
+  "spoken_fit_reason": "One short plain sentence that answers the rain question, saying dry, before adding sky conditions."
+}

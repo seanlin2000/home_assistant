@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Its single sentence only says it 'could not find a single hardware solution', recommends no hardware approach, never explains why ChatGPT-like quality is out of reach at $1,000, and misstates the requirement as doing 'web searches entirely locally'.",
+  "judgment_reason": "It doesn't quietly raise the budget, but it presents a search miss rather than an explicit judgment that the requirements can't be met, garbles the user's 'local except searches' condition, and offers no closest workable option.",
+  "spoken_fit_reason": "One short plain sentence that leads with the conclusion."
+}

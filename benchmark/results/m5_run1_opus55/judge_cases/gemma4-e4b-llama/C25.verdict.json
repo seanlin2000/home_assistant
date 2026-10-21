@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Both figures match the reference and the convert results: twenty-two point two degrees Celsius and three point one one miles.",
+  "judgment_reason": "It used two correct convert calls with no search, which is exactly what this question needed.",
+  "spoken_fit_reason": "One plain sentence with the numbers written out as words, which suits text-to-speech."
+}

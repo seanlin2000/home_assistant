@@ -1,7 +1,7 @@
 ---
 name: benchmark-judge
 description: Grades voice-assistant benchmark transcripts against benchmark/rubric.md and writes one verdict JSON file per case. Use after `benchmark-judge <date> --export`; pass it the judge_cases folder for one candidate.
-model: opus
+model: claude-opus-5-5
 tools: Read, Write, Glob
 ---
 

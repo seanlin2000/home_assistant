@@ -12,6 +12,7 @@ from assistant_core.llm_client import LLMClient
 from assistant_core.memory import ConversationMemory, NoMemory
 from assistant_core.models import (
     SEARCH_TOOL_NAMES,
+    SPORTS_TOOL_NAMES,
     WEATHER_TOOL_NAMES,
     AgentEvent,
     AgentPolicy,
@@ -119,7 +120,8 @@ class SpokenAnswerCap:
         return "".join(self.spoken_parts).strip()
 
 
-async def run(conversation: list[Message], llm: LLMClient, tools: ToolBox, policy: AgentPolicy, memory: ConversationMemory | None = None) -> AsyncIterator[AgentEvent]:
+async def run(conversation: list[Message], llm: LLMClient, tools: ToolBox, policy: AgentPolicy, memory: ConversationMemory | None = None, today: date | None = None) -> AsyncIterator[AgentEvent]:
+    """One exchange. today is pinned only by the benchmark, whose sports questions were recorded on a fixed day."""
     started = time.perf_counter()
     conversation = within_history_window(without_replayed_fillers(conversation, policy), policy)
     memory = memory or NoMemory()
@@ -134,7 +136,7 @@ async def run(conversation: list[Message], llm: LLMClient, tools: ToolBox, polic
         transcript.route = route_to_offered_tools(await decide_route(llm, conversation, policy), tool_specs)
         transcript.route.started_seconds = route_started
         directive = directive_for(transcript.route)
-    spoken_question = put_block_before_question(messages, per_question_block(date.today(), directive, memory.get_context(conversation)))
+    spoken_question = put_block_before_question(messages, per_question_block(today or date.today(), directive, memory.get_context(conversation)))
     max_tool_rounds = tool_round_cap(transcript.route, policy.max_tool_rounds)
     runner = ToolCallRunner(tools, policy, started)
     for round_index in range(max_tool_rounds + 1):
@@ -278,11 +280,14 @@ async def stream_model_reply(
 
 
 def filler_for(tool_name: str, policy: AgentPolicy) -> str:
-    """The sentence spoken while the first tool of an exchange runs: a web line for search tools, a forecast line for the weather, a math line for everything else."""
+    """The sentence spoken while the first tool of an exchange runs: a web line for search tools, a forecast line for the weather, a numbers line for
+    sports, a math line for everything else."""
     if tool_name in SEARCH_TOOL_NAMES:
         phrases = policy.filler_phrases
     elif tool_name in WEATHER_TOOL_NAMES:
         phrases = policy.weather_filler_phrases
+    elif tool_name in SPORTS_TOOL_NAMES:
+        phrases = policy.sports_filler_phrases
     else:
         phrases = policy.calculate_filler_phrases
     return random.choice(phrases or policy.filler_phrases)

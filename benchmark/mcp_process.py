@@ -1,5 +1,5 @@
 """Runs web_search_mcp as a child process for the duration of a benchmark run, with a per-run cache so every candidate sees identical search results
-and the same home forecast."""
+and the same home forecast, and with recorded ESPN answers so every sports question sees the same scores."""
 
 import asyncio
 import os
@@ -12,12 +12,16 @@ from pathlib import Path
 
 import httpx
 
-from assistant_core.models import REQUIRED_TOOL_NAMES, WEATHER_TOOL_NAMES, ToolSpec
+from assistant_core.models import REQUIRED_TOOL_NAMES, SPORTS_TOOL_NAMES, WEATHER_TOOL_NAMES, ToolSpec
 from assistant_core.tools import McpToolBox
 from benchmark.records import Services
 from web_search_mcp.fixtures import FIXTURE_ROUTE
 
 FIXTURES_DIR = Path("benchmark/fixtures/pages")
+SPORTS_FIXTURES_DIR = Path("benchmark/fixtures/sports")
+# The day benchmark/record_sports_fixtures.py recorded ESPN, which the sports tools take as today so "last night's game" asks for a recorded
+# scoreboard. Category J's questions carry the same date as their today, so the harness's prompt and the tools agree on it.
+SPORTS_RECORDED_ON = "2026-10-20"
 READINESS_ATTEMPTS = 40
 READINESS_INTERVAL_SECONDS = 0.5
 
@@ -46,13 +50,16 @@ class McpServerProcess:
             "WEB_SEARCH_HOST": self._services.mcp_host,
             "WEB_SEARCH_SEARXNG_URL": self._services.searxng_url,
             "WEB_SEARCH_FIXTURES_DIR": str(FIXTURES_DIR.resolve()),
+            "SPORTS_FIXTURES_DIR": str(SPORTS_FIXTURES_DIR.resolve()),
+            "SPORTS_CACHE_DIR": str(self._cache_dir / "sports"),
+            "SPORTS_TODAY": SPORTS_RECORDED_ON,
             **self._services.weather_home.environment(),
         }
         self._process = subprocess.Popen([sys.executable, "-m", "web_search_mcp.server"], env=env, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         tools = await wait_until_ready(self._services.mcp_url)
         if self._process.poll() is not None:
             raise RuntimeError(f"web_search_mcp exited with code {self._process.returncode}; something else answered at {self._services.mcp_url}")
-        missing = sorted((REQUIRED_TOOL_NAMES | WEATHER_TOOL_NAMES) - {tool.name for tool in tools})
+        missing = sorted((REQUIRED_TOOL_NAMES | WEATHER_TOOL_NAMES | SPORTS_TOOL_NAMES) - {tool.name for tool in tools})
         if missing:
             raise RuntimeError(f"the server at {self._services.mcp_url} is not this run's server: it lacks {missing}")
         return self._services.mcp_url

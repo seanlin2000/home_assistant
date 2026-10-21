@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It offers only a vague 'nutrient or water distribution' issue and leaves out normal shedding of old leaves, nitrogen deficiency, shading, and pot-bound roots, though it does ask for the species and how often the plant is watered.",
+  "judgment_reason": "Asking for missing information instead of naming one cause was right, but it leans toward calling it a problem without saying it may be normal ageing of old leaves.",
+  "spoken_fit_reason": "Three short plain sentences ending in a clear question, which suits speech."
+}

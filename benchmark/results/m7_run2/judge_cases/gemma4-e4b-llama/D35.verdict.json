@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 5,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The final reply, 'Jane Austen wrote Pride and Prejudice.', is correct; it reads 'rote' as 'wrote' without comment and is not thrown by the Zombies parody article.",
+  "judgment_reason": "It answered the intended question, but it ran a needless wikipedia_lookup for a stable, well-known fact.",
+  "spoken_fit_reason": "A single plain sentence that leads with the answer."
+}

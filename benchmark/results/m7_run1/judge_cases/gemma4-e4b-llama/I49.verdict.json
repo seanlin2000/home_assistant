@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It names Chicago and gives the tool's 48 to 54 degree clear, dry night, though it reports the range rather than saying plainly that the low will be forty-eight.",
+  "judgment_reason": "It used the weather tool for Chicago rather than searching the web.",
+  "spoken_fit_reason": "One plain sentence that leads with the temperatures."
+}
