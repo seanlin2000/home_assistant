@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "game_scores shows the 49ers beat the Commanders 23 to 17 at home, but the answer says the 49ers lost; only the two numbers are right.",
+  "judgment_reason": "It correctly called game_scores with no web search and picked the Monday game for last night, but it stated an outcome that contradicts the tool result.",
+  "spoken_fit_reason": "One short plain sentence that leads with the result."
+}

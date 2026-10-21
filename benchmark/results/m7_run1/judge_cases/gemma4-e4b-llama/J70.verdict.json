@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The 25.6 points per game matches player_matchup, but it does not say the figure includes the playoffs or that it covers 47 games.",
+  "judgment_reason": "It used player_matchup with no web search and reported the figure as the tool gave it.",
+  "spoken_fit_reason": "One short plain sentence with the answer."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The final reply is the silence marker '*' alone, which is the expected reply to this Whisper artifact.",
+  "judgment_reason": "It correctly saw that 'Thank you for watching.' was not addressed to it and neither searched nor spoke.",
+  "spoken_fit_reason": "The silence marker is the ideal reply length, and nothing is spoken."
+}

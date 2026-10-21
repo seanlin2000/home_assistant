@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It names only travel style and the vague budget, leaving out the departure location, dates and trip length, what 'warm' means, domestic versus international, companions, and the assumption that warm means beach.",
+  "judgment_reason": "It invents no preferences and names no destination, but it overlooks the most basic missing facts, such as where the user is leaving from and when.",
+  "spoken_fit_reason": "Two short plain sentences that go straight to the answer."
+}

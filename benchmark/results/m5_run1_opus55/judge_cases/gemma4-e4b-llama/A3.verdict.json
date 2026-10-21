@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 0,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It says it 'cannot definitively say' instead of giving the clear no the reference requires, and it only mentions total parameter count as one factor without explaining that every expert must stay in memory.",
+  "judgment_reason": "It does not accept the false premise, but it hedges instead of pushing back on it, which is the central point of the question.",
+  "spoken_fit_reason": "Two plain sentences, but they deliver a non-answer instead of leading with a yes or no."
+}

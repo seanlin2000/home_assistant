@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It gives the rate of about 1.1227, which matches the retrieved quotes (Google 1.1226, unitconverters 1.12265), and the calculator's 1,347.19 dollars for 1,200 euros.",
+  "judgment_reason": "It searched for a live rate, used a figure that several current sources agree on, and passed the multiplication to the calculator.",
+  "spoken_fit_reason": "Two short plain sentences that lead with the rate and then the converted amount."
+}

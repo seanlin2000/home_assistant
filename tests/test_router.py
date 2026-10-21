@@ -54,6 +54,15 @@ def test_weather_rule_fires_for_home_and_named_places_and_not_for_explanations()
     assert rule_route("Why does rain smell nice?") is None
 
 
+def test_sports_rule_fires_on_statistics_rosters_and_league_questions_and_not_on_other_rosters() -> None:
+    fired = {question.id for question in QUESTIONS.questions if (decision := rule_route(question.exchanges[-1])) and decision.route == Route.SPORTS}
+    assert {"J64", "J70"} <= fired
+    for sports in ("Who won the NFL game last night?", "How many three pointers did Curry make in 2016?", "What's Brady's record against the Colts?"):
+        assert rule_route(sports).tool_routes == [Route.SPORTS], sports
+    for not_sports in ("Who is on the cleaning roster this week?", "What is the average temperature in July?"):
+        assert rule_route(not_sports) is None, not_sports
+
+
 def test_rules_combine_when_a_question_needs_several_tools() -> None:
     assert rule_route("What are the current train schedules and weather in Lucerne?").tool_routes == [Route.SEARCH, Route.WEATHER]
     assert rule_route("Search for today's mortgage rate and the monthly payment on a 400,000 dollar loan").tool_routes == [Route.SEARCH, Route.CALCULATE]

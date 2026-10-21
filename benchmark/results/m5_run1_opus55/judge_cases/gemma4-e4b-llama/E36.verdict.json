@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The no-umbrella answer matches the tool's \"clear, dry\" afternoon, but it leaves out the 68 to 71°F temperature that the reference sketch asks for.",
+  "judgment_reason": "It called weather_forecast for tomorrow afternoon instead of searching, and stated nothing that is not in the tool result.",
+  "spoken_fit_reason": "One plain sentence that gives the umbrella answer, with no formatting."
+}

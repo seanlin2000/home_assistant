@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It wrongly claims the GPU 'only needs to load' the two active experts, which treats MoE as needing less memory by nature; that is the misconception the reference sketch rules out, and its later line that storage depends on total parameters contradicts it.",
+  "judgment_reason": "Answering without a search was right, but it never says that every expert must stay resident, or that quantization or CPU offload is what makes it fit, so it endorses the misleading simplification the question tests.",
+  "spoken_fit_reason": "Three paragraphs is long for speech, and the markdown emphasis in '*used*' would be read out wrongly."
+}

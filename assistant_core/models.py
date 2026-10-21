@@ -15,6 +15,7 @@ class Route(StrEnum):
     SEARCH = "search"
     CALCULATE = "calculate"
     WEATHER = "weather"
+    SPORTS = "sports"
     ANSWER = "answer"
 
 
@@ -67,12 +68,14 @@ class AgentPolicy(BaseModel):
     filler_phrases: list[str] = Field(default_factory=lambda: list(DEFAULT_FILLER_PHRASES))
     calculate_filler_phrases: list[str] = Field(default_factory=lambda: list(DEFAULT_CALCULATE_FILLER_PHRASES))
     weather_filler_phrases: list[str] = Field(default_factory=lambda: list(DEFAULT_WEATHER_FILLER_PHRASES))
+    sports_filler_phrases: list[str] = Field(default_factory=lambda: list(DEFAULT_SPORTS_FILLER_PHRASES))
     tool_timeout_seconds: float = 30.0
     history_exchanges: int = Field(default=3, ge=0)  # earlier exchanges replayed with each question; more and the model answers from the history instead of looking up
 
 
-# Spoken while the first tool call of an exchange runs, so the user hears something within a second or two. Search, calculation, and the forecast get
-# different lines because "checking the web" is wrong, and mildly alarming, when the assistant is only doing arithmetic locally or reading the forecast.
+# Spoken while the first tool call of an exchange runs, so the user hears something within a second or two. Search, calculation, the forecast, and
+# sports get different lines because "checking the web" is wrong, and mildly alarming, when the assistant is doing arithmetic locally or reading
+# a forecast or a box score.
 DEFAULT_FILLER_PHRASES = (
     "Let me pull some sources on that.",
     "One moment, checking the web.",
@@ -86,12 +89,17 @@ DEFAULT_WEATHER_FILLER_PHRASES = (
     "Checking the forecast.",
     "One moment, getting the forecast.",
 )
+DEFAULT_SPORTS_FILLER_PHRASES = (
+    "Let me check the numbers.",
+    "One moment, pulling up the numbers.",
+)
 SEARCH_TOOL_NAMES = frozenset({"search_and_read", "web_search", "fetch_page", "wikipedia_lookup"})
 WEATHER_TOOL_NAMES = frozenset({"weather_forecast"})
+SPORTS_TOOL_NAMES = frozenset({"game_scores", "team_roster", "player_stats", "player_matchup"})
 # The router's JSON: a route, up to two more, and a one-sentence plan. Forty tokens held the route alone and cut the plan off mid-string.
 CLASSIFY_MAX_TOKENS = 120
 CALCULATOR_TOOL_NAMES = frozenset({"calculate", "percent", "convert", "growth_schedule", "energy_cost", "loan_payment", "break_even", "date_math"})
-TOOL_NAMES_BY_ROUTE = {Route.SEARCH: SEARCH_TOOL_NAMES, Route.CALCULATE: CALCULATOR_TOOL_NAMES, Route.WEATHER: WEATHER_TOOL_NAMES}
+TOOL_NAMES_BY_ROUTE = {Route.SEARCH: SEARCH_TOOL_NAMES, Route.CALCULATE: CALCULATOR_TOOL_NAMES, Route.WEATHER: WEATHER_TOOL_NAMES, Route.SPORTS: SPORTS_TOOL_NAMES}
 # The tools a live tool server must expose before the benchmark or the health check trusts it as ours (a stale server once served a different set).
 REQUIRED_TOOL_NAMES = frozenset({"search_and_read", "web_search", "fetch_page", "wikipedia_lookup", "calculate", "percent", "convert"})
 

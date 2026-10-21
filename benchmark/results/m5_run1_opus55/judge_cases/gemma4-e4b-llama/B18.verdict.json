@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 1,
+  "answer_quality_reason": "Pointing to Qwen 3.8 27B in smaller quants for 16GB traces to the Codersera excerpt, but the answer labels the 18GB Q4_K_M download 'Qwen 3.6', skips the specific 13.4GB Q3 option that actually fits, and gives generic tradeoffs instead of the excerpts' concrete figures.",
+  "judgment_reason": "It notes that the 18GB quant leaves little headroom for context, but it blurs which model version the figure belongs to and doesn't mention smaller current options like Qwen3 8B or 14B.",
+  "spoken_fit_reason": "The answer is two long paragraphs and includes a raw token, 'Q4_K_M', which is too much for a spoken reply even though the question asked for explanation."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It gives 4,806 passing yards and 50 touchdowns for New England in 2007, matching the player_stats row.",
+  "judgment_reason": "It called player_stats for the single season and correctly gave the 2007 team as New England, even though the header listed Tampa Bay.",
+  "spoken_fit_reason": "One plain sentence with the numbers written out as words, though it opens with 'The tool shows that'."
+}

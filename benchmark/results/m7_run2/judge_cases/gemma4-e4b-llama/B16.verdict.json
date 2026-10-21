@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It cites the $4,795 average and the $4,100 one-bedroom median from the excerpts, but never compares the 4% increase with the 1.34% year-over-year rent growth RentCafe reported, which is the comparison asked for, and its risk explanation skips the gap between asking rents and signed leases or concessions that source 8 flags.",
+  "judgment_reason": "Searching was right and it avoided inventing figures, but it hedged with 'might be competitive' and asked for unit size when the rate-of-increase comparison could have been made with the data in hand.",
+  "spoken_fit_reason": "Four plain-prose sentences with spelled-out numbers and no lists or markup, a reasonable length for a two-part question."
+}

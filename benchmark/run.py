@@ -10,6 +10,7 @@ import sys
 import time
 import uuid
 from collections.abc import AsyncIterator, Awaitable, Callable
+from datetime import date
 from pathlib import Path
 
 import httpx
@@ -121,7 +122,7 @@ async def run_candidate(candidate: Candidate, questions: list[Question], config:
             await warm_up_llama_server(llm, toolbox)
         for question in pending:
             async with fixture_selected(mcp_url, question.fixture):
-                result = await run_question(question, candidate, llm.model_name, in_process_exchange(llm, toolbox, policy), memory_fit)
+                result = await run_question(question, candidate, llm.model_name, in_process_exchange(llm, toolbox, policy, question.today), memory_fit)
             append_jsonl(output_path, result)
             print_result_line(question, result)
     await release_model(candidate, config, args.delete_models)
@@ -134,8 +135,8 @@ async def run_through_harness(candidate: Candidate, pending: list[Question], out
     if health.status != "ok":
         raise SystemExit(f"the harness reports {health.model_dump()}; start it with scripts/services.sh install")
     for question in pending:
-        if question.fixture:
-            console.print(f"  {question.id:<4} [dim]skipped: its fixture pages exist only on the benchmark's own tool server[/dim]")
+        if question.needs_benchmark_tool_server:
+            console.print(f"  {question.id:<4} [dim]skipped: its fixture pages or recorded scores exist only on the benchmark's own tool server[/dim]")
             continue
         conversation_id = f"benchmark-{candidate.key}-{question.id}-{uuid.uuid4().hex[:8]}"
         result = await run_question(question, candidate, candidate.model, harness_exchange(client, conversation_id), MemoryFit())
@@ -224,9 +225,9 @@ async def run_question(question: Question, candidate: Candidate, model_name: str
     return QuestionResult(question_id=question.id, candidate_key=candidate.key, model=model_name, exchanges=transcripts, memory_fit=memory_fit)
 
 
-def in_process_exchange(llm: LLMClient, toolbox: McpToolBox, policy: AgentPolicy) -> ExchangeRunner:
+def in_process_exchange(llm: LLMClient, toolbox: McpToolBox, policy: AgentPolicy, today: date | None) -> ExchangeRunner:
     async def run_exchange(conversation: list[Message]) -> Transcript:
-        return await transcript_of(agent_loop.run(conversation, llm, toolbox, policy))
+        return await transcript_of(agent_loop.run(conversation, llm, toolbox, policy, today=today))
 
     return run_exchange
 

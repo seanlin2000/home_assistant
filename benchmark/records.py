@@ -1,5 +1,6 @@
 """Typed records shared by run, judge, and report."""
 
+from datetime import date
 from enum import StrEnum
 from pathlib import Path
 from typing import Any, Literal
@@ -20,6 +21,7 @@ class Category(StrEnum):
     F = "F"  # several tools: a question a correct answer cannot give without each of its required tools (design doc v2/01 section 3.3)
     H = "H"  # injection: a fixture page tries to give the assistant orders (design doc v2/01 section 3.3)
     I = "I"  # weather anywhere: weather_forecast with a place, which its heading must name
+    J = "J"  # sports: NBA and NFL scores, rosters, statistics, and head-to-heads from recorded ESPN answers, whose heading must name the team or player
 
 
 class ExpectedReply(StrEnum):
@@ -47,11 +49,12 @@ class Gate(StrEnum):
     FOLLOWED_INJECTED_INSTRUCTION = "followed_injected_instruction"
     FETCHED_UNPROVENANCED_URL = "fetched_unprovenanced_url"
     WRONG_PLACE = "wrong_place"
+    WRONG_ENTITY = "wrong_entity"
     MISSING_REQUIRED_TOOL = "missing_required_tool"
     RUN_ERROR = "run_error"
 
 
-from assistant_core.models import SEARCH_TOOL_NAMES, WEATHER_TOOL_NAMES  # noqa: E402 - shared with the agent loop so both agree on what counts as a search
+from assistant_core.models import CALCULATOR_TOOL_NAMES, SEARCH_TOOL_NAMES, SPORTS_TOOL_NAMES, WEATHER_TOOL_NAMES  # noqa: E402 - shared with the agent loop so both agree on what counts as a search
 
 JUDGE_GATES = (Gate.FABRICATED_CURRENT_FACT, Gate.VIOLATED_EXPLICIT_CONSTRAINT, Gate.PRESENTED_ESTIMATE_AS_FACT, Gate.LOST_PRIOR_EXCHANGE_CONTEXT, Gate.AGREED_WITH_FALSE_PREMISE)
 
@@ -84,7 +87,14 @@ class Question(BaseModel):
     fixture: str | None = None  # the page set in benchmark/fixtures/pages/ that every search returns for this question
     injection: Injection | None = None
     expected_place: str | None = None  # the place a forecast's heading must name, e.g. "Portland, Maine"; every comma-separated part must appear
-    required_tools: list[Route] = Field(default_factory=list)  # tool families a correct answer cannot avoid: search, calculate, weather
+    required_tools: list[Route] = Field(default_factory=list)  # tool families a correct answer cannot avoid: search, calculate, weather, sports
+    today: date | None = None  # the date the prompt gives, pinned for sports questions to the day their ESPN answers were recorded
+    expected_entity: str | None = None  # the team or player a sports tool's heading must name, e.g. "Tom Brady"
+
+    @property
+    def needs_benchmark_tool_server(self) -> bool:
+        """Fixture pages and recorded ESPN answers are served only by the tool server the benchmark starts, not by the live one the harness uses."""
+        return bool(self.fixture) or Route.SPORTS in self.required_tools
 
     @property
     def should_search(self) -> bool:
@@ -203,11 +213,18 @@ class QuestionResult(BaseModel):
 
     @property
     def forecast_call_count(self) -> int:
-        return sum(1 for transcript in self.exchanges for tool_call_record in transcript.tool_call_records if tool_call_record.call.name in WEATHER_TOOL_NAMES)
+        return self.call_count(WEATHER_TOOL_NAMES)
 
     @property
     def calculator_call_count(self) -> int:
-        return sum(1 for transcript in self.exchanges for tool_call_record in transcript.tool_call_records if tool_call_record.call.name not in SEARCH_TOOL_NAMES | WEATHER_TOOL_NAMES)
+        return self.call_count(CALCULATOR_TOOL_NAMES)
+
+    @property
+    def sports_call_count(self) -> int:
+        return self.call_count(SPORTS_TOOL_NAMES)
+
+    def call_count(self, tool_names: frozenset[str]) -> int:
+        return sum(1 for transcript in self.exchanges for tool_call_record in transcript.tool_call_records if tool_call_record.call.name in tool_names)
 
     @property
     def tool_call_count(self) -> int:
