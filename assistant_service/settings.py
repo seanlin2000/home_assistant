@@ -1,6 +1,5 @@
 """The typed contents of config/harness.toml, plus the host names the service answers to, which come from its launchd agent's environment."""
 
-import os
 import tomllib
 from pathlib import Path
 
@@ -8,6 +7,7 @@ from pydantic import BaseModel, ConfigDict
 
 from assistant_core.models import AgentPolicy
 from serving.settings import ServingConfig
+from utils.http_access_utils import allowed_hosts_from_environment
 
 HARNESS_CONFIG_PATH = Path(__file__).resolve().parent.parent / "config" / "harness.toml"
 ALLOWED_HOSTS_VARIABLE = "HARNESS_ALLOWED_HOSTS"
@@ -47,9 +47,7 @@ class HarnessConfig(StrictModel):
 
     def allowed_hosts(self) -> list[str]:
         """Host header values the service answers to: the derived list from the environment, or this machine's loopback names."""
-        configured = os.environ.get(ALLOWED_HOSTS_VARIABLE, "")
-        hosts = [entry.strip() for entry in configured.split(",") if entry.strip()]
-        return hosts or [f"localhost:{self.service.port}", f"127.0.0.1:{self.service.port}"]
+        return allowed_hosts_from_environment(ALLOWED_HOSTS_VARIABLE, self.service.port)
 
     def policy(self, serving: ServingConfig) -> AgentPolicy:
         """The loop policy: the answer settings from this file, the window and output cap from the served model's settings."""

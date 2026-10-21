@@ -2,8 +2,8 @@
 
 A Transcript carries everything the agent loop saw, including the full text of every fetched web page. The record keeps what a debugging session
 needs (what was asked, what was answered, which tools ran with which arguments and how long they took, token counts and timings, the failure
-flags the benchmark gates on) and drops the page text, which is thousands of words per search and can be fetched again. Pure pydantic, so it
-imports inside Home Assistant's own Python where the component runs.
+flags the benchmark gates on) and drops the page text, which is thousands of words per search. The exchange's trace keeps the whole transcript, for
+a shorter time, for the exchange dashboard (design doc v2/13). Pure pydantic, so it imports inside Home Assistant's own Python where the component runs.
 """
 
 from datetime import UTC, datetime
@@ -21,11 +21,14 @@ class ToolCallSummary(BaseModel):
     result_chars: int
     error: str | None = None
     refused: bool = False
+    started_seconds: float | None = None
 
 
 class ExchangeRecord(BaseModel):
     recorded_at: str  # ISO 8601, UTC
     source: str  # "home_assistant", "benchmark", "smoke"
+    exchange_id: str = ""  # shared with the exchange's trace; empty in records written before traces were kept
+    conversation_id: str = ""
     model: str
     user_text: str
     history_messages: int  # messages in the conversation before this exchange's question (0 for a fresh conversation)
@@ -52,6 +55,16 @@ class ExchangeRecord(BaseModel):
         return bool(self.error) or self.truncated or self.hit_tool_round_cap or self.malformed_tool_call_count > 0 or not self.final_answer.strip()
 
 
+class ExchangeTrace(BaseModel):
+    """The whole transcript of one exchange, every tool result included, which the exchange dashboard shows (design doc v2/13 section 3.1)."""
+
+    exchange_id: str
+    recorded_at: str  # ISO 8601, UTC, the same instant as the exchange's record
+    source: str
+    conversation_id: str = ""
+    transcript: Transcript
+
+
 def summarize_tool_call(tool_call_record: ToolCallRecord) -> ToolCallSummary:
     return ToolCallSummary(
         round_index=tool_call_record.round_index,
@@ -61,6 +74,7 @@ def summarize_tool_call(tool_call_record: ToolCallRecord) -> ToolCallSummary:
         result_chars=len(tool_call_record.result),
         error=tool_call_record.error,
         refused=tool_call_record.refused,
+        started_seconds=tool_call_record.started_seconds,
     )
 
 

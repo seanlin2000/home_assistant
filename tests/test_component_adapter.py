@@ -40,8 +40,13 @@ def test_chat_log_keeps_spoken_messages_only() -> None:
     ]
 
 
+def external_call(call: ToolCall) -> dict[str, Any]:
+    """Stands in for Home Assistant's ToolInput, which is not installed in this venv."""
+    return {"id": call.id, "tool_name": call.name, "external": True}
+
+
 async def collect(events: AsyncIterator[AgentEvent]) -> list[dict[str, Any]]:
-    return [delta async for delta in adapter.agent_events_to_deltas(events)]
+    return [delta async for delta in adapter.agent_events_to_deltas(events, external_call)]
 
 
 async def events_from(items: list[AgentEvent]) -> AsyncIterator[AgentEvent]:
@@ -55,7 +60,12 @@ async def test_filler_and_answer_become_one_streamed_assistant_message() -> None
     deltas = await collect(events_from([FillerSpoken(text="Let me check."), ToolStarted(call=call), AnswerDelta(text="It is "), AnswerDelta(text="3.63 percent."), Done(transcript=transcript)]))
     assert deltas[0] == {"role": "assistant"}
     assert "".join(delta.get("content", "") for delta in deltas[1:]) == "Let me check. It is 3.63 percent."
-    assert all("tool_calls" not in delta for delta in deltas)
+
+
+async def test_the_tool_call_follows_the_filler_so_home_assistant_starts_speaking_it() -> None:
+    call = ToolCall(id="c", name="search_and_read", arguments={"query": "fed funds"})
+    deltas = await collect(events_from([FillerSpoken(text="Let me check."), ToolStarted(call=call), AnswerDelta(text="It is 3.63 percent.")]))
+    assert deltas[1:3] == [{"content": "Let me check. "}, {"tool_calls": [{"id": "c", "tool_name": "search_and_read", "external": True}]}]
 
 
 async def test_answer_after_the_tool_round_cap_follows_the_filler() -> None:
@@ -63,7 +73,7 @@ async def test_answer_after_the_tool_round_cap_follows_the_filler() -> None:
     llm = ScriptedLLM([*tool_replies_past_the_cap(policy), text_reply("It is ", "3.63 percent.")])
     conversation = [Message(role=Role.USER, content="What is the fed funds rate?")]
     deltas = await collect(agent_loop.run(conversation, llm, FakeToolBox(), policy))
-    assert [delta.get("content") for delta in deltas[1:]] == ["Let me check. ", "It is ", "3.63 percent."]
+    assert [delta["content"] for delta in deltas[1:] if "content" in delta] == ["Let me check. ", "It is ", "3.63 percent."]
 
 
 async def test_empty_answer_gets_a_spoken_fallback() -> None:
@@ -87,7 +97,7 @@ async def test_an_unreachable_harness_is_announced_rather_than_silent() -> None:
 async def test_on_done_receives_the_transcript_before_the_stream_ends() -> None:
     transcript = Transcript(model="m", system_prompt="", conversation=[], final_answer="Done.")
     seen = []
-    deltas = [delta async for delta in adapter.agent_events_to_deltas(events_from([AnswerDelta(text="Done."), Done(transcript=transcript)]), on_done=seen.append)]
+    deltas = [delta async for delta in adapter.agent_events_to_deltas(events_from([AnswerDelta(text="Done."), Done(transcript=transcript)]), external_call, on_done=seen.append)]
     assert seen == [transcript]
     assert deltas[-1] == {"content": "Done."}
 

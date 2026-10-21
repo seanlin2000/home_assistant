@@ -1,56 +1,39 @@
-"""Append-only store of ExchangeRecords on the Mac's disk, one JSON Lines file per day, pruned after a retention period (design doc 10 §3.4, §3.6)."""
+"""The harness's two day-file logs on the Mac's disk: the trimmed exchange record, kept 90 days (design doc 10 §3.4, §3.6), and the full trace of
+the same exchange with every tool result, kept 14 days for the exchange dashboard (design doc v2/13 section 3.1)."""
 
-import re
-from datetime import UTC, date, datetime, timedelta
+import uuid
+from datetime import UTC, datetime
 from pathlib import Path
 
-from assistant_core.exchange_record import ExchangeRecord
-from utils.jsonl_utils import append_jsonl, read_jsonl
+from assistant_core.converse_protocol import ConverseRequest
+from assistant_core.exchange_record import ExchangeRecord, ExchangeTrace, exchange_record_from_transcript
+from assistant_core.models import Transcript
+from utils.daily_log_utils import DailyLog
 
-DAY_FILE = re.compile(r"^(\d{4}-\d{2}-\d{2})\.jsonl$")
 DEFAULT_RETENTION_DAYS = 90
+TRACE_RETENTION_DAYS = 14
 
 
-class ExchangeLog:
+class ExchangeLog(DailyLog[ExchangeRecord]):
     def __init__(self, directory: Path) -> None:
-        self._directory = directory
+        super().__init__(directory, ExchangeRecord, DEFAULT_RETENTION_DAYS)
 
-    @property
-    def directory(self) -> Path:
-        return self._directory
 
-    def path_for(self, day: date) -> Path:
-        return self._directory / f"{day.isoformat()}.jsonl"
+class TraceLog(DailyLog[ExchangeTrace]):
+    def __init__(self, directory: Path) -> None:
+        super().__init__(directory, ExchangeTrace, TRACE_RETENTION_DAYS)
 
-    def append(self, record: ExchangeRecord) -> Path:
-        path = self.path_for(datetime.now(UTC).date())
-        append_jsonl(path, record)
-        return path
 
-    def day_files(self) -> list[tuple[date, Path]]:
-        """Every day file that exists, oldest first. Files that do not match the day pattern are left alone."""
-        found = []
-        if not self._directory.exists():
-            return found
-        for path in self._directory.iterdir():
-            match = DAY_FILE.match(path.name)
-            if match:
-                found.append((date.fromisoformat(match.group(1)), path))
-        return sorted(found)
+class ExchangeArchive:
+    """Keeps each finished exchange in both logs under one id, so the dashboard can find the trace behind a record."""
 
-    def read_since(self, since: date) -> list[ExchangeRecord]:
-        records: list[ExchangeRecord] = []
-        for day, path in self.day_files():
-            if day >= since:
-                records.extend(read_jsonl(path, ExchangeRecord))
-        return records
+    def __init__(self, records: ExchangeLog, traces: TraceLog) -> None:
+        self.records = records
+        self.traces = traces
 
-    def prune(self, retention_days: int = DEFAULT_RETENTION_DAYS, today: date | None = None) -> list[Path]:
-        """Delete day files older than the retention period and return what was deleted."""
-        cutoff = (today or datetime.now(UTC).date()) - timedelta(days=retention_days)
-        deleted = []
-        for day, path in self.day_files():
-            if day < cutoff:
-                path.unlink()
-                deleted.append(path)
-        return deleted
+    def keep(self, request: ConverseRequest, transcript: Transcript) -> ExchangeRecord:
+        identity = {"exchange_id": uuid.uuid4().hex[:12], "conversation_id": request.conversation_id}
+        record = exchange_record_from_transcript(transcript, source=request.source, recorded_at=datetime.now(UTC)).model_copy(update=identity)
+        self.records.append(record)
+        self.traces.append(ExchangeTrace(recorded_at=record.recorded_at, source=request.source, transcript=transcript, **identity))
+        return record

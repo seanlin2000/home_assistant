@@ -11,7 +11,7 @@ from starlette.applications import Starlette
 from assistant_core.llama_server_client import LlamaServerClient
 from assistant_service.app import AccessRules, build_app
 from assistant_service.conversation_state import ConversationState
-from assistant_service.exchange_log import ExchangeLog
+from assistant_service.exchange_log import ExchangeArchive, ExchangeLog, TraceLog
 from assistant_service.harness import SECONDS_PER_MINUTE, Harness
 from assistant_service.settings import HarnessConfig, load_harness_config
 from ops import paths
@@ -37,7 +37,7 @@ def build_harness(config: HarnessConfig, serving: ServingConfig) -> Harness:
         tool_server_url=config.service.tool_server_url,
         policy=config.policy(serving),
         state=ConversationState(config.service.state_path),
-        exchange_log=ExchangeLog(paths.exchanges_dir()),
+        archive=ExchangeArchive(ExchangeLog(paths.exchanges_dir()), TraceLog(paths.traces_dir())),
         quiet_minutes=config.service.conversation_quiet_minutes,
     )
 

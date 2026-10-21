@@ -13,7 +13,6 @@ import httpx
 
 from assistant_core import agent_loop
 from assistant_core.converse_protocol import ConverseRequest, HarnessHealth
-from assistant_core.exchange_record import exchange_record_from_transcript
 from assistant_core.llama_server_client import LlamaServerClient
 from assistant_core.mcp_http import HttpMcpToolBox, McpProtocolError
 from assistant_core.models import AgentEvent, AgentPolicy, AnswerDelta, Done, Message, Transcript
@@ -21,7 +20,7 @@ from assistant_core.prompts import system_prompt
 from assistant_core.router import ROUTER_SYSTEM_PROMPT
 from assistant_core.tools import ToolBox, UnavailableToolBox
 from assistant_service.conversation_state import ConversationState
-from assistant_service.exchange_log import ExchangeLog
+from assistant_service.exchange_log import ExchangeArchive
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -31,12 +30,12 @@ SECONDS_PER_MINUTE = 60
 
 
 class Harness:
-    def __init__(self, llm: LlamaServerClient, tool_server_url: str, policy: AgentPolicy, state: ConversationState, exchange_log: ExchangeLog, quiet_minutes: float) -> None:
+    def __init__(self, llm: LlamaServerClient, tool_server_url: str, policy: AgentPolicy, state: ConversationState, archive: ExchangeArchive, quiet_minutes: float) -> None:
         self._llm = llm
         self._tool_server_url = tool_server_url
         self._policy = policy
         self._state = state
-        self._exchange_log = exchange_log
+        self._archive = archive
         self._quiet_seconds = quiet_minutes * SECONDS_PER_MINUTE
         self._slots_warm = False
 
@@ -54,7 +53,7 @@ class Harness:
         """Log the exchange, and keep the conversation's untrusted mark once any exchange of it read a stranger's text (design doc v2/12 section 3.2)."""
         if transcript.untrusted:
             self._state.mark_untrusted(request.conversation_id)
-        self._exchange_log.append(exchange_record_from_transcript(transcript, source=request.source))
+        self._archive.keep(request, transcript)
 
     async def warm_up(self) -> None:
         """Both slots read their stable prompts, so the next question reads only its own tokens (design doc v2/02 section 3.4)."""

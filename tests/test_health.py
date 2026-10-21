@@ -127,10 +127,14 @@ def test_housekeeping_touches_every_file_under_the_log_dir(tmp_path: Path, monke
     paths.exchanges_dir().mkdir()
     (paths.exchanges_dir() / "2025-01-01.jsonl").write_text("{}\n")
     (paths.exchanges_dir() / "2026-09-01.jsonl").write_text("{}\n")
+    paths.traces_dir().mkdir()
+    (paths.traces_dir() / "2026-08-20.jsonl").write_text("{}\n")
+    (paths.traces_dir() / "2026-09-01.jsonl").write_text("{}\n")
     paths.service_log("mcp").write_bytes(b"x" * (health.ROTATE_OVER_BYTES + 1))
     notes = health.housekeeping(today=date(2026, 9, 7))
-    assert notes == ["rotated mcp.log", "deleted 2025-01-01.jsonl"]
+    assert notes == ["rotated mcp.log", "deleted exchanges/2025-01-01.jsonl", "deleted traces/2026-08-20.jsonl"]
     assert (paths.exchanges_dir() / "2026-09-01.jsonl").exists()
+    assert (paths.traces_dir() / "2026-09-01.jsonl").exists()
 
 
 async def test_harness_check_sends_its_key_and_names_what_the_harness_cannot_reach(tmp_path: Path) -> None:

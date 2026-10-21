@@ -16,10 +16,22 @@ def log_dir() -> Path:
 # model clients stay on the Mac, so Home Assistant's Python never imports them (design doc v2/04 section 3.2).
 VENDORED_CORE_FILES = ("assistant_core/__init__.py", "assistant_core/models.py", "assistant_core/prompts.py", "assistant_core/converse_protocol.py", "assistant_core/harness_client.py")
 EXCHANGES_FOLDER = "exchanges"
+TRACES_FOLDER = "traces"
+PIPELINE_RUNS_FOLDER = "pipeline_runs"
 
 
 def exchanges_dir() -> Path:
     return log_dir() / EXCHANGES_FOLDER
+
+
+def traces_dir() -> Path:
+    """Full transcripts, every tool result included, kept 14 days for the exchange dashboard (design doc v2/13 section 3.1)."""
+    return log_dir() / TRACES_FOLDER
+
+
+def pipeline_runs_dir() -> Path:
+    """Home Assistant's Assist pipeline runs, which the dashboard collects for their speech timings (design doc v2/13 section 3.3)."""
+    return log_dir() / PIPELINE_RUNS_FOLDER
 
 
 def health_json() -> Path:
@@ -48,7 +60,7 @@ def health_state() -> Path:
     return log_dir() / "health_state.json"
 
 
-SERVICE_LOG_NAMES = ("ollama", "llama", "mcp", "harness", "whisper", "kokoro", "health")
+SERVICE_LOG_NAMES = ("ollama", "llama", "mcp", "harness", "dashboard", "whisper", "kokoro", "health")
 
 
 def service_log(name: str) -> Path:

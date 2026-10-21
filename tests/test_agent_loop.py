@@ -117,6 +117,25 @@ async def test_multi_exchange_conversation_carries_history() -> None:
     assert not any(isinstance(event, (FillerSpoken, ToolStarted)) for event in second)
 
 
+async def test_earlier_answers_reach_the_model_without_the_filler_spoken_before_them() -> None:
+    llm = ScriptedLLM([text_reply("It opened in 1936.")])
+    conversation = [
+        Message(role=Role.USER, content="When was the Golden Gate Bridge built?"),
+        Message(role=Role.ASSISTANT, content="One moment, checking the web. It was built from 1933 to 1937."),
+        Message(role=Role.USER, content="Checking the forecast. And the Bay Bridge?"),
+    ]
+    events = [event async for event in agent_loop.run(conversation, llm, FakeToolBox(), AgentPolicy(filler_phrases=["One moment, checking the web."]))]
+    sent = llm.seen_messages[0]
+    assert sent[2].content == "It was built from 1933 to 1937."
+    assert sent[3].content.endswith("Question: Checking the forecast. And the Bay Bridge?")
+    assert events[-1].transcript.conversation[1].content == "It was built from 1933 to 1937."
+
+
+def test_a_turn_that_is_only_the_filler_is_kept_as_it_was() -> None:
+    filler_only = Message(role=Role.ASSISTANT, content="Let me work that out.")
+    assert agent_loop.without_replayed_fillers([filler_only], AgentPolicy()) == [filler_only]
+
+
 async def test_calculator_call_speaks_the_math_filler_not_the_web_one() -> None:
     llm = ScriptedLLM([tool_reply("18% of 245", tool_name="percent"), text_reply("Forty-four dollars and ten cents.")])
     policy = AgentPolicy(filler_phrases=["Checking the web."], calculate_filler_phrases=["Doing the math."])
@@ -259,3 +278,14 @@ async def test_a_tool_call_written_as_text_is_never_spoken_and_is_asked_again() 
 async def test_a_reply_that_starts_with_markup_but_is_not_a_tool_call_is_spoken_at_its_end() -> None:
     events = await collect(ScriptedLLM([text_reply("<3 thanks, ", "glad to help.")]), FakeToolBox())
     assert "".join(spoken_deltas(events)) == "<3 thanks, glad to help."
+
+
+async def test_every_step_is_stamped_with_its_start_in_the_exchange() -> None:
+    """The dashboard draws each step where it ran (design doc v2/13 section 3.2); calls of one turn start together."""
+    events = await collect(ScriptedLLM([several_tool_calls_reply("gold price", "silver price"), text_reply("Done.")]), SlowToolBox())
+    transcript = events[-1].transcript
+    first_call, second_call = transcript.model_calls
+    gold, silver = transcript.tool_call_records
+    assert transcript.route.started_seconds <= first_call.started_seconds <= gold.started_seconds
+    assert gold.started_seconds == silver.started_seconds
+    assert second_call.started_seconds >= gold.started_seconds + gold.seconds

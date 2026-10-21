@@ -22,9 +22,10 @@ from pydantic import BaseModel, Field
 
 from assistant_core.converse_protocol import HEALTH_PATH, HarnessHealth
 from assistant_core.models import REQUIRED_TOOL_NAMES
-from assistant_service.exchange_log import ExchangeLog
+from assistant_service.exchange_log import ExchangeLog, TraceLog
 from assistant_service.settings import load_harness_config
 from ops import paths
+from ops.pipeline_runs import PipelineRunLog
 from serving.settings import read_api_key
 from utils.jsonl_utils import append_jsonl
 from web_search_mcp.searxng_client import describe_unresponsive_engines
@@ -399,8 +400,8 @@ def housekeeping(today: date | None = None) -> list[str]:
     removed = prune_history(paths.health_jsonl(), today=today)
     if removed:
         notes.append(f"pruned {removed} health snapshots")
-    for deleted in ExchangeLog(paths.exchanges_dir()).prune(today=today):
-        notes.append(f"deleted {deleted.name}")
+    for log in (ExchangeLog(paths.exchanges_dir()), TraceLog(paths.traces_dir()), PipelineRunLog(paths.pipeline_runs_dir())):
+        notes.extend(f"deleted {log.directory.name}/{deleted.name}" for deleted in log.prune(today=today))
     return notes
 
 
