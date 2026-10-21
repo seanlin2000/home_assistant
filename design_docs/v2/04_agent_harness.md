@@ -155,7 +155,18 @@ Home Assistant's chat log stays the record of what was said. The component sends
 
 The alternative, the harness holding the whole history itself, was weighed and set aside: two copies of a conversation can disagree, Home Assistant would still show its own, and the benchmark's two-exchange questions already pass the history in, the way the component does. The exchange log the harness writes holds everything needed to summarise a conversation after Home Assistant has forgotten it.
 
-**Fillers leave the replayed history.** Home Assistant replays each earlier answer with the filler sentence in front of it, but without the tool call the filler covered for. A run of turns that announce a lookup and then answer with none teaches a small model to do the same, so the harness strips a leading filler phrase from every earlier answer before the model sees it. A turn that is nothing but the filler stays as it was. Replaying the 2026-10-20 bridge exchange on Gemma 4 E4B, with 9 to 27 turns of history, the model called a tool in 19 of 40 trials with the fillers stripped and 7 of 40 with them kept. With all 37 turns it called none either way, so a long history still needs the tool call forced.
+**Fillers leave the replayed history.** Home Assistant replays each earlier answer with the filler sentence in front of it, but without the tool call the filler covered for. A run of turns that announce a lookup and then answer with none teaches a small model to do the same, so the harness strips a leading filler phrase from every earlier answer before the model sees it. A turn that is nothing but the filler stays as it was. Replaying the 2026-10-20 bridge exchange on Gemma 4 E4B, with 9 to 27 turns of history, the model called a tool in 19 of 40 trials with the fillers stripped and 7 of 40 with them kept. With all 37 turns it called none either way, so a long history also needs a shorter replay (next).
+
+**Only the last three exchanges are replayed.** Even without the fillers, a long run of earlier answers with no lookup behind them leads the model to answer from them, often while claiming "the search results indicate". The harness therefore keeps the current question and the three exchanges before it, where an exchange is one question and every reply after it, and drops the rest before the router, the model, and the transcript read the conversation. `history_exchanges` in `config/harness.toml` sets the number. The bridge question, replayed with all 37 turns of history and the fillers stripped, 8 trials per row, called a tool this often:
+
+| Earlier exchanges kept | Turns the model saw | Called a tool |
+|---|---|---|
+| All 18 | 37 | 1 of 8 |
+| 4 | 9 | 5 of 8 |
+| 3 | 7 | 8 of 8 |
+| 2 | 5 | 8 of 8 |
+
+Three is the default: it called a tool as often as two here, keeps one more exchange for follow-ups, and on the follow-ups below looked up more often than two. Four logged follow-ups that lean on an earlier exchange still resolved it with three kept, in every one of three trials each: "And who did they beat?", "search the web to find the answer to my previous question", "you named 17, but you said 13", and a scores question that leans on the exchange two back. Older exchanges are dropped outright until compaction (below) can stand in for them. Three exchanges of spoken answers come to a couple of hundred tokens, so reading them fresh on each question costs little.
 
 **Compaction.** When the history passes 75% of its allowance, the harness writes the compaction summary after the answer has been spoken, so the next question never waits for it. It is one quiet llama.cpp request: no tools, an answer forced into a JSON schema, at most 150 words, made from your words and the answers only (v1 already leaves earlier tool results out of the history). A compaction summary of an untrusted conversation is untrusted too.
 
