@@ -2,15 +2,13 @@
 # Only the keys that differ from the image defaults are listed; everything else is inherited.
 use_default_settings:
   engines:
+    # One front door per independent index, measured on 2026-10-09. DuckDuckGo serves Bing's index. Bing's own engine is left out: without a
+    # browser it answers many queries with results for the first word only ("best hiking trails" gives Best Buy), from Docker and from the Mac
+    # alike. Brave has its own index but answers this address "too many requests"; it stays in case that lifts. Google's index has no working
+    # door: SearXNG's google engine calls a retired endpoint, and the image marks startpage inactive (proof-of-work CAPTCHA).
     keep_only:
-      # The big four scrape-based engines block a single home address after bursts (Google needs JavaScript since 2026-09,
-      # Brave rate-limits, DuckDuckGo answers with a CAPTCHA page); the smaller engines below keep search alive when they do.
-      - google
-      - bing
-      - brave
       - duckduckgo
-      - startpage
-      - yahoo
+      - brave
       - wikipedia
 
 general:
