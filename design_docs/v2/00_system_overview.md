@@ -98,7 +98,7 @@ v2 holds only the docs that change or are new. Voice, Home Assistant, music, and
 | 00 System overview | this doc | v1/00 | The harness on the Mac, milestones, costs, privacy |
 | 01 LLM benchmark | [01_llm_benchmark.md](01_llm_benchmark.md) | v1/01 | The engine as a candidate; repeated runs for the noise band; categories F to J, one per milestone, with gates decided in code |
 | 02 Inference engine | [02_inference_engine.md](02_inference_engine.md) | v1/02 | llama-server instead of Ollama; serving settings in one file; prompt caching |
-| 03 Tool server | [03_tool_server.md](03_tool_server.md) | v1/03 | Weather anywhere; a tier for every tool; fixture search for the benchmark; sports and Reddit to come |
+| 03 Tool server | [03_tool_server.md](03_tool_server.md) | v1/03 | Weather anywhere; a tier for every tool; fixture search for the benchmark; sports from ESPN; Reddit to come |
 | 04 Agent harness | [04_agent_harness.md](04_agent_harness.md) | v1/04 | A Mac service; several tools per question; a context budget per model |
 | 05 Voice pipeline | | v1/05 still applies | Unchanged |
 | 06 Home Assistant core | | v1/06 still applies | Unchanged, apart from the thin client (doc 04) |
@@ -156,7 +156,7 @@ v1's boundary still holds: audio, transcripts, the model, and inference stay on 
 | Conversation summaries | A folder on the Mac, outside the repository and never under git, which you open in Obsidian. They are never sent to Home Assistant's chat log, to the tool server, or off the machine. |
 | Prompts and model output | llama-server on the Mac, listening only on the Mac itself, not on the network. |
 | Place names | Open-Meteo's geocoding service turns "Lisbon" into coordinates; Met.no then gets coordinates rounded to four decimals, as in v1. |
-| Sports questions | stats.nba.com, balldontlie, and nflverse's published data files see which players and teams are looked up. |
+| Sports questions | ESPN sees which teams, players, dates and seasons are looked up, never the question (doc 03 §3.4). |
 | Reddit threads | Reddit sees the assistant's own account and which threads it reads. |
 | Search queries | As in v1, plus a guard: no query or URL may carry a private detail from memory that you did not say yourself in that exchange (doc 12). |
 | Gmail, calendar, X, bank | After the new Mac, each under its own least-privilege access (doc 13). |
@@ -175,7 +175,7 @@ Each milestone keeps the benchmark and the product on the same code, and none ma
 | M4 | Weather anywhere | Every weather-anywhere question finds the right place and calls the forecast |
 | M5 | Several tools per question | A required tool is missed in at most one question in eight of the multi-tool category |
 | M6 | Memory v1: a summary per conversation, the full-text index, retrieval, `search_memory` | At least 80% of the memory-recall questions answered right; no untrusted summary saved without its mark and no private detail in a tool call; the first spoken word at most 10% later |
-| M7 | Sports statistics | Answers match the fixture data |
+| M7 | Sports statistics: scores, rosters, season statistics and head-to-head records for the NBA and NFL | No gate fails in category J and nine of its eleven answers match the recorded data (doc 01 §3.3); built before M6 |
 
 **After the new Mac**
 
@@ -192,7 +192,7 @@ Each milestone keeps the benchmark and the product on the same code, and none ma
 - **The small model may not chain tools reliably.** Gemma 4 E4B is widely reported as weak at multi-step tool calling; M5 could miss its target for the model's sake, not the harness's, until the bigger model arrives.
 - **Gemma 4 tool-call bugs.** Every engine has had them; the harness keeps malformed calls out of the history and caps retries.
 - **Anyone the puck hears can use memory.** There is no speaker identification, so a visitor or a television can ask what was said before. Nothing financial or otherwise sensitive goes into a summary, and you curate the notes.
-- **Sports data sources.** nba_api reads an unofficial endpoint that can block home addresses, and both libraries bring large dependencies.
+- **Sports data source.** ESPN's feed is unofficial and can change or close without notice, and Disney's terms forbid automated access. NBA.com refuses the apartment's address and Sports Reference forbids AI use, so there is no free NBA alternative; nflverse would take over NFL history (doc 03 §3.4).
 - **Agent accounts.** Reddit and X may suspend an account that reads automatically.
 - **Grading.** Memory recall and injection resistance need checks that code can score, not only the judge's opinion.
 
