@@ -3,8 +3,9 @@ API serves a day's exchanges only to names of this Mac (design doc v2/13)."""
 
 import json
 from collections.abc import AsyncIterator
-from datetime import datetime, timedelta
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
+from typing import Any
 
 import httpx
 import pytest
@@ -19,7 +20,7 @@ from dashboard.exchange_views import ExchangeStore
 from dashboard.pipeline_collector import PipelineRunCollector
 from dashboard.pipeline_match import matching_run
 from dashboard.timeline import Lane, build_timeline
-from ops.pipeline_runs import PipelineRun, PipelineRunLog, summarize
+from ops.pipeline_runs import PipelineRun, PipelineRunLog, pull, summarize
 from utils.jsonl_utils import append_jsonl
 
 QUESTION = "Who won the World Series in 1995?"
@@ -65,12 +66,12 @@ def search_transcript() -> Transcript:
     )
 
 
-def pipeline_run(intent_started: datetime, intent_input: str = QUESTION, conversation_id: str = "conv-1", run_id: str = "run-1") -> PipelineRun:
+def pipeline_events(intent_started: datetime, intent_input: str = QUESTION, conversation_id: str = "conv-1") -> list[dict[str, Any]]:
 
     def stamp(offset: float) -> str:
         return (intent_started + timedelta(seconds=offset)).isoformat()
 
-    events = [
+    return [
         {"type": "run-start", "timestamp": stamp(-3), "data": {}},
         {"type": "stt-vad-end", "timestamp": stamp(-1), "data": {}},
         {"type": "stt-end", "timestamp": stamp(-0.2), "data": {"stt_output": {"text": intent_input}}},
@@ -78,8 +79,12 @@ def pipeline_run(intent_started: datetime, intent_input: str = QUESTION, convers
         {"type": "intent-end", "timestamp": stamp(5), "data": {}},
         {"type": "tts-start", "timestamp": stamp(1.5), "data": {}},
         {"type": "tts-end", "timestamp": stamp(6), "data": {}},
+        {"type": "run-end", "timestamp": stamp(6.1), "data": {}},
     ]
-    return summarize("Jarvis", run_id, events)
+
+
+def pipeline_run(intent_started: datetime, intent_input: str = QUESTION, conversation_id: str = "conv-1", run_id: str = "run-1") -> PipelineRun:
+    return summarize("Jarvis", run_id, pipeline_events(intent_started, intent_input, conversation_id))
 
 
 def test_search_results_split_into_sources_starred_by_the_answer_words_they_hold() -> None:
@@ -219,6 +224,42 @@ async def test_the_collector_keeps_each_new_run_once(tmp_path: Path) -> None:
     assert await collector.collect() == 2
     assert await collector.collect() == 0
     assert [json.loads(line)["run_id"] for path in log.directory.iterdir() for line in path.read_text().splitlines()] == ["run-1", "run-2"]
+
+
+class RememberingHomeAssistant:
+    """Stands in for Home Assistant's websocket: one pipeline remembering the events so far of each run."""
+
+    def __init__(self, events_by_run: dict[str, list[dict[str, Any]]]) -> None:
+        self.events_by_run = events_by_run
+
+    async def ws(self, message: dict[str, Any]) -> dict[str, Any]:
+        answers = {
+            "assist_pipeline/pipeline/list": lambda: {"pipelines": [{"id": "pipeline-1", "name": "Jarvis"}]},
+            "assist_pipeline/pipeline_debug/list": lambda: {"pipeline_runs": [{"pipeline_run_id": run_id} for run_id in self.events_by_run]},
+            "assist_pipeline/pipeline_debug/get": lambda: {"events": self.events_by_run.get(message.get("pipeline_run_id"), [])},
+        }
+        return answers[message["type"]]()
+
+
+async def test_a_run_still_going_is_left_for_the_next_pull() -> None:
+    events = pipeline_events(datetime.fromisoformat("2026-10-11T12:00:00+00:00"))
+    home_assistant = RememberingHomeAssistant({"run-1": events[:2]})
+    assert await pull(home_assistant, None, set()) == []
+    home_assistant.events_by_run["run-1"] = events
+    assert [run.run_id for run in await pull(home_assistant, None, set())] == ["run-1"]
+
+
+async def test_a_run_kept_before_it_finished_is_kept_again_whole(tmp_path: Path) -> None:
+    runs = PipelineRunLog(tmp_path / "pipeline_runs")
+    finished = pipeline_run(datetime.fromisoformat("2026-10-11T12:00:00+00:00"))
+    runs.append(summarize("Jarvis", finished.run_id, finished.raw_events[:2]))
+
+    async def pull_new_runs(known: set[str]) -> list[PipelineRun]:
+        return [run for run in [finished] if run.run_id not in known]
+
+    assert await PipelineRunCollector(runs, pull_new_runs).collect() == 1
+    store = ExchangeStore(ExchangeLog(tmp_path / "exchanges"), TraceLog(tmp_path / "traces"), runs)
+    assert [run.total_seconds for run in store.runs_around(datetime.now(UTC).date())] == [finished.total_seconds]
 
 
 async def test_a_collector_failure_is_logged_once_until_it_recovers(tmp_path: Path, caplog: pytest.LogCaptureFixture) -> None:

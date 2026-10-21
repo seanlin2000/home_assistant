@@ -127,7 +127,9 @@ class ExchangeStore:
         return next((trace for trace in candidates if trace.exchange_id == record.exchange_id), None)
 
     def runs_around(self, day: date) -> list[PipelineRun]:
-        return [run for offset in (-1, 0, 1) for run in self._runs.read_day(day + timedelta(days=offset))]
+        """A run kept again once it finished replaces its earlier, partial copy."""
+        latest_by_id = {run.run_id: run for offset in (-1, 0, 1) for run in self._runs.read_day(day + timedelta(days=offset))}
+        return list(latest_by_id.values())
 
 
 def line_count(path: Path) -> int:

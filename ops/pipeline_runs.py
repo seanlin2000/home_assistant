@@ -25,6 +25,7 @@ from utils.jsonl_utils import append_jsonl, read_jsonl
 
 PROJECT_DIR = Path(__file__).resolve().parent.parent
 PIPELINE_RUN_RETENTION_DAYS = 14
+RUN_END_STAGE = "run-end"  # the last event Home Assistant records for a run
 
 
 class PipelineRun(BaseModel):
@@ -43,6 +44,10 @@ class PipelineRun(BaseModel):
     conversation_id: str | None = None
     intent_started_at: str | None = None
     raw_events: list[dict[str, Any]] = Field(default_factory=list)
+
+    @property
+    def is_finished(self) -> bool:
+        return RUN_END_STAGE in self.stages
 
 
 class PipelineRunLog(DailyLog[PipelineRun]):
@@ -78,8 +83,8 @@ def summarize(pipeline: str, run_id: str, events: list[dict[str, Any]]) -> Pipel
         run.agent_said = output.get("response", {}).get("speech", {}).get("plain", {}).get("speech")
     if "tts-start" in by_type and "tts-end" in by_type:
         run.tts_seconds = seconds_between(when("tts-start"), when("tts-end"))
-    if "run-end" in by_type:
-        run.total_seconds = seconds_between(start, when("run-end"))
+    if RUN_END_STAGE in by_type:
+        run.total_seconds = seconds_between(start, when(RUN_END_STAGE))
     if "error" in by_type:
         data = by_type["error"].get("data") or {}
         run.error = f"{data.get('code')}: {data.get('message')}"
@@ -87,6 +92,7 @@ def summarize(pipeline: str, run_id: str, events: list[dict[str, Any]]) -> Pipel
 
 
 async def pull(ha: HomeAssistant, pipeline_name: str | None, known: set[str]) -> list[PipelineRun]:
+    """Only finished runs come back: Home Assistant adds a run's later stages under the same id, so a run still going is left for the next pull."""
     pipelines = (await ha.ws({"type": "assist_pipeline/pipeline/list"}))["pipelines"]
     if pipeline_name:
         pipelines = [pipeline for pipeline in pipelines if pipeline["name"] == pipeline_name]
@@ -98,8 +104,9 @@ async def pull(ha: HomeAssistant, pipeline_name: str | None, known: set[str]) ->
             if run_id in known:
                 continue
             detail = await ha.ws({"type": "assist_pipeline/pipeline_debug/get", "pipeline_id": pipeline["id"], "pipeline_run_id": run_id})
-            if detail.get("events"):
-                new_runs.append(summarize(pipeline["name"], run_id, detail["events"]))
+            run = summarize(pipeline["name"], run_id, detail["events"]) if detail.get("events") else None
+            if run and run.is_finished:
+                new_runs.append(run)
     return new_runs
 
 
