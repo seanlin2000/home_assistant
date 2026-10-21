@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It names budget, travel duration, travel style, and interests, but misses key items from the reference sketch: departure location, dates or season, and what 'warm' means, plus assumptions to avoid such as home city or that warm means beach.",
+  "judgment_reason": "It did not search, named no destination, and treated the request as underspecified, as the question demanded.",
+  "spoken_fit_reason": "One plain sentence that answers both parts directly with no list formatting."
+}

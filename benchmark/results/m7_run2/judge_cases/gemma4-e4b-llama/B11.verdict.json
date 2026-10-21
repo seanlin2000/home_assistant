@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The 3.75 to 4 percent target range, the 3.88 percent effective rate on October 19, 2026, and the September 16 quarter-point hike all match the excerpts, but saying the rate 'has seen some increases' omits the three cuts in late 2025 that source 6 reports, so the year's net decline from 4 to 4.25 percent is misdescribed.",
+  "judgment_reason": "Searching was the right call for a current rate, and the answer stuck to figures in the retrieved excerpts rather than inventing any.",
+  "spoken_fit_reason": "Two plain-prose sentences that lead with the current rate and spell numbers out for speech, with no lists or markup."
+}

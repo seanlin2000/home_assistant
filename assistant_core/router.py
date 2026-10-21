@@ -1,7 +1,8 @@
-"""Decide, before the model speaks, which tools a question needs (the web, the calculator, the forecast, several of them, or none) and say so just before the question.
+"""Decide, before the model speaks, which tools a question needs (the web, the calculator, the forecast, sports statistics, several of them, or none) and say so
+just before the question.
 
-Two layers. Rules fire on unmistakable wording (an explicit request to search, numbers with an arithmetic cue, or a question about coming or current
-weather) at no cost, and several can fire for one question. When no rule fires, one short structured-output call asks the same model to classify the
+Two layers. Rules fire on unmistakable wording (an explicit request to search, numbers with an arithmetic cue, a question about coming or current
+weather, or an NBA or NFL statistic) at no cost, and several can fire for one question. When no rule fires, one short structured-output call asks the same model to classify the
 question and, when it needs more than one tool, to plan their order in a sentence. A directive naming the tools to call goes into the block just before the
 question (prompt 2.0), because the engines offer no way to force a tool call; answer adds nothing. The system prompt stays the same for every question so
 the engine keeps it cached. The decision is recorded on the transcript so the benchmark can score the router on its own.
@@ -11,9 +12,11 @@ import re
 import time
 
 from assistant_core.llm_client import LLMClient
-from assistant_core.models import WEATHER_TOOL_NAMES, AgentPolicy, Message, Role, Route, RouteDecision, ToolSpec
+from assistant_core.models import TOOL_NAMES_BY_ROUTE, AgentPolicy, Message, Role, Route, RouteDecision, ToolSpec
 
-TOOL_ROUTES = [Route.SEARCH, Route.CALCULATE, Route.WEATHER]
+TOOL_ROUTES = [Route.SEARCH, Route.CALCULATE, Route.WEATHER, Route.SPORTS]
+# Families the tool server offers only sometimes: the forecast needs home's coordinates, and a tool server from before M7 has no sports tools.
+OPTIONAL_ROUTES = (Route.WEATHER, Route.SPORTS)
 MAX_EXTRA_ROUTES = 2
 ROUTE_SCHEMA = {
     "type": "object",
@@ -25,12 +28,13 @@ ROUTE_SCHEMA = {
     "required": ["route"],
 }
 
-ROUTER_SYSTEM_PROMPT = """You sort spoken questions for a home voice assistant. Reply with JSON only: {"route": "search" | "calculate" | "weather" | "answer", "also": [...], "plan": "..."}.
+ROUTER_SYSTEM_PROMPT = """You sort spoken questions for a home voice assistant. Reply with JSON only: {"route": "search" | "calculate" | "weather" | "sports" | "answer", "also": [...], "plan": "..."}.
 search: the correct answer depends on facts that change over time or that the assistant cannot know without checking: current prices, rates, news, schedules, product availability, recent releases, market conditions, what to buy today, whether an offer is competitive right now, or a claim about a recent event. Also anything the user explicitly asks to be searched or looked up.
 calculate: the correct answer requires arithmetic on numbers in the question: percentages, totals over time, compounding, unit or temperature conversions, energy costs, loan payments, tips, splits, or date differences.
 weather: the coming or current weather or forecast, at home or in any named place: whether it will rain, how warm or cold it will get, whether to take an umbrella or a coat, the weekend forecast.
+sports: NBA or NFL game scores (live, recent, or long past), a team's roster, a player's season or career statistics, or how a player or team did against another. Other leagues and sports are search.
 answer: everything else: explanations of how things work, reasoning, advice from what the user said, comparisons of ideas, opinions, clarifying questions, and settled history even when it sounds topical.
-Examples: "What hardware gives the most memory for a thousand dollars today?" -> search. "Is a four percent rent increase competitive in my neighborhood?" -> search. "Since the central bank cut rates last month, should I refinance?" -> search. "What year did the Berlin Wall fall?" -> answer. "Why can a sparse model run on a smaller GPU?" -> answer. "What is fifteen percent of eighty dollars?" -> calculate. "Do I need an umbrella tomorrow?" -> weather. "What's the weather in Lisbon this weekend?" -> weather.
+Examples: "What hardware gives the most memory for a thousand dollars today?" -> search. "Is a four percent rent increase competitive in my neighborhood?" -> search. "Since the central bank cut rates last month, should I refinance?" -> search. "What year did the Berlin Wall fall?" -> answer. "Why can a sparse model run on a smaller GPU?" -> answer. "What is fifteen percent of eighty dollars?" -> calculate. "Do I need an umbrella tomorrow?" -> weather. "What's the weather in Lisbon this weekend?" -> weather. "Who won the 49ers game last night?" -> sports. "How many threes did Steph Curry make each season?" -> sports. "What's Tom Brady's record against Peyton Manning?" -> sports. "Who won the World Cup in 2022?" -> search.
 also: only when the question needs a second or third kind of tool after the first, in the order to use them; otherwise leave it out. plan: when also is given, one short sentence on how to use the tools together; otherwise leave it out.
 Examples: "Look up today's gold price and tell me what three ounces cost." -> {"route": "search", "also": ["calculate"], "plan": "Find today's gold price per ounce, then multiply it by three."} "Will it rain in Seattle tomorrow, and what time is the last ferry to Bainbridge?" -> {"route": "weather", "also": ["search"], "plan": "Get Seattle's forecast for tomorrow, then search the ferry schedule."} "Will Oslo be colder than here on Saturday?" -> {"route": "weather", "also": ["calculate"], "plan": "Get Saturday's forecast for Oslo and for home, then subtract the temperatures."} "What's tomorrow's high in Chicago in Celsius?" -> {"route": "weather", "also": ["calculate"], "plan": "Get Chicago's forecast for tomorrow, then convert the high to Celsius."}
 A comparison between places or a figure in other units needs the calculator as well as the forecast."""
@@ -42,8 +46,9 @@ A comparison between places or a figure in other units needs the calculator as w
 # Prompt 1.4 trimmed both blocks after pass 3: the search example had shown a finished spoken answer, and the smaller models imitated the answer
 # instead of the tool call. Each block now shows the call and nothing else.
 # Prompt 1.8 names wikipedia_lookup in the search block for lists and records; the example stays a search_and_read call, the commoner of the two.
+# Prompt 2.3 sends NBA and NFL statistics to the sports tools, so the Wikipedia example names an office, not a team.
 SEARCH_DIRECTIVE = """Routing for this question: SEARCH.
-This question needs information you must look up. Call search_and_read first, or wikipedia_lookup when it asks about a settled fact, list, or record such as a team's past players or who held an office; do not answer it from memory. Answer from what the tool returns.
+This question needs information you must look up. Call search_and_read first, or wikipedia_lookup when it asks about a settled fact, list, or record such as who held an office or a country's history; do not answer it from memory. Answer from what the tool returns.
 Example call: search_and_read(query="used RTX 3090 price")
 """
 CALCULATE_DIRECTIVE = """Routing for this question: CALCULATE.
@@ -54,7 +59,11 @@ WEATHER_DIRECTIVE = """Routing for this question: WEATHER.
 This question is about the weather. Call weather_forecast first, with place set to the place the user named, or with no place for home; do not search the web and do not answer from memory. Answer from the forecast it returns.
 Example call: weather_forecast(day="saturday", part_of_day="all", place="Lisbon")
 """
-DIRECTIVES = {Route.SEARCH: SEARCH_DIRECTIVE, Route.CALCULATE: CALCULATE_DIRECTIVE, Route.WEATHER: WEATHER_DIRECTIVE}
+SPORTS_DIRECTIVE = """Routing for this question: SPORTS.
+This question is about NBA or NFL scores, rosters, or statistics. Call game_scores for scores, team_roster for a roster, player_stats for a player's seasons, or player_matchup for a head-to-head; do not search the web and do not answer from memory. Answer from the numbers the tool returns.
+Example call: player_stats(league="nba", player="Stephen Curry", from_season=2011, to_season=2025)
+"""
+DIRECTIVES = {Route.SEARCH: SEARCH_DIRECTIVE, Route.CALCULATE: CALCULATE_DIRECTIVE, Route.WEATHER: WEATHER_DIRECTIVE, Route.SPORTS: SPORTS_DIRECTIVE}
 # A question that needs several tools gets one directive: the routes in order, the plan, then each route's instruction and example call without its heading.
 SEVERAL_TOOLS_INSTRUCTION = "This question needs more than one tool. Call each of them, in this order, and answer from what they return; do no arithmetic yourself."
 
@@ -88,11 +97,21 @@ SECOND_REQUEST = re.compile(
     re.IGNORECASE,
 )
 EXPLANATION_CUE = re.compile(r"\b(why|explain|what causes|what makes|how (does|do) (rain|snow|weather|the weather))\b", re.IGNORECASE)
+# The sports rule fires on a statistic only basketball or football keeps, or on the league's name with a score, roster, or statistics word. A team's
+# name alone is left to the model layer: "the Giants" or "the Kings" also name a baseball or hockey team, and the harness keeps no team list.
+SPORTS_STATISTIC = re.compile(
+    # "players on the ... roster" and "average against" carry no league name, and the model layer sent both to search (benchmark J64 and J70)
+    r"\b(three[- ]pointers?|3[- ]pointers?|points per game|rebounds|passing yards|rushing yards|receiving yards|touchdown passes|passer rating|head[- ]to[- ]head"
+    r"|players on the [\w .'-]{1,40} roster|(?:average|averages|averaged|record) against)\b",
+    re.IGNORECASE,
+)
+SPORTS_LEAGUE = re.compile(r"\b(nba|nfl)\b", re.IGNORECASE)
+SPORTS_ASK = re.compile(r"\b(scores?|won|win|beat|lost|roster|stats|statistics|record|standings|career|season)\b", re.IGNORECASE)
 
 
 def rule_route(text: str) -> RouteDecision | None:
-    """Every rule that fires, searching first, then the forecast, then the arithmetic on what they found; None when no rule fires."""
-    fired = [*search_reasons(text), *weather_reasons(text)]
+    """Every rule that fires, searching first, then the forecast and sports, then the arithmetic on what they found; None when no rule fires."""
+    fired = [*search_reasons(text), *weather_reasons(text), *sports_reasons(text)]
     fired.extend(arithmetic_reasons(text, minimum_numbers=1 if any(route == Route.SEARCH for route, _ in fired) else MIN_NUMBERS_FOR_ARITHMETIC))
     if not fired:
         return None
@@ -112,6 +131,16 @@ def search_reasons(text: str) -> list[tuple[Route, str]]:
 def weather_reasons(text: str) -> list[tuple[Route, str]]:
     cue = weather_question_cue(text)
     return [(Route.WEATHER, cue)] if cue else []
+
+
+def sports_reasons(text: str) -> list[tuple[Route, str]]:
+    statistic = SPORTS_STATISTIC.search(text)
+    if statistic:
+        return [(Route.SPORTS, f"statistic '{statistic.group(0)}'")]
+    league, ask = SPORTS_LEAGUE.search(text), SPORTS_ASK.search(text)
+    if league and ask:
+        return [(Route.SPORTS, f"'{league.group(0)}' with '{ask.group(0)}'")]
+    return []
 
 
 def arithmetic_reasons(text: str, minimum_numbers: int) -> list[tuple[Route, str]]:
@@ -185,11 +214,14 @@ def merged(rule_decision: RouteDecision, model_decision: RouteDecision) -> Route
 
 
 def route_to_offered_tools(decision: RouteDecision, tool_specs: list[ToolSpec]) -> RouteDecision:
-    """The tool server offers weather_forecast only when home has coordinates; without it a weather question is searched like any other place's weather."""
-    if Route.WEATHER not in decision.tool_routes or any(spec.name in WEATHER_TOOL_NAMES for spec in tool_specs):
+    """A question for a tool family the server does not offer is searched instead, as the weather of a place without coordinates is."""
+    offered = {spec.name for spec in tool_specs}
+    missing = [route for route in decision.tool_routes if route in OPTIONAL_ROUTES and not TOOL_NAMES_BY_ROUTE[route] & offered]
+    if not missing:
         return decision
-    routes = list(dict.fromkeys(Route.SEARCH if route == Route.WEATHER else route for route in decision.tool_routes))
-    return decision.model_copy(update={"route": routes[0], "also": routes[1:], "detail": f"{decision.detail}; weather tool not offered, so searched"})
+    routes = list(dict.fromkeys(Route.SEARCH if route in missing else route for route in decision.tool_routes))
+    not_offered = " and ".join(route.value for route in missing)
+    return decision.model_copy(update={"route": routes[0], "also": routes[1:], "detail": f"{decision.detail}; {not_offered} tool not offered, so searched"})
 
 
 def directive_for(decision: RouteDecision) -> str | None:

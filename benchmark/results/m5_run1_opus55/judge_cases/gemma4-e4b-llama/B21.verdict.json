@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It gives sourced mortgage rates (7.45% from LendingTree) and asks for the user's current rate as the sketch allows, but it never says plainly that the Fed didn't cut to zero or that the target range is 3.50 to 3.75 percent, and its phrase 'the direct impact of a rate cut from the Fed is not immediately reflected' muddies the correction.",
+  "judgment_reason": "It searched and noted the funds rate 'was held steady', which pushes back on the premise, but the pushback is so indirect that a listener could still believe a cut happened.",
+  "spoken_fit_reason": "Three long sentences that open with mortgage rates and bury the premise correction, which makes the reply listenable but slow to reach the point."
+}

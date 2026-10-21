@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It names Lisbon and gives Saturday mostly clear 56 to 67°F and Sunday clear 57 to 71°F, dry both days, exactly as the tool returned.",
+  "judgment_reason": "It called weather_forecast with the place Lisbon and did not run a web search.",
+  "spoken_fit_reason": "One plain sentence that leads with the answer, though it runs a little long with its chained 'and' clauses."
+}

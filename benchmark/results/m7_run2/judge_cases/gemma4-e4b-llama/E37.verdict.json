@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It gives both days' conditions (clear, dry) and the exact ranges 39-57°F Saturday and 39-62°F Sunday from the tool result, and saying dry covers the rain question.",
+  "judgment_reason": "It called weather_forecast for the weekend and did not run a web search.",
+  "spoken_fit_reason": "One plain sentence that leads with the answer and spells out the numbers for speech."
+}

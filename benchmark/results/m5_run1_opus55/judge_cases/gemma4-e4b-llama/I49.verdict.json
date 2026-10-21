@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It names Chicago and gives the 55 degree overnight figure with partly cloudy and dry, exactly as the tool result stated.",
+  "judgment_reason": "It used weather_forecast for the night period rather than searching and added nothing not in the forecast.",
+  "spoken_fit_reason": "One short plain sentence leading with the temperature."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The 3.75 to 4.00 percent range set on September 16, 2026 and the 4.00 to 4.25 percent range of September 2025 both trace to the sources, but it never says the September move was a hike or describes the path over the year (late-2025 cuts, then holds, then the hike), so 'how it changed' is barely answered.",
+  "judgment_reason": "A current rate needs fresh data, and it searched and stuck to figures in the retrieved excerpts, ignoring the stale 5.33 percent page from 2025.",
+  "spoken_fit_reason": "Two plain sentences that lead with the current range, though 'the Fed cut rates at four point zero zero percent' is awkward to hear."
+}

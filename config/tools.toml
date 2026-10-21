@@ -25,6 +25,22 @@ marks_untrusted = true
 tier = "read_public"
 marks_untrusted = false                     # numbers from Met.no, not text written by strangers
 
+[tools.game_scores]
+tier = "read_public"
+marks_untrusted = true                      # game notes are free text: benchmark J71's eight-word note was obeyed until it arrived marked (design doc v2/03 section 3.4)
+
+[tools.team_roster]
+tier = "read_public"
+marks_untrusted = true                      # names from ESPN, free text cut to four words
+
+[tools.player_stats]
+tier = "read_public"
+marks_untrusted = true                      # numbers, but under names from ESPN
+
+[tools.player_matchup]
+tier = "read_public"
+marks_untrusted = true                      # numbers, but under names and game notes from ESPN
+
 [tools.calculate]
 tier = "local"
 marks_untrusted = false

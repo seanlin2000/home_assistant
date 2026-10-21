@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It synthesizes the excerpts' main drivers (AI infrastructure demand, HBM and DRAM shortages, prioritization of Blackwell, and distribution changes), but it misses the link that suppliers favour HBM over the GDDR consumer cards need, and it attributes the distribution change to NVIDIA when the excerpts credit vendors generally.",
+  "judgment_reason": "Searching was right for a recent market question, and it explained causes as asked instead of reciting prices, hedging with 'appears to be' and 'some reports indicate'.",
+  "spoken_fit_reason": "Five plain sentences with no lists or markdown that lead with the answer, a reasonable length for a why-question that asks for an explanation."
+}

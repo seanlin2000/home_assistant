@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It names 8 GB RTX 4060 and 5060 gaming prebuilts as the most VRAM for the money, even though the excerpts point to 12 GB and 16 GB cards and the RTX 5060 Ti, so it misses the higher-VRAM options the question is about.",
+  "judgment_reason": "Searching was right, but it searched 'best budget gaming PC' rather than VRAM for LLMs, made a pointless calculator call that failed, and settled on gaming picks without weighing a higher-VRAM GPU or used card.",
+  "spoken_fit_reason": "It opens with 'I encountered a calculation error', which buries the answer behind an internal failure the listener does not need to hear."
+}

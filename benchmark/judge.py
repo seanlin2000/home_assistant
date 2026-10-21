@@ -20,7 +20,7 @@ from benchmark.records import BenchmarkConfig, Gate, JudgeVerdict, Question, Que
 CONFIG_PATH = Path("benchmark/config.yaml")
 QUESTIONS_PATH = Path("benchmark/questions.yaml")
 RUBRIC_PATH = Path("benchmark/rubric.md")
-SUBAGENT_JUDGE_LABEL = "claude-opus-5 (Claude Code subagent)"
+SUBAGENT_JUDGE_LABEL = "claude-opus-5-5 (Claude Code subagent)"
 console = Console()
 
 SCORE_RANGES = {"answer_quality": (0, 5), "judgment": (0, 3), "spoken_fit": (0, 2)}
@@ -162,7 +162,7 @@ def render_harness_notes(result: QuestionResult, gates: list[Gate]) -> str:
     return "\n".join(
         [
             "# Harness observations",
-            f"Searched: {'yes' if result.searched else 'no'}; tool calls: {result.tool_call_count}; calculator calls: {result.calculator_call_count}; forecast calls: {result.forecast_call_count}",
+            f"Searched: {'yes' if result.searched else 'no'}; tool calls: {result.tool_call_count}; calculator calls: {result.calculator_call_count}; forecast calls: {result.forecast_call_count}; sports calls: {result.sports_call_count}",
             f"Stayed silent (the final reply was the silence marker {SILENCE_MARKER}, so nothing was spoken): {'yes' if result.final.stayed_silent else 'no'}",
             render_route_note(result),
             f"Harness gates already applied: {', '.join(gate.value for gate in gates) or 'none'}",

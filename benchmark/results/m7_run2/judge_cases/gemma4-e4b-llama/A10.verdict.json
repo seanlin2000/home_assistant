@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It correctly says VRAM 'dictates how large a language model you can actually fit' and that overflow forces slow swapping to system memory, but it never draws the explicit contrast that raw speed only matters once a model fits, and it omits quantization headroom.",
+  "judgment_reason": "Not searching was right for a stable concept, and it kept to the spoken, under-45-second framing the user requested.",
+  "spoken_fit_reason": "Three plain sentences, about 60 words, that lead with the point and use no lists or markdown."
+}

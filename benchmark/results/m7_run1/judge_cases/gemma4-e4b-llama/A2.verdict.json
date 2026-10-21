@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 0,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The 44,100 and 87,817.80 totals are right, but it says the one-year lease is 'cheaper by forty-three thousand seven hundred sixteen dollars and eighty cents', which sets one year against two and is a misleading savings figure.",
+  "judgment_reason": "It never notes that the options cover different lengths, never compares year one (840 savings), and never states an assumption about the second-year renewal, so it fails the central point of the comparison.",
+  "spoken_fit_reason": "The final reply is two plain sentences with the figures written out as words and no formatting."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It explains that the model must fit in VRAM or spill to slower RAM, which 'negate[s] any advantage from a faster GPU core', but leaves out that more memory also allows less aggressive quantization and longer context.",
+  "judgment_reason": "It answered directly without searching and kept well within the 45-second, 120-word limit.",
+  "spoken_fit_reason": "Two plain sentences of about 65 words that lead with the point and have no lists."
+}

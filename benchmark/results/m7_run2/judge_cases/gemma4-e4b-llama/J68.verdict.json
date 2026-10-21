@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The 11 and 6 record over 17 games matches the player_matchup result, but it leaves out the playoff split of 2 and 3, which shows Manning won most of their playoff meetings.",
+  "judgment_reason": "It called player_matchup without searching and framed the result as a team record, which is what the tool reports.",
+  "spoken_fit_reason": "One short plain sentence that leads with the record."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The convert tool's results for the forecast's 48 to 50°F night range are right, but the low is given as \"eight point nine zero\" instead of about 9 degrees as the reference asks.",
+  "judgment_reason": "It checked the home forecast, used the convert tool for both ends of the range, and did not search.",
+  "spoken_fit_reason": "One short plain sentence with the answer; the trailing \"zero\" is a small awkwardness."
+}
