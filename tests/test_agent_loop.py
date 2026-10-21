@@ -117,6 +117,25 @@ async def test_multi_exchange_conversation_carries_history() -> None:
     assert not any(isinstance(event, (FillerSpoken, ToolStarted)) for event in second)
 
 
+async def test_earlier_answers_reach_the_model_without_the_filler_spoken_before_them() -> None:
+    llm = ScriptedLLM([text_reply("It opened in 1936.")])
+    conversation = [
+        Message(role=Role.USER, content="When was the Golden Gate Bridge built?"),
+        Message(role=Role.ASSISTANT, content="One moment, checking the web. It was built from 1933 to 1937."),
+        Message(role=Role.USER, content="Checking the forecast. And the Bay Bridge?"),
+    ]
+    events = [event async for event in agent_loop.run(conversation, llm, FakeToolBox(), AgentPolicy(filler_phrases=["One moment, checking the web."]))]
+    sent = llm.seen_messages[0]
+    assert sent[2].content == "It was built from 1933 to 1937."
+    assert sent[3].content.endswith("Question: Checking the forecast. And the Bay Bridge?")
+    assert events[-1].transcript.conversation[1].content == "It was built from 1933 to 1937."
+
+
+def test_a_turn_that_is_only_the_filler_is_kept_as_it_was() -> None:
+    filler_only = Message(role=Role.ASSISTANT, content="Let me work that out.")
+    assert agent_loop.without_replayed_fillers([filler_only], AgentPolicy()) == [filler_only]
+
+
 async def test_calculator_call_speaks_the_math_filler_not_the_web_one() -> None:
     llm = ScriptedLLM([tool_reply("18% of 245", tool_name="percent"), text_reply("Forty-four dollars and ten cents.")])
     policy = AgentPolicy(filler_phrases=["Checking the web."], calculate_filler_phrases=["Doing the math."])
