@@ -7,7 +7,7 @@ port = 8770
 api_key_file = "~/Library/Application Support/studio-assistant/harness.key"
 state_file = "~/Library/Application Support/studio-assistant/harness.sqlite3"
 tool_server_url = "http://127.0.0.1:8765/mcp"
-conversation_quiet_minutes = 5              # Home Assistant forgets a conversation after five quiet minutes; so does the harness
+conversation_quiet_minutes = 5              # the component starts the history over after five quiet minutes; so does the harness
 
 [answer]
 temperature = 0.7

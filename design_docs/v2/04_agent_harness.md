@@ -45,7 +45,7 @@ Home Assistant's pipeline turns speech into text and tries its built-in intents,
 6. **Run the allowed tool calls.** Every call is checked against the guards of doc 12; the allowed ones run on the tool server, at the same time when there are several.
 7. **Add the results and send a new llama.cpp request.** This repeats until the model answers or the round cap is reached. The answer streams to Home Assistant as it is written, and a final `done` line carries the exchange's transcript. The component writes the text into the chat log, so text-to-speech starts on the first sentence, and decides whether the puck listens again (v1/04 §15).
 8. **Log the exchange,** with the trust mark and the token counts of every llama.cpp request.
-9. **Summarise the conversation.** When it has been quiet for five minutes, which is when Home Assistant also forgets it, the harness sends the summary prompt to slot 1.
+9. **Summarise the conversation.** When it has been quiet for five minutes, which is when the component also starts the history over (§3.5), the harness sends the summary prompt to slot 1.
 10. **Save the note.** Code checks the summary and saves it as one note (doc 11).
 
 ### 3.2 The service and the thin client
@@ -157,7 +157,7 @@ The alternative, the harness holding the whole history itself, was weighed and s
 
 **Compaction.** When the history passes 75% of its allowance, the harness writes the compaction summary after the answer has been spoken, so the next question never waits for it. It is one quiet llama.cpp request: no tools, an answer forced into a JSON schema, at most 150 words, made from your words and the answers only (v1 already leaves earlier tool results out of the history). A compaction summary of an untrusted conversation is untrusted too.
 
-**The end of a conversation.** Home Assistant forgets a conversation five minutes after its last exchange, and the puck then starts a new conversation id. The harness checks every minute for conversations quiet for five minutes, writes their summaries (doc 11), and drops their state, except the trust mark, which is kept until the summary is saved.
+**The end of a conversation.** Home Assistant forgets a conversation only when a sweep, which runs every 301 seconds, finds it quiet for five minutes, so a conversation can survive a pause of five to ten minutes with the same id and its whole chat log. On 2026-10-21 one conversation kept 37 turns across two pauses of almost seven minutes. The component therefore cuts the history it sends at the last pause longer than five minutes, so five quiet minutes always start the history over, even when the id carries on. The harness checks every minute for conversations quiet for five minutes, writes their summaries (doc 11), and drops their state, except the trust mark, which is kept until the summary is saved.
 
 ### 3.6 The model client
 
@@ -218,7 +218,7 @@ The `ollama` package leaves the dependencies when M1 ends.
 
 **Compaction.** Replacing older parts of a conversation with a short summary so the conversation can continue without overflowing the window.
 
-**Conversation id.** Home Assistant's name for one conversation. It stays the same across follow-ups and is forgotten after five quiet minutes.
+**Conversation id.** Home Assistant's name for one conversation. It stays the same across follow-ups and is forgotten five to ten minutes after the last exchange; the history the component sends starts over after five.
 
 ## 8. Sources
 

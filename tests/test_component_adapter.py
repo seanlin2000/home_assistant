@@ -3,6 +3,7 @@
 import importlib.util
 from collections.abc import AsyncIterator
 from dataclasses import dataclass
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from typing import Any
 
@@ -15,12 +16,18 @@ ADAPTER_PATH = Path("custom_components/studio_assistant/adapter.py")
 spec = importlib.util.spec_from_file_location("studio_assistant_adapter", ADAPTER_PATH)
 adapter = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(adapter)
+CONVERSATION_START = datetime(2026, 10, 21, 1, 0, tzinfo=UTC)
 
 
 @dataclass
 class FakeContent:
     role: str
     content: str | None = None
+    created: datetime = CONVERSATION_START
+
+
+def said_at(minutes: float, role: str, content: str) -> FakeContent:
+    return FakeContent(role, content, CONVERSATION_START + timedelta(minutes=minutes))
 
 
 def test_chat_log_keeps_spoken_messages_only() -> None:
@@ -38,6 +45,24 @@ def test_chat_log_keeps_spoken_messages_only() -> None:
         (Role.ASSISTANT, "Go with 24."),
         (Role.USER, "Suppose it costs $400 more."),
     ]
+
+
+def test_history_starts_after_the_last_pause_longer_than_five_minutes() -> None:
+    contents = [
+        said_at(0, "user", "Search the web for a recipe to make steak."),
+        said_at(1, "assistant", "Sear it hot, then rest it."),
+        said_at(7, "user", "How far is Bryce Canyon from Zion?"),
+        said_at(8, "assistant", "About two hours by car."),
+        said_at(14.8, "system", "A system prompt written later is not speech and never cuts."),
+        said_at(14.8, "user", "When was the Bay Bridge built?"),
+    ]
+    conversation = adapter.chat_log_to_conversation(contents)
+    assert [message.content for message in conversation] == ["When was the Bay Bridge built?"]
+
+
+def test_pauses_of_five_minutes_or_less_keep_the_whole_history() -> None:
+    contents = [said_at(0, "user", "Is 24 GB enough?"), said_at(1, "assistant", "Yes."), said_at(6, "user", "And for two models at once?")]
+    assert len(adapter.chat_log_to_conversation(contents)) == 3
 
 
 def external_call(call: ToolCall) -> dict[str, Any]:

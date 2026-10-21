@@ -8,6 +8,7 @@ decision whether to listen for a follow-up.
 import logging
 from collections import OrderedDict
 from collections.abc import AsyncIterator, Callable
+from datetime import datetime, timedelta
 from typing import Any, Protocol
 
 from assistant_core.models import AgentEvent, AnswerDelta, Done, FillerSpoken, Message, Role, ToolCall, ToolStarted, Transcript
@@ -17,6 +18,10 @@ _LOGGER = logging.getLogger(__name__)
 
 EMPTY_ANSWER_FALLBACK = "Sorry, I could not come up with an answer to that."
 HARNESS_UNREACHABLE_ANSWER = "I can't reach the assistant right now."
+# Home Assistant's own CONVERSATION_TIMEOUT. Its sweep runs every 301 seconds and only then drops a conversation quiet that long, so a pause of five to
+# ten minutes can keep the whole history; cutting at the gap ends the conversation after five quiet minutes every time.
+QUIET_PAUSE_THAT_ENDS_A_CONVERSATION = timedelta(minutes=5)
+SPOKEN_ROLES = {"user": Role.USER, "assistant": Role.ASSISTANT}
 
 
 class ChatContent(Protocol):
@@ -24,18 +29,31 @@ class ChatContent(Protocol):
 
     role: str
     content: str | None
+    created: datetime
 
 
 def chat_log_to_conversation(contents: list[Any]) -> list[Message]:
-    """Keep the spoken messages of the conversation. System prompts are ours, not Home Assistant's, and tool bodies from earlier exchanges are not replayed."""
-    conversation: list[Message] = []
-    for content in contents:
-        text = (getattr(content, "content", None) or "").strip()
-        if content.role == "user" and text:
-            conversation.append(Message(role=Role.USER, content=text))
-        elif content.role == "assistant" and text:
-            conversation.append(Message(role=Role.ASSISTANT, content=text))
-    return conversation
+    """Keep the spoken messages since the conversation last went quiet. System prompts are ours, not Home Assistant's, and tool bodies from earlier
+    exchanges are not replayed."""
+    spoken = [content for content in contents if is_spoken(content)]
+    return [Message(role=SPOKEN_ROLES[content.role], content=spoken_text(content)) for content in since_last_quiet_gap(spoken)]
+
+
+def is_spoken(content: ChatContent) -> bool:
+    return content.role in SPOKEN_ROLES and bool(spoken_text(content))
+
+
+def spoken_text(content: ChatContent) -> str:
+    return (getattr(content, "content", None) or "").strip()
+
+
+def since_last_quiet_gap(contents: list[ChatContent]) -> list[ChatContent]:
+    """The messages after the last pause longer than Home Assistant's timeout; all of them when there was no such pause."""
+    start = 0
+    for index in range(1, len(contents)):
+        if contents[index].created - contents[index - 1].created > QUIET_PAUSE_THAT_ENDS_A_CONVERSATION:
+            start = index
+    return contents[start:]
 
 
 async def agent_events_to_deltas(
