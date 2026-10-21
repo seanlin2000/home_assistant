@@ -139,6 +139,7 @@ The health check is still one launchd agent that runs every five minutes, checks
 | The VM is stopped | Starts it | 30 minutes |
 | Home Assistant has failed 5 checks while the VM runs | Stops and starts the VM | 2 hours |
 | A deploy is running (the maintenance flag is set) | Nothing | |
+| The check was installed with `--leave-vm`, as on the laptop | Everything above except starting or restarting the VM, which is stopped there on purpose | |
 
 These are v1's rules with the two new services added, plus two for llama-server that its `/health` cannot see. A slot can stay busy and silent while `/health` answers 200, so the failure count never rises: on 2026-10-20 two requests pinned to one slot hung it until the client gave up, and answers stayed worse until a restart. The daily restart clears damage of that kind that builds up too slowly for a check to notice. The waits stop a part that is truly broken from being restarted every five minutes; the report shows the pattern, and a person decides. When llama-server is restarted, the harness warms it again by itself (3.1).
 

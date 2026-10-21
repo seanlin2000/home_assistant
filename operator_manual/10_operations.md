@@ -228,7 +228,7 @@ Why the thresholds are staged:
 
 Every action goes into the snapshot as one line, such as `kickstart:mcp (mcp failed 2 checks in a row): ok`, so the report can show what the machine did to itself. `tests/test_health.py` pins every threshold and cooldown without touching launchd or UTM.
 
-On the laptop the agent is installed with `HEALTH_CHECK_FLAGS=--no-remediate scripts/services.sh install`, so it records and never acts, because the laptop's VM is stopped on purpose most of the time. The mini uses the default and acts.
+On the laptop the agent is installed with `HEALTH_CHECK_FLAGS=--leave-vm scripts/services.sh install`, so it restarts failed services and a stuck llama-server but never starts or restarts the VM, because the laptop's VM is stopped on purpose most of the time. `--no-remediate` records and never acts. The mini uses the default and acts on everything.
 
 ### Logs and the report {#the-report}
 
@@ -441,7 +441,7 @@ When something goes wrong, find the symptom here:
 | [`ops/deploy.py`](https://github.com/seanlin2000/home_assistant/blob/main/ops/deploy.py) | `RULES` and `plan_actions`, `manifest_lock_mismatches`, `switch_to` (the checkout, preflight, tests, and actions), `with_lock`, and the five subcommands |
 | [`ops/smoke.py`](https://github.com/seanlin2000/home_assistant/blob/main/ops/smoke.py) | `CALCULATOR_QUESTION`, the expected pattern, and `smoke`, which waits for the API and asks through `converse` |
 | [`ops/health.py`](https://github.com/seanlin2000/home_assistant/blob/main/ops/health.py) | The probes `check_ollama` through `check_vm`, `Policy` with every threshold and cooldown, `decide_actions`, `execute`, `rotate_log`, `prune_history`, `housekeeping`, and `run_once` |
-| [`scripts/health_check.py`](https://github.com/seanlin2000/home_assistant/blob/main/scripts/health_check.py) | The command launchd runs: `--dry-run`, `--no-remediate`, `--full`, `--json`, and `--last` |
+| [`scripts/health_check.py`](https://github.com/seanlin2000/home_assistant/blob/main/scripts/health_check.py) | The command launchd runs: `--dry-run`, `--no-remediate`, `--leave-vm`, `--full`, `--json`, and `--last` |
 | [`ops/paths.py`](https://github.com/seanlin2000/home_assistant/blob/main/ops/paths.py) | Every file under `~/Library/Logs/studio-assistant` by name, and the `STUDIO_LOG_DIR` override |
 | [`ops/report.py`](https://github.com/seanlin2000/home_assistant/blob/main/ops/report.py) | `exchanges_section`, `health_section`, `pipeline_section`, `ollama_section`, and `render` |
 | [`ops/pipeline_runs.py`](https://github.com/seanlin2000/home_assistant/blob/main/ops/pipeline_runs.py) | `PipelineRun`, `summarize`, which flattens Home Assistant's event list, and `pull` over the websocket |

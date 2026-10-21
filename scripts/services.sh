@@ -154,7 +154,8 @@ install_agents() {
     write_plist whisper "$PROJECT_DIR/.venv/bin/wyoming-mlx-whisper" --uri tcp://0.0.0.0:10300 --model mlx-community/whisper-large-v3-turbo --language en
     # --volume 2 (+6 dB) brings answers level with the speaker's wake sound, which was about 8 dB louder. Kokoro lowers a sentence that would clip.
     write_plist kokoro "$PROJECT_DIR/.venv/bin/kokoro-server" --uri tcp://0.0.0.0:10210 --voice bm_fable --data-dir "$HOME/.cache/wyoming-kokoro" --streaming --volume 2 --device cpu
-    # HEALTH_CHECK_FLAGS="--no-remediate" installs an observe-only check (used on the laptop, where the VM is stopped on purpose most of the time).
+    # HEALTH_CHECK_FLAGS="--leave-vm" restarts services but never the VM (used on the laptop, where the VM is stopped on purpose most of the time);
+    # "--no-remediate" installs an observe-only check.
     read -ra health_flags <<<"${HEALTH_CHECK_FLAGS:-}"
     # Bash 3.2, the one macOS ships, treats "${array[@]}" of an empty array as unbound under set -u; this form expands to nothing instead.
     PLIST_START_INTERVAL="$HEALTH_INTERVAL_SECONDS" write_plist health "$PROJECT_DIR/.venv/bin/python" "$PROJECT_DIR/scripts/health_check.py" ${health_flags[@]+"${health_flags[@]}"}

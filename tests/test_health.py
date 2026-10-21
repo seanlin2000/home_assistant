@@ -236,3 +236,11 @@ def test_the_last_exchange_is_the_newest_day_file(tmp_path: Path, monkeypatch: p
     newest = paths.exchanges_dir() / "2026-10-21.jsonl"
     newest.write_text("{}\n")
     assert health.last_exchange_at() == newest.stat().st_mtime
+
+
+def test_a_health_check_told_to_leave_the_vm_still_restarts_services_but_never_the_vm() -> None:
+    checks = healthy_checks() | {"vm": VM_DOWN, "home_assistant": DOWN, "mcp": DOWN}
+    leave_vm = Policy(manage_vm=False)
+    assert keys(health.decide_actions(checks, after_failures(checks, 9), leave_vm, NOW, maintenance=False)) == ["kickstart:mcp"]
+    running = healthy_checks() | {"home_assistant": DOWN}
+    assert health.decide_actions(running, after_failures(running, 9), leave_vm, NOW, maintenance=False) == []
