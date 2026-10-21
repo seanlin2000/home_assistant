@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
 # Install, start, stop, and inspect the native macOS services that Home Assistant talks to over the LAN.
 #
-#   scripts/services.sh install      write launchd agents for whisper, kokoro, ollama, the harness and the exchange dashboard (LAN), llama-server and mcp (127.0.0.1), and the health check, and load them
+#   scripts/services.sh install      write launchd agents for whisper, kokoro, the harness and the exchange dashboard (LAN), llama-server and mcp (127.0.0.1), and the health check, and load them
 #   scripts/services.sh start|stop   load/unload the agents
-#   scripts/services.sh restart NAME restart one agent (ollama|llama|mcp|harness|dashboard|whisper|kokoro|health)
+#   scripts/services.sh restart NAME restart one agent (llama|mcp|harness|dashboard|whisper|kokoro|health)
 #   scripts/services.sh status       show what is listening on each port and the last health snapshot
 #   scripts/services.sh dashboard    start the exchange dashboard if it is not running and open it in the browser
-#   scripts/services.sh logs NAME    tail a service log (whisper|kokoro|mcp|harness|dashboard|ollama|llama|health)
+#   scripts/services.sh logs NAME    tail a service log (whisper|kokoro|mcp|harness|dashboard|llama|health)
 #   scripts/services.sh uninstall    unload and remove the agents
 #
-# Ports: Whisper 10300, Kokoro 10210, the harness 8770 (with an API key) and Ollama 11434 bind 0.0.0.0 so the VM can reach them, and the
+# Ports: Whisper 10300, Kokoro 10210 and the harness 8770 (with an API key) bind 0.0.0.0 so the VM can reach them, and the
 # exchange dashboard 8775 does so a laptop on the home network can open it. llama-server 127.0.0.1:8090 (with an API key, from config/serving.toml)
 # and the tool server 127.0.0.1:8765 answer only this Mac (design_docs/v2/08 section 3.2).
 set -euo pipefail
@@ -18,11 +18,12 @@ PROJECT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 AGENTS_DIR="$HOME/Library/LaunchAgents"
 LOG_DIR="$HOME/Library/Logs/studio-assistant"
 PREFIX="com.studio-assistant"
-SERVICES=(ollama llama mcp harness dashboard whisper kokoro health)
+SERVICES=(llama mcp harness dashboard whisper kokoro health)
+# Agents an older install wrote and install now removes: llama-server replaced Ollama (design_docs/v2/10 section 3.1).
+RETIRED_SERVICES=(ollama)
 APP_SUPPORT_DIR="$HOME/Library/Application Support/studio-assistant"
 HEALTH_INTERVAL_SECONDS="${HEALTH_INTERVAL_SECONDS:-300}"
 UNLOAD_TIMEOUT_SECONDS="${UNLOAD_TIMEOUT_SECONDS:-30}"
-OLLAMA_BIN="$(command -v ollama || echo /opt/homebrew/bin/ollama)"
 
 usage() {
     sed -n '2,14p' "$0"
@@ -111,13 +112,10 @@ install_agents() {
     prepare_kokoro
     # launchd keeps running the definition it loaded, so every agent is unloaded before its plist is rewritten; start_agents then loads the new ones.
     stop_agents
+    remove_retired_agents
     # With the harness stopped, nothing appends to the old turns/ folder while the exchange logs move out of it (a no-op once moved).
     # A failed move leaves the files where they were, so it must not stop the agents from coming back.
     "$PROJECT_DIR/.venv/bin/python" -m ops.legacy_exchange_logs "$LOG_DIR" || echo "warning: exchange logs not moved out of $LOG_DIR/turns; rerun: .venv/bin/python -m ops.legacy_exchange_logs" >&2
-    # Ollama: Homebrew's service binds to localhost only; ours binds the LAN and keeps the model loaded.
-    brew services stop ollama >/dev/null 2>&1 || true
-    ENV_KEYS=(OLLAMA_HOST OLLAMA_KEEP_ALIVE OLLAMA_MAX_LOADED_MODELS) ENV_VALUES=(0.0.0.0:11434 -1 1)
-    write_plist ollama "$OLLAMA_BIN" serve
     # llama-server: the launcher checks the model's hash and replaces itself with llama-server, so launchd supervises the server directly.
     ensure_api_key llama-server
     ENV_KEYS=() ENV_VALUES=()
@@ -192,6 +190,17 @@ stop_agents() {
     done
 }
 
+remove_retired_agents() {
+    local name
+    for name in "${RETIRED_SERVICES[@]}"; do
+        agent_loaded "$name" || [[ -f "$(plist_path "$name")" ]] || continue
+        launchctl bootout "$(agent_target "$name")" 2>/dev/null || true
+        wait_until_unloaded "$name"
+        rm -f "$(plist_path "$name")"
+        echo "removed the retired $name agent"
+    done
+}
+
 wait_until_unloaded() {
     # bootout returns while launchd still holds the job: Kokoro takes about 5 s to exit, and loading its plist again in that window fails with
     # "Bootstrap failed: 5: Input/output error". Rewriting or reloading a plist waits until the old job is gone.
@@ -217,7 +226,7 @@ status() {
     for name in "${SERVICES[@]}"; do
         agent_loaded "$name" || echo "$name: agent NOT loaded"
     done
-    local ports=("ollama:11434" "llama:8090" "mcp:8765" "harness:8770" "dashboard:8775" "whisper:10300" "kokoro:10210")
+    local ports=("llama:8090" "mcp:8765" "harness:8770" "dashboard:8775" "whisper:10300" "kokoro:10210")
     for entry in "${ports[@]}"; do
         local name="${entry%%:*}" port="${entry##*:}"
         if lsof -nP -iTCP:"$port" -sTCP:LISTEN >/dev/null 2>&1; then

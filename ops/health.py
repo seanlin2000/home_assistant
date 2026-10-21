@@ -31,7 +31,7 @@ from utils.jsonl_utils import append_jsonl
 from web_search_mcp.searxng_client import describe_unresponsive_engines
 
 LAUNCHD_PREFIX = "com.studio-assistant"
-LAUNCHD_SERVICES = ("ollama", "llama", "mcp", "harness", "whisper", "kokoro")
+LAUNCHD_SERVICES = ("llama", "mcp", "harness", "whisper", "kokoro")
 LLAMA_SERVER_PROCESS = "llama-server"
 LLAMA_RESTART_KEY = "kickstart:llama"
 DEFAULT_VM_NAME = "Home Assistant"
@@ -119,7 +119,6 @@ class Action(BaseModel):
 
 
 class Settings(BaseModel):
-    ollama_url: str = "http://127.0.0.1:11434"
     llama_server_url: str = "http://127.0.0.1:8090"
     llama_key_path: Path = Field(default_factory=lambda: load_serving_config().server.api_key_path)
     mcp_url: str = "http://127.0.0.1:8765"
@@ -150,7 +149,6 @@ def settings_from_environment() -> Settings:
 async def run_checks(settings: Settings, full: bool = False) -> dict[str, Check]:
     async with httpx.AsyncClient(timeout=settings.probe_timeout_seconds) as client:
         results = await asyncio.gather(
-            timed("ollama", check_ollama(client, settings)),
             timed("llama", check_llama_server(client, settings)),
             timed("mcp", check_mcp(client, settings)),
             timed("harness", check_harness(client, settings)),
@@ -175,13 +173,6 @@ async def timed(name: str, probe: Awaitable[Check]) -> tuple[str, Check]:
         check = Check(ok=False, detail=f"{type(error).__name__}: {error}"[:200])
     check.seconds = round(time.monotonic() - started, 3)
     return name, check
-
-
-async def check_ollama(client: httpx.AsyncClient, settings: Settings) -> Check:
-    response = await client.get(f"{settings.ollama_url}/api/version")
-    if response.status_code != 200:
-        return Check(ok=False, detail=f"HTTP {response.status_code}")
-    return Check(ok=True, detail=f"ollama {response.json().get('version', '?')}")
 
 
 async def check_llama_server(client: httpx.AsyncClient, settings: Settings) -> Check:
@@ -298,7 +289,7 @@ def agent_loaded(name: str) -> bool:
 # ---------------------------------------------------------------- memory
 
 
-def read_memory(settings: Settings) -> Memory:
+def read_memory() -> Memory:
     memory = Memory()
     try:
         memory.free_percent = parse_memory_pressure(subprocess.run(["memory_pressure"], capture_output=True, text=True, timeout=10).stdout)
@@ -307,13 +298,6 @@ def read_memory(settings: Settings) -> Memory:
     try:
         memory.swap_used_mb = parse_swapusage(subprocess.run(["sysctl", "-n", "vm.swapusage"], capture_output=True, text=True, timeout=10).stdout)
     except (OSError, subprocess.SubprocessError):
-        pass
-    try:
-        response = httpx.get(f"{settings.ollama_url}/api/ps", timeout=settings.probe_timeout_seconds)
-        models = response.json().get("models", []) if response.status_code == 200 else []
-        memory.resident_models = [model.get("name", "?") for model in models]
-        memory.resident_model_mb = round(sum(model.get("size", 0) for model in models) / 1e6, 1) if models else 0.0
-    except (httpx.HTTPError, ValueError):
         pass
     add_llama_server_memory(memory)
     return memory
@@ -515,7 +499,7 @@ async def run_once(settings: Settings, policy: Policy | None = None, remediate: 
     state = update_failure_counts(load_state(), checks)
     now = time.time()
     local_now = datetime.now().astimezone()
-    snapshot = Snapshot(checked_at=datetime.now(UTC).isoformat(timespec="seconds"), checks=checks, memory=read_memory(settings), llama_busy_slots=busy, maintenance=maintenance, full=full)
+    snapshot = Snapshot(checked_at=datetime.now(UTC).isoformat(timespec="seconds"), checks=checks, memory=read_memory(), llama_busy_slots=busy, maintenance=maintenance, full=full)
     watch = LlamaWatch(stuck_slots=stuck_llama_slots(state.llama_busy_slots, busy), daily_restart_due=daily_restart_due(state, policy, local_now, last_exchange_at()))
     actions = decide_actions(checks, state, policy, now, maintenance, watch) if remediate else []
     for action in actions:

@@ -60,7 +60,7 @@ def health_state() -> Path:
     return log_dir() / "health_state.json"
 
 
-SERVICE_LOG_NAMES = ("ollama", "llama", "mcp", "harness", "dashboard", "whisper", "kokoro", "health")
+SERVICE_LOG_NAMES = ("llama", "mcp", "harness", "dashboard", "whisper", "kokoro", "health")
 
 
 def service_log(name: str) -> Path:

@@ -56,7 +56,7 @@ A deploy restarts only the parts whose files changed. A restart of llama-server 
 | `mcp` | The tool server, as in v1, on `127.0.0.1` from M2 | Always | `mcp.log` |
 | `whisper`, `kokoro` | As in v1 | Always | As in v1 |
 | `health` | `scripts/health_check.py` | Every 300 seconds (`StartInterval`) | `health.log` |
-| `ollama` | As in v1 | Until M2, then removed by `services.sh install` | `ollama.log` |
+| `ollama` | Removed: `services.sh install` unloads it and deletes its plist | Never | |
 
 **Start order.** launchd starts agents in no particular order, so each one tolerates the others being missing:
 - **The harness waits for llama-server.** When the harness starts, it waits for llama-server's `/health` to report the model loaded, then warms both slots (doc 04 §3.6). Each warm-up request sends a slot its stable prompt once, so the cache holds it.
@@ -211,7 +211,7 @@ v1/10 §3.9 still applies, with three changes:
 
 | Setting | Where | Value |
 |---|---|---|
-| The agents | `scripts/services.sh` | `llama`, `harness`, `mcp`, `whisper`, `kokoro`, `health`; `ollama` until M2 |
+| The agents | `scripts/services.sh` | `llama`, `harness`, `mcp`, `whisper`, `kokoro`, `health` (`ollama` removed) |
 | API key files | `~/Library/Application Support/studio-assistant/` | `llama-server.key`, `harness.key`, mode 600 |
 | The harness's address, port and allowed host names | The harness's config file | Every address, port 8770, the Mac's name and address |
 | The restart list | `ops/deploy.py` | The table in 3.3 |

@@ -19,7 +19,7 @@ PACIFIC = timezone(timedelta(hours=-7))
 
 
 def healthy_checks() -> dict[str, Check]:
-    return {name: OK for name in ("ollama", "mcp", "whisper", "kokoro", "searxng", "home_assistant")} | {"vm": VM_UP}
+    return {name: OK for name in ("llama", "mcp", "whisper", "kokoro", "searxng", "home_assistant")} | {"vm": VM_UP}
 
 
 def after_failures(checks: dict[str, Check], runs: int, state: State | None = None) -> State:
