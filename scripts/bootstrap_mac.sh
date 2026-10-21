@@ -108,7 +108,7 @@ if ! pgrep -xq Docker; then
 fi
 run "$TARGET_DIR/scripts/searxng.sh" up
 
-step "launchd agents: ollama, mcp, whisper, kokoro, health"
+step "launchd agents: llama, mcp, harness, dashboard, whisper, kokoro, health"
 run "$TARGET_DIR/scripts/services.sh" install
 
 step "Docker and UTM open at login (the VM and SearXNG must come back after a power cut)"
@@ -135,7 +135,7 @@ else
     FW=/usr/libexec/ApplicationFirewall/socketfilterfw
     as_root "$FW" --setglobalstate on
     as_root "$FW" --setstealthmode off
-    for program in "$(command -v ollama)" "$TARGET_DIR/.venv/bin/python" "$(readlink -f "$TARGET_DIR/.venv/bin/python")" /Applications/Docker.app /Applications/UTM.app; do
+    for program in "$TARGET_DIR/.venv/bin/python" "$(readlink -f "$TARGET_DIR/.venv/bin/python")" /Applications/Docker.app /Applications/UTM.app; do
         [[ -e "$program" ]] || continue
         as_root "$FW" --add "$program"
         as_root "$FW" --unblockapp "$program"
