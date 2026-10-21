@@ -68,6 +68,7 @@ class AgentPolicy(BaseModel):
     calculate_filler_phrases: list[str] = Field(default_factory=lambda: list(DEFAULT_CALCULATE_FILLER_PHRASES))
     weather_filler_phrases: list[str] = Field(default_factory=lambda: list(DEFAULT_WEATHER_FILLER_PHRASES))
     tool_timeout_seconds: float = 30.0
+    history_exchanges: int = Field(default=3, ge=0)  # earlier exchanges replayed with each question; more and the model answers from the history instead of looking up
 
 
 # Spoken while the first tool call of an exchange runs, so the user hears something within a second or two. Search, calculation, and the forecast get

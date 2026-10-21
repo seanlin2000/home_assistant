@@ -121,6 +121,7 @@ class SpokenAnswerCap:
 
 async def run(conversation: list[Message], llm: LLMClient, tools: ToolBox, policy: AgentPolicy, memory: ConversationMemory | None = None) -> AsyncIterator[AgentEvent]:
     started = time.perf_counter()
+    conversation = within_history_window(without_replayed_fillers(conversation, policy), policy)
     memory = memory or NoMemory()
     tools = GuardedToolBox(tools, load_tool_table(), conversation)
     messages = [Message(role=Role.SYSTEM, content=system_prompt()), *conversation]
@@ -163,6 +164,32 @@ async def run(conversation: list[Message], llm: LLMClient, tools: ToolBox, polic
     transcript.untrusted = tools.untrusted
     memory.remember(transcript.conversation)
     yield Done(transcript=transcript)
+
+
+def without_replayed_fillers(conversation: list[Message], policy: AgentPolicy) -> list[Message]:
+    """Earlier answers come back from Home Assistant with the filler sentence in front but without the tool call it covered for. Left in, they show
+    the model a run of turns that announce a lookup and then answer with none, and a small model copies that instead of calling the tool."""
+    fillers = [*policy.filler_phrases, *policy.calculate_filler_phrases, *policy.weather_filler_phrases]
+    return [without_leading_filler(message, fillers) if message.role == Role.ASSISTANT else message for message in conversation]
+
+
+def without_leading_filler(message: Message, fillers: list[str]) -> Message:
+    """The answer alone; a turn that is nothing but the filler stays as it was, so the history keeps one assistant turn after each question."""
+    for filler in fillers:
+        answer = message.content.removeprefix(filler).strip()
+        if message.content.startswith(filler) and answer:
+            return message.model_copy(update={"content": answer})
+    return message
+
+
+def within_history_window(conversation: list[Message], policy: AgentPolicy) -> list[Message]:
+    """The current question and the last few exchanges before it, each one a question and the replies after it. Home Assistant replays every earlier
+    answer as bare text, and the longer that run of tool-less answers grows, the more the model answers from it instead of calling a tool."""
+    question_indexes = [index for index, message in enumerate(conversation) if message.role == Role.USER]
+    questions_kept = policy.history_exchanges + 1
+    if len(question_indexes) <= questions_kept:
+        return list(conversation)
+    return conversation[question_indexes[-questions_kept] :]
 
 
 def reply_is_empty(reply: ModelReply) -> bool:  # deslop: allow-comments
