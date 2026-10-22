@@ -131,6 +131,11 @@ async def test_earlier_answers_reach_the_model_without_the_filler_spoken_before_
     assert events[-1].transcript.conversation[1].content == "It was built from 1933 to 1937."
 
 
+def test_a_sports_filler_is_dropped_from_a_replayed_answer_like_the_others() -> None:
+    replayed = Message(role=Role.ASSISTANT, content="One moment, pulling up the numbers.\n\nStephen Curry made two three-pointers.")
+    assert agent_loop.without_replayed_fillers([replayed], AgentPolicy())[0].content == "Stephen Curry made two three-pointers."
+
+
 def test_a_turn_that_is_only_the_filler_is_kept_as_it_was() -> None:
     filler_only = Message(role=Role.ASSISTANT, content="Let me work that out.")
     assert agent_loop.without_replayed_fillers([filler_only], AgentPolicy()) == [filler_only]
