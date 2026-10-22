@@ -171,7 +171,7 @@ async def run(conversation: list[Message], llm: LLMClient, tools: ToolBox, polic
 def without_replayed_fillers(conversation: list[Message], policy: AgentPolicy) -> list[Message]:
     """Earlier answers come back from Home Assistant with the filler sentence in front but without the tool call it covered for. Left in, they show
     the model a run of turns that announce a lookup and then answer with none, and a small model copies that instead of calling the tool."""
-    fillers = [*policy.filler_phrases, *policy.calculate_filler_phrases, *policy.weather_filler_phrases]
+    fillers = policy.every_filler_phrase
     return [without_leading_filler(message, fillers) if message.role == Role.ASSISTANT else message for message in conversation]
 
 

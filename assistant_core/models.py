@@ -72,6 +72,10 @@ class AgentPolicy(BaseModel):
     tool_timeout_seconds: float = 30.0
     history_exchanges: int = Field(default=3, ge=0)  # earlier exchanges replayed with each question; more and the model answers from the history instead of looking up
 
+    @property
+    def every_filler_phrase(self) -> list[str]:
+        return [*self.filler_phrases, *self.calculate_filler_phrases, *self.weather_filler_phrases, *self.sports_filler_phrases]
+
 
 # Spoken while the first tool call of an exchange runs, so the user hears something within a second or two. Search, calculation, the forecast, and
 # sports get different lines because "checking the web" is wrong, and mildly alarming, when the assistant is doing arithmetic locally or reading
