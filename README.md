@@ -24,6 +24,7 @@ Phase 2 (proof of concept) is running. Benchmark passes 1 to 5 are complete (`be
 - `operator_manual/`: the Home Assistant Handbook, the book that explains the built system and how to run each part. Read it at https://seanlin2000.github.io/home_assistant/ or with `uv run mkdocs serve`; maintained by the `operator-manual` skill; every diagram is drawn to the `draw-diagram` skill's rules by the `diagrams/` package.
 - `docs/phase2_walkthrough.md`: a hands-on tour of the running proof of concept, component by component.
 - `docs/VERSIONS.md`: what the running system was built and measured with, and how to refresh it.
+- `docs/voice_pe_firmware.md`: the Voice PE firmware with barge-in (the wake word interrupts a reply and listens), and how to build, flash, and undo it.
 - `design_docs/v1/10_operations.md`: running, updating, and debugging the headless Mac mini from the laptop.
 - `design_docs/README.md`: how the docs are versioned and the reading order.
 - `design_docs/v0/00_system_overview.md`: start here.
