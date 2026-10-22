@@ -39,10 +39,6 @@ esphome:
   friendly_name: Home Assistant Voice
   name_add_mac_suffix: true
   min_version: 2026.6.0
-  # studio-assistant: shown as the firmware version in Home Assistant, so the device page says which build it runs
-  project:
-    name: studio-assistant.voice-pe-barge-in
-    version: 26.9.0-barge-in.1
   on_boot:
     priority: 375
     then:
@@ -98,31 +94,7 @@ wifi:
           - sendspin.media_source.enable_static_delay_adjustment:
         else:
           - sendspin.media_source.disable_static_delay_adjustment:
-    # studio-assistant: from the factory config. Bluetooth setup stays on until Wi-Fi connects; the delay lets the phone receive the result.
-    - delay: 5s
-    - ble.disable:
-    - script.execute: control_leds
   on_disconnect:
-    - ble.enable:
-    - script.execute: control_leds
-
-# studio-assistant: Wi-Fi setup from the factory config, without its Nabu Casa update entity, which would replace this build with stock.
-# Improv sets up Wi-Fi from a phone over Bluetooth (press the center button to allow it) or from a computer over USB.
-improv_serial:
-
-esp32_ble:
-  name: ha-voice-pe
-
-esp32_improv:
-  authorizer: center_button
-  on_start:
-    - lambda: id(improv_ble_in_progress) = true;
-    - script.execute: control_leds
-  on_provisioned:
-    - lambda: id(improv_ble_in_progress) = false;
-    - script.execute: control_leds
-  on_stop:
-    - lambda: id(improv_ble_in_progress) = false;
     - script.execute: control_leds
 
 network:
@@ -1526,46 +1498,17 @@ script:
           }
           id(is_timer_active) = output;
 
-  # studio-assistant: barge-in. Stops the running request and the reply audio, waits for the request to close (voice_assistant.start does
-  # nothing while one is still running), then listens for a new request exactly as a wake word does when the device is idle.
-  - id: barge_in
-    parameters:
-      wake_word_phrase: string
-    then:
-      - voice_assistant.stop:
-      - media_player.stop:
-          announcement: true
-          id: external_media_player
-      - wait_until:
-          condition:
-            not:
-              voice_assistant.is_running:
-          timeout: 2s
-      - if:
-          condition:
-            switch.is_on: wake_sound
-          then:
-            - script.execute:
-                id: play_sound
-                priority: true
-                sound_file: "wake_word_triggered_sound"
-            - delay: 300ms
-      - voice_assistant.start:
-          wake_word: !lambda return wake_word_phrase;
-
   # Script used activate the stop word if the TTS step is long.
   # Why is this wrapped on a script?
   #   Becasue we want to stop the sequence if the TTS step is faster than that.
   #   This allows us to prevent having the deactivation of the stop word before its own activation.
   - id: activate_stop_word_once
     then:
-      # studio-assistant: 30s instead of 5s. With a tool call the reply audio can start more than 5s after the stream is announced, and the
-      # 5s wait then armed "Stop" for an instant before playback began and never again for that reply.
       - wait_until:
           condition:
             media_player.is_announcing:
               id: external_media_player
-          timeout: 30s
+          timeout: 5s
       - delay: 1s
       # Enable stop wake word
       - if:
@@ -1765,7 +1708,7 @@ external_components:
   - source:
       type: git
       url: https://github.com/esphome/home-assistant-voice-pe
-      ref: 26.9.0  # studio-assistant: pinned to the release this file was copied from; upstream tracks dev
+      ref: dev
     components:
       - voice_kit
     refresh: 0s
@@ -1805,41 +1748,36 @@ micro_wake_word:
                 switch.is_on: timer_ringing
               then:
                 - switch.turn_off: timer_ringing
-              # studio-assistant: while the assistant is busy (a request running or a reply playing), "Stop" stops it as before,
-              # and a wake word stops it and listens for the next request (barge-in).
+              # Stop voice assistant if running
               else:
                 - if:
                     condition:
-                      or:
-                        - voice_assistant.is_running:
-                        - media_player.is_announcing:
-                            id: external_media_player
+                      voice_assistant.is_running:
                     then:
-                      - if:
-                          condition:
-                            lambda: 'return wake_word == "Stop";'
-                          then:
-                            - voice_assistant.stop:
-                            - media_player.stop:
-                                announcement: true
-                                id: external_media_player
-                          else:
-                            - script.execute:
-                                id: barge_in
-                                wake_word_phrase: !lambda return wake_word;
-                    # Start the voice assistant and play the wake sound, if enabled
+                      voice_assistant.stop:
+                    # Stop any other media player announcement
                     else:
                       - if:
                           condition:
-                            switch.is_on: wake_sound
+                            media_player.is_announcing:
+                              id: external_media_player
                           then:
-                            - script.execute:
-                                id: play_sound
-                                priority: true
-                                sound_file: "wake_word_triggered_sound"
-                            - delay: 300ms
-                      - voice_assistant.start:
-                          wake_word: !lambda return wake_word;
+                            - media_player.stop:
+                                announcement: true
+                                id: external_media_player
+                          # Start the voice assistant and play the wake sound, if enabled
+                          else:
+                            - if:
+                                condition:
+                                  switch.is_on: wake_sound
+                                then:
+                                  - script.execute:
+                                      id: play_sound
+                                      priority: true
+                                      sound_file: "wake_word_triggered_sound"
+                                  - delay: 300ms
+                            - voice_assistant.start:
+                                wake_word: !lambda return wake_word;
 
 select:
   - platform: template
@@ -1887,10 +1825,6 @@ voice_assistant:
   auto_gain: 0 dbfs
   volume_multiplier: 1
   on_client_connected:
-    # studio-assistant: from the factory config, which starts the wake word only once Bluetooth setup has ended.
-    - wait_until:
-        not: ble.enabled
-    - delay: 2s
     - lambda: id(init_in_progress) = false;
     - micro_wake_word.start:
     - lambda: id(voice_assistant_phase) = ${voice_assist_idle_phase_id};
