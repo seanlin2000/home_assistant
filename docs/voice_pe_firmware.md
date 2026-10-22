@@ -11,12 +11,12 @@ Each one is marked `studio-assistant:` in the file.
 | Arming "Stop" for a reply | Gives up if the audio has not started 5 s after the stream is announced | Waits up to 30 s, so slow tool-backed replies can still be stopped |
 | `voice_kit` component source | `dev` branch | The 26.9.0 tag |
 | Firmware version in Home Assistant | `26.9.0` | `26.9.0-barge-in.1` |
-| Wi-Fi setup | Improv over Bluetooth or USB | Improv over USB only |
+| Firmware updates | Home Assistant offers each Nabu Casa release | None; an upstream release is merged in by hand |
 
-It is built from the plain config, as ESPHome's "Take control" does, not the factory one. That drops the Bluetooth setup and the
-Nabu Casa update entity, so Home Assistant no longer offers stock firmware over this build. Wi-Fi credentials and the API encryption key
-are kept in the device's flash and survive an over-the-air update. If the Wi-Fi credentials are ever lost, plug the device into a computer
-and set them from <https://esphome.github.io/home-assistant-voice-pe/>.
+Nabu Casa's shipped firmware is built from a factory config that adds Wi-Fi setup over Bluetooth and USB (Improv) and the Nabu Casa
+update entity on top of this file. The Wi-Fi setup is copied in, so a phone can still set up the device over Bluetooth after pressing the
+center button. The update entity is left out: installing a stock release would replace this build and lose barge-in. Wi-Fi credentials and
+the API encryption key are kept in the device's flash and survive an over-the-air update.
 
 ## Build and flash
 

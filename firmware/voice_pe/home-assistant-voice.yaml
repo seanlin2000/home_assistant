@@ -98,12 +98,32 @@ wifi:
           - sendspin.media_source.enable_static_delay_adjustment:
         else:
           - sendspin.media_source.disable_static_delay_adjustment:
+    # studio-assistant: from the factory config. Bluetooth setup stays on until Wi-Fi connects; the delay lets the phone receive the result.
+    - delay: 5s
+    - ble.disable:
+    - script.execute: control_leds
   on_disconnect:
+    - ble.enable:
     - script.execute: control_leds
 
-# studio-assistant: the factory config provisions Wi-Fi through Improv, and ESPHome refuses a wifi block with no network unless Improv is present.
-# USB Improv keeps the credentials already saved on the device in use, and can re-provision it over USB if they are lost, without adding Bluetooth.
+# studio-assistant: Wi-Fi setup from the factory config, without its Nabu Casa update entity, which would replace this build with stock.
+# Improv sets up Wi-Fi from a phone over Bluetooth (press the center button to allow it) or from a computer over USB.
 improv_serial:
+
+esp32_ble:
+  name: ha-voice-pe
+
+esp32_improv:
+  authorizer: center_button
+  on_start:
+    - lambda: id(improv_ble_in_progress) = true;
+    - script.execute: control_leds
+  on_provisioned:
+    - lambda: id(improv_ble_in_progress) = false;
+    - script.execute: control_leds
+  on_stop:
+    - lambda: id(improv_ble_in_progress) = false;
+    - script.execute: control_leds
 
 network:
   enable_ipv6: true
@@ -1867,6 +1887,10 @@ voice_assistant:
   auto_gain: 0 dbfs
   volume_multiplier: 1
   on_client_connected:
+    # studio-assistant: from the factory config, which starts the wake word only once Bluetooth setup has ended.
+    - wait_until:
+        not: ble.enabled
+    - delay: 2s
     - lambda: id(init_in_progress) = false;
     - micro_wake_word.start:
     - lambda: id(voice_assistant_phase) = ${voice_assist_idle_phase_id};
