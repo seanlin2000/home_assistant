@@ -7,11 +7,14 @@ Steps (each is skipped when already done, so the script can be re-run):
   4. pipeline: an Assist pipeline "Jarvis" using Whisper, studio_assistant, and Kokoro's Fable voice, set as preferred (--tts piper for Piper)
   5. weather: copy the home location, time zone, and units into .env for the weather_forecast tool, and hide every weather entity from Assist so
      Home Assistant's built-in weather intent finds nothing to answer with and every weather question reaches studio_assistant
+  6. firmware_releases: follow Nabu Casa's Voice PE release feed and announce each new release on every phone with the Home Assistant app and in
+     the notification bell, since the puck runs a custom build that Home Assistant does not offer updates for
 
     uv run python scripts/ha_setup.py --host 192.168.1.60          # first run
     uv run python scripts/ha_setup.py --host 192.168.1.60 --only pipeline
     uv run python scripts/ha_setup.py --host 192.168.1.60 --only pipeline --tts-voice bm_george   # another Kokoro voice
     uv run python scripts/ha_setup.py --host 192.168.1.60 --only weather   # then scripts/services.sh install, so the tool server sees the coordinates
+    uv run python scripts/ha_setup.py --host 192.168.1.60 --only firmware_releases   # rerun after adding a phone, so it is notified too
 
 Credentials: HA_ADMIN_USER / HA_ADMIN_PASSWORD / HA_SAMBA_PASSWORD are read from .env and generated if missing. Everything lives on the LAN.
 """
@@ -36,7 +39,7 @@ PROJECT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT))  # scripts/ is not a package; make `ops` importable when run as a file
 ENV_PATH = PROJECT / ".env"
 MAC_IP_DEFAULT = "192.168.1.152"
-STEPS = ("onboarding", "addons", "integrations", "pipeline", "weather")
+STEPS = ("onboarding", "addons", "integrations", "pipeline", "weather", "firmware_releases")
 ADDONS = {
     "core_samba": {"options": None},  # options are filled in at runtime with the generated password
     "core_piper": {
@@ -51,6 +54,12 @@ PIPELINE_NAME = "Jarvis"
 # The language and voice each text-to-speech engine is given when none is named. Both engines advertise region codes (en_US, en_GB); a bare "en" is
 # rejected at run time with tts-not-supported. Kokoro's Fable is a British voice, so it needs en_GB. Piper's voice is set on its add-on (ADDONS).
 TTS_DEFAULTS = {"kokoro": ("en_GB", "bm_fable"), "piper": ("en_US", None)}
+FIRMWARE_RELEASES_FEED = "https://github.com/esphome/home-assistant-voice-pe/releases.atom"
+FIRMWARE_RELEASE_AUTOMATION_ID = "voice_pe_firmware_release"
+# Feedreader fires an event for each of the feed's last 20 entries when the feed is first added, so only a release this recent is announced.
+RECENT_RELEASE_SECONDS = 2 * 24 * 60 * 60
+# Release titles are bare versions such as 26.9.0; betas carry a suffix and are left out.
+STABLE_RELEASE_TITLE = r"^\d+\.\d+\.\d+$"
 
 
 def env_value(name: str, generate: bool = False) -> str:
@@ -227,12 +236,16 @@ async def point_studio_assistant_at_harness(ha: HomeAssistant, entries: list[dic
 
 
 async def run_flow(ha: HomeAssistant, handler: str, user_input: dict[str, Any], label: str) -> dict[str, Any]:
-    flow = await ha.post("/api/config/config_entries/flow", {"handler": handler})
-    result = await ha.post(f"/api/config/config_entries/flow/{flow['flow_id']}", user_input)
+    result = await submit_flow(ha, handler, user_input)
     if result.get("type") != "create_entry":
         raise RuntimeError(f"{handler} flow did not create an entry: {json.dumps(result)[:400]}")
     print(f"integrations: added {label}")
     return result
+
+
+async def submit_flow(ha: HomeAssistant, handler: str, user_input: dict[str, Any]) -> dict[str, Any]:
+    flow = await ha.post("/api/config/config_entries/flow", {"handler": handler})
+    return await ha.post(f"/api/config/config_entries/flow/{flow['flow_id']}", user_input)
 
 
 async def confirm_discovered_flows(ha: HomeAssistant) -> None:
@@ -319,6 +332,51 @@ async def hide_weather_entities_from_assist(ha: HomeAssistant) -> None:
     print(f"weather: {', '.join(weather_ids)} hidden from Assist, so weather questions reach studio_assistant")
 
 
+# ---------------------------------------------------------------- step 6: firmware releases
+
+
+async def firmware_releases(ha: HomeAssistant, args: argparse.Namespace) -> None:
+    await follow_release_feed(ha)
+    phones = phone_notify_services(await ha.get("/api/services"))
+    await ha.post(f"/api/config/automation/config/{FIRMWARE_RELEASE_AUTOMATION_ID}", firmware_release_automation(phones))
+    print(f"firmware_releases: new Voice PE releases are announced to {', '.join(phones) or 'no phones'} and the notification bell")
+
+
+async def follow_release_feed(ha: HomeAssistant) -> None:
+    result = await submit_flow(ha, "feedreader", {"url": FIRMWARE_RELEASES_FEED})
+    if result.get("reason") == "already_configured":
+        print("firmware_releases: release feed already followed")
+        return
+    if result.get("type") != "create_entry":
+        raise RuntimeError(f"feedreader flow did not create an entry: {json.dumps(result)[:400]}")
+    print(f"firmware_releases: following {FIRMWARE_RELEASES_FEED}")
+
+
+def phone_notify_services(services: list[dict[str, Any]]) -> list[str]:
+    """The Home Assistant app registers one notify service per phone, named mobile_app_<device>."""
+    notify = next((domain["services"] for domain in services if domain["domain"] == "notify"), {})
+    return sorted(name for name in notify if name.startswith("mobile_app_"))
+
+
+def firmware_release_automation(phones: list[str]) -> dict[str, Any]:
+    title = "Voice PE firmware {{ trigger.event.data.title }}"
+    message = "Nabu Casa released it. The puck runs the interruption build, which does not update itself; docs/voice_pe_firmware.md says how to bring a release in."
+    link = "{{ trigger.event.data.link }}"
+    phone_actions = [{"action": f"notify.{phone}", "data": {"title": title, "message": message, "data": {"url": link}}} for phone in phones]
+    bell_action = {"action": "persistent_notification.create", "data": {"title": title, "message": f"{message} [Release notes]({link})", "notification_id": FIRMWARE_RELEASE_AUTOMATION_ID}}
+    return {
+        "alias": "Voice PE firmware release",
+        "description": "Announces a new stable Voice PE firmware release from Nabu Casa's GitHub release feed.",
+        "mode": "queued",
+        "triggers": [{"trigger": "event", "event_type": "feedreader", "event_data": {"feed_url": FIRMWARE_RELEASES_FEED}}],
+        "conditions": [
+            {"condition": "template", "value_template": f"{{{{ trigger.event.data.title is match('{STABLE_RELEASE_TITLE}') }}}}"},
+            {"condition": "template", "value_template": f"{{{{ as_timestamp(trigger.event.data.updated, 0) > as_timestamp(now()) - {RECENT_RELEASE_SECONDS} }}}}"},
+        ],
+        "actions": [*phone_actions, bell_action],
+    }
+
+
 # ---------------------------------------------------------------- main
 
 
@@ -350,7 +408,8 @@ async def main_async() -> None:
     await wait_for_api(ha)
     save_env("HA_BASE", ha.base)
     print(f"Home Assistant API at {ha.base}")
-    for name, step in (("onboarding", onboarding), ("addons", addons), ("integrations", integrations), ("pipeline", pipeline), ("weather", weather)):
+    steps = (("onboarding", onboarding), ("addons", addons), ("integrations", integrations), ("pipeline", pipeline), ("weather", weather), ("firmware_releases", firmware_releases))
+    for name, step in steps:
         if args.only and name not in args.only:
             continue
         await step(ha, args)
