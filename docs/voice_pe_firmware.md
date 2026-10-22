@@ -1,12 +1,9 @@
 # Voice PE firmware with interruption
 
-The firmware is two files in `firmware/voice_pe/`:
-
-- `home-assistant-voice.yaml` is Nabu Casa's Voice Preview Edition config at release 26.9.0
-  ([esphome/home-assistant-voice-pe](https://github.com/esphome/home-assistant-voice-pe/blob/26.9.0/home-assistant-voice.yaml)),
-  byte for byte. It is never edited here.
-- `interruption.yaml` is what gets built. It includes the stock config as an ESPHome package and holds every change, so reading it is
-  reading the whole difference from stock.
+The firmware is `firmware/voice_pe/interruption.yaml`. It pulls Nabu Casa's Voice Preview Edition config at the 26.9.0 release tag
+([esphome/home-assistant-voice-pe](https://github.com/esphome/home-assistant-voice-pe/blob/26.9.0/home-assistant-voice.yaml)) from
+GitHub as an ESPHome package and holds every change on top of it, so reading it is reading the whole difference from stock. No copy of
+the stock config lives in this repo.
 
 | Change | Stock 26.9.0 | This build |
 |---|---|---|
@@ -50,8 +47,8 @@ The device's IP address works in place of the `.local` name.
 
 ## Taking a new upstream release
 
-1. Replace `home-assistant-voice.yaml` with the release's file, unchanged, and build with the ESPHome version its `min_version` names.
-2. Point `external_components` at the new tag and bump `version` in `interruption.yaml`.
+1. In `interruption.yaml`, move the `stock` package's `@26.9.0` and the `external_components` ref to the new tag, and bump `version`.
+2. Build with the ESPHome version the release's `min_version` names.
 3. A compile error naming an id (`master_mute_switch`, `timer_ringing`, `external_media_player`, `wake_sound`, `play_sound`,
    `improv_ble_in_progress`, `control_leds`) means upstream renamed something `interruption.yaml` uses.
 
