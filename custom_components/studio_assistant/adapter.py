@@ -18,6 +18,9 @@ _LOGGER = logging.getLogger(__name__)
 
 EMPTY_ANSWER_FALLBACK = "Sorry, I could not come up with an answer to that."
 HARNESS_UNREACHABLE_ANSWER = "I can't reach the assistant right now."
+# Kokoro's sentence splitter holds a sentence until the next one starts, and the answer's first sentence only arrives after the tool call returns.
+# A blank line is a sentence boundary on its own, so the filler is spoken while the tool runs instead of in front of the answer.
+AFTER_FILLER = "\n\n"
 # Home Assistant's own CONVERSATION_TIMEOUT. Its sweep runs every 301 seconds and only then drops a conversation quiet that long, so a pause of five to
 # ten minutes can keep the whole history; cutting at the gap ends the conversation after five quiet minutes every time.
 QUIET_PAUSE_THAT_ENDS_A_CONVERSATION = timedelta(minutes=5)
@@ -70,7 +73,7 @@ async def agent_events_to_deltas(
     async for event in events:
         if isinstance(event, FillerSpoken):
             spoke = True
-            yield {"content": event.text + " "}
+            yield {"content": event.text + AFTER_FILLER}
         elif isinstance(event, AnswerDelta):
             spoke = True
             yield {"content": event.text}

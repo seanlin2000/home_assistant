@@ -7,6 +7,8 @@ from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from typing import Any
 
+from sentence_stream import SentenceBoundaryDetector
+
 from assistant_core import agent_loop
 from assistant_core.models import AgentEvent, AgentPolicy, AnswerDelta, Done, FillerSpoken, Message, Role, ToolCall, ToolStarted, Transcript
 from assistant_core.prompts import ACKNOWLEDGEMENT_REPLY, REPEAT_REQUEST_REPLY, SILENCE_MARKER
@@ -84,13 +86,20 @@ async def test_filler_and_answer_become_one_streamed_assistant_message() -> None
     call = ToolCall(id="c", name="search_and_read", arguments={"query": "fed funds"})
     deltas = await collect(events_from([FillerSpoken(text="Let me check."), ToolStarted(call=call), AnswerDelta(text="It is "), AnswerDelta(text="3.63 percent."), Done(transcript=transcript)]))
     assert deltas[0] == {"role": "assistant"}
-    assert "".join(delta.get("content", "") for delta in deltas[1:]) == "Let me check. It is 3.63 percent."
+    assert "".join(delta.get("content", "") for delta in deltas[1:]) == "Let me check.\n\nIt is 3.63 percent."
 
 
 async def test_the_tool_call_follows_the_filler_so_home_assistant_starts_speaking_it() -> None:
     call = ToolCall(id="c", name="search_and_read", arguments={"query": "fed funds"})
     deltas = await collect(events_from([FillerSpoken(text="Let me check."), ToolStarted(call=call), AnswerDelta(text="It is 3.63 percent.")]))
-    assert deltas[1:3] == [{"content": "Let me check. "}, {"tool_calls": [{"id": "c", "tool_name": "search_and_read", "external": True}]}]
+    assert deltas[1:3] == [{"content": "Let me check.\n\n"}, {"tool_calls": [{"id": "c", "tool_name": "search_and_read", "external": True}]}]
+
+
+async def test_kokoro_speaks_the_filler_before_the_answer_arrives() -> None:
+    call = ToolCall(id="c", name="box_score", arguments={"team": "Golden State Warriors"})
+    deltas = await collect(events_from([FillerSpoken(text="One moment, pulling up the numbers."), ToolStarted(call=call)]))
+    splitter = SentenceBoundaryDetector()
+    assert [sentence for delta in deltas if "content" in delta for sentence in splitter.add_chunk(delta["content"])] == ["One moment, pulling up the numbers."]
 
 
 async def test_answer_after_the_tool_round_cap_follows_the_filler() -> None:
@@ -98,7 +107,7 @@ async def test_answer_after_the_tool_round_cap_follows_the_filler() -> None:
     llm = ScriptedLLM([*tool_replies_past_the_cap(policy), text_reply("It is ", "3.63 percent.")])
     conversation = [Message(role=Role.USER, content="What is the fed funds rate?")]
     deltas = await collect(agent_loop.run(conversation, llm, FakeToolBox(), policy))
-    assert [delta["content"] for delta in deltas[1:] if "content" in delta] == ["Let me check. ", "It is ", "3.63 percent."]
+    assert [delta["content"] for delta in deltas[1:] if "content" in delta] == ["Let me check.\n\n", "It is ", "3.63 percent."]
 
 
 async def test_empty_answer_gets_a_spoken_fallback() -> None:
