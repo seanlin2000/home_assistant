@@ -1,8 +1,9 @@
-"""The SearXNG client keeps a minimum gap between live requests so the upstream engines do not rate-limit a burst, never delays cached queries, and passes
-a time range on to SearXNG."""
+"""The SearXNG client keeps a minimum gap between live requests so the upstream engines do not rate-limit a burst, never delays cached queries, passes
+a time range on to SearXNG, and searches once more when a search came back empty only because an engine's request failed on the way."""
 
 import logging
 from pathlib import Path
+from typing import Any
 
 import httpx
 import pytest
@@ -25,13 +26,29 @@ class FakeTime:
         self.now += seconds
 
 
-def client_with(fake: FakeTime, monkeypatch: pytest.MonkeyPatch, gap: float = 3.0, cache_dir: str | None = None, seen_requests: list[httpx.Request] | None = None) -> SearxngClient:
-    payload = {"results": [{"title": "t", "url": "http://example.com", "content": "c", "engines": ["google"], "score": 1.0}]}
+ONE_RESULT = {"results": [{"title": "t", "url": "http://example.com", "content": "c", "engines": ["google"], "score": 1.0}]}
+BRAVE_RATE_LIMITED = ["brave", "Suspended: too many requests"]
+
+
+def empty_reply(*unresponsive_engines: list[str]) -> dict[str, Any]:
+    return {"results": [], "unresponsive_engines": list(unresponsive_engines)}
+
+
+def client_with(
+    fake: FakeTime,
+    monkeypatch: pytest.MonkeyPatch,
+    gap: float = 3.0,
+    cache_dir: str | None = None,
+    seen_requests: list[httpx.Request] | None = None,
+    replies: list[dict[str, Any]] | None = None,
+) -> SearxngClient:
+    """SearXNG answers with the given replies in turn, then with one result for every request after them."""
+    queued_replies = list(replies or [])
 
     def answer(request: httpx.Request) -> httpx.Response:
         if seen_requests is not None:
             seen_requests.append(request)
-        return httpx.Response(200, json=payload)
+        return httpx.Response(200, json=queued_replies.pop(0) if queued_replies else ONE_RESULT)
 
     transport = httpx.MockTransport(answer)
     real_async_client = httpx.AsyncClient
@@ -88,3 +105,42 @@ def test_engines_that_did_not_answer_are_logged_by_name_and_reason(caplog: pytes
         warn_about_unresponsive_engines([["brave", "too many requests"], ["duckduckgo", "CAPTCHA"]])
         warn_about_unresponsive_engines([])
     assert [record.getMessage() for record in caplog.records] == ["SearXNG engines not answering: brave (too many requests), duckduckgo (CAPTCHA)"]
+
+
+async def test_an_empty_search_after_an_engine_timed_out_is_asked_again_once_the_engine_is_back(monkeypatch: pytest.MonkeyPatch) -> None:
+    fake, requests = FakeTime(), []
+    client = client_with(fake, monkeypatch, seen_requests=requests, replies=[empty_reply(BRAVE_RATE_LIMITED, ["duckduckgo", "timeout"])])
+    results = await client.search("difference between New York strip steak and ribeye steak")
+    assert [result.url for result in results] == ["http://example.com"]
+    assert len(requests) == 2 and fake.slept == [SearchSettings().transient_retry_wait_seconds]
+
+
+@pytest.mark.parametrize("reason", ["HTTP connection error", "Suspended: timeout"])
+async def test_a_dropped_connection_or_an_engine_still_held_back_after_one_is_asked_again(monkeypatch: pytest.MonkeyPatch, reason: str) -> None:
+    requests: list[httpx.Request] = []
+    client = client_with(FakeTime(), monkeypatch, seen_requests=requests, replies=[empty_reply(["duckduckgo", reason])])
+    assert await client.search("nfl games today") and len(requests) == 2
+
+
+@pytest.mark.parametrize(
+    "empty",
+    [
+        empty_reply(BRAVE_RATE_LIMITED),
+        empty_reply(BRAVE_RATE_LIMITED, ["duckduckgo", "CAPTCHA"]),
+        empty_reply(),
+    ],
+    ids=["only-a-rate-limited-engine-silent", "captcha", "every-engine-answered"],
+)
+async def test_an_empty_search_is_not_repeated_after_a_rate_limit_a_captcha_or_a_true_miss(monkeypatch: pytest.MonkeyPatch, empty: dict[str, Any]) -> None:
+    fake, requests = FakeTime(), []
+    client = client_with(fake, monkeypatch, seen_requests=requests, replies=[empty])
+    assert await client.search("a question nothing matches") == []
+    assert len(requests) == 1 and fake.slept == []
+
+
+async def test_a_search_is_asked_again_only_once(monkeypatch: pytest.MonkeyPatch) -> None:
+    requests: list[httpx.Request] = []
+    timed_out = empty_reply(["duckduckgo", "timeout"])
+    client = client_with(FakeTime(), monkeypatch, seen_requests=requests, replies=[timed_out, timed_out, timed_out])
+    assert await client.search("nfl games today") == []
+    assert len(requests) == 2
