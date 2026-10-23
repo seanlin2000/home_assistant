@@ -28,6 +28,7 @@ PLAYOFF_SEASON_TYPE_NAME = "Postseason"
 EVENT_CATEGORY = "event"
 NOT_PLAYED = "pre"  # a game's state, as ESPN names it
 FINISHED = "post"
+FINAL_ONLY_STAT_KEYS = frozenset({"adjQBR"})  # listed among a live NFL game's passing keys, though its label and values only arrive once the game is final
 
 
 class EspnShapeError(ValueError):
@@ -43,6 +44,15 @@ class TeamLine(BaseModel):
     leader: str = ""  # the NBA's top scorer, such as "LeBron James 27"
 
 
+class GameProgress(BaseModel):
+    """Where a game stands by its summary, which ESPN updates along with the box score."""
+
+    state: str
+    status: str
+    away_score: str
+    home_score: str
+
+
 class Game(BaseModel):
     event_id: str
     day: date
@@ -54,6 +64,16 @@ class Game(BaseModel):
     home: TeamLine
     away: TeamLine
     leaders: list[str] = []  # the NFL's passing, rushing and receiving leaders, such as "Jayden Daniels 29/40, 300 YDS, 2 TD"
+
+    def updated_to(self, progress: GameProgress) -> "Game":
+        return self.model_copy(
+            update={
+                "state": progress.state,
+                "status": progress.status or self.status,
+                "away": self.away.model_copy(update={"score": progress.away_score or self.away.score}),
+                "home": self.home.model_copy(update={"score": progress.home_score or self.home.score}),
+            }
+        )
 
 
 class RosterPlayer(BaseModel):
@@ -137,6 +157,7 @@ class BoxScoreSide(BaseModel):
 
 class BoxScore(BaseModel):
     sides: list[BoxScoreSide]  # away team first, as ESPN lists them
+    progress: GameProgress | None = None  # None when the summary has no header, and in a box score cached before the header was read
 
     @property
     def has_players(self) -> bool:
@@ -213,7 +234,7 @@ def read_game(event: dict[str, Any]) -> Game:
         event_id=str(event["id"]),
         day=eastern_day(event["date"]),
         state=status["state"],
-        status=cleaned_note(status.get("detail") or status.get("description", "")),
+        status=status_text(status),
         note=cleaned_note(notes[0]) if notes else "",
         series=cleaned_note((competition.get("series") or {}).get("summary", "")),
         playoffs=season_type_of(event) == PLAYOFFS_SEASON_TYPE,
@@ -221,6 +242,11 @@ def read_game(event: dict[str, Any]) -> Game:
         away=read_team_line(sides["away"]),
         leaders=[read_nfl_leader(leader) for leader in competition.get("leaders", []) if leader.get("name") in NFL_LEADER_STATS and leader.get("leaders")],
     )
+
+
+def status_text(status_type: dict[str, Any]) -> str:
+    """The game's state as ESPN words it: "Final", "1:52 - 4th Quarter", or a coming game's start time."""
+    return cleaned_note(status_type.get("detail") or status_type.get("description", ""))
 
 
 def season_type_of(event: dict[str, Any]) -> int:
@@ -231,15 +257,20 @@ def season_type_of(event: dict[str, Any]) -> int:
 
 def read_team_line(side: dict[str, Any]) -> TeamLine:
     team = side["team"]
-    score = side.get("score") or ""  # a schedule gives no score for a game not yet played
     return TeamLine(
         name=cleaned_name(team.get("displayName") or f"{team.get('location', '')} {team.get('name', '')}"),
         abbreviation=cleaned_name(team.get("abbreviation", "")),
         espn_id=str(team.get("id", "")),
-        score=str(score.get("displayValue", "") if isinstance(score, dict) else score),
+        score=read_score(side),
         winner=bool(side.get("winner")),
         leader=read_nba_leader(side),
     )
+
+
+def read_score(side: dict[str, Any]) -> str:
+    """A scoreboard and a summary give the score as text, a schedule as a mapping; a schedule gives none for a game not yet played or an NBA game in progress."""
+    score = side.get("score") or ""
+    return str(score.get("displayValue", "") if isinstance(score, dict) else score)
 
 
 def read_nba_leader(side: dict[str, Any]) -> str:
@@ -371,9 +402,24 @@ def read_box_score(body: dict[str, Any], league: League) -> BoxScore:
     try:
         box_score = body["boxscore"]
         totals_by_team = {str(side["team"]["id"]): side.get("statistics", []) for side in box_score.get("teams", [])}
-        return BoxScore(sides=[read_box_score_side(side, totals_by_team.get(str(side["team"]["id"]), []), league) for side in box_score.get("players", [])])
+        sides = [read_box_score_side(side, totals_by_team.get(str(side["team"]["id"]), []), league) for side in box_score.get("players", [])]
+        return BoxScore(sides=sides, progress=read_game_progress(body))
     except (KeyError, IndexError, TypeError) as error:
         raise EspnShapeError(f"box score: {type(error).__name__} {error}") from error
+
+
+def read_game_progress(body: dict[str, Any]) -> GameProgress | None:
+    competitions = (body.get("header") or {}).get("competitions") or []
+    if not competitions:
+        return None
+    status = competitions[0]["status"]["type"]
+    sides = {side["homeAway"]: side for side in competitions[0]["competitors"]}
+    return GameProgress(
+        state=status["state"],
+        status=status_text(status),
+        away_score=read_score(sides["away"]),
+        home_score=read_score(sides["home"]),
+    )
 
 
 def read_box_score_side(side: dict[str, Any], team_totals: list[dict[str, Any]], league: League) -> BoxScoreSide:
@@ -400,7 +446,7 @@ def box_score_group(groups: list[dict[str, Any]], wanted: BoxScoreColumns) -> di
 
 def read_box_score_table(group: dict[str, Any], wanted: BoxScoreColumns) -> BoxScoreTable:
     """The kept stats of every player who played, in ESPN's order (starters first, the most-used first), up to the table's limit."""
-    keys = group.get("keys", [])
+    keys = keys_of_values(group)
     present = [(key, label) for key, label in wanted.stats if key in keys]
     rows = [
         BoxScoreRow(player=cleaned_name(athlete["athlete"]["displayName"]), stats=[cleaned_stat(athlete["stats"][keys.index(key)]) for key, _ in present])
@@ -408,6 +454,14 @@ def read_box_score_table(group: dict[str, Any], wanted: BoxScoreColumns) -> BoxS
         if athlete.get("stats") and not athlete.get("didNotPlay")
     ]
     return BoxScoreTable(title=wanted.title, labels=[label for _, label in present], rows=rows[: wanted.most_players])
+
+
+def keys_of_values(group: dict[str, Any]) -> list[str]:
+    """The keys of a player row's values, one per value. A group's labels always match its rows; its keys can list a stat before it has values."""
+    keys = group.get("keys", [])
+    if len(keys) > len(group.get("labels", keys)):
+        return [key for key in keys if key not in FINAL_ONLY_STAT_KEYS]
+    return keys
 
 
 def did_not_play(athlete: dict[str, Any]) -> str:
