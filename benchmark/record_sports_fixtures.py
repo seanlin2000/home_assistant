@@ -55,8 +55,9 @@ LOGGED_GAME = {
     "opponent": {"id": KEEP, "abbreviation": KEEP},
 }
 GAME_LOG = {"names": KEEP, "events": {ANY_KEY: LOGGED_GAME}, "seasonTypes": [{"displayName": KEEP, "categories": [{"type": KEEP, "events": [{"eventId": KEEP, "stats": KEEP}]}]}]}
-BOX_SCORE_PLAYERS = {"name": KEEP, "keys": KEEP, "athletes": [{"athlete": {"displayName": KEEP}, "stats": KEEP, "didNotPlay": KEEP, "reason": KEEP}]}
+BOX_SCORE_PLAYERS = {"name": KEEP, "keys": KEEP, "labels": KEEP, "athletes": [{"athlete": {"displayName": KEEP}, "stats": KEEP, "didNotPlay": KEEP, "reason": KEEP}]}
 BOX_SCORE = {
+    "header": {"competitions": [{"status": COMPETITION["status"], "competitors": [{"homeAway": KEEP, "score": KEEP}]}]},
     "boxscore": {
         "teams": [{"team": {"id": KEEP}, "statistics": [{"name": KEEP, "displayValue": KEEP}]}],
         "players": [{"team": {"id": KEEP, "displayName": KEEP, "abbreviation": KEEP}, "statistics": [BOX_SCORE_PLAYERS]}],

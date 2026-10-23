@@ -5,6 +5,7 @@ so these tests also prove the benchmark's recordings answer every call it expect
 
 import json
 from datetime import date
+from pathlib import Path
 from typing import Any
 
 import httpx
@@ -33,6 +34,9 @@ from sports_mcp.teams import Team, find_teams
 from utils.text_utils import clip_to_whole_lines
 
 RECORDED_ON = date.fromisoformat(SPORTS_RECORDED_ON)
+TONIGHT = date(2026, 10, 22)  # the two live summaries below were recorded that evening, US Eastern time
+BEARS_HALFTIME_SUMMARY = json.loads(Path("tests/fixtures/espn_nfl_summary_patriots_at_bears_halftime.json").read_text())
+THUNDER_FIRST_QUARTER_SUMMARY = json.loads(Path("tests/fixtures/espn_nba_summary_nuggets_at_thunder_first_quarter.json").read_text())
 CURRY_THREES_2011_TO_2025 = ["55", "272", "261", "286", "402", "324", "212", "354", "12", "337", "285", "273", "357", "311", "190"]
 THREES_COLUMN = 6  # season | team | games | points | rebounds | assists | 3-pointers made-attempted
 
@@ -160,6 +164,55 @@ def test_an_old_game_without_players_says_espn_has_only_the_score() -> None:
     box_score = read_box_score({"boxscore": {"teams": [], "players": [{"team": {"id": "13", "displayName": "Los Angeles Lakers", "abbreviation": "LAL"}}]}}, League.NBA)
     reply = box_score_text(League.NBA, scheduled_game("1", date(1985, 6, 9), "post", away="LAL"), box_score, None)
     assert reply.endswith("ESPN has no player statistics for this game, only the score.")
+
+
+def test_a_live_nfl_box_score_reads_passing_before_espn_has_a_qbr() -> None:
+    box_score = read_box_score(BEARS_HALFTIME_SUMMARY, League.NFL)
+    reply = box_score_text(League.NFL, scheduled_game("401873010", TONIGHT, "in", away="NE"), box_score, None)
+    assert "CHI passing: player | C/ATT | YDS | TD | INT | SACKS | RTG\nCaleb Williams | 9/16 | 167 | 1 | 0 | 2-9 | 113.3" in reply
+    assert "Drake Maye | 12/15 | 169 | 1 | 1 | 1-1 | 108.1" in reply
+
+
+async def test_a_live_box_score_takes_its_score_and_clock_from_the_game_summary() -> None:
+    reply = await ask("box_score", LiveNbaGame().transport, SportsSettings(cache_dir=None, today=TONIGHT), league="nba", team="Thunder", opponent="Nuggets", date="2026-10-22")
+    assert reply.startswith("NBA box score: Thu 2026-10-22 | 7:29 - 1st Quarter | Denver Nuggets 15 at Oklahoma City Thunder 9")
+    assert "Nikola Jokic | 4 | 2 | 1-2 | " in reply
+
+
+async def test_a_live_box_score_names_no_player_as_not_playing() -> None:
+    reply = await ask("box_score", LiveNbaGame().transport, SportsSettings(cache_dir=None, today=TONIGHT), league="nba", team="Thunder", opponent="Nuggets", date="2026-10-22")
+    assert "DeMar DeRozan" not in reply and "did not play" not in reply
+
+
+class LiveNbaGame:
+    """ESPN during Nuggets at Thunder, 7:29 into the first quarter: the team schedule minutes behind and without a score, the summary current."""
+
+    def handle(self, request: httpx.Request) -> httpx.Response:
+        if request.url.path.endswith("/summary"):
+            return httpx.Response(200, json=THUNDER_FIRST_QUARTER_SUMMARY)
+        regular_season = request.url.params.get("seasontype") == "2" and request.url.params.get("season") == "2027"
+        return httpx.Response(200, json={"events": [self.scheduled_event()] if regular_season else []})
+
+    @staticmethod
+    def scheduled_event() -> dict[str, Any]:
+        return {
+            "id": "401909094",
+            "date": "2026-10-23T00:00Z",
+            "seasonType": {"type": 2},
+            "competitions": [
+                {
+                    "status": {"type": {"state": "in", "detail": "9:12 - 1st Quarter"}},
+                    "competitors": [
+                        {"homeAway": "home", "score": None, "team": {"id": "25", "displayName": "Oklahoma City Thunder", "abbreviation": "OKC"}},
+                        {"homeAway": "away", "score": None, "team": {"id": "7", "displayName": "Denver Nuggets", "abbreviation": "DEN"}},
+                    ],
+                },
+            ],
+        }
+
+    @property
+    def transport(self) -> httpx.MockTransport:
+        return httpx.MockTransport(self.handle)
 
 
 def scheduled_game(event_id: str, day: date, state: str, away: str = "SF", away_id: str = "25") -> Game:
