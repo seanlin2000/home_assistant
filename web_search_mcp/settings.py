@@ -17,6 +17,7 @@ class SearchSettings(BaseModel):
     max_redirects: int = 5
     results_to_return: int = 8
     min_seconds_between_searches: float = 3.0  # gap between live SearXNG requests; the upstream engines rate-limit bursts (cached queries never wait)
+    transient_retry_wait_seconds: float = 5.5  # SearXNG holds an engine back for ban_time_on_fail (5 s) after a timeout or a dropped connection
     cache_dir: str | None = None
     fixtures_dir: str | None = None  # set only by the benchmark: enables POST /benchmark/fixture and its known pages (design doc v2/03 section 3.3)
     user_agent: str = "Mozilla/5.0 (Macintosh; Intel Mac OS X 14_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0 Safari/537.36"
