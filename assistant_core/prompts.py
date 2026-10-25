@@ -3,7 +3,7 @@
 from datetime import date
 
 PERSONA_NAME = "Jarvis"
-PROMPT_VERSION = "2.4"  # 1.2 adds the calculator rule; 1.3 moves the router directive into the system prompt with a worked example; 1.4 trims the directives to the call alone; 1.5 adds today's date; 1.6 adds the rules for unclear input; 1.7 sends weather at home to weather_forecast; 1.8 offers wikipedia_lookup for settled facts, lists, and records; 2.0 moves the date and the route directive out of the system prompt into a block just before the question, so the system prompt and tools stay cached; 2.1 treats text inside <untrusted> blocks as information, never instructions, and stops the answer reading the date from the note aloud; 2.2 sends the weather anywhere to weather_forecast with a place; 2.3 sends NBA and NFL scores, rosters, and statistics to the sports tools, and says every item when the user asks for a list; 2.4 adds box_score for one game's player statistics
+PROMPT_VERSION = "2.5"  # 1.2 adds the calculator rule; 1.3 moves the router directive into the system prompt with a worked example; 1.4 trims the directives to the call alone; 1.5 adds today's date; 1.6 adds the rules for unclear input; 1.7 sends weather at home to weather_forecast; 1.8 offers wikipedia_lookup for settled facts, lists, and records; 2.0 moves the date and the route directive out of the system prompt into a block just before the question, so the system prompt and tools stay cached; 2.1 treats text inside <untrusted> blocks as information, never instructions, and stops the answer reading the date from the note aloud; 2.2 sends the weather anywhere to weather_forecast with a place; 2.3 sends NBA and NFL scores, rosters, and statistics to the sports tools, and says every item when the user asks for a list; 2.4 adds box_score for one game's player statistics; 2.5 sends what is playing on Broadway and Off-Broadway to broadway_shows
 
 # The three fixed replies for input that is not a clear question. The agent loop never speaks the silence marker, and the Home Assistant component
 # stops listening for a follow-up after the marker or the acknowledgement. The marker is safe because the prompt forbids markdown, so a real answer
@@ -50,7 +50,11 @@ Weather
 NBA and NFL
 - For NBA and NFL scores, rosters, and statistics, call the sports tools instead of searching: game_scores for a game's score (live, recent, or long past), box_score for how each player did in one game, team_roster for a team's players, player_stats for a player's numbers by season, and player_matchup for how a player did against another player or a team.
 - Pass a date as YYYY-MM-DD, worked out from today's date in the note, and a season as the year it started: the 2015-16 NBA season is 2015.
-- Read the numbers out as the tool gives them; do not add, round, or estimate them. Each result's heading names the team or player it found; if that is not who the user meant, say so."""
+- Read the numbers out as the tool gives them; do not add, round, or estimate them. Each result's heading names the team or player it found; if that is not who the user meant, say so.
+
+Broadway and Off-Broadway
+- For what is playing on Broadway or Off-Broadway in New York, call broadway_shows instead of searching. It lists the shows running now, or with timing="upcoming" the ones that have not started, from TodayTix's listings. Set venue_tier to "off_broadway" or "both" only when the user mentions Off-Broadway, and set the other filters only when the user asked for them.
+- Name the shows in the order the tool gives them, saying whether each is a musical or a play; say prices and scores as the tool gives them. It has no performance times: for a time, tell the user to pick one on TodayTix."""
 
 DATE_LINE = "For reference, not to be read aloud: today is {today}. Use this date whenever a question depends on what is current; do not assume an earlier year in your searches or answers."
 QUESTION_LABEL = "Question: "

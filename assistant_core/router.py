@@ -1,8 +1,8 @@
-"""Decide, before the model speaks, which tools a question needs (the web, the calculator, the forecast, sports statistics, several of them, or none) and say so
+"""Decide, before the model speaks, which tools a question needs (the web, the calculator, the forecast, sports statistics, show listings, several of them, or none) and say so
 just before the question.
 
 Two layers. Rules fire on unmistakable wording (an explicit request to search, numbers with an arithmetic cue, a question about coming or current
-weather, or an NBA or NFL statistic) at no cost, and several can fire for one question. When no rule fires, one short structured-output call asks the same model to classify the
+weather, an NBA or NFL statistic, or what is on Broadway) at no cost, and several can fire for one question. When no rule fires, one short structured-output call asks the same model to classify the
 question and, when it needs more than one tool, to plan their order in a sentence. A directive naming the tools to call goes into the block just before the
 question (prompt 2.0), because the engines offer no way to force a tool call; answer adds nothing. The system prompt stays the same for every question so
 the engine keeps it cached. The decision is recorded on the transcript so the benchmark can score the router on its own.
@@ -14,9 +14,9 @@ import time
 from assistant_core.llm_client import LLMClient
 from assistant_core.models import TOOL_NAMES_BY_ROUTE, AgentPolicy, Message, Role, Route, RouteDecision, ToolSpec
 
-TOOL_ROUTES = [Route.SEARCH, Route.CALCULATE, Route.WEATHER, Route.SPORTS]
-# Families the tool server offers only sometimes: the forecast needs home's coordinates, and a tool server from before M7 has no sports tools.
-OPTIONAL_ROUTES = (Route.WEATHER, Route.SPORTS)
+TOOL_ROUTES = [Route.SEARCH, Route.CALCULATE, Route.WEATHER, Route.SPORTS, Route.SHOWS]
+# Families the tool server offers only sometimes: the forecast needs home's coordinates, and an older tool server has no sports or show tools.
+OPTIONAL_ROUTES = (Route.WEATHER, Route.SPORTS, Route.SHOWS)
 MAX_EXTRA_ROUTES = 2
 ROUTE_SCHEMA = {
     "type": "object",
@@ -28,13 +28,14 @@ ROUTE_SCHEMA = {
     "required": ["route"],
 }
 
-ROUTER_SYSTEM_PROMPT = """You sort spoken questions for a home voice assistant. Reply with JSON only: {"route": "search" | "calculate" | "weather" | "sports" | "answer", "also": [...], "plan": "..."}.
+ROUTER_SYSTEM_PROMPT = """You sort spoken questions for a home voice assistant. Reply with JSON only: {"route": "search" | "calculate" | "weather" | "sports" | "shows" | "answer", "also": [...], "plan": "..."}.
 search: the correct answer depends on facts that change over time or that the assistant cannot know without checking: current prices, rates, news, schedules, product availability, recent releases, market conditions, what to buy today, whether an offer is competitive right now, or a claim about a recent event. Also anything the user explicitly asks to be searched or looked up.
 calculate: the correct answer requires arithmetic on numbers in the question: percentages, totals over time, compounding, unit or temperature conversions, energy costs, loan payments, tips, splits, or date differences.
 weather: the coming or current weather or forecast, at home or in any named place: whether it will rain, how warm or cold it will get, whether to take an umbrella or a coat, the weekend forecast.
 sports: NBA or NFL game scores (live, recent, or long past), how a player did in one game, a team's roster, a player's season or career statistics, or how a player or team did against another. Other leagues and sports are search.
+shows: what is playing on Broadway or Off-Broadway in New York, now or soon: which musicals or plays are running, the most popular or best reviewed, shows of a genre or under a price, rush and lottery tickets.
 answer: everything else: explanations of how things work, reasoning, advice from what the user said, comparisons of ideas, opinions, clarifying questions, and settled history even when it sounds topical.
-Examples: "What hardware gives the most memory for a thousand dollars today?" -> search. "Is a four percent rent increase competitive in my neighborhood?" -> search. "Since the central bank cut rates last month, should I refinance?" -> search. "What year did the Berlin Wall fall?" -> answer. "Why can a sparse model run on a smaller GPU?" -> answer. "What is fifteen percent of eighty dollars?" -> calculate. "Do I need an umbrella tomorrow?" -> weather. "What's the weather in Lisbon this weekend?" -> weather. "Who won the 49ers game last night?" -> sports. "How many threes did Steph Curry make each season?" -> sports. "What's Tom Brady's record against Peyton Manning?" -> sports. "Who won the World Cup in 2022?" -> search.
+Examples: "What hardware gives the most memory for a thousand dollars today?" -> search. "Is a four percent rent increase competitive in my neighborhood?" -> search. "Since the central bank cut rates last month, should I refinance?" -> search. "What year did the Berlin Wall fall?" -> answer. "Why can a sparse model run on a smaller GPU?" -> answer. "What is fifteen percent of eighty dollars?" -> calculate. "Do I need an umbrella tomorrow?" -> weather. "What's the weather in Lisbon this weekend?" -> weather. "Who won the 49ers game last night?" -> sports. "How many threes did Steph Curry make each season?" -> sports. "What's Tom Brady's record against Peyton Manning?" -> sports. "What musicals are on Broadway right now?" -> shows. "Who won the World Cup in 2022?" -> search.
 also: only when the question needs a second or third kind of tool after the first, in the order to use them; otherwise leave it out. plan: when also is given, one short sentence on how to use the tools together; otherwise leave it out.
 Examples: "Look up today's gold price and tell me what three ounces cost." -> {"route": "search", "also": ["calculate"], "plan": "Find today's gold price per ounce, then multiply it by three."} "Will it rain in Seattle tomorrow, and what time is the last ferry to Bainbridge?" -> {"route": "weather", "also": ["search"], "plan": "Get Seattle's forecast for tomorrow, then search the ferry schedule."} "Will Oslo be colder than here on Saturday?" -> {"route": "weather", "also": ["calculate"], "plan": "Get Saturday's forecast for Oslo and for home, then subtract the temperatures."} "What's tomorrow's high in Chicago in Celsius?" -> {"route": "weather", "also": ["calculate"], "plan": "Get Chicago's forecast for tomorrow, then convert the high to Celsius."}
 A comparison between places or a figure in other units needs the calculator as well as the forecast."""
@@ -63,7 +64,11 @@ SPORTS_DIRECTIVE = """Routing for this question: SPORTS.
 This question is about NBA or NFL scores, rosters, or statistics. Call game_scores for scores, box_score for one game's player statistics, team_roster for a roster, player_stats for a player's seasons, or player_matchup for a head-to-head; do not search the web and do not answer from memory. Answer from the numbers the tool returns.
 Example call: player_stats(league="nba", player="Stephen Curry", from_season=2011, to_season=2025)
 """
-DIRECTIVES = {Route.SEARCH: SEARCH_DIRECTIVE, Route.CALCULATE: CALCULATE_DIRECTIVE, Route.WEATHER: WEATHER_DIRECTIVE, Route.SPORTS: SPORTS_DIRECTIVE}
+SHOWS_DIRECTIVE = """Routing for this question: SHOWS.
+This question is about what is playing on Broadway or Off-Broadway. Call broadway_shows, with venue_tier set to "off_broadway" or "both" only when the user mentions Off-Broadway, and the other filters only when the user asked for them; do not search the web and do not answer from memory. Answer from the shows the tool returns.
+Example call: broadway_shows(show_type="musical", sort_by="audience_score")
+"""
+DIRECTIVES = {Route.SEARCH: SEARCH_DIRECTIVE, Route.CALCULATE: CALCULATE_DIRECTIVE, Route.WEATHER: WEATHER_DIRECTIVE, Route.SPORTS: SPORTS_DIRECTIVE, Route.SHOWS: SHOWS_DIRECTIVE}
 # A question that needs several tools gets one directive: the routes in order, the plan, then each route's instruction and example call without its heading.
 SEVERAL_TOOLS_INSTRUCTION = "This question needs more than one tool. Call each of them, in this order, and answer from what they return; do no arithmetic yourself."
 
@@ -107,11 +112,16 @@ SPORTS_STATISTIC = re.compile(
 )
 SPORTS_LEAGUE = re.compile(r"\b(nba|nfl)\b", re.IGNORECASE)
 SPORTS_ASK = re.compile(r"\b(scores?|box score|stat line|won|win|beat|lost|roster|stats|statistics|record|standings|career|season)\b", re.IGNORECASE)
+# The shows rule fires on Off-Broadway alone, or on Broadway with a theater word: Broadway is also a street, so "the best pizza on Broadway" or
+# "a hotel near Broadway and 42nd" is left to the model layer.
+OFF_BROADWAY = re.compile(r"\boff[- ]broadway\b", re.IGNORECASE)
+BROADWAY = re.compile(r"\bbroadway\b", re.IGNORECASE)
+THEATER_ASK = re.compile(r"\b(shows?|musicals?|plays?|playing|running|tickets?|lottery|theaters?|theatres?|see|on now|opening|closing)\b", re.IGNORECASE)
 
 
 def rule_route(text: str) -> RouteDecision | None:
-    """Every rule that fires, searching first, then the forecast and sports, then the arithmetic on what they found; None when no rule fires."""
-    fired = [*search_reasons(text), *weather_reasons(text), *sports_reasons(text)]
+    """Every rule that fires, searching first, then the forecast, sports, and shows, then the arithmetic on what they found; None when no rule fires."""
+    fired = [*search_reasons(text), *weather_reasons(text), *sports_reasons(text), *shows_reasons(text)]
     fired.extend(arithmetic_reasons(text, minimum_numbers=1 if any(route == Route.SEARCH for route, _ in fired) else MIN_NUMBERS_FOR_ARITHMETIC))
     if not fired:
         return None
@@ -140,6 +150,16 @@ def sports_reasons(text: str) -> list[tuple[Route, str]]:
     league, ask = SPORTS_LEAGUE.search(text), SPORTS_ASK.search(text)
     if league and ask:
         return [(Route.SPORTS, f"'{league.group(0)}' with '{ask.group(0)}'")]
+    return []
+
+
+def shows_reasons(text: str) -> list[tuple[Route, str]]:
+    off_broadway = OFF_BROADWAY.search(text)
+    if off_broadway:
+        return [(Route.SHOWS, f"'{off_broadway.group(0)}'")]
+    broadway, ask = BROADWAY.search(text), THEATER_ASK.search(text)
+    if broadway and ask:
+        return [(Route.SHOWS, f"'{broadway.group(0)}' with '{ask.group(0)}'")]
     return []
 
 

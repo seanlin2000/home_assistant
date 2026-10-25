@@ -12,6 +12,7 @@ from assistant_core.llm_client import LLMClient
 from assistant_core.memory import ConversationMemory, NoMemory
 from assistant_core.models import (
     SEARCH_TOOL_NAMES,
+    SHOWS_TOOL_NAMES,
     SPORTS_TOOL_NAMES,
     WEATHER_TOOL_NAMES,
     AgentEvent,
@@ -281,13 +282,15 @@ async def stream_model_reply(
 
 def filler_for(tool_name: str, policy: AgentPolicy) -> str:
     """The sentence spoken while the first tool of an exchange runs: a web line for search tools, a forecast line for the weather, a numbers line for
-    sports, a math line for everything else."""
+    sports, a listings line for shows, a math line for everything else."""
     if tool_name in SEARCH_TOOL_NAMES:
         phrases = policy.filler_phrases
     elif tool_name in WEATHER_TOOL_NAMES:
         phrases = policy.weather_filler_phrases
     elif tool_name in SPORTS_TOOL_NAMES:
         phrases = policy.sports_filler_phrases
+    elif tool_name in SHOWS_TOOL_NAMES:
+        phrases = policy.shows_filler_phrases
     else:
         phrases = policy.calculate_filler_phrases
     return random.choice(phrases or policy.filler_phrases)

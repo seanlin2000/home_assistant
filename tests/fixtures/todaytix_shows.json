@@ -1,0 +1,629 @@
+{
+ "code": 200,
+ "data": [
+  {
+   "displayName": "Wicked",
+   "productType": "SHOW",
+   "category": {
+    "name": "Musicals"
+   },
+   "subcategories": [
+    {
+     "name": "Broadway"
+    },
+    {
+     "name": "Family / Kid-friendly"
+    },
+    {
+     "name": "Halloween"
+    },
+    {
+     "name": "Classic"
+    },
+    {
+     "name": "Must-See"
+    },
+    {
+     "name": "Film / TV"
+    },
+    {
+     "name": "Award winners"
+    },
+    {
+     "name": "Drama"
+    }
+   ],
+   "venue": "Gershwin Theatre",
+   "startDate": "2003-10-08",
+   "endDate": "null",
+   "recentPdpViewsCount": 9502,
+   "reviewSummary": {
+    "score": 94,
+    "reviewsCount": 27162
+   },
+   "lowPriceForRegularTickets": {
+    "value": 89.0
+   },
+   "isRushActive": false,
+   "isLotteryActive": false
+  },
+  {
+   "displayName": "Chicago",
+   "productType": "SHOW",
+   "category": {
+    "name": "Musicals"
+   },
+   "subcategories": [
+    {
+     "name": "Broadway"
+    },
+    {
+     "name": "Classic"
+    },
+    {
+     "name": "Revival"
+    },
+    {
+     "name": "Stars on Stage"
+    },
+    {
+     "name": "Award winners"
+    },
+    {
+     "name": "Drama"
+    }
+   ],
+   "venue": "Ambassador Theatre",
+   "startDate": "1996-10-23",
+   "endDate": "null",
+   "recentPdpViewsCount": 7990,
+   "reviewSummary": {
+    "score": 86,
+    "reviewsCount": 9290
+   },
+   "lowPriceForRegularTickets": {
+    "value": 73.0
+   },
+   "isRushActive": false,
+   "isLotteryActive": false
+  },
+  {
+   "displayName": "Hamilton",
+   "productType": "SHOW",
+   "category": {
+    "name": "Musicals"
+   },
+   "subcategories": [
+    {
+     "name": "Broadway"
+    },
+    {
+     "name": "Romance"
+    },
+    {
+     "name": "Family / Kid-friendly"
+    },
+    {
+     "name": "History"
+    },
+    {
+     "name": "Must-See"
+    },
+    {
+     "name": "Award winners"
+    },
+    {
+     "name": "Drama"
+    }
+   ],
+   "venue": "Richard Rodgers Theatre",
+   "startDate": "2015-07-13",
+   "endDate": "null",
+   "recentPdpViewsCount": 5996,
+   "reviewSummary": {
+    "score": 96,
+    "reviewsCount": 16174
+   },
+   "lowPriceForRegularTickets": {
+    "value": 112.0
+   },
+   "isRushActive": false,
+   "isLotteryActive": false
+  },
+  {
+   "displayName": "Evita",
+   "productType": "SHOW",
+   "category": {
+    "name": "Musicals"
+   },
+   "subcategories": [
+    {
+     "name": "Broadway"
+    },
+    {
+     "name": "Stars on Stage"
+    }
+   ],
+   "venue": "Winter Garden Theatre",
+   "startDate": "2027-02-27",
+   "endDate": "null",
+   "recentPdpViewsCount": 406,
+   "reviewSummary": null,
+   "lowPriceForRegularTickets": {
+    "value": 72.0
+   },
+   "isRushActive": false,
+   "isLotteryActive": false
+  },
+  {
+   "displayName": "Little Shop of Horrors",
+   "productType": "SHOW",
+   "category": {
+    "name": "Musicals"
+   },
+   "subcategories": [
+    {
+     "name": "Comedy"
+    },
+    {
+     "name": "Family / Kid-friendly"
+    },
+    {
+     "name": "Revival"
+    },
+    {
+     "name": "Must-See"
+    },
+    {
+     "name": "Stars on Stage"
+    },
+    {
+     "name": "Award winners"
+    },
+    {
+     "name": "Off Broadway"
+    }
+   ],
+   "venue": "Westside Theatre",
+   "startDate": "2019-09-17",
+   "endDate": "null",
+   "recentPdpViewsCount": 3072,
+   "reviewSummary": {
+    "score": 93,
+    "reviewsCount": 3535
+   },
+   "lowPriceForRegularTickets": {
+    "value": 55.0
+   },
+   "isRushActive": false,
+   "isLotteryActive": false
+  },
+  {
+   "displayName": "The Museum of Broadway ",
+   "productType": "ATTRACTION",
+   "category": {
+    "name": "Museums and Galleries"
+   },
+   "subcategories": [
+    {
+     "name": "Broadway"
+    },
+    {
+     "name": "Family / Kid-friendly"
+    }
+   ],
+   "venue": "The Museum of Broadway",
+   "startDate": "2022-12-13",
+   "endDate": "null",
+   "recentPdpViewsCount": 157,
+   "reviewSummary": {
+    "score": 85,
+    "reviewsCount": 1247
+   },
+   "lowPriceForRegularTickets": {
+    "value": 42.77
+   },
+   "isRushActive": false,
+   "isLotteryActive": false
+  },
+  {
+   "displayName": "The Rocky Horror Show",
+   "productType": "SHOW",
+   "category": {
+    "name": "Musicals"
+   },
+   "subcategories": [
+    {
+     "name": "Broadway"
+    },
+    {
+     "name": "Comedy"
+    },
+    {
+     "name": "Halloween"
+    },
+    {
+     "name": "Revival"
+    },
+    {
+     "name": "Film / TV"
+    },
+    {
+     "name": "Sci Fi / Fantasy"
+    },
+    {
+     "name": "Stars on Stage"
+    },
+    {
+     "name": "Horror"
+    }
+   ],
+   "venue": "Studio 54",
+   "startDate": "2026-03-26",
+   "endDate": "null",
+   "recentPdpViewsCount": 23896,
+   "reviewSummary": {
+    "score": 94,
+    "reviewsCount": 4336
+   },
+   "lowPriceForRegularTickets": {
+    "value": 62.0
+   },
+   "isRushActive": false,
+   "isLotteryActive": true
+  },
+  {
+   "displayName": "The Imaginary Invalid",
+   "productType": "SHOW",
+   "category": {
+    "name": "Plays"
+   },
+   "subcategories": [
+    {
+     "name": "Broadway"
+    },
+    {
+     "name": "Comedy"
+    },
+    {
+     "name": "Classic"
+    },
+    {
+     "name": "History"
+    },
+    {
+     "name": "Satire"
+    }
+   ],
+   "venue": "Todd Haimes Theatre",
+   "startDate": "2026-09-25",
+   "endDate": "2026-11-22",
+   "recentPdpViewsCount": 6584,
+   "reviewSummary": {
+    "score": 83,
+    "reviewsCount": 533
+   },
+   "lowPriceForRegularTickets": {
+    "value": 69.0
+   },
+   "isRushActive": true,
+   "isLotteryActive": false
+  },
+  {
+   "displayName": "Masquerade",
+   "productType": "SHOW",
+   "category": {
+    "name": "Musicals"
+   },
+   "subcategories": [
+    {
+     "name": "Romance"
+    },
+    {
+     "name": "Immersive"
+    },
+    {
+     "name": "Adventure"
+    },
+    {
+     "name": "Drama"
+    },
+    {
+     "name": "Off Broadway"
+    }
+   ],
+   "venue": "Masquerade",
+   "startDate": "2025-07-31",
+   "endDate": "null",
+   "recentPdpViewsCount": 2979,
+   "reviewSummary": {
+    "score": 95,
+    "reviewsCount": 892
+   },
+   "lowPriceForRegularTickets": {
+    "value": 199.0
+   },
+   "isRushActive": true,
+   "isLotteryActive": false
+  },
+  {
+   "displayName": "Two Strangers (Carry a Cake Across New York)",
+   "productType": "SHOW",
+   "category": {
+    "name": "Musicals"
+   },
+   "subcategories": [
+    {
+     "name": "Broadway"
+    },
+    {
+     "name": "Romance"
+    }
+   ],
+   "venue": "Longacre Theatre",
+   "startDate": "2025-11-01",
+   "endDate": "2026-11-29",
+   "recentPdpViewsCount": 5946,
+   "reviewSummary": {
+    "score": 93,
+    "reviewsCount": 3733
+   },
+   "lowPriceForRegularTickets": {
+    "value": 67.0
+   },
+   "isRushActive": false,
+   "isLotteryActive": false
+  },
+  {
+   "displayName": "School Girls; Or, The African Mean Girls Play",
+   "productType": "SHOW",
+   "category": {
+    "name": "Plays"
+   },
+   "subcategories": [
+    {
+     "name": "Broadway"
+    }
+   ],
+   "venue": "Samuel J. Friedman Theatre",
+   "startDate": "2026-09-08",
+   "endDate": "2026-11-15",
+   "recentPdpViewsCount": 8065,
+   "reviewSummary": {
+    "score": 93,
+    "reviewsCount": 577
+   },
+   "lowPriceForRegularTickets": {
+    "value": 82.0
+   },
+   "isRushActive": true,
+   "isLotteryActive": false
+  },
+  {
+   "displayName": "Billy Crystal 860",
+   "productType": "SHOW",
+   "category": {
+    "name": "Plays"
+   },
+   "subcategories": [
+    {
+     "name": "Broadway"
+    },
+    {
+     "name": "Stars on Stage"
+    }
+   ],
+   "venue": "Imperial Theatre",
+   "startDate": "2026-10-01",
+   "endDate": "2027-01-03",
+   "recentPdpViewsCount": 3498,
+   "reviewSummary": {
+    "score": 98,
+    "reviewsCount": 309
+   },
+   "lowPriceForRegularTickets": {
+    "value": 82.0
+   },
+   "isRushActive": false,
+   "isLotteryActive": false
+  },
+  {
+   "displayName": "Paranormal Activity ",
+   "productType": "SHOW",
+   "category": {
+    "name": "Plays"
+   },
+   "subcategories": [
+    {
+     "name": "Broadway"
+    },
+    {
+     "name": "Crime / Thriller / Mystery"
+    },
+    {
+     "name": "Halloween"
+    },
+    {
+     "name": "Film / TV"
+    }
+   ],
+   "venue": "August Wilson Theatre",
+   "startDate": "2026-08-14",
+   "endDate": "null",
+   "recentPdpViewsCount": 21340,
+   "reviewSummary": {
+    "score": 91,
+    "reviewsCount": 2578
+   },
+   "lowPriceForRegularTickets": {
+    "value": 59.0
+   },
+   "isRushActive": true,
+   "isLotteryActive": false
+  },
+  {
+   "displayName": "Midnight",
+   "productType": "SHOW",
+   "category": {
+    "name": "Musicals"
+   },
+   "subcategories": [
+    {
+     "name": "Off Broadway"
+    }
+   ],
+   "venue": "Daryl Roth Theatre",
+   "startDate": "2026-09-22",
+   "endDate": "2027-01-03",
+   "recentPdpViewsCount": 7340,
+   "reviewSummary": null,
+   "lowPriceForRegularTickets": {
+    "value": 75.0
+   },
+   "isRushActive": true,
+   "isLotteryActive": false
+  },
+  {
+   "displayName": "Purple Rain",
+   "productType": "SHOW",
+   "category": {
+    "name": "Musicals"
+   },
+   "subcategories": [
+    {
+     "name": "Broadway"
+    }
+   ],
+   "venue": "Majestic Theatre ",
+   "startDate": "2027-03-12",
+   "endDate": "2027-11-21",
+   "recentPdpViewsCount": 181,
+   "reviewSummary": null,
+   "lowPriceForRegularTickets": {
+    "value": 53.0
+   },
+   "isRushActive": false,
+   "isLotteryActive": false
+  },
+  {
+   "displayName": "Downstate",
+   "productType": "SHOW",
+   "category": {
+    "name": "Plays"
+   },
+   "subcategories": [
+    {
+     "name": "Broadway"
+    },
+    {
+     "name": "Stars on Stage"
+    }
+   ],
+   "venue": "Booth Theatre",
+   "startDate": "2026-10-22",
+   "endDate": "2027-01-10",
+   "recentPdpViewsCount": 3948,
+   "reviewSummary": null,
+   "lowPriceForRegularTickets": {
+    "value": 69.0
+   },
+   "isRushActive": false,
+   "isLotteryActive": false
+  },
+  {
+   "displayName": "Rope",
+   "productType": "SHOW",
+   "category": {
+    "name": "Plays"
+   },
+   "subcategories": [
+    {
+     "name": "Crime / Thriller / Mystery"
+    },
+    {
+     "name": "Off Broadway"
+    }
+   ],
+   "venue": "Theatre at St. Clement's",
+   "startDate": "2026-10-13",
+   "endDate": "2026-12-06",
+   "recentPdpViewsCount": 3793,
+   "reviewSummary": null,
+   "lowPriceForRegularTickets": {
+    "value": 77.0
+   },
+   "isRushActive": true,
+   "isLotteryActive": false
+  },
+  {
+   "displayName": "Second Stage 2026/27 Subscriptions",
+   "productType": "ATTRACTION",
+   "category": {
+    "name": "Plays"
+   },
+   "subcategories": [
+    {
+     "name": "Broadway"
+    },
+    {
+     "name": "Off Broadway"
+    }
+   ],
+   "venue": "",
+   "startDate": "2027-08-31",
+   "endDate": "null",
+   "recentPdpViewsCount": 277,
+   "reviewSummary": null,
+   "lowPriceForRegularTickets": {
+    "value": 132.0
+   },
+   "isRushActive": false,
+   "isLotteryActive": false
+  },
+  {
+   "displayName": "Private Lives",
+   "productType": "SHOW",
+   "category": {
+    "name": "Plays"
+   },
+   "subcategories": [
+    {
+     "name": "Broadway"
+    }
+   ],
+   "venue": "",
+   "startDate": "2025-02-24",
+   "endDate": "null",
+   "recentPdpViewsCount": 13,
+   "reviewSummary": null,
+   "lowPriceForRegularTickets": null,
+   "isRushActive": false,
+   "isLotteryActive": false
+  },
+  {
+   "displayName": "Montauk",
+   "productType": "SHOW",
+   "category": {
+    "name": "Plays"
+   },
+   "subcategories": [
+    {
+     "name": "Broadway"
+    }
+   ],
+   "venue": "Samuel J. Friedman Theatre",
+   "startDate": "null",
+   "endDate": "null",
+   "recentPdpViewsCount": 40,
+   "reviewSummary": null,
+   "lowPriceForRegularTickets": null,
+   "isRushActive": false,
+   "isLotteryActive": false
+  }
+ ],
+ "pagination": {
+  "limit": 300,
+  "offset": 0,
+  "total": 20
+ }
+}

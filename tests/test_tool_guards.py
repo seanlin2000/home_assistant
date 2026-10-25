@@ -3,7 +3,7 @@
 import pytest
 
 from assistant_core.egress_guard import leaked_terms, private_terms_in
-from assistant_core.models import REQUIRED_TOOL_NAMES, SPORTS_TOOL_NAMES, WEATHER_TOOL_NAMES, Message, Role, ToolCall, ToolSpec
+from assistant_core.models import REQUIRED_TOOL_NAMES, SHOWS_TOOL_NAMES, SPORTS_TOOL_NAMES, WEATHER_TOOL_NAMES, Message, Role, ToolCall, ToolSpec
 from assistant_core.tool_guards import EGRESS_REFUSAL, PROVENANCE_REFUSAL, GuardedToolBox, ToolRefused, load_tool_table
 from tests.fakes import SEARCH_TOOL, FakeToolBox
 
@@ -106,9 +106,14 @@ def test_common_words_are_dropped_and_the_distinctive_ones_kept() -> None:
 
 
 def test_every_tool_the_server_must_offer_has_a_tier() -> None:
-    assert (REQUIRED_TOOL_NAMES | WEATHER_TOOL_NAMES | SPORTS_TOOL_NAMES) <= set(load_tool_table().tools)
+    assert (REQUIRED_TOOL_NAMES | WEATHER_TOOL_NAMES | SPORTS_TOOL_NAMES | SHOWS_TOOL_NAMES) <= set(load_tool_table().tools)
 
 
 def test_sports_tools_read_public_text_and_mark_the_exchange_untrusted() -> None:
     rules = load_tool_table().tools
     assert {(rules[name].tier.value, rules[name].marks_untrusted) for name in SPORTS_TOOL_NAMES} == {("read_public", True)}
+
+
+def test_the_show_listings_read_public_text_and_mark_the_exchange_untrusted() -> None:
+    rules = load_tool_table().tools
+    assert {(rules[name].tier.value, rules[name].marks_untrusted) for name in SHOWS_TOOL_NAMES} == {("read_public", True)}

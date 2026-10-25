@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 # Install, start, stop, and inspect the native macOS services that Home Assistant talks to over the LAN.
 #
-#   scripts/services.sh install      write launchd agents for whisper, kokoro, the harness and the exchange dashboard (LAN), llama-server and mcp (127.0.0.1), and the health check, and load them
+#   scripts/services.sh install      write launchd agents for whisper, kokoro, the harness and the exchange dashboard (LAN), llama-server and mcp (127.0.0.1), the health check, and the nightly listings refresh, and load them
 #   scripts/services.sh start|stop   load/unload the agents
-#   scripts/services.sh restart NAME restart one agent (llama|mcp|harness|dashboard|whisper|kokoro|health)
+#   scripts/services.sh restart NAME restart one agent (llama|mcp|harness|dashboard|whisper|kokoro|health|listings)
 #   scripts/services.sh status       show what is listening on each port and the last health snapshot
 #   scripts/services.sh dashboard    start the exchange dashboard if it is not running and open it in the browser
-#   scripts/services.sh logs NAME    tail a service log (whisper|kokoro|mcp|harness|dashboard|llama|health)
+#   scripts/services.sh logs NAME    tail a service log (whisper|kokoro|mcp|harness|dashboard|llama|health|listings)
 #   scripts/services.sh uninstall    unload and remove the agents
 #
 # Ports: Whisper 10300, Kokoro 10210 and the harness 8770 (with an API key) bind 0.0.0.0 so the VM can reach them, and the
@@ -18,11 +18,13 @@ PROJECT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 AGENTS_DIR="$HOME/Library/LaunchAgents"
 LOG_DIR="$HOME/Library/Logs/studio-assistant"
 PREFIX="com.studio-assistant"
-SERVICES=(llama mcp harness dashboard whisper kokoro health)
+SERVICES=(llama mcp harness dashboard whisper kokoro health listings)
 # Agents an older install wrote and install now removes: llama-server replaced Ollama (design_docs/v2/10 section 3.1).
 RETIRED_SERVICES=(ollama)
 APP_SUPPORT_DIR="$HOME/Library/Application Support/studio-assistant"
 HEALTH_INTERVAL_SECONDS="${HEALTH_INTERVAL_SECONDS:-300}"
+LISTINGS_REFRESH_HOUR="${LISTINGS_REFRESH_HOUR:-4}"
+LISTINGS_REFRESH_MINUTE="${LISTINGS_REFRESH_MINUTE:-30}"
 UNLOAD_TIMEOUT_SECONDS="${UNLOAD_TIMEOUT_SECONDS:-30}"
 
 usage() {
@@ -43,7 +45,8 @@ env_file_value() {
 
 write_plist() {
     # $1 name, $2.. program arguments; environment via ENV_KEYS/ENV_VALUES arrays.
-    # PLIST_START_INTERVAL=N makes a periodic job (launchd runs it every N seconds) instead of a kept-alive daemon.
+    # PLIST_START_INTERVAL=N makes a periodic job (launchd runs it every N seconds) instead of a kept-alive daemon; PLIST_START_HOUR and
+    # PLIST_START_MINUTE make a daily one (launchd runs it at that local time, or on waking when the Mac slept through it).
     local name="$1"
     shift
     local path
@@ -72,6 +75,8 @@ EOF
 EOF
         if [[ -n "${PLIST_START_INTERVAL:-}" ]]; then
             echo "  <key>StartInterval</key><integer>$PLIST_START_INTERVAL</integer>"
+        elif [[ -n "${PLIST_START_HOUR:-}" ]]; then
+            echo "  <key>StartCalendarInterval</key><dict><key>Hour</key><integer>$PLIST_START_HOUR</integer><key>Minute</key><integer>${PLIST_START_MINUTE:-0}</integer></dict>"
         else
             echo "  <key>KeepAlive</key><true/>"
             echo "  <key>ThrottleInterval</key><integer>10</integer>"
@@ -157,6 +162,9 @@ install_agents() {
     read -ra health_flags <<<"${HEALTH_CHECK_FLAGS:-}"
     # Bash 3.2, the one macOS ships, treats "${array[@]}" of an empty array as unbound under set -u; this form expands to nothing instead.
     PLIST_START_INTERVAL="$HEALTH_INTERVAL_SECONDS" write_plist health "$PROJECT_DIR/.venv/bin/python" "$PROJECT_DIR/scripts/health_check.py" ${health_flags[@]+"${health_flags[@]}"}
+    # The show listings the tool server reads all day (ops/listings_refresh.py). RunAtLoad also refreshes them on every install, so a new Mac has
+    # listings before its first night.
+    PLIST_START_HOUR="$LISTINGS_REFRESH_HOUR" PLIST_START_MINUTE="$LISTINGS_REFRESH_MINUTE" write_plist listings "$PROJECT_DIR/.venv/bin/listings-refresh"
     start_agents
 }
 
@@ -236,6 +244,7 @@ status() {
         fi
     done
     agent_loaded health && echo "health: checks every $HEALTH_INTERVAL_SECONDS s"
+    agent_loaded listings && printf 'listings: refreshes daily at %d:%02d; last: %s\n' "$LISTINGS_REFRESH_HOUR" "$LISTINGS_REFRESH_MINUTE" "$(tail -n 1 "$LOG_DIR/listings.log" 2>/dev/null || echo "not run yet")"
     [[ -f "$LOG_DIR/maintenance" ]] && echo "MAINTENANCE FLAG SET: self-healing is off ($LOG_DIR/maintenance)"
     if [[ -f "$LOG_DIR/health.json" ]]; then
         "$PROJECT_DIR/.venv/bin/python" "$PROJECT_DIR/scripts/health_check.py" --last

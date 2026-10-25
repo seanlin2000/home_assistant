@@ -45,6 +45,10 @@ marks_untrusted = true                      # numbers, but under names from ESPN
 tier = "read_public"
 marks_untrusted = true                      # numbers, but under names and game notes from ESPN
 
+[tools.broadway_shows]
+tier = "read_public"
+marks_untrusted = true                      # show names and tags written by TodayTix and the producers who list there
+
 [tools.calculate]
 tier = "local"
 marks_untrusted = false

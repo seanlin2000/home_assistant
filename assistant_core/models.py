@@ -16,6 +16,7 @@ class Route(StrEnum):
     CALCULATE = "calculate"
     WEATHER = "weather"
     SPORTS = "sports"
+    SHOWS = "shows"
     ANSWER = "answer"
 
 
@@ -69,17 +70,18 @@ class AgentPolicy(BaseModel):
     calculate_filler_phrases: list[str] = Field(default_factory=lambda: list(DEFAULT_CALCULATE_FILLER_PHRASES))
     weather_filler_phrases: list[str] = Field(default_factory=lambda: list(DEFAULT_WEATHER_FILLER_PHRASES))
     sports_filler_phrases: list[str] = Field(default_factory=lambda: list(DEFAULT_SPORTS_FILLER_PHRASES))
+    shows_filler_phrases: list[str] = Field(default_factory=lambda: list(DEFAULT_SHOWS_FILLER_PHRASES))
     tool_timeout_seconds: float = 30.0
     history_exchanges: int = Field(default=3, ge=0)  # earlier exchanges replayed with each question; more and the model answers from the history instead of looking up
 
     @property
     def every_filler_phrase(self) -> list[str]:
-        return [*self.filler_phrases, *self.calculate_filler_phrases, *self.weather_filler_phrases, *self.sports_filler_phrases]
+        return [*self.filler_phrases, *self.calculate_filler_phrases, *self.weather_filler_phrases, *self.sports_filler_phrases, *self.shows_filler_phrases]
 
 
-# Spoken while the first tool call of an exchange runs, so the user hears something within a second or two. Search, calculation, the forecast, and
-# sports get different lines because "checking the web" is wrong, and mildly alarming, when the assistant is doing arithmetic locally or reading
-# a forecast or a box score.
+# Spoken while the first tool call of an exchange runs, so the user hears something within a second or two. Search, calculation, the forecast,
+# sports, and show listings get different lines because "checking the web" is wrong, and mildly alarming, when the assistant is doing arithmetic
+# locally or reading a forecast, a box score, or the night's listings.
 DEFAULT_FILLER_PHRASES = (
     "Let me pull some sources on that.",
     "One moment, checking the web.",
@@ -97,13 +99,18 @@ DEFAULT_SPORTS_FILLER_PHRASES = (
     "Let me check the numbers.",
     "One moment, pulling up the numbers.",
 )
+DEFAULT_SHOWS_FILLER_PHRASES = (
+    "Let me check what's playing.",
+    "One moment, pulling up the listings.",
+)
 SEARCH_TOOL_NAMES = frozenset({"search_and_read", "web_search", "fetch_page", "wikipedia_lookup"})
 WEATHER_TOOL_NAMES = frozenset({"weather_forecast"})
 SPORTS_TOOL_NAMES = frozenset({"game_scores", "box_score", "team_roster", "player_stats", "player_matchup"})
+SHOWS_TOOL_NAMES = frozenset({"broadway_shows"})
 # The router's JSON: a route, up to two more, and a one-sentence plan. Forty tokens held the route alone and cut the plan off mid-string.
 CLASSIFY_MAX_TOKENS = 120
 CALCULATOR_TOOL_NAMES = frozenset({"calculate", "percent", "convert", "growth_schedule", "energy_cost", "loan_payment", "break_even", "date_math"})
-TOOL_NAMES_BY_ROUTE = {Route.SEARCH: SEARCH_TOOL_NAMES, Route.CALCULATE: CALCULATOR_TOOL_NAMES, Route.WEATHER: WEATHER_TOOL_NAMES, Route.SPORTS: SPORTS_TOOL_NAMES}
+TOOL_NAMES_BY_ROUTE = {Route.SEARCH: SEARCH_TOOL_NAMES, Route.CALCULATE: CALCULATOR_TOOL_NAMES, Route.WEATHER: WEATHER_TOOL_NAMES, Route.SPORTS: SPORTS_TOOL_NAMES, Route.SHOWS: SHOWS_TOOL_NAMES}
 # The tools a live tool server must expose before the benchmark or the health check trusts it as ours (a stale server once served a different set).
 REQUIRED_TOOL_NAMES = frozenset({"search_and_read", "web_search", "fetch_page", "wikipedia_lookup", "calculate", "percent", "convert"})
 
