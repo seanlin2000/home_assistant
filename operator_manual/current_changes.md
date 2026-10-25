@@ -2,8 +2,8 @@
 
 This page lists the pull requests that are open right now, one entry each, in the same shape as a section. An entry is written when its pull request opens and removed when the pull request merges or closes.
 
-## Branch broadway-shows: Add broadway_shows: what is playing on Broadway and Off-Broadway, from TodayTix
-<!-- manual-entry branch="broadway-shows" pr="pending" date="2026-10-25" -->
+## PR #51: Add broadway_shows: what is playing on Broadway and Off-Broadway, from TodayTix
+<!-- manual-entry branch="broadway-shows" pr="51" date="2026-10-25" -->
 
 ### Where this fits
 
