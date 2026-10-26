@@ -208,8 +208,15 @@ def box_score_text(league: League, game: Game, box_score: BoxScore | None, asked
         return "\n".join([*lines, "ESPN has no player statistics for this game, only the score."])
     for side, table in tables_in_order(league, box_score):
         lines.extend(box_score_table_lines(side, table))
-    lines.extend(f"{side.abbreviation} did not play: {', '.join(side.did_not_play)}" for side in box_score.sides if side.did_not_play)
+    lines.extend(did_not_play_lines(game, box_score))
     return "\n".join(lines)
+
+
+def did_not_play_lines(game: Game, box_score: BoxScore) -> list[str]:
+    """Until a game is final ESPN marks every player yet to check in as not playing, for "coach's decision", so a live game lists no one."""
+    if game.state != FINISHED:
+        return []
+    return [f"{side.abbreviation} did not play: {', '.join(side.did_not_play)}" for side in box_score.sides if side.did_not_play]
 
 
 def tables_in_order(league: League, box_score: BoxScore) -> list[tuple[BoxScoreSide, BoxScoreTable]]:

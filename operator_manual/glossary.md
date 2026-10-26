@@ -61,6 +61,7 @@ Every term the handbook defines, in one sentence, with the section that explains
 | Last good commit | The commit hash that most recently passed the smoke test, kept in the file `last_good_ref` on the mini for a rollback to return to. | [Operations](10_operations.md#deploy-smoke-test-and-rollback) |
 | launchd | macOS's service manager, which runs the program a plist file describes at login and keeps it alive or reruns it every N seconds. | [Hardware](08_hardware_and_deployment.md#three-places-to-run-a-service) |
 | Line reference | A citation in a pull request description of the form `` `path:start-end` (`symbol`) `` that names the exact lines a reviewer should open. | [Development](09_dev_environment.md#the-pr-description) |
+| Listings snapshot | The file the nightly listings refresh writes, such as `broadway.json`, which a listings tool reads on every call instead of asking the source. | [Current Working Changes](current_changes.md) |
 | LLM-as-judge | Using a strong model to grade another model's answer against a written rubric. | [Benchmarking and Model Selection](01_llm_benchmark.md#the-judge) |
 | Lock file | A file that records every resolved dependency at one exact version with its hash, regenerated from the declared constraints; `uv.lock` is one. | [Development](09_dev_environment.md#the-environment) |
 | Login item | An application macOS opens when the user logs in, listed under System Settings, General, Login Items. | [Hardware](08_hardware_and_deployment.md#coming-back-after-a-reboot) |
@@ -91,7 +92,9 @@ Every term the handbook defines, in one sentence, with the section that explains
 | Question router | The step before the first model call that decides whether a question needs the web, the calculator, the forecast for home, or none of them. | [Conversation Agent](04_conversation_agent.md#the-question-router) |
 | Reference sketch | Two or three sentences in the benchmark saying what a correct answer must contain, so the judge checks against it instead of working the problem itself. | [Benchmarking and Model Selection](01_llm_benchmark.md#questions-rubric-and-configuration) |
 | rsync | A copy tool that compares source and destination and sends only the differences, the standard way to mirror a folder between two machines over SSH. | [Operations](10_operations.md#bootstrap) |
+| Rush ticket | A cheap ticket a theater sells on the day of the performance, first come, first served. | [Current Working Changes](current_changes.md) |
 | SMB share | A folder served over SMB, the network file-sharing protocol that macOS and Windows speak natively. | [Home Assistant](06_home_assistant_core.md#the-virtual-machine) |
+| Show-Score | An audience review site for New York theater; TodayTix shows its score out of 100 and its review count on each show's page, beside TodayTix's own rating out of 5. | [Current Working Changes](current_changes.md) |
 | Smoke test | The smallest end-to-end exercise that proves the system is alive: one question through Home Assistant, the conversation agent, the model, and the tools. | [Operations](10_operations.md#deploy-smoke-test-and-rollback) |
 | Speech to text (STT) | A model that takes recorded audio and returns the text spoken in it. | [Voice Pipeline](05_voice_pipeline.md#speech-to-text) |
 | Spotify Connect | Spotify's mechanism for controlling playback on another device from any client. | [Music](07_music_spotify.md#run-it-yourself) |
@@ -106,6 +109,7 @@ Every term the handbook defines, in one sentence, with the section that explains
 | Temperature | A sampling setting where zero makes the model pick its most likely token every time and higher values add variety. | [Conversation Agent](04_conversation_agent.md#the-question-router) |
 | Text to speech (TTS) | A model that takes text and returns audio of a voice speaking it. | [Voice Pipeline](05_voice_pipeline.md#text-to-speech) |
 | Thinking mode | A setting on recent models that makes them write a hidden chain of reasoning before the answer, which helps hard problems and multiplies latency. | [LLMs on Apple Silicon](02_local_llm.md#prefill-and-decode) |
+| Ticket lottery | A draw for cheap tickets to one performance, entered online before the day. | [Current Working Changes](current_changes.md) |
 | Time to first audio | How long a text-to-speech server takes from receiving text to sending its first audio chunk. | [Voice Pipeline](05_voice_pipeline.md#run-it-yourself) |
 | Time to first token | How long the model takes to read the prompt before it starts writing, which prefill sets and which grows with prompt length. | [LLMs on Apple Silicon](02_local_llm.md#prefill-and-decode) |
 | Token | The unit a language model reads and writes, roughly a word fragment. | [Introduction](index.md#key-definitions) |

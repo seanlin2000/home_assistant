@@ -8,7 +8,7 @@ import asyncio
 from datetime import date
 
 from sports_mcp.espn_client import EspnSession
-from sports_mcp.espn_records import FINISHED, NOT_PLAYED, FoundPlayer, LoggedGame
+from sports_mcp.espn_records import FINISHED, NOT_PLAYED, BoxScore, FoundPlayer, Game, LoggedGame
 from sports_mcp.game_finder import closest_game, game_near_day, last_meeting, plays_in, whole_season
 from sports_mcp.leagues import League
 from sports_mcp.render import (
@@ -62,7 +62,15 @@ async def game_box_score(session: EspnSession, league: League, team: Team, oppon
     if game is None:
         return no_game_text(league, team, opponent, day or session.today)
     box_score = None if game.state == NOT_PLAYED else await session.box_score(league, game)
-    return box_score_text(league, game, box_score, day)
+    return box_score_text(league, game_as_summarized(game, box_score), box_score, day)
+
+
+def game_as_summarized(game: Game, box_score: BoxScore | None) -> Game:
+    """The game's own summary arrives with the box score, so its score and clock match the statistics. A team schedule is kept for minutes and
+    gives no score for an NBA game in progress."""
+    if box_score is None or box_score.progress is None:
+        return game
+    return game.updated_to(box_score.progress)
 
 
 async def team_roster(session: EspnSession, league: League, team: Team) -> str:
