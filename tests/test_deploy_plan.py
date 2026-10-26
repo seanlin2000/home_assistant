@@ -22,6 +22,7 @@ def test_tool_server_code_restarts_only_the_tool_server() -> None:
     assert actions("web_search_mcp/server.py") == ["restart:mcp"]
     assert actions("calculator_mcp/tools.py") == ["restart:mcp"]
     assert actions("weather_mcp/forecast.py") == ["restart:mcp"]
+    assert actions("broadway_mcp/shows.py") == ["restart:mcp"]
 
 
 def test_shared_utilities_restart_both_services_that_import_them() -> None:

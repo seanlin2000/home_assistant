@@ -43,7 +43,7 @@ RULES: tuple[Rule, ...] = (
         actions=("sync_env", "restart:mcp", "restart:harness", "restart:whisper", "restart:kokoro"),
         why="dependencies changed: sync the venv and restart every long-running Python service",
     ),
-    Rule(prefixes=("web_search_mcp/", "calculator_mcp/", "weather_mcp/", "assistant_core/", "utils/"), actions=("restart:mcp",), why="tool server code changed"),
+    Rule(prefixes=("web_search_mcp/", "calculator_mcp/", "weather_mcp/", "broadway_mcp/", "assistant_core/", "utils/"), actions=("restart:mcp",), why="tool server code changed"),
     Rule(prefixes=("assistant_core/", "assistant_service/", "config/harness.toml", "utils/"), actions=("restart:harness",), why="the harness's code or settings changed"),
     Rule(prefixes=("custom_components/", *paths.VENDORED_CORE_FILES), actions=("deploy_component",), why="the component or its vendored core changed"),
     Rule(
