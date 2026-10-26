@@ -46,7 +46,7 @@ def show_line(rank: int, show: Show, query: ShowQuery, today: date) -> str:
         parts.append(", ".join(genres))
     if query.venue_tier == "both":
         parts.append(TIER_LABELS[show.tier.value])
-    parts.append(show.venue)
+    parts.append(f"at {show.venue}")
     parts.extend(detail_parts(show, query, today))
     return " | ".join(parts)
 
@@ -71,8 +71,9 @@ def popularity_parts(show: Show, query: ShowQuery) -> list[str]:
 
 
 def deal_parts(show: Show) -> list[str]:
-    deals = [deal for deal, offered in (("rush", show.has_rush), ("lottery", show.has_lottery)) if offered]
-    return [f"{' and '.join(deals)} tickets"] if deals else []
+    """Named as TodayTix's programs, since the flags say the show runs one, not that a seat is free right now."""
+    deals = [deal for deal, offered in (("rush tickets", show.has_rush), ("lottery", show.has_lottery)) if offered]
+    return [f"TodayTix {' and '.join(deals)}"] if deals else []
 
 
 def date_parts(show: Show, today: date) -> list[str]:

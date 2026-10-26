@@ -109,7 +109,10 @@ async def test_by_default_the_most_viewed_broadway_shows_running_now_horror_incl
     reply = await ask()
     assert reply.startswith("Broadway shows running now, most viewed on TodayTix first (10 of 32):")
     assert listed_names(reply)[:3] == ["The Rocky Horror Show", "Paranormal Activity", "& Juliet"]
-    assert "1. The Rocky Horror Show | musical | Comedy, Horror, Sci Fi / Fantasy, Revival | Studio 54 | from $62 | 23,896 recent views | audience score 94 from 4,336 reviews |" in reply
+    assert (
+        "1. The Rocky Horror Show | musical | Comedy, Horror, Sci Fi / Fantasy, Revival | at Studio 54 | from $62 | 23,896 recent views | audience score 94 from 4,336 reviews | TodayTix lottery"
+        in reply
+    )
 
 
 async def test_off_broadway_and_both_tiers_label_each_show_only_when_both_are_asked_for() -> None:
