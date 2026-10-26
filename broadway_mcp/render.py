@@ -47,17 +47,36 @@ def show_line(rank: int, show: Show, query: ShowQuery, today: date) -> str:
     if query.venue_tier == "both":
         parts.append(TIER_LABELS[show.tier.value])
     parts.append(show.venue)
-    parts.extend(detail_parts(show, today))
+    parts.extend(detail_parts(show, query, today))
     return " | ".join(parts)
 
 
-def detail_parts(show: Show, today: date) -> list[str]:
-    details = [f"from ${show.lowest_price:,.0f}"] if show.lowest_price is not None else []
+def detail_parts(show: Show, query: ShowQuery, today: date) -> list[str]:
+    return [*price_parts(show), *popularity_parts(show, query), *deal_parts(show), *date_parts(show, today)]
+
+
+def price_parts(show: Show) -> list[str]:
+    return [f"from ${show.lowest_price:,.0f}"] if show.lowest_price is not None else []
+
+
+def popularity_parts(show: Show, query: ShowQuery) -> list[str]:
+    """The number the list is ordered by is always on the line. The review count stays beside the score, since a 98 from 300 reviews and a 94
+    from 27,000 do not mean the same thing; views are shown only when they set the order."""
+    parts = [f"{show.views_count:,} recent views"] if query.sort_by == "views_count" else []
     if show.audience_score is not None:
-        details.append(f"audience score {show.audience_score}")
+        parts.append(f"audience score {show.audience_score}" + (f" from {show.reviews_count:,} reviews" if show.reviews_count else ""))
+    elif show.reviews_count:
+        parts.append(f"{show.reviews_count:,} reviews")
+    return parts
+
+
+def deal_parts(show: Show) -> list[str]:
     deals = [deal for deal, offered in (("rush", show.has_rush), ("lottery", show.has_lottery)) if offered]
-    if deals:
-        details.append(f"{' and '.join(deals)} tickets")
+    return [f"{' and '.join(deals)} tickets"] if deals else []
+
+
+def date_parts(show: Show, today: date) -> list[str]:
+    details: list[str] = []
     if show.start_date is not None and show.start_date > today:
         details.append(f"starts {spoken_date(show.start_date, today)}")
     elif show.start_date is None:

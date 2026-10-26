@@ -21,7 +21,7 @@ class BroadwaySettings(BaseModel):
     timeout_seconds: float = 30.0  # the answer is about 3 MB
     snapshot_path: Path = DEFAULT_LISTINGS_DIR / "broadway.json"
     stale_after_days: int = 3  # the refresh runs nightly; older than this, an answer says how old its listings are
-    max_words: int = 800  # 25 shows at about 28 words a line, the " | " between parts counted as words; inside a tool result's allowance (design doc v2/04)
+    max_words: int = 900  # 25 shows at about 32 words a line, the " | " between parts counted as words; inside a tool result's allowance (design doc v2/04)
     today: date | None = None  # the day the benchmark's snapshot was taken; set only by the benchmark
     user_agent: str = USER_AGENT
 
