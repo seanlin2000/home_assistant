@@ -47,7 +47,8 @@
    "isRushActive": false,
    "isLotteryActive": false,
    "avgRating": 4.77292,
-   "ratingCount": 5577
+   "ratingCount": 5577,
+   "description": "How did the Wicked Witch of the West become wicked? This *Wizard of Oz* prequel musical explores her and Glinda the Good Witch's untold origin stories. Hear now-classic showtunes like \"Defying Gravity\" at Broadway's fourth-longest-running show."
   },
   {
    "displayName": "Chicago",
@@ -89,7 +90,8 @@
    "isRushActive": false,
    "isLotteryActive": false,
    "avgRating": 4.31563,
-   "ratingCount": 6500
+   "ratingCount": 6500,
+   "description": "The Kander and Ebb musical about murderesses-turned-overnight-celebrities has razzle-dazzled audiences for decades. With a rotating lineup of stars in the lead roles, you never know who you'll see as starry-eyed housewife Roxie, veteran vaudevillian Velma, and more."
   },
   {
    "displayName": "Hamilton",
@@ -134,7 +136,8 @@
    "isRushActive": false,
    "isLotteryActive": false,
    "avgRating": 4.82325,
-   "ratingCount": 775
+   "ratingCount": 775,
+   "description": "How does a show about an American Founding Father go on to revolutionize Broadway? Experience Lin-Manuel Miranda's Pulitzer- and Tony-winning hip-hop musical about how Alexander Hamilton fought, feuded, and financed his way into the history books."
   },
   {
    "displayName": "Evita",
@@ -161,7 +164,8 @@
    "isRushActive": false,
    "isLotteryActive": false,
    "avgRating": 4.55045,
-   "ratingCount": 238
+   "ratingCount": 238,
+   "description": "*Evita* is the riveting story of the rise and fall of the glamorous First Lady of Argentina."
   },
   {
    "displayName": "Little Shop of Horrors",
@@ -206,7 +210,8 @@
    "isRushActive": false,
    "isLotteryActive": false,
    "avgRating": 4.69222,
-   "ratingCount": 991
+   "ratingCount": 991,
+   "description": "When a nerdy flower shop worker finds a mysterious talking plant, it completely changes his life — but at a bloody cost. Go down to Skid Row for the latest revival of Alan Menken and Howard Ashman's horror comedy blossoming off Broadway."
   },
   {
    "displayName": "The Museum of Broadway ",
@@ -236,7 +241,8 @@
    "isRushActive": false,
    "isLotteryActive": false,
    "avgRating": null,
-   "ratingCount": null
+   "ratingCount": null,
+   "description": "Experience more than a century of Broadway history all in one building. Located just off Times Square, this showstopping museum is the first exclusively dedicated to the most game-changing plays, musicals, artists, and creators to ever take the stage."
   },
   {
    "displayName": "The Rocky Horror Show",
@@ -284,7 +290,8 @@
    "isRushActive": false,
    "isLotteryActive": true,
    "avgRating": null,
-   "ratingCount": null
+   "ratingCount": null,
+   "description": "*The Rocky Horror Show* is a cult classic musical about a young, straight-laced couple who wanders into a mansion that unleashes a cast of colorful characters, their own desires, and plenty of zany fun."
   },
   {
    "displayName": "The Imaginary Invalid",
@@ -323,7 +330,8 @@
    "isRushActive": true,
    "isLotteryActive": false,
    "avgRating": null,
-   "ratingCount": null
+   "ratingCount": null,
+   "description": "Molière's comedy is about an eternal patient who plans to marry off his daughter to a doctor to save on medical bills."
   },
   {
    "displayName": "Masquerade",
@@ -362,7 +370,8 @@
    "isRushActive": true,
    "isLotteryActive": false,
    "avgRating": null,
-   "ratingCount": null
+   "ratingCount": null,
+   "description": ""
   },
   {
    "displayName": "Two Strangers (Carry a Cake Across New York)",
@@ -392,7 +401,8 @@
    "isRushActive": false,
    "isLotteryActive": false,
    "avgRating": null,
-   "ratingCount": null
+   "ratingCount": null,
+   "description": "*Two Strangers (Carry a Cake Across New York)* is an original, new musical comedy about two ordinary people, a cheery Brit and a lifelong New Yorker, who go on a city adventure and spark a connection along the way."
   },
   {
    "displayName": "School Girls; Or, The African Mean Girls Play",
@@ -419,7 +429,8 @@
    "isRushActive": true,
    "isLotteryActive": false,
    "avgRating": null,
-   "ratingCount": null
+   "ratingCount": null,
+   "description": "*School Girls; Or, The African Mean Girls Play* is about beauty, girlhood, and coming of age in a surface-obsessed culture."
   },
   {
    "displayName": "Billy Crystal 860",
@@ -449,7 +460,8 @@
    "isRushActive": false,
    "isLotteryActive": false,
    "avgRating": null,
-   "ratingCount": null
+   "ratingCount": null,
+   "description": "*860* is Billy Crystal's one-person show about the Los Angeles fires — and losing his own home."
   },
   {
    "displayName": "Paranormal Activity ",
@@ -485,7 +497,8 @@
    "isRushActive": true,
    "isLotteryActive": false,
    "avgRating": null,
-   "ratingCount": null
+   "ratingCount": null,
+   "description": "*Paranormal Activity* is a play based on the cult film about a haunting that follows a young couple."
   },
   {
    "displayName": "Midnight",
@@ -509,7 +522,8 @@
    "isRushActive": true,
    "isLotteryActive": false,
    "avgRating": null,
-   "ratingCount": null
+   "ratingCount": null,
+   "description": "*Midnight* is Todrick Hall's original musical about twelve interconnected lives during the 19th century's American South."
   },
   {
    "displayName": "Purple Rain",
@@ -533,7 +547,8 @@
    "isRushActive": false,
    "isLotteryActive": false,
    "avgRating": null,
-   "ratingCount": null
+   "ratingCount": null,
+   "description": "*Purple Rain* is a stage adaptation of the Academy Award-winning musical film by Prince, featuring the artist's catalogue and the story of a young musician on the rise."
   },
   {
    "displayName": "Downstate",
@@ -560,7 +575,8 @@
    "isRushActive": false,
    "isLotteryActive": false,
    "avgRating": null,
-   "ratingCount": null
+   "ratingCount": null,
+   "description": ""
   },
   {
    "displayName": "Rope",
@@ -587,7 +603,8 @@
    "isRushActive": true,
    "isLotteryActive": false,
    "avgRating": null,
-   "ratingCount": null
+   "ratingCount": null,
+   "description": "Based on the play that inspired Hitchcock's film, *Rope* is a thriller and murder mystery about keeping up appearances after a dinner party gone wrong."
   },
   {
    "displayName": "Second Stage 2026/27 Subscriptions",
@@ -614,7 +631,8 @@
    "isRushActive": false,
    "isLotteryActive": false,
    "avgRating": null,
-   "ratingCount": null
+   "ratingCount": null,
+   "description": ""
   },
   {
    "displayName": "Private Lives",
@@ -636,7 +654,8 @@
    "isRushActive": false,
    "isLotteryActive": false,
    "avgRating": null,
-   "ratingCount": null
+   "ratingCount": null,
+   "description": "*Private Lives* is a classic comedy of errors about honeymooning couples who run into their exes."
   },
   {
    "displayName": "Montauk",
@@ -658,7 +677,8 @@
    "isRushActive": false,
    "isLotteryActive": false,
    "avgRating": null,
-   "ratingCount": null
+   "ratingCount": null,
+   "description": "*Montauk* is a sophisticated play that follows artists with different perspectives to their craft as they fall in and out of love."
   }
  ],
  "pagination": {

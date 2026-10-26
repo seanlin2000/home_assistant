@@ -33,6 +33,7 @@ class Show(BaseModel):
     lowest_price: float | None  # dollars, the cheapest regular ticket
     has_rush: bool
     has_lottery: bool
+    description: str = ""  # TodayTix's one to three sentences, italics marks removed; empty for most Off-Broadway shows. Defaulted so an older snapshot still reads
 
 
 class BroadwaySnapshot(BaseModel):
@@ -64,7 +65,7 @@ Genre = Literal[
 ]
 TicketDeal = Literal["any", "rush", "lottery"]
 Timing = Literal["running", "upcoming"]
-SortBy = Literal["views_count", "reviews_count", "audience_score"]
+SortBy = Literal["views_count", "reviews_count", "audience_score", "todaytix_rating"]
 
 GENRE_TAGS: dict[str, str] = {
     "comedy": "Comedy",
@@ -163,11 +164,12 @@ def has_closed(show: Show, today: date) -> bool:
     return show.end_date is not None and show.end_date < today
 
 
-def sort_key(sort_by: SortBy) -> Callable[[Show], tuple[int, int]]:
+def sort_key(sort_by: SortBy) -> Callable[[Show], tuple[float, int]]:
     """Largest first, with the views count breaking ties so the order never depends on TodayTix's listing order."""
-    orders: dict[str, Callable[[Show], tuple[int, int]]] = {
+    orders: dict[str, Callable[[Show], tuple[float, int]]] = {
         "views_count": lambda show: (-show.views_count, 0),
         "reviews_count": lambda show: (-(show.reviews_count if show.reviews_count is not None else NO_COUNT), -show.views_count),
         "audience_score": lambda show: (-(show.audience_score if show.audience_score is not None else NO_COUNT), -show.views_count),
+        "todaytix_rating": lambda show: (-(show.todaytix_rating if show.todaytix_rating is not None else NO_COUNT), -show.views_count),
     }
     return orders[sort_by]

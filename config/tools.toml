@@ -49,6 +49,10 @@ marks_untrusted = true                      # numbers, but under names and game 
 tier = "read_public"
 marks_untrusted = true                      # show names and tags written by TodayTix and the producers who list there
 
+[tools.broadway_show_details]
+tier = "read_public"
+marks_untrusted = true                      # the description too is written by TodayTix and the producers
+
 [tools.calculate]
 tier = "local"
 marks_untrusted = false

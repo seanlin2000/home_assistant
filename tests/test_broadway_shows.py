@@ -1,6 +1,6 @@
-"""broadway_shows and the nightly refresh behind it: which TodayTix entries count as shows, the snapshot written in one piece and kept when TodayTix
-fails, every filter and order the tool offers, the replies when there is no snapshot or an old one, and the router, filler, and refresh command around
-it. The listing is the benchmark's own (benchmark/fixtures/broadway/broadway.json, TodayTix's New York listing kept on 2026-10-25), so these tests also
+"""broadway_shows, broadway_show_details, and the nightly refresh behind them: which TodayTix entries count as shows, the snapshot written in one piece
+and kept when TodayTix fails, every filter and order the list offers, the details of one show however it is named, the replies when there is no
+snapshot or an old one, and the router, filler, and refresh command around them. The listing is the benchmark's own (benchmark/fixtures/broadway/broadway.json, TodayTix's New York listing kept on 2026-10-25), so these tests also
 prove the benchmark's snapshot answers the calls it expects; tests/fixtures/todaytix_shows.json is a trimmed copy of the raw listing it came from."""
 
 import json
@@ -18,7 +18,7 @@ from assistant_core.models import DEFAULT_SHOWS_FILLER_PHRASES, SHOWS_TOOL_NAMES
 from assistant_core.router import SHOWS_DIRECTIVE, directive_for, route_to_offered_tools, rule_route
 from assistant_core.tools import McpToolBox
 from benchmark.mcp_process import BROADWAY_RECORDED_ON, BROADWAY_SNAPSHOT_PATH
-from broadway_mcp.register import NO_SNAPSHOT_MESSAGE, register_broadway_tools
+from broadway_mcp.register import BROADWAY_DETAILS_TOOL_NAME, BROADWAY_TOOL_NAME, NO_SNAPSHOT_MESSAGE, register_broadway_tools
 from broadway_mcp.settings import BroadwaySettings, broadway_settings_from_environment
 from broadway_mcp.shows import GENRE_TAGS, BroadwaySnapshot, Genre, Tier
 from broadway_mcp.todaytix import TodayTixUnavailable, refresh_broadway_snapshot, show_from_product
@@ -34,11 +34,19 @@ def recorded_settings(today: date = RECORDED_ON) -> BroadwaySettings:
     return BroadwaySettings(snapshot_path=BROADWAY_SNAPSHOT_PATH, today=today)
 
 
-async def ask(settings: BroadwaySettings | None = None, **arguments: Any) -> str:
+async def call_broadway_tool(tool_name: str, arguments: dict[str, Any], settings: BroadwaySettings | None = None) -> str:
     server = MCPServer("test")
     register_broadway_tools(server, settings or recorded_settings())
     async with McpToolBox(server) as toolbox:
-        return await toolbox.call(ToolCall(id="1", name="broadway_shows", arguments=arguments))
+        return await toolbox.call(ToolCall(id="1", name=tool_name, arguments=arguments))
+
+
+async def ask(settings: BroadwaySettings | None = None, **arguments: Any) -> str:
+    return await call_broadway_tool(BROADWAY_TOOL_NAME, arguments, settings)
+
+
+async def ask_about(show: str, settings: BroadwaySettings | None = None) -> str:
+    return await call_broadway_tool(BROADWAY_DETAILS_TOOL_NAME, {"show": show}, settings)
 
 
 def show_lines(reply: str) -> list[str]:
@@ -77,6 +85,7 @@ def test_only_shows_at_a_theater_are_kept_with_todaytix_labels_and_the_tier_tags
     assert "Broadway" not in wicked.tags and "Family / Kid-friendly" in wicked.tags
     assert (wicked.audience_score, wicked.reviews_count, wicked.todaytix_rating, wicked.todaytix_ratings_count) == (94, 27162, 4.77292, 5577)
     assert shows["The Rocky Horror Show"].todaytix_rating is None  # most shows have no TodayTix rating
+    assert wicked.description.startswith("How did the Wicked Witch of the West become wicked? This Wizard of Oz prequel")  # *Wizard of Oz* in markdown
     assert shows["Midnight"].tier == Tier.OFF_BROADWAY
     assert shows["Montauk"].start_date is None  # listed at a theater before its first preview is announced
 
@@ -107,12 +116,12 @@ def test_a_missing_or_unreadable_snapshot_is_reported_as_missing(tmp_path: Path)
         read_snapshot(tmp_path / "broadway.json", BroadwaySnapshot)
 
 
-def test_a_snapshot_written_before_todaytix_ratings_were_kept_still_reads(tmp_path: Path) -> None:
+def test_a_snapshot_written_before_ratings_and_descriptions_were_kept_still_reads(tmp_path: Path) -> None:
     snapshot = json.loads(BROADWAY_SNAPSHOT_PATH.read_text())
     for show in snapshot["shows"]:
-        del show["todaytix_rating"], show["todaytix_ratings_count"]
+        del show["todaytix_rating"], show["todaytix_ratings_count"], show["description"]
     (tmp_path / "broadway.json").write_text(json.dumps(snapshot))
-    assert all(show.todaytix_rating is None for show in read_snapshot(tmp_path / "broadway.json", BroadwaySnapshot).shows)
+    assert all(show.todaytix_rating is None and show.description == "" for show in read_snapshot(tmp_path / "broadway.json", BroadwaySnapshot).shows)
 
 
 async def test_by_default_the_most_viewed_broadway_shows_running_now_horror_included() -> None:
@@ -141,6 +150,9 @@ async def test_each_order_puts_the_largest_first_and_shows_without_a_score_last(
     assert listed_names(by_reviews) == ["Wicked", "The Book of Mormon", "Hamilton"]
     assert show_lines(by_reviews)[0].endswith("| audience score 94 from 27,162 Show-Score reviews | TodayTix rating 4.8 of 5 from 5,577 ratings")
     assert "recent views" not in by_reviews
+    by_rating = show_lines(await ask(sort_by="todaytix_rating", limit=13))
+    assert listed_names("\n".join(by_rating[:3])) == ["MJ The Musical", "Hamilton", "Wicked"]
+    assert all("TodayTix rating" in line for line in by_rating[:11]) and not any("TodayTix rating" in line for line in by_rating[11:])
 
 
 async def test_genre_price_and_deal_filters_keep_only_the_shows_that_fit() -> None:
@@ -163,12 +175,43 @@ async def test_no_match_says_so_and_the_limit_is_held_to_a_spoken_list() -> None
     assert len(show_lines(await ask(venue_tier="both", limit=100))) == 25
 
 
+async def test_one_show_named_exactly_gets_every_fact_and_its_description() -> None:
+    reply = (await ask_about("Wicked")).split("\n")
+    assert reply[0] == "Wicked, from TodayTix:"
+    assert reply[1] == (
+        "musical | Drama, Family / Kid-friendly, Classic | Broadway | at Gershwin Theatre | from $89 | audience score 94 from 27,162 Show-Score reviews"
+        " | TodayTix rating 4.8 of 5 from 5,577 ratings | running now"
+    )
+    assert reply[2].startswith("About: How did the Wicked Witch of the West become wicked?")
+    assert (await ask_about("Evita")).split("\n")[1].endswith("| starts February 27, 2027")
+
+
+async def test_a_loose_match_names_the_show_it_found_and_several_matches_ask_which() -> None:
+    assert (await ask_about("Hamilton tickets")).startswith('TodayTix\'s closest match for "Hamilton tickets" is Hamilton:')
+    assert (await ask_about("Romeo and Juliet")).startswith('TodayTix\'s closest match for "Romeo and Juliet" is Drunk Romeo & Juliet NYC:')
+    several = await ask_about("Juliet")
+    assert several.split("\n") == [
+        '2 shows on TodayTix match "Juliet". Ask the user which one they mean:',
+        "1. & Juliet | Broadway | at Stephen Sondheim Theatre",
+        "2. Drunk Romeo & Juliet NYC | Off-Broadway | at The Ruby Theatre",
+    ]
+
+
+async def test_a_show_not_listed_or_without_a_description_sends_the_model_to_the_web() -> None:
+    assert (await ask_about("Phantom of the Opera")).startswith('No show on TodayTix\'s New York listing matches "Phantom of the Opera", so it is probably not playing')
+    undescribed = await ask_about("Awake and Sing")
+    assert undescribed.endswith("TodayTix has no description of this show; if the user wants to know what it is about, search the web.")
+    assert "| starts December 15 | closes February 7, 2027" in undescribed
+
+
 async def test_no_snapshot_and_an_old_snapshot_are_said_plainly(tmp_path: Path) -> None:
     assert await ask(BroadwaySettings(snapshot_path=tmp_path / "missing.json")) == NO_SNAPSHOT_MESSAGE
+    assert await ask_about("Wicked", BroadwaySettings(snapshot_path=tmp_path / "missing.json")) == NO_SNAPSHOT_MESSAGE
     old = BroadwaySnapshot(refreshed_at=datetime(2026, 10, 1, 12, tzinfo=UTC), shows=read_snapshot(BROADWAY_SNAPSHOT_PATH, BroadwaySnapshot).shows)
     write_snapshot(tmp_path / "old.json", old)
     reply = await ask(BroadwaySettings(snapshot_path=tmp_path / "old.json", today=RECORDED_ON))
     assert reply.endswith("These listings were last refreshed 24 days ago, on October 1; tell the user they may be out of date.")
+    assert (await ask_about("Wicked", BroadwaySettings(snapshot_path=tmp_path / "old.json", today=RECORDED_ON))).endswith("tell the user they may be out of date.")
     assert "refreshed" not in await ask(recorded_settings(today=RECORDED_ON + timedelta(days=3)))
 
 
@@ -193,13 +236,14 @@ def test_the_shows_rule_fires_on_theater_questions_and_not_on_the_street() -> No
 
 def test_a_shows_question_gets_the_shows_directive_and_is_searched_when_the_server_has_no_listings() -> None:
     decision = RouteDecision(route=Route.SHOWS, source="rule")
-    assert directive_for(decision) == SHOWS_DIRECTIVE.rstrip()
+    assert directive_for(decision) == SHOWS_DIRECTIVE.rstrip() and BROADWAY_DETAILS_TOOL_NAME in SHOWS_DIRECTIVE
     assert route_to_offered_tools(decision, [ToolSpec(name="search_and_read", description="", input_schema={})]).route == Route.SEARCH
 
 
 def test_the_listings_get_their_own_filler_line_and_it_is_stripped_from_replays() -> None:
     policy = AgentPolicy()
-    assert filler_for(next(iter(SHOWS_TOOL_NAMES)), policy) in DEFAULT_SHOWS_FILLER_PHRASES
+    assert {BROADWAY_TOOL_NAME, BROADWAY_DETAILS_TOOL_NAME} == SHOWS_TOOL_NAMES
+    assert all(filler_for(tool_name, policy) in DEFAULT_SHOWS_FILLER_PHRASES for tool_name in SHOWS_TOOL_NAMES)
     assert set(DEFAULT_SHOWS_FILLER_PHRASES) <= set(policy.every_filler_phrase)
 
 

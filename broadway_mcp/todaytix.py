@@ -82,7 +82,13 @@ def show_from_product(product: dict[str, Any]) -> Show | None:
         lowest_price=(product.get("lowPriceForRegularTickets") or {}).get("value"),
         has_rush=bool(product.get("isRushActive")),
         has_lottery=bool(product.get("isLotteryActive")),
+        description=plain_description(product.get("description")),
     )
+
+
+def plain_description(text: str | None) -> str:
+    """TodayTix writes titles in markdown italics (*Wicked*); the only markdown its descriptions use, and nothing a voice should read out."""
+    return " ".join((text or "").replace("*", "").split())
 
 
 def listed_date(text: str | None) -> date | None:

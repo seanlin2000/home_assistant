@@ -10,7 +10,12 @@ from broadway_mcp.shows import GENRE_TAGS, Show, ShowQuery
 
 TIER_LABELS = {"broadway": "Broadway", "off_broadway": "Off-Broadway", "both": "Broadway and Off-Broadway"}
 TIMING_LABELS = {"running": "running now", "upcoming": "not started yet"}
-ORDER_LABELS = {"views_count": "most viewed on TodayTix first", "reviews_count": "most reviewed first", "audience_score": "best audience score first"}
+ORDER_LABELS = {
+    "views_count": "most viewed on TodayTix first",
+    "reviews_count": "most reviewed first",
+    "audience_score": "best audience score first",
+    "todaytix_rating": "best TodayTix rating first",
+}
 SHOW_TYPE_LABELS = {"musical": "musicals", "play": "plays", "any": "shows"}
 CATEGORY_NAMES = {"Musicals": "musical", "Plays": "play", "Comedy Shows": "comedy show", "Concerts": "concert", "Immersive Experiences": "immersive show"}
 
@@ -40,15 +45,14 @@ def filter_labels(query: ShowQuery) -> list[str]:
 
 
 def show_line(rank: int, show: Show, query: ShowQuery, today: date) -> str:
-    parts = [f"{rank}. {show.name}", CATEGORY_NAMES.get(show.category, show.category.lower())]
+    tier = [TIER_LABELS[show.tier.value]] if query.venue_tier == "both" else []
+    return " | ".join([f"{rank}. {show.name}", *label_parts(show), *tier, f"at {show.venue}", *detail_parts(show, query, today)])
+
+
+def label_parts(show: Show) -> list[str]:
+    """TodayTix's category, said as one show ("musical"), then its genre tags."""
     genres = [tag for tag in GENRE_TAGS.values() if tag in show.tags]  # TodayTix's own order changes from one night to the next
-    if genres:
-        parts.append(", ".join(genres))
-    if query.venue_tier == "both":
-        parts.append(TIER_LABELS[show.tier.value])
-    parts.append(f"at {show.venue}")
-    parts.extend(detail_parts(show, query, today))
-    return " | ".join(parts)
+    return [CATEGORY_NAMES.get(show.category, show.category.lower()), *([", ".join(genres)] if genres else [])]
 
 
 def detail_parts(show: Show, query: ShowQuery, today: date) -> list[str]:
@@ -62,7 +66,12 @@ def price_parts(show: Show) -> list[str]:
 def popularity_parts(show: Show, query: ShowQuery) -> list[str]:
     """The number the list is ordered by is always on the line. Each score keeps its count beside it, since a 98 from 300 reviews and a 94
     from 27,000 do not mean the same thing; views are shown only when they set the order."""
-    parts = [f"{show.views_count:,} recent views"] if query.sort_by == "views_count" else []
+    views = [f"{show.views_count:,} recent views"] if query.sort_by == "views_count" else []
+    return views + score_parts(show)
+
+
+def score_parts(show: Show) -> list[str]:
+    parts: list[str] = []
     if show.audience_score is not None:
         parts.append(f"audience score {show.audience_score}" + (f" from {show.reviews_count:,} Show-Score reviews" if show.reviews_count else ""))
     elif show.reviews_count:
