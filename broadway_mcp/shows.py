@@ -26,8 +26,10 @@ class Show(BaseModel):
     start_date: date | None  # the first preview; None when TodayTix has not announced it
     end_date: date | None  # the closing date; None when the run is open-ended or TodayTix has none
     views_count: int  # how often the show's TodayTix page was opened recently
-    reviews_count: int | None
-    audience_score: int | None  # out of 100
+    reviews_count: int | None  # Show-Score's audience reviews, which TodayTix shows on its pages
+    audience_score: int | None  # Show-Score's, out of 100
+    todaytix_rating: float | None = None  # TodayTix's own buyers' rating, out of 5; most shows have none. Defaulted so an older snapshot still reads
+    todaytix_ratings_count: int | None = None
     lowest_price: float | None  # dollars, the cheapest regular ticket
     has_rush: bool
     has_lottery: bool

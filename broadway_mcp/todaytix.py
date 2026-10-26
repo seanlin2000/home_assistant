@@ -77,6 +77,8 @@ def show_from_product(product: dict[str, Any]) -> Show | None:
         views_count=product.get("recentPdpViewsCount") or 0,
         reviews_count=review_summary.get("reviewsCount"),
         audience_score=review_summary.get("score"),
+        todaytix_rating=product.get("avgRating"),
+        todaytix_ratings_count=product.get("ratingCount"),
         lowest_price=(product.get("lowPriceForRegularTickets") or {}).get("value"),
         has_rush=bool(product.get("isRushActive")),
         has_lottery=bool(product.get("isLotteryActive")),

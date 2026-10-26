@@ -75,6 +75,8 @@ def test_only_shows_at_a_theater_are_kept_with_todaytix_labels_and_the_tier_tags
     wicked = shows["Wicked"]
     assert (wicked.tier, wicked.category, wicked.venue, wicked.end_date) == (Tier.BROADWAY, "Musicals", "Gershwin Theatre", None)  # endDate "null"
     assert "Broadway" not in wicked.tags and "Family / Kid-friendly" in wicked.tags
+    assert (wicked.audience_score, wicked.reviews_count, wicked.todaytix_rating, wicked.todaytix_ratings_count) == (94, 27162, 4.77292, 5577)
+    assert shows["The Rocky Horror Show"].todaytix_rating is None  # most shows have no TodayTix rating
     assert shows["Midnight"].tier == Tier.OFF_BROADWAY
     assert shows["Montauk"].start_date is None  # listed at a theater before its first preview is announced
 
@@ -105,12 +107,20 @@ def test_a_missing_or_unreadable_snapshot_is_reported_as_missing(tmp_path: Path)
         read_snapshot(tmp_path / "broadway.json", BroadwaySnapshot)
 
 
+def test_a_snapshot_written_before_todaytix_ratings_were_kept_still_reads(tmp_path: Path) -> None:
+    snapshot = json.loads(BROADWAY_SNAPSHOT_PATH.read_text())
+    for show in snapshot["shows"]:
+        del show["todaytix_rating"], show["todaytix_ratings_count"]
+    (tmp_path / "broadway.json").write_text(json.dumps(snapshot))
+    assert all(show.todaytix_rating is None for show in read_snapshot(tmp_path / "broadway.json", BroadwaySnapshot).shows)
+
+
 async def test_by_default_the_most_viewed_broadway_shows_running_now_horror_included() -> None:
     reply = await ask()
     assert reply.startswith("Broadway shows running now, most viewed on TodayTix first (10 of 32):")
     assert listed_names(reply)[:3] == ["The Rocky Horror Show", "Paranormal Activity", "& Juliet"]
     assert (
-        "1. The Rocky Horror Show | musical | Comedy, Horror, Sci Fi / Fantasy, Revival | at Studio 54 | from $62 | 23,896 recent views | audience score 94 from 4,336 reviews | TodayTix lottery"
+        "1. The Rocky Horror Show | musical | Comedy, Horror, Sci Fi / Fantasy, Revival | at Studio 54 | from $62 | 23,896 recent views | audience score 94 from 4,336 Show-Score reviews | TodayTix lottery"
         in reply
     )
 
@@ -129,7 +139,8 @@ async def test_each_order_puts_the_largest_first_and_shows_without_a_score_last(
     assert all(" | musical | " in line for line in show_lines(by_score))
     by_reviews = await ask(sort_by="reviews_count", limit=3)
     assert listed_names(by_reviews) == ["Wicked", "The Book of Mormon", "Hamilton"]
-    assert "audience score 94 from 27,162 reviews" in show_lines(by_reviews)[0] and "recent views" not in by_reviews
+    assert show_lines(by_reviews)[0].endswith("| audience score 94 from 27,162 Show-Score reviews | TodayTix rating 4.8 of 5 from 5,577 ratings")
+    assert "recent views" not in by_reviews
 
 
 async def test_genre_price_and_deal_filters_keep_only_the_shows_that_fit() -> None:

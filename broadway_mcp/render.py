@@ -60,14 +60,20 @@ def price_parts(show: Show) -> list[str]:
 
 
 def popularity_parts(show: Show, query: ShowQuery) -> list[str]:
-    """The number the list is ordered by is always on the line. The review count stays beside the score, since a 98 from 300 reviews and a 94
+    """The number the list is ordered by is always on the line. Each score keeps its count beside it, since a 98 from 300 reviews and a 94
     from 27,000 do not mean the same thing; views are shown only when they set the order."""
     parts = [f"{show.views_count:,} recent views"] if query.sort_by == "views_count" else []
     if show.audience_score is not None:
-        parts.append(f"audience score {show.audience_score}" + (f" from {show.reviews_count:,} reviews" if show.reviews_count else ""))
+        parts.append(f"audience score {show.audience_score}" + (f" from {show.reviews_count:,} Show-Score reviews" if show.reviews_count else ""))
     elif show.reviews_count:
-        parts.append(f"{show.reviews_count:,} reviews")
-    return parts
+        parts.append(f"{show.reviews_count:,} Show-Score reviews")
+    return parts + todaytix_rating_parts(show)
+
+
+def todaytix_rating_parts(show: Show) -> list[str]:
+    if show.todaytix_rating is None:
+        return []
+    return [f"TodayTix rating {show.todaytix_rating:.1f} of 5" + (f" from {show.todaytix_ratings_count:,} ratings" if show.todaytix_ratings_count else "")]
 
 
 def deal_parts(show: Show) -> list[str]:

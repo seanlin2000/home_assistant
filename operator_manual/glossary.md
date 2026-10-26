@@ -94,6 +94,7 @@ Every term the handbook defines, in one sentence, with the section that explains
 | rsync | A copy tool that compares source and destination and sends only the differences, the standard way to mirror a folder between two machines over SSH. | [Operations](10_operations.md#bootstrap) |
 | Rush ticket | A cheap ticket a theater sells on the day of the performance, first come, first served. | [Current Working Changes](current_changes.md) |
 | SMB share | A folder served over SMB, the network file-sharing protocol that macOS and Windows speak natively. | [Home Assistant](06_home_assistant_core.md#the-virtual-machine) |
+| Show-Score | An audience review site for New York theater; TodayTix shows its score out of 100 and its review count on each show's page, beside TodayTix's own rating out of 5. | [Current Working Changes](current_changes.md) |
 | Smoke test | The smallest end-to-end exercise that proves the system is alive: one question through Home Assistant, the conversation agent, the model, and the tools. | [Operations](10_operations.md#deploy-smoke-test-and-rollback) |
 | Speech to text (STT) | A model that takes recorded audio and returns the text spoken in it. | [Voice Pipeline](05_voice_pipeline.md#speech-to-text) |
 | Spotify Connect | Spotify's mechanism for controlling playback on another device from any client. | [Music](07_music_spotify.md#run-it-yourself) |
