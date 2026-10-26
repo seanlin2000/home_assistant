@@ -2,6 +2,7 @@
 
 import argparse
 import importlib.util
+import re
 from pathlib import Path
 
 import pytest
@@ -47,3 +48,31 @@ def test_every_engine_default_language_is_a_region_code(engine: str) -> None:
     language, _ = ha_setup.TTS_DEFAULTS[engine]
 
     assert language.startswith("en_"), "a bare 'en' is accepted by the pipeline editor and then fails every run with tts-not-supported"
+
+
+def test_only_phones_with_the_home_assistant_app_are_notified() -> None:
+    services = [
+        {"domain": "light", "services": {"turn_on": {}}},
+        {"domain": "notify", "services": {"notify": {}, "persistent_notification": {}, "send_message": {}, "mobile_app_seans_iphone": {}, "mobile_app_ipad": {}}},
+    ]
+
+    assert ha_setup.phone_notify_services(services) == ["mobile_app_ipad", "mobile_app_seans_iphone"]
+
+
+@pytest.mark.parametrize(("title", "is_stable"), [("26.9.0", True), ("26.10.0", True), ("26.10.0b1", False), ("26.10.0-beta.1", False), ("Release notes", False)])
+def test_only_stable_release_titles_are_announced(title: str, is_stable: bool) -> None:
+    assert bool(re.match(ha_setup.STABLE_RELEASE_TITLE, title)) is is_stable
+
+
+def test_a_release_is_announced_on_every_phone_and_in_the_notification_bell() -> None:
+    automation = ha_setup.firmware_release_automation(["mobile_app_seans_iphone"])
+
+    assert [action["action"] for action in automation["actions"]] == ["notify.mobile_app_seans_iphone", "persistent_notification.create"]
+    assert automation["triggers"] == [{"trigger": "event", "event_type": "feedreader", "event_data": {"feed_url": ha_setup.FIRMWARE_RELEASES_FEED}}]
+
+
+def test_the_conditions_hold_the_stable_title_pattern_and_the_recent_release_window() -> None:
+    templates = [condition["value_template"] for condition in ha_setup.firmware_release_automation([])["conditions"]]
+
+    assert templates[0] == "{{ trigger.event.data.title is match('" + ha_setup.STABLE_RELEASE_TITLE + "') }}"
+    assert templates[1] == "{{ as_timestamp(trigger.event.data.updated, 0) > as_timestamp(now()) - 172800 }}"
