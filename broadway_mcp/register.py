@@ -12,11 +12,11 @@ from datetime import date
 from mcp.server.mcpserver import MCPServer
 
 from broadway_mcp.details import show_details_text
-from broadway_mcp.render import age_note, shows_text
-from broadway_mcp.settings import BroadwaySettings, broadway_today
+from broadway_mcp.render import shows_text
+from broadway_mcp.settings import BroadwaySettings
 from broadway_mcp.show_names import shows_named
 from broadway_mcp.shows import DEFAULT_LIMIT, BroadwaySnapshot, Genre, ShowQuery, ShowType, SortBy, TicketDeal, Timing, VenueTier, matching_shows
-from utils.snapshot_utils import SnapshotMissing, read_snapshot
+from utils.snapshot_utils import SnapshotMissing, answered_from_snapshot
 from utils.text_utils import clip_to_whole_lines
 
 BROADWAY_TOOL_NAME = "broadway_shows"
@@ -49,15 +49,7 @@ def register_broadway_tools(server: MCPServer, settings: BroadwaySettings) -> No
 
 def snapshot_answer(settings: BroadwaySettings, answer: Callable[[BroadwaySnapshot, date], str]) -> str:
     try:
-        return dated_answer(read_snapshot(settings.snapshot_path, BroadwaySnapshot), answer, settings)
+        return answered_from_snapshot(settings, BroadwaySnapshot, answer)
     except SnapshotMissing as error:
         _LOGGER.warning("the Broadway tools have no snapshot: %s", error)
         return NO_SNAPSHOT_MESSAGE
-
-
-def dated_answer(snapshot: BroadwaySnapshot, answer: Callable[[BroadwaySnapshot, date], str], settings: BroadwaySettings) -> str:
-    """The tool's answer, then a note when the nightly refresh has not run for days, which the word budget never cuts."""
-    today = broadway_today(settings)
-    text = answer(snapshot, today)
-    stale_note = age_note(snapshot.refreshed_at, today, settings.stale_after_days)
-    return f"{text}\n{stale_note}" if stale_note else text

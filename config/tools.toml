@@ -53,6 +53,14 @@ marks_untrusted = true                      # show names and tags written by Tod
 tier = "read_public"
 marks_untrusted = true                      # the description too is written by TodayTix and the producers
 
+[tools.movies_showing]
+tier = "read_public"
+marks_untrusted = true                      # titles and genres written by Fandango and the theaters that list there
+
+[tools.movie_details]
+tier = "read_public"
+marks_untrusted = true                      # the synopsis too is written by Fandango and the studios
+
 [tools.calculate]
 tier = "local"
 marks_untrusted = false

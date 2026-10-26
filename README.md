@@ -63,7 +63,7 @@ through the hook, description, checks, push, PR, CI. See `design_docs/v1/09_dev_
 ## Operating the Mac that runs it
 
 Services on the Mac are launchd agents; the health check is an agent that runs every five minutes and records what it sees (design doc 10), and the
-listings refresh is one that runs at 4:30 every morning and rewrites the show listings in `~/Library/Caches/studio-assistant/listings/` (`uv run listings-refresh` by hand).
+listings refresh is one that runs at 4:30 every morning and rewrites the Broadway and movie listings in `~/Library/Caches/studio-assistant/listings/` (`uv run listings-refresh` by hand).
 
 ```
 scripts/services.sh install                    # write and load the agents (HEALTH_CHECK_FLAGS=--leave-vm on the laptop)

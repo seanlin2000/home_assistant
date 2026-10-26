@@ -13,7 +13,7 @@ from pathlib import Path
 
 import httpx
 
-from assistant_core.models import REQUIRED_TOOL_NAMES, SHOWS_TOOL_NAMES, SPORTS_TOOL_NAMES, WEATHER_TOOL_NAMES, ToolSpec
+from assistant_core.models import MOVIES_TOOL_NAMES, REQUIRED_TOOL_NAMES, SHOWS_TOOL_NAMES, SPORTS_TOOL_NAMES, WEATHER_TOOL_NAMES, ToolSpec
 from assistant_core.tools import McpToolBox
 from benchmark.records import Services
 from web_search_mcp.fixtures import FIXTURE_ROUTE
@@ -26,6 +26,9 @@ SPORTS_RECORDED_ON = "2026-10-20"
 # TodayTix's New York listing as the nightly refresh kept it on this day, which broadway_shows takes as today so "running now" means that night's shows.
 BROADWAY_SNAPSHOT_PATH = Path("benchmark/fixtures/broadway/broadway.json")
 BROADWAY_RECORDED_ON = "2026-10-25"
+# Fandango's Manhattan listings as the nightly refresh kept them from this day, which the movies tools take as today.
+MOVIES_SNAPSHOT_PATH = Path("benchmark/fixtures/movies/movies.json")
+MOVIES_RECORDED_ON = "2026-10-25"
 READINESS_ATTEMPTS = 40
 READINESS_INTERVAL_SECONDS = 0.5
 
@@ -59,13 +62,15 @@ class McpServerProcess:
             "SPORTS_TODAY": SPORTS_RECORDED_ON,
             "BROADWAY_SNAPSHOT_PATH": str(BROADWAY_SNAPSHOT_PATH.resolve()),
             "BROADWAY_TODAY": BROADWAY_RECORDED_ON,
+            "MOVIES_SNAPSHOT_PATH": str(MOVIES_SNAPSHOT_PATH.resolve()),
+            "MOVIES_TODAY": MOVIES_RECORDED_ON,
             **self._services.weather_home.environment(),
         }
         self._process = subprocess.Popen([sys.executable, "-m", "web_search_mcp.server"], env=env, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         tools = await wait_until_ready(self._services.mcp_url)
         if self._process.poll() is not None:
             raise RuntimeError(f"web_search_mcp exited with code {self._process.returncode}; something else answered at {self._services.mcp_url}")
-        missing = sorted((REQUIRED_TOOL_NAMES | WEATHER_TOOL_NAMES | SPORTS_TOOL_NAMES | SHOWS_TOOL_NAMES) - {tool.name for tool in tools})
+        missing = sorted((REQUIRED_TOOL_NAMES | WEATHER_TOOL_NAMES | SPORTS_TOOL_NAMES | SHOWS_TOOL_NAMES | MOVIES_TOOL_NAMES) - {tool.name for tool in tools})
         if missing:
             raise RuntimeError(f"the server at {self._services.mcp_url} is not this run's server: it lacks {missing}")
         return self._services.mcp_url

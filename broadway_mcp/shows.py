@@ -5,11 +5,13 @@ tool's genre choices are spellings a model can pass, each standing for exactly o
 """
 
 from collections.abc import Callable
-from datetime import date, datetime
+from datetime import date
 from enum import StrEnum
 from typing import Literal
 
 from pydantic import BaseModel, field_validator
+
+from utils.snapshot_utils import DatedSnapshot
 
 
 class Tier(StrEnum):
@@ -36,8 +38,7 @@ class Show(BaseModel):
     description: str = ""  # TodayTix's one to three sentences, italics marks removed; empty for most Off-Broadway shows. Defaulted so an older snapshot still reads
 
 
-class BroadwaySnapshot(BaseModel):
-    refreshed_at: datetime
+class BroadwaySnapshot(DatedSnapshot):
     shows: list[Show]
 
 
