@@ -7,10 +7,9 @@ from pathlib import Path
 
 from pydantic import BaseModel
 
+from utils.browser_utils import BROWSER_USER_AGENT
 from utils.snapshot_utils import DEFAULT_LISTINGS_DIR
 
-# The same browser user agent the search server sends: a personal assistant reading one listing a night, not a crawler.
-USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 14_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0 Safari/537.36"
 NEW_YORK_LOCATION_ID = 1
 
 
@@ -23,7 +22,7 @@ class BroadwaySettings(BaseModel):
     stale_after_days: int = 3  # the refresh runs nightly; older than this, an answer says how old its listings are
     max_words: int = 1000  # 25 shows came to 940 words at most on 2026-10-25, the " | " between parts counted as words; inside a tool result's allowance (design doc v2/04)
     today: date | None = None  # the day the benchmark's snapshot was taken; set only by the benchmark
-    user_agent: str = USER_AGENT
+    user_agent: str = BROWSER_USER_AGENT
 
 
 def broadway_settings_from_environment() -> BroadwaySettings:
@@ -31,8 +30,3 @@ def broadway_settings_from_environment() -> BroadwaySettings:
     empty value counts as unset."""
     overrides = {key.removeprefix("BROADWAY_").lower(): value for key, value in os.environ.items() if key.startswith("BROADWAY_") and value.strip()}
     return BroadwaySettings(**overrides)
-
-
-def broadway_today(settings: BroadwaySettings) -> date:
-    """The user's local date, unless the benchmark pins it to the day its snapshot was taken."""
-    return settings.today or date.today()

@@ -1,4 +1,6 @@
-"""Word-budget helpers shared by the page reader, the Wikipedia tool, and the sports tools."""
+"""Word-budget helpers shared by the page reader, the Wikipedia tool, and the sports tools, and the spoken dates of the listings tools."""
+
+from datetime import date
 
 
 def clip_to_words(text: str, max_words: int) -> str:
@@ -29,3 +31,8 @@ def clip_to_whole_lines(text: str, max_words: int) -> str:
 
 def word_count(text: str) -> int:
     return len(text.split())
+
+
+def spoken_month_day(day: date, today: date) -> str:
+    """ "October 30", with the year only when it is not this year's: "February 27, 2027"."""
+    return f"{day:%B} {day.day}" if day.year == today.year else f"{day:%B} {day.day}, {day.year}"

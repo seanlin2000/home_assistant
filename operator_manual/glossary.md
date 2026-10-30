@@ -84,6 +84,7 @@ Every term the handbook defines, in one sentence, with the section that explains
 | Parsoid HTML | The HTML that Wikipedia's REST API returns for an article, in which every section is a `<section>` element holding its heading and data tables carry the class `wikitable`. | [MCP Tool Server](03_web_search_mcp.md#key-definitions) |
 | PCM audio | Uncompressed sound stored as a sequence of integer samples, described by a sample rate, a sample width, and a channel count. | [Voice Pipeline](05_voice_pipeline.md#key-definitions) |
 | Phonemizer | A program that turns written text into the sequence of speech sounds a text-to-speech model pronounces. | [Voice Pipeline](05_voice_pipeline.md#packages-and-tools) |
+| Popcornmeter | Rotten Tomatoes' audience score: the percentage of audience ratings of a movie that are positive. | [Current Working Changes](current_changes.md) |
 | Prefill | Reading the whole prompt in one batch before the first token, which is limited by compute. | [LLMs on Apple Silicon](02_local_llm.md#prefill-and-decode) |
 | Preview build | A reduced-precision build of a model whose 4-bit production build does not fit the prototype machine, so a high preview score is strong evidence for the production build and a low one only weak evidence against it. | [Benchmarking and Model Selection](01_llm_benchmark.md#questions-rubric-and-configuration) |
 | Prompt injection | Text inside a tool result, here a web page, that is written like an instruction and that the model may follow because it cannot tell it apart from your question. | [MCP Tool Server](03_web_search_mcp.md#the-url-guard) |
@@ -114,6 +115,7 @@ Every term the handbook defines, in one sentence, with the section that explains
 | Time to first token | How long the model takes to read the prompt before it starts writing, which prefill sets and which grows with prompt length. | [LLMs on Apple Silicon](02_local_llm.md#prefill-and-decode) |
 | Token | The unit a language model reads and writes, roughly a word fragment. | [Introduction](index.md#key-definitions) |
 | Tokens per second | How fast the model writes once it has started, which decode sets and which keeps up with speech above about three to four. | [LLMs on Apple Silicon](02_local_llm.md#prefill-and-decode) |
+| Tomatometer | Rotten Tomatoes' critics score: the percentage of critics' reviews of a movie that are positive. | [Current Working Changes](current_changes.md) |
 | Tool calling | The model replying with a structured request to run a tool, such as `web_search(query="current federal funds rate")`, instead of with an answer. | [Conversation Agent](04_conversation_agent.md#inside-the-loop) |
 | Tool round | One cycle of the agent loop in which the model asks for tools, the loop runs them, and the model is called again with the results, at most four per exchange. | [Conversation Agent](04_conversation_agent.md#inside-the-loop) |
 | Tool schema | The JSON description of a tool's parameters, which the model reads to decide when to call the tool and how to form valid arguments. | [MCP Tool Server](03_web_search_mcp.md#one-tool-call-end-to-end) |

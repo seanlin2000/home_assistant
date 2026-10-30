@@ -12,7 +12,7 @@ import httpx
 
 from broadway_mcp.settings import BroadwaySettings
 from broadway_mcp.shows import BroadwaySnapshot, Show, Tier
-from utils.snapshot_utils import write_snapshot
+from utils.snapshot_utils import ListingsUnavailable, write_snapshot
 
 OK = 200
 SHOW_PRODUCT_TYPE = "SHOW"
@@ -20,7 +20,7 @@ TIER_TAGS = {"Broadway": Tier.BROADWAY, "Off Broadway": Tier.OFF_BROADWAY}  # Br
 NO_DATE = "null"  # TodayTix sends an open-ended run's end date as this string, not as JSON null
 
 
-class TodayTixUnavailable(RuntimeError):
+class TodayTixUnavailable(ListingsUnavailable):
     """TodayTix did not answer, refused, or answered in a shape the refresh cannot read."""
 
 

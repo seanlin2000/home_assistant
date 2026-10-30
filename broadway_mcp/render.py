@@ -4,9 +4,10 @@ The heading names the filters, so the model can tell the user when nothing match
 marketing tags such as "Must-See", to keep each line short enough to say.
 """
 
-from datetime import date, datetime
+from datetime import date
 
 from broadway_mcp.shows import GENRE_TAGS, Show, ShowQuery
+from utils.text_utils import spoken_month_day
 
 TIER_LABELS = {"broadway": "Broadway", "off_broadway": "Off-Broadway", "both": "Broadway and Off-Broadway"}
 TIMING_LABELS = {"running": "running now", "upcoming": "not started yet"}
@@ -94,21 +95,9 @@ def deal_parts(show: Show) -> list[str]:
 def date_parts(show: Show, today: date) -> list[str]:
     details: list[str] = []
     if show.start_date is not None and show.start_date > today:
-        details.append(f"starts {spoken_date(show.start_date, today)}")
+        details.append(f"starts {spoken_month_day(show.start_date, today)}")
     elif show.start_date is None:
         details.append("dates not announced")
     if show.end_date is not None:
-        details.append(f"closes {spoken_date(show.end_date, today)}")
+        details.append(f"closes {spoken_month_day(show.end_date, today)}")
     return details
-
-
-def spoken_date(day: date, today: date) -> str:
-    return f"{day:%B} {day.day}" if day.year == today.year else f"{day:%B} {day.day}, {day.year}"
-
-
-def age_note(refreshed_at: datetime, today: date, stale_after_days: int) -> str:
-    refreshed_on = refreshed_at.astimezone().date()
-    days_old = (today - refreshed_on).days
-    if days_old <= stale_after_days:
-        return ""
-    return f"These listings were last refreshed {days_old} days ago, on {spoken_date(refreshed_on, today)}; tell the user they may be out of date."

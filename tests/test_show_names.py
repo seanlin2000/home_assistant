@@ -4,9 +4,10 @@ a show TodayTix does not list finds nothing rather than a show with a similar wo
 import pytest
 
 from benchmark.mcp_process import BROADWAY_SNAPSHOT_PATH
-from broadway_mcp.show_names import MatchRule, shows_named, title_words
+from broadway_mcp.show_names import SHOW_TITLES, shows_named
 from broadway_mcp.shows import BroadwaySnapshot
 from utils.snapshot_utils import read_snapshot
+from utils.title_matching_utils import MatchRule
 
 SHOWS = read_snapshot(BROADWAY_SNAPSHOT_PATH, BroadwaySnapshot).shows
 
@@ -42,6 +43,6 @@ def test_a_word_in_two_titles_finds_both_shortest_first() -> None:
 
 
 def test_title_words_drop_punctuation_accents_and_the_words_around_a_title() -> None:
-    assert title_words("Clifford Odets' Awake and Sing!") == ["clifford", "odets", "awake", "and", "sing"]
-    assert title_words("Café Society on Broadway") == ["cafe", "society"]
-    assert title_words("The Play") == ["the", "play"]
+    assert SHOW_TITLES.title_words("Clifford Odets' Awake and Sing!") == ["clifford", "odets", "awake", "and", "sing"]
+    assert SHOW_TITLES.title_words("Café Society on Broadway") == ["cafe", "society"]
+    assert SHOW_TITLES.title_words("The Play") == ["the", "play"]

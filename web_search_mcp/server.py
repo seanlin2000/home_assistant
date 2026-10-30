@@ -14,6 +14,8 @@ from assistant_core.models import REQUIRED_TOOL_NAMES
 from broadway_mcp.register import register_broadway_tools
 from broadway_mcp.settings import BroadwaySettings, broadway_settings_from_environment
 from calculator_mcp.register import register_calculator_tools
+from movies_mcp.register import register_movies_tools
+from movies_mcp.settings import MoviesSettings, movies_settings_from_environment
 from sports_mcp.register import register_sports_tools
 from sports_mcp.settings import SportsSettings, sports_settings_from_environment
 from utils.http_access_utils import host_allowed, misdirected
@@ -42,6 +44,7 @@ def build_server(
     wikipedia: WikipediaSettings | None = None,
     sports: SportsSettings | None = None,
     broadway: BroadwaySettings | None = None,
+    movies: MoviesSettings | None = None,
 ) -> MCPServer:
     cache = QueryCache(settings.cache_dir)
     wikipedia = wikipedia or WikipediaSettings()
@@ -53,10 +56,10 @@ def build_server(
     server = MCPServer(
         "assistant-tools",
         instructions=(
-            "Web search backed by a local SearXNG instance, Wikipedia articles, exact calculator tools, the forecast for home, NBA and NFL statistics from ESPN, and what is playing on Broadway. Prefer"
+            "Web search backed by a local SearXNG instance, Wikipedia articles, exact calculator tools, the forecast for home, NBA and NFL statistics from ESPN, what is playing on Broadway, and what movies are showing in Manhattan. Prefer"
             " search_and_read for questions about the world and wikipedia_lookup for settled facts, lists, and records; use the calculator tools for any arithmetic,"
             " weather_forecast for the weather, and game_scores, box_score, team_roster, player_stats, and player_matchup for NBA and NFL scores, rosters, and statistics,"
-            " and broadway_shows for what is playing on Broadway and Off-Broadway."
+            " broadway_shows for what is playing on Broadway and Off-Broadway, and movies_showing and movie_details for what movies are showing in Manhattan theaters and what one is about."
         ),
     )
 
@@ -89,6 +92,7 @@ def build_server(
     register_wikipedia_tools(server, wikipedia, cache)
     register_sports_tools(server, sports or SportsSettings(cache_dir=None))  # a server built without settings, as in tests, leaves the real cache alone
     register_broadway_tools(server, broadway or BroadwaySettings())
+    register_movies_tools(server, movies or MoviesSettings())
     register_operations_routes(server, allowed_host_list(settings))
     if fixture_pages:
         server.custom_route(FIXTURE_ROUTE, ["POST"])(fixture_route(fixture_pages))
@@ -154,7 +158,12 @@ def plain_snippet(snippet: str) -> str:
 def main() -> None:
     settings = settings_from_environment()
     build_server(
-        settings, weather=weather_settings_from_environment(), wikipedia=wikipedia_settings_from_environment(), sports=sports_settings_from_environment(), broadway=broadway_settings_from_environment()
+        settings,
+        weather=weather_settings_from_environment(),
+        wikipedia=wikipedia_settings_from_environment(),
+        sports=sports_settings_from_environment(),
+        broadway=broadway_settings_from_environment(),
+        movies=movies_settings_from_environment(),
     ).run(transport="streamable-http", host=settings.host, port=settings.port, transport_security=transport_security_for(settings))
 
 

@@ -7,9 +7,11 @@ description sends the model to the web, the only place left to learn what it is 
 
 from datetime import date
 
-from broadway_mcp.render import TIER_LABELS, date_parts, deal_parts, label_parts, price_parts, score_parts, spoken_date
-from broadway_mcp.show_names import MatchRule, ShowsNamed
+from broadway_mcp.render import TIER_LABELS, date_parts, deal_parts, label_parts, price_parts, score_parts
+from broadway_mcp.show_names import ShowsNamed
 from broadway_mcp.shows import Show, has_closed, is_running
+from utils.text_utils import spoken_month_day
+from utils.title_matching_utils import MatchRule
 
 MAX_LISTED_MATCHES = 5
 NOT_LISTED = 'No show on TodayTix\'s New York listing matches "{asked}", so it is probably not playing in New York now. Tell the user; if they want to know what the show is about, search the web.'
@@ -45,5 +47,5 @@ def facts_line(show: Show, today: date) -> str:
 
 def run_parts(show: Show, today: date) -> list[str]:
     if has_closed(show, today):
-        return [f"closed {spoken_date(show.end_date, today)}"]
+        return [f"closed {spoken_month_day(show.end_date, today)}"]
     return (["running now"] if is_running(show, today) else []) + date_parts(show, today)
