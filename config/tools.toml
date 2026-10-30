@@ -61,6 +61,10 @@ marks_untrusted = true                      # titles and genres written by Fanda
 tier = "read_public"
 marks_untrusted = true                      # the synopsis too is written by Fandango and the studios
 
+[tools.reddit_search]
+tier = "read_public"
+marks_untrusted = true                      # thread titles and comments written by anyone on Reddit
+
 [tools.calculate]
 tier = "local"
 marks_untrusted = false

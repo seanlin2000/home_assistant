@@ -142,4 +142,8 @@ def text_argument_given_as_number(spec: ToolSpec, arguments: dict) -> str | None
 
 def as_untrusted_block(source: str, text: str) -> str:
     """Wrap a stranger's text as data. Any untrusted tag inside it is defused first, so a page cannot close the block and speak as the system."""
-    return f'<untrusted source="{source}">\n{UNTRUSTED_TAG.sub("(tag removed)", text)}\n</untrusted>'
+    return f'{untrusted_block_opening(source)}{UNTRUSTED_TAG.sub("(tag removed)", text)}\n</untrusted>'
+
+
+def untrusted_block_opening(source: str) -> str:
+    return f'<untrusted source="{source}">\n'
