@@ -12,6 +12,7 @@ import httpx
 
 from broadway_mcp.settings import BroadwaySettings
 from broadway_mcp.shows import BroadwaySnapshot, Show, Tier
+from utils.browser_utils import chosen_user_agent
 from utils.snapshot_utils import ListingsUnavailable, write_snapshot
 
 OK = 200
@@ -35,7 +36,7 @@ async def refresh_broadway_snapshot(settings: BroadwaySettings, transport: httpx
 async def read_products(settings: BroadwaySettings, transport: httpx.AsyncBaseTransport | None) -> list[dict[str, Any]]:
     """Every New York product, a page at a time in case the listing outgrows one request."""
     products: list[dict[str, Any]] = []
-    async with httpx.AsyncClient(timeout=settings.timeout_seconds, follow_redirects=False, headers={"User-Agent": settings.user_agent}, transport=transport) as client:
+    async with httpx.AsyncClient(timeout=settings.timeout_seconds, follow_redirects=False, headers={"User-Agent": chosen_user_agent(settings.user_agent)}, transport=transport) as client:
         while True:
             page, total = await read_page(client, settings, offset=len(products))
             products.extend(page)

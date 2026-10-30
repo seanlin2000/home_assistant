@@ -5,6 +5,7 @@ import httpx
 import trafilatura
 from pydantic import BaseModel
 
+from utils.browser_utils import chosen_user_agent
 from utils.passage_utils import select_passages
 from utils.text_utils import clip_to_words, word_count
 from web_search_mcp.fixtures import FixturePages
@@ -105,7 +106,7 @@ class PageExtractor:
         Each hop connects to the address the check approved, not to the name: the URL's host is swapped for that address while the real name goes
         in the Host header and, for https, in the TLS handshake (`sni_hostname`), so certificate verification still checks the real name. After the
         connection is up the peer address is checked once more, which also covers a transport that resolved on its own."""
-        headers = {"User-Agent": self._settings.user_agent, "Accept-Language": "en-US,en;q=0.9"}
+        headers = {"User-Agent": chosen_user_agent(self._settings.user_agent), "Accept-Language": "en-US,en;q=0.9"}
         async with httpx.AsyncClient(timeout=self._settings.fetch_timeout_seconds, follow_redirects=False, headers=headers, transport=self._transport) as client:
             for _ in range(self._settings.max_redirects + 1):
                 addresses = await ensure_public_url(url, self._resolver)

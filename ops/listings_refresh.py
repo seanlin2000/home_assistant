@@ -1,4 +1,5 @@
-"""The nightly listings refresh: reads each listings source once and replaces its snapshot, which the tools then read all day.
+"""The nightly listings refresh: reads each listings source once and replaces its snapshot, which the tools then read all day. It first records the
+newest Chrome that Macs have fully rolled out, so the browser user agent those reads and the page reader send stays current (utils/browser_utils.py).
 
 launchd runs it at 4:30 every morning, and once when the agent is loaded (scripts/services.sh installs it as "listings"); run it by hand with
 `uv run listings-refresh`. Each source's outcome is one line in ~/Library/Logs/studio-assistant/listings.log. A source that fails keeps its last good
@@ -14,6 +15,8 @@ from broadway_mcp.settings import broadway_settings_from_environment
 from broadway_mcp.todaytix import refresh_broadway_snapshot
 from movies_mcp.fandango import refresh_movies_snapshot
 from movies_mcp.settings import movies_settings_from_environment
+from ops.chrome_releases import refresh_chrome_release
+from utils.browser_utils import CHROME_RELEASE_PATH
 from utils.snapshot_utils import ListingsUnavailable
 
 _LOGGER = logging.getLogger("listings_refresh")
@@ -22,7 +25,7 @@ Refresh = Callable[[], Awaitable[str]]
 
 def main() -> None:
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s", stream=sys.stdout)
-    refreshes = {"broadway": refresh_broadway, "movies": refresh_movies}
+    refreshes = {"chrome": refresh_chrome, "broadway": refresh_broadway, "movies": refresh_movies}
     failures = asyncio.run(failed_refreshes(refreshes))
     sys.exit(1 if failures else 0)
 
@@ -40,6 +43,11 @@ async def refreshed(name: str, refresh: Refresh) -> bool:
     except (ListingsUnavailable, OSError) as error:
         _LOGGER.error("%s: refresh failed, the last snapshot stays: %s", name, error)
         return False
+
+
+async def refresh_chrome() -> str:
+    release = await refresh_chrome_release()
+    return f"Chrome {release.major} ({release.version}) written to {CHROME_RELEASE_PATH}"
 
 
 async def refresh_broadway() -> str:
