@@ -18,6 +18,7 @@ class Route(StrEnum):
     SPORTS = "sports"
     SHOWS = "shows"
     MOVIES = "movies"
+    REDDIT = "reddit"
     ANSWER = "answer"
 
 
@@ -73,12 +74,26 @@ class AgentPolicy(BaseModel):
     sports_filler_phrases: list[str] = Field(default_factory=lambda: list(DEFAULT_SPORTS_FILLER_PHRASES))
     shows_filler_phrases: list[str] = Field(default_factory=lambda: list(DEFAULT_SHOWS_FILLER_PHRASES))
     movies_filler_phrases: list[str] = Field(default_factory=lambda: list(DEFAULT_MOVIES_FILLER_PHRASES))
+    reddit_filler_phrases: list[str] = Field(default_factory=lambda: list(DEFAULT_REDDIT_FILLER_PHRASES))
+    reddit_still_trying_phrases: list[str] = Field(default_factory=lambda: list(DEFAULT_REDDIT_STILL_TRYING_PHRASES))
+    reddit_unavailable_phrases: list[str] = Field(default_factory=lambda: list(DEFAULT_REDDIT_UNAVAILABLE_PHRASES))
+    still_trying_after_seconds: float = 6.0  # a Reddit call still running this long is most likely retrying, so the user hears why it is slow
     tool_timeout_seconds: float = 30.0
     history_exchanges: int = Field(default=3, ge=0)  # earlier exchanges replayed with each question; more and the model answers from the history instead of looking up
 
     @property
     def every_filler_phrase(self) -> list[str]:
-        return [*self.filler_phrases, *self.calculate_filler_phrases, *self.weather_filler_phrases, *self.sports_filler_phrases, *self.shows_filler_phrases, *self.movies_filler_phrases]
+        return [
+            *self.filler_phrases,
+            *self.calculate_filler_phrases,
+            *self.weather_filler_phrases,
+            *self.sports_filler_phrases,
+            *self.shows_filler_phrases,
+            *self.movies_filler_phrases,
+            *self.reddit_filler_phrases,
+            *self.reddit_still_trying_phrases,
+            *self.reddit_unavailable_phrases,
+        ]
 
 
 # Spoken while the first tool call of an exchange runs, so the user hears something within a second or two. Search, calculation, the forecast,
@@ -109,11 +124,25 @@ DEFAULT_MOVIES_FILLER_PHRASES = (
     "Let me check what's in theaters.",
     "One moment, pulling up the movie listings.",
 )
+# Reddit is read through Arctic Shift, a free archive that times out under load, so the first line warns that it can be slow, a second line follows
+# when the call is still running (most likely retrying), and a third replaces the silence when it never answered and the model searches the web instead.
+DEFAULT_REDDIT_FILLER_PHRASES = (
+    "Checking Reddit. It can be slow, but I'll do my best.",
+    "Let me see what Reddit says. It can be slow, but I'll do my best.",
+)
+DEFAULT_REDDIT_STILL_TRYING_PHRASES = (
+    "Reddit's slow today, still trying.",
+    "Still waiting on Reddit, one more moment.",
+)
+DEFAULT_REDDIT_UNAVAILABLE_PHRASES = ("I couldn't reach Reddit, so I'll check the web instead.",)
 SEARCH_TOOL_NAMES = frozenset({"search_and_read", "web_search", "fetch_page", "wikipedia_lookup"})
 WEATHER_TOOL_NAMES = frozenset({"weather_forecast"})
 SPORTS_TOOL_NAMES = frozenset({"game_scores", "box_score", "team_roster", "player_stats", "player_matchup"})
 SHOWS_TOOL_NAMES = frozenset({"broadway_shows", "broadway_show_details"})
 MOVIES_TOOL_NAMES = frozenset({"movies_showing", "movie_details"})
+REDDIT_TOOL_NAMES = frozenset({"reddit_search"})
+# How reddit_search's answer starts when Arctic Shift never answered, so the agent loop knows to say the could-not-reach line.
+REDDIT_UNAVAILABLE_PREFIX = "Reddit error: Reddit did not answer"
 # The router's JSON: a route, up to two more, and a one-sentence plan. Forty tokens held the route alone and cut the plan off mid-string.
 CLASSIFY_MAX_TOKENS = 120
 CALCULATOR_TOOL_NAMES = frozenset({"calculate", "percent", "convert", "growth_schedule", "energy_cost", "loan_payment", "break_even", "date_math"})
@@ -124,6 +153,7 @@ TOOL_NAMES_BY_ROUTE = {
     Route.SPORTS: SPORTS_TOOL_NAMES,
     Route.SHOWS: SHOWS_TOOL_NAMES,
     Route.MOVIES: MOVIES_TOOL_NAMES,
+    Route.REDDIT: REDDIT_TOOL_NAMES,
 }
 # The tools a live tool server must expose before the benchmark or the health check trusts it as ours (a stale server once served a different set).
 REQUIRED_TOOL_NAMES = frozenset({"search_and_read", "web_search", "fetch_page", "wikipedia_lookup", "calculate", "percent", "convert"})
@@ -203,6 +233,7 @@ class Transcript(BaseModel):
     malformed_tool_calls: list[str] = Field(default_factory=list)
     spoken_text: str = ""
     filler_text: str = ""  # the phrase spoken while the first tools ran
+    tool_notices: list[str] = Field(default_factory=list)  # lines spoken later in the exchange: Reddit still trying, Reddit not reached
     final_answer: str = ""
     truncated: bool = False
     tool_call_count: int = 0

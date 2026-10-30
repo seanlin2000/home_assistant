@@ -1,8 +1,8 @@
-"""Decide, before the model speaks, which tools a question needs (the web, the calculator, the forecast, sports statistics, show listings, several of them, or none) and say so
+"""Decide, before the model speaks, which tools a question needs (the web, the calculator, the forecast, sports statistics, show or movie listings, Reddit, several of them, or none) and say so
 just before the question.
 
 Two layers. Rules fire on unmistakable wording (an explicit request to search, numbers with an arithmetic cue, a question about coming or current
-weather, an NBA or NFL statistic, or what is on Broadway) at no cost, and several can fire for one question. When no rule fires, one short structured-output call asks the same model to classify the
+weather, an NBA or NFL statistic, what is on Broadway or in theaters, or a question that names Reddit) at no cost, and several can fire for one question. When no rule fires, one short structured-output call asks the same model to classify the
 question and, when it needs more than one tool, to plan their order in a sentence. A directive naming the tools to call goes into the block just before the
 question (prompt 2.0), because the engines offer no way to force a tool call; answer adds nothing. The system prompt stays the same for every question so
 the engine keeps it cached. The decision is recorded on the transcript so the benchmark can score the router on its own.
@@ -14,9 +14,9 @@ import time
 from assistant_core.llm_client import LLMClient
 from assistant_core.models import TOOL_NAMES_BY_ROUTE, AgentPolicy, Message, Role, Route, RouteDecision, ToolSpec
 
-TOOL_ROUTES = [Route.SEARCH, Route.CALCULATE, Route.WEATHER, Route.SPORTS, Route.SHOWS, Route.MOVIES]
-# Families the tool server offers only sometimes: the forecast needs home's coordinates, and an older tool server has no sports, show, or movie tools.
-OPTIONAL_ROUTES = (Route.WEATHER, Route.SPORTS, Route.SHOWS, Route.MOVIES)
+TOOL_ROUTES = [Route.SEARCH, Route.CALCULATE, Route.WEATHER, Route.SPORTS, Route.SHOWS, Route.MOVIES, Route.REDDIT]
+# Families the tool server offers only sometimes: the forecast needs home's coordinates, and an older tool server has no sports, show, movie, or Reddit tools.
+OPTIONAL_ROUTES = (Route.WEATHER, Route.SPORTS, Route.SHOWS, Route.MOVIES, Route.REDDIT)
 MAX_EXTRA_ROUTES = 2
 ROUTE_SCHEMA = {
     "type": "object",
@@ -28,15 +28,16 @@ ROUTE_SCHEMA = {
     "required": ["route"],
 }
 
-ROUTER_SYSTEM_PROMPT = """You sort spoken questions for a home voice assistant. Reply with JSON only: {"route": "search" | "calculate" | "weather" | "sports" | "shows" | "movies" | "answer", "also": [...], "plan": "..."}.
+ROUTER_SYSTEM_PROMPT = """You sort spoken questions for a home voice assistant. Reply with JSON only: {"route": "search" | "calculate" | "weather" | "sports" | "shows" | "movies" | "reddit" | "answer", "also": [...], "plan": "..."}.
 search: the correct answer depends on facts that change over time or that the assistant cannot know without checking: current prices, rates, news, schedules, product availability, recent releases, market conditions, what to buy today, whether an offer is competitive right now, or a claim about a recent event. Also anything the user explicitly asks to be searched or looked up.
 calculate: the correct answer requires arithmetic on numbers in the question: percentages, totals over time, compounding, unit or temperature conversions, energy costs, loan payments, tips, splits, or date differences.
 weather: the coming or current weather or forecast, at home or in any named place: whether it will rain, how warm or cold it will get, whether to take an umbrella or a coat, the weekend forecast.
 sports: NBA or NFL game scores (live, recent, or long past), how a player did in one game, a team's roster, a player's season or career statistics, or how a player or team did against another. Other leagues and sports are search.
 shows: what is playing on Broadway or Off-Broadway in New York, now or soon: which musicals or plays are running, the most popular or best reviewed, shows of a genre or under a price, rush and lottery tickets, and what one of those shows is about.
 movies: what movies are showing in movie theaters in Manhattan this week: what is playing, the widest or newest releases, movies of a genre, whether and where one movie is showing, what one theater shows. A movie's plot, cast, or reviews is search.
+reddit: only when the user names Reddit or a subreddit and asks what is said there. A request for recommendations or opinions that does not name Reddit is search or answer.
 answer: everything else: explanations of how things work, reasoning, advice from what the user said, comparisons of ideas, opinions, clarifying questions, and settled history even when it sounds topical.
-Examples: "What hardware gives the most memory for a thousand dollars today?" -> search. "Is a four percent rent increase competitive in my neighborhood?" -> search. "Since the central bank cut rates last month, should I refinance?" -> search. "What year did the Berlin Wall fall?" -> answer. "Why can a sparse model run on a smaller GPU?" -> answer. "What is fifteen percent of eighty dollars?" -> calculate. "Do I need an umbrella tomorrow?" -> weather. "What's the weather in Lisbon this weekend?" -> weather. "Who won the 49ers game last night?" -> sports. "How many threes did Steph Curry make each season?" -> sports. "What's Tom Brady's record against Peyton Manning?" -> sports. "What musicals are on Broadway right now?" -> shows. "What is Hadestown about?" -> shows. "What movies are playing this weekend?" -> movies. "Is Clayface showing anywhere near me?" -> movies. "Who won the World Cup in 2022?" -> search.
+Examples: "What hardware gives the most memory for a thousand dollars today?" -> search. "Is a four percent rent increase competitive in my neighborhood?" -> search. "Since the central bank cut rates last month, should I refinance?" -> search. "What year did the Berlin Wall fall?" -> answer. "Why can a sparse model run on a smaller GPU?" -> answer. "What is fifteen percent of eighty dollars?" -> calculate. "Do I need an umbrella tomorrow?" -> weather. "What's the weather in Lisbon this weekend?" -> weather. "Who won the 49ers game last night?" -> sports. "How many threes did Steph Curry make each season?" -> sports. "What's Tom Brady's record against Peyton Manning?" -> sports. "What musicals are on Broadway right now?" -> shows. "What is Hadestown about?" -> shows. "What movies are playing this weekend?" -> movies. "Is Clayface showing anywhere near me?" -> movies. "What does Reddit say about Via Carota?" -> reddit. "Best soup dumplings in Flushing?" -> search. "Who won the World Cup in 2022?" -> search.
 also: only when the question needs a second or third kind of tool after the first, in the order to use them; otherwise leave it out. plan: when also is given, one short sentence on how to use the tools together; otherwise leave it out.
 Examples: "Look up today's gold price and tell me what three ounces cost." -> {"route": "search", "also": ["calculate"], "plan": "Find today's gold price per ounce, then multiply it by three."} "Will it rain in Seattle tomorrow, and what time is the last ferry to Bainbridge?" -> {"route": "weather", "also": ["search"], "plan": "Get Seattle's forecast for tomorrow, then search the ferry schedule."} "Will Oslo be colder than here on Saturday?" -> {"route": "weather", "also": ["calculate"], "plan": "Get Saturday's forecast for Oslo and for home, then subtract the temperatures."} "What's tomorrow's high in Chicago in Celsius?" -> {"route": "weather", "also": ["calculate"], "plan": "Get Chicago's forecast for tomorrow, then convert the high to Celsius."}
 A comparison between places or a figure in other units needs the calculator as well as the forecast."""
@@ -73,6 +74,10 @@ MOVIES_DIRECTIVE = """Routing for this question: MOVIES.
 This question is about what movies are showing in theaters. Call movies_showing for a list of movies, with when="coming_up" when the user asks about later than this week, title set when the user names a movie, theater when they name a theater, and genre only when they ask for one; call movie_details with the title when the user asks what one movie is about. Do not search the web unless the tool says to, and do not answer from memory. Answer from the movies the tool returns.
 Example call: movies_showing(genre="comedy")
 """
+REDDIT_DIRECTIVE = """Routing for this question: REDDIT.
+The user asked what people on Reddit say. Call reddit_search with subreddits set to the subreddits the user named, without the "r/", or to the one or two that fit the topic when they named none, and query set to a few key words; set time_range only when the user asks about recent posts. Do not search the web unless the tool says to, and do not answer from memory. Answer from the threads and comments the tool returns, and say it is what people on Reddit say.
+Example call: reddit_search(subreddits=["FoodNYC"], query="soup dumplings Flushing")
+"""
 DIRECTIVES = {
     Route.SEARCH: SEARCH_DIRECTIVE,
     Route.CALCULATE: CALCULATE_DIRECTIVE,
@@ -80,6 +85,7 @@ DIRECTIVES = {
     Route.SPORTS: SPORTS_DIRECTIVE,
     Route.SHOWS: SHOWS_DIRECTIVE,
     Route.MOVIES: MOVIES_DIRECTIVE,
+    Route.REDDIT: REDDIT_DIRECTIVE,
 }
 # A question that needs several tools gets one directive: the routes in order, the plan, then each route's instruction and example call without its heading.
 SEVERAL_TOOLS_INSTRUCTION = "This question needs more than one tool. Call each of them, in this order, and answer from what they return; do no arithmetic yourself."
@@ -135,12 +141,17 @@ MOVIE_WORD = re.compile(r"\b(movies?|films?|cinemas?|movie theaters?)\b", re.IGN
 MOVIE_ASK = re.compile(r"\b(playing|showing|in theaters|out now|opening|coming out|comes out|coming soon|out yet|now showing|this week|this weekend|tonight|at the movies)\b", re.IGNORECASE)
 MOVIE_THEATER_CHAIN = re.compile(r"\b(amc|regal|angelika|alamo drafthouse|quad cinema|paris theater|imax)\b", re.IGNORECASE)
 MOVIE_THEATER_ASK = re.compile(r"\b(playing|showing|on at)\b", re.IGNORECASE)
+# The Reddit rule fires only when the user names Reddit or a subreddit ("r/FoodNYC", or "r slash nba" as the speech recognizer may write it);
+# recommendations without the name stay with search, by the user's choice. Naming Reddit outranks the sports, shows, movies, and search rules:
+# "what does r/nba say about the Knicks' record" asks for Reddit's opinion, not the record.
+REDDIT_MENTION = re.compile(r"\b(reddit|subreddits?|redditors?)\b|(?<!\w)r\s*/\s*[a-z]\w+|\br slash [a-z]\w+", re.IGNORECASE)
 STREAMING = re.compile(r"\b(netflix|hulu|streaming|stream|prime video|disney\+?|hbo|apple tv|peacock|paramount\+?|on tv|at home)\b", re.IGNORECASE)
 
 
 def rule_route(text: str) -> RouteDecision | None:
-    """Every rule that fires, searching first, then the forecast, sports, shows, and movies, then the arithmetic on what they found; None when no rule fires."""
-    fired = [*search_reasons(text), *weather_reasons(text), *sports_reasons(text), *shows_reasons(text), *movies_reasons(text)]
+    """Every rule that fires, searching first, then the forecast, sports, shows, and movies, then the arithmetic on what they found; None when no rule fires.
+    A question that names Reddit goes to Reddit alone, before the arithmetic."""
+    fired = reddit_reasons(text) or [*search_reasons(text), *weather_reasons(text), *sports_reasons(text), *shows_reasons(text), *movies_reasons(text)]
     fired.extend(arithmetic_reasons(text, minimum_numbers=1 if any(route == Route.SEARCH for route, _ in fired) else MIN_NUMBERS_FOR_ARITHMETIC))
     if not fired:
         return None
@@ -192,6 +203,11 @@ def movies_reasons(text: str) -> list[tuple[Route, str]]:
     if chain and playing:
         return [(Route.MOVIES, f"'{chain.group(0)}' with '{playing.group(0)}'")]
     return []
+
+
+def reddit_reasons(text: str) -> list[tuple[Route, str]]:
+    mention = REDDIT_MENTION.search(text)
+    return [(Route.REDDIT, f"names '{mention.group(0)}'")] if mention else []
 
 
 def arithmetic_reasons(text: str, minimum_numbers: int) -> list[tuple[Route, str]]:
