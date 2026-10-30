@@ -14,12 +14,8 @@ class RedditSettings(BaseModel):
     timeout_seconds: float = 8.0
     attempts: int = 3
     retry_waits_seconds: tuple[float, ...] = (2.0, 5.0)  # before the second and the third attempt
-    # A keyword search that Arctic Shift turned away usually fails again however long the wait (2 of 9 retries after its 60-second window succeeded,
-    # measured 2026-10-29), so it gets one retry; the thread and comment reads it serves in under a second get the full attempts.
-    keyword_search_attempts: int = 2
     total_budget_seconds: float = 20.0  # every attempt and wait of one tool call, well inside the agent loop's 30-second tool timeout
-    max_subreddits: int = 3  # each costs one web search, and live searches are at least three seconds apart
-    candidate_posts: int = 100  # Arctic Shift sorts keyword matches by date only, so the tool reads this many and ranks them itself
+    max_subreddits: int = 3  # each costs up to two web searches, and live SearXNG searches are at least three seconds apart
     threads_to_return: int = 4
     comment_reads_at_a_time: int = 2
     comments_per_thread: int = 4
