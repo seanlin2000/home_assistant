@@ -20,6 +20,12 @@ class QueryCache:
     def put_search(self, query: str, time_range: str | None, results: list[dict[str, Any]]) -> None:
         self._put(search_key(query, time_range), results)
 
+    def get_brave_search(self, query: str, time_range: str | None) -> list[dict[str, Any]] | None:
+        return self._get(f"brave:{search_key(query, time_range)}")
+
+    def put_brave_search(self, query: str, time_range: str | None, results: list[dict[str, Any]]) -> None:
+        self._put(f"brave:{search_key(query, time_range)}", results)
+
     def get_page(self, url: str) -> str | None:
         return self._get(f"page:{url}")
 

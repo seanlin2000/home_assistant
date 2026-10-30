@@ -7,6 +7,7 @@ from utils.browser_utils import BROWSER_USER_AGENT
 
 class SearchSettings(BaseModel):
     searxng_url: str = "http://127.0.0.1:8080"
+    engines: str = "brave,searxng"  # comma-separated, in order: each is asked only when those before it fail; brave needs its key in the Keychain
     host: str = "127.0.0.1"
     port: int = 8765
     allowed_hosts: str = ""  # comma-separated Host header values (host:port) accepted when bound to the LAN; empty means no Host check (localhost binds)
@@ -35,6 +36,10 @@ class SearchSettings(BaseModel):
         "bloomberg.com",
         "nytimes.com",
     )
+
+
+def engine_names(settings: SearchSettings) -> list[str]:
+    return [name.strip().lower() for name in settings.engines.split(",") if name.strip()]
 
 
 def allowed_host_list(settings: SearchSettings) -> list[str]:
