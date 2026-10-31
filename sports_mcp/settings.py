@@ -6,9 +6,10 @@ from pathlib import Path
 
 from pydantic import BaseModel
 
-# ESPN publishes no etiquette for these addresses; naming the application and its repository lets ESPN tell this client apart, without any
-# personal address leaving the network.
-USER_AGENT = "studio-assistant-sports/1.0 github.com/seanlin2000/home_assistant"
+from utils.user_agent_utils import descriptive_user_agent
+
+# ESPN publishes no etiquette for these addresses; naming the application lets ESPN tell this client apart.
+USER_AGENT = descriptive_user_agent("sports")
 DEFAULT_CACHE_DIR = Path.home() / "Library" / "Caches" / "studio-assistant" / "sports"
 
 

@@ -5,8 +5,10 @@ import os
 
 from pydantic import BaseModel
 
-# Arctic Shift asks heavy users to identify themselves; naming the application and its repository does that without any personal address leaving the network.
-USER_AGENT = "studio-assistant-reddit/1.0 github.com/seanlin2000/home_assistant"
+from utils.user_agent_utils import descriptive_user_agent
+
+# Arctic Shift asks heavy users to identify themselves.
+USER_AGENT = descriptive_user_agent("reddit")
 
 
 class RedditSettings(BaseModel):
