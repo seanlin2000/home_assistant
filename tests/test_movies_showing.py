@@ -32,6 +32,10 @@ MOVIE_DETAILS = json.loads(Path("tests/fixtures/fandango_movie_details.json").re
 MOVIE_LINE = re.compile(r"^\d+\. ")
 
 
+async def resolve_public(host: str) -> list[str]:
+    return ["93.184.216.34"]
+
+
 def recorded_settings(today: date = RECORDED_ON) -> MoviesSettings:
     return MoviesSettings(snapshot_path=MOVIES_SNAPSHOT_PATH, today=today)
 
@@ -98,7 +102,7 @@ def fixture_settings(tmp_path: Path) -> MoviesSettings:
 
 async def test_the_refresh_opens_the_zip_page_first_then_reads_every_page_of_every_day(tmp_path: Path) -> None:
     server = FandangoServer()
-    await refresh_movies_snapshot(fixture_settings(tmp_path), server.transport)
+    await refresh_movies_snapshot(fixture_settings(tmp_path), server.transport, resolve_public)
     assert server.requests[0].url.path == "/10036_movietimes"
     listing_requests = [request for request in server.requests if request.url.path == "/napi/theaterswithshowtimes"]
     assert [(request.url.params["date"], request.url.params["page"]) for request in listing_requests[:3]] == [("2026-10-25", "1"), ("2026-10-25", "2"), ("2026-10-26", "1")]
@@ -108,7 +112,7 @@ async def test_the_refresh_opens_the_zip_page_first_then_reads_every_page_of_eve
 
 
 async def test_only_manhattan_theaters_are_kept_and_each_movie_once_across_theaters_and_days(tmp_path: Path) -> None:
-    snapshot = await refresh_movies_snapshot(fixture_settings(tmp_path), FandangoServer().transport)
+    snapshot = await refresh_movies_snapshot(fixture_settings(tmp_path), FandangoServer().transport, resolve_public)
     assert "AMC Newport Centre 11" not in snapshot.theaters and "Regal UA Kaufman Astoria" not in snapshot.theaters  # Jersey City, Astoria
     assert "Cross County Multiplex Cinemas" not in snapshot.theaters  # Yonkers, 10704: a 10 zip code that is not Manhattan
     assert "Quad Cinema" in snapshot.theaters and "New Plaza Cinema" in snapshot.theaters  # open, with nothing posted on some days
@@ -125,7 +129,7 @@ async def test_only_manhattan_theaters_are_kept_and_each_movie_once_across_theat
 async def test_each_movie_gets_its_scores_and_page_and_a_page_is_read_only_the_first_night(tmp_path: Path) -> None:
     settings = fixture_settings(tmp_path)
     server = FandangoServer()
-    snapshot = await refresh_movies_snapshot(settings, server.transport)
+    snapshot = await refresh_movies_snapshot(settings, server.transport, resolve_public)
     movies = {movie.title: movie for movie in snapshot.movies}
     clayface = movies["Clayface"]
     assert clayface.scores == RottenTomatoesScores(critics_score=75, audience_score=94, certified_fresh=True)
@@ -136,7 +140,7 @@ async def test_each_movie_gets_its_scores_and_page_and_a_page_is_read_only_the_f
     assert without_details and all(movie.scores is None and movie.page is None for movie in without_details)  # not found: kept without them
     assert len(server.paths_requested("/napi/fanAndCriticRatings/")) == len(movie_pages_requested(server)) == len(snapshot.movies)
     next_night = FandangoServer()
-    tomorrow = await refresh_movies_snapshot(settings, next_night.transport)
+    tomorrow = await refresh_movies_snapshot(settings, next_night.transport, resolve_public)
     assert len(next_night.paths_requested("/napi/fanAndCriticRatings/")) == len(snapshot.movies)  # scores every night
     assert set(movie_pages_requested(next_night)) == {movie.page_path for movie in without_details}  # only the pages not read yet
     assert {movie.title: movie.page for movie in tomorrow.movies}["Clayface"] == clayface.page
@@ -146,12 +150,42 @@ def movie_pages_requested(server: FandangoServer) -> list[str]:
     return [path for path in server.paths_requested("/") if path.endswith("/movie-overview")]
 
 
+class RedirectingFandango(FandangoServer):
+    """Fandango that first sends the zip-code page somewhere else, then serves as usual."""
+
+    def __init__(self, location: str) -> None:
+        super().__init__()
+        self.location = location
+
+    def handle(self, request: httpx.Request) -> httpx.Response:
+        if request.url.path.endswith("_movietimes") and "moved" not in request.url.params:
+            self.requests.append(request)
+            return httpx.Response(302, headers={"location": self.location})
+        return super().handle(request)
+
+
+async def test_a_redirect_within_fandango_is_followed(tmp_path: Path) -> None:
+    server = RedirectingFandango(location="?moved=1")
+    await refresh_movies_snapshot(fixture_settings(tmp_path), server.transport, resolve_public)
+
+    assert sum(request.url.path.endswith("_movietimes") for request in server.requests) == 2
+
+
+async def test_a_redirect_to_the_home_network_fails_the_refresh_and_keeps_the_last_snapshot(tmp_path: Path) -> None:
+    settings = fixture_settings(tmp_path)
+    await refresh_movies_snapshot(settings, FandangoServer().transport, resolve_public)
+    kept = settings.snapshot_path.read_bytes()
+    with pytest.raises(FandangoUnavailable, match="must not read"):
+        await refresh_movies_snapshot(settings, RedirectingFandango(location="http://192.168.1.1/admin").transport, resolve_public)
+    assert settings.snapshot_path.read_bytes() == kept
+
+
 async def test_a_refused_session_writes_nothing_and_keeps_the_last_snapshot(tmp_path: Path) -> None:
     settings = fixture_settings(tmp_path)
-    await refresh_movies_snapshot(settings, FandangoServer().transport)
+    await refresh_movies_snapshot(settings, FandangoServer().transport, resolve_public)
     kept = settings.snapshot_path.read_bytes()
     with pytest.raises(FandangoUnavailable, match="403"):
-        await refresh_movies_snapshot(settings, FandangoServer(status=403).transport)
+        await refresh_movies_snapshot(settings, FandangoServer(status=403).transport, resolve_public)
     assert settings.snapshot_path.read_bytes() == kept
 
 

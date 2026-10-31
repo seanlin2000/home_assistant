@@ -1,4 +1,4 @@
-"""The readable text of a downloaded page, for fetch_page and search_and_read.
+"""The readable text of a downloaded page, for fetch_page and search_and_read. Plain text and Markdown are already text; an HTML page is extracted.
 
 trafilatura's precision mode keeps a page's main article and drops what looks like boilerplate. On a page that is a grid of cards, such as a listing of
 restaurants, shows, or products, the cards are the content, and precision mode drops them all: Michelin's three-star New York listing came out on
@@ -7,11 +7,21 @@ whole visible text is read instead, navigation included; a few extra words cost 
 """
 
 import trafilatura
+from pydantic import BaseModel
 
 from web_search_mcp.page_markdown import to_passage_format
 
 THIN_ARTICLE_CHARS = 500  # an article this short is likely a heading and a caption left over from a page of cards
 FULL_TEXT_FACTOR = 5  # the whole visible text must be this many times longer to be worth its navigation and footer
+
+
+class DownloadedPage(BaseModel):
+    body: str
+    content_type: str  # the Content-Type header, e.g. "text/html; charset=utf-8"
+
+
+def text_of(page: DownloadedPage) -> str:
+    return readable_text(page.body) if "html" in page.content_type else to_passage_format(page.body)
 
 
 def readable_text(html: str) -> str:

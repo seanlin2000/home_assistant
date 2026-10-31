@@ -9,11 +9,11 @@ from utils.passage_utils import select_passages
 from utils.text_utils import clip_to_words, word_count
 from web_search_mcp.fixtures import FixturePages
 from web_search_mcp.page_failures import PageFailure, PageUnreadable, failure_for_transport_error, raise_if_unreadable
-from web_search_mcp.page_text import readable_text
+from web_search_mcp.page_text import DownloadedPage, text_of
 from web_search_mcp.query_cache import QueryCache
 from web_search_mcp.searxng_client import SearchResult
 from web_search_mcp.settings import SearchSettings
-from web_search_mcp.url_guard import Resolver, UnsafeUrl, ensure_public_url, host_header, is_public_address, pin_url_to_address, system_resolver
+from web_search_mcp.url_guard import Resolver, UnsafeUrl, ensure_public_url, host_header, pin_url_to_address, refuse_unless_public_peer, system_resolver
 from wikipedia_mcp.article import render_article
 from wikipedia_mcp.client import WikipediaClient, WikipediaUnavailable
 
@@ -87,20 +87,20 @@ class PageExtractor:
             return ""
 
     async def _read_generic_page(self, url: str) -> str:
-        text = readable_text(await self._download_or_explain(url))
+        text = text_of(await self._download_or_explain(url))
         if not text:
             raise PageUnreadable(PageFailure.NO_TEXT)
         return text
 
-    async def _download_or_explain(self, url: str) -> str:
-        """The page's HTML, with a connection that fails or times out raised as PageUnreadable saying which."""
+    async def _download_or_explain(self, url: str) -> DownloadedPage:
+        """The downloaded page, with a connection that fails or times out raised as PageUnreadable saying which."""
         try:
             return await self._download(url)
         except httpx.HTTPError as error:
             raise PageUnreadable(failure_for_transport_error(error)) from error
 
-    async def _download(self, url: str) -> str:
-        """Follow redirects by hand so every hop is checked against the public-address rule, and stop reading past the byte cap.
+    async def _download(self, url: str) -> DownloadedPage:
+        """Follow redirects by hand so every hop is checked against the blocked sites and the public-address rule, and stop reading past the byte cap.
 
         Each hop connects to the address the check approved, not to the name: the URL's host is swapped for that address while the real name goes
         in the Host header and, for https, in the TLS handshake (`sni_hostname`), so certificate verification still checks the real name. After the
@@ -108,6 +108,8 @@ class PageExtractor:
         headers = {"User-Agent": chosen_user_agent(self._settings.user_agent), "Accept-Language": "en-US,en;q=0.9"}
         async with httpx.AsyncClient(timeout=self._settings.fetch_timeout_seconds, follow_redirects=False, headers=headers, transport=self._transport) as client:
             for _ in range(self._settings.max_redirects + 1):
+                if self._is_blocked_site(url):
+                    raise PageUnreadable(PageFailure.BLOCKED_SITE)
                 addresses = await ensure_public_url(url, self._resolver)
                 hostname = urlparse(url).hostname or ""
                 extensions = {"sni_hostname": hostname} if urlparse(url).scheme == "https" else {}
@@ -117,7 +119,7 @@ class PageExtractor:
                         url = urljoin(url, response.headers.get("location", ""))
                         continue
                     raise_if_unreadable(response)
-                    return await self._read_capped(response)
+                    return DownloadedPage(body=await self._read_capped(response), content_type=response.headers.get("content-type", ""))
         raise PageUnreadable(PageFailure.REDIRECT_LOOP)
 
     async def _read_capped(self, response: httpx.Response) -> str:
@@ -137,16 +139,12 @@ class PageExtractor:
         parsed = urlparse(url)
         if parsed.scheme not in ("http", "https") or parsed.path.lower().endswith(SKIPPED_EXTENSIONS):
             return False
-        host = parsed.netloc.lower().removeprefix("www.")
-        return not any(host == blocked or host.endswith(f".{blocked}") for blocked in self._settings.blocked_domains)
+        return not self._is_blocked_site(url)
 
-
-def refuse_unless_public_peer(response: httpx.Response) -> None:
-    """Raise UnsafeUrl if the socket behind this response reached a non-public address. Injected transports (tests) carry no network stream and pass."""
-    stream = response.extensions.get("network_stream")
-    peer = stream.get_extra_info("server_addr") if stream is not None else None
-    if peer and not is_public_address(str(peer[0])):
-        raise UnsafeUrl(f"connection reached non-public address {peer[0]}")
+    def _is_blocked_site(self, url: str) -> bool:
+        """By the host name alone, so a port or a username in the address cannot slip a blocked site past the check."""
+        host = (urlparse(url).hostname or "").lower().removeprefix("www.")
+        return any(host == blocked or host.endswith(f".{blocked}") for blocked in self._settings.blocked_domains)
 
 
 def to_excerpt(result: SearchResult, text: str, words_per_page: int) -> PageExcerpt:

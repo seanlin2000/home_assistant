@@ -14,6 +14,7 @@ import logging
 import re
 from datetime import UTC, date, datetime, timedelta
 from typing import Any
+from urllib.parse import urljoin
 
 import httpx
 
@@ -22,8 +23,10 @@ from movies_mcp.movies import Movie, MoviePage, MoviesSnapshot, RottenTomatoesSc
 from movies_mcp.settings import MoviesSettings
 from utils.browser_utils import chosen_user_agent
 from utils.snapshot_utils import ListingsUnavailable, SnapshotMissing, listing_today, read_snapshot, write_snapshot
+from web_search_mcp.url_guard import Resolver, UnsafeUrl, ensure_public_url, refuse_unless_public_peer, system_resolver
 
 OK = 200
+MAX_REDIRECTS = 5
 MANHATTAN_ZIP_CODE = re.compile(r"10[0-2]\d\d")
 YEAR_AFTER_TITLE = re.compile(r"\s*\((?:19|20)\d\d\)$")  # "Clayface (2026)"
 _LOGGER = logging.getLogger(__name__)
@@ -33,13 +36,13 @@ class FandangoUnavailable(ListingsUnavailable):
     """Fandango did not answer, refused, or answered in a shape the refresh cannot read."""
 
 
-async def refresh_movies_snapshot(settings: MoviesSettings, transport: httpx.AsyncBaseTransport | None = None) -> MoviesSnapshot:
+async def refresh_movies_snapshot(settings: MoviesSettings, transport: httpx.AsyncBaseTransport | None = None, resolver: Resolver = system_resolver) -> MoviesSnapshot:
     """Reads the listings and replaces the snapshot. A failed listing read raises before anything is written, so the last good snapshot stays."""
     first_day = listing_today(settings)
     days = [first_day + timedelta(days=offset) for offset in range(settings.days)]
     pages_read = pages_already_read(settings)
-    async with httpx.AsyncClient(timeout=settings.timeout_seconds, follow_redirects=True, headers={"User-Agent": chosen_user_agent(settings.user_agent)}, transport=transport) as client:
-        session = FandangoSession(client, settings)
+    async with httpx.AsyncClient(timeout=settings.timeout_seconds, follow_redirects=False, headers={"User-Agent": chosen_user_agent(settings.user_agent)}, transport=transport) as client:
+        session = FandangoSession(client, settings, resolver)
         listings = ManhattanListings(await session.read_days(days))
         for movie in listings.movies.values():
             await session.add_details(movie, pages_read)
@@ -60,8 +63,8 @@ class FandangoSession:
     """One night's requests: the zip-code page for its cookies, then each day's theaters a page at a time, then each movie's details, one request
     after another."""
 
-    def __init__(self, client: httpx.AsyncClient, settings: MoviesSettings) -> None:
-        self.client, self.settings = client, settings
+    def __init__(self, client: httpx.AsyncClient, settings: MoviesSettings, resolver: Resolver) -> None:
+        self.client, self.settings, self.resolver = client, settings, resolver
         self.listing_page = settings.listing_page_url.format(zip_code=settings.zip_code)
 
     async def read_days(self, days: list[date]) -> dict[date, list[dict[str, Any]]]:
@@ -139,8 +142,25 @@ class FandangoSession:
         return await self.request(url, params, accept)
 
     async def request(self, url: str, params: dict[str, Any], accept: str) -> httpx.Response:
+        """Follows Fandango's redirects by hand, as the page reader does, so a redirect cannot point the refresh at an address on the home network."""
+        url = str(httpx.URL(url, params=params))
+        for _ in range(MAX_REDIRECTS + 1):
+            response = await self.request_once(url, accept)
+            if not response.is_redirect:
+                return response
+            url = urljoin(url, response.headers.get("location", ""))
+        raise FandangoUnavailable("Fandango redirected too many times")
+
+    async def request_once(self, url: str, accept: str) -> httpx.Response:
+        """The address is checked before connecting and the connection's peer after; cookies stay matched to Fandango's name, so the connection is
+        not pinned to the checked address as the page reader's is."""
         try:
-            return await self.client.get(url, params=params, headers={"Accept": accept, "Referer": self.listing_page})
+            await ensure_public_url(url, self.resolver)
+            response = await self.client.get(url, headers={"Accept": accept, "Referer": self.listing_page})
+            refuse_unless_public_peer(response)
+            return response
+        except UnsafeUrl as error:
+            raise FandangoUnavailable(f"Fandango pointed the refresh at an address it must not read ({error})") from error
         except httpx.HTTPError as error:
             raise FandangoUnavailable(f"no answer from Fandango ({type(error).__name__})") from error
 

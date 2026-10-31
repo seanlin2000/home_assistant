@@ -11,6 +11,7 @@ import httpx
 
 
 class PageFailure(StrEnum):
+    BLOCKED_SITE = "the assistant does not read this site, which needs a login or keeps its pages behind a paywall; use another source"
     CHALLENGED = "the site answered with a bot check instead of the page; use another source"
     REFUSED = "the site refused the request (HTTP 403); use another source"
     NOT_FOUND = "the page does not exist at this address; search for where it moved"
@@ -19,7 +20,7 @@ class PageFailure(StrEnum):
     TIMED_OUT = "the site did not answer in time; try again or use another source"
     UNREACHABLE = "the site could not be reached; check the address or use another source"
     REDIRECT_LOOP = "the address redirects too many times"
-    NOT_A_PAGE = "the address is a file or data, not a web page"
+    NOT_A_PAGE = "the address is a file or data, not a web page or text"
     TOO_LARGE = "the page is larger than the reader accepts; use another source"
     NO_TEXT = "the page has no readable text, perhaps because it builds its content in the browser; use another source"
 
@@ -36,10 +37,11 @@ class PageUnreadable(Exception):
 
 
 FAILURES_BY_STATUS = {403: PageFailure.REFUSED, 404: PageFailure.NOT_FOUND, 410: PageFailure.NOT_FOUND, 429: PageFailure.RATE_LIMITED}
+READABLE_CONTENT_TYPES = ("html", "text/plain", "markdown")  # web pages, and the plain text and Markdown files such as a repository's README
 
 
 def raise_if_unreadable(response: httpx.Response) -> None:
-    """Raise PageUnreadable unless the response is an HTML page to read. Called once redirects have been followed."""
+    """Raise PageUnreadable unless the response is a page or text to read. Called once redirects have been followed."""
     failure = failure_for(response)
     if failure is not None:
         raise PageUnreadable(failure)
@@ -50,7 +52,7 @@ def failure_for(response: httpx.Response) -> PageFailure | None:
         return PageFailure.CHALLENGED
     if response.is_error:
         return FAILURES_BY_STATUS.get(response.status_code, PageFailure.SITE_ERROR)
-    if "html" not in response.headers.get("content-type", ""):
+    if not any(kind in response.headers.get("content-type", "") for kind in READABLE_CONTENT_TYPES):
         return PageFailure.NOT_A_PAGE
     return None
 

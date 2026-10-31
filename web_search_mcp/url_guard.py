@@ -2,7 +2,8 @@
 
 The model chooses which URLs fetch_page reads, and a web page can tell the model which URL to choose. Without this check an injected instruction could
 point the tool server at the router, the Home Assistant VM, Ollama's API, or a cloud metadata service. Every hostname is resolved first and every
-resolved address must be globally routable; redirects are checked hop by hop by the caller.
+resolved address must be globally routable; redirects are checked hop by hop by the caller, and the address a connection reached is checked once
+more. An address carrying a username or password is refused too: nothing the assistant reads needs a login sent in the URL.
 """
 
 import asyncio
@@ -10,6 +11,8 @@ import ipaddress
 import socket
 from collections.abc import Awaitable, Callable
 from urllib.parse import urlparse, urlunparse
+
+import httpx
 
 Resolver = Callable[[str], Awaitable[list[str]]]
 
@@ -38,11 +41,13 @@ def is_public_address(address: str) -> bool:
 
 
 async def ensure_public_url(url: str, resolver: Resolver = system_resolver) -> list[str]:
-    """Raise UnsafeUrl unless url uses http(s) and every address its host resolves to is public; return those addresses so the caller can connect
-    to one of them instead of resolving the name a second time (a hostile zone can answer the second lookup differently)."""
+    """Raise UnsafeUrl unless url uses http(s), carries no username or password, and every address its host resolves to is public; return those
+    addresses so the caller can connect to one of them instead of resolving the name a second time (a hostile zone can answer the second lookup differently)."""
     parsed = urlparse(url)
     if parsed.scheme not in ALLOWED_SCHEMES:
         raise UnsafeUrl(f"scheme '{parsed.scheme}' is not allowed")
+    if parsed.username is not None or parsed.password is not None:
+        raise UnsafeUrl("the address carries a username or password")
     host = (parsed.hostname or "").lower().rstrip(".")
     if not host:
         raise UnsafeUrl("no host in url")
@@ -58,6 +63,14 @@ async def ensure_public_url(url: str, resolver: Resolver = system_resolver) -> l
         if not is_public_address(address):
             raise UnsafeUrl(f"'{host}' resolves to non-public address {address}")
     return addresses
+
+
+def refuse_unless_public_peer(response: httpx.Response) -> None:
+    """Raise UnsafeUrl if the socket behind this response reached a non-public address. Injected transports (tests) carry no network stream and pass."""
+    stream = response.extensions.get("network_stream")
+    peer = stream.get_extra_info("server_addr") if stream is not None else None
+    if peer and not is_public_address(str(peer[0])):
+        raise UnsafeUrl(f"connection reached non-public address {peer[0]}")
 
 
 def pin_url_to_address(url: str, address: str) -> str:
