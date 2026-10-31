@@ -12,6 +12,8 @@ from assistant_core.llm_client import LLMClient
 from assistant_core.memory import ConversationMemory, NoMemory
 from assistant_core.models import (
     MOVIES_TOOL_NAMES,
+    REDDIT_TOOL_NAMES,
+    REDDIT_UNAVAILABLE_PREFIX,
     SEARCH_TOOL_NAMES,
     SHOWS_TOOL_NAMES,
     SPORTS_TOOL_NAMES,
@@ -36,7 +38,7 @@ from assistant_core.models import (
 )
 from assistant_core.prompts import SILENCE_MARKER, per_question_block, question_with_block, system_prompt
 from assistant_core.router import decide_route, directive_for, route_to_offered_tools, tool_round_cap
-from assistant_core.tool_guards import GuardedToolBox, ToolRefused, load_tool_table
+from assistant_core.tool_guards import GuardedToolBox, ToolRefused, load_tool_table, untrusted_block_opening
 from assistant_core.tools import ToolBox
 
 EMPTY_COMPLETION_RETRIES = 1
@@ -161,7 +163,7 @@ async def run(conversation: list[Message], llm: LLMClient, tools: ToolBox, polic
                 yield event
             record_model_reply(transcript, reply, messages)
             break
-        async for event in execute_tool_calls(runner, reply.tool_calls, round_index, messages, transcript):
+        async for event in execute_tool_calls(runner, reply.tool_calls, round_index, messages, transcript, policy):
             yield event
     restore_spoken_question(messages, spoken_question)
     finish_transcript(transcript, reply, cap, messages, started)
@@ -178,12 +180,16 @@ def without_replayed_fillers(conversation: list[Message], policy: AgentPolicy) -
 
 
 def without_leading_filler(message: Message, fillers: list[str]) -> Message:
-    """The answer alone; a turn that is nothing but the filler stays as it was, so the history keeps one assistant turn after each question."""
-    for filler in fillers:
-        answer = message.content.removeprefix(filler).strip()
-        if message.content.startswith(filler) and answer:
-            return message.model_copy(update={"content": answer})
-    return message
+    """The answer alone, after every filler line in front of it (a Reddit answer can carry three); a turn that is nothing but fillers stays as it was,
+    so the history keeps one assistant turn after each question."""
+    answer = message.content
+    while filler := leading_filler(answer, fillers):
+        answer = answer.removeprefix(filler).strip()
+    return message.model_copy(update={"content": answer}) if answer and answer != message.content else message
+
+
+def leading_filler(text: str, fillers: list[str]) -> str | None:
+    return next((filler for filler in fillers if text.startswith(filler)), None)
 
 
 def within_history_window(conversation: list[Message], policy: AgentPolicy) -> list[Message]:
@@ -283,7 +289,7 @@ async def stream_model_reply(
 
 def filler_for(tool_name: str, policy: AgentPolicy) -> str:
     """The sentence spoken while the first tool of an exchange runs: a web line for search tools, a forecast line for the weather, a numbers line for
-    sports, a listings line for shows and for movies, a math line for everything else."""
+    sports, a listings line for shows and for movies, a Reddit line that warns it can be slow, a math line for everything else."""
     if tool_name in SEARCH_TOOL_NAMES:
         phrases = policy.filler_phrases
     elif tool_name in WEATHER_TOOL_NAMES:
@@ -294,6 +300,8 @@ def filler_for(tool_name: str, policy: AgentPolicy) -> str:
         phrases = policy.shows_filler_phrases
     elif tool_name in MOVIES_TOOL_NAMES:
         phrases = policy.movies_filler_phrases
+    elif tool_name in REDDIT_TOOL_NAMES:
+        phrases = policy.reddit_filler_phrases
     else:
         phrases = policy.calculate_filler_phrases
     return random.choice(phrases or policy.filler_phrases)
@@ -320,13 +328,43 @@ def record_model_reply(transcript: Transcript, reply: ModelReply, messages: list
     messages.append(reply.completion.message)
 
 
-async def execute_tool_calls(runner: "ToolCallRunner", calls: list[ToolCall], round_index: int, messages: list[Message], transcript: Transcript) -> AsyncIterator[AgentEvent]:
+async def execute_tool_calls(runner: "ToolCallRunner", calls: list[ToolCall], round_index: int, messages: list[Message], transcript: Transcript, policy: AgentPolicy) -> AsyncIterator[AgentEvent]:
+    """Runs one turn's calls. A Reddit call still running after a few seconds gets the still-trying line, and one that never reached Reddit the
+    could-not-reach line, each at most once an exchange, so the user is not left in silence while Arctic Shift retries."""
     for call in calls:
         yield ToolStarted(call=call)
-    for tool_call_record in await runner.run_turn(calls, round_index):
+    turn = asyncio.ensure_future(runner.run_turn(calls, round_index))
+    if any(call.name in REDDIT_TOOL_NAMES for call in calls) and not await finished_within(turn, policy.still_trying_after_seconds):
+        for notice in notices_not_yet_spoken(transcript, policy.reddit_still_trying_phrases):
+            yield notice
+    for tool_call_record in await turn:
         transcript.tool_call_records.append(tool_call_record)
         messages.append(Message(role=Role.TOOL, content=tool_call_record.result, tool_call_id=tool_call_record.call.id, tool_name=tool_call_record.call.name))
         yield ToolFinished(call=tool_call_record.call, seconds=tool_call_record.seconds, error=tool_call_record.error)
+        if reddit_was_unreachable(tool_call_record):
+            for notice in notices_not_yet_spoken(transcript, policy.reddit_unavailable_phrases):
+                yield notice
+
+
+async def finished_within(task: asyncio.Future, seconds: float) -> bool:
+    done, _ = await asyncio.wait({task}, timeout=seconds)
+    return bool(done)
+
+
+def notices_not_yet_spoken(transcript: Transcript, phrases: list[str]) -> list[FillerSpoken]:
+    """One of the phrases, spoken as a filler and kept on the transcript, unless one of them was already spoken this exchange."""
+    if not phrases or set(phrases) & set(transcript.tool_notices):
+        return []
+    notice = random.choice(phrases)
+    transcript.tool_notices.append(notice)
+    return [FillerSpoken(text=notice)]
+
+
+def reddit_was_unreachable(tool_call_record: ToolCallRecord) -> bool:
+    """Whether the tool's own first words, inside the untrusted block the guard wraps Reddit's text in, say Arctic Shift never answered."""
+    name = tool_call_record.call.name
+    tool_text = tool_call_record.result.removeprefix(untrusted_block_opening(name))
+    return name in REDDIT_TOOL_NAMES and not tool_call_record.repeated and tool_text.startswith(REDDIT_UNAVAILABLE_PREFIX)
 
 
 class ToolCallRunner:
