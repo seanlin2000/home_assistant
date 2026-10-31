@@ -15,12 +15,13 @@ import logging
 import re
 import time
 from collections.abc import Awaitable, Callable
-from typing import Literal, Protocol
+from typing import Literal
 
 from pydantic import BaseModel
 
 from reddit_mcp.arctic_shift import ArcticShiftSession, RedditComment, RedditPost, RedditUnavailable
 from reddit_mcp.settings import RedditSettings
+from web_search_mcp.search_engines import SearchEngine
 from web_search_mcp.searxng_client import SearchResult
 
 TimeRange = Literal["day", "week", "month", "year", "two_years", "all"]
@@ -32,10 +33,6 @@ THREAD_ID_IN_URL = re.compile(r"reddit\.com/r/(\w+)/comments/([a-z0-9]{5,10})\b"
 SUBREDDIT_NAME = re.compile(r"^\w{2,21}$")
 SPOKEN_PREFIX = re.compile(r"^\s*(/?r\s*/|r slash\s+)", re.IGNORECASE)
 _LOGGER = logging.getLogger(__name__)
-
-
-class WebSearch(Protocol):
-    async def search(self, query: str, time_range: str | None = None) -> list[SearchResult]: ...
 
 
 class RedditThread(BaseModel):
@@ -55,7 +52,7 @@ def subreddit_names(spoken: list[str], max_subreddits: int) -> list[str]:
     return list(dict.fromkeys(name for name in names if SUBREDDIT_NAME.match(name)))[:max_subreddits]
 
 
-async def threads_answering(reddit_query: RedditQuery, web_search: WebSearch, arctic_shift: ArcticShiftSession, settings: RedditSettings, now: float | None = None) -> list[RedditThread]:
+async def threads_answering(reddit_query: RedditQuery, web_search: SearchEngine, arctic_shift: ArcticShiftSession, settings: RedditSettings, now: float | None = None) -> list[RedditThread]:
     """The most relevant threads in the time range first, each with its top comments. A thread whose comments could not be read keeps its post;
     RedditUnavailable only when Arctic Shift could not read the threads themselves."""
     since = oldest_allowed(reddit_query.time_range, now or time.time())
@@ -70,7 +67,7 @@ def oldest_allowed(time_range: str, now: float) -> int | None:
     return int(now - seconds) if seconds else None
 
 
-async def web_ranked_thread_ids(reddit_query: RedditQuery, web_search: WebSearch) -> list[str]:
+async def web_ranked_thread_ids(reddit_query: RedditQuery, web_search: SearchEngine) -> list[str]:
     """Thread ids in the web search's order: within a subreddit the time filters' rankings take turns, then the subreddits take turns, so neither
     recent threads nor one subreddit crowd out the rest. Anywhere on Reddit when no subreddit was named."""
     subreddits: list[str | None] = list(reddit_query.subreddits) or [None]
@@ -78,13 +75,13 @@ async def web_ranked_thread_ids(reddit_query: RedditQuery, web_search: WebSearch
     return list(dict.fromkeys(taking_turns(per_subreddit)))
 
 
-async def subreddit_ranking(subreddit: str | None, reddit_query: RedditQuery, web_search: WebSearch) -> list[str]:
+async def subreddit_ranking(subreddit: str | None, reddit_query: RedditQuery, web_search: SearchEngine) -> list[str]:
     query = f"site:reddit.com r/{subreddit} {reddit_query.query}" if subreddit else f"site:reddit.com {reddit_query.query}"
     rankings = [thread_ids(await web_results(web_search, query, engine_range), subreddit) for engine_range in ENGINE_TIME_RANGES[reddit_query.time_range]]
     return list(dict.fromkeys(taking_turns(rankings)))
 
 
-async def web_results(web_search: WebSearch, query: str, time_range: str | None) -> list[SearchResult]:
+async def web_results(web_search: SearchEngine, query: str, time_range: str | None) -> list[SearchResult]:
     """The web search's results, or none when it failed, so one failed search leaves the others to answer."""
     try:
         return await web_search.search(query, time_range)

@@ -27,7 +27,8 @@ from weather_mcp.settings import WeatherSettings, weather_settings_from_environm
 from web_search_mcp.fixtures import FIXTURE_ROUTE, FixturePages, FixtureSearch, fixture_route
 from web_search_mcp.page_extractor import PageExcerpt, PageExtractor
 from web_search_mcp.query_cache import QueryCache
-from web_search_mcp.searxng_client import SearchResult, SearxngClient
+from web_search_mcp.search_engines import SearchEngine, configured_search
+from web_search_mcp.searxng_client import SearchResult
 from web_search_mcp.settings import SearchSettings, allowed_host_list, settings_from_environment
 from web_search_mcp.url_guard import UnsafeUrl
 from wikipedia_mcp.client import WikipediaClient
@@ -40,7 +41,7 @@ NOT_FOUND_INSTRUCTION = "If these sources do not answer the question, say plainl
 
 def build_server(
     settings: SearchSettings,
-    searxng: SearxngClient | None = None,
+    search: SearchEngine | None = None,
     extractor: PageExtractor | None = None,
     weather: WeatherSettings | None = None,
     wikipedia: WikipediaSettings | None = None,
@@ -52,14 +53,14 @@ def build_server(
     cache = QueryCache(settings.cache_dir)
     wikipedia = wikipedia or WikipediaSettings()
     fixture_pages = FixturePages(Path(settings.fixtures_dir)) if settings.fixtures_dir else None
-    searxng = searxng or SearxngClient(settings, cache)
+    search = search or configured_search(settings, cache)
     if fixture_pages:
-        searxng = FixtureSearch(searxng, fixture_pages)
+        search = FixtureSearch(search, fixture_pages)
     extractor = extractor or PageExtractor(settings, cache, wikipedia=WikipediaClient(wikipedia, cache), fixture_pages=fixture_pages)
     server = MCPServer(
         "assistant-tools",
         instructions=(
-            "Web search backed by a local SearXNG instance, Wikipedia articles, exact calculator tools, the forecast for home, NBA and NFL statistics from ESPN, what is playing on Broadway, what movies are showing in Manhattan, and what people on Reddit say. Prefer"
+            "Web search through Brave's API, falling back to a local SearXNG instance, Wikipedia articles, exact calculator tools, the forecast for home, NBA and NFL statistics from ESPN, what is playing on Broadway, what movies are showing in Manhattan, and what people on Reddit say. Prefer"
             " search_and_read for questions about the world and wikipedia_lookup for settled facts, lists, and records; use the calculator tools for any arithmetic,"
             " weather_forecast for the weather, and game_scores, box_score, team_roster, player_stats, and player_matchup for NBA and NFL scores, rosters, and statistics,"
             " broadway_shows for what is playing on Broadway and Off-Broadway, movies_showing and movie_details for what movies are showing in Manhattan theaters and what one is about,"
@@ -70,14 +71,14 @@ def build_server(
     @server.tool()
     async def search_and_read(query: str, time_range: str | None = None) -> str:
         """Search the web and read the top pages. Returns the ranked results, numbered, with the parts of each readable page that best match the query and the snippet of each page that could not be read, ready to synthesize an answer from. Use short keyword queries, e.g. "federal funds rate september 2026". time_range: optional "day", "week", "month", or "year" to keep only recent pages; use it for "latest" or "this week" questions."""
-        results = await searxng.search(query, time_range)
+        results = await search.search(query, time_range)
         excerpts = await extractor.read_pages(results, query)
         return render_grounded_context(query, results, excerpts, settings.results_to_return)
 
     @server.tool()
     async def web_search(query: str, time_range: str | None = None) -> str:
         """Search the web and return only the ranked result list (title, URL, snippet) without reading the pages. Use when you want to pick which page to read with fetch_page. time_range: optional "day", "week", "month", or "year" to keep only recent pages; use it for "latest" or "this week" questions."""
-        results = await searxng.search(query, time_range)
+        results = await search.search(query, time_range)
         return render_result_list(results[: settings.results_to_return])
 
     @server.tool()
@@ -97,7 +98,7 @@ def build_server(
     register_sports_tools(server, sports or SportsSettings(cache_dir=None))  # a server built without settings, as in tests, leaves the real cache alone
     register_broadway_tools(server, broadway or BroadwaySettings())
     register_movies_tools(server, movies or MoviesSettings())
-    register_reddit_tools(server, reddit or RedditSettings(), searxng)
+    register_reddit_tools(server, reddit or RedditSettings(), search)
     register_operations_routes(server, allowed_host_list(settings))
     if fixture_pages:
         server.custom_route(FIXTURE_ROUTE, ["POST"])(fixture_route(fixture_pages))

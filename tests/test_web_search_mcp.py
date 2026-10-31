@@ -38,7 +38,7 @@ class FakeExtractor:
 
 
 async def test_tools_are_listed_and_callable_in_process() -> None:
-    server = build_server(SearchSettings(), searxng=FakeSearxng(), extractor=FakeExtractor())
+    server = build_server(SearchSettings(), search=FakeSearxng(), extractor=FakeExtractor())
     async with McpToolBox(server) as toolbox:
         names = [spec.name for spec in await toolbox.list_tools()]
         assert names[:3] == ["search_and_read", "web_search", "fetch_page"]
@@ -69,7 +69,7 @@ def test_blocked_and_binary_urls_are_not_fetched() -> None:
 
 async def test_search_tools_take_an_optional_time_range_that_never_fails_validation() -> None:
     searxng = FakeSearxng()
-    async with McpToolBox(build_server(SearchSettings(), searxng=searxng, extractor=FakeExtractor())) as toolbox:
+    async with McpToolBox(build_server(SearchSettings(), search=searxng, extractor=FakeExtractor())) as toolbox:
         specs = {spec.name: spec for spec in await toolbox.list_tools()}
         for name in ("search_and_read", "web_search"):
             for time_range in ("week", "", "decade"):

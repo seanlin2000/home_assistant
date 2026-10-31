@@ -14,7 +14,8 @@ from pydantic import BaseModel, ConfigDict
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
 
-from web_search_mcp.searxng_client import SearchResult, SearxngClient
+from web_search_mcp.search_engines import SearchEngine
+from web_search_mcp.searxng_client import SearchResult
 
 FIXTURE_ROUTE = "/benchmark/fixture"
 FIXTURE_ENGINE = "fixture"
@@ -66,7 +67,7 @@ def load_fixture_set(path: Path) -> FixtureSet:
 class FixtureSearch:
     """Stands in front of the SearXNG client: the selected set's pages for any query, or the live search when no set is selected."""
 
-    def __init__(self, live_search: SearxngClient, pages: FixturePages) -> None:
+    def __init__(self, live_search: SearchEngine, pages: FixturePages) -> None:
         self._live_search = live_search
         self._pages = pages
 
