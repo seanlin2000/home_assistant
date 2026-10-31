@@ -26,6 +26,7 @@ from weather_mcp.register import register_weather_tools
 from weather_mcp.settings import WeatherSettings, weather_settings_from_environment
 from web_search_mcp.fixtures import FIXTURE_ROUTE, FixturePages, FixtureSearch, fixture_route
 from web_search_mcp.page_extractor import PageExcerpt, PageExtractor
+from web_search_mcp.page_failures import PageUnreadable
 from web_search_mcp.query_cache import QueryCache
 from web_search_mcp.search_engines import SearchEngine, configured_search
 from web_search_mcp.searxng_client import SearchResult
@@ -88,8 +89,8 @@ def build_server(
             text = await extractor.read_page(url)
         except UnsafeUrl as error:
             return f"Refused to fetch {url}: {error}. Only public web addresses can be read."
-        if not text:
-            return f"Could not extract readable text from {url}."
+        except PageUnreadable as unreadable:
+            return f"Could not read {url} ({unreadable.code}): {unreadable}."
         return clip_to_words(text, settings.fetch_page_words)
 
     register_calculator_tools(server)
