@@ -20,6 +20,7 @@ import httpx
 from movies_mcp.movie_page import MoviePageUnreadable, movie_page_from_html, scores_from_ratings
 from movies_mcp.movies import Movie, MoviePage, MoviesSnapshot, RottenTomatoesScores
 from movies_mcp.settings import MoviesSettings
+from utils.browser_utils import chosen_user_agent
 from utils.snapshot_utils import ListingsUnavailable, SnapshotMissing, listing_today, read_snapshot, write_snapshot
 
 OK = 200
@@ -37,7 +38,7 @@ async def refresh_movies_snapshot(settings: MoviesSettings, transport: httpx.Asy
     first_day = listing_today(settings)
     days = [first_day + timedelta(days=offset) for offset in range(settings.days)]
     pages_read = pages_already_read(settings)
-    async with httpx.AsyncClient(timeout=settings.timeout_seconds, follow_redirects=True, headers={"User-Agent": settings.user_agent}, transport=transport) as client:
+    async with httpx.AsyncClient(timeout=settings.timeout_seconds, follow_redirects=True, headers={"User-Agent": chosen_user_agent(settings.user_agent)}, transport=transport) as client:
         session = FandangoSession(client, settings)
         listings = ManhattanListings(await session.read_days(days))
         for movie in listings.movies.values():

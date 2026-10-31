@@ -27,7 +27,9 @@ from assistant_service.settings import load_harness_config
 from ops import paths
 from ops.pipeline_runs import PipelineRunLog
 from serving.settings import load_serving_config, read_api_key
+from utils.browser_utils import CHROME_RELEASE_PATH, FALLBACK_CHROME_MAJOR, ChromeRelease
 from utils.jsonl_utils import append_jsonl
+from utils.snapshot_utils import SnapshotMissing, read_snapshot
 from web_search_mcp.searxng_client import describe_unresponsive_engines
 
 LAUNCHD_PREFIX = "com.studio-assistant"
@@ -37,6 +39,7 @@ LLAMA_RESTART_KEY = "kickstart:llama"
 DEFAULT_VM_NAME = "Home Assistant"
 PROJECT_DIR = Path(__file__).resolve().parent.parent
 SNAPSHOT_HISTORY_DAYS = 90
+CHROME_RELEASE_STALE_DAYS = 14  # the listings refresh records it nightly, and Chrome ships a major version about every four weeks
 ROTATE_OVER_BYTES = 20 * 1024 * 1024
 ROTATE_GENERATIONS = 3
 
@@ -157,6 +160,7 @@ async def run_checks(settings: Settings, full: bool = False) -> dict[str, Check]
             timed("searxng", check_searxng(client, settings, full)),
             timed("home_assistant", check_home_assistant(client, settings)),
             timed("vm", asyncio.to_thread(check_vm, settings.vm_name)),
+            timed("browser", asyncio.to_thread(check_browser_agent, CHROME_RELEASE_PATH, date.today())),
         )
     checks = dict(results)
     for name in LAUNCHD_SERVICES:
@@ -279,6 +283,25 @@ def parse_vm_status(returncode: int, stdout: str, stderr: str) -> Check:
     if returncode != 0:
         return Check(ok=None, detail=f"utmctl failed: {stderr.strip()[:120] or status}")
     return Check(ok=status == "started", detail=status or "unknown")
+
+
+def check_browser_agent(path: Path, today: date) -> Check:
+    """Which Chrome the page reader and the listings refreshes name. A record the nightly refresh stopped updating fails: sites start turning an agent
+    away within weeks of its version going stale."""
+    try:
+        release = read_snapshot(path, ChromeRelease)
+    except SnapshotMissing:
+        return no_browser_record()
+    days_old = (today - release.refreshed_at.astimezone().date()).days
+    detail = f"sending Chrome {max(release.major, FALLBACK_CHROME_MAJOR)}; Chrome {release.version} recorded {days_old} days ago"
+    return Check(ok=days_old <= CHROME_RELEASE_STALE_DAYS, detail=detail)
+
+
+def no_browser_record() -> Check:
+    """Before the first nightly refresh the fallback version is sent; that is expected only while the listings agent is not loaded."""
+    if agent_loaded("listings"):
+        return Check(ok=False, detail=f"no Chrome release recorded although the listings agent is loaded; sending the fallback Chrome {FALLBACK_CHROME_MAJOR}")
+    return Check(ok=None, detail=f"listings agent not loaded, so no Chrome release recorded; sending the fallback Chrome {FALLBACK_CHROME_MAJOR}")
 
 
 def agent_loaded(name: str) -> bool:

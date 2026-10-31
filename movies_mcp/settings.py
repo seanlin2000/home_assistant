@@ -7,7 +7,6 @@ from pathlib import Path
 
 from pydantic import BaseModel
 
-from utils.browser_utils import BROWSER_USER_AGENT
 from utils.snapshot_utils import DEFAULT_LISTINGS_DIR
 
 TIMES_SQUARE_ZIP_CODE = "10036"
@@ -27,7 +26,7 @@ class MoviesSettings(BaseModel):
     stale_after_days: int = 3  # the refresh runs nightly; older than this, an answer says how old its listings are
     max_words: int = 1000
     today: date | None = None  # the day the benchmark's snapshot was taken; set only by the benchmark
-    user_agent: str = BROWSER_USER_AGENT
+    user_agent: str = ""  # empty sends what current Chrome sends (utils/browser_utils.py); set it only to try another agent
 
 
 def movies_settings_from_environment() -> MoviesSettings:
