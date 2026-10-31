@@ -4,9 +4,10 @@ import os
 
 from pydantic import BaseModel
 
-# Wikimedia's API etiquette asks for a User-Agent that names the application and a way to reach its owner; the repository serves as the contact,
-# so no personal address ever leaves the network.
-USER_AGENT = "studio-assistant-wikipedia/1.0 github.com/seanlin2000/home_assistant"
+# Wikimedia's User-Agent policy asks for the application's name and version, then a way to reach its owner in parentheses; the repository serves
+# as the contact, so no personal address ever leaves the network. The form matters: on 2026-10-31 the API refused the contact written bare, without
+# parentheses or https, with "403 Please respect our robot policy".
+USER_AGENT = "studio-assistant-wikipedia/1.0 (https://github.com/seanlin2000/home_assistant)"
 
 
 class WikipediaSettings(BaseModel):
