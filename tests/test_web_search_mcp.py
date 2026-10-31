@@ -12,7 +12,7 @@ from web_search_mcp.page_extractor import PageExcerpt, PageExtractor, apply_tota
 from web_search_mcp.page_markdown import to_passage_format
 from web_search_mcp.query_cache import QueryCache
 from web_search_mcp.searxng_client import SearchResult
-from web_search_mcp.server import NOT_FOUND_INSTRUCTION, build_server, render_grounded_context
+from web_search_mcp.server import NOT_FOUND_INSTRUCTION, build_server, clipped_with_note, render_grounded_context
 from web_search_mcp.settings import SearchSettings
 
 SMASHWIKI_PAGE = Path("tests/fixtures/smashwiki_kill_confirm.html").read_text()
@@ -129,3 +129,10 @@ async def test_an_ordinary_page_keeps_its_headings_and_rows() -> None:
 def test_markdown_comes_back_in_the_shared_passage_format() -> None:
     markdown = "#\n## Moves[edit]\n| Character | Setup | \n|---|---|\n| **Roy** | *Jab to back aerial *Up aerial | \n\n- A *weak* attack\n* A strong throw\n\n#1 seller, a <sub>$</sub>69 paragraph\nthat wraps."
     assert to_passage_format(markdown) == "## Moves\n\nCharacter | Setup\nRoy | *Jab to back aerial *Up aerial\n\n- A weak attack\n- A strong throw\n\n#1 seller, a $69 paragraph that wraps."
+
+
+def test_a_page_cut_to_the_word_limit_says_how_much_was_left_out() -> None:
+    page = " ".join(f"word{number}" for number in range(50))
+
+    assert clipped_with_note(page, 50) == page
+    assert clipped_with_note(page, 10) == " ".join(f"word{number}" for number in range(10)) + "\n[The page continues: this is the first 10 of its 50 words.]"

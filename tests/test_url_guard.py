@@ -56,6 +56,8 @@ async def test_ensure_public_url_rejects_schemes_names_and_private_resolutions()
         "http://evil.example/",
         "http://printer/",
         "http://metadata.google.internal/",
+        "https://user:secret@example.com/page",
+        "https://user@example.com/page",
     ):
         with pytest.raises(UnsafeUrl):
             await ensure_public_url(bad, resolver)
