@@ -21,7 +21,7 @@ from reddit_mcp.settings import RedditSettings, reddit_settings_from_environment
 from sports_mcp.register import register_sports_tools
 from sports_mcp.settings import SportsSettings, sports_settings_from_environment
 from utils.http_access_utils import host_allowed, misdirected
-from utils.text_utils import clip_to_words
+from utils.text_utils import clip_to_words, word_count
 from weather_mcp.register import register_weather_tools
 from weather_mcp.settings import WeatherSettings, weather_settings_from_environment
 from web_search_mcp.fixtures import FIXTURE_ROUTE, FixturePages, FixtureSearch, fixture_route
@@ -91,7 +91,7 @@ def build_server(
             return f"Refused to fetch {url}: {error}. Only public web addresses can be read."
         except PageUnreadable as unreadable:
             return f"Could not read {url} ({unreadable.code}): {unreadable}."
-        return clip_to_words(text, settings.fetch_page_words)
+        return clipped_with_note(text, settings.fetch_page_words)
 
     register_calculator_tools(server)
     register_weather_tools(server, weather or WeatherSettings(), cache)
@@ -126,6 +126,14 @@ def register_operations_routes(server: MCPServer, allowed_hosts: list[str]) -> N
         names = sorted(tool.name for tool in await server.list_tools())
         missing = sorted(REQUIRED_TOOL_NAMES - set(names))
         return JSONResponse({"status": "ok" if not missing else "degraded", "tools": names, "missing": missing})
+
+
+def clipped_with_note(text: str, word_limit: int) -> str:
+    """The top of a page, saying where it was cut, so the model knows the rest exists rather than taking the top for the whole."""
+    total_words = word_count(text)
+    if total_words <= word_limit:
+        return text
+    return f"{clip_to_words(text, word_limit)}\n[The page continues: this is the first {word_limit:,} of its {total_words:,} words.]"
 
 
 def render_result_list(results: list[SearchResult]) -> str:

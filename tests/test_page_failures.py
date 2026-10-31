@@ -52,6 +52,7 @@ async def failure_reading(transport: httpx.MockTransport) -> PageFailure:
         (answering(200, {"content-type": "application/json"}, "{}"), PageFailure.NOT_A_PAGE),
         (answering(200, body="<html><body></body></html>"), PageFailure.NO_TEXT),
         (answering(302, {"location": URL}), PageFailure.REDIRECT_LOOP),
+        (answering(302, {"location": "https://www.facebook.com/a-post"}), PageFailure.BLOCKED_SITE),
         (raising(httpx.ReadTimeout("slow")), PageFailure.TIMED_OUT),
         (raising(httpx.ConnectError("refused")), PageFailure.UNREACHABLE),
     ],
@@ -89,3 +90,23 @@ async def test_search_and_read_skips_an_unreadable_page() -> None:
     results = [SearchResult(title=host, url=f"http://{host}/", snippet="", engines=["x"], score=1.0) for host in ("busy.example", "good.example")]
 
     assert [excerpt.title for excerpt in await extractor.read_pages(results, "sentence")] == ["good.example"]
+
+
+async def test_fetch_page_refuses_a_blocked_site_before_connecting() -> None:
+    def never_called(request: httpx.Request) -> httpx.Response:
+        raise AssertionError(f"connected to {request.url}")
+
+    extractor = PageExtractor(SearchSettings(), QueryCache(None), resolver=fake_resolver({}), transport=httpx.MockTransport(never_called))
+    with pytest.raises(PageUnreadable) as unreadable:
+        await extractor.read_page("https://user@www.facebook.com:443/a-post")
+
+    assert unreadable.value.failure is PageFailure.BLOCKED_SITE
+
+
+@pytest.mark.parametrize("content_type", ["text/plain; charset=utf-8", "text/markdown"])
+async def test_plain_text_and_markdown_are_read_rather_than_refused(content_type: str) -> None:
+    body = "# Install\n\nRun the installer, then sign in once."
+    transport = httpx.MockTransport(lambda request: httpx.Response(200, headers={"content-type": content_type}, text=body))
+    extractor = PageExtractor(SearchSettings(), QueryCache(None), resolver=fake_resolver(PUBLIC), transport=transport)
+
+    assert "Run the installer, then sign in once." in await extractor.read_page(URL)
