@@ -2,14 +2,14 @@ import asyncio
 from urllib.parse import urljoin, urlparse
 
 import httpx
-import trafilatura
 from pydantic import BaseModel
 
 from utils.browser_utils import chosen_user_agent
 from utils.passage_utils import select_passages
 from utils.text_utils import clip_to_words, word_count
 from web_search_mcp.fixtures import FixturePages
-from web_search_mcp.page_markdown import to_passage_format
+from web_search_mcp.page_failures import PageFailure, PageUnreadable, failure_for_transport_error, raise_if_unreadable
+from web_search_mcp.page_text import readable_text
 from web_search_mcp.query_cache import QueryCache
 from web_search_mcp.searxng_client import SearchResult
 from web_search_mcp.settings import SearchSettings
@@ -25,10 +25,6 @@ class PageExcerpt(BaseModel):
     url: str
     text: str
     word_count: int
-
-
-class PageTooLarge(ValueError):
-    """The page kept sending bytes past the configured cap."""
 
 
 class PageExtractor:
@@ -62,11 +58,12 @@ class PageExtractor:
     async def _read_or_empty(self, url: str) -> str:
         try:
             return await self.read_page(url)
-        except UnsafeUrl:
+        except (UnsafeUrl, PageUnreadable):
             return ""
 
     async def read_page(self, url: str) -> str:
-        """Main text of one page, or "" when it cannot be read. Raises UnsafeUrl for addresses the server must never contact."""
+        """Main text of one page. Raises UnsafeUrl for addresses the server must never contact, and PageUnreadable saying why a page could not be read;
+        neither is cached, so a page that failed once is tried again next time."""
         fixture_text = self._fixture_pages.text_for(url) if self._fixture_pages else None
         if fixture_text is not None:
             return fixture_text
@@ -90,15 +87,17 @@ class PageExtractor:
             return ""
 
     async def _read_generic_page(self, url: str) -> str:
-        """trafilatura's Markdown keeps the page's headings, table rows, and lists, which passage selection needs to choose between them."""
+        text = readable_text(await self._download_or_explain(url))
+        if not text:
+            raise PageUnreadable(PageFailure.NO_TEXT)
+        return text
+
+    async def _download_or_explain(self, url: str) -> str:
+        """The page's HTML, with a connection that fails or times out raised as PageUnreadable saying which."""
         try:
-            html = await self._download(url)
-        except UnsafeUrl:
-            raise
-        except (httpx.HTTPError, ValueError):
-            return ""
-        extracted = trafilatura.extract(html, include_comments=False, include_tables=True, favor_precision=True, output_format="markdown")
-        return to_passage_format(extracted or "")
+            return await self._download(url)
+        except httpx.HTTPError as error:
+            raise PageUnreadable(failure_for_transport_error(error)) from error
 
     async def _download(self, url: str) -> str:
         """Follow redirects by hand so every hop is checked against the public-address rule, and stop reading past the byte cap.
@@ -117,22 +116,20 @@ class PageExtractor:
                     if response.is_redirect:
                         url = urljoin(url, response.headers.get("location", ""))
                         continue
-                    response.raise_for_status()
-                    if "html" not in response.headers.get("content-type", ""):
-                        raise ValueError("not an HTML page")
+                    raise_if_unreadable(response)
                     return await self._read_capped(response)
-        raise ValueError("too many redirects")
+        raise PageUnreadable(PageFailure.REDIRECT_LOOP)
 
     async def _read_capped(self, response: httpx.Response) -> str:
-        declared = response.headers.get("content-length")
-        if declared and int(declared) > self._settings.max_page_bytes:
-            raise PageTooLarge(f"content-length {declared} exceeds {self._settings.max_page_bytes}")
+        declared = response.headers.get("content-length", "")
+        if declared.isdigit() and int(declared) > self._settings.max_page_bytes:
+            raise PageUnreadable(PageFailure.TOO_LARGE)
         chunks: list[bytes] = []
         received = 0
         async for chunk in response.aiter_bytes():
             received += len(chunk)
             if received > self._settings.max_page_bytes:
-                raise PageTooLarge(f"page exceeded {self._settings.max_page_bytes} bytes")
+                raise PageUnreadable(PageFailure.TOO_LARGE)
             chunks.append(chunk)
         return b"".join(chunks).decode(response.encoding or "utf-8", errors="replace")
 

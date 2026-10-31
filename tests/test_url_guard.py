@@ -6,6 +6,7 @@ import httpx
 import pytest
 
 from web_search_mcp.page_extractor import PageExtractor
+from web_search_mcp.page_failures import PageFailure, PageUnreadable
 from web_search_mcp.query_cache import QueryCache
 from web_search_mcp.settings import SearchSettings
 from web_search_mcp.url_guard import UnsafeUrl, ensure_public_url, host_header, is_public_address, pin_url_to_address
@@ -159,8 +160,10 @@ async def test_oversized_pages_are_dropped_by_declared_length_and_by_stream() ->
     def streamed(request: httpx.Request) -> httpx.Response:
         return httpx.Response(200, headers=HTML, content=big)
 
-    assert await extractor_with(declared, {"a.example": ["93.184.216.34"]}, max_page_bytes=1000).read_page("http://a.example/") == ""
-    assert await extractor_with(streamed, {"b.example": ["93.184.216.34"]}, max_page_bytes=1000).read_page("http://b.example/") == ""
+    for handler, host in ((declared, "a.example"), (streamed, "b.example")):
+        with pytest.raises(PageUnreadable) as unreadable:
+            await extractor_with(handler, {host: ["93.184.216.34"]}, max_page_bytes=1000).read_page(f"http://{host}/")
+        assert unreadable.value.failure is PageFailure.TOO_LARGE
     assert await extractor_with(streamed, {"c.example": ["93.184.216.34"]}, max_page_bytes=100000).read_page("http://c.example/") != ""
 
 
