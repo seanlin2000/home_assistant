@@ -11,9 +11,10 @@ from zoneinfo import ZoneInfo
 
 from pydantic import BaseModel
 
-# Met.no's terms require a User-Agent that names the application and a way to reach its owner; the repository serves as the contact, so no
-# personal address ever leaves the network.
-USER_AGENT = "studio-assistant-weather/1.0 github.com/seanlin2000/home_assistant"
+from utils.user_agent_utils import descriptive_user_agent
+
+# Met.no's terms require a User-Agent that names the application and a way to reach its owner.
+USER_AGENT = descriptive_user_agent("weather")
 LOCALTIME_LINK = Path("/etc/localtime")
 ZONEINFO_MARKER = "zoneinfo/"
 FALLBACK_TIMEZONE = "UTC"

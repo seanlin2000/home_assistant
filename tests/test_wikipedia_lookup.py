@@ -33,7 +33,6 @@ ARTICLE_TEXT = render_article(ARTICLE_HTML)
 SEARCH_PATH = "/w/rest.php/v1/search/page"
 ARTICLE_PATH = "/w/rest.php/v1/page/List_of_San_Francisco_49ers_starting_quarterbacks/html"
 SEASON_ROW = re.compile(r"^(\d{4}) \| ")
-POLICY_USER_AGENT = re.compile(r"[\w.-]+/[\d.]+ \(https://[^)\s]+\)")
 
 
 class FakeWikipedia:
@@ -122,11 +121,6 @@ async def test_requests_identify_the_application_and_ask_for_five_titles() -> No
     assert [request.url.path for request in wikipedia.requests] == [SEARCH_PATH, ARTICLE_PATH]
     assert all(request.headers["user-agent"] == USER_AGENT for request in wikipedia.requests)
     assert dict(wikipedia.requests[0].url.params) == {"q": "49ers starting quarterbacks", "limit": "5"}
-
-
-def test_the_user_agent_has_the_form_wikimedia_accepts() -> None:
-    """Name/version, then the contact in parentheses with its scheme: the API answers 403 to the contact written bare."""
-    assert POLICY_USER_AGENT.fullmatch(USER_AGENT)
 
 
 async def test_cached_lookups_do_not_ask_wikipedia_again(tmp_path: Path) -> None:

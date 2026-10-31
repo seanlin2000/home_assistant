@@ -130,7 +130,7 @@ async def test_request_rounds_coordinates_and_identifies_the_app_without_persona
     request = fake.requests[0]
     assert request.url.path == "/weatherapi/locationforecast/2.0/complete"
     assert dict(request.url.params) == {"lat": "59.9139", "lon": "10.7522"}
-    assert request.headers["User-Agent"] == "studio-assistant-weather/1.0 github.com/seanlin2000/home_assistant" and "@" not in request.headers["User-Agent"]
+    assert request.headers["User-Agent"] == "studio-assistant-weather/1.0 (https://github.com/seanlin2000/home_assistant)" and "@" not in request.headers["User-Agent"]
 
 
 async def test_forecast_is_reused_until_it_expires_then_revalidated_with_if_modified_since() -> None:
