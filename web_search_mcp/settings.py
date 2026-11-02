@@ -6,9 +6,6 @@ from pydantic import BaseModel
 class SearchSettings(BaseModel):
     searxng_url: str = "http://127.0.0.1:8080"
     engines: str = "brave,searxng"  # comma-separated, in order: each is asked only when those before it fail; brave needs its key in the Keychain
-    host: str = "127.0.0.1"
-    port: int = 8765
-    allowed_hosts: str = ""  # comma-separated Host header values (host:port) accepted when bound to the LAN; empty means no Host check (localhost binds)
     pages_to_read: int = 6
     words_per_page: int = 350  # the passages of a page that best match the query; six pages of them come to about the total budget
     fetch_page_words: int = 1200  # fetch_page returns the top of one page the model chose, so it gets more room than one of six pages
@@ -38,10 +35,6 @@ class SearchSettings(BaseModel):
 
 def engine_names(settings: SearchSettings) -> list[str]:
     return [name.strip().lower() for name in settings.engines.split(",") if name.strip()]
-
-
-def allowed_host_list(settings: SearchSettings) -> list[str]:
-    return [entry.strip() for entry in settings.allowed_hosts.split(",") if entry.strip()]
 
 
 def settings_from_environment() -> SearchSettings:

@@ -44,7 +44,7 @@ RULES: tuple[Rule, ...] = (
         why="dependencies changed: sync the venv and restart every long-running Python service",
     ),
     Rule(
-        prefixes=("web_search_mcp/", "calculator_mcp/", "weather_mcp/", "broadway_mcp/", "movies_mcp/", "reddit_mcp/", "assistant_core/", "utils/"),
+        prefixes=("assistant_mcp/", "web_search_mcp/", "calculator_mcp/", "weather_mcp/", "wikipedia_mcp/", "sports_mcp/", "broadway_mcp/", "movies_mcp/", "reddit_mcp/", "assistant_core/", "utils/"),
         actions=("restart:mcp",),
         why="tool server code changed",
     ),
