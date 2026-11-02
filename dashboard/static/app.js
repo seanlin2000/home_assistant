@@ -3,7 +3,7 @@
 
 const POLL_MS = 2000;
 const SHORT_RESULT_CHARS = 600;
-const state = { openNextArrival: false, asking: false, live: null, days: [], day: null, summaries: [], selected: null, detail: null, today: null, view: "exchanges", layouts: new Map(), drawerCard: null, drawerTab: "sources" };
+const state = { openNextArrival: false, asking: false, live: null, days: [], day: null, summaries: [], selected: null, detail: null, today: null, view: "exchanges", layouts: new Map(), chosenPart: null, pointedMemory: [], drawerCard: null, drawerTab: "sources" };
 const SEGMENT_KINDS = [
   ["system", "system rules"],
   ["tools", "tool definitions"],
@@ -14,13 +14,6 @@ const SEGMENT_KINDS = [
   ["rest", "closing markers"],
 ];
 const VERDICT_MARKS = { expected: "✓", early: "!", full_reread: "✕", unknown: "?" };
-const MACHINE_PARTS = [
-  ["app_bytes", "mem-app", "app memory", "what apps allocated for themselves"],
-  ["wired_bytes", "mem-wired", "wired", "kept in RAM for the system and the GPU; llama-server's model weights are here"],
-  ["compressed_bytes", "mem-compressed", "compressed", "squeezed by macOS to make room"],
-  ["cached_files_bytes", "mem-cached", "cached files", "file contents and purgeable memory, which macOS frees first"],
-  ["free_bytes", "mem-free", "free", "not in use"],
-];
 const chat = { id: newConversationId(), history: [] };
 
 const $ = (id) => document.getElementById(id);
@@ -60,9 +53,10 @@ const wordsOnly = (text) => text.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim(
 const argumentText = (args) => Object.entries(args).map(([key, value]) => `${key}=${JSON.stringify(value)}`).join(", ");
 const tokensPerSecond = (perSecond) => (perSecond === null || perSecond === undefined ? "–" : `${Math.round(perSecond)} tok/s`);
 const count = (tokens) => tokens.toLocaleString();
+const plural = (amount, noun) => `${amount} ${noun}${amount === 1 ? "" : "s"}`;
 // Binary gigabytes, labelled GB the way Activity Monitor labels them, so the two read the same.
 const memorySize = (bytes) => (bytes < 1024 ** 3 ? `${Math.round(bytes / 1024 ** 2)} MB` : `${(bytes / 1024 ** 3).toFixed(bytes < 10 * 1024 ** 3 ? 2 : 1)} GB`);
-const processCount = (processes) => `${processes} process${processes === 1 ? "" : "es"}`;
+const MEMORY_SMALL_SHARE = 0.01;
 
 
 async function poll() {
@@ -146,6 +140,7 @@ async function openExchange(day, index) {
 }
 
 function startNewChat() {
+  if (state.view !== "exchanges") showView("exchanges");
   closeDrawer();
   closeSidebar();
   state.live = null;
@@ -185,7 +180,7 @@ function listRow(summary, index, fresh) {
   const meta = [localTime(summary.recorded_at), seconds(summary.total_seconds), summary.route, ...summary.tools].filter(Boolean).join(" · ");
   return el(
     "button",
-    { class: `row${selected ? " selected" : ""}${fresh ? " fresh" : ""}`, type: "button", title: summary.user_text, onclick: () => openExchange(summary.day, index) },
+    { class: `row${selected ? " selected" : ""}${fresh ? " fresh" : ""}`, type: "button", title: summary.user_text, onclick: () => openFromHistory(summary.day, index) },
     el("div", { class: "row-text" }, summary.user_text || "(no question)"),
     el("div", { class: "row-meta" }, summary.failed && el("span", { class: "flag" }, "⚠ "), meta),
   );
@@ -208,6 +203,12 @@ function renderExchange(detail) {
 }
 
 // Earlier questions in this conversation. One that has its own exchange record opens its steps and timing in place when clicked.
+// Memory is about the Mac, not one exchange, so picking an exchange there opens it in Exchanges; Prompt cache shows the picked exchange's prompt.
+function openFromHistory(day, index) {
+  if (state.view === "memory") showView("exchanges");
+  openExchange(day, index);
+}
+
 function earlierTurns(detail) {
   const unmatched = [...detail.earlier_exchanges];
   const pairs = questionAnswerPairs(detail.earlier_messages);
@@ -272,8 +273,7 @@ function assistantTurn(detail) {
     answerElement(record),
     sourceChips(detail),
     el("div", { class: "meta" }, metaBadges(detail)),
-    speedCard(detail),
-    timingCard(detail),
+    responseCard(detail),
     detail.system_prompt && fold(`System prompt (${detail.system_prompt.length} chars)`, detail.system_prompt),
     !detail.has_trace && el("div", { class: "note-line" }, "The full tool text for this exchange is gone (no trace kept, or older than 14 days); sizes and times remain."),
   );
@@ -300,9 +300,6 @@ function metaBadges(detail) {
   const record = detail.record;
   const badges = [
     el("span", { title: "the model that answered this exchange" }, record.model),
-    el("span", {}, `total ${seconds(record.total_seconds)}`),
-    el("span", {}, `first word ${seconds(record.time_to_first_spoken_seconds)}`),
-    el("span", {}, `${record.model_calls.length} model calls · ${record.tool_calls.length} tool calls`),
     el("span", {}, `${record.spoken_chars} chars spoken`),
     record.untrusted && el("span", { class: "badge warn" }, "read untrusted text"),
   ];
@@ -372,52 +369,56 @@ function sourceRow(source) {
 }
 
 
-function speedCard(detail) {
-  const speed = detail.speed;
-  if (!speed) return null;
-  const today = state.today && state.today.responses ? state.today : null;
-  const cell = (text, kind = "") => el("span", { class: kind }, text);
-  const row = (phase, phaseSeconds, tokens, tokensText, average) => [cell(phase, "phase"), cell(seconds(phaseSeconds)), cell(tokensText), cell(tokensPerSecond(phaseSeconds > 0 ? tokens / phaseSeconds : null)), versusAverage(phaseSeconds, average)];
-  return el(
-    "div",
-    { class: "speed-card" },
-    el("div", { class: "speed-title" }, "This response"),
-    el(
-      "div",
-      { class: "speed-grid" },
-      ["", "time", "tokens", "speed", "vs today's average"].map((heading) => cell(heading, "head")),
-      row("prefill", speed.prefill_seconds, speed.prefill_tokens, `${count(speed.prefill_tokens)} read, ${count(speed.cached_tokens)} cached`, today && today.prefill_seconds),
-      row("decode", speed.decode_seconds, speed.decode_tokens, `${count(speed.decode_tokens)} written`, today && today.decode_seconds),
-    ),
-    perCallLine(detail.record.model_calls),
-  );
-}
-
-function versusAverage(phaseSeconds, average) {
-  if (average === null || average === undefined) return el("span", { class: "versus" }, "–");
-  const difference = phaseSeconds - average;
-  if (Math.abs(difference) < 0.005) return el("span", { class: "versus" }, "the same");
-  return el("span", { class: `versus ${difference > 0 ? "slower" : "faster"}` }, `${seconds(Math.abs(difference))} ${difference > 0 ? "slower" : "faster"}`);
-}
-
-// Numbered as in the timing chart, so "model #2" names the same call in both.
-function perCallLine(modelCalls) {
-  const timed = modelCalls.map((stats, index) => ({ stats, number: index + 1 })).filter(({ stats }) => stats.prompt_eval_seconds !== null && stats.generation_seconds !== null);
-  if (timed.length < 2) return null;
-  return el("div", { class: "speed-calls" }, timed.map(({ stats, number }) => `model #${number}: prefill ${seconds(stats.prompt_eval_seconds)}, decode ${seconds(stats.generation_seconds)}`).join(" · "));
-}
-
-function timingCard(detail) {
+function responseCard(detail) {
   const timeline = detail.timeline;
   const note = [timeline.approximate ? "approximate: this exchange was recorded before steps were timestamped" : "", detail.speech ? "" : "speech timings not available"].filter(Boolean).join(" · ");
   return el(
     "details",
-    { class: "fold timing", open: true },
-    el("summary", {}, `Timing · ${seconds(timeline.total_seconds)} total, first word at ${seconds(timeline.first_spoken_seconds)}`),
+    { class: "fold response", open: true },
+    el("summary", {}, "This response", el("span", { class: "folded-only" }, `· ${seconds(timeline.total_seconds)} total, first word at ${seconds(timeline.first_spoken_seconds)}`)),
+    el("div", { class: "figures" }, responseFigures(detail)),
     note && el("div", { class: "timing-note" }, note),
     timelineGrid(timeline),
     timelineLegend(),
   );
+}
+
+// Prefill and decode lead with their speed; their seconds are already drawn in the steps chart under the figures.
+function responseFigures(detail) {
+  const record = detail.record;
+  const speed = detail.speed;
+  const today = state.today && state.today.responses ? state.today : null;
+  const prefillRate = speed && rate(speed.prefill_tokens, speed.prefill_seconds);
+  const decodeRate = speed && rate(speed.decode_tokens, speed.decode_seconds);
+  return [
+    figure(el("i", { class: "swatch first-word" }), "first word", seconds(detail.timeline.first_spoken_seconds), "after the question arrived"),
+    figure(null, "total", seconds(detail.timeline.total_seconds), `${plural(record.model_calls.length, "model call")}, ${plural(record.tool_calls.length, "tool call")}`),
+    speed &&
+      figure(
+        el("i", { class: "swatch seg-read" }),
+        "prefill",
+        tokensPerSecond(prefillRate),
+        `${count(speed.prefill_tokens)} read, ${count(speed.cached_tokens)} cached`,
+        `over ${seconds(speed.prefill_seconds)}`,
+        versusAverage(prefillRate, today && today.prefill_tokens_per_second),
+      ),
+    speed && figure(el("i", { class: "swatch seg-write" }), "decode", tokensPerSecond(decodeRate), `${count(speed.decode_tokens)} written over ${seconds(speed.decode_seconds)}`, versusAverage(decodeRate, today && today.decode_tokens_per_second)),
+  ];
+}
+
+function figure(swatch, name, value, ...details) {
+  return el("div", { class: "figure" }, el("span", { class: "name" }, swatch, name), el("span", { class: "value" }, value), details.filter(Boolean).map((text) => el("span", { class: "sub" }, text)));
+}
+
+function rate(tokens, phaseSeconds) {
+  return phaseSeconds > 0 ? tokens / phaseSeconds : null;
+}
+
+function versusAverage(perSecond, average) {
+  if (perSecond === null || average === null || average === undefined) return null;
+  const difference = perSecond - average;
+  if (Math.abs(difference) < 1) return el("span", { class: "versus" }, "the same as today's average");
+  return el("span", { class: `versus ${difference > 0 ? "faster" : "slower"}` }, `${Math.round(Math.abs(difference))} tok/s ${difference > 0 ? "faster" : "slower"} than today's average`);
 }
 
 function timelineGrid(timeline) {
@@ -483,8 +484,8 @@ function timelineLegend() {
     { class: "legend" },
     entry("background:var(--speech)", "speech (Home Assistant)"),
     entry("background:var(--router)", "router"),
-    entry("background:var(--model-read)", "model reading the prompt"),
-    entry("background:var(--model-write)", "model writing"),
+    entry("background:var(--model-read)", "prefill: reading the prompt"),
+    entry("background:var(--model-write)", "decode: writing"),
     entry("background:repeating-linear-gradient(135deg,var(--model-load) 0 3px,transparent 3px 6px)", "model loading"),
     entry("background:var(--tool)", "tool"),
     entry("border-left:2px dashed var(--speech);width:0;border-radius:0", "first word spoken"),
@@ -700,15 +701,16 @@ function exchangeAddress() {
 function showView(view) {
   state.view = view;
   if (state.selected) history.replaceState(null, "", exchangeAddress());
-  for (const tab of document.querySelectorAll(".view-tab")) {
-    tab.classList.toggle("active", tab.dataset.view === view);
-    tab.setAttribute("aria-selected", String(tab.dataset.view === view));
+  for (const item of document.querySelectorAll(".nav-item[data-view]")) {
+    if (item.dataset.view === view) item.setAttribute("aria-current", "page");
+    else item.removeAttribute("aria-current");
   }
   $("thread").hidden = view !== "exchanges";
   $("composer").hidden = view !== "exchanges";
   $("cache-view").hidden = view !== "cache";
   $("memory-view").hidden = view !== "memory";
   closeDrawer();
+  closeSidebar();
   if (view === "cache") {
     refreshSlots();
     renderPromptLayout();
@@ -767,45 +769,83 @@ async function renderPromptLayout() {
   try {
     if (!state.layouts.has(key)) state.layouts.set(key, await getJsonOrReason(`/api/days/${selected.day}/exchanges/${selected.index}/prompt`));
     if (state.selected !== selected) return;
-    box.replaceChildren(sectionHead("This exchange", title), ...layoutElements(state.layouts.get(key)));
+    box.replaceChildren(sectionHead("This exchange", title), ...layoutElements(state.layouts.get(key), key));
   } catch (error) {
     if (state.selected === selected) box.replaceChildren(sectionHead("This exchange", title), el("div", { class: "note-line" }, String(error.message || error)));
   }
 }
 
-function layoutElements(layout) {
+function layoutElements(layout, key) {
   if (!layout.calls.length) return [el("div", { class: "note-line" }, "No model call in this exchange.")];
   const longest = Math.max(...layout.calls.map((call) => call.prompt_tokens), 1);
+  const chosen = state.chosenPart && state.chosenPart.key === key ? state.chosenPart.label : null;
   return [
-    el("p", { class: "panel-lead" }, "Each model call's prompt, in tokens, split into the parts the harness lays out. The thin track under it shows what came from the cache and what was read fresh."),
+    el("p", { class: "panel-lead" }, "Each model call's prompt, in tokens, split into the parts the harness lays out. The thin track under it shows what came from the cache and what was read fresh. Click a part to read its text."),
     layout.note && el("div", { class: "timing-note" }, layout.note),
-    promptChart(layout.calls, longest),
+    promptChart(layout.calls, longest, chosen),
     promptLegend(layout.calls),
     el("div", { class: "verdicts" }, layout.calls.map(verdictLine)),
-    partsTable(layout.calls[layout.calls.length - 1]),
-    systemPromptFold(layout),
-    layout.per_question_block && fold(`Per-question block (${segmentTokens(layout, "block")} tokens) · changes every question`, layout.per_question_block),
+    partText(layout, chosen),
+    partsTable(layout.calls[layout.calls.length - 1], chosen),
     toolsFold(layout),
   ];
 }
 
-function promptChart(calls, longest) {
+async function choosePart(label) {
+  const selected = state.selected;
+  state.chosenPart = label ? { key: `${selected.day}/${selected.index}`, label } : null;
+  await renderPromptLayout();
+  if (label) $("part-text").scrollIntoView({ block: "nearest", behavior: "smooth" });
+}
+
+// The chat template's markers are part of what the model reads, so the text is shown as the model read it, markers and all.
+function partText(layout, label) {
+  if (!label) return el("div", { class: "note-line" }, "Click a part of a bar, or a part in the table below, to read its full text here.");
+  const segment = [...layout.calls].reverse().flatMap((call) => call.segments).find((candidate) => candidate.label === label);
+  const text = layout.part_texts[label];
+  return el(
+    "div",
+    { class: "part-text", id: "part-text" },
+    el(
+      "div",
+      { class: "part-text-head" },
+      el("i", { class: `swatch seg-${segment.kind}` }),
+      el("strong", {}, label),
+      el("span", { class: "panel-note" }, `${count(segment.tokens)} tokens · as the model read it, template markers included`),
+      el("button", { type: "button", class: "icon-button", "aria-label": "Close the text", onclick: () => choosePart(null) }, "×"),
+    ),
+    text ? el("pre", { class: "raw" }, text) : el("div", { class: "note-line" }, missingPartText(segment)),
+  );
+}
+
+function missingPartText(segment) {
+  if (segment.kind === "rest") return "What the chat template adds after the last part, such as the opener of the model's turn. Its text isn't kept on its own.";
+  return "Not recorded: this trace is from before traces kept the tool definitions and the per-question block.";
+}
+
+function promptChart(calls, longest, chosen) {
   const position = (tokens) => `${(tokens / longest) * 100}%`;
   const ticks = tokenTicks(longest);
   const chart = el("div", { class: "prompt-chart" });
   chart.append(el("div", { class: "prompt-row" }, el("div"), el("div", { class: "axis" }, ticks.map((tick) => el("span", { style: `left:${position(tick)}` }, count(tick))))));
   for (const call of calls) {
     const gridlines = ticks.map((tick) => el("div", { class: "gridline", style: `left:${position(tick)}` }));
-    const track = el("div", { class: "prompt-track" }, gridlines, segmentBar(call, position), cacheBar(call, position), cacheMarker(call, position));
+    const track = el("div", { class: "prompt-track" }, gridlines, segmentBar(call, position, chosen), cacheBar(call, position), cacheMarker(call, position));
     chart.append(el("div", { class: "prompt-row" }, el("div", { class: "lane-label" }, `model #${call.number}`), track, el("div", { class: "lane-seconds" }, cacheNumbers(call))));
   }
   return chart;
 }
 
-function segmentBar(call, position) {
-  const bar = el("div", { class: "segments", style: `width:${position(call.prompt_tokens)}` });
+function segmentBar(call, position, chosen) {
+  const bar = el("div", { class: `segments${chosen ? " has-chosen" : ""}`, style: `width:${position(call.prompt_tokens)}` });
   for (const segment of call.segments) {
-    const node = el("i", { class: `segment seg-${segment.kind}`, style: `flex:${segment.tokens}` });
+    const node = el("button", {
+      type: "button",
+      class: `segment seg-${segment.kind}${segment.label === chosen ? " chosen" : ""}`,
+      style: `flex:${segment.tokens}`,
+      "aria-label": `${segment.label}, ${count(segment.tokens)} tokens: show its text`,
+      onclick: () => choosePart(segment.label),
+    });
     attachTooltip(node, () => segmentTooltip(segment, call));
     bar.append(node);
   }
@@ -816,7 +856,7 @@ function segmentTooltip(segment, call) {
   const cached = call.cached_tokens || 0;
   const cachedPart = Math.max(Math.min(cached, segment.start + segment.tokens) - segment.start, 0);
   const origin = cachedPart === segment.tokens ? "all from the cache" : cachedPart === 0 ? "all read fresh" : `${count(cachedPart)} from the cache, ${count(segment.tokens - cachedPart)} read fresh`;
-  return `${segment.label}: ${count(segment.tokens)} tokens (${count(segment.start)} to ${count(segment.start + segment.tokens)})\n${origin}`;
+  return `${segment.label}: ${count(segment.tokens)} tokens (${count(segment.start)} to ${count(segment.start + segment.tokens)})\n${origin}\nclick to read its text`;
 }
 
 function cacheBar(call, position) {
@@ -863,13 +903,19 @@ function verdictLine(call) {
 }
 
 // The table view of the last call's prompt, which holds every part: the chart's colors are not the only way to read it.
-function partsTable(call) {
+function partsTable(call, chosen) {
   const rows = call.segments.map((segment) =>
-    el("tr", {}, el("td", {}, el("i", { class: `swatch seg-${segment.kind}` }), segment.label), el("td", { class: "number" }, count(segment.tokens)), el("td", { class: "number" }, `${Math.round((segment.tokens / call.prompt_tokens) * 100)}%`)),
+    el(
+      "tr",
+      { class: segment.label === chosen ? "chosen" : null },
+      el("td", {}, el("button", { type: "button", class: "part-button", onclick: () => choosePart(segment.label) }, el("i", { class: `swatch seg-${segment.kind}` }), segment.label)),
+      el("td", { class: "number" }, count(segment.tokens)),
+      el("td", { class: "number" }, `${Math.round((segment.tokens / call.prompt_tokens) * 100)}%`),
+    ),
   );
   return el(
     "details",
-    { class: "fold" },
+    { class: "fold", open: Boolean(chosen) },
     el("summary", {}, `Parts of model #${call.number}'s prompt (${count(call.prompt_tokens)} tokens)`),
     el("table", { class: "parts" }, el("thead", {}, el("tr", {}, el("th", {}, "part"), el("th", { class: "number" }, "tokens"), el("th", { class: "number" }, "share"))), el("tbody", {}, rows)),
   );
@@ -878,10 +924,6 @@ function partsTable(call) {
 function segmentTokens(layout, kind) {
   const last = layout.calls[layout.calls.length - 1];
   return count(last.segments.filter((segment) => segment.kind === kind).reduce((total, segment) => total + segment.tokens, 0));
-}
-
-function systemPromptFold(layout) {
-  return fold(`System prompt (${segmentTokens(layout, "system")} tokens) · the same for every question, so it should always be cached`, layout.system_prompt);
 }
 
 function toolsFold(layout) {
@@ -899,121 +941,192 @@ function toolsFold(layout) {
 async function refreshMemory() {
   try {
     const view = await getJsonOrReason("/api/memory");
-    $("machine-memory").replaceChildren(...machineElements(view));
-    $("process-memory").replaceChildren(...processElements(view));
-    $("process-memory").hidden = false;
+    $("memory-panel").replaceChildren(...memoryElements(view));
+    showPointedMemory();
   } catch (error) {
-    $("machine-memory").replaceChildren(sectionHead("This Mac"), el("div", { class: "note-line" }, String(error.message || error)));
-    $("process-memory").hidden = true;
+    $("memory-panel").replaceChildren(sectionHead("This Mac"), el("div", { class: "note-line" }, String(error.message || error)));
   }
 }
 
-function machineElements(view) {
+function memoryElements(view) {
   const machine = view.machine;
-  return [sectionHead(machine.name, machine.chip, `${memorySize(machine.total_bytes)} of memory`, "read every 4 s"), setupHeadline(view), machineBar(machine), machineLegend(machine), ...machineNotes(machine)];
-}
-
-function setupHeadline(view) {
-  const share = Math.round((view.setup_bytes / view.machine.total_bytes) * 100);
-  return el("div", { class: "memory-headline" }, el("span", { class: "hero" }, memorySize(view.setup_bytes)), el("span", {}, `taken by the Home Assistant setup, ${share}% of this Mac's ${memorySize(view.machine.total_bytes)}`));
-}
-
-function machineBar(machine) {
-  return el(
-    "div",
-    { class: "memory-bar" },
-    MACHINE_PARTS.map(([field, className, label, meaning]) => memorySegment(className, machine[field], `${label}: ${memorySize(machine[field])}\n${meaning}`)),
-  );
-}
-
-function memorySegment(className, bytes, tooltip) {
-  const segment = el("i", { class: className, style: `flex:${bytes}` });
-  attachTooltip(segment, () => tooltip);
-  return segment;
-}
-
-function machineLegend(machine) {
-  return el(
-    "div",
-    { class: "legend" },
-    MACHINE_PARTS.map(([field, className, label]) => el("span", {}, el("i", { class: className }), `${label} ${memorySize(machine[field])}`)),
-  );
-}
-
-function machineNotes(machine) {
   return [
-    machine.gpu_in_use_bytes !== null && el("div", { class: "note-line" }, `The GPU holds ${memorySize(machine.gpu_in_use_bytes)} of the wired memory, most of it llama-server's model weights.`),
-    machine.swap_used_bytes > 0 && el("div", { class: "note-line" }, `Swap: ${memorySize(machine.swap_used_bytes)} of ${memorySize(machine.swap_total_bytes)} written to disk because it did not fit in RAM.`),
-  ].filter(Boolean);
-}
-
-function processElements(view) {
-  const footprints = view.setup_bytes + view.others_bytes;
-  return [
-    sectionHead("By process", "each process's footprint, the figure Activity Monitor shows"),
-    el("p", { class: "panel-lead" }, "A footprint counts what a process has compressed or swapped out, so on a Mac short of memory the footprints add up to more than its RAM. The dashed line marks the RAM."),
-    processBar(view, Math.max(footprints, view.machine.total_bytes)),
-    processLegend(),
+    sectionHead(machine.name, machine.chip, `${memorySize(machine.total_bytes)} of RAM`, "read every 4 s"),
+    setupHeadline(view),
+    el("p", { class: "panel-lead" }, "What fills the RAM right now. Each app counts only what it holds in RAM; what macOS has compressed for it or moved to disk is in the tables below."),
+    ramBar(view),
+    ramLegend(view),
+    swapNote(view),
     el("div", { class: "memory-tables" }, setupTable(view), othersTable(view)),
   ];
 }
 
-// llama-server's model weights sit next to its footprint, hatched: they are held by the GPU and appear in no process's footprint.
-function processBar(view, scale) {
-  const position = (bytes) => `${(bytes / scale) * 100}%`;
-  const setupSegments = view.setup.flatMap((group) => [
-    group.footprint_bytes > 0 && memorySegment("mem-setup", group.footprint_bytes, `${group.name}: ${memorySize(group.footprint_bytes)}, ${processCount(group.processes)}`),
-    group.model_weights_bytes > 0 && memorySegment("mem-weights", group.model_weights_bytes, `${group.name}'s model weights: ${memorySize(group.model_weights_bytes)}\nmapped from the model file and held by the GPU`),
-  ]);
-  const otherSegments = view.others.map((group) => memorySegment("mem-other", group.total_bytes, `${group.name}: ${memorySize(group.total_bytes)}, ${processCount(group.processes)}`));
+function setupHeadline(view) {
+  const share = Math.round((view.setup_ram_bytes / view.machine.total_bytes) * 100);
   return el(
     "div",
-    { class: "process-track" },
-    el("div", { class: "memory-bar", style: `width:${position(view.setup_bytes + view.others_bytes)}` }, setupSegments, otherSegments),
-    el("div", { class: "ram-line", style: `left:${position(view.machine.total_bytes)}` }, el("span", {}, `${memorySize(view.machine.total_bytes)} of RAM`)),
+    { class: "memory-headline" },
+    el("span", { class: "hero" }, memorySize(view.setup_ram_bytes)),
+    el("span", {}, `of RAM held by the Home Assistant setup, ${share}% of this Mac's ${memorySize(view.machine.total_bytes)}`),
   );
 }
 
-function processLegend() {
+// The pieces add up to the Mac's RAM: the apps' own, then what no single app owns.
+function ramBar(view) {
+  const machine = view.machine;
+  const pieces = [
+    ...setupPieces(view),
+    ...view.others.map((group) => memoryPiece("mem-other", group.ram_bytes, groupTooltip(group), [group.name])),
+    memoryPiece("mem-compressed", machine.compressed_bytes, `compressed, all apps: ${memorySize(machine.compressed_bytes)}\nevery app's compressed memory, packed together; macOS does not say whose is whose`),
+    memoryPiece("mem-macos", machine.macos_bytes, `macOS itself: ${memorySize(machine.macos_bytes)}\nthe system, and memory no single app owns`),
+    memoryPiece("mem-free", freeBytes(machine), `free: ${memorySize(freeBytes(machine))}\n${memorySize(machine.unused_bytes)} unused, plus ${memorySize(machine.file_cache_bytes)} of file copies macOS drops the moment anything needs room`),
+  ];
+  return el("div", { class: "ram-track" }, el("div", { class: "memory-bar", id: "ram-bar" }, pieces), memoryTicks(machine.total_bytes));
+}
+
+// Setup services holding under 1% of the RAM share one piece, so every piece stays wide enough to point at.
+function setupPieces(view) {
+  const running = view.setup.filter((group) => group.processes > 0);
+  const smallest = view.machine.total_bytes * MEMORY_SMALL_SHARE;
+  const small = running.filter((group) => group.ram_bytes < smallest);
+  const smallBytes = small.reduce((total, group) => total + group.ram_bytes, 0);
+  const smallNames = small.map((group) => group.name);
+  return [
+    ...running.filter((group) => group.ram_bytes >= smallest).flatMap(setupGroupPieces),
+    small.length > 0 && memoryPiece("mem-setup", smallBytes, `${smallNames.join(", ")}: ${memorySize(smallBytes)} in RAM together`, smallNames),
+  ];
+}
+
+// llama-server's model weights sit next to its own memory, hatched: the GPU holds them, so they are never compressed or moved to disk.
+function setupGroupPieces(group) {
+  const ownBytes = group.ram_bytes - group.model_weights_bytes;
+  return [
+    memoryPiece("mem-setup", ownBytes, groupTooltip(group, ownBytes), [group.name]),
+    group.model_weights_bytes > 0 &&
+      memoryPiece("mem-weights", group.model_weights_bytes, `${group.name}'s model weights: ${memorySize(group.model_weights_bytes)}\nheld in RAM by the GPU, never compressed or moved to disk`, [group.name]),
+  ];
+}
+
+function groupTooltip(group, ramBytes = group.ram_bytes) {
+  return `${group.name}: ${memorySize(ramBytes)} in RAM\n${memorySize(group.compressed_bytes)} more compressed or on disk`;
+}
+
+function memoryPiece(className, bytes, tooltip, keys = []) {
+  const piece = el("i", { class: className, style: `flex:${bytes}`, "data-keys": keys.join("|") || null });
+  attachTooltip(piece, () => tooltip);
+  return keys.length ? pointable(piece) : piece;
+}
+
+const freeBytes = (machine) => machine.unused_bytes + machine.file_cache_bytes;
+
+function memoryTicks(totalBytes) {
+  const gigabytes = totalBytes / 1024 ** 3;
+  const step = [1, 2, 4, 8, 16, 32, 64, 128].find((candidate) => gigabytes / candidate <= 4) || 256;
+  const ticks = [];
+  for (let tick = 0; tick <= gigabytes + 0.01; tick += step) ticks.push(tick);
+  return el(
+    "div",
+    { class: "memory-ticks", "aria-hidden": "true" },
+    ticks.map((tick) => el("span", { class: tick === 0 ? "start" : Math.abs(tick - gigabytes) < 0.01 ? "end" : null, style: `left:${(tick / gigabytes) * 100}%` }, tick === 0 ? "0" : `${tick} GB`)),
+  );
+}
+
+function ramLegend(view) {
+  const machine = view.machine;
+  const weights = view.setup.reduce((total, group) => total + group.model_weights_bytes, 0);
   const entry = (className, text) => el("span", {}, el("i", { class: className }), text);
-  return el("div", { class: "legend" }, entry("mem-setup", "Home Assistant setup"), entry("mem-weights", "model weights, on the GPU"), entry("mem-other", "everything else"));
+  return el(
+    "div",
+    { class: "legend" },
+    entry("mem-setup", `Home Assistant setup ${memorySize(view.setup_ram_bytes - weights)}`),
+    weights > 0 && entry("mem-weights", `llama-server's model weights ${memorySize(weights)}`),
+    entry("mem-other", `other apps ${memorySize(view.others_ram_bytes)}`),
+    entry("mem-compressed", `compressed, all apps ${memorySize(machine.compressed_bytes)}`),
+    entry("mem-macos", `macOS ${memorySize(machine.macos_bytes)}`),
+    entry("mem-free", `free ${memorySize(freeBytes(machine))}`),
+  );
+}
+
+function swapNote(view) {
+  const swapped = view.machine.swap_used_bytes;
+  if (!swapped) return null;
+  const setupOut = view.setup.reduce((total, group) => total + group.compressed_bytes, 0);
+  return el(
+    "div",
+    { class: "disk-note" },
+    el("strong", {}, `${memorySize(swapped)} on disk.`),
+    ` RAM is full, so macOS has moved memory to disk, and an app waits while its memory comes back. ${memorySize(setupOut)} of the Home Assistant setup is compressed or on disk.`,
+  );
 }
 
 // Every component is listed, running or not, so a service that has stopped shows as stopped rather than vanishing.
 function setupTable(view) {
   const rows = view.setup.map((group) =>
-    el(
-      "tr",
-      { class: group.processes ? null : "not-running" },
+    pointable(
       el(
-        "td",
-        {},
-        el("i", { class: "swatch mem-setup" }),
-        group.name,
-        group.model_weights_bytes > 0 && el("span", { class: "row-note" }, `${memorySize(group.model_weights_bytes)} of it model weights`),
-        group.note && el("span", { class: "row-note warn" }, group.note),
+        "tr",
+        { class: group.processes ? null : "not-running", "data-keys": group.name },
+        el("td", {}, el("i", { class: "swatch mem-setup" }), group.name, setupRowNotes(group)),
+        el("td", { class: "number" }, group.processes ? memorySize(group.ram_bytes) : "not running"),
+        el("td", { class: `number${mostlyOutOfRam(group) ? " warn" : ""}` }, group.processes ? memorySize(group.compressed_bytes) : "–"),
       ),
-      el("td", { class: "number" }, group.processes ? processCount(group.processes) : "not running"),
-      el("td", { class: "number" }, group.processes ? memorySize(group.total_bytes) : "–"),
     ),
   );
-  return memoryTable(`Home Assistant setup · ${memorySize(view.setup_bytes)}`, "component", rows);
+  return memoryTable("Home Assistant setup", "component", rows);
+}
+
+function setupRowNotes(group) {
+  return [
+    group.model_weights_bytes > 0 && el("span", { class: "row-note" }, el("i", { class: "swatch mem-weights" }), `${memorySize(group.model_weights_bytes)} of it model weights, held by the GPU`),
+    group.note && el("span", { class: "row-note warn" }, group.note),
+  ];
+}
+
+// More of the service compressed or on disk than in RAM: it waits for its memory to come back whenever it is asked something.
+function mostlyOutOfRam(group) {
+  return group.processes > 0 && group.compressed_bytes >= 100 * 1024 ** 2 && group.compressed_bytes > group.ram_bytes - group.model_weights_bytes;
 }
 
 function othersTable(view) {
   const rows = view.others.map((group) =>
-    el("tr", {}, el("td", {}, el("i", { class: "swatch mem-other" }), group.name), el("td", { class: "number" }, processCount(group.processes)), el("td", { class: "number" }, memorySize(group.total_bytes))),
+    pointable(
+      el(
+        "tr",
+        { "data-keys": group.name },
+        el("td", {}, el("i", { class: "swatch mem-other" }), group.name),
+        el("td", { class: "number" }, memorySize(group.ram_bytes)),
+        el("td", { class: "number" }, memorySize(group.compressed_bytes)),
+      ),
+    ),
   );
-  return memoryTable(`Everything else · ${memorySize(view.others_bytes)}`, "app", rows);
+  return memoryTable("Other apps", "app", rows);
 }
 
 function memoryTable(title, nameHeading, rows) {
-  return el(
-    "div",
-    {},
-    el("h3", { class: "table-title" }, title),
-    el("table", { class: "parts" }, el("thead", {}, el("tr", {}, el("th", {}, nameHeading), el("th", { class: "number" }, "processes"), el("th", { class: "number" }, "memory"))), el("tbody", {}, rows)),
-  );
+  const heading = el("tr", {}, el("th", {}, nameHeading), el("th", { class: "number" }, "in RAM"), el("th", { class: "number", title: "compressed in RAM, or moved to disk; macOS does not say which" }, "compressed or on disk"));
+  return el("div", {}, el("h3", { class: "table-title" }, title), el("table", { class: "parts" }, el("thead", {}, heading), el("tbody", {}, rows)));
+}
+
+// Pointing at a piece of the bar shades its rows in the tables, and pointing at a row brightens its pieces, so each piece can be traced to its app.
+function pointable(node) {
+  node.addEventListener("mouseenter", () => pointAtMemory(node.dataset.keys.split("|")));
+  node.addEventListener("mouseleave", () => pointAtMemory([]));
+  return node;
+}
+
+function pointAtMemory(keys) {
+  state.pointedMemory = keys;
+  showPointedMemory();
+}
+
+function showPointedMemory() {
+  const bar = $("ram-bar");
+  if (!bar) return;
+  const keys = state.pointedMemory;
+  const pointedAt = (node) => Boolean(node.dataset.keys) && node.dataset.keys.split("|").some((key) => keys.includes(key));
+  bar.classList.toggle("pointing", keys.length > 0);
+  for (const piece of bar.children) piece.classList.toggle("lit", pointedAt(piece));
+  for (const row of $("memory-panel").querySelectorAll("tr[data-keys]")) row.classList.toggle("lit", pointedAt(row));
 }
 
 function openSidebar() {
@@ -1048,7 +1161,7 @@ for (const tab of document.querySelectorAll(".tab")) {
   });
 }
 $("day").addEventListener("change", (event) => openDay(event.target.value));
-for (const tab of document.querySelectorAll(".view-tab")) tab.addEventListener("click", () => showView(tab.dataset.view));
+for (const item of document.querySelectorAll(".nav-item[data-view]")) item.addEventListener("click", () => showView(item.dataset.view));
 document.addEventListener("keydown", stepThroughExchanges);
 
 renderGreeting();

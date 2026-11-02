@@ -27,15 +27,15 @@ The page answers the home network only. Each exchange appears about a second aft
  ONE EXCHANGE ON THE PAGE
  ┌─ sidebar ────────────┬─ gemma-4-e4b ──────────────────────────────────────────────────┐
  │ ✎ New chat           │                        ┌───────────────────────────────────┐   │
- │ Day (UTC) 2026-10-11 │                        │ Who won the World Series in 1995? │   │
- │ ▸Who won the World…  │                        └───────────────────────────────────┘   │
- │  20:41 · 6.8s        │                                    🎤 spoken · 20:41:07        │
- │ What's 17 percent…   │ ↪ router chose search                                          │
- │  20:38 · 1.9s        │ 🔊 "Let me look that up."  spoken at 1.66s                     │
- │                      │ 🔧 search_and_read "1995 World Series winner" 2.4s full text › │
- │                      │     1 mlb.com  Braves win 1995 World Series          ★         │
- │                      │ The Atlanta Braves won the World Series in 1995, …             │
- │                      │ (★ mlb.com)  gemma-4-e4b · total 6.8s · first word 1.66s       │
+ │ ▸ Exchanges          │                        │ Who won the World Series in 1995? │   │
+ │   Prompt cache       │                        └───────────────────────────────────┘   │
+ │   Memory             │                                    🎤 spoken · 20:41:07        │
+ │                      │ ↪ router chose search                                          │
+ │ History   2026-10-11 │ 🔊 "Let me look that up."  spoken at 1.66s                     │
+ │ ▸Who won the World…  │ 🔧 search_and_read "1995 World Series winner" 2.4s full text › │
+ │  20:41 · 6.8s        │     1 mlb.com  Braves win 1995 World Series          ★         │
+ │ What's 17 percent…   │ The Atlanta Braves won the World Series in 1995, …             │
+ │  20:38 · 1.9s        │ (★ mlb.com)  gemma-4-e4b · total 6.8s · first word 1.66s       │
  │                      │ Timing ›  router ▌  model #1 ▓▓░  search_and_read ██████ …     │
  │ ● open new exchanges │ ┌────────────────────────────────────────────────────────────┐ │
  │ ● live               │ │ Ask Jarvis anything                                    (↑) │ │
@@ -47,7 +47,7 @@ The page answers the home network only. Each exchange appears about a second aft
 
 ### 3.1 What the harness keeps
 
-The exchange log (v1/10 §3.4) keeps a trimmed record for 90 days and drops the text tools returned, because a search returns thousands of words. The dashboard needs that text, so the harness now writes a second, fuller log beside it: one trace per exchange, holding the whole transcript, including every tool result and any thinking text. Traces are kept 14 days; the health check's housekeeping deletes older day files, as it already does for the exchange log. A trace and its record share an `exchange_id`, and both carry Home Assistant's `conversation_id`. The transcript now also keeps the filler phrase spoken while the first tools ran, which the conversation view shows, and the per-question block put before the question. The trace also keeps the tool definitions every model call was sent, which the prompt cache tab needs (3.10); they are left out of the transcript wherever else it is written, such as benchmark results, because they run to thousands of tokens and are the same for every exchange.
+The exchange log (v1/10 §3.4) keeps a trimmed record for 90 days and drops the text tools returned, because a search returns thousands of words. The dashboard needs that text, so the harness now writes a second, fuller log beside it: one trace per exchange, holding the whole transcript, including every tool result and any thinking text. Traces are kept 14 days; the health check's housekeeping deletes older day files, as it already does for the exchange log. A trace and its record share an `exchange_id`, and both carry Home Assistant's `conversation_id`. The transcript now also keeps the filler phrase spoken while the first tools ran, which the conversation view shows, and the per-question block put before the question. The trace also keeps the tool definitions every model call was sent, which the prompt cache view needs (3.10); they are left out of the transcript wherever else it is written, such as benchmark results, because they run to thousands of tokens and are the same for every exchange.
 
 ### 3.2 When each step started
 
@@ -63,15 +63,15 @@ A tool result shows as a card in the conversation: the call, its time, and a sho
 
 ### 3.5 Reading and writing time
 
-Each model call has prompt tokens, cached tokens, the seconds spent reading the prompt, and the seconds spent writing (`GenerationStats`). The chart splits each model bar into loading (Ollama only), reading, and writing, so it shows that every round rereads its context, not only the first.
+Each model call has prompt tokens, cached tokens, the seconds spent reading the prompt, and the seconds spent writing (`GenerationStats`). The chart, in the This response card (3.9), splits each model bar into loading (Ollama only), reading (prefill), and writing (decode), so it shows that every round rereads its context, not only the first.
 
 ### 3.6 Live updates
 
 The page asks for the list of days every two seconds. When the newest day gains an exchange, the list refreshes and, while "Open new exchanges as they arrive" is ticked, the new exchange opens. Each exchange's address (`#/day/line`) can be bookmarked or shared on the home network.
 
-The page, titled Assistant Dashboard, is laid out like a chat app: exchanges in a sidebar, the open exchange as a conversation in the middle, and the question box at the bottom. The header names the model that answered the newest exchange, which is the model the harness is serving now; each exchange names its own model under its answer, so a model swap shows up exchange by exchange.
+The page, titled Assistant Dashboard, is laid out like a chat app: a sidebar on the left, the open exchange as a conversation in the middle, and the question box at the bottom. The top of the sidebar holds New chat and the page's three views: Exchanges, the conversation view; Prompt cache (3.10); and Memory (3.11). Under them, set apart, History lists the exchanges of the day chosen beside its title. Clicking one opens it in the view on screen, or in Exchanges when Memory is on screen, since Memory is not about any one exchange; New chat always goes to Exchanges. The header names the model that answered the newest exchange, which is the model the harness is serving now; each exchange names its own model under its answer, so a model swap shows up exchange by exchange.
 
-The page is sized for laptop and desktop screens, from a 13-inch laptop to a 27-inch monitor. The conversation widens with the window, from 768 pixels up to about 1,180, and stays one column of reading. The prompt cache and memory tabs, which are charts and tables, fill the window up to 1,880 pixels. Below 860 pixels, as in a window snapped to half a laptop screen, the sidebar folds away behind a button.
+The page is sized for laptop and desktop screens, from a 13-inch laptop to a 27-inch monitor. The conversation widens with the window, from 768 pixels up to about 1,180, and stays one column of reading. The prompt cache and memory views, which are charts and tables, fill the window up to 1,880 pixels. Below 860 pixels, as in a window snapped to half a laptop screen, the sidebar folds away behind a button.
 
 Above the open exchange sit the earlier questions of its conversation, found by conversation id on that day and the day before. Each shows only its answer until it is clicked; it then opens its own steps and timing chart in place, so a follow-up can be compared with the question before it without leaving the conversation.
 
@@ -89,22 +89,24 @@ The dashboard belongs on the Mac that serves the assistant, beside the harness a
 
 Prefill is the time a model call spends reading its prompt, and decode is the time it spends writing. The timing chart (3.5) shows both for each model call. Two numbers answer whether a change made the assistant faster: what this response cost, and what a response costs on an ordinary day.
 
-**This response.** A card under each answer adds up the response's model calls, since every tool round reads and writes again:
+**This response.** One card under each answer holds the response's timing. Four figures sit across its top:
 
-| Row | Time | Tokens | Speed |
-|---|---|---|---|
-| Prefill | the sum of the calls' prompt reading | read fresh, and how many came from the prompt cache | fresh tokens over prefill time |
-| Decode | the sum of the calls' writing | written | written tokens over decode time |
+| Figure | What it shows |
+|---|---|
+| First word | Seconds from the question reaching the agent to the first spoken word |
+| Total | Seconds for the whole response, with how many model and tool calls it made |
+| Prefill | Speed reading the prompt: fresh tokens over the calls' summed prompt reading, with the tokens read fresh and cached and the seconds |
+| Decode | Speed writing: written tokens over the calls' summed writing, with the tokens written and the seconds |
 
-The prefill speed leaves the cached tokens out, because reusing them costs almost nothing. A line under the table lists each call by the number the timing chart gives it, so "model #2" names the same call in both. A last column compares each time with today's average, as slower or faster by so many seconds. Model calls without timings (an engine that did not report them) are left out. A response with none shows no card.
+Prefill and decode lead with their speed rather than their time, because the steps chart under the figures (3.5) already draws each call's reading and writing time, in the same two colours the figures carry. Both figures add up every model call, since every tool round reads and writes again. The prefill speed leaves the cached tokens out, because reusing them costs almost nothing. Each speed is compared with today's speed, as faster or slower by so many tokens a second, once today has responses. Model calls without timings (an engine that did not report them) are left out, and a response with none shows only first word and total. The card folds to one line giving the total and the first word.
 
 **Today's average.** The header shows today's response count, the average prefill and decode time per response, and today's speeds. Today runs from midnight on the Mac's clock, not UTC as the day files do, so an evening in New York is not split at 8 pm across two days; the dashboard reads the one or two UTC day files that local day spans. The speeds divide all of today's tokens by all of today's seconds, so a long prompt counts for more than a short one. The page asks for these figures with the day list, every two seconds.
 
-### 3.10 The prompt cache tab
+### 3.10 The prompt cache view
 
-The page has three tabs in its header: Exchanges, the conversation view above; Prompt cache; and Memory (3.11). The Prompt cache tab shows whether the prompt order of v2/02 section 3.3 is doing its job: whether each model call found the parts that never change already cached, and read only what was new. An exchange's address is `#/day/line`, or `#/cache/day/line` to open it in this tab.
+The Prompt cache view, chosen in the sidebar (3.6), shows whether the prompt order of v2/02 section 3.3 is doing its job: whether each model call found the parts that never change already cached, and read only what was new. An exchange's address is `#/day/line`, or `#/cache/day/line` to open it in this view.
 
-**Live slots.** Every two seconds, while the tab is open, the dashboard asks llama-server for its slots, with llama-server's key read from disk on the Mac, so the browser never holds it. Each slot shows a meter of about how many tokens it holds (its last prompt and what it wrote after it) against the share of the pool the harness budgets for it: 16,384 tokens for slot 0, the conversation, and the rest of the 18,432-token pool for slot 1, the router and the quiet requests. A slot can borrow past its share, so its meter stops at full. Hovering a slot shows its last request: prompt tokens, how many came from the cache, and how many it wrote.
+**Live slots.** Every two seconds, while the view is open, the dashboard asks llama-server for its slots, with llama-server's key read from disk on the Mac, so the browser never holds it. Each slot shows a meter of about how many tokens it holds (its last prompt and what it wrote after it) against the share of the pool the harness budgets for it: 16,384 tokens for slot 0, the conversation, and the rest of the 18,432-token pool for slot 1, the router and the quiet requests. A slot can borrow past its share, so its meter stops at full. Hovering a slot shows its last request: prompt tokens, how many came from the cache, and how many it wrote.
 
 **Each call's prompt.** The trace keeps the conversation, the system rules, the per-question block, and the tool definitions every call was sent (3.1). From these the dashboard rebuilds the prompt of each model call, and llama-server renders it through the model's own chat template and counts its tokens, so the sizes are the ones the model read. The prompt's parts follow the harness's order:
 
@@ -121,6 +123,8 @@ A part ends where a render of the prompt up to it stops matching the whole promp
 
 Each call is one bar of coloured parts, with a thin track under it: grey for what came from the cache, dark for what was read fresh, and a dashed line where the cache stopped. Every part also has a tooltip, and a table lists the parts of the last call with their sizes, so the colours are not the only way to read it.
 
+**Each part's text.** Clicking a part, in a bar or in the table, shows its full text under the chart, as the model read it, the template's markers included, so what the model was given can be read rather than guessed. A part's text is the stretch of the whole rendered prompt between its boundaries, so the parts together are the whole prompt. The closing part is only the template's markers after the last part, and says so; a part an older trace never recorded says that instead. Clicking the part again, or the close button, hides the text.
+
 **Where the cache stopped, judged.** Under the bars, one line per call says where the cache stopped, in the words of the parts ("cache held through tool definitions, read from earlier exchanges"), with a mark:
 
 | Mark | Meaning |
@@ -130,38 +134,40 @@ Each call is one bar of coloured parts, with a thin track under it: grey for wha
 | ✕ full re-read | Nothing came from the cache |
 | ? unknown | The model server did not report the cached count, or the trace is too old to know what should have been cached |
 
-For a follow-up, the first call is expected to re-read from the previous question onward, because the previous per-question block is dropped from the history (v2/02 section 3.3). Under the bars sit the system prompt, the per-question block, and the tool definitions, each folded, with each tool's own size measured against the system rules alone.
+For a follow-up, the first call is expected to re-read from the previous question onward, because the previous per-question block is dropped from the history (v2/02 section 3.3). Under the bars sit the parts table and the tool definitions, each folded, with each tool's own size measured against the system rules alone.
 
 **Older traces.** A trace written before traces kept the tool definitions and the block is rebuilt without them. The size the first call recorded says how many tokens are missing, and they are drawn as one part after the system rules, "tool definitions and per-question block (not recorded)". The first call is then marked unknown rather than judged.
 
-### 3.11 The memory tab
+### 3.11 The memory view
 
-The Memory tab shows how much of the serving Mac's memory the Home Assistant setup takes, and what else is competing for it. Every two seconds, while the tab is open, the page asks for a reading. The dashboard reads at most once every four seconds however many pages ask, because `top` alone takes about half a second. `#/memory/day/line` opens the page on this tab.
+The Memory view shows how much of the serving Mac's RAM the Home Assistant setup holds, and what else is competing for it. Every two seconds, while the view is open, the page asks for a reading. The dashboard reads at most once every four seconds however many pages ask, because `top` alone takes about half a second. `#/memory/day/line` opens the page on this view.
 
 **The reading.** It comes from macOS's own tools, none of which needs root:
 
 | Tool | What it gives |
 |---|---|
-| `top -l 1 -stats pid,mem` | Each process's physical footprint |
+| `top -l 1 -stats pid,mem,cmprs` | Each process's physical footprint, and how much of it is compressed or on disk |
 | `ps` | Each process's executable and command line |
 | `vm_stat` | The Mac's memory pages by kind |
 | `sysctl` | The Mac's RAM, its swap, and its chip |
-| `ioreg` | How much memory the GPU holds |
-| `scutil --get ComputerName` | The Mac's name, at the head of the tab |
+| `scutil --get ComputerName` | The Mac's name, at the head of the view |
 
-**This Mac.** A headline gives the setup's total and its share of the Mac's RAM. Under it, one bar splits the RAM the way Activity Monitor does, with each part's size beside its legend entry:
+**One bar of the RAM, by process.** A headline gives the setup's total and its share of the Mac's RAM. Under it, one bar splits the RAM into pieces that add up to it, with each kind's size beside its legend entry:
 
-| Part | What it is |
+| Piece | What it is |
 |---|---|
-| App memory | Memory apps allocated for themselves |
-| Wired | Kept in RAM for the system and the GPU; llama-server's model weights are here |
-| Compressed | Squeezed by macOS to make room |
-| Cached files | File contents and purgeable memory, which macOS frees first |
-| Free | Not in use |
+| Each setup component | What it holds in RAM; services under 1% of the RAM share one piece, so every piece is wide enough to point at |
+| llama-server's model weights | Hatched, beside llama-server (see below) |
+| Each other app | What it holds in RAM, in grey |
+| Compressed, all apps | The RAM every app's compressed memory takes, packed together; macOS does not say whose is whose |
+| macOS | What is left: the system itself, and memory no single app owns |
+| Free | Unused pages, plus copies of files macOS drops the moment anything needs room |
 
-Notes under the bar say how much of the wired memory the GPU holds, and how much has been swapped to disk.
+An app's physical footprint, the figure Activity Monitor shows, counts what macOS has compressed for it or moved to disk, so footprints can add up to far more than the RAM: on the 16 GB laptop, with Firefox open, the apps outside the setup alone came to 35 GB. `top`'s CMPRS column gives that part per process, so each app counts only its footprint less CMPRS, what it holds in RAM as-is. The compressed memory itself is one piece, from `vm_stat`'s pages occupied by the compressor. macOS's piece is the remainder, so the pieces add up to the RAM; it never goes below zero.
 
-**By process.** A process's size is its physical footprint, the figure Activity Monitor shows. A footprint counts what the process has compressed or swapped out, so on a Mac short of memory the footprints add up to more than its RAM; a dashed line on the bar marks the RAM. The setup's components come first, highlighted, then everything else in grey:
+Hovering a piece shows its name and sizes, and lights its row in the tables; hovering a row lights its piece. When macOS has moved memory to disk, a note under the bar says how much, and how much of the setup is compressed or on disk: a service whose memory is on disk waits for it to come back when it is asked something.
+
+**The tables.** Two tables under the bar, the setup and the other apps, give each group's RAM and its compressed or on-disk memory, so colour is not the only way to read the bar. A setup component with more compressed or on disk than in RAM, at least 100 MB, has that figure marked. The setup's components are found by:
 
 | Component | Found by |
 |---|---|
@@ -176,9 +182,9 @@ Notes under the bar say how much of the wired memory the GPU holds, and how much
 
 A component is matched on the executable and the first two words of its command line, which name a script and the interpreter running it. A shell that started a service names the service further along its command line, so it is not counted as the service. A component that is not running is still listed, as not running, so a stopped service shows as stopped rather than vanishing.
 
-**llama-server's model weights.** llama-server maps its model file and hands it to the GPU, so the weights sit in wired memory and appear in no process's footprint. Stopping llama-server on the laptop freed about 5.6 GB of wired memory, its 0.5 GB footprint plus the 5.15 GB model file. No tool on macOS reports that memory per process without root: `vmmap` counts only the few hundred megabytes of the file llama-server itself has touched, and the GPU driver reports one figure for every program using the GPU. llama-server does report the model it has loaded: `/v1/models` gives the size of its weights in bytes. The tab asks for it at every reading, so when llama-server is restarted with another model, or swaps models while it runs, the next reading shows the new size with no restart of the dashboard. The size is added to llama-server's footprint and drawn hatched beside it. The GPU note under the machine bar is the cross-check: the GPU's total should be the weights plus a little more for the cache and the other programs drawing on screen.
+**llama-server's model weights.** llama-server maps its model file and hands it to the GPU, so the weights appear in no process's footprint. Stopping llama-server on the laptop freed about 5.6 GB, its 0.5 GB footprint plus the 5.15 GB model file. No tool on macOS reports that memory per process without root: `vmmap` counts only the few hundred megabytes of the file llama-server itself has touched, and the GPU driver reports one figure for every program using the GPU. llama-server does report the model it has loaded: `/v1/models` gives the size of its weights in bytes. The view asks for it at every reading, so when llama-server is restarted with another model, or swaps models while it runs, the next reading shows the new size with no restart of the dashboard. The size is added to llama-server's RAM, drawn hatched beside it, and shown with the same hatching in llama-server's row.
 
-**Everything else** is grouped by app, so a browser's dozens of helper processes count as the browser. The seven largest apps are named, and the rest are one group. Two tables under the bar, the setup and everything else, give each group's processes and size, so colour is not the only way to read the bar. Sizes are binary gigabytes labelled GB, as Activity Monitor labels them, so the two read the same.
+**The other apps** are grouped by app, so a browser's dozens of helper processes count as the browser. The seven holding the most RAM are named, and the rest are one group. Sizes are binary gigabytes labelled GB, as Activity Monitor labels them, so the two read the same.
 
 ## 4. Packages and what they do for the business logic
 
@@ -186,7 +192,7 @@ A component is matched on the executable and the first two words of its command 
 |---|---|
 | Starlette and uvicorn | Serve the page and its small JSON API, as they already serve the harness |
 | llama-server's `/apply-template`, `/tokenize`, and `/slots` | Render a prompt through the model's chat template, count its tokens, and report each slot's state |
-| macOS's `top`, `ps`, `vm_stat`, `sysctl`, `ioreg`, and `scutil` | Read the Mac's memory, and each process's, for the memory tab |
+| macOS's `top`, `ps`, `vm_stat`, `sysctl`, and `scutil` | Read the Mac's memory, and each process's, for the memory view |
 | websockets (through `ops/ha_client.py`) | Ask Home Assistant for its recent pipeline runs |
 | Plain HTML, CSS, and JavaScript | The page itself; no build step and nothing fetched from the internet |
 
@@ -198,7 +204,7 @@ A component is matched on the executable and the first two words of its command 
 | Trace retention | `assistant_service/exchange_log.py` | 14 days |
 | Home Assistant poll interval | `dashboard/settings.py` | 5 seconds; off when `HA_HOST` or `HA_TOKEN` is missing from `.env` |
 | Page refresh interval | `dashboard/static/app.js` | 2 seconds |
-| llama-server address and key | `config/serving.toml` | The prompt cache tab is off when the key file is missing |
+| llama-server address and key | `config/serving.toml` | The prompt cache view is off when the key file is missing |
 | Memory reading interval | `dashboard/memory_reader.py` | At most one reading every 4 seconds, shared by every page |
 | The setup's components | `dashboard/memory_views.py` | The eight in section 3.11, each a pattern matched against the program a process runs |
 
@@ -208,9 +214,9 @@ A component is matched on the executable and the first two words of its command 
 - **The dashboard crashes.** Nothing else notices: it only reads files the harness writes, and the harness answers Home Assistant directly.
 - **The harness is down when a question is typed.** The chat box shows why the question went unanswered (connection refused, timeout) instead of waiting.
 - **A trace is missing** (an exchange from before this change, or older than 14 days). The page shows the record's summary, with tool calls as names, arguments, sizes, and times, and says the full text is gone.
-- **llama-server is down, still loading, or refuses the key.** The prompt cache tab says so in place of the slots and the bars; the conversation view is unaffected.
-- **The memory tools fail, time out, or the dashboard runs on something other than macOS.** The memory tab says why in place of its bars; the other tabs are unaffected.
-- **llama-server is running but does not answer** (still loading, or its key is missing). llama-server is shown with its footprint alone, and its row says the model weights are not counted, rather than guessing at them.
+- **llama-server is down, still loading, or refuses the key.** The prompt cache view says so in place of the slots and the bars; the conversation view is unaffected.
+- **The memory tools fail, time out, or the dashboard runs on something other than macOS.** The memory view says why in place of its bar; the other views are unaffected.
+- **llama-server is running but does not answer** (still loading, or its key is missing). llama-server is shown with its own RAM alone, and its row says the model weights are not counted, rather than guessing at them.
 - **A component's program is renamed.** It drops out of the setup into everything else, and the setup lists it as not running; its pattern in `dashboard/memory_views.py` has to follow the rename.
 - **Two pipeline runs could match one exchange** (the same question asked twice in two minutes). The run matching on both conversation id and question wins; between equals, the closer start time does.
 
@@ -218,8 +224,9 @@ A component is matched on the executable and the first two words of its command 
 
 - **Prompt cache.** The model server keeps the prompt it last read, so the next call reads only the new tokens. The chart's "cached" count is how much of a call's prompt it did not have to read again.
 - **Prefill and decode.** Prefill is the model reading the prompt, many tokens at once; decode is the model writing the answer, one token at a time. On the laptop prefill runs at a few hundred tokens a second and decode at about forty (v2/02 section 7).
-- **Physical footprint.** The memory a process is charged for: what it allocated for itself, including what macOS has compressed or swapped to disk. Memory mapped from files, like a model's weights, is not part of it.
-- **Wired memory.** Memory macOS will never compress or swap out. The GPU's working memory is wired, so on Apple silicon the model's weights land here.
+- **Physical footprint.** The memory a process is charged for, the figure Activity Monitor shows: what it allocated for itself, including what macOS has compressed or moved to disk. Memory mapped from files, like a model's weights, is not part of it.
+- **Compressed memory.** When RAM runs short, macOS packs memory an app has not touched lately into less room, rather than moving it to disk straight away. The app gets it back, unpacked, the next time it reads it.
+- **Swap.** Memory macOS has moved to disk because even compressing was not enough. An app whose memory is on disk waits for it to be read back, which is why a service that has been idle can answer slowly at first.
 - **Pipeline run.** Home Assistant's record of one voice exchange: wake word, speech to text, the agent, text to speech, each with timestamps.
 
 ## 8. Sources

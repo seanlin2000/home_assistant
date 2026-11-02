@@ -13,12 +13,11 @@ from dashboard.memory_views import MemoryOutputs, MemoryView, memory_view
 SNAPSHOT_SECONDS = 4.0  # the page asks every two seconds; top alone takes about half a second
 COMMAND_TIMEOUT_SECONDS = 10.0
 COMMANDS = {
-    "top": ["top", "-l", "1", "-stats", "pid,mem"],
+    "top": ["top", "-l", "1", "-stats", "pid,mem,cmprs"],
     "executables": ["ps", "-axww", "-o", "pid=,comm="],
     "command_lines": ["ps", "-axww", "-o", "pid=,args="],
     "vm_stat": ["vm_stat"],
     "sysctl": ["sysctl", "-n", "hw.memsize", "vm.swapusage", "machdep.cpu.brand_string"],
-    "ioreg": ["ioreg", "-r", "-d", "1", "-w", "0", "-c", "IOAccelerator"],
     "computer_name": ["scutil", "--get", "ComputerName"],
 }
 ReadOutputs = Callable[[], Awaitable[MemoryOutputs]]
