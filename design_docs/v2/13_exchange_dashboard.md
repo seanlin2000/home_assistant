@@ -47,7 +47,7 @@ The page answers the home network only. Each exchange appears about a second aft
 
 ### 3.1 What the harness keeps
 
-The exchange log (v1/10 §3.4) keeps a trimmed record for 90 days and drops the text tools returned, because a search returns thousands of words. The dashboard needs that text, so the harness now writes a second, fuller log beside it: one trace per exchange, holding the whole transcript, including every tool result and any thinking text. Traces are kept 14 days; the health check's housekeeping deletes older day files, as it already does for the exchange log. A trace and its record share an `exchange_id`, and both carry Home Assistant's `conversation_id`. The transcript now also keeps the filler phrase spoken while the first tools ran, which the conversation view shows.
+The exchange log (v1/10 §3.4) keeps a trimmed record for 90 days and drops the text tools returned, because a search returns thousands of words. The dashboard needs that text, so the harness now writes a second, fuller log beside it: one trace per exchange, holding the whole transcript, including every tool result and any thinking text. Traces are kept 14 days; the health check's housekeeping deletes older day files, as it already does for the exchange log. A trace and its record share an `exchange_id`, and both carry Home Assistant's `conversation_id`. The transcript now also keeps the filler phrase spoken while the first tools ran, which the conversation view shows, and the per-question block put before the question. The trace also keeps the tool definitions every model call was sent, which the prompt cache tab needs (3.10); they are left out of the transcript wherever else it is written, such as benchmark results, because they run to thousands of tokens and are the same for every exchange.
 
 ### 3.2 When each step started
 
@@ -96,11 +96,46 @@ The prefill speed leaves the cached tokens out, because reusing them costs almos
 
 **Today's average.** The header shows today's response count, the average prefill and decode time per response, and today's speeds. Today runs from midnight on the Mac's clock, not UTC as the day files do, so an evening in New York is not split at 8 pm across two days; the dashboard reads the one or two UTC day files that local day spans. The speeds divide all of today's tokens by all of today's seconds, so a long prompt counts for more than a short one. The page asks for these figures with the day list, every two seconds.
 
+### 3.10 The prompt cache tab
+
+The page has two tabs in its header: Exchanges, the conversation view above, and Prompt cache. The Prompt cache tab shows whether the prompt order of v2/02 section 3.3 is doing its job: whether each model call found the parts that never change already cached, and read only what was new. An exchange's address is `#/day/line`, or `#/cache/day/line` to open it in this tab.
+
+**Live slots.** Every two seconds, while the tab is open, the dashboard asks llama-server for its slots, with llama-server's key read from disk on the Mac, so the browser never holds it. Each slot shows a meter of about how many tokens it holds (its last prompt and what it wrote after it) against the share of the pool the harness budgets for it: 16,384 tokens for slot 0, the conversation, and the rest of the 18,432-token pool for slot 1, the router and the quiet requests. A slot can borrow past its share, so its meter stops at full. Hovering a slot shows its last request: prompt tokens, how many came from the cache, and how many it wrote.
+
+**Each call's prompt.** The trace keeps the conversation, the system rules, the per-question block, and the tool definitions every call was sent (3.1). From these the dashboard rebuilds the prompt of each model call, and llama-server renders it through the model's own chat template and counts its tokens, so the sizes are the ones the model read. The prompt's parts follow the harness's order:
+
+| Part | Changes when |
+|---|---|
+| System rules | The prompt version changes |
+| Tool definitions | A tool is added or its description changes |
+| Earlier exchanges | Each exchange adds one |
+| Per-question block | Every question |
+| Question | Every question |
+| Tool rounds | Each round adds the model's tool calls and their results |
+
+A part ends where a render of the prompt up to it stops matching the whole prompt, so the template's markers are counted as the model reads them; a boundary can sit a token late. When the rebuilt size matches the size llama-server recorded for the call, the layout is exact. Otherwise a note says the parts are approximate, as when the template or a tool changed since the exchange.
+
+Each call is one bar of coloured parts, with a thin track under it: grey for what came from the cache, dark for what was read fresh, and a dashed line where the cache stopped. Every part also has a tooltip, and a table lists the parts of the last call with their sizes, so the colours are not the only way to read it.
+
+**Where the cache stopped, judged.** Under the bars, one line per call says where the cache stopped, in the words of the parts ("cache held through tool definitions, read from earlier exchanges"), with a mark:
+
+| Mark | Meaning |
+|---|---|
+| ✓ as expected | The first call found at least the system rules and tool definitions cached; a later call found everything the call before it sent |
+| ! early | The cache stopped before that point, so text that should have been reused was read again |
+| ✕ full re-read | Nothing came from the cache |
+| ? unknown | The model server did not report the cached count, or the trace is too old to know what should have been cached |
+
+For a follow-up, the first call is expected to re-read from the previous question onward, because the previous per-question block is dropped from the history (v2/02 section 3.3). Under the bars sit the system prompt, the per-question block, and the tool definitions, each folded, with each tool's own size measured against the system rules alone.
+
+**Older traces.** A trace written before traces kept the tool definitions and the block is rebuilt without them. The size the first call recorded says how many tokens are missing, and they are drawn as one part after the system rules, "tool definitions and per-question block (not recorded)". The first call is then marked unknown rather than judged.
+
 ## 4. Packages and what they do for the business logic
 
 | Package | What it does here |
 |---|---|
 | Starlette and uvicorn | Serve the page and its small JSON API, as they already serve the harness |
+| llama-server's `/apply-template`, `/tokenize`, and `/slots` | Render a prompt through the model's chat template, count its tokens, and report each slot's state |
 | websockets (through `ops/ha_client.py`) | Ask Home Assistant for its recent pipeline runs |
 | Plain HTML, CSS, and JavaScript | The page itself; no build step and nothing fetched from the internet |
 
@@ -112,6 +147,7 @@ The prefill speed leaves the cached tokens out, because reusing them costs almos
 | Trace retention | `assistant_service/exchange_log.py` | 14 days |
 | Home Assistant poll interval | `dashboard/settings.py` | 5 seconds; off when `HA_HOST` or `HA_TOKEN` is missing from `.env` |
 | Page refresh interval | `dashboard/static/app.js` | 2 seconds |
+| llama-server address and key | `config/serving.toml` | The prompt cache tab is off when the key file is missing |
 
 ## 6. Failure modes
 
@@ -119,6 +155,7 @@ The prefill speed leaves the cached tokens out, because reusing them costs almos
 - **The dashboard crashes.** Nothing else notices: it only reads files the harness writes, and the harness answers Home Assistant directly.
 - **The harness is down when a question is typed.** The chat box shows why the question went unanswered (connection refused, timeout) instead of waiting.
 - **A trace is missing** (an exchange from before this change, or older than 14 days). The page shows the record's summary, with tool calls as names, arguments, sizes, and times, and says the full text is gone.
+- **llama-server is down, still loading, or refuses the key.** The prompt cache tab says so in place of the slots and the bars; the conversation view is unaffected.
 - **Two pipeline runs could match one exchange** (the same question asked twice in two minutes). The run matching on both conversation id and question wins; between equals, the closer start time does.
 
 ## 7. Concepts for newcomers

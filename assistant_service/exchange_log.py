@@ -35,5 +35,5 @@ class ExchangeArchive:
         identity = {"exchange_id": uuid.uuid4().hex[:12], "conversation_id": request.conversation_id}
         record = exchange_record_from_transcript(transcript, source=request.source, recorded_at=datetime.now(UTC)).model_copy(update=identity)
         self.records.append(record)
-        self.traces.append(ExchangeTrace(recorded_at=record.recorded_at, source=request.source, transcript=transcript, **identity))
+        self.traces.append(ExchangeTrace(recorded_at=record.recorded_at, source=request.source, transcript=transcript, tool_specs=transcript.tool_specs, **identity))
         return record

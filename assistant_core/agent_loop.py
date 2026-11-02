@@ -134,13 +134,15 @@ async def run(conversation: list[Message], llm: LLMClient, tools: ToolBox, polic
     transcript = Transcript(model=llm.model_name, system_prompt=system_prompt(), conversation=list(conversation))
     cap = SpokenAnswerCap(policy.word_budget)
     tool_specs = await load_tool_specs(tools, transcript)
+    transcript.tool_specs = tool_specs
     directive = None
     if policy.route_questions and tool_specs:
         route_started = seconds_since(started)
         transcript.route = route_to_offered_tools(await decide_route(llm, conversation, policy), tool_specs)
         transcript.route.started_seconds = route_started
         directive = directive_for(transcript.route)
-    spoken_question = put_block_before_question(messages, per_question_block(today or date.today(), directive, memory.get_context(conversation)))
+    transcript.per_question_block = per_question_block(today or date.today(), directive, memory.get_context(conversation))
+    spoken_question = put_block_before_question(messages, transcript.per_question_block)
     max_tool_rounds = tool_round_cap(transcript.route, policy.max_tool_rounds)
     runner = ToolCallRunner(tools, policy, started)
     for round_index in range(max_tool_rounds + 1):
