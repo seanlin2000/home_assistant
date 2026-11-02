@@ -1,7 +1,7 @@
 """What the dashboard's API returns: the exchanges of a day as one-line summaries, and one exchange in full, built from its record, its trace when
 one is kept, and its Home Assistant pipeline run when one matches (design doc v2/13 sections 3.1 to 3.4)."""
 
-from datetime import date, timedelta
+from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
 
 from pydantic import BaseModel, Field
@@ -10,6 +10,7 @@ from assistant_core.exchange_record import ExchangeRecord, ExchangeTrace, ToolCa
 from assistant_core.models import Message, Role, ToolCallRecord, Transcript
 from assistant_service.exchange_log import ExchangeLog, TraceLog
 from dashboard.evidence import ToolEvidence, tool_evidence
+from dashboard.generation_speed import ResponseSpeed, response_speed
 from dashboard.pipeline_match import matching_run
 from dashboard.timeline import Timeline, build_timeline
 from ops.pipeline_runs import PipelineRun, PipelineRunLog
@@ -75,6 +76,7 @@ class ExchangeDetail(BaseModel):
     filler_text: str = ""
     turns: list[Turn]
     timeline: Timeline
+    speed: ResponseSpeed | None = None
     speech: SpeechRun | None = None
     earlier_exchanges: list[ExchangeSummary] = Field(default_factory=list)  # the exchanges before this one in its conversation, oldest first
 
@@ -97,6 +99,12 @@ class ExchangeStore:
         day = day_files[-1][0]
         records = self._records.read_day(day)
         return summarize(day, len(records) - 1, records[-1]) if records else None
+
+    def records_since(self, moment: datetime) -> list[ExchangeRecord]:
+        """Every exchange recorded at or after the moment; the day files are UTC days, so a local day can span two of them."""
+        first_day = moment.astimezone(UTC).date()
+        records = [record for day, _path in self._records.day_files() if day >= first_day for record in self._records.read_day(day)]
+        return [record for record in records if datetime.fromisoformat(record.recorded_at) >= moment]
 
     def summaries(self, day: date) -> list[ExchangeSummary]:
         return [summarize(day, index, record) for index, record in enumerate(self._records.read_day(day))]
@@ -155,9 +163,10 @@ def summarize(day: date, index: int, record: ExchangeRecord) -> ExchangeSummary:
 
 def detail_from(summary: ExchangeSummary, record: ExchangeRecord, trace: ExchangeTrace | None, run: PipelineRun | None) -> ExchangeDetail:
     timeline = build_timeline(record, run)
+    speed = response_speed(record)
     speech = speech_run(run) if run else None
     if trace is None:
-        return ExchangeDetail(summary=summary, record=record, has_trace=False, earlier_messages=[], turns=turns_from_record(record), timeline=timeline, speech=speech)
+        return ExchangeDetail(summary=summary, record=record, has_trace=False, earlier_messages=[], turns=turns_from_record(record), timeline=timeline, speed=speed, speech=speech)
     transcript = trace.transcript
     question_index = last_question_index(transcript.conversation)
     return ExchangeDetail(
@@ -169,6 +178,7 @@ def detail_from(summary: ExchangeSummary, record: ExchangeRecord, trace: Exchang
         filler_text=transcript.filler_text,
         turns=turns_from_transcript(transcript, question_index, record),
         timeline=timeline,
+        speed=speed,
         speech=speech,
     )
 

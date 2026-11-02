@@ -5,7 +5,7 @@ asking questions through DNS rebinding or a forged form (design doc v2/12 sectio
 import json
 from collections.abc import AsyncIterator, Callable
 from contextlib import AbstractAsyncContextManager
-from datetime import date
+from datetime import date, datetime
 
 from pydantic import ValidationError
 from starlette.applications import Starlette
@@ -19,14 +19,22 @@ from starlette.staticfiles import StaticFiles
 from assistant_core.converse_protocol import NDJSON_MEDIA_TYPE, ConverseRequest, event_to_line
 from assistant_core.models import AgentEvent
 from dashboard.exchange_views import ExchangeStore
+from dashboard.generation_speed import local_midnight, local_now, today_speed
 from dashboard.settings import STATIC_DIR
 from utils.http_access_utils import host_named, misdirected
 
 CHAT_SOURCE = "dashboard"  # how the exchange log labels questions typed into the chat box
 Converse = Callable[[ConverseRequest], AsyncIterator[AgentEvent]]
+Clock = Callable[[], datetime]
 
 
-def build_app(store: ExchangeStore, allowed_hosts: list[str], converse: Converse | None = None, lifespan: Callable[[Starlette], AbstractAsyncContextManager[None]] | None = None) -> Starlette:
+def build_app(
+    store: ExchangeStore,
+    allowed_hosts: list[str],
+    converse: Converse | None = None,
+    lifespan: Callable[[Starlette], AbstractAsyncContextManager[None]] | None = None,
+    clock: Clock = local_now,
+) -> Starlette:
     async def index(_request: Request) -> Response:
         return FileResponse(STATIC_DIR / "index.html")
 
@@ -36,6 +44,10 @@ def build_app(store: ExchangeStore, allowed_hosts: list[str], converse: Converse
     async def latest(_request: Request) -> Response:
         newest = store.latest()
         return JSONResponse(newest.model_dump() if newest else None)
+
+    async def today(_request: Request) -> Response:
+        since = local_midnight(clock())
+        return JSONResponse(today_speed(store.records_since(since), since).model_dump())
 
     async def exchanges(request: Request) -> Response:
         day = day_in(request)
@@ -62,6 +74,7 @@ def build_app(store: ExchangeStore, allowed_hosts: list[str], converse: Converse
         Route("/", index),
         Route("/api/days", days),
         Route("/api/latest", latest),
+        Route("/api/today", today),
         Route("/api/ask", ask, methods=["POST"]),
         Route("/api/days/{day}/exchanges", exchanges),
         Route("/api/days/{day}/exchanges/{index:int}", exchange),
