@@ -98,8 +98,14 @@ async function takeDays(days) {
   if (!grew) return;
   const follow = state.openNextArrival || $("follow").checked;
   state.openNextArrival = false;
-  if (follow) await openDay(newest.day, { openLatest: true });
+  if (follow) await followNewest(newest.day);
   else if (state.day === newest.day) await openDay(newest.day, { keepSelection: true });
+}
+
+// Following arrivals means watching the latest answer, so the thread stays at its end instead of jumping back to the conversation's first question.
+async function followNewest(day) {
+  await openDay(day, { openLatest: true });
+  showThreadEnd();
 }
 
 function firstDay(days) {
@@ -645,6 +651,10 @@ function renderLive(live) {
   if (state.live !== live) return;
   const box = liveBox();
   box.replaceChildren(userTurn(live.question, ["typed · dashboard · now"]), liveAssistantTurn(live));
+  showThreadEnd();
+}
+
+function showThreadEnd() {
   $("thread").scrollTop = $("thread").scrollHeight;
 }
 
