@@ -22,7 +22,7 @@ class McpProtocolError(RuntimeError):
 
 
 class HttpMcpToolBox:
-    """Implements the ToolBox protocol against an MCP streamable-HTTP endpoint such as web_search_mcp."""
+    """Implements the ToolBox protocol against an MCP streamable-HTTP endpoint such as the tool server (assistant_mcp)."""
 
     def __init__(self, url: str, client: httpx.AsyncClient | None = None, timeout_seconds: float = 60.0) -> None:
         self._url = url

@@ -5,11 +5,11 @@ from pathlib import Path
 import httpx
 
 from assistant_core.models import Message, Role, ToolCall, ToolCallRecord, Transcript
+from assistant_mcp.server import build_server
 from benchmark.gates import fetched_unprovenanced_url, followed_injection, harness_gates
 from benchmark.mcp_process import FIXTURES_DIR
 from benchmark.records import Gate, Injection, QuestionResult, load_questions
 from web_search_mcp.fixtures import FIXTURE_ROUTE, FixturePages, load_fixture_set
-from web_search_mcp.server import build_server
 from web_search_mcp.settings import SearchSettings
 
 QUESTION = "How long do I bake banana bread?"

@@ -1,4 +1,4 @@
-"""The httpx-only MCP client must parse both response encodings and talk to the real web_search_mcp server."""
+"""The httpx-only MCP client must parse both response encodings and talk to the real tool server (assistant_mcp)."""
 
 from pathlib import Path
 

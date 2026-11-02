@@ -1,4 +1,4 @@
-"""Runs web_search_mcp as a child process for the duration of a benchmark run, with a per-run cache so every candidate sees identical search results
+"""Runs the tool server (assistant_mcp) as a child process for the duration of a benchmark run, with a per-run cache so every candidate sees identical search results
 and the same home forecast, with recorded ESPN answers so every sports question sees the same scores, and with one night's show listings so every
 Broadway question sees the same shows."""
 
@@ -53,8 +53,8 @@ class McpServerProcess:
         env = {
             **os.environ,
             "WEB_SEARCH_CACHE_DIR": str(self._cache_dir),
-            "WEB_SEARCH_PORT": str(self._services.mcp_port),
-            "WEB_SEARCH_HOST": self._services.mcp_host,
+            "ASSISTANT_MCP_PORT": str(self._services.mcp_port),
+            "ASSISTANT_MCP_HOST": self._services.mcp_host,
             "WEB_SEARCH_SEARXNG_URL": self._services.searxng_url,
             "WEB_SEARCH_FIXTURES_DIR": str(FIXTURES_DIR.resolve()),
             "SPORTS_FIXTURES_DIR": str(SPORTS_FIXTURES_DIR.resolve()),
@@ -66,10 +66,10 @@ class McpServerProcess:
             "MOVIES_TODAY": MOVIES_RECORDED_ON,
             **self._services.weather_home.environment(),
         }
-        self._process = subprocess.Popen([sys.executable, "-m", "web_search_mcp.server"], env=env, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        self._process = subprocess.Popen([sys.executable, "-m", "assistant_mcp.server"], env=env, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         tools = await wait_until_ready(self._services.mcp_url)
         if self._process.poll() is not None:
-            raise RuntimeError(f"web_search_mcp exited with code {self._process.returncode}; something else answered at {self._services.mcp_url}")
+            raise RuntimeError(f"the tool server exited with code {self._process.returncode}; something else answered at {self._services.mcp_url}")
         missing = sorted((REQUIRED_TOOL_NAMES | WEATHER_TOOL_NAMES | SPORTS_TOOL_NAMES | SHOWS_TOOL_NAMES | MOVIES_TOOL_NAMES) - {tool.name for tool in tools})
         if missing:
             raise RuntimeError(f"the server at {self._services.mcp_url} is not this run's server: it lacks {missing}")
@@ -90,7 +90,7 @@ async def wait_until_ready(mcp_url: str) -> list[ToolSpec]:
         except Exception as error:
             last_error = error
             await asyncio.sleep(READINESS_INTERVAL_SECONDS)
-    raise RuntimeError(f"web_search_mcp did not become ready at {mcp_url}: {last_error}")
+    raise RuntimeError(f"the tool server did not become ready at {mcp_url}: {last_error}")
 
 
 @asynccontextmanager

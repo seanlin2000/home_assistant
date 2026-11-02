@@ -126,7 +126,7 @@ install_agents() {
     ENV_KEYS=() ENV_VALUES=()
     write_plist llama "$PROJECT_DIR/.venv/bin/serving" launch
     # Only the harness calls the tool server, so it listens on 127.0.0.1 alone.
-    ENV_KEYS=(WEB_SEARCH_HOST WEB_SEARCH_PORT)
+    ENV_KEYS=(ASSISTANT_MCP_HOST ASSISTANT_MCP_PORT)
     ENV_VALUES=(127.0.0.1 8765)
     # Home for weather_forecast, written to .env by scripts/ha_setup.py --only weather (the shell environment wins). Without coordinates the server
     # starts without the weather tool and says why in mcp.log.
@@ -138,7 +138,7 @@ install_agents() {
             ENV_VALUES+=("$value")
         fi
     done
-    write_plist mcp "$PROJECT_DIR/.venv/bin/web-search-mcp"
+    write_plist mcp "$PROJECT_DIR/.venv/bin/assistant-mcp"
     # The harness listens on the LAN for the Home Assistant VM, so it requires its API key and answers only requests that name this machine (Host
     # header); a web page cannot reach it by DNS rebinding. HARNESS_ALLOWED_HOSTS in the environment overrides the derived list (the new Mac's
     # interface may not be en0). Rerun install after an address change. Its other settings are in config/harness.toml.
