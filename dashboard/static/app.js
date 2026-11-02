@@ -14,6 +14,13 @@ const SEGMENT_KINDS = [
   ["rest", "closing markers"],
 ];
 const VERDICT_MARKS = { expected: "✓", early: "!", full_reread: "✕", unknown: "?" };
+const MACHINE_PARTS = [
+  ["app_bytes", "mem-app", "app memory", "what apps allocated for themselves"],
+  ["wired_bytes", "mem-wired", "wired", "kept in RAM for the system and the GPU; llama-server's model weights are here"],
+  ["compressed_bytes", "mem-compressed", "compressed", "squeezed by macOS to make room"],
+  ["cached_files_bytes", "mem-cached", "cached files", "file contents and purgeable memory, which macOS frees first"],
+  ["free_bytes", "mem-free", "free", "not in use"],
+];
 const chat = { id: newConversationId(), history: [] };
 
 const $ = (id) => document.getElementById(id);
@@ -53,6 +60,9 @@ const wordsOnly = (text) => text.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim(
 const argumentText = (args) => Object.entries(args).map(([key, value]) => `${key}=${JSON.stringify(value)}`).join(", ");
 const tokensPerSecond = (perSecond) => (perSecond === null || perSecond === undefined ? "–" : `${Math.round(perSecond)} tok/s`);
 const count = (tokens) => tokens.toLocaleString();
+// Binary gigabytes, labelled GB the way Activity Monitor labels them, so the two read the same.
+const memorySize = (bytes) => (bytes < 1024 ** 3 ? `${Math.round(bytes / 1024 ** 2)} MB` : `${(bytes / 1024 ** 3).toFixed(bytes < 10 * 1024 ** 3 ? 2 : 1)} GB`);
+const processCount = (processes) => `${processes} process${processes === 1 ? "" : "es"}`;
 
 
 async function poll() {
@@ -61,6 +71,7 @@ async function poll() {
     $("model").textContent = latest ? latest.model : "";
     renderToday(today);
     if (state.view === "cache") refreshSlots();
+    if (state.view === "memory") refreshMemory();
     setStatus("live", "live");
     await takeDays(days);
   } catch (error) {
@@ -114,9 +125,9 @@ async function openDay(day, { openLatest = false, keepSelection = false } = {}) 
   else await openExchange(day, state.summaries.length - 1);
 }
 
-// An exchange's address is #/day/line, or #/cache/day/line to open it in the prompt cache tab.
+// An exchange's address is #/day/line, or #/cache/day/line or #/memory/day/line to open the page on another tab.
 function selectionFromHash() {
-  const match = location.hash.match(/^#\/(?:cache\/)?(\d{4}-\d{2}-\d{2})\/(\d+)$/);
+  const match = location.hash.match(/^#\/(?:cache\/|memory\/)?(\d{4}-\d{2}-\d{2})\/(\d+)$/);
   return match ? { day: match[1], index: Number(match[2]) } : null;
 }
 
@@ -683,7 +694,7 @@ function sendOnEnter(event) {
 
 function exchangeAddress() {
   if (!state.selected) return location.pathname;
-  return `#/${state.view === "cache" ? "cache/" : ""}${state.selected.day}/${state.selected.index}`;
+  return `#/${state.view === "exchanges" ? "" : `${state.view}/`}${state.selected.day}/${state.selected.index}`;
 }
 
 function showView(view) {
@@ -696,11 +707,13 @@ function showView(view) {
   $("thread").hidden = view !== "exchanges";
   $("composer").hidden = view !== "exchanges";
   $("cache-view").hidden = view !== "cache";
+  $("memory-view").hidden = view !== "memory";
   closeDrawer();
   if (view === "cache") {
     refreshSlots();
     renderPromptLayout();
   }
+  if (view === "memory") refreshMemory();
 }
 
 function sectionHead(title, ...notes) {
@@ -882,6 +895,127 @@ function toolsFold(layout) {
   );
 }
 
+// The memory tools run on the Mac the dashboard runs on, so a page opened from a laptop shows the serving Mac's memory.
+async function refreshMemory() {
+  try {
+    const view = await getJsonOrReason("/api/memory");
+    $("machine-memory").replaceChildren(...machineElements(view));
+    $("process-memory").replaceChildren(...processElements(view));
+    $("process-memory").hidden = false;
+  } catch (error) {
+    $("machine-memory").replaceChildren(sectionHead("This Mac"), el("div", { class: "note-line" }, String(error.message || error)));
+    $("process-memory").hidden = true;
+  }
+}
+
+function machineElements(view) {
+  const machine = view.machine;
+  return [sectionHead(machine.name, machine.chip, `${memorySize(machine.total_bytes)} of memory`, "read every 4 s"), setupHeadline(view), machineBar(machine), machineLegend(machine), ...machineNotes(machine)];
+}
+
+function setupHeadline(view) {
+  const share = Math.round((view.setup_bytes / view.machine.total_bytes) * 100);
+  return el("div", { class: "memory-headline" }, el("span", { class: "hero" }, memorySize(view.setup_bytes)), el("span", {}, `taken by the Home Assistant setup, ${share}% of this Mac's ${memorySize(view.machine.total_bytes)}`));
+}
+
+function machineBar(machine) {
+  return el(
+    "div",
+    { class: "memory-bar" },
+    MACHINE_PARTS.map(([field, className, label, meaning]) => memorySegment(className, machine[field], `${label}: ${memorySize(machine[field])}\n${meaning}`)),
+  );
+}
+
+function memorySegment(className, bytes, tooltip) {
+  const segment = el("i", { class: className, style: `flex:${bytes}` });
+  attachTooltip(segment, () => tooltip);
+  return segment;
+}
+
+function machineLegend(machine) {
+  return el(
+    "div",
+    { class: "legend" },
+    MACHINE_PARTS.map(([field, className, label]) => el("span", {}, el("i", { class: className }), `${label} ${memorySize(machine[field])}`)),
+  );
+}
+
+function machineNotes(machine) {
+  return [
+    machine.gpu_in_use_bytes !== null && el("div", { class: "note-line" }, `The GPU holds ${memorySize(machine.gpu_in_use_bytes)} of the wired memory, most of it llama-server's model weights.`),
+    machine.swap_used_bytes > 0 && el("div", { class: "note-line" }, `Swap: ${memorySize(machine.swap_used_bytes)} of ${memorySize(machine.swap_total_bytes)} written to disk because it did not fit in RAM.`),
+  ].filter(Boolean);
+}
+
+function processElements(view) {
+  const footprints = view.setup_bytes + view.others_bytes;
+  return [
+    sectionHead("By process", "each process's footprint, the figure Activity Monitor shows"),
+    el("p", { class: "panel-lead" }, "A footprint counts what a process has compressed or swapped out, so on a Mac short of memory the footprints add up to more than its RAM. The dashed line marks the RAM."),
+    processBar(view, Math.max(footprints, view.machine.total_bytes)),
+    processLegend(),
+    el("div", { class: "memory-tables" }, setupTable(view), othersTable(view)),
+  ];
+}
+
+// llama-server's model weights sit next to its footprint, hatched: they are held by the GPU and appear in no process's footprint.
+function processBar(view, scale) {
+  const position = (bytes) => `${(bytes / scale) * 100}%`;
+  const setupSegments = view.setup.flatMap((group) => [
+    group.footprint_bytes > 0 && memorySegment("mem-setup", group.footprint_bytes, `${group.name}: ${memorySize(group.footprint_bytes)}, ${processCount(group.processes)}`),
+    group.model_weights_bytes > 0 && memorySegment("mem-weights", group.model_weights_bytes, `${group.name}'s model weights: ${memorySize(group.model_weights_bytes)}\nmapped from the model file and held by the GPU`),
+  ]);
+  const otherSegments = view.others.map((group) => memorySegment("mem-other", group.total_bytes, `${group.name}: ${memorySize(group.total_bytes)}, ${processCount(group.processes)}`));
+  return el(
+    "div",
+    { class: "process-track" },
+    el("div", { class: "memory-bar", style: `width:${position(view.setup_bytes + view.others_bytes)}` }, setupSegments, otherSegments),
+    el("div", { class: "ram-line", style: `left:${position(view.machine.total_bytes)}` }, el("span", {}, `${memorySize(view.machine.total_bytes)} of RAM`)),
+  );
+}
+
+function processLegend() {
+  const entry = (className, text) => el("span", {}, el("i", { class: className }), text);
+  return el("div", { class: "legend" }, entry("mem-setup", "Home Assistant setup"), entry("mem-weights", "model weights, on the GPU"), entry("mem-other", "everything else"));
+}
+
+// Every component is listed, running or not, so a service that has stopped shows as stopped rather than vanishing.
+function setupTable(view) {
+  const rows = view.setup.map((group) =>
+    el(
+      "tr",
+      { class: group.processes ? null : "not-running" },
+      el(
+        "td",
+        {},
+        el("i", { class: "swatch mem-setup" }),
+        group.name,
+        group.model_weights_bytes > 0 && el("span", { class: "row-note" }, `${memorySize(group.model_weights_bytes)} of it model weights`),
+        group.note && el("span", { class: "row-note warn" }, group.note),
+      ),
+      el("td", { class: "number" }, group.processes ? processCount(group.processes) : "not running"),
+      el("td", { class: "number" }, group.processes ? memorySize(group.total_bytes) : "–"),
+    ),
+  );
+  return memoryTable(`Home Assistant setup · ${memorySize(view.setup_bytes)}`, "component", rows);
+}
+
+function othersTable(view) {
+  const rows = view.others.map((group) =>
+    el("tr", {}, el("td", {}, el("i", { class: "swatch mem-other" }), group.name), el("td", { class: "number" }, processCount(group.processes)), el("td", { class: "number" }, memorySize(group.total_bytes))),
+  );
+  return memoryTable(`Everything else · ${memorySize(view.others_bytes)}`, "app", rows);
+}
+
+function memoryTable(title, nameHeading, rows) {
+  return el(
+    "div",
+    {},
+    el("h3", { class: "table-title" }, title),
+    el("table", { class: "parts" }, el("thead", {}, el("tr", {}, el("th", {}, nameHeading), el("th", { class: "number" }, "processes"), el("th", { class: "number" }, "memory"))), el("tbody", {}, rows)),
+  );
+}
+
 function openSidebar() {
   $("sidebar").classList.add("open");
   $("scrim").hidden = false;
@@ -918,5 +1052,6 @@ for (const tab of document.querySelectorAll(".view-tab")) tab.addEventListener("
 document.addEventListener("keydown", stepThroughExchanges);
 
 renderGreeting();
-if (location.hash.startsWith("#/cache/")) showView("cache");
+const openingView = location.hash.match(/^#\/(cache|memory)(\/|$)/);
+if (openingView) showView(openingView[1]);
 poll();
