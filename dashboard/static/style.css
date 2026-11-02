@@ -93,12 +93,18 @@ button { font: inherit; color: inherit; }
 .app { display: grid; grid-template-columns: clamp(280px, 15vw, 340px) minmax(0, 1fr); height: 100vh; }
 
 .sidebar { background: var(--sidebar); display: flex; flex-direction: column; min-height: 0; padding: 10px 8px; gap: 6px; }
-.sidebar-top { display: flex; flex-direction: column; gap: 6px; padding: 0 4px; }
-.brand { font-weight: 600; font-size: 15px; padding: 6px 8px; }
-.new-chat { display: flex; align-items: center; gap: 10px; border: 0; background: none; padding: 8px 10px; border-radius: 10px; cursor: pointer; font-size: 14px; text-align: left; }
-.new-chat:hover { background: var(--hover); }
-.day-picker { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 10px 12px 2px; font-size: 12px; color: var(--ink-3); font-weight: 600; }
-.day-picker select { font: inherit; font-weight: 400; border: 0; background: none; color: var(--ink-2); cursor: pointer; text-align: right; }
+.brand { font-weight: 600; font-size: 15px; padding: 6px 12px 4px; }
+.nav { display: flex; flex-direction: column; gap: 1px; padding: 0 4px; }
+.nav-item { display: flex; align-items: center; gap: 10px; width: 100%; border: 0; background: none; padding: 7px 10px; border-radius: 10px; cursor: pointer; font-size: 14px; text-align: left; }
+.nav-item svg { flex: none; color: var(--ink-2); }
+.nav-item:hover { background: var(--hover); }
+.nav-item[aria-current="page"] { background: var(--hover); font-weight: 600; }
+.nav-item[aria-current="page"] svg { color: var(--ink); }
+.nav-item:focus-visible, .part-button:focus-visible, .segments > .segment:focus-visible { outline: 2px solid var(--link); outline-offset: 2px; }
+/* The space above History sets the exchanges apart from the views, as ChatGPT sets its chats apart. */
+.history-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin-top: 18px; padding: 0 14px 2px; }
+.history-head span { font-size: 12px; font-weight: 600; color: var(--ink-3); }
+.history-head select { font: inherit; font-size: 12px; border: 0; background: none; color: var(--ink-2); cursor: pointer; text-align: right; min-width: 0; }
 .list { flex: 1; overflow-y: auto; padding: 2px 4px; }
 .row { display: block; width: 100%; text-align: left; border: 0; background: none; padding: 7px 10px; border-radius: 10px; cursor: pointer; }
 .row:hover, .row.selected { background: var(--hover); }
@@ -124,10 +130,6 @@ button { font: inherit; color: inherit; }
 #sidebar-toggle { display: none; }
 .model-name { font-size: 17px; font-weight: 600; padding: 6px 10px; white-space: nowrap; }
 .model-name:empty { display: none; }
-.view-tabs { display: flex; gap: 2px; background: var(--sunken); border-radius: 999px; padding: 3px; }
-.view-tab { border: 0; background: none; border-radius: 999px; padding: 4px 14px; font-size: 13.5px; color: var(--ink-2); cursor: pointer; white-space: nowrap; }
-.view-tab:hover { color: var(--ink); }
-.view-tab.active { background: var(--surface); color: var(--ink); box-shadow: var(--shadow); }
 .today-speed { margin-left: auto; display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 0 14px; font-size: 12.5px; color: var(--ink-3); font-variant-numeric: tabular-nums; padding: 6px 0; }
 .today-speed span:first-child { color: var(--ink-2); font-weight: 600; }
 .thread { flex: 1; overflow-y: auto; padding: 8px 20px 40px; }
@@ -260,7 +262,16 @@ details.fold pre { white-space: pre-wrap; background: var(--sunken); padding: 12
 .prompt-row { display: grid; grid-template-columns: 76px minmax(0, 1fr) 190px; column-gap: 12px; align-items: center; }
 .prompt-track { position: relative; height: 24px; }
 .segments { position: absolute; top: 0; left: 0; height: 14px; display: flex; gap: 2px; border-radius: 4px; overflow: hidden; }
-.segments > i { display: block; height: 100%; min-width: 2px; }
+.segments > .segment { display: block; height: 100%; min-width: 2px; border: 0; padding: 0; cursor: pointer; }
+.segments.has-chosen > .segment:not(.chosen) { opacity: .4; }
+.part-text { border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+.part-text-head { display: flex; align-items: center; gap: 4px 10px; flex-wrap: wrap; padding: 6px 6px 6px 12px; background: var(--sunken); font-size: 13.5px; }
+.part-text-head .swatch { margin-right: 0; }
+.part-text-head .icon-button { margin-left: auto; width: 30px; height: 30px; font-size: 18px; }
+.part-text pre { margin: 0; max-height: 60vh; overflow: auto; padding: 10px 12px; white-space: pre-wrap; overflow-wrap: anywhere; font-family: var(--mono); font-size: 12.5px; line-height: 1.5; }
+.part-button { border: 0; background: none; padding: 0; cursor: pointer; text-align: left; color: var(--link); }
+.part-button:hover { text-decoration: underline; }
+table.parts tr.chosen td { background: var(--hover); }
 .cache-track { position: absolute; top: 17px; left: 0; height: 6px; display: flex; gap: 2px; border-radius: 3px; overflow: hidden; }
 .cache-track > i { display: block; height: 100%; }
 .cache-cut { position: absolute; top: -3px; height: 30px; width: 0; border-left: 2px dashed var(--ink); }
@@ -291,24 +302,30 @@ table.parts .number { text-align: right; }
 
 .memory-headline { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; font-size: 14px; color: var(--ink-2); }
 .memory-headline .hero { font-size: 30px; font-weight: 600; color: var(--ink); font-variant-numeric: tabular-nums; }
-.memory-bar { display: flex; gap: 2px; height: 16px; border-radius: 4px; overflow: hidden; }
-.memory-bar > i { display: block; height: 100%; min-width: 2px; }
-.mem-app { background: var(--seg-system); }
-.mem-wired { background: var(--seg-tools); }
-.mem-compressed { background: var(--seg-earlier); }
-.mem-cached { background: var(--cached); }
-.mem-free { background: var(--sunken); box-shadow: inset 0 0 0 1px var(--border); }
+.ram-track { display: flex; flex-direction: column; gap: 4px; }
+.memory-bar { display: flex; gap: 2px; height: 20px; border-radius: 4px; overflow: hidden; }
+.memory-bar > i { display: block; height: 100%; min-width: 2px; transition: opacity .12s; }
+.memory-bar.pointing > i:not(.lit) { opacity: .4; }
+.memory-ticks { position: relative; height: 16px; font-size: 11.5px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+.memory-ticks span { position: absolute; transform: translateX(-50%); white-space: nowrap; }
+.memory-ticks .start { transform: none; }
+.memory-ticks .end { transform: translateX(-100%); }
 .mem-setup { background: var(--seg-question); }
 .mem-weights { background: repeating-linear-gradient(135deg, var(--seg-question) 0 3px, color-mix(in srgb, var(--seg-question) 40%, var(--surface)) 3px 6px); }
 .mem-other { background: var(--cached); }
-.process-track { position: relative; padding-top: 20px; }
-.ram-line { position: absolute; top: 0; bottom: -4px; width: 0; border-left: 2px dashed var(--ink); }
-.ram-line > span { position: absolute; top: 0; right: 6px; white-space: nowrap; font-size: 12px; color: var(--ink-2); }
+.mem-compressed { background: repeating-linear-gradient(45deg, var(--router) 0 2px, var(--cached) 2px 5px); }
+.mem-macos { background: var(--router); }
+.mem-free { background: var(--sunken); box-shadow: inset 0 0 0 1px var(--border); }
+.disk-note { font-size: 13px; color: var(--ink-2); }
+.disk-note strong { color: var(--ink); }
 .memory-tables { display: grid; grid-template-columns: repeat(2, minmax(0, 720px)); gap: 8px 48px; }
 .memory-tables table.parts { width: 100%; }
 .memory-tables .number { white-space: nowrap; }
+.memory-tables td.warn { color: var(--warn); font-weight: 600; }
+.memory-tables tr.lit td { background: var(--hover); }
 .table-title { margin: 6px 0 0; font-size: 13.5px; font-weight: 600; }
 .row-note { display: block; margin-left: 18px; font-size: 12px; color: var(--ink-3); }
+.row-note .swatch { width: 14px; }
 .row-note.warn { color: var(--warn); }
 tr.not-running td { color: var(--ink-3); }
 

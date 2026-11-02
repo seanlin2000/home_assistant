@@ -102,6 +102,17 @@ async def test_the_prompt_splits_into_the_parts_the_harness_lays_out_in_order() 
     assert all(tool.tokens > 0 for tool in layout.tools)
 
 
+async def test_each_part_keeps_its_text_as_the_model_read_it_and_together_they_are_the_whole_prompt() -> None:
+    trace = search_trace()
+    layout = await prompt_layout(trace, calls_with(await recorded_sizes(trace), [None, None]), TemplatingServer())
+    whole = await TemplatingServer().render_prompt(prompt_parts(trace).last_prompt(), trace.tool_specs)
+    assert "".join(layout.part_texts.values()) == whole
+    assert layout.part_texts["system rules"].startswith("<system>Be brief.")
+    assert layout.part_texts["tool definitions"].startswith("{search_and_read,calculate}")
+    assert "Who won in 1995?" in layout.part_texts["question"]
+    assert "text" not in layout.calls[0].model_dump()["segments"][0]
+
+
 async def test_a_cache_reaching_past_the_tools_then_the_whole_last_prompt_is_as_expected() -> None:
     trace = search_trace()
     sizes = await recorded_sizes(trace)

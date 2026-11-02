@@ -10,7 +10,7 @@ import asyncio
 from enum import StrEnum
 from typing import Protocol
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from assistant_core.exchange_record import ExchangeTrace
 from assistant_core.models import GenerationStats, Message, Role, ToolSpec
@@ -42,6 +42,7 @@ class Segment(BaseModel):
     label: str
     start: int
     tokens: int
+    text: str = Field(default="", exclude=True)  # as the model read it, template markers included; sent once per exchange in `part_texts`
 
     @property
     def end(self) -> int:
@@ -72,8 +73,7 @@ class ToolSize(BaseModel):
 class PromptLayout(BaseModel):
     exact: bool
     note: str = ""
-    system_prompt: str
-    per_question_block: str
+    part_texts: dict[str, str]  # each part's label to its text as the model read it, from the last call's prompt, which holds every part
     tools: list[ToolSize]
     calls: list[CallLayout]
 
@@ -130,8 +130,7 @@ async def prompt_layout(trace: ExchangeTrace, model_calls: list[GenerationStats]
     return PromptLayout(
         exact=exact,
         note=layout_note(tools, exact),
-        system_prompt=parts.system.content,
-        per_question_block=parts.per_question_block,
+        part_texts={segment.label: segment.text for segment in segments if segment.text},
         tools=await tool_sizes(parts.system, tools, counter),
         calls=call_layouts(model_calls, segments, replies, first_call_expects),
     )
@@ -152,7 +151,8 @@ def prompt_parts(trace: ExchangeTrace) -> PromptParts:
 
 
 async def measured_segments(parts: PromptParts, tools: list[ToolSpec], counter: PromptCounter) -> list[Segment]:
-    """Each part's end in characters, from where a render up to it stops matching the whole prompt, then in tokens, by counting the text before it."""
+    """Each part's end in characters, from where a render up to it stops matching the whole prompt, then in tokens, by counting the text before it.
+    Each part keeps its characters, so the page can show the text the model read."""
     whole = await counter.render_prompt(parts.last_prompt(), tools)
     beginnings = part_beginnings(parts, tools)
     ends = await asyncio.gather(*(matching_length(messages, part_tools, whole, counter) for _kind, _label, messages, part_tools in beginnings))
@@ -161,7 +161,9 @@ async def measured_segments(parts: PromptParts, tools: list[ToolSpec], counter: 
     labels = [(kind, label) for kind, label, _messages, _tools in beginnings] + [(SegmentKind.REST, CLOSING_LABEL)]
     starts = [0, *token_ends]
     stops = [*token_ends, total]
-    return [Segment(kind=kind, label=label, start=start, tokens=stop - start) for (kind, label), start, stop in zip(labels, starts, stops) if stop > start]
+    texts = [whole[start:stop] for start, stop in zip([0, *ends], [*ends, len(whole)])]
+    measured = zip(labels, starts, stops, texts)
+    return [Segment(kind=kind, label=label, start=start, tokens=stop - start, text=text) for (kind, label), start, stop, text in measured if stop > start]
 
 
 def part_beginnings(parts: PromptParts, tools: list[ToolSpec]) -> list[tuple[SegmentKind, str, list[Message], list[ToolSpec]]]:
