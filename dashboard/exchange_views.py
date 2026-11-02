@@ -102,8 +102,7 @@ class ExchangeStore:
 
     def records_since(self, moment: datetime) -> list[ExchangeRecord]:
         """Every exchange recorded at or after the moment; the day files are UTC days, so a local day can span two of them."""
-        first_day = moment.astimezone(UTC).date()
-        records = [record for day, _path in self._records.day_files() if day >= first_day for record in self._records.read_day(day)]
+        records = self._records.read_since(moment.astimezone(UTC).date())
         return [record for record in records if datetime.fromisoformat(record.recorded_at) >= moment]
 
     def summaries(self, day: date) -> list[ExchangeSummary]:
