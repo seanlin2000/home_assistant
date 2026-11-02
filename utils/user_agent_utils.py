@@ -1,4 +1,4 @@
-"""The User-Agent our own API clients send (Wikipedia, Met.no and Open-Meteo, ESPN, Arctic Shift), as opposed to the current-Chrome agent page
+"""The User-Agent our own API clients send (Wikipedia, Met.no and Open-Meteo, ESPN, Arctic Shift, Nominatim), as opposed to the current-Chrome agent page
 reads send (utils/browser_utils.py).
 
 It names the application and gives the repository as the way to reach its owner, so no personal address leaves the network. The form is the one
