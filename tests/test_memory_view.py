@@ -1,5 +1,6 @@
-"""The memory tab: this Mac's memory split as Activity Monitor splits it, the Home Assistant setup's processes found and added up with the weights
-llama-server reports for its loaded model, everything else grouped by app, and one reading shared by every page that asks (design doc v2/13 section 3.11)."""
+"""The memory tab: this Mac's RAM split into pieces that add up to it, each app counting only what it holds in RAM, the Home Assistant setup found and
+given the weights llama-server reports for its loaded model, everything else grouped by app, and one reading shared by every page that asks (design
+doc v2/13 section 3.11)."""
 
 from pathlib import Path
 
@@ -18,14 +19,14 @@ MODEL_WEIGHTS_BYTES = 5 * GIB
 TOP = """Processes: 6 total, 1 running, 5 sleeping, 400 threads
 PhysMem: 15G used (8083M wired, 4602M compressor), 94M unused.
 
-PID    MEM
-101    512M+
-102    4096M
-103    3G
-104    100M-
-105    1024M
-106    2M
-107    96M
+PID    MEM    CMPRS
+101    512M+  128M
+102    4096M  3840M
+103    3G     1G
+104    100M-  60M
+105    1024M  0B
+106    2M     0B
+107    96M    32M
 """
 EXECUTABLES = """  101 /opt/homebrew/bin/llama-server
   102 /Applications/UTM.app/Contents/XPCServices/QEMUHelper.xpc/Contents/MacOS/QEMULauncher.app/Contents/MacOS/QEMULauncher
@@ -56,11 +57,6 @@ SYSCTL = """17179869184
 total = 2048.00M  used = 1024.50M  free = 1023.50M  (encrypted)
 Apple M1 Pro
 """
-IOREG = """+-o AGXAcceleratorG13X  <class AGXAcceleratorG13X>
-    {
-      "PerformanceStatistics" = {"In use system memory"=6164348928,"Alloc system memory"=7000000000}
-    }
-"""
 
 
 class LoadedModel:
@@ -77,46 +73,48 @@ class LoadedModel:
 
 
 def outputs() -> MemoryOutputs:
-    return MemoryOutputs(top=TOP, executables=EXECUTABLES, command_lines=COMMAND_LINES, vm_stat=VM_STAT, sysctl=SYSCTL, ioreg=IOREG, computer_name="Studio\n")
+    return MemoryOutputs(top=TOP, executables=EXECUTABLES, command_lines=COMMAND_LINES, vm_stat=VM_STAT, sysctl=SYSCTL, computer_name="Studio\n")
 
 
 def test_sizes_read_with_their_units_and_growth_marks() -> None:
     assert [size_in_bytes(text) for text in ["512M+", "3G", "100M-", "12K", "0B", "N/A"]] == [512 * 1024**2, 3 * GIB, 100 * 1024**2, 12 * 1024, 0, None]
 
 
-def test_the_mac_is_split_the_way_activity_monitor_splits_it() -> None:
-    machine = memory_view(outputs(), MODEL_WEIGHTS_BYTES).machine
+def test_the_pieces_add_up_to_the_macs_ram() -> None:
+    view = memory_view(outputs(), MODEL_WEIGHTS_BYTES)
+    machine = view.machine
     page = 16384
     assert (machine.name, machine.chip, machine.total_bytes) == ("Studio", "Apple M1 Pro", 16 * GIB)
-    assert machine.app_bytes == (262144 - 16384) * page
-    assert machine.wired_bytes == 131072 * page
-    assert machine.compressed_bytes == 65536 * page
-    assert machine.cached_files_bytes == (65536 + 16384) * page
-    assert machine.free_bytes == 16 * GIB - (245760 + 131072 + 65536 + 81920) * page
+    assert (machine.compressed_bytes, machine.file_cache_bytes, machine.unused_bytes) == (65536 * page, (65536 + 16384) * page, 4624 * page)
+    pieces = [view.setup_ram_bytes, view.others_ram_bytes, machine.compressed_bytes, machine.macos_bytes, machine.file_cache_bytes, machine.unused_bytes]
+    assert machine.macos_bytes > 0 and sum(pieces) == machine.total_bytes
     assert (machine.swap_used_bytes, machine.swap_total_bytes) == (round(1024.5 * 1024**2), 2048 * 1024**2)
-    assert machine.gpu_in_use_bytes == 6164348928
+
+
+def test_an_app_counts_only_what_it_holds_in_ram_and_the_rest_as_compressed_or_on_disk() -> None:
+    view = memory_view(outputs(), MODEL_WEIGHTS_BYTES)
+    home_assistant = next(group for group in view.setup if group.name == "Home Assistant VM (UTM)")
+    assert (home_assistant.ram_bytes, home_assistant.compressed_bytes) == (256 * 1024**2, 3840 * 1024**2)
+    assert [(group.name, group.processes, group.ram_bytes, group.compressed_bytes) for group in view.others] == [("Firefox", 2, 3 * GIB, GIB), ("zsh", 1, 2 * 1024**2, 0)]
 
 
 def test_the_setup_adds_llama_servers_model_weights_and_lists_components_not_running() -> None:
     view = memory_view(outputs(), MODEL_WEIGHTS_BYTES)
     by_name = {group.name: group for group in view.setup}
     llama = by_name["llama-server"]
-    assert (llama.footprint_bytes, llama.model_weights_bytes, llama.total_bytes) == (512 * 1024**2, MODEL_WEIGHTS_BYTES, 512 * 1024**2 + MODEL_WEIGHTS_BYTES)
-    assert by_name["Home Assistant VM (UTM)"].total_bytes == 4 * GIB
-    assert by_name["harness"].processes == 1
-    assert by_name["Kokoro, text to speech"].processes == 0
+    assert (llama.ram_bytes, llama.model_weights_bytes, llama.compressed_bytes) == (384 * 1024**2 + MODEL_WEIGHTS_BYTES, MODEL_WEIGHTS_BYTES, 128 * 1024**2)
+    assert (by_name["harness"].processes, by_name["Kokoro, text to speech"].processes) == (1, 0)
     assert view.setup[0].name == "llama-server"
-    assert view.setup_bytes == sum(group.total_bytes for group in view.setup)
+    assert view.setup_ram_bytes == sum(group.ram_bytes for group in view.setup)
 
 
 def test_a_shell_that_started_a_service_is_not_counted_as_the_service() -> None:
     by_name = {group.name: group for group in memory_view(outputs(), MODEL_WEIGHTS_BYTES).setup}
-    assert (by_name["exchange dashboard"].processes, by_name["exchange dashboard"].footprint_bytes) == (1, 96 * 1024**2)
+    assert (by_name["exchange dashboard"].processes, by_name["exchange dashboard"].ram_bytes) == (1, 64 * 1024**2)
 
 
-def test_everything_else_is_grouped_by_app() -> None:
-    others = memory_view(outputs(), MODEL_WEIGHTS_BYTES).others
-    assert [(group.name, group.processes, group.total_bytes) for group in others] == [("Firefox", 2, 4 * GIB), ("zsh", 1, 2 * 1024**2)]
+def test_macos_share_is_never_negative_when_the_apps_claim_more_than_is_left() -> None:
+    assert memory_view(outputs(), 20 * GIB).machine.macos_bytes == 0
 
 
 async def test_one_reading_serves_every_page_for_a_few_seconds() -> None:
@@ -159,7 +157,7 @@ async def test_llama_server_running_but_not_answering_is_shown_without_its_weigh
         return outputs()
 
     llama = next(group for group in (await MemoryReader(read_outputs, loaded).current()).setup if group.name == "llama-server")
-    assert (llama.model_weights_bytes, llama.total_bytes) == (0, 512 * 1024**2)
+    assert (llama.model_weights_bytes, llama.ram_bytes) == (0, 384 * 1024**2)
     assert llama.note == "model weights not counted: llama-server did not say which model it has loaded"
 
 
