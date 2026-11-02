@@ -21,6 +21,7 @@ from assistant_core.converse_protocol import NDJSON_MEDIA_TYPE, ConverseRequest,
 from assistant_core.models import AgentEvent
 from dashboard.exchange_views import ExchangeStore
 from dashboard.generation_speed import local_midnight, local_now, today_speed
+from dashboard.memory_reader import MemoryReader
 from dashboard.prompt_layout import prompt_layout
 from dashboard.settings import STATIC_DIR, LlamaServerAccess
 from dashboard.slot_views import slots_view
@@ -38,6 +39,7 @@ def build_app(
     lifespan: Callable[[Starlette], AbstractAsyncContextManager[None]] | None = None,
     clock: Clock = local_now,
     llama_server: LlamaServerAccess | None = None,
+    memory: MemoryReader | None = None,
 ) -> Starlette:
     async def index(_request: Request) -> Response:
         return FileResponse(STATIC_DIR / "index.html")
@@ -83,6 +85,15 @@ def build_app(
 
         return await from_llama_server(current_slots)
 
+    async def memory_now(_request: Request) -> Response:
+        if memory is None:
+            return JSONResponse({"error": "the memory tab reads macOS's own tools, so it is off on other systems"}, status_code=503)
+        try:
+            view = await memory.current()
+        except (OSError, TimeoutError, ValueError) as error:
+            return JSONResponse({"error": f"this Mac's memory could not be read: {type(error).__name__}: {error}"}, status_code=503)
+        return Response(view.model_dump_json(), media_type="application/json")
+
     async def ask(request: Request) -> Response:
         if converse is None:
             return JSONResponse({"error": "the chat box is off: the harness's API key was not found"}, status_code=503)
@@ -105,6 +116,7 @@ def build_app(
         Route("/api/days/{day}/exchanges/{index:int}", exchange),
         Route("/api/days/{day}/exchanges/{index:int}/prompt", prompt),
         Route("/api/slots", slots),
+        Route("/api/memory", memory_now),
         Mount("/static", StaticFiles(directory=STATIC_DIR), name="static"),
     ]
     return Starlette(routes=routes, middleware=[Middleware(BaseHTTPMiddleware, dispatch=refuse_other_hosts)], lifespan=lifespan)

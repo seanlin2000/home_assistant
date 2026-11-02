@@ -286,6 +286,28 @@ table.parts td { padding: 3px 18px 3px 0; border-top: 1px solid var(--border); }
 table.parts .number { text-align: right; }
 .swatch { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 8px; vertical-align: -1px; }
 
+.memory-headline { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; font-size: 14px; color: var(--ink-2); }
+.memory-headline .hero { font-size: 30px; font-weight: 600; color: var(--ink); font-variant-numeric: tabular-nums; }
+.memory-bar { display: flex; gap: 2px; height: 16px; border-radius: 4px; overflow: hidden; }
+.memory-bar > i { display: block; height: 100%; min-width: 2px; }
+.mem-app { background: var(--seg-system); }
+.mem-wired { background: var(--seg-tools); }
+.mem-compressed { background: var(--seg-earlier); }
+.mem-cached { background: var(--cached); }
+.mem-free { background: var(--sunken); box-shadow: inset 0 0 0 1px var(--border); }
+.mem-setup { background: var(--seg-question); }
+.mem-weights { background: repeating-linear-gradient(135deg, var(--seg-question) 0 3px, color-mix(in srgb, var(--seg-question) 40%, var(--surface)) 3px 6px); }
+.mem-other { background: var(--cached); }
+.process-track { position: relative; padding-top: 20px; }
+.ram-line { position: absolute; top: 0; bottom: -4px; width: 0; border-left: 2px dashed var(--ink); }
+.ram-line > span { position: absolute; top: 0; right: 6px; white-space: nowrap; font-size: 12px; color: var(--ink-2); }
+.memory-tables { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 28px; }
+.memory-tables table.parts { width: 100%; }
+.memory-tables .number { white-space: nowrap; }
+.table-title { margin: 6px 0 0; font-size: 13.5px; font-weight: 600; }
+.row-note { display: block; margin-left: 18px; font-size: 12px; color: var(--ink-3); }
+tr.not-running td { color: var(--ink-3); }
+
 .composer { flex: none; padding: 0 20px 10px; }
 .composer-box { max-width: 768px; margin: 0 auto; display: flex; align-items: flex-end; gap: 8px; background: var(--panel); border-radius: 26px; box-shadow: var(--shadow); padding: 10px 10px 10px 20px; }
 .composer textarea { flex: 1; min-width: 0; border: 0; outline: 0; resize: none; background: none; color: var(--ink); font: inherit; font-size: 16px; line-height: 1.5; max-height: 200px; padding: 6px 0; }
@@ -333,6 +355,8 @@ mark { background: var(--mark); color: inherit; border-radius: 3px; padding: 0 1
   .prompt-row { grid-template-columns: 64px minmax(0, 1fr); }
   .prompt-row > .lane-seconds { grid-column: 2; text-align: left; }
   .verdict { grid-template-columns: 18px 64px minmax(0, 1fr); }
+  .memory-tables { grid-template-columns: minmax(0, 1fr); }
+  .memory-tables table.parts th, .memory-tables table.parts td { padding-right: 10px; }
   .speed-grid > :nth-child(5n) { display: none; }
   .source-row { grid-template-columns: 22px minmax(0, 1fr) 72px 16px; }
   .source-row .site, .source-row .coverage { display: none; }

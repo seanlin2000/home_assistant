@@ -2,6 +2,7 @@
 
 import asyncio
 import logging
+import sys
 from collections.abc import AsyncIterator, Callable
 from contextlib import AbstractAsyncContextManager, asynccontextmanager
 
@@ -12,8 +13,20 @@ from assistant_core.harness_client import HarnessClient
 from assistant_service.exchange_log import ExchangeLog, TraceLog
 from dashboard.app import Converse, build_app
 from dashboard.exchange_views import ExchangeStore
+from dashboard.memory_reader import MemoryReader, read_memory_outputs
 from dashboard.pipeline_collector import PipelineRunCollector
-from dashboard.settings import DASHBOARD_HOST, DASHBOARD_PORT, PIPELINE_POLL_SECONDS, HomeAssistantAccess, allowed_hosts, harness_key, harness_url, home_assistant_access, llama_server_access
+from dashboard.settings import (
+    DASHBOARD_HOST,
+    DASHBOARD_PORT,
+    PIPELINE_POLL_SECONDS,
+    HomeAssistantAccess,
+    allowed_hosts,
+    harness_key,
+    harness_url,
+    home_assistant_access,
+    llama_server_access,
+    served_model_file_bytes,
+)
 from ops import paths
 from ops.ha_client import HomeAssistant
 from ops.pipeline_runs import PipelineRun, PipelineRunLog, pull_and_close
@@ -26,8 +39,13 @@ def main() -> None:
     runs = PipelineRunLog(paths.pipeline_runs_dir())
     store = ExchangeStore(ExchangeLog(paths.exchanges_dir()), TraceLog(paths.traces_dir()), runs)
     lifespan = lifespan_for(collector_for(runs, home_assistant_access()))
-    app = build_app(store, allowed_hosts(), converse=converse_for(harness_key()), lifespan=lifespan, llama_server=llama_server_access())
+    app = build_app(store, allowed_hosts(), converse=converse_for(harness_key()), lifespan=lifespan, llama_server=llama_server_access(), memory=memory_reader())
     uvicorn.run(app, host=DASHBOARD_HOST, port=DASHBOARD_PORT, log_level="warning")
+
+
+def memory_reader() -> MemoryReader | None:
+    """The memory tab reads macOS's own tools; elsewhere it is off."""
+    return MemoryReader(read_memory_outputs, served_model_file_bytes()) if sys.platform == "darwin" else None
 
 
 def converse_for(key: str | None) -> Converse | None:
