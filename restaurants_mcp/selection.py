@@ -5,6 +5,7 @@ from typing import Literal, Protocol
 
 from pydantic import BaseModel
 
+from restaurants_mcp.cities import HOME_CUISINES, HOUSE_STYLE_LABELS
 from restaurants_mcp.locations import plain_words
 from restaurants_mcp.restaurants import Award, Restaurant
 
@@ -25,8 +26,14 @@ class RestaurantFilters(BaseModel):
         return self.serves_cuisine(restaurant) and self.within_price(restaurant) and self.has_award(restaurant)
 
     def serves_cuisine(self, restaurant: Restaurant) -> bool:
-        """Every word asked is in Michelin's cuisine: "seafood" finds "Fish and Seafood", "japanese" does not find "Sushi"."""
-        return set(plain_words(self.cuisine)) <= set(plain_words(restaurant.cuisine))
+        """Every word asked is in Michelin's cuisine: "seafood" finds "Fish and Seafood", "japanese" does not find "Sushi". A city's home cuisine
+        finds its house styles too: "French" in Paris finds "Modern Cuisine", "Classic Cuisine", and "Creative"."""
+        asked_words = set(plain_words(self.cuisine))
+        return asked_words <= set(plain_words(restaurant.cuisine)) or self.names_home_cuisine_of(restaurant)
+
+    def names_home_cuisine_of(self, restaurant: Restaurant) -> bool:
+        home_words = {word for cuisine in HOME_CUISINES.get(restaurant.guide_city, ()) for word in plain_words(cuisine)}
+        return restaurant.cuisine in HOUSE_STYLE_LABELS and bool(home_words & set(plain_words(self.cuisine)))
 
     def within_price(self, restaurant: Restaurant) -> bool:
         return self.max_price is None or (restaurant.price_level is not None and restaurant.price_level <= self.max_price)
