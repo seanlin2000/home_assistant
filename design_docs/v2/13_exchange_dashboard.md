@@ -69,7 +69,7 @@ Each model call has prompt tokens, cached tokens, the seconds spent reading the 
 
 The page asks for the list of days every two seconds. When the newest day gains an exchange, the list refreshes and, while "Open new exchanges as they arrive" is ticked, the new exchange opens. Each exchange's address (`#/day/line`) can be bookmarked or shared on the home network.
 
-The page is laid out like a chat app: exchanges in a sidebar, the open exchange as a conversation in the middle, and the question box at the bottom. The header names the model that answered the newest exchange, which is the model the harness is serving now; each exchange names its own model under its answer, so a model swap shows up exchange by exchange.
+The page, titled Assistant Dashboard, is laid out like a chat app: exchanges in a sidebar, the open exchange as a conversation in the middle, and the question box at the bottom. The header names the model that answered the newest exchange, which is the model the harness is serving now; each exchange names its own model under its answer, so a model swap shows up exchange by exchange.
 
 Above the open exchange sit the earlier questions of its conversation, found by conversation id on that day and the day before. Each shows only its answer until it is clicked; it then opens its own steps and timing chart in place, so a follow-up can be compared with the question before it without leaving the conversation.
 
@@ -80,6 +80,21 @@ Typing a question is the quickest way to test a change to the harness without sp
 ### 3.8 Opening it
 
 `scripts/services.sh install` adds the dashboard as a launchd agent beside the harness. `scripts/services.sh dashboard` starts that agent if it is not running and opens the page; before install has written the agent, it runs the dashboard in the terminal instead. From another computer at home, the page is at the Mac's address on port 8775, which the command prints.
+
+### 3.9 Prefill and decode per response, and today's average
+
+Prefill is the time a model call spends reading its prompt, and decode is the time it spends writing. The timing chart (3.5) shows both for each model call. Two numbers answer whether a change made the assistant faster: what this response cost, and what a response costs on an ordinary day.
+
+**This response.** A card under each answer adds up the response's model calls, since every tool round reads and writes again:
+
+| Row | Time | Tokens | Speed |
+|---|---|---|---|
+| Prefill | the sum of the calls' prompt reading | read fresh, and how many came from the prompt cache | fresh tokens over prefill time |
+| Decode | the sum of the calls' writing | written | written tokens over decode time |
+
+The prefill speed leaves the cached tokens out, because reusing them costs almost nothing. A line under the table lists each call by the number the timing chart gives it, so "model #2" names the same call in both. A last column compares each time with today's average, as slower or faster by so many seconds. Model calls without timings (an engine that did not report them) are left out. A response with none shows no card.
+
+**Today's average.** The header shows today's response count, the average prefill and decode time per response, and today's speeds. Today runs from midnight on the Mac's clock, not UTC as the day files do, so an evening in New York is not split at 8 pm across two days; the dashboard reads the one or two UTC day files that local day spans. The speeds divide all of today's tokens by all of today's seconds, so a long prompt counts for more than a short one. The page asks for these figures with the day list, every two seconds.
 
 ## 4. Packages and what they do for the business logic
 
@@ -109,6 +124,7 @@ Typing a question is the quickest way to test a change to the harness without sp
 ## 7. Concepts for newcomers
 
 - **Prompt cache.** The model server keeps the prompt it last read, so the next call reads only the new tokens. The chart's "cached" count is how much of a call's prompt it did not have to read again.
+- **Prefill and decode.** Prefill is the model reading the prompt, many tokens at once; decode is the model writing the answer, one token at a time. On the laptop prefill runs at a few hundred tokens a second and decode at about forty (v2/02 section 7).
 - **Pipeline run.** Home Assistant's record of one voice exchange: wake word, speech to text, the agent, text to speech, each with timestamps.
 
 ## 8. Sources

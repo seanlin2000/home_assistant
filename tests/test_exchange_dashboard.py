@@ -17,6 +17,7 @@ from assistant_service.exchange_log import ExchangeArchive, ExchangeLog, TraceLo
 from dashboard.app import Converse, build_app
 from dashboard.evidence import distinctive_terms, tool_evidence
 from dashboard.exchange_views import ExchangeStore
+from dashboard.generation_speed import response_speed, today_speed
 from dashboard.pipeline_collector import PipelineRunCollector
 from dashboard.pipeline_match import matching_run
 from dashboard.timeline import Lane, build_timeline
@@ -38,6 +39,7 @@ The season was shortened by the strike.
 If these sources do not answer the question, say plainly that you could not find it.
 </untrusted>"""
 ALLOWED_HOSTS = ["mac.lan:8775"]
+NEW_YORK_EVENING = datetime.fromisoformat("2026-11-02T21:00:00-05:00")
 
 
 def search_transcript() -> Transcript:
@@ -160,7 +162,7 @@ def seeded_store(tmp_path: Path) -> tuple[ExchangeStore, ExchangeRecord]:
 
 
 def client_for(store: ExchangeStore, converse: Converse | None = None) -> httpx.AsyncClient:
-    return httpx.AsyncClient(transport=httpx.ASGITransport(app=build_app(store, ALLOWED_HOSTS, converse=converse)), base_url="http://mac.lan:8775")
+    return httpx.AsyncClient(transport=httpx.ASGITransport(app=build_app(store, ALLOWED_HOSTS, converse=converse, clock=lambda: NEW_YORK_EVENING)), base_url="http://mac.lan:8775")
 
 
 async def test_the_api_lists_a_day_and_opens_an_exchange_with_its_trace_and_speech(tmp_path: Path) -> None:
@@ -311,3 +313,49 @@ async def test_the_chat_box_is_off_without_the_harness_key_and_refuses_other_sit
         assert (await client.post("/api/ask", json=ASKED)).status_code == 503
     async with client_for(store, RecordingHarness(reachable=True).converse) as client:
         assert (await client.post("/api/ask", json=ASKED, headers={"origin": "http://evil.example"})).status_code == 421
+
+
+def timed_record(recorded_at: str) -> ExchangeRecord:
+    """The search exchange with both model calls timed: 900 tokens read then 500 more over 900 cached, 20 and 15 written."""
+    record = recorded("", recorded_at)
+    first, second = record.model_calls
+    second = second.model_copy(update={"fresh_prompt_tokens": 500, "prompt_eval_seconds": 0.1, "generation_seconds": 1.0})
+    return record.model_copy(update={"model_calls": [first, second]})
+
+
+def test_a_response_adds_up_its_timed_model_calls() -> None:
+    speed = response_speed(timed_record("2026-11-02T12:00:00+00:00"))
+    assert (speed.prefill_seconds, speed.prefill_tokens, speed.cached_tokens) == (0.5, 1400, 900)
+    assert (speed.decode_seconds, speed.decode_tokens) == (1.5, 35)
+
+
+def test_untimed_model_calls_are_left_out_and_a_response_without_any_has_no_speed() -> None:
+    record = recorded("", "2026-11-02T12:00:00+00:00")
+    assert (response_speed(record).prefill_tokens, response_speed(record).decode_seconds) == (900, 0.5)
+    assert response_speed(record.model_copy(update={"model_calls": record.model_calls[1:]})) is None
+
+
+def test_today_averages_per_response_and_weighs_speed_by_tokens() -> None:
+    since = datetime.fromisoformat("2026-11-02T00:00:00-05:00")
+    timed, untimed = timed_record("2026-11-02T12:00:00+00:00"), recorded("", "2026-11-02T13:00:00+00:00")
+    today = today_speed([timed, untimed], since)
+    assert (today.responses, today.prefill_seconds, today.decode_seconds) == (2, 0.45, 1.0)
+    assert (today.prefill_tokens_per_second, today.decode_tokens_per_second) == (2300 / 0.9, 55 / 2.0)
+    assert today_speed([], since).responses == 0
+
+
+async def test_today_starts_at_midnight_on_the_macs_clock_across_two_utc_day_files(tmp_path: Path) -> None:
+    records = ExchangeLog(tmp_path / "exchanges")
+    for recorded_at in ["2026-11-02T03:00:00+00:00", "2026-11-02T06:00:00+00:00", "2026-11-03T01:30:00+00:00"]:
+        append_jsonl(records.path_for(datetime.fromisoformat(recorded_at).date()), timed_record(recorded_at))
+    store = ExchangeStore(records, TraceLog(tmp_path / "traces"), PipelineRunLog(tmp_path / "pipeline_runs"))
+    async with client_for(store) as client:
+        today = (await client.get("/api/today")).json()
+    assert (today["since"], today["responses"]) == ("2026-11-02T00:00:00-05:00", 2)
+
+
+async def test_an_exchange_carries_its_prefill_and_decode(tmp_path: Path) -> None:
+    store, record = seeded_store(tmp_path)
+    async with client_for(store) as client:
+        speed = (await client.get(f"/api/days/{record.recorded_at[:10]}/exchanges/0")).json()["speed"]
+    assert (speed["prefill_seconds"], speed["prefill_tokens"], speed["decode_tokens"]) == (0.4, 900, 20)

@@ -3,7 +3,7 @@
 
 const POLL_MS = 2000;
 const SHORT_RESULT_CHARS = 600;
-const state = { openNextArrival: false, asking: false, live: null, days: [], day: null, summaries: [], selected: null, detail: null, drawerCard: null, drawerTab: "sources" };
+const state = { openNextArrival: false, asking: false, live: null, days: [], day: null, summaries: [], selected: null, detail: null, today: null, drawerCard: null, drawerTab: "sources" };
 const chat = { id: newConversationId(), history: [] };
 
 const $ = (id) => document.getElementById(id);
@@ -33,18 +33,30 @@ const localTime = (iso) => new Date(iso).toLocaleTimeString([], { hour: "2-digit
 const kilo = (chars) => (chars >= 1000 ? `${(chars / 1000).toFixed(1)}k chars` : `${chars} chars`);
 const wordsOnly = (text) => text.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
 const argumentText = (args) => Object.entries(args).map(([key, value]) => `${key}=${JSON.stringify(value)}`).join(", ");
+const tokensPerSecond = (perSecond) => (perSecond === null || perSecond === undefined ? "–" : `${Math.round(perSecond)} tok/s`);
+const count = (tokens) => tokens.toLocaleString();
 
 
 async function poll() {
   try {
-    const [days, latest] = await Promise.all([getJson("/api/days"), getJson("/api/latest")]);
+    const [days, latest, today] = await Promise.all([getJson("/api/days"), getJson("/api/latest"), getJson("/api/today")]);
     $("model").textContent = latest ? latest.model : "";
+    renderToday(today);
     setStatus("live", "live");
     await takeDays(days);
   } catch (error) {
     setStatus("down", "dashboard unreachable, retrying");
   }
   setTimeout(poll, POLL_MS);
+}
+
+// Today's averages sit in the header, and each response's card compares itself with them.
+function renderToday(today) {
+  state.today = today;
+  const parts = today.responses
+    ? [`Today · ${today.responses} responses`, `prefill avg ${seconds(today.prefill_seconds)} · ${tokensPerSecond(today.prefill_tokens_per_second)}`, `decode avg ${seconds(today.decode_seconds)} · ${tokensPerSecond(today.decode_tokens_per_second)}`]
+    : ["Today · no responses yet"];
+  $("today").replaceChildren(...parts.map((part) => el("span", {}, part)));
 }
 
 function setStatus(kind, text) {
@@ -228,6 +240,7 @@ function assistantTurn(detail) {
     answerElement(record),
     sourceChips(detail),
     el("div", { class: "meta" }, metaBadges(detail)),
+    speedCard(detail),
     timingCard(detail),
     detail.system_prompt && fold(`System prompt (${detail.system_prompt.length} chars)`, detail.system_prompt),
     !detail.has_trace && el("div", { class: "note-line" }, "The full tool text for this exchange is gone (no trace kept, or older than 14 days); sizes and times remain."),
@@ -326,6 +339,41 @@ function sourceRow(source) {
   );
 }
 
+
+function speedCard(detail) {
+  const speed = detail.speed;
+  if (!speed) return null;
+  const today = state.today && state.today.responses ? state.today : null;
+  const cell = (text, kind = "") => el("span", { class: kind }, text);
+  const row = (phase, phaseSeconds, tokens, tokensText, average) => [cell(phase, "phase"), cell(seconds(phaseSeconds)), cell(tokensText), cell(tokensPerSecond(phaseSeconds > 0 ? tokens / phaseSeconds : null)), versusAverage(phaseSeconds, average)];
+  return el(
+    "div",
+    { class: "speed-card" },
+    el("div", { class: "speed-title" }, "This response"),
+    el(
+      "div",
+      { class: "speed-grid" },
+      ["", "time", "tokens", "speed", "vs today's average"].map((heading) => cell(heading, "head")),
+      row("prefill", speed.prefill_seconds, speed.prefill_tokens, `${count(speed.prefill_tokens)} read, ${count(speed.cached_tokens)} cached`, today && today.prefill_seconds),
+      row("decode", speed.decode_seconds, speed.decode_tokens, `${count(speed.decode_tokens)} written`, today && today.decode_seconds),
+    ),
+    perCallLine(detail.record.model_calls),
+  );
+}
+
+function versusAverage(phaseSeconds, average) {
+  if (average === null || average === undefined) return el("span", { class: "versus" }, "–");
+  const difference = phaseSeconds - average;
+  if (Math.abs(difference) < 0.005) return el("span", { class: "versus" }, "the same");
+  return el("span", { class: `versus ${difference > 0 ? "slower" : "faster"}` }, `${seconds(Math.abs(difference))} ${difference > 0 ? "slower" : "faster"}`);
+}
+
+// Numbered as in the timing chart, so "model #2" names the same call in both.
+function perCallLine(modelCalls) {
+  const timed = modelCalls.map((stats, index) => ({ stats, number: index + 1 })).filter(({ stats }) => stats.prompt_eval_seconds !== null && stats.generation_seconds !== null);
+  if (timed.length < 2) return null;
+  return el("div", { class: "speed-calls" }, timed.map(({ stats, number }) => `model #${number}: prefill ${seconds(stats.prompt_eval_seconds)}, decode ${seconds(stats.generation_seconds)}`).join(" · "));
+}
 
 function timingCard(detail) {
   const timeline = detail.timeline;
