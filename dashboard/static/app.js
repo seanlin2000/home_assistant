@@ -53,6 +53,7 @@ const wordsOnly = (text) => text.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim(
 const argumentText = (args) => Object.entries(args).map(([key, value]) => `${key}=${JSON.stringify(value)}`).join(", ");
 const tokensPerSecond = (perSecond) => (perSecond === null || perSecond === undefined ? "–" : `${Math.round(perSecond)} tok/s`);
 const count = (tokens) => tokens.toLocaleString();
+const plural = (amount, noun) => `${amount} ${noun}${amount === 1 ? "" : "s"}`;
 // Binary gigabytes, labelled GB the way Activity Monitor labels them, so the two read the same.
 const memorySize = (bytes) => (bytes < 1024 ** 3 ? `${Math.round(bytes / 1024 ** 2)} MB` : `${(bytes / 1024 ** 3).toFixed(bytes < 10 * 1024 ** 3 ? 2 : 1)} GB`);
 const MEMORY_SMALL_SHARE = 0.01;
@@ -272,8 +273,7 @@ function assistantTurn(detail) {
     answerElement(record),
     sourceChips(detail),
     el("div", { class: "meta" }, metaBadges(detail)),
-    speedCard(detail),
-    timingCard(detail),
+    responseCard(detail),
     detail.system_prompt && fold(`System prompt (${detail.system_prompt.length} chars)`, detail.system_prompt),
     !detail.has_trace && el("div", { class: "note-line" }, "The full tool text for this exchange is gone (no trace kept, or older than 14 days); sizes and times remain."),
   );
@@ -300,9 +300,6 @@ function metaBadges(detail) {
   const record = detail.record;
   const badges = [
     el("span", { title: "the model that answered this exchange" }, record.model),
-    el("span", {}, `total ${seconds(record.total_seconds)}`),
-    el("span", {}, `first word ${seconds(record.time_to_first_spoken_seconds)}`),
-    el("span", {}, `${record.model_calls.length} model calls · ${record.tool_calls.length} tool calls`),
     el("span", {}, `${record.spoken_chars} chars spoken`),
     record.untrusted && el("span", { class: "badge warn" }, "read untrusted text"),
   ];
@@ -372,52 +369,56 @@ function sourceRow(source) {
 }
 
 
-function speedCard(detail) {
-  const speed = detail.speed;
-  if (!speed) return null;
-  const today = state.today && state.today.responses ? state.today : null;
-  const cell = (text, kind = "") => el("span", { class: kind }, text);
-  const row = (phase, phaseSeconds, tokens, tokensText, average) => [cell(phase, "phase"), cell(seconds(phaseSeconds)), cell(tokensText), cell(tokensPerSecond(phaseSeconds > 0 ? tokens / phaseSeconds : null)), versusAverage(phaseSeconds, average)];
-  return el(
-    "div",
-    { class: "speed-card" },
-    el("div", { class: "speed-title" }, "This response"),
-    el(
-      "div",
-      { class: "speed-grid" },
-      ["", "time", "tokens", "speed", "vs today's average"].map((heading) => cell(heading, "head")),
-      row("prefill", speed.prefill_seconds, speed.prefill_tokens, `${count(speed.prefill_tokens)} read, ${count(speed.cached_tokens)} cached`, today && today.prefill_seconds),
-      row("decode", speed.decode_seconds, speed.decode_tokens, `${count(speed.decode_tokens)} written`, today && today.decode_seconds),
-    ),
-    perCallLine(detail.record.model_calls),
-  );
-}
-
-function versusAverage(phaseSeconds, average) {
-  if (average === null || average === undefined) return el("span", { class: "versus" }, "–");
-  const difference = phaseSeconds - average;
-  if (Math.abs(difference) < 0.005) return el("span", { class: "versus" }, "the same");
-  return el("span", { class: `versus ${difference > 0 ? "slower" : "faster"}` }, `${seconds(Math.abs(difference))} ${difference > 0 ? "slower" : "faster"}`);
-}
-
-// Numbered as in the timing chart, so "model #2" names the same call in both.
-function perCallLine(modelCalls) {
-  const timed = modelCalls.map((stats, index) => ({ stats, number: index + 1 })).filter(({ stats }) => stats.prompt_eval_seconds !== null && stats.generation_seconds !== null);
-  if (timed.length < 2) return null;
-  return el("div", { class: "speed-calls" }, timed.map(({ stats, number }) => `model #${number}: prefill ${seconds(stats.prompt_eval_seconds)}, decode ${seconds(stats.generation_seconds)}`).join(" · "));
-}
-
-function timingCard(detail) {
+function responseCard(detail) {
   const timeline = detail.timeline;
   const note = [timeline.approximate ? "approximate: this exchange was recorded before steps were timestamped" : "", detail.speech ? "" : "speech timings not available"].filter(Boolean).join(" · ");
   return el(
     "details",
-    { class: "fold timing", open: true },
-    el("summary", {}, `Timing · ${seconds(timeline.total_seconds)} total, first word at ${seconds(timeline.first_spoken_seconds)}`),
+    { class: "fold response", open: true },
+    el("summary", {}, "This response", el("span", { class: "folded-only" }, `· ${seconds(timeline.total_seconds)} total, first word at ${seconds(timeline.first_spoken_seconds)}`)),
+    el("div", { class: "figures" }, responseFigures(detail)),
     note && el("div", { class: "timing-note" }, note),
     timelineGrid(timeline),
     timelineLegend(),
   );
+}
+
+// Prefill and decode lead with their speed; their seconds are already drawn in the steps chart under the figures.
+function responseFigures(detail) {
+  const record = detail.record;
+  const speed = detail.speed;
+  const today = state.today && state.today.responses ? state.today : null;
+  const prefillRate = speed && rate(speed.prefill_tokens, speed.prefill_seconds);
+  const decodeRate = speed && rate(speed.decode_tokens, speed.decode_seconds);
+  return [
+    figure(el("i", { class: "swatch first-word" }), "first word", seconds(detail.timeline.first_spoken_seconds), "after the question arrived"),
+    figure(null, "total", seconds(detail.timeline.total_seconds), `${plural(record.model_calls.length, "model call")}, ${plural(record.tool_calls.length, "tool call")}`),
+    speed &&
+      figure(
+        el("i", { class: "swatch seg-read" }),
+        "prefill",
+        tokensPerSecond(prefillRate),
+        `${count(speed.prefill_tokens)} read, ${count(speed.cached_tokens)} cached`,
+        `over ${seconds(speed.prefill_seconds)}`,
+        versusAverage(prefillRate, today && today.prefill_tokens_per_second),
+      ),
+    speed && figure(el("i", { class: "swatch seg-write" }), "decode", tokensPerSecond(decodeRate), `${count(speed.decode_tokens)} written over ${seconds(speed.decode_seconds)}`, versusAverage(decodeRate, today && today.decode_tokens_per_second)),
+  ];
+}
+
+function figure(swatch, name, value, ...details) {
+  return el("div", { class: "figure" }, el("span", { class: "name" }, swatch, name), el("span", { class: "value" }, value), details.filter(Boolean).map((text) => el("span", { class: "sub" }, text)));
+}
+
+function rate(tokens, phaseSeconds) {
+  return phaseSeconds > 0 ? tokens / phaseSeconds : null;
+}
+
+function versusAverage(perSecond, average) {
+  if (perSecond === null || average === null || average === undefined) return null;
+  const difference = perSecond - average;
+  if (Math.abs(difference) < 1) return el("span", { class: "versus" }, "the same as today's average");
+  return el("span", { class: `versus ${difference > 0 ? "faster" : "slower"}` }, `${Math.round(Math.abs(difference))} tok/s ${difference > 0 ? "faster" : "slower"} than today's average`);
 }
 
 function timelineGrid(timeline) {
@@ -483,8 +484,8 @@ function timelineLegend() {
     { class: "legend" },
     entry("background:var(--speech)", "speech (Home Assistant)"),
     entry("background:var(--router)", "router"),
-    entry("background:var(--model-read)", "model reading the prompt"),
-    entry("background:var(--model-write)", "model writing"),
+    entry("background:var(--model-read)", "prefill: reading the prompt"),
+    entry("background:var(--model-write)", "decode: writing"),
     entry("background:repeating-linear-gradient(135deg,var(--model-load) 0 3px,transparent 3px 6px)", "model loading"),
     entry("background:var(--tool)", "tool"),
     entry("border-left:2px dashed var(--speech);width:0;border-radius:0", "first word spoken"),

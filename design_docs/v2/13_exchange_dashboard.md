@@ -63,7 +63,7 @@ A tool result shows as a card in the conversation: the call, its time, and a sho
 
 ### 3.5 Reading and writing time
 
-Each model call has prompt tokens, cached tokens, the seconds spent reading the prompt, and the seconds spent writing (`GenerationStats`). The chart splits each model bar into loading (Ollama only), reading, and writing, so it shows that every round rereads its context, not only the first.
+Each model call has prompt tokens, cached tokens, the seconds spent reading the prompt, and the seconds spent writing (`GenerationStats`). The chart, in the This response card (3.9), splits each model bar into loading (Ollama only), reading (prefill), and writing (decode), so it shows that every round rereads its context, not only the first.
 
 ### 3.6 Live updates
 
@@ -89,14 +89,16 @@ The dashboard belongs on the Mac that serves the assistant, beside the harness a
 
 Prefill is the time a model call spends reading its prompt, and decode is the time it spends writing. The timing chart (3.5) shows both for each model call. Two numbers answer whether a change made the assistant faster: what this response cost, and what a response costs on an ordinary day.
 
-**This response.** A card under each answer adds up the response's model calls, since every tool round reads and writes again:
+**This response.** One card under each answer holds the response's timing. Four figures sit across its top:
 
-| Row | Time | Tokens | Speed |
-|---|---|---|---|
-| Prefill | the sum of the calls' prompt reading | read fresh, and how many came from the prompt cache | fresh tokens over prefill time |
-| Decode | the sum of the calls' writing | written | written tokens over decode time |
+| Figure | What it shows |
+|---|---|
+| First word | Seconds from the question reaching the agent to the first spoken word |
+| Total | Seconds for the whole response, with how many model and tool calls it made |
+| Prefill | Speed reading the prompt: fresh tokens over the calls' summed prompt reading, with the tokens read fresh and cached and the seconds |
+| Decode | Speed writing: written tokens over the calls' summed writing, with the tokens written and the seconds |
 
-The prefill speed leaves the cached tokens out, because reusing them costs almost nothing. A line under the table lists each call by the number the timing chart gives it, so "model #2" names the same call in both. A last column compares each time with today's average, as slower or faster by so many seconds. Model calls without timings (an engine that did not report them) are left out. A response with none shows no card.
+Prefill and decode lead with their speed rather than their time, because the steps chart under the figures (3.5) already draws each call's reading and writing time, in the same two colours the figures carry. Both figures add up every model call, since every tool round reads and writes again. The prefill speed leaves the cached tokens out, because reusing them costs almost nothing. Each speed is compared with today's speed, as faster or slower by so many tokens a second, once today has responses. Model calls without timings (an engine that did not report them) are left out, and a response with none shows only first word and total. The card folds to one line giving the total and the first word.
 
 **Today's average.** The header shows today's response count, the average prefill and decode time per response, and today's speeds. Today runs from midnight on the Mac's clock, not UTC as the day files do, so an evening in New York is not split at 8 pm across two days; the dashboard reads the one or two UTC day files that local day spans. The speeds divide all of today's tokens by all of today's seconds, so a long prompt counts for more than a short one. The page asks for these figures with the day list, every two seconds.
 
