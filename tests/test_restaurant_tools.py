@@ -118,6 +118,25 @@ def test_the_filters_admit_by_cuisine_word_price_ceiling_and_award() -> None:
     assert admitted(RestaurantFilters(award="bib_gourmand", cuisine="chinese")) == ["Dim Sum Go Go"]
 
 
+def test_a_citys_home_cuisine_is_one_umbrella_over_its_house_styles() -> None:
+    paris = ("Paris", "", "Île-de-France", "Paris")
+    in_paris = [
+        restaurant("Kei", paris, Award.THREE_STARS, 4, "Modern Cuisine", (48.8630, 2.3420)),
+        restaurant("Arpège", paris, Award.THREE_STARS, 4, "Creative", (48.8556, 2.3168)),
+        restaurant("Chez Georges", paris, Award.SELECTED, 3, "Traditional Cuisine", (48.8660, 2.3410)),
+        restaurant("Sushi B", paris, Award.ONE_STAR, 4, "Japanese", (48.8650, 2.3360)),
+    ]
+    creative_in_tokyo = restaurant("Florilège", SHIBUYA, Award.TWO_STARS, 4, "Creative", (35.6650, 139.7130))
+
+    def admitted(cuisine: str) -> list[str]:
+        return names([restaurant for restaurant in [*in_paris, creative_in_tokyo, *RESTAURANTS] if RestaurantFilters(cuisine=cuisine).admits(restaurant)])
+
+    assert admitted("French") == ["Kei", "Arpège", "Chez Georges"]  # Michelin labels none of them "French" in Paris
+    assert admitted("modern French") == ["Kei", "Arpège", "Chez Georges"]  # no split between modern and traditional
+    assert admitted("Japanese") == ["Sushi B", "Den"]  # Tokyo names its own cuisine, so its Creative restaurant is not Japanese
+    assert admitted("Brazilian") == ["Tuju"]
+
+
 def test_restaurants_come_best_awarded_first_then_by_name() -> None:
     assert names(best_awarded_first(RESTAURANTS[:4])) == ["Le Bernardin", "Casa Mono", "Alta Calidad", "Dim Sum Go Go"]
 

@@ -81,6 +81,33 @@ GUIDE_CITIES = (
     guide_city("Buenos Aires", "ciudad-autonoma-de-buenos-aires/buenos-aires_7770009"),
 )
 
+# Michelin names a country's own cooking only abroad: French food is "French" in Tokyo but "Modern Cuisine", "Classic Cuisine", or "Creative" in
+# Paris. In these guide cities each such style label counts as the home cuisine, one umbrella with no split between modern and traditional (the
+# user's choice, 2026-11-02). London is left out because Michelin writes "Modern British" there and its London "Modern Cuisine" is mostly French-led
+# kitchens; US and Asian cities are left out because Michelin names their cuisines.
+HOME_CUISINES = {
+    "Paris": ("French",),
+    "Brussels": ("Belgian", "French"),
+    "Madrid": ("Spanish",),
+    "Barcelona": ("Spanish", "Catalan"),
+    "Milan": ("Italian",),
+    "Rome": ("Italian",),
+    "Lisbon": ("Portuguese",),
+    "Amsterdam": ("Dutch",),
+    "Copenhagen": ("Danish", "Nordic", "Scandinavian"),
+    "Stockholm": ("Swedish", "Nordic", "Scandinavian"),
+    "Berlin": ("German",),
+    "Munich": ("German",),
+    "Vienna": ("Austrian",),
+    "Zurich": ("Swiss",),
+    "Istanbul": ("Turkish",),
+    "Montreal": ("Quebecois", "Canadian"),
+    "Buenos Aires": ("Argentinian", "Argentine"),
+    "Sao Paulo": ("Brazilian",),
+    "Mexico City": ("Mexican",),
+}
+HOUSE_STYLE_LABELS = frozenset({"Modern Cuisine", "Traditional Cuisine", "Classic Cuisine", "Regional Cuisine", "Country cooking", "Home Cooking", "Creative"})
+
 NEW_YORK_BOROUGHS = frozenset({"Manhattan", "Brooklyn", "Queens", "The Bronx", "Staten Island"})
 BAY_AREA_DISTRICTS = frozenset({"San Francisco", "East Bay", "South Bay", "Peninsula", "Marin"})
 DESCRIBED_DISTRICTS = {"New York State": NEW_YORK_BOROUGHS, "California": BAY_AREA_DISTRICTS}  # Michelin's region, then its districts within it
