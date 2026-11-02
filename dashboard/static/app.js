@@ -985,7 +985,14 @@ function setupTable(view) {
     el(
       "tr",
       { class: group.processes ? null : "not-running" },
-      el("td", {}, el("i", { class: "swatch mem-setup" }), group.name, group.model_weights_bytes > 0 && el("span", { class: "row-note" }, `${memorySize(group.model_weights_bytes)} of it model weights`)),
+      el(
+        "td",
+        {},
+        el("i", { class: "swatch mem-setup" }),
+        group.name,
+        group.model_weights_bytes > 0 && el("span", { class: "row-note" }, `${memorySize(group.model_weights_bytes)} of it model weights`),
+        group.note && el("span", { class: "row-note warn" }, group.note),
+      ),
       el("td", { class: "number" }, group.processes ? processCount(group.processes) : "not running"),
       el("td", { class: "number" }, group.processes ? memorySize(group.total_bytes) : "–"),
     ),

@@ -71,6 +71,8 @@ The page asks for the list of days every two seconds. When the newest day gains 
 
 The page, titled Assistant Dashboard, is laid out like a chat app: exchanges in a sidebar, the open exchange as a conversation in the middle, and the question box at the bottom. The header names the model that answered the newest exchange, which is the model the harness is serving now; each exchange names its own model under its answer, so a model swap shows up exchange by exchange.
 
+The page is sized for laptop and desktop screens, from a 13-inch laptop to a 27-inch monitor. The conversation widens with the window, from 768 pixels up to about 1,180, and stays one column of reading. The prompt cache and memory tabs, which are charts and tables, fill the window up to 1,880 pixels. Below 860 pixels, as in a window snapped to half a laptop screen, the sidebar folds away behind a button.
+
 Above the open exchange sit the earlier questions of its conversation, found by conversation id on that day and the day before. Each shows only its answer until it is clicked; it then opens its own steps and timing chart in place, so a follow-up can be compared with the question before it without leaving the conversation.
 
 ### 3.7 The chat box
@@ -174,7 +176,7 @@ Notes under the bar say how much of the wired memory the GPU holds, and how much
 
 A component is matched on the executable and the first two words of its command line, which name a script and the interpreter running it. A shell that started a service names the service further along its command line, so it is not counted as the service. A component that is not running is still listed, as not running, so a stopped service shows as stopped rather than vanishing.
 
-**llama-server's model weights.** llama-server maps its model file and hands it to the GPU, so the weights sit in wired memory and appear in no process's footprint. Stopping llama-server on the laptop freed about 5.6 GB of wired memory, its 0.5 GB footprint plus the 5.15 GB model file. The tab therefore adds the size of the model file in `config/serving.toml` to llama-server's footprint, and draws it hatched beside it.
+**llama-server's model weights.** llama-server maps its model file and hands it to the GPU, so the weights sit in wired memory and appear in no process's footprint. Stopping llama-server on the laptop freed about 5.6 GB of wired memory, its 0.5 GB footprint plus the 5.15 GB model file. No tool on macOS reports that memory per process without root: `vmmap` counts only the few hundred megabytes of the file llama-server itself has touched, and the GPU driver reports one figure for every program using the GPU. llama-server does report the model it has loaded: `/v1/models` gives the size of its weights in bytes. The tab asks for it at every reading, so when llama-server is restarted with another model, or swaps models while it runs, the next reading shows the new size with no restart of the dashboard. The size is added to llama-server's footprint and drawn hatched beside it. The GPU note under the machine bar is the cross-check: the GPU's total should be the weights plus a little more for the cache and the other programs drawing on screen.
 
 **Everything else** is grouped by app, so a browser's dozens of helper processes count as the browser. The seven largest apps are named, and the rest are one group. Two tables under the bar, the setup and everything else, give each group's processes and size, so colour is not the only way to read the bar. Sizes are binary gigabytes labelled GB, as Activity Monitor labels them, so the two read the same.
 
@@ -208,6 +210,7 @@ A component is matched on the executable and the first two words of its command 
 - **A trace is missing** (an exchange from before this change, or older than 14 days). The page shows the record's summary, with tool calls as names, arguments, sizes, and times, and says the full text is gone.
 - **llama-server is down, still loading, or refuses the key.** The prompt cache tab says so in place of the slots and the bars; the conversation view is unaffected.
 - **The memory tools fail, time out, or the dashboard runs on something other than macOS.** The memory tab says why in place of its bars; the other tabs are unaffected.
+- **llama-server is running but does not answer** (still loading, or its key is missing). llama-server is shown with its footprint alone, and its row says the model weights are not counted, rather than guessing at them.
 - **A component's program is renamed.** It drops out of the setup into everything else, and the setup lists it as not running; its pattern in `dashboard/memory_views.py` has to follow the rename.
 - **Two pipeline runs could match one exchange** (the same question asked twice in two minutes). The run matching on both conversation id and question wins; between equals, the closer start time does.
 

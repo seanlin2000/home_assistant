@@ -18,7 +18,7 @@ CONVERSATION_SLOT = 0
 QUIET_SLOT = 1
 WARM_UP_USER_TEXT = "Hello."
 REQUEST_TIMEOUT_SECONDS = 300.0
-SLOTS_TIMEOUT_SECONDS = 5.0
+MONITORING_TIMEOUT_SECONDS = 5.0
 STREAM_DATA_PREFIX = "data: "
 STREAM_END = "[DONE]"
 MILLISECONDS_PER_SECOND = 1000
@@ -97,8 +97,15 @@ class LlamaServerClient:
 
     async def slots(self) -> list[dict[str, Any]]:
         """Each slot's state and its last request's sizes, as llama-server's monitoring endpoint reports them."""
-        async with httpx.AsyncClient(timeout=SLOTS_TIMEOUT_SECONDS, headers=self._headers) as client:
-            response = await client.get(f"{self._base_url}/slots")
+        return await self._get("/slots")
+
+    async def loaded_model_bytes(self) -> int:
+        """The size of the weights of the model llama-server has loaded, whatever file it was started with."""
+        return weights_bytes(await self._get("/v1/models"))
+
+    async def _get(self, path: str) -> Any:
+        async with httpx.AsyncClient(timeout=MONITORING_TIMEOUT_SECONDS, headers=self._headers) as client:
+            response = await client.get(f"{self._base_url}{path}")
         response.raise_for_status()
         return response.json()
 
@@ -107,6 +114,11 @@ class LlamaServerClient:
             response = await client.post(f"{self._base_url}{path}", json=body)
         response.raise_for_status()
         return response.json()
+
+
+def weights_bytes(models_reply: dict[str, Any]) -> int:
+    """`/v1/models` lists the loaded model with its weights' size in bytes; a model without one (not loaded, in router mode) adds nothing."""
+    return sum(model["meta"]["size"] for model in models_reply["data"] if "size" in model.get("meta", {}))
 
 
 def response_request_body(messages: list[Message], tools: list[ToolSpec], policy: AgentPolicy) -> dict[str, Any]:

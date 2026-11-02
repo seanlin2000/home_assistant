@@ -57,12 +57,6 @@ def llama_server_access() -> LlamaServerAccess | None:
     return LlamaServerAccess(client=client, pool_tokens=serving.served_model.context_tokens, conversation_tokens=serving.served_model.conversation_tokens)
 
 
-def served_model_file_bytes() -> int | None:
-    """The served model's file size, which the memory tab adds to llama-server's footprint: with every layer on the GPU, the whole file is held in memory."""
-    model_file = Path(load_serving_config().served_model.gguf).expanduser()
-    return model_file.stat().st_size if model_file.exists() else None
-
-
 def home_assistant_access() -> HomeAssistantAccess | None:
     """Home Assistant's address and token from .env, as the health check reads them; None turns the pipeline run collector off."""
     load_dotenv(PROJECT_DIR / ".env")

@@ -4,6 +4,9 @@ run on the Mac the dashboard runs on, so a page opened from a laptop shows the s
 import asyncio
 import time
 from collections.abc import Awaitable, Callable
+from typing import Protocol
+
+import httpx
 
 from dashboard.memory_views import MemoryOutputs, MemoryView, memory_view
 
@@ -22,6 +25,10 @@ ReadOutputs = Callable[[], Awaitable[MemoryOutputs]]
 Clock = Callable[[], float]
 
 
+class ModelWeightsSource(Protocol):
+    async def loaded_model_bytes(self) -> int: ...
+
+
 async def read_memory_outputs() -> MemoryOutputs:
     texts = await asyncio.gather(*(command_output(arguments) for arguments in COMMANDS.values()))
     return MemoryOutputs(**dict(zip(COMMANDS, texts)))
@@ -38,9 +45,11 @@ async def command_output(arguments: list[str]) -> str:
 
 
 class MemoryReader:
-    def __init__(self, read_outputs: ReadOutputs, model_file_bytes: int | None, clock: Clock = time.monotonic) -> None:
+    """llama-server is asked for its model's size at every reading, so a switch to another model shows at the next one, with no restart."""
+
+    def __init__(self, read_outputs: ReadOutputs, llama_server: ModelWeightsSource | None, clock: Clock = time.monotonic) -> None:
         self._read_outputs = read_outputs
-        self._model_file_bytes = model_file_bytes
+        self._llama_server = llama_server
         self._clock = clock
         self._lock = asyncio.Lock()
         self._view: MemoryView | None = None
@@ -49,6 +58,20 @@ class MemoryReader:
     async def current(self) -> MemoryView:
         async with self._lock:
             if self._view is None or self._clock() - self._taken_at >= SNAPSHOT_SECONDS:
-                self._view = memory_view(await self._read_outputs(), self._model_file_bytes)
+                outputs, model_weights_bytes = await asyncio.gather(self._read_outputs(), self._model_weights_bytes())
+                self._view = memory_view(outputs, model_weights_bytes)
                 self._taken_at = self._clock()
             return self._view
+
+    async def _model_weights_bytes(self) -> int | None:
+        if self._llama_server is None:
+            return None
+        return await reported_model_bytes(self._llama_server)
+
+
+async def reported_model_bytes(llama_server: ModelWeightsSource) -> int | None:
+    """None when llama-server cannot say, as while it is down or still loading; the tab then shows llama-server without its weights."""
+    try:
+        return await llama_server.loaded_model_bytes()
+    except (httpx.HTTPError, KeyError):
+        return None

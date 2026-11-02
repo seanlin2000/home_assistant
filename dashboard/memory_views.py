@@ -2,7 +2,7 @@
 
 Each process's size is its physical footprint, the figure Activity Monitor shows: what the process allocated itself, compressed and swapped-out
 memory included, so on a Mac under pressure the footprints add up to more than its RAM. llama-server's model weights are the exception: they are
-mapped from the model file and held by the GPU, outside the footprint, so the model file's size is added to llama-server's.
+mapped from the model file and held by the GPU, outside the footprint, so the size llama-server reports for its loaded model is added to its own.
 """
 
 import re
@@ -20,6 +20,7 @@ VM_STAT_LINE = re.compile(r'^"?([^":]+)"?:\s+(\d+)\.?$')
 PAGE_SIZE = re.compile(r"page size of (\d+) bytes")
 APP_BUNDLE = re.compile(r"/([^/]+)\.app/")
 LLAMA_SERVER = "llama-server"
+UNKNOWN_WEIGHTS_NOTE = "model weights not counted: llama-server did not say which model it has loaded"
 
 
 class SetupComponent(BaseModel):
@@ -73,6 +74,7 @@ class ProcessGroup(BaseModel):
     footprint_bytes: int
     model_weights_bytes: int = 0  # llama-server's weights, mapped from the model file and outside its footprint
     total_bytes: int
+    note: str = ""
 
 
 class MemoryView(BaseModel):
@@ -90,11 +92,11 @@ class RunningProcess(BaseModel):
     footprint_bytes: int
 
 
-def memory_view(outputs: MemoryOutputs, model_file_bytes: int | None) -> MemoryView:
+def memory_view(outputs: MemoryOutputs, model_weights_bytes: int | None) -> MemoryView:
     processes = running_processes(outputs)
     setup_processes = {component.name: [process for process in processes if matches(component, process)] for component in SETUP_COMPONENTS}
     claimed = {process.pid for members in setup_processes.values() for process in members}
-    setup = sorted((setup_group(name, members, model_file_bytes) for name, members in setup_processes.items()), key=lambda group: -group.total_bytes)
+    setup = sorted((setup_group(name, members, model_weights_bytes) for name, members in setup_processes.items()), key=lambda group: -group.total_bytes)
     others = other_groups([process for process in processes if process.pid not in claimed])
     return MemoryView(
         machine=machine_memory(outputs),
@@ -144,10 +146,13 @@ def program_text(process: RunningProcess) -> str:
     return f"{process.executable}\n{' '.join(process.command_line.split()[:2])}"
 
 
-def setup_group(name: str, members: list[RunningProcess], model_file_bytes: int | None) -> ProcessGroup:
-    footprint = sum(process.footprint_bytes for process in members)
-    weights = (model_file_bytes or 0) if name == LLAMA_SERVER and members else 0
-    return ProcessGroup(name=name, processes=len(members), footprint_bytes=footprint, model_weights_bytes=weights, total_bytes=footprint + weights)
+def setup_group(name: str, members: list[RunningProcess], model_weights_bytes: int | None) -> ProcessGroup:
+    group = plain_group(name, members)
+    if name != LLAMA_SERVER or not members:
+        return group
+    if model_weights_bytes is None:
+        return group.model_copy(update={"note": UNKNOWN_WEIGHTS_NOTE})
+    return group.model_copy(update={"model_weights_bytes": model_weights_bytes, "total_bytes": group.footprint_bytes + model_weights_bytes})
 
 
 def other_groups(processes: list[RunningProcess]) -> list[ProcessGroup]:
