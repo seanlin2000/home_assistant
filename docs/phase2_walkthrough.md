@@ -29,7 +29,7 @@ When you are done for the day, go to the last section and shut things down, so t
                                                │ LAN
   ┌────────────────────────────── the Mac  192.168.1.152 ─────────────────────────────────────────┐
   │  Ollama :11434         gemma4:e4b-it-qat, the language model                                   │
-  │  web-search-mcp :8765  the tool server: 3 search tools + 8 calculator tools                    │
+  │  assistant-mcp :8765   the tool server: 3 search tools + 8 calculator tools                    │
   │      └─▶ SearXNG :8080 (Docker, localhost only)  ─▶  Google, Bing, Brave, DuckDuckGo           │
   │  Whisper :10300        speech to text (Wyoming protocol)                                       │
   │  Kokoro  :10210        text to speech (Wyoming protocol), alternative to Piper                 │
@@ -70,7 +70,7 @@ uv run python scripts/benchmark_llm.py --help
 
 ## 2. The tool server (web search and calculator)
 
-`web-search-mcp` is our own server. The model never touches the internet itself; it asks this server, over a protocol called MCP, to run a named tool with arguments and gets text back.
+`assistant-mcp` is our own server. The model never touches the internet itself; it asks this server, over a protocol called MCP, to run a named tool with arguments and gets text back.
 
 Check it is up and list its tools:
 

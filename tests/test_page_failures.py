@@ -8,12 +8,12 @@ import pytest
 
 from assistant_core.models import ToolCall
 from assistant_core.tools import McpToolBox
+from assistant_mcp.server import build_server
 from tests.test_url_guard import HTML, extractor_with, fake_resolver
 from web_search_mcp.page_extractor import PageExtractor
 from web_search_mcp.page_failures import PageFailure, PageUnreadable
 from web_search_mcp.query_cache import QueryCache
 from web_search_mcp.searxng_client import SearchResult
-from web_search_mcp.server import build_server
 from web_search_mcp.settings import SearchSettings
 
 PUBLIC = {"site.example": ["93.184.216.34"]}

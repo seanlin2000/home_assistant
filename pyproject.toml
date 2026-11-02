@@ -22,7 +22,7 @@ dependencies = [
 ]
 
 [project.scripts]
-web-search-mcp = "web_search_mcp.server:main"
+assistant-mcp = "assistant_mcp.server:main"
 benchmark-run = "benchmark.run:main"
 benchmark-judge = "benchmark.judge:main"
 benchmark-report = "benchmark.report:main"
@@ -63,7 +63,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
-packages = ["assistant_core", "web_search_mcp", "calculator_mcp", "weather_mcp", "wikipedia_mcp", "sports_mcp", "broadway_mcp", "movies_mcp", "reddit_mcp", "benchmark", "voice", "ops", "utils", "deslop", "pr_references", "manual_checks", "diagrams", "serving", "assistant_service", "dashboard"]
+packages = ["assistant_core", "assistant_mcp", "web_search_mcp", "calculator_mcp", "weather_mcp", "wikipedia_mcp", "sports_mcp", "broadway_mcp", "movies_mcp", "reddit_mcp", "benchmark", "voice", "ops", "utils", "deslop", "pr_references", "manual_checks", "diagrams", "serving", "assistant_service", "dashboard"]
 
 [tool.uv]
 required-version = ">=0.5"

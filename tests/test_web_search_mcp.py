@@ -8,11 +8,12 @@ import httpx
 
 from assistant_core.models import ToolCall
 from assistant_core.tools import McpToolBox
+from assistant_mcp.server import build_server
 from web_search_mcp.page_extractor import PageExcerpt, PageExtractor, apply_total_budget
 from web_search_mcp.page_markdown import to_passage_format
 from web_search_mcp.query_cache import QueryCache
+from web_search_mcp.register import NOT_FOUND_INSTRUCTION, clipped_with_note, render_grounded_context
 from web_search_mcp.searxng_client import SearchResult
-from web_search_mcp.server import NOT_FOUND_INSTRUCTION, build_server, clipped_with_note, render_grounded_context
 from web_search_mcp.settings import SearchSettings
 
 SMASHWIKI_PAGE = Path("tests/fixtures/smashwiki_kill_confirm.html").read_text()

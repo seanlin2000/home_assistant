@@ -3,14 +3,15 @@
 import httpx
 import pytest
 
-from web_search_mcp.server import build_server, transport_security_for
+from assistant_mcp.server import build_server, transport_security_for
+from assistant_mcp.settings import ToolServerSettings
 from web_search_mcp.settings import SearchSettings
 
 
 def client_for(allowed_hosts: str = "") -> httpx.AsyncClient:
-    settings = SearchSettings(searxng_url="http://127.0.0.1:1", allowed_hosts=allowed_hosts)
-    server = build_server(settings)
-    return httpx.AsyncClient(transport=httpx.ASGITransport(app=server.streamable_http_app(transport_security=transport_security_for(settings))), base_url="http://testserver")
+    tool_server = ToolServerSettings(allowed_hosts=allowed_hosts)
+    server = build_server(SearchSettings(searxng_url="http://127.0.0.1:1"), tool_server=tool_server)
+    return httpx.AsyncClient(transport=httpx.ASGITransport(app=server.streamable_http_app(transport_security=transport_security_for(tool_server))), base_url="http://testserver")
 
 
 @pytest.mark.asyncio
@@ -34,8 +35,8 @@ async def test_host_allow_list_turns_away_other_names_and_browser_origins() -> N
 
 @pytest.mark.asyncio
 async def test_host_allow_list_also_guards_the_mcp_endpoint() -> None:
-    settings = SearchSettings(searxng_url="http://127.0.0.1:1", allowed_hosts="mac.lan:8765")
-    app = build_server(settings).streamable_http_app(transport_security=transport_security_for(settings))
+    tool_server = ToolServerSettings(allowed_hosts="mac.lan:8765")
+    app = build_server(SearchSettings(searxng_url="http://127.0.0.1:1"), tool_server=tool_server).streamable_http_app(transport_security=transport_security_for(tool_server))
     mcp_headers = {"content-type": "application/json", "accept": "application/json, text/event-stream"}
     async with app.router.lifespan_context(app), httpx.AsyncClient(transport=httpx.ASGITransport(app=app), base_url="http://testserver") as client:
         assert (await client.post("/mcp", content=b"{}", headers=mcp_headers | {"host": "evil.example:8765"})).status_code == 421

@@ -19,7 +19,7 @@ def test_docs_tests_and_ops_change_nothing() -> None:
 
 
 def test_tool_server_code_restarts_only_the_tool_server() -> None:
-    assert actions("web_search_mcp/server.py") == ["restart:mcp"]
+    assert actions("assistant_mcp/server.py") == ["restart:mcp"]
     assert actions("calculator_mcp/tools.py") == ["restart:mcp"]
     assert actions("weather_mcp/forecast.py") == ["restart:mcp"]
     assert actions("broadway_mcp/shows.py") == ["restart:mcp"]
@@ -48,7 +48,7 @@ def test_lock_change_syncs_first_and_restarts_every_python_service() -> None:
 
 
 def test_services_script_change_reinstalls_agents_instead_of_individual_restarts() -> None:
-    assert actions("scripts/services.sh", "web_search_mcp/server.py", "voice/kokoro_server.py") == ["reinstall_agents"]
+    assert actions("scripts/services.sh", "assistant_mcp/server.py", "voice/kokoro_server.py") == ["reinstall_agents"]
     assert actions("scripts/services.sh", "uv.lock") == ["sync_env", "reinstall_agents"]
 
 
@@ -57,10 +57,10 @@ def test_searxng_config_restarts_the_container_and_component_deploy_runs_last() 
 
 
 def test_plan_records_why_each_action_was_chosen() -> None:
-    plan = deploy.plan_actions(["assistant_core/models.py", "web_search_mcp/server.py"])
+    plan = deploy.plan_actions(["assistant_core/models.py", "assistant_mcp/server.py"])
     assert plan.reasons["restart:mcp"].startswith("assistant_core/models.py")
     assert "component" in plan.reasons["deploy_component"]
-    assert plan.changed == ["assistant_core/models.py", "web_search_mcp/server.py"]
+    assert plan.changed == ["assistant_core/models.py", "assistant_mcp/server.py"]
 
 
 LOCK = """

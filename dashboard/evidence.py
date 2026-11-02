@@ -9,7 +9,7 @@ from urllib.parse import urlparse
 
 from pydantic import BaseModel
 
-from web_search_mcp.server import NOT_FOUND_INSTRUCTION
+from web_search_mcp.register import NOT_FOUND_INSTRUCTION
 
 STARRED_COVERAGE = 0.5
 UNTRUSTED_WRAPPER = re.compile(r"^<untrusted source=\"[^\"]*\">\n(.*)\n</untrusted>$", re.DOTALL)

@@ -13,8 +13,8 @@ Phase 2 (proof of concept) is running. Benchmark passes 1 to 5 are complete (`be
                                    │
                                    └──▶ our conversation agent ──▶ Ollama + local model
                                                  │                       │ tool call
-                                                 │                 web_search_mcp ──▶ SearXNG ──▶ the web
-                                                 │                 (+ calculator_mcp tools, same server)
+                                                 │                 assistant_mcp, the tool server ──▶ the web
+                                                 │                 (web search, calculator, and every other tool package)
                                                  └──▶ Kokoro / Piper ──▶ puck speaker
   Music Assistant + Spotify ──▶ Sonos
 ```

@@ -16,13 +16,13 @@ from mcp.server.mcpserver import MCPServer
 
 from assistant_core.models import ToolCall
 from assistant_core.tools import McpToolBox
+from assistant_mcp.server import build_server
 from weather_mcp.forecast import ForecastReader, ForecastRequestError, condition_words
 from weather_mcp.geocoding import Geocoder, PlaceNotFound, choose_match, place_from_match
 from weather_mcp.metno_client import PLACES_HELD, MetnoClient, WeatherUnavailable
 from weather_mcp.register import SERVICE_DOWN_MESSAGE, WEATHER_TOOL_NAME, register_weather_tools
 from weather_mcp.settings import WeatherSettings, weather_settings_from_environment
 from web_search_mcp.query_cache import QueryCache
-from web_search_mcp.server import build_server
 from web_search_mcp.settings import SearchSettings
 
 FIXTURE = json.loads(Path("tests/fixtures/metno_oslo_complete.json").read_text())
