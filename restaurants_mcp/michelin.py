@@ -17,7 +17,7 @@ from datetime import UTC, date, datetime
 import httpx
 
 from restaurants_mcp.cities import GUIDE_CITIES, GuideCity
-from restaurants_mcp.michelin_pages import ListingPage, UnexpectedPage, read_listing_page, read_restaurant_page
+from restaurants_mcp.michelin_pages import ListingPage, RestaurantPage, UnexpectedPage, read_listing_page, read_restaurant_page
 from restaurants_mcp.restaurants import Restaurant, RestaurantsSnapshot
 from restaurants_mcp.settings import RestaurantsSettings
 from utils.browser_utils import chosen_user_agent
@@ -112,11 +112,18 @@ class MichelinGuide:
         if known and known.description and known.award == restaurant.award:
             return restaurant.model_copy(update={"description": known.description, "address": known.address})
         try:
-            page = read_restaurant_page(await self.page_html(restaurant.url))
-        except (MichelinPageUnreadable, UnexpectedPage) as error:
+            page = await self.restaurant_page(restaurant.url)
+        except MichelinPageUnreadable as error:
             _LOGGER.warning("%s: no description this month: %s", restaurant.name, error)
             return restaurant
         return restaurant.model_copy(update={"description": page.description, "address": page.address})
+
+    async def restaurant_page(self, url: str) -> RestaurantPage:
+        html = await self.page_html(url)
+        try:
+            return read_restaurant_page(html)
+        except UnexpectedPage as error:
+            raise MichelinPageUnreadable(f"{url}: {error}") from error
 
     async def page_html(self, url: str) -> str:
         await asyncio.sleep(self.settings.seconds_between_requests)
