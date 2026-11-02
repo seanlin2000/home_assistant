@@ -118,6 +118,12 @@ class ExchangeStore:
         earlier = self.earlier_in_conversation(day, records[:index], record)
         return detail_from(summarize(day, index, record), record, trace, run).model_copy(update={"earlier_exchanges": earlier})
 
+    def record_and_trace(self, day: date, index: int) -> tuple[ExchangeRecord, ExchangeTrace | None] | None:
+        records = self._records.read_day(day)
+        if not 0 <= index < len(records):
+            return None
+        return records[index], self.trace_for(records[index], day)
+
     def earlier_in_conversation(self, day: date, earlier_that_day: list[ExchangeRecord], record: ExchangeRecord) -> list[ExchangeSummary]:
         """The exchanges that share this one's conversation id: earlier lines of its day, and the day before, since a conversation can cross midnight UTC."""
         if not record.conversation_id:

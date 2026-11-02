@@ -247,6 +247,8 @@ class Transcript(BaseModel):
     route: RouteDecision | None = None
     untrusted: bool = False  # a tool whose text is written by strangers ran in this exchange (design doc v2/12 section 3.2)
     error: str | None = None
+    per_question_block: str = ""  # put before the question for the model only; the conversation keeps the question as it was asked
+    tool_specs: list[ToolSpec] = Field(default_factory=list, exclude=True)  # sent with every model call; only the exchange's trace keeps them on disk
 
 
 class Done(BaseModel):

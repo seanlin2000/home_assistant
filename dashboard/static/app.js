@@ -3,7 +3,17 @@
 
 const POLL_MS = 2000;
 const SHORT_RESULT_CHARS = 600;
-const state = { openNextArrival: false, asking: false, live: null, days: [], day: null, summaries: [], selected: null, detail: null, today: null, drawerCard: null, drawerTab: "sources" };
+const state = { openNextArrival: false, asking: false, live: null, days: [], day: null, summaries: [], selected: null, detail: null, today: null, view: "exchanges", layouts: new Map(), drawerCard: null, drawerTab: "sources" };
+const SEGMENT_KINDS = [
+  ["system", "system rules"],
+  ["tools", "tool definitions"],
+  ["earlier", "earlier exchanges"],
+  ["block", "per-question block"],
+  ["question", "question"],
+  ["tool_round", "tool rounds"],
+  ["rest", "closing markers"],
+];
+const VERDICT_MARKS = { expected: "✓", early: "!", full_reread: "✕", unknown: "?" };
 const chat = { id: newConversationId(), history: [] };
 
 const $ = (id) => document.getElementById(id);
@@ -28,6 +38,14 @@ async function getJson(path) {
   return response.json();
 }
 
+// For views that can be unavailable (llama-server down, a trace gone): the error says why, in the server's words.
+async function getJsonOrReason(path) {
+  const response = await fetch(path, { cache: "no-store" });
+  const body = await response.json();
+  if (!response.ok) throw new Error(body.error || `${path}: ${response.status}`);
+  return body;
+}
+
 const seconds = (value) => (value === null || value === undefined ? "–" : `${value.toFixed(value < 10 ? 2 : 1)}s`);
 const localTime = (iso) => new Date(iso).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" });
 const kilo = (chars) => (chars >= 1000 ? `${(chars / 1000).toFixed(1)}k chars` : `${chars} chars`);
@@ -42,6 +60,7 @@ async function poll() {
     const [days, latest, today] = await Promise.all([getJson("/api/days"), getJson("/api/latest"), getJson("/api/today")]);
     $("model").textContent = latest ? latest.model : "";
     renderToday(today);
+    if (state.view === "cache") refreshSlots();
     setStatus("live", "live");
     await takeDays(days);
   } catch (error) {
@@ -95,8 +114,9 @@ async function openDay(day, { openLatest = false, keepSelection = false } = {}) 
   else await openExchange(day, state.summaries.length - 1);
 }
 
+// An exchange's address is #/day/line, or #/cache/day/line to open it in the prompt cache tab.
 function selectionFromHash() {
-  const match = location.hash.match(/^#\/(\d{4}-\d{2}-\d{2})\/(\d+)$/);
+  const match = location.hash.match(/^#\/(?:cache\/)?(\d{4}-\d{2}-\d{2})\/(\d+)$/);
   return match ? { day: match[1], index: Number(match[2]) } : null;
 }
 
@@ -106,11 +126,12 @@ async function openExchange(day, index) {
   closeSidebar();
   state.live = null;
   state.selected = { day, index };
-  history.replaceState(null, "", `#/${day}/${index}`);
+  history.replaceState(null, "", exchangeAddress());
   renderList();
   state.detail = await getJson(`/api/days/${day}/exchanges/${index}`);
   continueConversationOf(state.detail);
   renderExchange(state.detail);
+  if (state.view === "cache") renderPromptLayout();
 }
 
 function startNewChat() {
@@ -660,6 +681,207 @@ function sendOnEnter(event) {
 }
 
 
+function exchangeAddress() {
+  if (!state.selected) return location.pathname;
+  return `#/${state.view === "cache" ? "cache/" : ""}${state.selected.day}/${state.selected.index}`;
+}
+
+function showView(view) {
+  state.view = view;
+  if (state.selected) history.replaceState(null, "", exchangeAddress());
+  for (const tab of document.querySelectorAll(".view-tab")) {
+    tab.classList.toggle("active", tab.dataset.view === view);
+    tab.setAttribute("aria-selected", String(tab.dataset.view === view));
+  }
+  $("thread").hidden = view !== "exchanges";
+  $("composer").hidden = view !== "exchanges";
+  $("cache-view").hidden = view !== "cache";
+  closeDrawer();
+  if (view === "cache") {
+    refreshSlots();
+    renderPromptLayout();
+  }
+}
+
+function sectionHead(title, ...notes) {
+  return el("div", { class: "panel-head" }, el("h2", {}, title), notes.filter(Boolean).map((note) => el("span", { class: "panel-note" }, note)));
+}
+
+async function refreshSlots() {
+  try {
+    const view = await getJsonOrReason("/api/slots");
+    $("slots").replaceChildren(sectionHead("Live slots", "from llama-server, every 2 s", `one pool of ${count(view.pool_tokens)} tokens`), el("div", { class: "slot-rows" }, view.slots.map(slotRow)));
+  } catch (error) {
+    $("slots").replaceChildren(sectionHead("Live slots"), el("div", { class: "note-line" }, String(error.message || error)));
+  }
+}
+
+// A slot's meter is what it holds against the part of the pool the harness budgets for it; a slot may borrow past its share, so the meter stops full.
+function slotRow(slot) {
+  const holds = slot.holds_tokens;
+  const meter = el("div", { class: "meter" }, el("i", { style: `width:${holds === null ? 0 : Math.min(holds / slot.share_tokens, 1) * 100}%` }));
+  const amount = holds === null ? "empty since the server started" : `${count(holds)} / ${count(slot.share_tokens)}`;
+  const row = el(
+    "div",
+    { class: "slot-row" },
+    el("span", { class: "slot-name" }, `slot ${slot.slot}`, el("span", { class: "slot-role" }, slot.role)),
+    meter,
+    el("span", { class: "slot-amount" }, amount),
+    el("span", { class: `slot-state${slot.processing ? " busy" : ""}` }, slot.processing ? "working" : "idle"),
+  );
+  attachTooltip(row, () => slotTooltip(slot));
+  return row;
+}
+
+function slotTooltip(slot) {
+  if (slot.last_prompt_tokens === null) return `slot ${slot.slot} has not served a request since llama-server started`;
+  return [
+    `slot ${slot.slot}, ${slot.role}: holds about ${count(slot.holds_tokens)} tokens`,
+    `last request: ${count(slot.last_prompt_tokens)} prompt tokens, ${count(slot.last_cached_tokens || 0)} of them from the cache`,
+    `then wrote ${count(slot.last_written_tokens || 0)} tokens`,
+    `budgeted share of the pool: ${count(slot.share_tokens)} tokens`,
+  ].join("\n");
+}
+
+async function renderPromptLayout() {
+  const box = $("prompt-layout");
+  const selected = state.selected;
+  if (!selected) return box.replaceChildren(sectionHead("This exchange"), el("div", { class: "note-line" }, "Pick an exchange in the sidebar to see how its prompt was cached."));
+  const summary = state.summaries[selected.index];
+  const title = summary ? `“${summary.user_text}” · ${localTime(summary.recorded_at)}` : "";
+  const key = `${selected.day}/${selected.index}`;
+  if (!state.layouts.has(key)) box.replaceChildren(sectionHead("This exchange", title), el("div", { class: "note-line" }, "Rebuilding the prompt with llama-server…"));
+  try {
+    if (!state.layouts.has(key)) state.layouts.set(key, await getJsonOrReason(`/api/days/${selected.day}/exchanges/${selected.index}/prompt`));
+    if (state.selected !== selected) return;
+    box.replaceChildren(sectionHead("This exchange", title), ...layoutElements(state.layouts.get(key)));
+  } catch (error) {
+    if (state.selected === selected) box.replaceChildren(sectionHead("This exchange", title), el("div", { class: "note-line" }, String(error.message || error)));
+  }
+}
+
+function layoutElements(layout) {
+  if (!layout.calls.length) return [el("div", { class: "note-line" }, "No model call in this exchange.")];
+  const longest = Math.max(...layout.calls.map((call) => call.prompt_tokens), 1);
+  return [
+    el("p", { class: "panel-lead" }, "Each model call's prompt, in tokens, split into the parts the harness lays out. The thin track under it shows what came from the cache and what was read fresh."),
+    layout.note && el("div", { class: "timing-note" }, layout.note),
+    promptChart(layout.calls, longest),
+    promptLegend(layout.calls),
+    el("div", { class: "verdicts" }, layout.calls.map(verdictLine)),
+    partsTable(layout.calls[layout.calls.length - 1]),
+    systemPromptFold(layout),
+    layout.per_question_block && fold(`Per-question block (${segmentTokens(layout, "block")} tokens) · changes every question`, layout.per_question_block),
+    toolsFold(layout),
+  ];
+}
+
+function promptChart(calls, longest) {
+  const position = (tokens) => `${(tokens / longest) * 100}%`;
+  const ticks = tokenTicks(longest);
+  const chart = el("div", { class: "prompt-chart" });
+  chart.append(el("div", { class: "prompt-row" }, el("div"), el("div", { class: "axis" }, ticks.map((tick) => el("span", { style: `left:${position(tick)}` }, count(tick))))));
+  for (const call of calls) {
+    const gridlines = ticks.map((tick) => el("div", { class: "gridline", style: `left:${position(tick)}` }));
+    const track = el("div", { class: "prompt-track" }, gridlines, segmentBar(call, position), cacheBar(call, position), cacheMarker(call, position));
+    chart.append(el("div", { class: "prompt-row" }, el("div", { class: "lane-label" }, `model #${call.number}`), track, el("div", { class: "lane-seconds" }, cacheNumbers(call))));
+  }
+  return chart;
+}
+
+function segmentBar(call, position) {
+  const bar = el("div", { class: "segments", style: `width:${position(call.prompt_tokens)}` });
+  for (const segment of call.segments) {
+    const node = el("i", { class: `segment seg-${segment.kind}`, style: `flex:${segment.tokens}` });
+    attachTooltip(node, () => segmentTooltip(segment, call));
+    bar.append(node);
+  }
+  return bar;
+}
+
+function segmentTooltip(segment, call) {
+  const cached = call.cached_tokens || 0;
+  const cachedPart = Math.max(Math.min(cached, segment.start + segment.tokens) - segment.start, 0);
+  const origin = cachedPart === segment.tokens ? "all from the cache" : cachedPart === 0 ? "all read fresh" : `${count(cachedPart)} from the cache, ${count(segment.tokens - cachedPart)} read fresh`;
+  return `${segment.label}: ${count(segment.tokens)} tokens (${count(segment.start)} to ${count(segment.start + segment.tokens)})\n${origin}`;
+}
+
+function cacheBar(call, position) {
+  const cached = Math.min(call.cached_tokens || 0, call.prompt_tokens);
+  return el(
+    "div",
+    { class: "cache-track", style: `width:${position(call.prompt_tokens)}` },
+    cached > 0 && el("i", { class: "cached", style: `flex:${cached}` }),
+    call.prompt_tokens > cached && el("i", { class: "fresh", style: `flex:${call.prompt_tokens - cached}` }),
+  );
+}
+
+function cacheMarker(call, position) {
+  if (!call.cached_tokens) return null;
+  return el("div", { class: "cache-cut", style: `left:${position(call.cached_tokens)}`, title: `the cache stopped at token ${count(call.cached_tokens)}` });
+}
+
+function cacheNumbers(call) {
+  if (call.cached_tokens === null) return `${count(call.prompt_tokens)}`;
+  return `${count(call.cached_tokens)} cached · ${count(call.prompt_tokens - call.cached_tokens)} read`;
+}
+
+function tokenTicks(longest) {
+  const step = [100, 250, 500, 1000, 2000, 2500, 5000, 10000].find((candidate) => longest / candidate <= 6) || 20000;
+  const ticks = [];
+  for (let tick = 0; tick <= longest; tick += step) ticks.push(tick);
+  return ticks;
+}
+
+function promptLegend(calls) {
+  const present = new Set(calls.flatMap((call) => call.segments.map((segment) => segment.kind)));
+  const entry = (className, text) => el("span", {}, el("i", { class: className }), text);
+  return el(
+    "div",
+    { class: "legend" },
+    SEGMENT_KINDS.filter(([kind]) => present.has(kind)).map(([kind, label]) => entry(`seg-${kind}`, label)),
+    entry("cached", "from the cache"),
+    entry("fresh", "read fresh"),
+  );
+}
+
+function verdictLine(call) {
+  return el("div", { class: `verdict ${call.verdict}` }, el("span", { class: "verdict-mark", "aria-hidden": "true" }, VERDICT_MARKS[call.verdict]), el("span", { class: "verdict-call" }, `model #${call.number}`), el("span", {}, call.explanation));
+}
+
+// The table view of the last call's prompt, which holds every part: the chart's colors are not the only way to read it.
+function partsTable(call) {
+  const rows = call.segments.map((segment) =>
+    el("tr", {}, el("td", {}, el("i", { class: `swatch seg-${segment.kind}` }), segment.label), el("td", { class: "number" }, count(segment.tokens)), el("td", { class: "number" }, `${Math.round((segment.tokens / call.prompt_tokens) * 100)}%`)),
+  );
+  return el(
+    "details",
+    { class: "fold" },
+    el("summary", {}, `Parts of model #${call.number}'s prompt (${count(call.prompt_tokens)} tokens)`),
+    el("table", { class: "parts" }, el("thead", {}, el("tr", {}, el("th", {}, "part"), el("th", { class: "number" }, "tokens"), el("th", { class: "number" }, "share"))), el("tbody", {}, rows)),
+  );
+}
+
+function segmentTokens(layout, kind) {
+  const last = layout.calls[layout.calls.length - 1];
+  return count(last.segments.filter((segment) => segment.kind === kind).reduce((total, segment) => total + segment.tokens, 0));
+}
+
+function systemPromptFold(layout) {
+  return fold(`System prompt (${segmentTokens(layout, "system")} tokens) · the same for every question, so it should always be cached`, layout.system_prompt);
+}
+
+function toolsFold(layout) {
+  if (!layout.tools.length) return null;
+  const rows = layout.tools.map((tool) => el("tr", {}, el("td", {}, tool.name), el("td", { class: "number" }, count(tool.tokens))));
+  return el(
+    "details",
+    { class: "fold" },
+    el("summary", {}, `Tool definitions (${segmentTokens(layout, "tools")} tokens for ${layout.tools.length} tools) · sent with every call, in a fixed order`),
+    el("table", { class: "parts" }, el("thead", {}, el("tr", {}, el("th", {}, "tool"), el("th", { class: "number" }, "tokens alone"))), el("tbody", {}, rows)),
+  );
+}
+
 function openSidebar() {
   $("sidebar").classList.add("open");
   $("scrim").hidden = false;
@@ -692,7 +914,9 @@ for (const tab of document.querySelectorAll(".tab")) {
   });
 }
 $("day").addEventListener("change", (event) => openDay(event.target.value));
+for (const tab of document.querySelectorAll(".view-tab")) tab.addEventListener("click", () => showView(tab.dataset.view));
 document.addEventListener("keydown", stepThroughExchanges);
 
 renderGreeting();
+if (location.hash.startsWith("#/cache/")) showView("cache");
 poll();

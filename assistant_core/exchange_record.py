@@ -10,7 +10,7 @@ from datetime import UTC, datetime
 
 from pydantic import BaseModel, Field
 
-from assistant_core.models import GenerationStats, Role, RouteDecision, ToolCallRecord, Transcript
+from assistant_core.models import GenerationStats, Role, RouteDecision, ToolCallRecord, ToolSpec, Transcript
 
 
 class ToolCallSummary(BaseModel):
@@ -63,6 +63,7 @@ class ExchangeTrace(BaseModel):
     source: str
     conversation_id: str = ""
     transcript: Transcript
+    tool_specs: list[ToolSpec] = Field(default_factory=list)  # the transcript leaves them out when written, so the trace keeps them itself
 
 
 def summarize_tool_call(tool_call_record: ToolCallRecord) -> ToolCallSummary:

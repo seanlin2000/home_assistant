@@ -3,7 +3,7 @@ import asyncio
 from assistant_core import agent_loop
 from assistant_core.agent_loop import SpeechHold, SpokenAnswerCap
 from assistant_core.models import AgentEvent, AgentPolicy, AnswerDelta, Done, FillerSpoken, Message, Role, ToolCall, ToolFinished, ToolStarted
-from assistant_core.prompts import SILENCE_MARKER
+from assistant_core.prompts import SILENCE_MARKER, question_with_block
 from tests.fakes import FakeToolBox, ScriptedLLM, empty_reply, malformed_reply, several_tool_calls_reply, text_reply, tool_replies_past_the_cap, tool_reply
 
 
@@ -327,3 +327,12 @@ async def test_every_step_is_stamped_with_its_start_in_the_exchange() -> None:
     assert transcript.route.started_seconds <= first_call.started_seconds <= gold.started_seconds
     assert gold.started_seconds == silver.started_seconds
     assert second_call.started_seconds >= gold.started_seconds + gold.seconds
+
+
+async def test_the_transcript_keeps_the_block_and_tool_definitions_the_model_was_sent() -> None:
+    llm = ScriptedLLM([text_reply("It is four percent.")])
+    transcript = (await collect(llm, FakeToolBox()))[-1].transcript
+    assert llm.seen_messages[0][-1].content == question_with_block("What is the fed funds rate?", transcript.per_question_block)
+    assert transcript.conversation[0].content == "What is the fed funds rate?"
+    assert transcript.per_question_block.startswith("For reference, not to be read aloud: today is")
+    assert [tool.name for tool in transcript.tool_specs] == ["search_and_read"]

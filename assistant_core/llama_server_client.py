@@ -18,6 +18,7 @@ CONVERSATION_SLOT = 0
 QUIET_SLOT = 1
 WARM_UP_USER_TEXT = "Hello."
 REQUEST_TIMEOUT_SECONDS = 300.0
+SLOTS_TIMEOUT_SECONDS = 5.0
 STREAM_DATA_PREFIX = "data: "
 STREAM_END = "[DONE]"
 MILLISECONDS_PER_SECOND = 1000
@@ -83,6 +84,23 @@ class LlamaServerClient:
         except httpx.HTTPError:
             return False
         return response.status_code == httpx.codes.OK
+
+    async def render_prompt(self, messages: list[Message], tools: list[ToolSpec]) -> str:
+        """The prompt text the model reads for these messages and tools, through the model's own chat template, the opener of its turn included."""
+        reply = await self._post("/apply-template", {"messages": [to_openai_message(message) for message in messages], "tools": [to_openai_tool(tool) for tool in tools] or None})
+        return reply["prompt"]
+
+    async def count_tokens(self, text: str) -> int:
+        """Counted as a request's prompt is: the template's markers as single tokens, and the start-of-text token in front."""
+        reply = await self._post("/tokenize", {"content": text, "add_special": True, "parse_special": True})
+        return len(reply["tokens"])
+
+    async def slots(self) -> list[dict[str, Any]]:
+        """Each slot's state and its last request's sizes, as llama-server's monitoring endpoint reports them."""
+        async with httpx.AsyncClient(timeout=SLOTS_TIMEOUT_SECONDS, headers=self._headers) as client:
+            response = await client.get(f"{self._base_url}/slots")
+        response.raise_for_status()
+        return response.json()
 
     async def _post(self, path: str, body: dict[str, Any]) -> dict[str, Any]:
         async with httpx.AsyncClient(timeout=REQUEST_TIMEOUT_SECONDS, headers=self._headers) as client:

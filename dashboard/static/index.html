@@ -28,9 +28,19 @@
       <header class="main-head">
         <button type="button" id="sidebar-toggle" class="icon-button" aria-label="Show exchanges">☰</button>
         <span id="model" class="model-name" title="The model that answered the newest exchange"></span>
+        <nav class="view-tabs" role="tablist" aria-label="Views">
+          <button type="button" role="tab" class="view-tab active" data-view="exchanges" aria-selected="true">Exchanges</button>
+          <button type="button" role="tab" class="view-tab" data-view="cache" aria-selected="false">Prompt cache</button>
+        </nav>
         <div id="today" class="today-speed" title="Since midnight on this Mac's clock. Times are averages per response; speeds count the tokens read fresh and the tokens written."></div>
       </header>
       <main id="thread" class="thread"></main>
+      <main id="cache-view" class="view-page" hidden>
+        <div class="page-inner">
+          <section id="slots" class="panel" aria-label="Live slots"></section>
+          <section id="prompt-layout" class="panel" aria-label="This exchange's prompt"></section>
+        </div>
+      </main>
       <form id="composer" class="composer" autocomplete="off">
         <div class="composer-box">
           <textarea id="ask-input" rows="1" placeholder="Ask Jarvis anything" aria-label="Question"></textarea>
