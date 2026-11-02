@@ -14,7 +14,6 @@ import logging
 import re
 from datetime import UTC, date, datetime, timedelta
 from typing import Any
-from urllib.parse import urljoin
 
 import httpx
 
@@ -23,10 +22,9 @@ from movies_mcp.movies import Movie, MoviePage, MoviesSnapshot, RottenTomatoesSc
 from movies_mcp.settings import MoviesSettings
 from utils.browser_utils import chosen_user_agent
 from utils.snapshot_utils import ListingsUnavailable, SnapshotMissing, listing_today, read_snapshot, write_snapshot
-from web_search_mcp.url_guard import Resolver, UnsafeUrl, ensure_public_url, refuse_unless_public_peer, system_resolver
+from web_search_mcp.url_guard import Resolver, UnsafeUrl, get_with_checked_redirects, system_resolver
 
 OK = 200
-MAX_REDIRECTS = 5
 MANHATTAN_ZIP_CODE = re.compile(r"10[0-2]\d\d")
 YEAR_AFTER_TITLE = re.compile(r"\s*\((?:19|20)\d\d\)$")  # "Clayface (2026)"
 _LOGGER = logging.getLogger(__name__)
@@ -142,25 +140,14 @@ class FandangoSession:
         return await self.request(url, params, accept)
 
     async def request(self, url: str, params: dict[str, Any], accept: str) -> httpx.Response:
-        """Follows Fandango's redirects by hand, as the page reader does, so a redirect cannot point the refresh at an address on the home network."""
-        url = str(httpx.URL(url, params=params))
-        for _ in range(MAX_REDIRECTS + 1):
-            response = await self.request_once(url, accept)
-            if not response.is_redirect:
-                return response
-            url = urljoin(url, response.headers.get("location", ""))
-        raise FandangoUnavailable("Fandango redirected too many times")
-
-    async def request_once(self, url: str, accept: str) -> httpx.Response:
-        """The address is checked before connecting and the connection's peer after; cookies stay matched to Fandango's name, so the connection is
-        not pinned to the checked address as the page reader's is."""
+        """The query goes into the URL once, before the first hop: httpx drops a URL's own query when handed empty params, so a redirect carrying one
+        would otherwise be lost."""
         try:
-            await ensure_public_url(url, self.resolver)
-            response = await self.client.get(url, headers={"Accept": accept, "Referer": self.listing_page})
-            refuse_unless_public_peer(response)
-            return response
+            return await get_with_checked_redirects(self.client, str(httpx.URL(url, params=params)), self.resolver, {"Accept": accept, "Referer": self.listing_page})
         except UnsafeUrl as error:
             raise FandangoUnavailable(f"Fandango pointed the refresh at an address it must not read ({error})") from error
+        except httpx.TooManyRedirects as error:
+            raise FandangoUnavailable("Fandango redirected too many times") from error
         except httpx.HTTPError as error:
             raise FandangoUnavailable(f"no answer from Fandango ({type(error).__name__})") from error
 

@@ -10,7 +10,7 @@ import asyncio
 import ipaddress
 import socket
 from collections.abc import Awaitable, Callable
-from urllib.parse import urlparse, urlunparse
+from urllib.parse import urljoin, urlparse, urlunparse
 
 import httpx
 
@@ -18,6 +18,7 @@ Resolver = Callable[[str], Awaitable[list[str]]]
 
 ALLOWED_SCHEMES = ("http", "https")
 BLOCKED_HOSTNAMES = ("localhost", "localhost.localdomain", "metadata.google.internal")
+MAX_REDIRECTS = 5
 
 
 class UnsafeUrl(ValueError):
@@ -93,3 +94,17 @@ def is_ip_literal(host: str) -> bool:
     except ValueError:
         return False
     return True
+
+
+async def get_with_checked_redirects(client: httpx.AsyncClient, url: str, resolver: Resolver, headers: dict[str, str]) -> httpx.Response:
+    """GET through a client that does not follow redirects itself: every hop's address is checked before connecting and the connection's peer after,
+    so a redirect cannot point a listings refresh at the home network. Raises UnsafeUrl, or httpx.TooManyRedirects past MAX_REDIRECTS hops. The
+    connection is not pinned to the checked address as the page reader's is, so cookies stay matched to the site's name."""
+    for _ in range(MAX_REDIRECTS + 1):
+        await ensure_public_url(url, resolver)
+        response = await client.get(url, headers=headers)
+        refuse_unless_public_peer(response)
+        if not response.is_redirect:
+            return response
+        url = urljoin(url, response.headers.get("location", ""))
+    raise httpx.TooManyRedirects(f"more than {MAX_REDIRECTS} redirects", request=response.request)
