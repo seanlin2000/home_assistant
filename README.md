@@ -80,6 +80,13 @@ scripts/export_to_new_mac.sh /Volumes/<drive>                 # old Mac, from it
 bash /Volumes/<drive>/studio-assistant-move/bootstrap_mac.sh  # new Mac: installs everything, restores the pack, points Home Assistant here, asks the test question
 ```
 
+An update merged on GitHub goes live with one command at the serving Mac. The steps are in [`docs/DEPLOYING.md`](docs/DEPLOYING.md); the design is v2/10 section 3.11.
+
+```
+cd ~/Code/home_assistant_live && scripts/deploy.sh   # fetch main -> tests -> restart what changed -> wait for the model -> test question -> keep or roll back
+scripts/deploy.sh --dry-run                           # what would restart and why
+```
+
 The Mac mini is driven from the laptop over SSH once `MINI_HOST` is in `.env`:
 
 ```

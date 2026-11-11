@@ -23,6 +23,7 @@ What v2 changes:
 - **Models.** They are GGUF files, copied and checked by their hash (3.7).
 - **Versions.** llama.cpp is held at a known version (3.8).
 - **Moving to a new Mac.** One command on each Mac, run at its own keyboard, with nothing sent over SSH (3.10).
+- **Deploying at the Mac.** One command at the serving Mac takes main live, waits for the model, and keeps or rolls back the commit (3.11).
 
 ## 2. Diagram
 
@@ -95,6 +96,7 @@ What changes is the list that maps each changed folder to what must restart, the
 | The files of `assistant_core/` that the component vendors (the event and transcript models) | Copies the component into the VM and restarts Home Assistant | The component and the harness must agree on the events they exchange |
 | `custom_components/` | Copies the component into the VM and restarts Home Assistant | As in v1 |
 | `uv.lock`, `pyproject.toml` | Syncs the environment and restarts every Python service, the harness included | As in v1 |
+| `dashboard/`, `ops/paths.py`, and the `assistant_core/`, `assistant_service/` and `utils/` code it imports | The exchange dashboard | Added 2026-11-11: the dashboard runs as its own service and kept old code until restarted by hand |
 | `voice/` | Kokoro | As in v1 |
 | `scripts/services.sh` | Rewrites and reloads every agent | As in v1 |
 | `docker/searxng/` | SearXNG | As in v1 |
@@ -237,6 +239,21 @@ Three changes make the scripts work on any Mac, not only the laptop:
 - **The Brewfile installs llama.cpp**, not Ollama.
 
 What still needs a person after the script: the router reservation, and erasing the drive, whose copy of the VM holds Home Assistant's accounts. `docs/MOVING_TO_A_NEW_MAC.md` is the human version of this section, as numbered steps, and the export copies it into the folder as `README.md`.
+
+### 3.11 Deploying at the Mac
+
+Added 2026-11-11. Section 3.3's deploy is driven from the laptop over SSH by `scripts/mini.sh deploy`. The serving Mac no longer takes commands over SSH (3.10), so the same protocol now runs at its keyboard: `scripts/deploy.sh`, which runs `ops/deploy_here.py`.
+
+1. **Refuse a branch.** The serving checkout is detached at one commit. A checkout on a branch is somebody's working copy, and the deploy stops.
+2. **Record a last good commit if none exists.** A Mac set up before this script has none, so the first failed deploy would have nothing to return to. The running commit is the best one known.
+3. **Apply.** `ops.deploy`'s `switch_to` fetches, checks out `origin/main` (or `--ref`), runs the tests and restarts what changed, as in 3.3. If the tests fail, nothing restarts, the old commit is checked out again, the maintenance flag is cleared, and the script exits 1.
+4. **Wait for the model.** If the restarts touched the answer path (llama-server, the tool server, the harness, the environment or every agent), the script polls the harness's `/health` until it reports llama-server and the tool server ready, for up to 15 minutes. A large model takes minutes to load, and the smoke test should judge the answer, not the start-up.
+5. **Ask the test question.** `ops.smoke`, through Home Assistant, as in 3.3.
+6. **Keep or roll back.**
+    - It answers: record the commit as last good, clear the maintenance flag, exit 0.
+    - It does not: switch back to the last good commit without tests, wait, and ask again. If that answers, clear the flag and exit 1. If not, leave the flag set, so the health check does not restart services under a person, and exit 2.
+
+`scripts/mini.sh deploy` stays for a Mac that is still driven over SSH. `docs/DEPLOYING.md` is the human version of this section.
 
 ## 4. Packages and tools, and what each does for the business logic
 

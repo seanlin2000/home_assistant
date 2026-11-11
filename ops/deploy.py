@@ -40,7 +40,7 @@ class Rule(BaseModel):
 RULES: tuple[Rule, ...] = (
     Rule(
         prefixes=("uv.lock", "pyproject.toml"),
-        actions=("sync_env", "restart:mcp", "restart:harness", "restart:whisper", "restart:kokoro"),
+        actions=("sync_env", "restart:mcp", "restart:harness", "restart:dashboard", "restart:whisper", "restart:kokoro"),
         why="dependencies changed: sync the venv and restart every long-running Python service",
     ),
     Rule(
@@ -71,9 +71,26 @@ RULES: tuple[Rule, ...] = (
     Rule(prefixes=("voice/",), actions=("restart:kokoro",), why="Kokoro server wrapper changed"),
     Rule(prefixes=("scripts/services.sh",), actions=("reinstall_agents",), why="launchd definitions changed"),
     Rule(prefixes=("docker/searxng/",), actions=("restart_searxng",), why="SearXNG configuration changed"),
+    Rule(prefixes=("config/tools.toml",), actions=("restart:harness",), why="the tools the harness may call changed; it reads them at start"),
+    Rule(
+        prefixes=("dashboard/", "assistant_core/", "assistant_service/", "ops/paths.py", "utils/"),
+        actions=("restart:dashboard",),
+        why="the exchange dashboard's code, or code it imports, changed",
+    ),
 )
-ACTION_ORDER = ("sync_env", "reinstall_agents", "restart:llama", "restart:mcp", "restart:harness", "restart:kokoro", "restart:whisper", "restart_searxng", "deploy_component")
-RESTARTS_COVERED_BY_REINSTALL = {"restart:llama", "restart:mcp", "restart:harness", "restart:kokoro", "restart:whisper"}
+ACTION_ORDER = (
+    "sync_env",
+    "reinstall_agents",
+    "restart:llama",
+    "restart:mcp",
+    "restart:harness",
+    "restart:dashboard",
+    "restart:kokoro",
+    "restart:whisper",
+    "restart_searxng",
+    "deploy_component",
+)
+RESTARTS_COVERED_BY_REINSTALL = {"restart:llama", "restart:mcp", "restart:harness", "restart:dashboard", "restart:kokoro", "restart:whisper"}
 
 
 class Plan(BaseModel):
@@ -205,6 +222,17 @@ def with_lock(fn: Callable[[], dict]) -> dict:
         return fn()
 
 
+def mark_good(ref: str) -> str:
+    sha = git("rev-parse", "--verify", f"{ref}^{{commit}}")
+    paths.log_dir().mkdir(parents=True, exist_ok=True)
+    paths.last_good_ref().write_text(sha + "\n")
+    return sha
+
+
+def clear_maintenance() -> None:
+    paths.maintenance_flag().unlink(missing_ok=True)
+
+
 def status() -> dict:
     head = git("rev-parse", "HEAD")
     last_good = paths.last_good_ref().read_text().strip() if paths.last_good_ref().exists() else None
@@ -240,12 +268,9 @@ def main(argv: list[str] | None = None) -> int:
             raise SystemExit("no last_good_ref recorded on this machine; nothing to roll back to")
         result = with_lock(lambda: switch_to(paths.last_good_ref().read_text().strip(), run_tests=False, dry_run=False))
     elif args.command == "mark-good":
-        sha = git("rev-parse", "--verify", f"{args.ref}^{{commit}}")
-        paths.log_dir().mkdir(parents=True, exist_ok=True)
-        paths.last_good_ref().write_text(sha + "\n")
-        result = {"last_good_ref": sha}
+        result = {"last_good_ref": mark_good(args.ref)}
     elif args.command == "clear-maintenance":
-        paths.maintenance_flag().unlink(missing_ok=True)
+        clear_maintenance()
         result = {"maintenance": False}
     else:
         result = status()

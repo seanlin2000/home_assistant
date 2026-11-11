@@ -25,17 +25,27 @@ def test_tool_server_code_restarts_only_the_tool_server() -> None:
     assert actions("broadway_mcp/shows.py") == ["restart:mcp"]
 
 
-def test_shared_utilities_restart_both_services_that_import_them() -> None:
-    assert actions("utils/jsonl_utils.py") == ["restart:mcp", "restart:harness"]
+def test_shared_utilities_restart_every_service_that_imports_them() -> None:
+    assert actions("utils/jsonl_utils.py") == ["restart:mcp", "restart:harness", "restart:dashboard"]
 
 
 def test_shared_core_restarts_the_harness_and_redeploys_the_component_only_for_vendored_files() -> None:
-    assert actions("assistant_core/prompts.py") == ["restart:mcp", "restart:harness", "deploy_component"]
-    assert actions("assistant_core/agent_loop.py") == ["restart:mcp", "restart:harness"]
+    assert actions("assistant_core/prompts.py") == ["restart:mcp", "restart:harness", "restart:dashboard", "deploy_component"]
+    assert actions("assistant_core/agent_loop.py") == ["restart:mcp", "restart:harness", "restart:dashboard"]
 
 
-def test_harness_code_or_settings_restart_only_the_harness() -> None:
-    assert actions("assistant_service/app.py", "config/harness.toml") == ["restart:harness"]
+def test_harness_settings_restart_only_the_harness_and_its_code_also_the_dashboard_that_imports_it() -> None:
+    assert actions("config/harness.toml") == ["restart:harness"]
+    assert actions("assistant_service/app.py") == ["restart:harness", "restart:dashboard"]
+
+
+def test_the_tools_the_harness_may_call_restart_the_harness() -> None:
+    assert actions("config/tools.toml") == ["restart:harness"]
+
+
+def test_dashboard_code_restarts_only_the_dashboard() -> None:
+    assert actions("dashboard/app.py", "dashboard/static/app.js") == ["restart:dashboard"]
+    assert actions("ops/paths.py") == ["restart:dashboard"]
 
 
 def test_component_only_change_redeploys_the_component() -> None:
@@ -43,7 +53,7 @@ def test_component_only_change_redeploys_the_component() -> None:
 
 
 def test_lock_change_syncs_first_and_restarts_every_python_service() -> None:
-    assert actions("uv.lock") == ["sync_env", "restart:mcp", "restart:harness", "restart:kokoro", "restart:whisper"]
+    assert actions("uv.lock") == ["sync_env", "restart:mcp", "restart:harness", "restart:dashboard", "restart:kokoro", "restart:whisper"]
     assert actions("pyproject.toml", "voice/kokoro_server.py")[0] == "sync_env"
 
 
