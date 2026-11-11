@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It opens with a clear no, explains that routing changes per token so every expert must stay resident, ties memory to total parameters with a 30B-at-4-bit worked figure, and adds KV cache and activations, matching the sketch.",
+  "judgment_reason": "It rejects the false premise outright instead of hedging and explains exactly where the confusion between compute and memory lies.",
+  "spoken_fit_reason": "It leads with the answer, but five paragraphs with markdown emphasis ran past the word cap and were cut mid-arithmetic."
+}

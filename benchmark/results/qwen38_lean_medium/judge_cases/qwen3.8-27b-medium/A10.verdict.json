@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It nails the core point, 'Capacity decides whether the model runs; raw speed only decides how fast it runs once it fits', and explains spillover to slower memory, but it leaves out that more memory also allows lighter quantization and longer context.",
+  "judgment_reason": "No search was needed, and it answers with a concrete twelve-versus-thirty-two-gigabyte contrast rather than hedging.",
+  "spoken_fit_reason": "Natural plain prose with no lists, but seven sentences put it slightly over the requested length, and the key line arrives near the end instead of up front."
+}

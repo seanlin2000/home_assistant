@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 4,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The content matches the reference (six to seven minutes, then ice water), but the reply states it twice over in two near-duplicate drafts.",
+  "judgment_reason": "The user said 'Look up' and the assistant answered from memory with no search at all.",
+  "spoken_fit_reason": "The listener heard two duplicated paragraphs with a literal </think> tag between them, a wall of text cut by the word cap."
+}

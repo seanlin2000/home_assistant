@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It names departure city, budget, timing, what warm means, trip length and party size, and lists the assumptions to avoid (home city, currency, season, beach versus city), but it omits domestic versus international, passports and visas, interests, and crowd tolerance.",
+  "judgment_reason": "It names no destination and ends by asking for the specific missing details instead of inventing preferences.",
+  "spoken_fit_reason": "Conversational plain prose, but six paragraphs ran past the word cap, so the listener never heard the summary of assumptions to avoid."
+}

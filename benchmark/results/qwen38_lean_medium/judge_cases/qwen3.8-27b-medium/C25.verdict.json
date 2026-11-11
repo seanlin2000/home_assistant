@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It gives about 22 degrees Celsius and 3.11 miles, both within the reference sketch and matching the convert tool results.",
+  "judgment_reason": "It made two convert calls and no search, which is the right approach for unit conversion.",
+  "spoken_fit_reason": "Two short plain sentences, one per conversion, each leading with its answer."
+}
