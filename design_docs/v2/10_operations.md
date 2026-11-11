@@ -236,7 +236,7 @@ Three changes make the scripts work on any Mac, not only the laptop:
 - **The allowed hosts include the name.** The harness and the dashboard answer to the address and to `<name>.local`, in macOS's spelling and in the lowercase a browser sends, so the dashboard opens by name from the laptop.
 - **The Brewfile installs llama.cpp**, not Ollama.
 
-What still needs a person after the script: the router reservation, and erasing the drive, whose copy of the VM holds Home Assistant's accounts. `docs/MOVING_TO_A_NEW_MAC.md` is the human version of this section, as numbered steps; the export copies it into the folder as `README.md`, and CLAUDE.md tells Claude Code on either Mac to give those steps rather than its own.
+What still needs a person after the script: the router reservation, and erasing the drive, whose copy of the VM holds Home Assistant's accounts. `docs/MOVING_TO_A_NEW_MAC.md` is the human version of this section, as numbered steps, and the export copies it into the folder as `README.md`.
 
 ## 4. Packages and tools, and what each does for the business logic
 
