@@ -3,9 +3,11 @@
 import pytest
 
 from assistant_core.egress_guard import leaked_terms, private_terms_in
-from assistant_core.models import REQUIRED_TOOL_NAMES, SHOWS_TOOL_NAMES, SPORTS_TOOL_NAMES, WEATHER_TOOL_NAMES, Message, Role, ToolCall, ToolSpec
+from assistant_core.models import RESTAURANTS_TOOL_NAMES, SHOWS_TOOL_NAMES, SPORTS_TOOL_NAMES, Message, Role, ToolCall, ToolSpec
 from assistant_core.tool_guards import EGRESS_REFUSAL, PROVENANCE_REFUSAL, GuardedToolBox, ToolRefused, load_tool_table
+from assistant_mcp.server import build_server
 from tests.fakes import SEARCH_TOOL, FakeToolBox
+from web_search_mcp.settings import SearchSettings
 
 FETCH_TOOL = ToolSpec(name="fetch_page", description="fetch", input_schema={"type": "object", "properties": {"url": {"type": "string"}}, "required": ["url"]})
 CALCULATE_TOOL = ToolSpec(name="calculate", description="calc", input_schema={"type": "object", "properties": {"expression": {"type": "string"}}, "required": ["expression"]})
@@ -105,8 +107,11 @@ def test_common_words_are_dropped_and_the_distinctive_ones_kept() -> None:
     assert private_terms_in(["We talked about the weather this week."]) == frozenset({"weather"})
 
 
-def test_every_tool_the_server_must_offer_has_a_tier() -> None:
-    assert (REQUIRED_TOOL_NAMES | WEATHER_TOOL_NAMES | SPORTS_TOOL_NAMES | SHOWS_TOOL_NAMES) <= set(load_tool_table().tools)
+@pytest.mark.asyncio
+async def test_every_tool_the_server_offers_has_a_tier() -> None:
+    """A tool missing from config/tools.toml is dropped from the model's tool list, as the restaurant tools were from #65 until prompt 2.8."""
+    offered = {tool.name for tool in await build_server(SearchSettings(searxng_url="http://127.0.0.1:1")).list_tools()}
+    assert offered - set(load_tool_table().tools) == set()
 
 
 def test_sports_tools_read_public_text_and_mark_the_exchange_untrusted() -> None:
@@ -117,3 +122,8 @@ def test_sports_tools_read_public_text_and_mark_the_exchange_untrusted() -> None
 def test_the_show_listings_read_public_text_and_mark_the_exchange_untrusted() -> None:
     rules = load_tool_table().tools
     assert {(rules[name].tier.value, rules[name].marks_untrusted) for name in SHOWS_TOOL_NAMES} == {("read_public", True)}
+
+
+def test_the_restaurant_tools_read_public_text_and_mark_the_exchange_untrusted() -> None:
+    rules = load_tool_table().tools
+    assert {(rules[name].tier.value, rules[name].marks_untrusted) for name in RESTAURANTS_TOOL_NAMES} == {("read_public", True)}
