@@ -2,11 +2,19 @@
 
 Every place the build departs from the v2 design, with the reason. Grouped by the design doc the deviation mainly changes, oldest first within each group. **Part of the system** names the concrete component that moved; **Also touches** lists other docs affected. To add an entry, put it under the doc it mainly changes, not at the bottom of the file.
 
+## 02. Inference engine
+
+| Date | Part of the system | Also touches | Deviation | Why |
+|---|---|---|---|---|
+| 2026-11-11 | `config/serving.toml` (`speculative`), `serving/command.py` | 10 | Qwen 3.8 27B is served with `--spec-type draft-mtp`, so its own multi-token-prediction layer drafts tokens, and with a 2,048 MiB prompt cache instead of 1,024. Thinking stays off on the server and the harness turns it on per request. | Decode measured 19 tok/s without drafting and 34 to 37 with it on the M5 Max, with the same model file. One slot's prompt state is about 1,091 MiB, so a 1,024 MiB cache skipped it. |
+
 ## 03. Tool server
 
 | Date | Part of the system | Also touches | Deviation | Why |
 |---|---|---|---|---|
 | 2026-10-08 | `weather_mcp/geocoding.py` (`Geocoder`) | — | Places are kept in the tool server's memory, not on disk, so a restart looks each spoken place up again. Only the benchmark, which runs its tool server with a cache folder, keeps them on disk. | The production tool server has no cache folder today, and a lookup is one small request to Open-Meteo. A permanent place store can come with the next change that needs one on disk. |
+| 2026-11-11 | the nine `*_mcp/register.py` files | 04 | Every tool argument has its own description in the schema, fixed value sets are enums, and each tool's answer-shaping rules (read numbers as given, no showtimes, Michelin price words) live in its description instead of the system prompt. The harness sends schemas without pydantic's `title` keys. | The system prompt repeated most tool descriptions; one place per rule means a new tool needs no prompt change. Titles only repeated each argument's name, 13% of the definitions. |
+
 
 ## 04. Agent harness
 
@@ -15,6 +23,8 @@ Every place the build departs from the v2 design, with the reason. Grouped by th
 | 2026-10-08 | `assistant_core/router.py` (`ROUTE_SCHEMA`) | 01 | The router plans tool families (`search`, `calculate`, `weather`) with `route`, `also` and `plan`, not a list of tool names. `route` stays the first family, so single-tool questions and the router-accuracy report are unchanged. | The directives already speak in families, and a small model picks one of three words more reliably than one of fourteen tool names. Category F's `required_tools` names families for the same reason. |
 | 2026-10-08 | `assistant_core/router.py` (`decide_route`) | — | A question the rules route that also carries a second request ("…, and when is the last ferry?") asks the model layer too, and the model's extra routes and plan are added after the rules' routes. | The rules see one part of a compound question and would otherwise answer it alone; the extra router call (about 0.3 s, in the quiet slot) is paid only for compound questions. |
 | 2026-10-08 | `assistant_core/router.py` (`tool_round_cap`) | — | The round cap is the planned tools plus one, but never below the configured cap (4), rather than at least two. | Lowering the cap for one-tool questions would change A to E, where a search is often followed by a page read; M5 measures the multi-tool change alone. |
+| 2026-11-11 | `assistant_core/prompts.py` (prompt 3.0), `config/harness.toml` | 02 | For Qwen 3.8 27B the router is off (`route_questions = false`), so the note before each question carries only the date; six earlier exchanges are replayed instead of three; thinking is on at medium effort per request (`think = "medium"`); the system prompt drops from 8,909 to 2,470 characters. | The router, the per-tool prompt sections and the three-exchange window were added for Gemma 4 E4B's failures; the larger model chooses tools from their definitions. The benchmark measures the change. |
+
 
 ## 10. Operations
 

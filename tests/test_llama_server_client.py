@@ -1,5 +1,5 @@
-from assistant_core.llama_server_client import CONVERSATION_SLOT, StreamedReply, parse_stream_line, response_request_body, to_openai_message
-from assistant_core.models import AgentPolicy, MalformedToolCall, Message, Role, ToolCall, ToolCallRequest
+from assistant_core.llama_server_client import CONVERSATION_SLOT, StreamedReply, parse_stream_line, response_request_body, thinking_template_options, to_openai_message, to_openai_tool
+from assistant_core.models import AgentPolicy, MalformedToolCall, Message, Role, ToolCall, ToolCallRequest, ToolSpec
 
 
 def chunk(delta: dict, finish_reason: str | None = None, timings: dict | None = None) -> dict:
@@ -53,3 +53,27 @@ def test_every_response_request_is_pinned_to_the_conversation_slot() -> None:
     body = response_request_body([Message(role=Role.USER, content="hi")], [], AgentPolicy(temperature=0.5, max_output_tokens=600))
     assert body["id_slot"] == CONVERSATION_SLOT and body["cache_prompt"] is True and body["stream"] is True
     assert body["tools"] is None and body["temperature"] == 0.5 and body["max_tokens"] == 600
+    assert "chat_template_kwargs" not in body
+
+
+def test_a_thinking_level_turns_thinking_on_at_that_effort_and_a_bool_switches_it() -> None:
+    assert thinking_template_options("medium") == {"enable_thinking": True, "reasoning_effort": "medium"}
+    assert thinking_template_options(False) == {"enable_thinking": False}
+    assert thinking_template_options(None) == {}
+    body = response_request_body([Message(role=Role.USER, content="hi")], [], AgentPolicy(think="medium"))
+    assert body["chat_template_kwargs"] == {"enable_thinking": True, "reasoning_effort": "medium"}
+
+
+def test_thinking_is_kept_on_the_message_but_never_streamed_as_spoken_text() -> None:
+    reply = StreamedReply()
+    assert reply.absorb(chunk({"reasoning_content": "Twelve percent of 250 "}), 0.0) == []
+    assert reply.absorb(chunk({"reasoning_content": "is 30."}), 0.0) == []
+    assert reply.absorb(chunk({"content": "It is thirty."}), 0.0) == ["It is thirty."]
+    message = reply.assistant_message()
+    assert (message.thinking, message.content) == ("Twelve percent of 250 is 30.", "It is thirty.")
+
+
+def test_the_model_reads_tool_schemas_without_the_titles_that_repeat_each_argument_name() -> None:
+    schema = {"title": "percentArguments", "type": "object", "properties": {"title": {"title": "Title", "type": "string"}, "a": {"title": "A", "type": "number"}}}
+    sent = to_openai_tool(ToolSpec(name="percent", description="Percent questions.", input_schema=schema))["function"]["parameters"]
+    assert sent == {"type": "object", "properties": {"title": {"type": "string"}, "a": {"type": "number"}}}

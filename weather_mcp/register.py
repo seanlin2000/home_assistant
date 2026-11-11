@@ -7,7 +7,7 @@ is looked up with Open-Meteo's geocoding first, and the forecast is grouped in t
 import logging
 from collections.abc import Callable
 from datetime import datetime
-from typing import Annotated, Protocol
+from typing import Annotated, Literal, Protocol
 from zoneinfo import ZoneInfo
 
 from mcp.server.mcpserver import MCPServer
@@ -37,8 +37,12 @@ def register_weather_tools(server: MCPServer, settings: WeatherSettings, store: 
     geocoder = Geocoder(store, settings.timeout_seconds, settings.user_agent)
 
     @server.tool(name=WEATHER_TOOL_NAME)
-    async def weather_forecast(day: str = "today", part_of_day: str = "all", place: Annotated[str, Field(max_length=MAX_PLACE_CHARS)] = "") -> str:
-        """Weather forecast for the user's home, or for any other place. day: "today", "tonight", "tomorrow", a weekday such as "saturday", "weekend", or "week" for the next seven days. part_of_day: "morning", "afternoon", "evening", "night" (the night after that day's evening), or "all". place: leave empty for home; otherwise the place as the user said it, with the region or country after a comma when it helps, e.g. "Lisbon" or "Portland, Maine". Times are the place's local time."""
+    async def weather_forecast(
+        day: Annotated[str, Field(description='today, tonight, tomorrow, a weekday like "saturday", weekend, or week for seven days')] = "today",
+        part_of_day: Annotated[Literal["all", "morning", "afternoon", "evening", "night"], Field(description="night follows that day's evening")] = "all",
+        place: Annotated[str, Field(max_length=MAX_PLACE_CHARS, description='empty for home; else as the user said it, e.g. "Portland, Maine"')] = "",
+    ) -> str:
+        """Weather forecast for home or any place, in local time. Give the conditions, temperature range and chance of rain or snow, numbers rounded. If the heading names a different place than the user meant, say so."""
         if not place.strip():
             return await home_forecast(client, settings, clock(), day, part_of_day)
         return await place_forecast(client, geocoder, settings, clock(), place.strip(), day, part_of_day)

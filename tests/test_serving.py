@@ -11,10 +11,17 @@ from serving.settings import SERVING_CONFIG_PATH, load_serving_config
 
 def test_the_checked_in_file_builds_the_documented_command() -> None:
     command = build_command(load_serving_config())
-    for flag, value in (("--host", "127.0.0.1"), ("--port", "8090"), ("-c", "18432"), ("-np", "2"), ("-cram", "1024"), ("--reasoning", "off"), ("-fa", "on")):
+    for flag, value in (("--host", "127.0.0.1"), ("--port", "8090"), ("-c", "18432"), ("-np", "2"), ("-cram", "2048"), ("--reasoning", "off"), ("-fa", "on")):
         assert command[command.index(flag) + 1] == value
     assert {"--kv-unified", "--no-cache-idle-slots", "--no-ui", "--jinja", "--metrics"} <= set(command)
     assert "--swa-full" not in command
+    assert command[command.index("--spec-type") + 1] == "draft-mtp"
+
+
+def test_a_model_without_a_draft_layer_gets_no_speculative_flag() -> None:
+    config = load_serving_config()
+    gemma = config.model_copy(update={"server": config.server.model_copy(update={"model": "gemma-4-e4b"})})
+    assert "--spec-type" not in build_command(gemma)
 
 
 def test_an_unknown_key_stops_the_launch(tmp_path: Path) -> None:

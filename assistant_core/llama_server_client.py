@@ -122,7 +122,7 @@ def weights_bytes(models_reply: dict[str, Any]) -> int:
 
 
 def response_request_body(messages: list[Message], tools: list[ToolSpec], policy: AgentPolicy) -> dict[str, Any]:
-    return {
+    body = {
         "messages": [to_openai_message(message) for message in messages],
         "tools": [to_openai_tool(tool) for tool in tools] or None,
         "temperature": policy.temperature,
@@ -131,6 +131,20 @@ def response_request_body(messages: list[Message], tools: list[ToolSpec], policy
         "id_slot": CONVERSATION_SLOT,
         "cache_prompt": True,
     }
+    thinking = thinking_template_options(policy.think)
+    if thinking:
+        body["chat_template_kwargs"] = thinking
+    return body
+
+
+def thinking_template_options(think: bool | str | None) -> dict[str, Any]:
+    """The chat template's thinking switch for one request: a level such as "medium" turns thinking on at that effort, a bool turns it on or off, and
+    None leaves the server's setting. A request's options win over the server's --reasoning off, so the harness decides per request."""
+    if think is None:
+        return {}
+    if isinstance(think, str):
+        return {"enable_thinking": True, "reasoning_effort": think}
+    return {"enable_thinking": think}
 
 
 def parse_stream_line(line: str) -> dict[str, Any] | None:
@@ -147,6 +161,7 @@ class StreamedReply:
 
     def __init__(self) -> None:
         self.text_parts: list[str] = []
+        self.thinking_parts: list[str] = []
         self.tool_fragments: dict[int, dict[str, str]] = {}
         self.finish_reason: str | None = None
         self.timings: dict[str, Any] = {}
@@ -161,6 +176,8 @@ class StreamedReply:
             delta = choice.get("delta") or {}
             if (delta.get("content") or delta.get("tool_calls")) and self.first_token_at is None:
                 self.first_token_at = time.perf_counter() - started
+            if delta.get("reasoning_content"):
+                self.thinking_parts.append(delta["reasoning_content"])
             if delta.get("content"):
                 self.text_parts.append(delta["content"])
                 texts.append(delta["content"])
@@ -180,7 +197,7 @@ class StreamedReply:
 
     def assistant_message(self) -> Message:
         calls = [event.call for event in self.tool_call_events() if isinstance(event, ToolCallRequest)]
-        return Message(role=Role.ASSISTANT, content="".join(self.text_parts), tool_calls=calls)
+        return Message(role=Role.ASSISTANT, content="".join(self.text_parts), thinking="".join(self.thinking_parts), tool_calls=calls)
 
     def stats(self, model: str, started: float) -> GenerationStats:
         fresh = self.timings.get("prompt_n")
@@ -221,7 +238,17 @@ def to_openai_message(message: Message) -> dict[str, Any]:
 
 
 def to_openai_tool(tool: ToolSpec) -> dict[str, Any]:
-    return {"type": "function", "function": {"name": tool.name, "description": tool.description, "parameters": tool.input_schema}}
+    return {"type": "function", "function": {"name": tool.name, "description": tool.description, "parameters": without_titles(tool.input_schema)}}
+
+
+def without_titles(schema: Any) -> Any:
+    """The schema without the "title" pydantic writes for every argument ("Max Price" for max_price): the model reads it on every request and it
+    only repeats the name. The guards still validate against the full schema."""
+    if isinstance(schema, dict):
+        return {key: without_titles(value) for key, value in schema.items() if not (key == "title" and isinstance(value, str))}
+    if isinstance(schema, list):
+        return [without_titles(item) for item in schema]
+    return schema
 
 
 def milliseconds_to_seconds(value: float | None) -> float | None:

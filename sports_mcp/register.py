@@ -34,9 +34,11 @@ MAX_PLAYER_CHARS = 60
 MAX_DATE_CHARS = 10
 SERVICE_DOWN_MESSAGE = "Sports error: ESPN did not answer. Search the web with search_and_read instead."
 SPOKEN_DAYS = {"today": 0, "yesterday": -1, "tomorrow": 1}
+READ_AS_GIVEN = "Say numbers as given; never add, round or estimate. If the heading names a different team or player than the user meant, say so."
+SEASON_FORMAT = "year the season started (2015-16 is 2015)"
 _LOGGER = logging.getLogger(__name__)
 
-LeagueName = Literal["nba", "nfl"]
+LeagueName = Annotated[Literal["nba", "nfl"], Field(description="the league")]
 TeamName = Annotated[str, Field(max_length=MAX_TEAM_CHARS)]
 PlayerName = Annotated[str, Field(max_length=MAX_PLAYER_CHARS)]
 DayText = Annotated[str, Field(max_length=MAX_DATE_CHARS)]
@@ -54,29 +56,48 @@ def register_sports_tools(server: MCPServer, settings: SportsSettings, transport
     async def answered(ask: Ask, max_words: int = settings.max_words) -> str:
         return await answered_from_espn(EspnSession(settings, cache, sports_today(settings), transport), ask, max_words)
 
-    @server.tool(name=GAME_SCORES_TOOL_NAME)
-    async def game_scores(league: LeagueName, team: TeamName = "", date: DayText = "", season: int | None = None, playoffs: bool = False) -> str:
-        """NBA or NFL game scores: live, final, or scheduled, with the quarter and clock, the playoff series, and the top players. team: as the user said it, e.g. "Warriors" or "49ers". With only a team: its game today, its last game, and its next game. date: YYYY-MM-DD, worked out from today's date, for every game that day, or only that team's when a team is given. season: the year the season started (the 2015-16 NBA season is 2015) for every game the team played that season; playoffs: true for its playoff games instead."""
+    @server.tool(name=GAME_SCORES_TOOL_NAME, description=f"NBA or NFL scores: live, final or scheduled, with clock, playoff series and top players. {READ_AS_GIVEN}")
+    async def game_scores(
+        league: LeagueName,
+        team: Annotated[TeamName, Field(description='as the user said it, e.g. "Warriors"; alone: its last, current and next game')] = "",
+        date: Annotated[DayText, Field(description="YYYY-MM-DD: that day's games")] = "",
+        season: Annotated[int | None, Field(description=f"{SEASON_FORMAT}: the team's whole season")] = None,
+        playoffs: Annotated[bool, Field(description="true for the team's playoff games")] = False,
+    ) -> str:
         return await answered(lambda espn: scores_answer(espn, League(league), team, date, season, playoffs))
 
-    @server.tool(name=BOX_SCORE_TOOL_NAME)
-    async def box_score(league: LeagueName, team: TeamName, opponent: TeamName = "", date: DayText = "") -> str:
-        """One NBA or NFL game's box score: each player's statistics (NBA: minutes, points, shooting, rebounds, assists; NFL: passing, rushing, receiving, tackles, kicking) and both teams' totals. team: as the user said it, e.g. "49ers". With only a team: its last game. opponent: the other team, e.g. "Seahawks", for the last game the two played. date: YYYY-MM-DD, worked out from today's date, for the team's game closest to that day, or with an opponent, the two teams' game closest to it."""
+    @server.tool(name=BOX_SCORE_TOOL_NAME, description=f"One NBA or NFL game's box score: player statistics and team totals. {READ_AS_GIVEN}")
+    async def box_score(
+        league: LeagueName,
+        team: Annotated[TeamName, Field(description='as the user said it, e.g. "49ers"; alone: its last game')],
+        opponent: Annotated[TeamName, Field(description="the other team, for their last game together")] = "",
+        date: Annotated[DayText, Field(description="YYYY-MM-DD: the game closest to it")] = "",
+    ) -> str:
         return await answered(lambda espn: box_score_answer(espn, League(league), team, opponent, date), settings.box_score_max_words)
 
-    @server.tool(name=TEAM_ROSTER_TOOL_NAME)
-    async def roster(league: LeagueName, team: TeamName) -> str:
-        """An NBA or NFL team's current roster: every player's jersey number, name, position, and injury status. team: as the user said it, e.g. "Golden State Warriors" or "Niners"."""
+    @server.tool(name=TEAM_ROSTER_TOOL_NAME, description=f"An NBA or NFL team's roster: number, name, position, injury status. {READ_AS_GIVEN}")
+    async def roster(league: LeagueName, team: Annotated[TeamName, Field(description='as the user said it, e.g. "Niners"')]) -> str:
         return await answered(lambda espn: team_roster(espn, League(league), one_team(League(league), team)))
 
-    @server.tool(name=PLAYER_STATS_TOOL_NAME)
-    async def stats(league: LeagueName, player: PlayerName, from_season: int | None = None, to_season: int | None = None) -> str:
-        """An NBA or NFL player's regular-season statistics, one row per season plus the career total. NBA: games, points, rebounds and assists per game, 3-pointers made and attempted, field goal %. NFL: passing, rushing, or receiving. player: the full name, e.g. "Stephen Curry". from_season, to_season: the years the first and last seasons started (the 2015-16 NBA season is 2015); leave both empty for the whole career."""
+    @server.tool(name=PLAYER_STATS_TOOL_NAME, description=f"An NBA or NFL player's regular-season statistics by season, with career totals. {READ_AS_GIVEN}")
+    async def stats(
+        league: LeagueName,
+        player: Annotated[PlayerName, Field(description='full name, e.g. "Stephen Curry"')],
+        from_season: Annotated[int | None, Field(description=f"first season, {SEASON_FORMAT}; empty for whole career")] = None,
+        to_season: Annotated[int | None, Field(description="last season, same format; empty for whole career")] = None,
+    ) -> str:
         return await answered(lambda espn: stats_answer(espn, League(league), player, from_season, to_season))
 
-    @server.tool(name=PLAYER_MATCHUP_TOOL_NAME)
-    async def matchup(league: LeagueName, player: PlayerName, opponent_player: PlayerName = "", opponent_team: TeamName = "") -> str:
-        """Head-to-head: every regular-season and playoff game in which an NBA or NFL player faced another player or a team, with the win-loss record, both players' averages, and each game's score and stat lines. player: the full name, e.g. "Tom Brady". Give opponent_player, e.g. "Peyton Manning", or opponent_team, e.g. "Lakers", not both."""
+    @server.tool(
+        name=PLAYER_MATCHUP_TOOL_NAME,
+        description=f"Every game an NBA or NFL player played against another player or a team: record, averages, and each game's score and stat lines. {READ_AS_GIVEN}",
+    )
+    async def matchup(
+        league: LeagueName,
+        player: Annotated[PlayerName, Field(description='full name, e.g. "Tom Brady"')],
+        opponent_player: Annotated[PlayerName, Field(description="other player's full name; or opponent_team")] = "",
+        opponent_team: Annotated[TeamName, Field(description='team faced, e.g. "Lakers"; or opponent_player')] = "",
+    ) -> str:
         return await answered(lambda espn: matchup_answer(espn, League(league), player, opponent_player, opponent_team))
 
 

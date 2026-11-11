@@ -22,6 +22,7 @@ flash_attention = "on"                      # -fa
 prompt_cache_mib = 1024                     # -cram
 reasoning = "off"                           # --reasoning
 swa_full = false                            # --swa-full
+speculative = "none"                        # --spec-type; Gemma 4 E4B has no draft layer
 
 [models.gemma-4-e4b.sampling]               # defaults; the harness may override per request
 temperature = 0.7
@@ -39,10 +40,11 @@ kv_unified = true
 cache_idle_slots = false
 gpu_layers = "all"
 flash_attention = "on"
-prompt_cache_mib = 1024
-reasoning = "off"                           # thinking is on by default in Qwen 3.8; the voice turn cannot wait for it
+prompt_cache_mib = 2048                     # one slot's prompt state is about 1,091 MiB, which a 1,024 MiB cache skipped
+reasoning = "off"                           # the server default; the harness turns thinking on per request (config/harness.toml think)
 swa_full = false                            # no sliding-window layers in this model
+speculative = "draft-mtp"                   # the model's own multi-token-prediction layer drafts tokens: decode 19 -> about 36 tok/s on the M5 Max
 
 [models."qwen3.8-27b".sampling]
 temperature = 0.7
-max_output_tokens = 600
+max_output_tokens = 2048                    # thinking counts against it; medium effort writes a few hundred tokens before the answer

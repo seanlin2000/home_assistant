@@ -10,10 +10,11 @@ from assistant_core.exchange_record import ExchangeRecord, ExchangeTrace, ToolCa
 from assistant_core.models import Message, Role, ToolCallRecord, Transcript
 from assistant_service.exchange_log import ExchangeLog, TraceLog
 from dashboard.evidence import ToolEvidence, tool_evidence
-from dashboard.generation_speed import ResponseSpeed, response_speed
+from dashboard.generation_speed import response_speed
 from dashboard.pipeline_match import matching_run
 from dashboard.timeline import Timeline, build_timeline
 from ops.pipeline_runs import PipelineRun, PipelineRunLog
+from utils.generation_speed_utils import GenerationSpeed
 
 
 class DaySummary(BaseModel):
@@ -76,7 +77,7 @@ class ExchangeDetail(BaseModel):
     filler_text: str = ""
     turns: list[Turn]
     timeline: Timeline
-    speed: ResponseSpeed | None = None
+    speed: GenerationSpeed | None = None
     speech: SpeechRun | None = None
     earlier_exchanges: list[ExchangeSummary] = Field(default_factory=list)  # the exchanges before this one in its conversation, oldest first
 

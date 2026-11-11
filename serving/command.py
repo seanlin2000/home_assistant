@@ -47,6 +47,8 @@ def model_flags(alias: str, model: ModelSettings) -> list[str]:
     ]
     if model.swa_full:
         flags.append("--swa-full")
+    if model.speculative != "none":
+        flags.extend(["--spec-type", model.speculative])
     return flags
 
 
