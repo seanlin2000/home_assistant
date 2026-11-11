@@ -14,6 +14,7 @@ from assistant_core.models import (
     MOVIES_TOOL_NAMES,
     REDDIT_TOOL_NAMES,
     REDDIT_UNAVAILABLE_PREFIX,
+    RESTAURANTS_TOOL_NAMES,
     SEARCH_TOOL_NAMES,
     SHOWS_TOOL_NAMES,
     SPORTS_TOOL_NAMES,
@@ -291,7 +292,7 @@ async def stream_model_reply(
 
 def filler_for(tool_name: str, policy: AgentPolicy) -> str:
     """The sentence spoken while the first tool of an exchange runs: a web line for search tools, a forecast line for the weather, a numbers line for
-    sports, a listings line for shows and for movies, a Reddit line that warns it can be slow, a math line for everything else."""
+    sports, a listings line for shows and for movies, a Michelin line for restaurants, a Reddit line that warns it can be slow, a math line for everything else."""
     if tool_name in SEARCH_TOOL_NAMES:
         phrases = policy.filler_phrases
     elif tool_name in WEATHER_TOOL_NAMES:
@@ -302,6 +303,8 @@ def filler_for(tool_name: str, policy: AgentPolicy) -> str:
         phrases = policy.shows_filler_phrases
     elif tool_name in MOVIES_TOOL_NAMES:
         phrases = policy.movies_filler_phrases
+    elif tool_name in RESTAURANTS_TOOL_NAMES:
+        phrases = policy.restaurants_filler_phrases
     elif tool_name in REDDIT_TOOL_NAMES:
         phrases = policy.reddit_filler_phrases
     else:

@@ -11,7 +11,10 @@ import httpx
 import pytest
 from mcp.server.mcpserver import MCPServer
 
-from assistant_core.models import ToolCall
+from assistant_core.agent_loop import filler_for
+from assistant_core.models import DEFAULT_RESTAURANTS_FILLER_PHRASES, RESTAURANTS_TOOL_NAMES, AgentPolicy, Route, RouteDecision, ToolCall, ToolSpec
+from assistant_core.prompts import SYSTEM_PROMPT
+from assistant_core.router import RESTAURANTS_DIRECTIVE, directive_for, route_to_offered_tools, rule_route
 from assistant_core.tools import McpToolBox
 from assistant_mcp.server import build_server
 from restaurants_mcp.answers import NO_SNAPSHOT_MESSAGE, RestaurantAnswers
@@ -318,3 +321,31 @@ async def test_no_snapshot_and_an_old_snapshot_are_said(tmp_path: Path) -> None:
     write_restaurants(settings, refreshed_at=datetime(2026, 9, 1, 12, tzinfo=UTC))
     reply = await call(settings, RESTAURANTS_TOOL_NAME, {"location": "Manhattan"})
     assert reply.splitlines()[-1].startswith("These listings were last refreshed 62 days ago")
+
+
+def test_the_restaurants_rule_fires_on_asking_where_to_eat_and_not_on_other_restaurant_talk() -> None:
+    for restaurants in (
+        "Can you give me some restaurant recommendations in San Francisco for Asian cuisines that are less than or equal to three dollar signs in price point?",
+        "What are the best Japanese restaurants in Tokyo?",
+        "Michelin starred restaurants in Paris",
+        "Any Bib Gourmand spots near Union Square?",
+        "Where should we eat in the East Village?",
+        "Can you recommend a restaurant for date night?",
+    ):
+        assert rule_route(restaurants).tool_routes == [Route.RESTAURANTS], restaurants
+    for other in ("What's a good tip at a restaurant?", "Are Michelin tires good?", "What time does Le Bernardin close?", "What's the best pizza on Broadway?", "Recommend a good book"):
+        assert rule_route(other) is None or Route.RESTAURANTS not in rule_route(other).tool_routes, other
+
+
+def test_a_restaurants_question_gets_the_restaurants_directive_and_is_searched_when_the_server_has_no_guide() -> None:
+    decision = RouteDecision(route=Route.RESTAURANTS, source="rule")
+    assert directive_for(decision) == RESTAURANTS_DIRECTIVE.rstrip() and RESTAURANTS_TOOL_NAME in RESTAURANTS_DIRECTIVE
+    assert route_to_offered_tools(decision, [ToolSpec(name="search_and_read", description="", input_schema={})]).route == Route.SEARCH
+
+
+def test_restaurants_get_their_own_filler_line_and_the_prompt_says_michelins_price_levels_in_words() -> None:
+    policy = AgentPolicy()
+    assert RESTAURANTS_TOOL_NAMES == {RESTAURANTS_TOOL_NAME, RESTAURANT_DETAILS_TOOL_NAME}
+    assert filler_for(RESTAURANT_DETAILS_TOOL_NAME, policy) in DEFAULT_RESTAURANTS_FILLER_PHRASES
+    assert set(DEFAULT_RESTAURANTS_FILLER_PHRASES) <= set(policy.every_filler_phrase)
+    assert '"Three dollar signs or less" is max_price=3' in SYSTEM_PROMPT

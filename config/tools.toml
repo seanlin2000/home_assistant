@@ -61,6 +61,14 @@ marks_untrusted = true                      # titles and genres written by Fanda
 tier = "read_public"
 marks_untrusted = true                      # the synopsis too is written by Fandango and the studios
 
+[tools.restaurant_recommendations]
+tier = "read_public"
+marks_untrusted = true                      # names and the inspector's sentences written by Michelin; a "near" place goes to OpenStreetMap's Nominatim
+
+[tools.restaurant_details]
+tier = "read_public"
+marks_untrusted = true                      # the inspector's whole description, read from Michelin's page the first time it is asked for
+
 [tools.reddit_search]
 tier = "read_public"
 marks_untrusted = true                      # thread titles and comments written by anyone on Reddit
