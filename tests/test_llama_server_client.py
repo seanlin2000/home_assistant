@@ -83,3 +83,30 @@ def test_the_policys_sampling_is_sent_and_what_it_leaves_unset_keeps_the_servers
     body = response_request_body([Message(role=Role.USER, content="hi")], [], AgentPolicy(temperature=1.0, top_k=20, min_p=0.0))
     assert (body["temperature"], body["top_k"], body["min_p"]) == (1.0, 20, 0.0)
     assert "top_p" not in body and "presence_penalty" not in body
+
+
+def streamed_text(*contents: str) -> tuple[list[str], str]:
+    reply = StreamedReply()
+    spoken = [text for content in contents for text in reply.absorb(chunk({"content": content}), 0.0)]
+    spoken += reply.release_held_text()
+    return spoken, reply.assistant_message().content
+
+
+def test_a_stray_think_end_and_the_repeat_after_it_are_never_spoken() -> None:
+    spoken, content = streamed_text("Can you repeat that?\n", "</think>", "\n\nCan you repeat that?")
+    assert "".join(spoken) == content == "Can you repeat that?\n"
+
+
+def test_a_stray_think_end_split_across_chunks_is_caught() -> None:
+    spoken, content = streamed_text("Canberra.</th", "ink>\n\nCanberra.")
+    assert "".join(spoken) == content == "Canberra."
+
+
+def test_text_held_back_as_a_possible_tag_is_released_when_no_tag_follows() -> None:
+    spoken, content = streamed_text("Two is less than three <", " so yes.")
+    assert "".join(spoken) == content == "Two is less than three < so yes."
+
+
+def test_a_reply_ending_in_a_possible_tag_start_is_released_at_the_end() -> None:
+    spoken, content = streamed_text("It is a <")
+    assert "".join(spoken) == content == "It is a <"
