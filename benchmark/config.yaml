@@ -46,6 +46,16 @@ candidates:
     provider: llama-server
     model: qwen3.8-27b
     think: medium
+  - key: qwen3.8-27b-low
+    label: Qwen 3.8 27B, Q8_0, on llama-server, thinking low (prompt 3.0)
+    provider: llama-server
+    model: qwen3.8-27b
+    think: low
+  - key: qwen3.8-27b-off
+    label: Qwen 3.8 27B, Q8_0, on llama-server, thinking off (prompt 3.0)
+    provider: llama-server
+    model: qwen3.8-27b
+    think: false
   # harness: the same model through the harness's HTTP API (design doc v2/04 section 3.2); install the services first (scripts/services.sh install).
   - key: gemma4-e4b-harness
     label: Gemma 4 E4B on llama-server, through the harness service
