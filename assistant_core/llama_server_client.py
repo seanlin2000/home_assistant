@@ -22,6 +22,9 @@ MONITORING_TIMEOUT_SECONDS = 5.0
 STREAM_DATA_PREFIX = "data: "
 STREAM_END = "[DONE]"
 MILLISECONDS_PER_SECOND = 1000
+# Qwen 3.8 now and then writes its answer, a stray "</think>", then the same answer again, in the text it means to say; llama-server passes the tag
+# through, most often with thinking off. Everything from the tag on is dropped, so the answer is said once and the tag never reaches speech.
+STRAY_THINK_END = "</think>"
 
 
 class LlamaServerClient:
@@ -47,6 +50,8 @@ class LlamaServerClient:
                         continue
                     for text in stream.absorb(chunk, started):
                         yield TextDelta(text=text)
+        for text in stream.release_held_text():
+            yield TextDelta(text=text)
         for event in stream.tool_call_events():
             yield event
         yield Completion(message=stream.assistant_message(), stats=stream.stats(self._model_alias, started))
@@ -154,6 +159,14 @@ def thinking_template_options(think: bool | str | None) -> dict[str, Any]:
     return {"enable_thinking": think}
 
 
+def start_of_partial_tag(text: str) -> int:
+    """Where the end of text begins a stray </think> that the next chunk may finish; len(text) when it does not."""
+    for length in range(min(len(STRAY_THINK_END) - 1, len(text)), 0, -1):
+        if STRAY_THINK_END.startswith(text[-length:]):
+            return len(text) - length
+    return len(text)
+
+
 def parse_stream_line(line: str) -> dict[str, Any] | None:
     if not line.startswith(STREAM_DATA_PREFIX):
         return None
@@ -173,6 +186,8 @@ class StreamedReply:
         self.finish_reason: str | None = None
         self.timings: dict[str, Any] = {}
         self.first_token_at: float | None = None
+        self.held_text = ""  # the end of the text so far when it could be the start of a stray </think>
+        self.reached_stray_think_end = False
 
     def absorb(self, chunk: dict[str, Any], started: float) -> list[str]:
         """Take in one chunk and return the text it adds, in order."""
@@ -186,11 +201,33 @@ class StreamedReply:
             if delta.get("reasoning_content"):
                 self.thinking_parts.append(delta["reasoning_content"])
             if delta.get("content"):
-                self.text_parts.append(delta["content"])
-                texts.append(delta["content"])
+                texts.extend(self.text_before_stray_think_end(delta["content"]))
             for fragment in delta.get("tool_calls") or []:
                 self.add_tool_fragment(fragment)
         return texts
+
+    def text_before_stray_think_end(self, content: str) -> list[str]:
+        if self.reached_stray_think_end:
+            return []
+        text = self.held_text + content
+        if STRAY_THINK_END in text:
+            self.reached_stray_think_end = True
+            self.held_text = ""
+            return self.keep_text(text.split(STRAY_THINK_END)[0].rstrip())
+        held_from = start_of_partial_tag(text)
+        self.held_text = text[held_from:]
+        return self.keep_text(text[:held_from])
+
+    def release_held_text(self) -> list[str]:
+        """The held end of the text once the stream is over, when no tag followed it."""
+        text, self.held_text = self.held_text, ""
+        return self.keep_text(text)
+
+    def keep_text(self, text: str) -> list[str]:
+        if not text:
+            return []
+        self.text_parts.append(text)
+        return [text]
 
     def add_tool_fragment(self, fragment: dict[str, Any]) -> None:
         collected = self.tool_fragments.setdefault(fragment.get("index", 0), {"id": "", "name": "", "arguments": ""})
