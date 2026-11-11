@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It correctly says yes, backed by the tool's heavy rain and 0.45 in rounded to about half an inch, but 'low to mid-50s' understates the tool's 53 to 59°F range.",
+  "judgment_reason": "It checked weather_forecast for tomorrow afternoon instead of searching, and gave a clear yes.",
+  "spoken_fit_reason": "Three plain sentences that open with 'Yes', with no lists or markup."
+}

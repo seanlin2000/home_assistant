@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "Opens with a clear 'No, that's not correct', separates active-parameter compute from total-parameter memory because routing is decided per token, and adds KV cache and overhead, matching the sketch.",
+  "judgment_reason": "It rejects the false premise immediately and explains the reasoning rather than hedging.",
+  "spoken_fit_reason": "Leads with the answer but runs to five paragraphs and was cut by the word cap."
+}

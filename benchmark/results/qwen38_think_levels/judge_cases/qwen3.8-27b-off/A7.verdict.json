@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The energy_cost result (1.45 kWh a day, 43.5 kWh a month, about $7.40 at 17 cents, about $13 at 30 cents) matches the sketch, but it never notes that the machine is probably not at 300 W for the whole interaction hour.",
+  "judgment_reason": "It named the rate, the 30 days, and the idle hours as assumptions, but treated a full hour at 300 W as given even though the user explicitly asked it not to pretend to know the time under load.",
+  "spoken_fit_reason": "It leads with 'roughly seven dollars and forty cents a month' in two short plain-prose paragraphs."
+}

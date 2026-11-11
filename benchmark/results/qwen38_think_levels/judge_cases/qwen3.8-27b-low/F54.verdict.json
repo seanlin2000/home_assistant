@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Gives Lisbon 65 to 68 and home 53 to 59 from the two forecasts and a correct 9 to 12 degree difference, about ten.",
+  "judgment_reason": "Fetched both forecasts without searching, but worked out the difference in its head instead of using the calculator the question was testing.",
+  "spoken_fit_reason": "One sentence that leads with both temperatures and the difference in plain prose."
+}

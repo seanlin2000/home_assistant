@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It gives a low of about forty-one degrees in Chicago tonight, partly cloudy, dry, with wind up to twenty-three miles an hour, exactly matching the tool's night period of 41 to 44°F.",
+  "judgment_reason": "It called weather_forecast for Chicago tonight instead of searching and sensibly noted that the wind would make it feel colder.",
+  "spoken_fit_reason": "Two short plain sentences that lead with the low temperature."
+}

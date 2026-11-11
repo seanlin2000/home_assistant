@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "Correctly answers yes but only via a trained microWakeWord model flashed in custom ESPHome firmware, matching the forum reply and the MorningstarOwl repo, and lists the three stock wake words from Nabu Casa, though the claim that you lose automatic updates comes from a forum poster's own assumption.",
+  "judgment_reason": "It explains why it trusted the reproducible GitHub config plus forum corroboration over the stock-only support page, and did not repeat the unread snippet's claim of a built-in wake word recorder.",
+  "spoken_fit_reason": "Leads with 'Yes', but includes a backticked config key and ran past the word cap across two long paragraphs."
+}

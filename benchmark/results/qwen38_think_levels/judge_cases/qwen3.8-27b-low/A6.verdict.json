@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 4,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "Builds on the first turn, weighs the $400 against moving up to the 27 to 32B tier, and gives a conditional 'still 24 GB unless the money strains you or your models are light' recommendation, though the line that $100 would be a closer call than $400 is backwards.",
+  "judgment_reason": "The final recommendation is well conditioned and keeps the context, but the first exchange ran a web search on a stable hardware-reasoning question that needed none.",
+  "spoken_fit_reason": "Leads with 'no, I'd still pick the 24 GB' but runs three long paragraphs and was cut by the word cap."
+}

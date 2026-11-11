@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Correct yes backed by the tool's heavy rain and about half an inch of precipitation, but 'temps in the low fifties' understates the tool's 53 to 59°F range.",
+  "judgment_reason": "Called weather_forecast for tomorrow afternoon rather than searching, and gave a clear umbrella verdict.",
+  "spoken_fit_reason": "Three short sentences that lead with 'Yes, definitely' in plain prose."
+}

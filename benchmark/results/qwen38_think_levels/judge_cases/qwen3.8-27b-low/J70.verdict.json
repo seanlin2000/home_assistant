@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It gives 25.6 points per game over 47 games and says this covers the regular season and playoffs, matching player_matchup, and its note about the 30-point Finals games fits the game log.",
+  "judgment_reason": "It used player_matchup with the Cavaliers as the opponent team and stated what the average covers.",
+  "spoken_fit_reason": "It leads with the average in two plain sentences."
+}

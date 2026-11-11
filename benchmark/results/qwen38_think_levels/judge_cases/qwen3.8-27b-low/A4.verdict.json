@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "Covers normal leaf cycling, mobile-nitrogen deficiency, and over or underwatering, and asks for species, watering routine, and rate, but leaves out light or shading, fertilizer history, and pot-bound roots.",
+  "judgment_reason": "It frames aging as most likely under stated conditions and explicitly asks for the species and watering details instead of asserting one cause.",
+  "spoken_fit_reason": "Plain prose that leads with the answer, but four long paragraphs were cut by the word cap before the questions were heard."
+}

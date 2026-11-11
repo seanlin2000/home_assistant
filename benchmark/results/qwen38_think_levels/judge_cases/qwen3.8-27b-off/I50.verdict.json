@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It says yes, bring one, because of light rain at 41 to 44 degrees tomorrow afternoon in Portland, Maine, matching the tool result.",
+  "judgment_reason": "It called weather_forecast for Portland, Maine for tomorrow afternoon, the right place and period, instead of searching.",
+  "spoken_fit_reason": "It leads with \"Yes, I'd bring one\" and stays at two plain sentences."
+}

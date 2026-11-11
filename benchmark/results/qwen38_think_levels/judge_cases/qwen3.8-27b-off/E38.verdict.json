@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The final reply is the silence marker '*' with no weather_forecast call, so tonight's low is never given.",
+  "judgment_reason": "It treated a clear question about tonight's temperature as speech not meant for it and never checked the forecast.",
+  "spoken_fit_reason": "Nothing is spoken in reply to a real request."
+}

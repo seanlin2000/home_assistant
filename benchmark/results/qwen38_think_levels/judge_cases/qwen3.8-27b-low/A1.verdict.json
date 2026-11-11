@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It correctly says all thirty billion weights must be resident for both models, but then credits lower activation memory for the fit, never mentions quantization or expert offloading, and breaks off mid-sentence before answering why 16 GB can work.",
+  "judgment_reason": "Not searching was right, but leaning on activation memory as the explanation is the kind of misleading simplification the question warns against.",
+  "spoken_fit_reason": "A multi-paragraph lecture opening with 'Great question' that hit the word cap before reaching the answer."
+}
