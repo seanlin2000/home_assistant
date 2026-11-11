@@ -162,4 +162,5 @@ def test_the_checked_in_config_loads_and_takes_the_window_from_the_served_model(
     assert config.allowed_hosts() == ["192.168.1.152:8770", "mac.local:8770"]
     assert config.policy(serving).context_tokens == serving.served_model.conversation_tokens
     assert config.policy(serving).history_exchanges == config.answer.history_exchanges
+    assert (config.policy(serving).route_questions, config.policy(serving).think) == (config.answer.route_questions, config.answer.think)
     assert config.service.tool_server_url.startswith("http://127.0.0.1:")

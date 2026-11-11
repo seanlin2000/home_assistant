@@ -1,9 +1,11 @@
 """Expose Wikipedia lookups as an MCP tool on an existing server, alongside web search, the calculators, and the forecast, so the agent sees one tool list."""
 
 import logging
+from typing import Annotated
 
 import httpx
 from mcp.server.mcpserver import MCPServer
+from pydantic import Field
 
 from wikipedia_mcp.article import render_article
 from wikipedia_mcp.client import ArticleStore, WikipediaClient, WikipediaUnavailable
@@ -21,8 +23,11 @@ def register_wikipedia_tools(server: MCPServer, settings: WikipediaSettings, sto
     client = WikipediaClient(settings, store, transport)
 
     @server.tool(name=WIKIPEDIA_TOOL_NAME)
-    async def wikipedia_lookup(topic: str, focus: str = "") -> str:
-        """Read the encyclopedia article on a topic, for settled facts, lists, records, and histories: who held an office, a team's seasons or starting players, a person's career, a country's history. Tables come back as rows. topic: what the article is about, e.g. "San Francisco 49ers starting quarterbacks". focus: optional words or a year naming the part you need; a year means that year onward, e.g. "2000". Not for prices, news, or anything that changes week to week; search the web for those."""
+    async def wikipedia_lookup(
+        topic: Annotated[str, Field(description='subject, e.g. "San Francisco 49ers starting quarterbacks"')],
+        focus: Annotated[str, Field(description="words or a year for the part you need; a year means from then on")] = "",
+    ) -> str:
+        """Read a Wikipedia article, tables as rows. For settled facts, lists and records: who held an office, a country's history, a career, leagues other than the NBA and NFL. For things that change over time, use search_and_read."""
         if not topic.strip():
             return NO_TOPIC_MESSAGE
         try:

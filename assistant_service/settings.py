@@ -40,6 +40,8 @@ class AnswerSettings(StrictModel):
     max_tool_rounds: int
     tool_timeout_seconds: float
     history_exchanges: int
+    route_questions: bool
+    think: bool | str | None = None  # "low", "medium" or "xhigh" turns the model's thinking on at that effort, per request
 
 
 class HarnessConfig(StrictModel):
@@ -59,6 +61,8 @@ class HarnessConfig(StrictModel):
             max_tool_rounds=self.answer.max_tool_rounds,
             tool_timeout_seconds=self.answer.tool_timeout_seconds,
             history_exchanges=self.answer.history_exchanges,
+            route_questions=self.answer.route_questions,
+            think=self.answer.think,
             context_tokens=model.conversation_tokens,
             max_output_tokens=model.sampling.max_output_tokens,
         )

@@ -2,10 +2,12 @@
 policy:
   temperature: 0.7
   max_tool_rounds: 4
-  max_output_tokens: 600
+  max_output_tokens: 2048  # room for a thinking candidate's thoughts before its answer; the spoken word budget still caps the answer
   word_budget: 200
   context_tokens: 16384
   tool_timeout_seconds: 60
+  route_questions: false  # from prompt 3.0 every candidate chooses its tools from the definitions, as the harness now does
+  history_exchanges: 6
 
 services:
   ollama_host: http://127.0.0.1:11434
@@ -39,6 +41,11 @@ candidates:
     provider: llama-server
     model: gemma-4-e4b
     think: false
+  - key: qwen3.8-27b-medium
+    label: Qwen 3.8 27B, Q8_0, on llama-server, thinking medium (prompt 3.0)
+    provider: llama-server
+    model: qwen3.8-27b
+    think: medium
   # harness: the same model through the harness's HTTP API (design doc v2/04 section 3.2); install the services first (scripts/services.sh install).
   - key: gemma4-e4b-harness
     label: Gemma 4 E4B on llama-server, through the harness service

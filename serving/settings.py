@@ -48,6 +48,7 @@ class ModelSettings(StrictModel):
     prompt_cache_mib: int
     reasoning: Literal["on", "off", "auto"]
     swa_full: bool
+    speculative: Literal["none", "draft-mtp"]
     sampling: Sampling
 
     @property

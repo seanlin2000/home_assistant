@@ -41,8 +41,15 @@ QueryText = Annotated[str, Field(max_length=MAX_QUERY_CHARS)]
 
 def register_reddit_tools(server: MCPServer, settings: RedditSettings, web_search: SearchEngine, transport: httpx.AsyncBaseTransport | None = None) -> None:
     @server.tool(name=REDDIT_TOOL_NAME)
-    async def reddit_search(query: QueryText, subreddits: list[SubredditName] | None = None, time_range: TimeRange = DEFAULT_TIME_RANGE) -> str:
-        """What people on Reddit say about something: the most relevant threads, each with its subreddit, month and year, upvotes, the start of the post, and its top comments. query: a few key words, such as "soup dumplings Flushing" or "Hadestown worth it". subreddits: the subreddits to read, without "r/", such as ["FoodNYC"] or ["Broadway"]; the ones the user named, or one or two that fit the topic (FoodNYC or AskNYC for New York restaurants and things to do, Broadway for shows, nba or nfl for basketball or football); empty for all of Reddit. time_range: "two_years" by default, mixing the past year's threads with the most relevant of the last two years; "day", "week", "month", or "year" for only threads that recent, when the user asks what people are saying lately; "all" when the user asks for older threads too."""
+    async def reddit_search(
+        query: Annotated[QueryText, Field(description='a few key words, e.g. "soup dumplings Flushing"')],
+        subreddits: Annotated[
+            list[SubredditName] | None,
+            Field(description='without "r/": ones the user named, or one or two that fit (FoodNYC, AskNYC, Broadway, nba, nfl); empty for all'),
+        ] = None,
+        time_range: Annotated[TimeRange, Field(description="day to year only if the user asks about recent posts; all for older too")] = DEFAULT_TIME_RANGE,
+    ) -> str:
+        """What people on Reddit say: top threads with subreddit, date, upvotes, post and top comments. Answer with what they agree on and recommend most, saying it is from Reddit; give a thread's age if over a year. If it says Reddit did not answer, the user was already told: do not apologize, search the web as it says."""
         reddit_query = RedditQuery(subreddits=subreddit_names(subreddits or [], settings.max_subreddits), query=query, time_range=time_range)
         return await reddit_answer(reddit_query, web_search, ArcticShiftSession(settings, transport), settings)
 

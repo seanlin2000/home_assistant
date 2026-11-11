@@ -10,6 +10,7 @@ import yaml
 
 from assistant_core.models import Route, RouteDecision
 from benchmark.records import Candidate, Category, Gate, Question, QuestionResult, QuestionSet, Score, load_config, load_questions, read_jsonl
+from utils.generation_speed_utils import GenerationSpeed, generation_speed
 
 CONFIG_PATH = Path("benchmark/config.yaml")
 QUESTIONS_PATH = Path("benchmark/questions.yaml")
@@ -59,6 +60,10 @@ class CandidateReport:
     def mean_words(self) -> float:
         finals = self.finals()
         return statistics.fmean(len(transcript.final_answer.split()) for transcript in finals) if finals else 0.0
+
+    def generation_speed(self) -> GenerationSpeed | None:
+        """Every model call of every question added up, so the rates weigh long prompts and long answers by their size."""
+        return generation_speed([call for transcript in self.finals() for call in transcript.model_calls])
 
     def searched_count(self) -> int:
         return sum(1 for result in self.results if result.searched)
@@ -232,14 +237,20 @@ def render_latency_table(reports: list[CandidateReport]) -> str:
     lines = [
         "## Logged, not scored (prototype machine, for projection only)",
         "",
-        "| Candidate | Median time to first token | Median total | Mean answer words | Questions searched | Fully on GPU |",
-        "|---|---|---|---|---|---|",
+        "| Candidate | Median time to first token | Median total | Mean answer words | Questions searched | Prefill | Decode | Fully on GPU |",
+        "|---|---|---|---|---|---|---|---|",
     ]
     for report in reports:
+        speed = report.generation_speed()
         lines.append(
-            f"| {label(report)} | {report.median_seconds('time_to_first_token_seconds'):.1f} s | {report.median_seconds('total_seconds'):.1f} s | {report.mean_words():.0f} | {report.searched_count()}/{len(report.results)} | {report.fully_on_gpu()} |"
+            f"| {label(report)} | {report.median_seconds('time_to_first_token_seconds'):.1f} s | {report.median_seconds('total_seconds'):.1f} s | {report.mean_words():.0f} |"
+            f" {report.searched_count()}/{len(report.results)} | {tokens_per_second(speed and speed.prefill_tokens_per_second)} | {tokens_per_second(speed and speed.decode_tokens_per_second)} | {report.fully_on_gpu()} |"
         )
     return "\n".join(lines)
+
+
+def tokens_per_second(rate: float | None) -> str:
+    return "n/a" if rate is None else f"{rate:.0f} tok/s"
 
 
 def render_matrix(question_set: QuestionSet, reports: list[CandidateReport]) -> str:
