@@ -31,12 +31,14 @@ from assistant_service.settings import load_harness_config
 from benchmark.mcp_process import McpServerProcess, fixture_selected
 from benchmark.ollama_utils import delete_model, ensure_model_present, unload, warm_up
 from benchmark.records import BenchmarkConfig, Candidate, MemoryFit, Question, QuestionResult, QuestionSet, append_jsonl, load_config, load_questions, read_jsonl
+from serving.command import llama_server_program
 from serving.settings import load_serving_config, read_api_key
 
 ExchangeRunner = Callable[[list[Message]], Awaitable[Transcript]]
 CONFIG_PATH = Path("benchmark/config.yaml")
 QUESTIONS_PATH = Path("benchmark/questions.yaml")
 console = Console()
+SAMPLING_FIELDS = {"think", "temperature", "top_p", "top_k", "min_p", "presence_penalty", "repeat_penalty", "max_output_tokens"}
 
 
 def parse_args() -> argparse.Namespace:
@@ -85,21 +87,29 @@ def write_run_metadata(run_dir: Path, config: BenchmarkConfig, question_set: Que
         "prompt_version": PROMPT_VERSION,
         "policy": config.policy.model_dump(),
         "candidates": [candidate.model_dump() for candidate in config.candidates],
+        "candidate_sampling": {candidate.key: candidate_sampling(candidate, config) for candidate in config.candidates},
         "machine": platform.platform(),
         "chip": run_command(["sysctl", "-n", "machdep.cpu.brand_string"]),
         "memory_bytes": run_command(["sysctl", "-n", "hw.memsize"]),
         "ollama_version": run_command(["ollama", "--version"]),
-        "llama_server_version": run_command(["llama-server", "--version"]),
+        "llama_server_version": run_command([llama_server_program(), "--version"]),
         "git_commit": run_command(["git", "rev-parse", "--short", "HEAD"]),
     }
     (run_dir / "run_meta.json").write_text(json.dumps(metadata, indent=2))
 
 
+def candidate_sampling(candidate: Candidate, config: BenchmarkConfig) -> dict[str, bool | str | float | int | None]:
+    """The thinking and sampling a candidate actually runs with, which the shared policy above does not show for a llama-server candidate."""
+    return candidate_policy(candidate, config).model_dump(include=SAMPLING_FIELDS)
+
+
 def run_command(command: list[str]) -> str:
+    """The command's output: stdout, or stderr when stdout is empty, because llama-server prints its --version there."""
     try:
-        return subprocess.run(command, capture_output=True, text=True, check=False).stdout.strip()
+        finished = subprocess.run(command, capture_output=True, text=True, check=False)
     except OSError:
         return ""
+    return (finished.stdout or finished.stderr).strip()
 
 
 async def run_candidate(candidate: Candidate, questions: list[Question], config: BenchmarkConfig, mcp_url: str, run_dir: Path, args: argparse.Namespace) -> None:
