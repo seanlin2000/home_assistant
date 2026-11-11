@@ -116,7 +116,7 @@ async def run_candidate(candidate: Candidate, questions: list[Question], config:
     if llm is None:
         return
     memory_fit = await prepare_model(candidate, config)
-    policy = config.policy.model_copy(update={"think": candidate.think})
+    policy = candidate_policy(candidate, config)
     async with McpToolBox(mcp_url) as toolbox:
         if isinstance(llm, LlamaServerClient):
             await warm_up_llama_server(llm, toolbox)
@@ -167,6 +167,15 @@ def build_llm(candidate: Candidate, config: BenchmarkConfig) -> LLMClient | None
     if candidate.provider == "llama-server":
         return llama_server_client(candidate)
     return OllamaClient(candidate.model, host=config.services.ollama_host)
+
+
+def candidate_policy(candidate: Candidate, config: BenchmarkConfig) -> AgentPolicy:
+    """The shared policy with the candidate's thinking. A llama-server candidate also takes its model's own sampling from config/serving.toml, in the
+    set for its thinking, as the harness does; an Ollama candidate keeps the shared temperature and Ollama's defaults."""
+    policy = config.policy.model_copy(update={"think": candidate.think})
+    if candidate.provider != "llama-server":
+        return policy
+    return policy.model_copy(update=load_serving_config().models[candidate.model].sampling_for(candidate.think).policy_fields())
 
 
 def llama_server_client(candidate: Candidate) -> LlamaServerClient:

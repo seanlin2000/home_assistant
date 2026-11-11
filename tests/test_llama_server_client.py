@@ -77,3 +77,9 @@ def test_the_model_reads_tool_schemas_without_the_titles_that_repeat_each_argume
     schema = {"title": "percentArguments", "type": "object", "properties": {"title": {"title": "Title", "type": "string"}, "a": {"title": "A", "type": "number"}}}
     sent = to_openai_tool(ToolSpec(name="percent", description="Percent questions.", input_schema=schema))["function"]["parameters"]
     assert sent == {"type": "object", "properties": {"title": {"type": "string"}, "a": {"type": "number"}}}
+
+
+def test_the_policys_sampling_is_sent_and_what_it_leaves_unset_keeps_the_servers_default() -> None:
+    body = response_request_body([Message(role=Role.USER, content="hi")], [], AgentPolicy(temperature=1.0, top_k=20, min_p=0.0))
+    assert (body["temperature"], body["top_k"], body["min_p"]) == (1.0, 20, 0.0)
+    assert "top_p" not in body and "presence_penalty" not in body

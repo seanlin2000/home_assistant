@@ -29,8 +29,19 @@ class ServerSettings(StrictModel):
 
 
 class Sampling(StrictModel):
+    """How the model picks each next token, with the names llama-server takes per request."""
+
     temperature: float
+    top_p: float
+    top_k: int
+    min_p: float
+    presence_penalty: float
+    repeat_penalty: float
     max_output_tokens: int
+
+    def policy_fields(self) -> dict[str, float | int]:
+        """The fields of an AgentPolicy these settings fill."""
+        return self.model_dump()
 
 
 class ModelSettings(StrictModel):
@@ -50,6 +61,11 @@ class ModelSettings(StrictModel):
     swa_full: bool
     speculative: Literal["none", "draft-mtp"]
     sampling: Sampling
+    thinking_sampling: Sampling | None = None  # the model maker's set for thinking mode; without one, thinking uses `sampling`
+
+    def sampling_for(self, think: bool | str | None) -> Sampling:
+        """The set for answering with thinking on (a level or True) or off (False or None)."""
+        return self.thinking_sampling if think not in (None, False) and self.thinking_sampling else self.sampling
 
     @property
     def gguf_path(self) -> Path:

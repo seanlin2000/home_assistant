@@ -65,3 +65,11 @@ def test_fetch_keeps_a_file_that_already_matches_instead_of_downloading_again(tm
 
     monkeypatch.setattr(serving_cli, "fetch_model_file", refuse_download)
     serving_cli.fetch(model)
+
+
+def test_thinking_takes_the_models_thinking_sampling_and_no_thinking_its_plain_set() -> None:
+    qwen = load_serving_config().models["qwen3.8-27b"]
+    assert qwen.sampling_for("medium").temperature == 1.0 and qwen.sampling_for("medium").presence_penalty == 0.0
+    assert qwen.sampling_for(False).temperature == 0.7 and qwen.sampling_for(None).presence_penalty == 1.5
+    gemma = load_serving_config().models["gemma-4-e4b"]
+    assert gemma.sampling_for("medium") == gemma.sampling
