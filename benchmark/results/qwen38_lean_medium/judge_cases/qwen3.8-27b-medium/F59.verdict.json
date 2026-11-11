@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It gives tonight's low as about 11 degrees Celsius from the convert tool's 10.56 for the forecast's 51°F, along with the forecast's 51 to 54°F range, clouds and light rain.",
+  "judgment_reason": "It checked the home forecast, converted with the convert tool rather than searching, and gave the Fahrenheit source figure.",
+  "spoken_fit_reason": "It leads with the answer, but writes '°F' and '°C' symbols mid-sentence and adds an unsupported 'muggier' aside and a window remark."
+}

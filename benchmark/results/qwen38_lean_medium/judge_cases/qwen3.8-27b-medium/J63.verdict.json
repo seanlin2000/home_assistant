@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 3,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "Gets the Cavaliers' 93 to 89 win, LeBron's 27 and Draymond Green's 32 right from the box score, then wrongly claims Kevin Durant was in the game, which no tool result supports.",
+  "judgment_reason": "The box_score already answered everything, yet it ran an unneeded web search for Durant and then cast doubt on correct data because of its own false belief.",
+  "spoken_fit_reason": "Leads with the winner and score, but the spurious Durant caveat drags the reply to five sentences."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 4,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Gives the correct triple-double of 27 points, 11 rebounds and 11 assists on 9 of 24, with 2 steals and 3 blocks, but garbles the Heavy and NBA sources into 'the only time he and Jerry West and James Worthy have recorded a triple-double'.",
+  "judgment_reason": "Called player_stats for season averages instead of box_score, then fell back to a web search for a game-level line the sports tools could have given.",
+  "spoken_fit_reason": "Leads with the triple-double in three plain sentences, with no lists or markup."
+}

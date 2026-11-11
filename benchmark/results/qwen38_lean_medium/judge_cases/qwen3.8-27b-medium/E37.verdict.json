@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Both days match the tool: Saturday is cloudy, 38 to 47; Sunday is clear and dry, 37 to 49. Calling Saturday's 0.02 in 'a touch of moisture in the air' is vague about whether rain is likely.",
+  "judgment_reason": "It called weather_forecast for home instead of searching and added no figures that the tool did not return.",
+  "spoken_fit_reason": "Three short plain sentences that summarise each day rather than reading out every line."
+}

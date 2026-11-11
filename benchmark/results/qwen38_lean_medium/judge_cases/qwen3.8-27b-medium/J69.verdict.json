@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 0,
+  "answer_quality_reason": "Gives the 30 to 25 record with the 13 to 14 and 17 to 11 splits and the 25.3 versus 30.7 scoring averages exactly as player_matchup returned them, but includes a garbled sentence about the 'regular season's flip side' and wrongly credits the playoff edge to Warriors-Lakers meetings.",
+  "judgment_reason": "Called player_matchup for Curry against LeBron without searching, and every figure it used came from that result.",
+  "spoken_fit_reason": "Four paragraphs of stats and highlights, a wall of text that the word cap cut off mid-reply at 'A few memorable standouts stand out.'"
+}

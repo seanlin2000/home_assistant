@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The final message names all eighteen players with correct numbers and statuses, but a false start that reads part of the list twice pushed it past the word cap, so the listener heard only twelve, ending at Georges Niang.",
+  "judgment_reason": "Called team_roster without searching and set out to read every player rather than summarising with 'and others'.",
+  "spoken_fit_reason": "Spoken sentences rather than a list, but the 'LJ... no wait, let me go down the list in order' restart would sound wrong aloud and wastes the word budget."
+}
