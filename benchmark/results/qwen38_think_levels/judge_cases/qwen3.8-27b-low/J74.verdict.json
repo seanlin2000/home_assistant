@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 5,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It gives 27 points on 9 of 24, 11 rebounds, 11 assists, 2 steals, and 3 blocks in about 47 minutes in the 93 to 89 win, all traceable to the Basketball-Reference and Heavy.com excerpts.",
+  "judgment_reason": "It ran a web search instead of calling its box_score sports tool for a recorded game, though the search happened to return the right figures.",
+  "spoken_fit_reason": "It gives the triple-double stat line in three plain sentences."
+}

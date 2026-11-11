@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It says no rain, which matches the tool result showing every part of Friday dry, and gives the 47 to 65 temperature span correctly.",
+  "judgment_reason": "It used the weather_forecast tool for Tokyo tomorrow instead of searching.",
+  "spoken_fit_reason": "It leads with 'No, it looks dry in Tokyo tomorrow' in three short plain sentences."
+}

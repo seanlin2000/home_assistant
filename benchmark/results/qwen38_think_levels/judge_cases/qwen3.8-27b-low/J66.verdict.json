@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 1,
+  "answer_quality_reason": "All fifteen season totals from 55 to 190 match the tool result, but it calls 2025-26 the current season still in progress at 'one hundred ninety and climbing' when it is finished, and it blames the short 2017-18 and 2019-20 seasons on an 'Achilles tear' that nothing in the result supports.",
+  "judgment_reason": "It picked the right fifteen seasons but misjudged which season is current, added unsourced injury stories, and ended by asking an unneeded follow-up question.",
+  "spoken_fit_reason": "It is in spoken sentences, but the four paragraphs of narrative ran into the word cap, so the listener heard only eight of the fifteen seasons."
+}

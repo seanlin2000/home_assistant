@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "Correctly gives 0.48 kWh a day, 14.4 kWh and $4.32 for 30 days, but leads with 'four dollars and a quarter' and adds an unsupported claim that the 120 watts is 'just the picture and audio side'.",
+  "judgment_reason": "Used the energy_cost tool with the stated price and still gave the asked figure while flagging standby and accessories as possible extras, which the reference allows.",
+  "spoken_fit_reason": "Two paragraphs with a step-by-step walk-through and an em-dash aside, much longer than the one-line answer needed."
+}

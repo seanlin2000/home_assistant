@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 2,
+  "judgment": 0,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The 14 million versus 8.5 million figures and the ratio of about 1.6 come from memory, not Wikipedia or the calculator, and the 'more than four times' metro claim compares Greater Tokyo's 37 million to New York's city-proper population.",
+  "judgment_reason": "It ignored the explicit 'Check Wikipedia' instruction, made no search or calculator call, and mixed a metro figure with a city figure while labelling it a metropolitan comparison.",
+  "spoken_fit_reason": "Four plain sentences that lead with the answer, with no lists or markup."
+}

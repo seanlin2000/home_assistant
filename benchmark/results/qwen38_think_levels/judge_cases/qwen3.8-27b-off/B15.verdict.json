@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": false,
+  "answer_quality": 1,
+  "judgment": 0,
+  "spoken_fit": 0,
+  "answer_quality_reason": "Without any search, it asserts that used RTX 4080s sell in 'the low-to-mid $500s' and 'just under budget' and that 3090s are 'often cheaper', none of it verified, and it names as the best under-$500 option a card it itself prices above $500.",
+  "judgment_reason": "It said it cannot check live prices yet did not search a current-price shopping question and stated prices anyway, failing the central point.",
+  "spoken_fit_reason": "The output has a dash-bulleted list, a leaked '</think>' tag, and a second duplicated draft that is cut off mid-sentence."
+}
