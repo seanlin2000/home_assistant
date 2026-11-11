@@ -131,10 +131,17 @@ def response_request_body(messages: list[Message], tools: list[ToolSpec], policy
         "id_slot": CONVERSATION_SLOT,
         "cache_prompt": True,
     }
+    body.update(sampling_options(policy))
     thinking = thinking_template_options(policy.think)
     if thinking:
         body["chat_template_kwargs"] = thinking
     return body
+
+
+def sampling_options(policy: AgentPolicy) -> dict[str, float | int]:
+    """The sampling settings the policy names; the ones it leaves unset keep llama-server's defaults."""
+    fields = {"top_p": policy.top_p, "top_k": policy.top_k, "min_p": policy.min_p, "presence_penalty": policy.presence_penalty, "repeat_penalty": policy.repeat_penalty}
+    return {name: value for name, value in fields.items() if value is not None}
 
 
 def thinking_template_options(think: bool | str | None) -> dict[str, Any]:

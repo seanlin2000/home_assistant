@@ -65,6 +65,11 @@ class AgentPolicy(BaseModel):
     temperature: float = 0.7
     max_tool_rounds: int = 4
     max_output_tokens: int = 600
+    top_p: float | None = None  # None leaves llama-server's default; serving.toml sets each model's own
+    top_k: int | None = None
+    min_p: float | None = None
+    presence_penalty: float | None = None
+    repeat_penalty: float | None = None
     word_budget: int = 200
     context_tokens: int = 16384
     think: bool | str | None = None

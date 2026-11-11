@@ -24,8 +24,13 @@ reasoning = "off"                           # --reasoning
 swa_full = false                            # --swa-full
 speculative = "none"                        # --spec-type; Gemma 4 E4B has no draft layer
 
-[models.gemma-4-e4b.sampling]               # defaults; the harness may override per request
+[models.gemma-4-e4b.sampling]               # sent with every request; top_p, top_k, min_p and the penalties are llama-server's defaults
 temperature = 0.7
+top_p = 0.95
+top_k = 40
+min_p = 0.05
+presence_penalty = 0.0
+repeat_penalty = 1.0
 max_output_tokens = 600
 
 [models."qwen3.8-27b"]
@@ -45,6 +50,20 @@ reasoning = "off"                           # the server default; the harness tu
 swa_full = false                            # no sliding-window layers in this model
 speculative = "draft-mtp"                   # the model's own multi-token-prediction layer drafts tokens: decode 19 -> about 36 tok/s on the M5 Max
 
-[models."qwen3.8-27b".sampling]
+[models."qwen3.8-27b".sampling]             # Qwen's set without thinking (Unsloth's model card)
 temperature = 0.7
+top_p = 0.8
+top_k = 20
+min_p = 0.0
+presence_penalty = 1.5
+repeat_penalty = 1.0
+max_output_tokens = 600
+
+[models."qwen3.8-27b".thinking_sampling]    # Qwen's set with thinking on (Unsloth's model card)
+temperature = 1.0
+top_p = 0.95
+top_k = 20
+min_p = 0.0
+presence_penalty = 0.0
+repeat_penalty = 1.0
 max_output_tokens = 2048                    # thinking counts against it; medium effort writes a few hundred tokens before the answer
