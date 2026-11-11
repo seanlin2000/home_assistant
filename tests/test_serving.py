@@ -3,8 +3,9 @@ from pathlib import Path
 import pytest
 from pydantic import ValidationError
 
+from serving import cli as serving_cli
 from serving.command import build_command, refuse_dangerous_flags
-from serving.model_file import ModelFileMismatch, file_sha256, verify_model_file
+from serving.model_file import ModelFileMismatch, file_sha256, model_file_matches, verify_model_file
 from serving.settings import SERVING_CONFIG_PATH, load_serving_config
 
 
@@ -36,3 +37,24 @@ def test_a_model_file_that_differs_from_its_pinned_hash_is_refused(tmp_path: Pat
     with pytest.raises(ModelFileMismatch, match="pins"):
         verify_model_file(model)
     verify_model_file(model.model_copy(update={"sha256": file_sha256(model_file)}))
+
+
+def test_a_model_file_matches_only_when_it_exists_with_its_pinned_hash(tmp_path: Path) -> None:
+    model_file = tmp_path / "model.gguf"
+    model = load_serving_config().served_model.model_copy(update={"gguf": str(model_file)})
+    assert not model_file_matches(model)
+    model_file.write_bytes(b"the model")
+    assert not model_file_matches(model)
+    assert model_file_matches(model.model_copy(update={"sha256": file_sha256(model_file)}))
+
+
+def test_fetch_keeps_a_file_that_already_matches_instead_of_downloading_again(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    model_file = tmp_path / "model.gguf"
+    model_file.write_bytes(b"the model")
+    model = load_serving_config().served_model.model_copy(update={"gguf": str(model_file), "sha256": file_sha256(model_file)})
+
+    def refuse_download(_model: object) -> Path:
+        raise AssertionError("downloaded a model that was already in place")
+
+    monkeypatch.setattr(serving_cli, "fetch_model_file", refuse_download)
+    serving_cli.fetch(model)

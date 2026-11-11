@@ -53,6 +53,11 @@ class HomeAssistant:
             raise RuntimeError(f"POST {path} -> {response.status_code} {response.text[:300]}")
         return response.json() if response.content else None
 
+    async def delete(self, path: str) -> Any:
+        response = await self.http.delete(path, headers=self.headers())
+        response.raise_for_status()
+        return response.json() if response.content else None
+
     async def supervisor(self, method: str, endpoint: str, data: dict[str, Any] | None = None) -> Any:
         """Supervisor calls go over the websocket `supervisor/api` command, as the frontend does. On Home Assistant 2026.9 the REST proxy at
         /api/hassio answered 401 to a valid owner token; the websocket route accepted the same token."""

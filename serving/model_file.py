@@ -32,6 +32,14 @@ def verify_model_file(model: ModelSettings) -> None:
         raise ModelFileMismatch(f"{path} has SHA-256 {actual}, but config/serving.toml pins {model.sha256}")
 
 
+def model_file_matches(model: ModelSettings) -> bool:
+    try:
+        verify_model_file(model)
+    except ModelFileMismatch:
+        return False
+    return True
+
+
 def fetch_model_file(model: ModelSettings) -> Path:
     """Download into a partial file, check its hash, then move it into place, so a broken download never sits where the launcher looks."""
     path = model.gguf_path
