@@ -225,14 +225,18 @@ A move is now two commands, each run at the Mac it changes:
     - registers the VM with UTM (`haos_vm.sh register`), bridged to the new Mac's own interface, and starts it;
     - runs `ha_setup.py --only integrations --only pipeline`, which replaces Wyoming entries made for another address, duplicates included;
     - asks the smoke test's question through Home Assistant;
+    - removes `env`, `app-support/` and the Brave key from the folder, last, so a run that stops partway can be repeated;
     - prints the router reservation to make, with the interface's hardware address.
+
+    Everything that needs a person comes first: the Xcode tools, the installers' and system settings' password, Docker's terms, and the permission
+    prompts for System Events and UTM. The script then prints "nothing below needs you" before the model download, which can take an hour.
 
 Three changes make the scripts work on any Mac, not only the laptop:
 - **One place knows the network.** `scripts/network_identity.sh` reads the interface that carries the default route, its address, its hardware address and the Bonjour name. `services.sh`, `haos_vm.sh` and `ha_setup.py` ask it instead of assuming `en0` or `192.168.1.152`.
 - **The allowed hosts include the name.** The harness and the dashboard answer to the address and to `<name>.local`, in macOS's spelling and in the lowercase a browser sends, so the dashboard opens by name from the laptop.
 - **The Brewfile installs llama.cpp**, not Ollama.
 
-What still needs a person: approving the Xcode tools dialog, accepting Docker's terms, allowing Terminal to control UTM and to reach its data, the password for the system settings, and the router reservation. The script stops or says so at each one, and can be run again from the start.
+What still needs a person after the script: the router reservation, and erasing the drive, whose copy of the VM holds Home Assistant's accounts. `docs/MOVING_TO_A_NEW_MAC.md` is the human version of this section, as numbered steps; the export copies it into the folder as `README.md`, and CLAUDE.md tells Claude Code on either Mac to give those steps rather than its own.
 
 ## 4. Packages and tools, and what each does for the business logic
 

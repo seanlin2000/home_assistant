@@ -112,6 +112,14 @@ store_brave_key() {
     fi
 }
 
+step "what this needs from you, all in the first few minutes"
+cat <<EOF
+    - your Mac login password: Homebrew, Docker and UTM's installers, then the power and firewall settings
+    - a click to install Xcode's command line tools (then run this script again), and to accept Docker's terms
+    - "Allow" when macOS asks whether Terminal may control System Events and UTM, and access UTM's data
+    Once it prints "nothing below needs you", you can walk away.
+EOF
+
 # ---------------------------------------------------------------- 1. tools
 step "Xcode command line tools (git needs them)"
 if ! xcode-select -p >/dev/null 2>&1; then
@@ -152,9 +160,12 @@ run mkdir -p "$LOG_DIR/exchanges"
 # ---------------------------------------------------------------- 3. what the old Mac had (before the services start, so they start with it)
 if [[ -n "$FROM" ]]; then
     step "restoring from $FROM ($(sed -n 's/^from_mac=//p' "$FROM/manifest.txt"), exported $(sed -n 's/^exported_at=//p' "$FROM/manifest.txt"))"
-    echo "    .env"
-    restore_keeping_backup "$FROM/env" "$TARGET_DIR/.env"
-    run chmod 600 "$TARGET_DIR/.env"
+    # An earlier run that finished removed the secrets from the folder (section 8), so each part is restored only while it is there.
+    if [[ -f "$FROM/env" ]]; then
+        echo "    .env"
+        restore_keeping_backup "$FROM/env" "$TARGET_DIR/.env"
+        run chmod 600 "$TARGET_DIR/.env"
+    fi
     if [[ -d "$FROM/app-support" ]]; then
         echo "    API keys, the harness database and the Brave spend log"
         restore_keeping_backup "$FROM/app-support" "$APP_SUPPORT_DIR"
@@ -170,34 +181,7 @@ if [[ -n "$FROM" ]]; then
     fi
 fi
 
-step "the model config/serving.toml serves (the first time this downloads tens of GB; a file already matching its hash is kept)"
-run "$TARGET_DIR/.venv/bin/serving" fetch
-
-# ---------------------------------------------------------------- 4. services
-step "Docker Desktop and SearXNG (accept Docker's terms if it asks)"
-if ! pgrep -xq Docker; then
-    run open -g -a Docker
-    $DRY_RUN || {
-        printf '    waiting for the Docker engine'
-        for _ in $(seq 1 60); do
-            if "$TARGET_DIR/scripts/searxng.sh" status >/dev/null 2>&1 || /Applications/Docker.app/Contents/Resources/bin/docker info >/dev/null 2>&1; then break; fi
-            printf '.'
-            sleep 5
-        done
-        echo
-    }
-fi
-run "$TARGET_DIR/scripts/searxng.sh" up
-
-step "launchd agents: llama, mcp, harness, dashboard, whisper, kokoro, health, listings"
-run "$TARGET_DIR/scripts/services.sh" install
-
-step "Docker and UTM open at login (the VM and SearXNG must come back after a power cut)"
-for app in Docker UTM; do
-    run osascript -e "tell application \"System Events\" to if not (exists login item \"$app\") then make login item at end with properties {path:\"/Applications/$app.app\", hidden:true}"
-done
-
-# ---------------------------------------------------------------- 5. system settings (sudo)
+# ---------------------------------------------------------------- 4. system settings (sudo: your password)
 if $SKIP_SYSTEM; then
     step "system settings skipped (--skip-system)"
 else
@@ -244,7 +228,27 @@ EOF
     fi
 fi
 
-# ---------------------------------------------------------------- 6. Home Assistant
+# ---------------------------------------------------------------- 5. the apps that ask for a click
+step "Docker Desktop and SearXNG (accept Docker's terms if it asks)"
+if ! pgrep -xq Docker; then
+    run open -g -a Docker
+    $DRY_RUN || {
+        printf '    waiting for the Docker engine'
+        for _ in $(seq 1 60); do
+            if "$TARGET_DIR/scripts/searxng.sh" status >/dev/null 2>&1 || /Applications/Docker.app/Contents/Resources/bin/docker info >/dev/null 2>&1; then break; fi
+            printf '.'
+            sleep 5
+        done
+        echo
+    }
+fi
+run "$TARGET_DIR/scripts/searxng.sh" up
+
+step "Docker and UTM open at login, so the VM and SearXNG come back after a power cut (allow Terminal to control System Events)"
+for app in Docker UTM; do
+    run osascript -e "tell application \"System Events\" to if not (exists login item \"$app\") then make login item at end with properties {path:\"/Applications/$app.app\", hidden:true}"
+done
+
 step "Home Assistant OS VM"
 if [[ -d "$FROM/vm/$VM_NAME.utm" ]]; then
     echo "    allow Terminal to control UTM and to access its data if macOS asks"
@@ -259,6 +263,16 @@ else
     echo "      HAOS_VM_MEMORY_MB=3072 $TARGET_DIR/scripts/haos_vm.sh create   (then uv run python scripts/ha_setup.py --host <its address>)"
 fi
 
+step "nothing below needs you: the model download can take an hour, then the services start and Home Assistant is pointed here"
+
+# ---------------------------------------------------------------- 6. the model and the services
+step "the model config/serving.toml serves (the first time this downloads tens of GB; a file already matching its hash is kept)"
+run "$TARGET_DIR/.venv/bin/serving" fetch
+
+step "launchd agents: llama, mcp, harness, dashboard, whisper, kokoro, health, listings"
+run "$TARGET_DIR/scripts/services.sh" install
+
+# ---------------------------------------------------------------- 7. Home Assistant
 if [[ -n "$FROM" ]]; then
     step "pointing Home Assistant at this Mac (waits for it to boot; the first boot after a move takes a few minutes)"
     run bash -c "cd '$TARGET_DIR' && uv run python scripts/ha_setup.py --only integrations --only pipeline"
@@ -267,7 +281,14 @@ if [[ -n "$FROM" ]]; then
     run bash -c "cd '$TARGET_DIR' && uv run python -m ops.smoke"
 fi
 
-# ---------------------------------------------------------------- 7. what a person still has to do
+# ---------------------------------------------------------------- 8. the secrets on the drive
+if [[ -n "$FROM" ]]; then
+    # Last, so a run that stops partway can be repeated from the same folder. The VM's disk on the drive still holds Home Assistant's own settings.
+    step "removing .env, the API keys and the Brave Search key from $FROM, now that this Mac holds them"
+    run rm -rf "$FROM/env" "$FROM/app-support" "$FROM/brave-search-api.key"
+fi
+
+# ---------------------------------------------------------------- 9. what a person still has to do
 ADDRESS="$("$TARGET_DIR/scripts/network_identity.sh" address 2>/dev/null || echo "this Mac's address")"
 HARDWARE="$("$TARGET_DIR/scripts/network_identity.sh" hardware 2>/dev/null || echo "its hardware address")"
 NAME="$("$TARGET_DIR/scripts/network_identity.sh" name 2>/dev/null || echo "this-mac.local")"
@@ -283,7 +304,7 @@ cat <<EOF
 EOF
 if [[ -n "$FROM" ]]; then
     cat <<EOF
-    Delete $FROM once you are happy: it holds passwords and keys.
+    Erase the drive once you are happy: its copy of the VM still holds Home Assistant's settings and accounts.
     Leave the old Mac's VM off: both copies have the same network address.
 EOF
 fi

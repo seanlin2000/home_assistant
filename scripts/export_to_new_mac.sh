@@ -134,9 +134,10 @@ step "stopping this Mac's services and its Home Assistant VM (they stay stopped:
 run "$PROJECT_DIR/scripts/services.sh" stop
 stop_vm
 
-step "the setup script and the Brewfile, so the new Mac needs nothing else to start"
+step "the setup script, the Brewfile and the steps to follow, so the new Mac needs nothing else to start"
 run mkdir -p "$MOVE_DIR"
 run cp "$PROJECT_DIR/scripts/bootstrap_mac.sh" "$PROJECT_DIR/Brewfile" "$MOVE_DIR/"
+run cp "$PROJECT_DIR/docs/MOVING_TO_A_NEW_MAC.md" "$MOVE_DIR/README.md"
 
 step ".env: addresses, passwords and the Home Assistant token"
 run cp "$PROJECT_DIR/.env" "$MOVE_DIR/env"

@@ -73,7 +73,7 @@ uv run python scripts/health_check.py --dry-run   # probe everything and say wha
 uv run python scripts/ops_report.py --days 1 ~/Library/Logs/studio-assistant   # this machine's exchanges, health, Ollama speeds
 ```
 
-Moving the assistant to a new Mac takes one command on each machine, run at its own keyboard, with nothing sent over the network (design doc v2/10 section 3.10):
+Moving the assistant to a new Mac takes one command on each machine, run at its own keyboard, with nothing sent over the network. The steps to follow are in [`docs/MOVING_TO_A_NEW_MAC.md`](docs/MOVING_TO_A_NEW_MAC.md); the design is v2/10 section 3.10.
 
 ```
 scripts/export_to_new_mac.sh /Volumes/<drive>                 # old Mac, from its production checkout: stops it, packs .env, keys, history, the Brave key and the VM
