@@ -52,6 +52,36 @@ async def test_tool_round_cap_forces_a_final_answer() -> None:
     assert agent_loop.TOOL_LIMIT_NOTICE in [message.content for message in llm.seen_messages[-1]]
 
 
+CONTEXT_POLICY = AgentPolicy(filler_phrases=["Checking."], context_tokens=16384, max_output_tokens=600)
+PAGE_TOO_LONG_TO_FIT = "word " * 8000
+
+
+async def test_results_that_would_overflow_the_context_are_replaced_by_a_notice_to_answer() -> None:
+    llm = ScriptedLLM([tool_reply("q1", prompt_tokens=6000), text_reply("Here is what I know.")])
+    events = await collect(llm, FakeToolBox(result=PAGE_TOO_LONG_TO_FIT), CONTEXT_POLICY)
+    transcript = events[-1].transcript
+    assert transcript.hit_context_limit is True and transcript.hit_tool_round_cap is False
+    assert llm.seen_messages[1][-1].content == agent_loop.CONTEXT_LIMIT_NOTICE
+    assert PAGE_TOO_LONG_TO_FIT.strip() in transcript.tool_call_records[0].result
+    assert transcript.final_answer == "Here is what I know."
+
+
+async def test_a_call_after_the_context_notice_is_not_run_and_the_model_must_answer() -> None:
+    llm = ScriptedLLM([tool_reply("q1", prompt_tokens=6000), tool_reply("q2", "call_1"), text_reply("Here is what I know.")])
+    tools = FakeToolBox(result=PAGE_TOO_LONG_TO_FIT)
+    events = await collect(llm, tools, CONTEXT_POLICY)
+    assert [call.arguments["query"] for call in tools.calls] == ["q1"]
+    assert agent_loop.TOOL_LIMIT_NOTICE in [message.content for message in llm.seen_messages[-1]]
+    assert events[-1].transcript.final_answer == "Here is what I know."
+
+
+async def test_results_that_fit_the_context_are_passed_on() -> None:
+    llm = ScriptedLLM([tool_reply("q1", prompt_tokens=6000), text_reply("It is 4.25 percent.")])
+    events = await collect(llm, FakeToolBox(), CONTEXT_POLICY)
+    assert events[-1].transcript.hit_context_limit is False
+    assert llm.seen_messages[1][-1].content != agent_loop.CONTEXT_LIMIT_NOTICE
+
+
 async def test_answer_after_the_tool_round_cap_is_spoken() -> None:
     policy = AgentPolicy(filler_phrases=["Checking."])
     llm = ScriptedLLM([*tool_replies_past_the_cap(policy), text_reply("Here is ", "what I found.")])

@@ -46,6 +46,10 @@ EMPTY_COMPLETION_RETRIES = 1
 MALFORMED_RETRIES = 1
 REPEATED_CALL_NOTE = "You already made this exact call for this question; here is its result again. Use it rather than calling again."
 TOOL_LIMIT_NOTICE = "Tool call limit reached. Answer the user now with what you already know; do not call any more tools."
+CONTEXT_LIMIT_NOTICE = "No room left for this result. Answer the user now with what you already know; do not call any more tools."
+# Web text runs about four characters a token; counting three keeps the estimate on the safe side, and each message adds its template markers.
+CHARS_PER_TOKEN_ESTIMATE = 3
+MESSAGE_MARKER_TOKENS = 10
 TOOL_UNREACHABLE_NOTICE = "The web search tool is unavailable right now. Tell the user you could not check the web, then answer from your own knowledge with that caveat."
 # A sentence end counts only once the space after it has arrived, so "$3." or "version 2." at the end of a streamed chunk does not close the answer.
 SENTENCE_END = re.compile(r"[.!?][\"')\]]?\s")
@@ -171,8 +175,8 @@ async def run(conversation: list[Message], llm: LLMClient, tools: ToolBox, polic
         record_model_reply(transcript, reply, messages)
         if not reply.tool_calls:
             break
-        if round_index == max_tool_rounds:
-            transcript.hit_tool_round_cap = True
+        if round_index == max_tool_rounds or transcript.hit_context_limit:
+            transcript.hit_tool_round_cap = round_index == max_tool_rounds
             messages.extend(limit_notices(reply.tool_calls))
             reply = ModelReply()
             async for event in stream_model_reply(llm, messages, tool_specs, policy, reply, cap, transcript, started):
@@ -181,6 +185,8 @@ async def run(conversation: list[Message], llm: LLMClient, tools: ToolBox, polic
             break
         async for event in execute_tool_calls(runner, reply.tool_calls, round_index, messages, transcript, policy):
             yield event
+        if not next_request_fits(messages, transcript, policy):
+            set_aside_results_that_do_not_fit(messages, transcript)
     restore_spoken_question(messages, spoken_question)
     finish_transcript(transcript, reply, cap, messages, started)
     transcript.untrusted = tools.untrusted
@@ -428,6 +434,32 @@ async def execute_one_call(tools: ToolBox, call: ToolCall, round_index: int, pol
         return ToolCallRecord(round_index=round_index, call=call, result=str(refusal), seconds=time.perf_counter() - call_started, refused=True)
     except Exception as error:
         return ToolCallRecord(round_index=round_index, call=call, result=TOOL_UNREACHABLE_NOTICE, seconds=time.perf_counter() - call_started, error=f"{type(error).__name__}: {error}")
+
+
+def next_request_fits(messages: list[Message], transcript: Transcript, policy: AgentPolicy) -> bool:
+    """Whether the next request, with its reply, stays within the context budget: llama-server refuses a prompt longer than its context outright.
+    The last request's counted prompt plus an estimate of what was added since (the model's reply and the tool results)."""
+    last_prompt_tokens = transcript.model_calls[-1].prompt_tokens if transcript.model_calls else None
+    if last_prompt_tokens is None:
+        return True
+    added_tokens = sum(estimated_tokens(message) for message in messages[last_reply_index(messages) :])
+    return last_prompt_tokens + added_tokens + policy.max_output_tokens <= policy.context_tokens
+
+
+def estimated_tokens(message: Message) -> int:
+    arguments = "".join(json.dumps(call.arguments) for call in message.tool_calls)
+    return (len(message.content) + len(arguments)) // CHARS_PER_TOKEN_ESTIMATE + MESSAGE_MARKER_TOKENS
+
+
+def last_reply_index(messages: list[Message]) -> int:
+    return max(index for index, message in enumerate(messages) if message.role == Role.ASSISTANT)
+
+
+def set_aside_results_that_do_not_fit(messages: list[Message], transcript: Transcript) -> None:
+    """Replaces the last round's tool results with a notice to answer now; the transcript's tool call records keep the results themselves."""
+    for index in range(last_reply_index(messages) + 1, len(messages)):
+        messages[index] = messages[index].model_copy(update={"content": CONTEXT_LIMIT_NOTICE})
+    transcript.hit_context_limit = True
 
 
 def limit_notices(calls: list[ToolCall]) -> list[Message]:
