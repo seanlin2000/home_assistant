@@ -22,6 +22,7 @@ What v2 changes:
 - **Memory notes.** They are backed up to the laptop, outside any git repository (3.6).
 - **Models.** They are GGUF files, copied and checked by their hash (3.7).
 - **Versions.** llama.cpp is held at a known version (3.8).
+- **Moving to a new Mac.** One command on each Mac, run at its own keyboard, with nothing sent over SSH (3.10).
 
 ## 2. Diagram
 
@@ -195,6 +196,43 @@ v1/10 §3.9 still applies, with three changes:
 - **The firewall allow-list.** The bootstrap no longer allows Ollama. It does not list llama-server either, because a process that listens only on `127.0.0.1` never meets the firewall. The project's Python stays on the list, for the harness, Whisper and Kokoro.
 - **The Keychain after a restart (to confirm in M8).** The tools that need a secret read it from the macOS Keychain (doc 12 §3.9). With automatic login, macOS should unlock the login keychain itself, so these tools should work after a power cut. M8 checks this. If it does not hold, those tools report themselves unavailable until you log in once through Screen Sharing.
 - **No Obsidian plugins on the Mac.** If Obsidian runs on the Mac, it runs with no community plugins (doc 12 §3.8).
+
+### 3.10 Moving to a new Mac
+
+Added 2026-11-11, after the move from the laptop to the Mac Studio. That move used v1's laptop-driven commands (`mini.sh push-env`, `push-vm`) and needed fix after fix by hand: the harness refused Home Assistant because the address check read `en0`, which is the Studio's unplugged Ethernet port; the VM came up bridged to that same port; UTM 5 did not list the copied VM; Home Assistant's speech entries still pointed at the laptop, two of each; the Brave key stayed in the laptop's Keychain, which a session over SSH cannot write; and the dashboard's history stayed behind. Remote control of the new Mac was also the wrong default: nothing on it needs Remote Login once it is set up.
+
+A move is now two commands, each run at the Mac it changes:
+
+1. **On the old Mac, `scripts/export_to_new_mac.sh DESTINATION`.** It stops the services and the VM, then packs one folder, `studio-assistant-move`, onto a drive or any folder you can carry:
+
+    | In the folder | From | Why |
+    |---|---|---|
+    | `bootstrap_mac.sh`, `Brewfile` | the checkout | The new Mac needs nothing else to start, not even git |
+    | `env` | `.env` | Addresses, Home Assistant's token, the Samba password |
+    | `app-support/` | `~/Library/Application Support/studio-assistant/` | The API keys Home Assistant already holds, the harness database, the Brave spend log |
+    | `logs/` | `exchanges/`, `traces/`, `pipeline_runs/` | The dashboard's history; service logs and health state describe the old Mac and stay |
+    | `brave-search-api.key` | the login Keychain | The one secret outside `.env` |
+    | `vm/Home Assistant.utm` | UTM's folder | The configured Home Assistant, with its network card's MAC address, so the router gives it the same address |
+    | `manifest.txt` | | When, from which Mac, the repository and commit |
+
+    The old Mac's services and VM stay stopped. Both copies of the VM share one MAC address, so it must never run on two Macs.
+
+2. **On the new Mac, `bash <folder>/bootstrap_mac.sh`.** The bootstrap finds the export folder beside itself and reads the repository from the manifest. After v1's install steps it:
+    - restores `.env` and the key folder before any service starts, keeping whatever was already there under a dated name;
+    - merges the history without overwriting a day the new Mac has already logged;
+    - puts the Brave key in the Keychain;
+    - downloads the served model, or keeps a file that already matches its hash (`serving fetch`);
+    - registers the VM with UTM (`haos_vm.sh register`), bridged to the new Mac's own interface, and starts it;
+    - runs `ha_setup.py --only integrations --only pipeline`, which replaces Wyoming entries made for another address, duplicates included;
+    - asks the smoke test's question through Home Assistant;
+    - prints the router reservation to make, with the interface's hardware address.
+
+Three changes make the scripts work on any Mac, not only the laptop:
+- **One place knows the network.** `scripts/network_identity.sh` reads the interface that carries the default route, its address, its hardware address and the Bonjour name. `services.sh`, `haos_vm.sh` and `ha_setup.py` ask it instead of assuming `en0` or `192.168.1.152`.
+- **The allowed hosts include the name.** The harness and the dashboard answer to the address and to `<name>.local`, in macOS's spelling and in the lowercase a browser sends, so the dashboard opens by name from the laptop.
+- **The Brewfile installs llama.cpp**, not Ollama.
+
+What still needs a person: approving the Xcode tools dialog, accepting Docker's terms, allowing Terminal to control UTM and to reach its data, the password for the system settings, and the router reservation. The script stops or says so at each one, and can be run again from the start.
 
 ## 4. Packages and tools, and what each does for the business logic
 

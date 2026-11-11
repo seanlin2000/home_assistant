@@ -47,3 +47,42 @@ def test_every_engine_default_language_is_a_region_code(engine: str) -> None:
     language, _ = ha_setup.TTS_DEFAULTS[engine]
 
     assert language.startswith("en_"), "a bare 'en' is accepted by the pipeline editor and then fails every run with tts-not-supported"
+
+
+# The entries a move from the laptop found on 2026-11-11: two of each Wyoming service, the second left behind by an earlier setup run.
+LAPTOP_ENTRIES = [
+    {"entry_id": "whisper-1", "domain": "wyoming", "title": "mlx-whisper"},
+    {"entry_id": "kokoro-1", "domain": "wyoming", "title": "kokoro"},
+    {"entry_id": "whisper-2", "domain": "wyoming", "title": "mlx-whisper"},
+    {"entry_id": "kokoro-2", "domain": "wyoming", "title": "kokoro"},
+    {"entry_id": "piper", "domain": "wyoming", "title": "Piper"},
+    {"entry_id": "agent", "domain": "studio_assistant", "title": "Studio Assistant"},
+]
+
+
+def test_an_entry_made_for_this_address_is_kept() -> None:
+    saved = {"HA_WYOMING_WHISPER_ENTRY": "whisper-2", "HA_WYOMING_HOST": "192.168.1.162"}
+
+    assert ha_setup.wyoming_entry_is_current(LAPTOP_ENTRIES, saved, "HA_WYOMING_WHISPER_ENTRY", "192.168.1.162")
+
+
+def test_an_entry_made_for_another_address_is_replaced() -> None:
+    saved = {"HA_WYOMING_WHISPER_ENTRY": "whisper-2", "HA_WYOMING_HOST": "192.168.1.152"}
+
+    assert not ha_setup.wyoming_entry_is_current(LAPTOP_ENTRIES, saved, "HA_WYOMING_WHISPER_ENTRY", "192.168.1.162")
+
+
+def test_an_entry_from_before_the_address_was_recorded_is_replaced_once() -> None:
+    saved = {"HA_WYOMING_WHISPER_ENTRY": "whisper-2"}
+
+    assert not ha_setup.wyoming_entry_is_current(LAPTOP_ENTRIES, saved, "HA_WYOMING_WHISPER_ENTRY", "192.168.1.162")
+
+
+def test_replacing_an_entry_removes_its_duplicates_but_no_other_service() -> None:
+    assert ha_setup.stale_wyoming_entry_ids(LAPTOP_ENTRIES, "whisper-2") == ["whisper-1", "whisper-2"]
+    assert ha_setup.stale_wyoming_entry_ids(LAPTOP_ENTRIES, "kokoro-1") == ["kokoro-1", "kokoro-2"]
+
+
+def test_an_unknown_recorded_entry_removes_nothing() -> None:
+    assert ha_setup.stale_wyoming_entry_ids(LAPTOP_ENTRIES, "gone") == []
+    assert ha_setup.stale_wyoming_entry_ids(LAPTOP_ENTRIES, None) == []

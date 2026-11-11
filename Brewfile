@@ -3,7 +3,7 @@
 
 brew "git"
 brew "uv"          # manages the project's Python and virtual environment (.venv), pinned by uv.lock
-brew "ollama"      # runs the language model; scripts/services.sh installs our own launchd agent for it (LAN binding)
+brew "llama.cpp"   # llama-server runs the language model; scripts/services.sh installs its launchd agent (127.0.0.1, config/serving.toml)
 brew "espeak-ng"   # phonemizer Kokoro's text-to-speech needs
 brew "rsync"       # real rsync 3.x; macOS ships openrsync, which lacks --info=progress2 and other flags
 brew "shellcheck"  # scripts/lint.sh

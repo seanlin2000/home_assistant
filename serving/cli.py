@@ -5,8 +5,8 @@ import os
 import sys
 
 from serving.command import build_command, printable_command
-from serving.model_file import ModelFileMismatch, fetch_model_file, verify_model_file
-from serving.settings import ServingConfig, load_serving_config
+from serving.model_file import ModelFileMismatch, fetch_model_file, model_file_matches, verify_model_file
+from serving.settings import ModelSettings, ServingConfig, load_serving_config
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -23,7 +23,7 @@ def main() -> None:
     if action == "show":
         show(config)
     elif action == "fetch":
-        print(f"downloaded and verified {fetch_model_file(config.served_model)}")
+        fetch(config.served_model)
     else:
         launch(config)
 
@@ -35,6 +35,14 @@ def show(config: ServingConfig) -> None:
         print(f"model file matches its pinned SHA-256 ({config.served_model.sha256[:12]}...)")
     except ModelFileMismatch as error:
         print(f"model file problem: {error}")
+
+
+def fetch(model: ModelSettings) -> None:
+    """A file that already matches its pinned hash is kept, so running the setup of a new Mac again does not download the model again."""
+    if model_file_matches(model):
+        print(f"{model.gguf_path} already matches its pinned SHA-256")
+        return
+    print(f"downloaded and verified {fetch_model_file(model)}")
 
 
 def launch(config: ServingConfig) -> None:
