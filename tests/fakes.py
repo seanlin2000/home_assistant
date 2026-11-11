@@ -14,9 +14,10 @@ def text_reply(*chunks: str) -> list[LLMEvent]:
     ]
 
 
-def tool_reply(query: str, call_id: str = "call_0", tool_name: str = "search_and_read") -> list[LLMEvent]:
+def tool_reply(query: str, call_id: str = "call_0", tool_name: str = "search_and_read", prompt_tokens: int | None = None) -> list[LLMEvent]:
     call = ToolCall(id=call_id, name=tool_name, arguments={"query": query})
-    return [ToolCallRequest(call=call), Completion(message=Message(role=Role.ASSISTANT, content="", tool_calls=[call]), stats=GenerationStats(model="fake", total_seconds=0.1))]
+    stats = GenerationStats(model="fake", total_seconds=0.1, prompt_tokens=prompt_tokens)
+    return [ToolCallRequest(call=call), Completion(message=Message(role=Role.ASSISTANT, content="", tool_calls=[call]), stats=stats)]
 
 
 def several_tool_calls_reply(*queries: str) -> list[LLMEvent]:

@@ -252,6 +252,7 @@ class Transcript(BaseModel):
     truncated: bool = False
     tool_call_count: int = 0
     hit_tool_round_cap: bool = False
+    hit_context_limit: bool = False  # a round's tool results would not have fit the context budget, so the model was told to answer without them
     empty_completion_retries: int = 0  # times the model returned neither text nor a tool call and was asked again
     malformed_retries: int = 0  # times the model's only output was a tool call that could not be parsed, and it was asked again without it
     stayed_silent: bool = False  # the final reply was the silence marker, so no answer was spoken
