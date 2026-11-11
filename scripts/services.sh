@@ -112,6 +112,21 @@ ensure_api_key() {
     fi
 }
 
+host_names_with_port() {
+    # $1 port. Every Host header a caller on the home network or this Mac sends: the LAN address, the Bonjour name as macOS spells it and in the
+    # lowercase a browser sends, and the loopback names. The match is exact, so each spelling is listed.
+    local port="$1" address name hosts=() host listed=""
+    address="$("$PROJECT_DIR/scripts/network_identity.sh" address 2>/dev/null || true)"
+    name="$("$PROJECT_DIR/scripts/network_identity.sh" name 2>/dev/null || true)"
+    [[ -n "$address" ]] && hosts+=("$address")
+    [[ -n "$name" ]] && hosts+=("$name" "$(echo "$name" | tr '[:upper:]' '[:lower:]')")
+    hosts+=(localhost 127.0.0.1)
+    for host in "${hosts[@]}"; do
+        [[ ",$listed," == *",$host:$port,"* ]] || listed="${listed:+$listed,}$host:$port"
+    done
+    echo "$listed"
+}
+
 install_agents() {
     mkdir -p "$AGENTS_DIR" "$LOG_DIR"
     prepare_kokoro
@@ -140,18 +155,16 @@ install_agents() {
     done
     write_plist mcp "$PROJECT_DIR/.venv/bin/assistant-mcp"
     # The harness listens on the LAN for the Home Assistant VM, so it requires its API key and answers only requests that name this machine (Host
-    # header); a web page cannot reach it by DNS rebinding. HARNESS_ALLOWED_HOSTS in the environment overrides the derived list (the new Mac's
-    # interface may not be en0). Rerun install after an address change. Its other settings are in config/harness.toml.
+    # header); a web page cannot reach it by DNS rebinding. HARNESS_ALLOWED_HOSTS in the environment overrides the derived list. Rerun install after
+    # an address change. Its other settings are in config/harness.toml.
     ensure_api_key harness
-    local lan_address
-    lan_address="$(ipconfig getifaddr en0 2>/dev/null || true)"
     ENV_KEYS=(HARNESS_ALLOWED_HOSTS)
-    ENV_VALUES=("${HARNESS_ALLOWED_HOSTS:-${lan_address:+$lan_address:8770,}localhost:8770,127.0.0.1:8770}")
+    ENV_VALUES=("${HARNESS_ALLOWED_HOSTS:-$(host_names_with_port 8770)}")
     write_plist harness "$PROJECT_DIR/.venv/bin/assistant-service"
     # The exchange dashboard has no key of its own (its chat box uses the harness's, server side), so it too answers only requests that name this
     # machine and refuses other sites' pages (design_docs/v2/13).
     ENV_KEYS=(DASHBOARD_ALLOWED_HOSTS)
-    ENV_VALUES=("${DASHBOARD_ALLOWED_HOSTS:-${lan_address:+$lan_address:8775,}localhost:8775,127.0.0.1:8775}")
+    ENV_VALUES=("${DASHBOARD_ALLOWED_HOSTS:-$(host_names_with_port 8775)}")
     write_plist dashboard "$PROJECT_DIR/.venv/bin/exchange-dashboard"
     ENV_KEYS=() ENV_VALUES=()
     write_plist whisper "$PROJECT_DIR/.venv/bin/wyoming-mlx-whisper" --uri tcp://0.0.0.0:10300 --model mlx-community/whisper-large-v3-turbo --language en
@@ -253,7 +266,7 @@ status() {
 
 open_dashboard() {
     # Before install has written its agent, the dashboard runs in this terminal instead, so the command works on a fresh checkout too.
-    local url="http://localhost:8775" lan_address
+    local url="http://localhost:8775" name
     if [[ ! -f "$(plist_path dashboard)" ]]; then
         echo "no dashboard agent yet (scripts/services.sh install adds one); running it here until Ctrl-C"
         (sleep 2 && open "$url") &
@@ -269,8 +282,8 @@ open_dashboard() {
         sleep 0.5
         half_seconds=$((half_seconds + 1))
     done
-    lan_address="$(ipconfig getifaddr en0 2>/dev/null || true)"
-    echo "dashboard: $url${lan_address:+ (from another computer at home: http://$lan_address:8775)}"
+    name="$("$PROJECT_DIR/scripts/network_identity.sh" name 2>/dev/null || true)"
+    echo "dashboard: $url${name:+ (from another computer at home: http://$name:8775)}"
     open "$url"
 }
 

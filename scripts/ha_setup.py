@@ -3,7 +3,8 @@
 Steps (each is skipped when already done, so the script can be re-run):
   1. onboarding: create the owner account, finish the onboarding wizard, mint a long-lived token (saved to .env as HA_TOKEN)
   2. add-ons: Samba (for deploys), Piper (the alternative text to speech), Music Assistant, ESPHome (for the puck), openWakeWord (optional server-side wake word)
-  3. integrations: Wyoming entries for Whisper and Kokoro on the Mac, confirm the discovered Piper add-on, add studio_assistant pointed at the harness
+  3. integrations: Wyoming entries for Whisper and Kokoro on this Mac (replacing ones that point at another Mac), confirm the discovered Piper add-on,
+     and point studio_assistant at the harness
   4. pipeline: an Assist pipeline "Jarvis" using Whisper, studio_assistant, and Kokoro's Fable voice, set as preferred (--tts piper for Piper)
   5. weather: copy the home location, time zone, and units into .env for the weather_forecast tool, and hide every weather entity from Assist so
      Home Assistant's built-in weather intent finds nothing to answer with and every weather question reaches studio_assistant
@@ -21,6 +22,7 @@ import asyncio
 import json
 import os
 import secrets
+import subprocess
 import sys
 import time
 from pathlib import Path
@@ -35,7 +37,8 @@ from serving.settings import read_api_key
 PROJECT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT))  # scripts/ is not a package; make `ops` importable when run as a file
 ENV_PATH = PROJECT / ".env"
-MAC_IP_DEFAULT = "192.168.1.152"
+# The address the Wyoming entries were made with. A Mac with another address (a move, a new reservation) gets new entries rather than a dead one.
+WYOMING_HOST_KEY = "HA_WYOMING_HOST"
 STEPS = ("onboarding", "addons", "integrations", "pipeline", "weather")
 ADDONS = {
     "core_samba": {"options": None},  # options are filled in at runtime with the generated password
@@ -192,20 +195,45 @@ async def wait_for_addon(ha: HomeAssistant, slug: str, timeout_seconds: int = 90
 
 
 async def integrations(ha: HomeAssistant, args: argparse.Namespace) -> None:
+    if not args.mac_ip:
+        raise SystemExit("could not read this Mac's LAN address; pass --mac-ip")
     entries = await ha.get("/api/config/config_entries/entry")
-    entry_ids = {entry["entry_id"] for entry in entries}
     saved = dotenv_values(ENV_PATH)
     for key, (title, port) in WYOMING_SERVICES.items():
-        # The Wyoming flow titles the entry after the remote service name and the entry listing hides host and port, so the only reliable
-        # rerun check is the entry id we recorded when we created it.
         env_key = f"HA_WYOMING_{key.upper()}_ENTRY"
-        if saved.get(env_key) in entry_ids:
+        if wyoming_entry_is_current(entries, saved, env_key, args.mac_ip):
             print(f"integrations: wyoming {key} present")
             continue
+        for stale_id in stale_wyoming_entry_ids(entries, saved.get(env_key)):
+            await ha.delete(f"/api/config/config_entries/entry/{stale_id}")
+            print(f"integrations: removed the old wyoming {key} entry {stale_id}")
         created = await run_flow(ha, "wyoming", {"host": args.mac_ip, "port": port}, title)
         save_env(env_key, created["result"]["entry_id"])
+    save_env(WYOMING_HOST_KEY, args.mac_ip)
     await confirm_discovered_flows(ha)
     await point_studio_assistant_at_harness(ha, entries, harness_settings(args.mac_ip))
+
+
+def wyoming_entry_is_current(entries: list[dict[str, Any]], saved: dict[str, str | None], env_key: str, mac_ip: str) -> bool:
+    """The Wyoming flow titles the entry after the remote service name and the entry listing hides host and port, so the rerun check is the entry id
+    recorded when it was made, together with the address it was made for."""
+    recorded_id = saved.get(env_key)
+    return any(entry["entry_id"] == recorded_id for entry in entries) and saved.get(WYOMING_HOST_KEY) == mac_ip
+
+
+def stale_wyoming_entry_ids(entries: list[dict[str, Any]], recorded_id: str | None) -> list[str]:
+    """The recorded entry and every other Wyoming entry with its title. An earlier run can leave a second one behind, and the pipeline step's entity
+    lookup could pick that entry's entity, which still points at the old address."""
+    recorded = next((entry for entry in entries if entry["entry_id"] == recorded_id), None)
+    if recorded is None:
+        return []
+    return [entry["entry_id"] for entry in entries if entry["domain"] == "wyoming" and entry["title"] == recorded["title"]]
+
+
+def this_mac_address() -> str:
+    """This Mac's LAN address, from the same lookup scripts/services.sh uses for the harness's allowed hosts; empty when it cannot be read."""
+    lookup = subprocess.run([str(PROJECT / "scripts" / "network_identity.sh"), "address"], capture_output=True, text=True, check=False)
+    return lookup.stdout.strip()
 
 
 def harness_settings(mac_ip: str) -> dict[str, str]:
@@ -325,7 +353,11 @@ async def hide_weather_entities_from_assist(ha: HomeAssistant) -> None:
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Configure Home Assistant for the studio assistant.")
     parser.add_argument("--host", default=os.environ.get("HA_HOST"), help="Home Assistant address (VM IP or homeassistant.local)")
-    parser.add_argument("--mac-ip", default=os.environ.get("MAC_LAN_IP", MAC_IP_DEFAULT), help="LAN address of this Mac, where Whisper, Kokoro, and the harness listen")
+    parser.add_argument(
+        "--mac-ip",
+        default=os.environ.get("MAC_LAN_IP") or this_mac_address(),
+        help="LAN address of the Mac where Whisper, Kokoro, and the harness listen (default: this Mac's, from scripts/network_identity.sh)",
+    )
     parser.add_argument("--tts", default="kokoro", choices=sorted(TTS_DEFAULTS), help="which text-to-speech entity the pipeline uses")
     parser.add_argument("--tts-voice", help="the voice the pipeline asks for (default: bm_fable for Kokoro, the add-on's voice for Piper)")
     parser.add_argument("--tts-language", help="the text-to-speech language, a region code such as en_US (default: en_GB for Kokoro, en_US for Piper)")
