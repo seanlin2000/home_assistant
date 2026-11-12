@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Covers the bridge as the local Zigbee hub, inviting household members, Hue dimmer switches for phone-free control, linking Apple Home, Google or Alexa, and correctly says local app control, Apple Home with a hub and bridge automations survive an outage while Alexa, Google voice and remote control stop, with Home Assistant as a local option.",
+  "judgment_reason": "Did not invent a preferred voice ecosystem, leaving the choice to the household, and answered stable architecture without searching.",
+  "spoken_fit_reason": "Leads with the recommended setup in plain prose with no formatting, at a length the two-part question warrants."
+}

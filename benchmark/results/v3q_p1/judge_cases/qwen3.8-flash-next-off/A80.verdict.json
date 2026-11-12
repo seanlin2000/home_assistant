@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 3,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The 4-bit (about 35 GB) and 2-bit (about 17.5 GB) totals are right, but it says 16-bit is 'half a byte per parameter, or about 35 gigabytes' when it is about 140 GB, describes 4-bit as 'half a byte for every two weights', and calls 1.58-bit the 'NF4' format, all significant errors in the arithmetic the question asked for.",
+  "judgment_reason": "Answering from knowledge without searching was the right call for a stable technical question, and it correctly noted that the KV cache and activations come on top of the weights.",
+  "spoken_fit_reason": "It is built from bulleted lists and runs long enough that the word cap cut it before the trade-offs were spoken."
+}

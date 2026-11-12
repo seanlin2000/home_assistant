@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It explains discounting off the risk-free rate, long-duration growth cash flows, a correct worked example (100 dollars in ten years falls from about 74 to 56 when the rate goes from 3 to 6 percent), costlier borrowing for unprofitable firms, and bonds as a competing alternative.",
+  "judgment_reason": "It answered from knowledge without searching, used the calculator for its worked figures, and added fair caveats about rates being priced in and the 2023-24 AI rally.",
+  "spoken_fit_reason": "Seven paragraphs with markdown asterisk emphasis (*when*, *expected*) ran past the word cap and were cut."
+}

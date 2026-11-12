@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The value of about $167 thousand, the 8.3x multiple and the $147 thousand profit match the sketch, but it twice calls the stake 'one-third of one percent' and then 'one-sixth of one percent' when the calculator's 0.0003333 is one-thirtieth of a percent, a tenfold error in a spoken figure.",
+  "judgment_reason": "It used the calculator for the arithmetic and stated the assumptions of proportional dilution and no liquidation preferences, as the sketch asks.",
+  "spoken_fit_reason": "The listener heard the whole result twice with 'Let me verify those numbers precisely' between the two, and the closing assumption sentence was cut by the word cap."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 5,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It recommends the bridge as the hub, Hue app member invites with Lighting versus Admin roles, one voice ecosystem, and physical Hue switches, and it correctly says bridge automations, local app control and switches survive an outage while Alexa and Google voice and remote control stop, with Apple Home hubs and Home Assistant local voice as the local options.",
+  "judgment_reason": "It announced a check and made six searches for a stable architecture question that needed none, exceeding the tool-call limit, and padded the answer with Bridge Pro prices nobody asked for.",
+  "spoken_fit_reason": "Five long paragraphs, plus a spoken preamble about searching, ran past the word cap, so the listener never reached the internet-outage part of the question."
+}

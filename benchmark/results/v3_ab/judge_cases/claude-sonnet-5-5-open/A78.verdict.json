@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Gives three distinct mechanisms from the sketch (top-tenth stock ownership, rent and grocery inflation outpacing wages, profits from cost cutting or earning abroad) plus mega-cap concentration and rate expectations, though 'prices can rise while living costs rise faster' is a confusing slip for share prices.",
+  "judgment_reason": "Stable economics answered from knowledge without searching, and it avoided citing specific current figures it could not verify.",
+  "spoken_fit_reason": "Leads with the core distinction, then 'First, Second, Third' in plain prose with no list formatting; length fits a three-example request."
+}

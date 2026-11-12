@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The five picks and their 2026-27 lines (Wembanyama 30.3/11.7/2.8, Doncic 38.6, Jokic 23.5/10.8/9.0, Giannis 27.7/12.6/5.2, Gilgeous-Alexander near 30 with an 8-2 record) trace to the HoopsHype and Ballislife results with a reason each, though calling Wembanyama's 2.8 assists 'triple-double-ish' and Doncic's 38.6 'well above thirty-eight' are loose.",
+  "judgment_reason": "It searched for this season's figures, used the 2026-27 table rather than the 2025-26 leaders, opened with the small-sample caveat, and flagged the fifth spot as contested.",
+  "spoken_fit_reason": "Plain prose that leads with the caveat and the ranking, but at about five paragraphs it ran past the word cap after the second player."
+}

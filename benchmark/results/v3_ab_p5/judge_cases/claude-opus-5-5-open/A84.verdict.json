@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Explains discounting off the risk-free rate, compounding that hits distant cash flows hardest, growth stocks as long-duration assets like long bonds, plus bond competition, costlier funding and the 2022 example, matching the sketch.",
+  "judgment_reason": "Rightly answered stable finance theory from knowledge without searching.",
+  "spoken_fit_reason": "Plain explanatory prose with no lists or figures needing formatting, at a length the explain-the-relationship request warrants."
+}

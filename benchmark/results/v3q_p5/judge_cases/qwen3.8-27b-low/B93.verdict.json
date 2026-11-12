@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": false,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It ignores the restaurant_recommendations result (Vert Frais, the only Michelin-listed LIC entry) and builds five picks from web pages, giving per-person prices that no result supports ('60 to 90 dollars' for Soothr, '30 to 50' for Casa Enrique, 'under 25' for Hello! Bangladesh, '20 to 30' for Nai Brother) and the garbled 'priced at about two dollars'.",
+  "judgment_reason": "It ran web searches and page fetches when the restaurant tool was the intended source, never said that the tool found only one nearby restaurant, and filled in prices instead of admitting they were unknown.",
+  "spoken_fit_reason": "Markdown bold restaurant names such as '**Soothr LIC**' and a long five-paragraph comparison that the word cap cut during the second restaurant."
+}

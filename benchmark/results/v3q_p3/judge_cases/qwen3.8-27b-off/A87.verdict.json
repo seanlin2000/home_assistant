@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It separates the two problems and gives ordered steps, but on audio it misses the likely culprit (the speaker also paired with the laptop and competing for it) and the 5 GHz Wi-Fi fix, and on eye strain it misses seating distance, focus and keystone, and the DLP rainbow effect, and it advises maxing brightness rather than balancing it with room light.",
+  "judgment_reason": "Correctly handled a general troubleshooting question without searching and offered model lookups only if the user wants them.",
+  "spoken_fit_reason": "Two dense paragraphs, a wall of text that ran past the word cap, so the listener never heard the eye-strain half."
+}

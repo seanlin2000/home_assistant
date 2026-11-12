@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Corrects the premise with the sources (held at 3.75 to 4 percent on October 28 after a September hike) and adds Freddie Mac's 7.32 percent rate, then gives the refinance logic of rate gap, closing costs and how long the user stays, matching the sketch.",
+  "judgment_reason": "Searched to check the claimed cut instead of accepting it, said plainly \"the Fed didn't cut rates to zero\", and asked for the user's current mortgage rate, the one missing input.",
+  "spoken_fit_reason": "Leads with the correction and stays to a few plain sentences ending in a single clarifying question."
+}

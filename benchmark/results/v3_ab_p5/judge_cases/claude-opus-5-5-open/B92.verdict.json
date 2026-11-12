@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Rates for five banks come from the excerpts (Marcus 3.50, Amex, Capital One and Ally 3.20, Axos 3.75 and the bundled 4.21), the interest figures of $1,750, $1,600 and $1,875 match the calculator, and the $0 minimums are as the sources list them.",
+  "judgment_reason": "Searched for current rates, called them variable, said the interest assumes the rate holds all year, and flagged that higher advertised rates come with conditions.",
+  "spoken_fit_reason": "Leads with the framing and the top rate, groups the three banks at 3.20 percent to save time, and stays in plain prose at a length five banks require."
+}

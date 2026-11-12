@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": false,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The descriptions of Soothr, Casa Enrique, Hupo, Meju and Takumen come from the Infatuation and Eater pages, but it never mentions Vert Frais, the only restaurant the Michelin tool returned, and it gives per-person prices like 'forty to sixty dollars' and 'thirty to fifty dollars' that no source states.",
+  "judgment_reason": "It searched the web when the restaurant tool was the intended source, padded the list instead of saying the Michelin snapshot had only one LIC entry, and then claimed its price bands are 'what the sources support' when they are not.",
+  "spoken_fit_reason": "Plain prose without markdown, but seven long paragraphs ran past the word cap, so the listener heard only two of the five restaurants."
+}

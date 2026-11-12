@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 2,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The listener heard a sound four-layer outline and that used RTX 3090s at $1,400-1,500 exceed the budget, but the word cap cut it before the build, the limitations and the priorities, and the written build prices an RTX 4060 Ti at 'four hundred to five hundred dollars used', a figure no excerpt gives.",
+  "judgment_reason": "Searching for current hardware prices was right and it honestly ruled the 3090 out on budget, but it spent ten calls, hitting the limit before it could check the 4060 Ti price it then asserted anyway.",
+  "spoken_fit_reason": "Markdown bold section headings and a long essay that the word cap cut in the hardware section."
+}

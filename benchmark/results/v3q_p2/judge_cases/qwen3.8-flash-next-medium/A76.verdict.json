@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 5,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The written answer names the 1989 revolutions, the August 1991 coup, and the Belavezha Accords with correct dates (Ukraine referendum December 1, resignation December 25, dissolution December 26) and cleanly separates economy, arms race, nationalism and reform as causes from the dated triggers.",
+  "judgment_reason": "It made three tool calls, including a web search, for stable history that the reference expects answered without searching.",
+  "spoken_fit_reason": "The reply runs to several long paragraphs, so the word cap cut it off right after the first of the three events and the listener never heard the rest."
+}

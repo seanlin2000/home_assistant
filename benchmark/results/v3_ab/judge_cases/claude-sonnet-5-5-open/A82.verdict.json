@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Defines API, tool (name, description, arguments) and MCP server correctly and lays out a local inference server, an orchestrator, one MCP server with search and page-fetch tools, capped page text, untrusted web text and model-side summarizing, but leaves out the cap on tool rounds, timeouts and caching.",
+  "judgment_reason": "Stable architecture question answered from knowledge without a search.",
+  "spoken_fit_reason": "Plain prose that leads with the definitions and walks through the layers without lists or markup; length suits a two-part design question."
+}

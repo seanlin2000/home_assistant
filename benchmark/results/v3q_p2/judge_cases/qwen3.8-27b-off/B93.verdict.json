@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": false,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "Casa Enrique, Soothr and Hupo details trace to the web results, but it gives Takumen a \"twenty-to-forty dollar\" price no excerpt supports, wrongly says all are a few minutes' walk apart around 49th and 50th Avenue though Soothr is at 25-20 43rd Avenue, and the message breaks off before a fifth restaurant.",
+  "judgment_reason": "It used nine web search and fetch calls instead of the restaurant recommendations tool, and it assumed the user's location instead of stating that assumption.",
+  "spoken_fit_reason": "Each restaurant gets a long paragraph with addresses and review counts, so the word cap cut it after the first restaurant."
+}

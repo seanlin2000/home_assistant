@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 0,
+  "answer_quality_reason": "Muse Spark Open (October 15) and DeepSeek V4.1-Flash-1017 (October 17) are accurately drawn from the sources, but the reply stops mid-sentence after two of the five promised developments and never covers Qwen4-Max's November 11 preview or Mistral Large 4's gated status.",
+  "judgment_reason": "Searching was right and it correctly said there is no DeepSeek V5, but it called DeepSeek 'the strongest of the four labs' by comparing a BenchLM score of 65 with a BenchLeader score of 58, two different indices, before looking at Qwen or Mistral.",
+  "spoken_fit_reason": "A long run of spec-heavy paragraphs that the word cap cut after the first development, and the written reply itself breaks off mid-sentence."
+}

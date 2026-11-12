@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "Correctly says the Fed did not cut to zero, gives the 3.75-4 percent range with the September hike and October hold, cites the 7.18 and 6.57 percent mortgage averages from the excerpt, and asks for the user's current rate and time in the home.",
+  "judgment_reason": "Searched to check the premise, rejected it plainly, and asked for the two missing facts instead of inventing them.",
+  "spoken_fit_reason": "Leads with the correction in plain prose, but four paragraphs is longer than needed and the word cap cut it before the closing question."
+}

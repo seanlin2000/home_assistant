@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It covers white sunlight as a mix, stronger scattering of short waves by the fourth power, why the sky is not violet, the long low path at sunset, and the dust effect, but overstates the sunset path as \"hundreds of times more air\" and leaves out the sun's weaker violet output.",
+  "judgment_reason": "It answered a stable physics question from knowledge without searching, and its one calculator call only checked the 450-to-650 nanometer ratio.",
+  "spoken_fit_reason": "The eight-paragraph reply was cut by the word cap after the scattering paragraph, so the listener never heard why sunsets are red."
+}

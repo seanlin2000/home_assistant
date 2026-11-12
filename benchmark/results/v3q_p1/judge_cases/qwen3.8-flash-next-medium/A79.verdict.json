@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 4,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It covers parallel matrix math, the HBM memory-bandwidth wall, a fixed-function ASIC (Etched Sohu), SRAM and wafer-scale designs (Groq, Cerebras) and the latency, stable-architecture and volume conditions for a win, but garbles ASIC as 'applied specifically silicon' and never names the TPU or CUDA's moat directly.",
+  "judgment_reason": "A conceptual hardware question needed no search, yet it made four search and fetch calls, though it did flag Etched's throughput as an unverified vendor claim.",
+  "spoken_fit_reason": "Tool-call narration ('One claim in those results needs checking') was spoken run-together before a seven-paragraph essay that the word cap cut off."
+}

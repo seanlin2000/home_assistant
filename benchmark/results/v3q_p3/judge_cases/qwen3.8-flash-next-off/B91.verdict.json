@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 2,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The listener heard only Luka Dončić at number one, with current-season figures that match the excerpts (38.5 points, 5.9 threes, 66.3 percent true shooting, Lakers 11-2); the word cap cut it before players two through five.",
+  "judgment_reason": "Searching for this season's stats was right and it flagged that eleven games is a small sample, but it spent eight calls, hitting the tool-call limit, on a ranking it then could not deliver in a spoken-length reply.",
+  "spoken_fit_reason": "Four narrated tool-use preambles and markdown bold headings lead into a long ranking that was cut after the first player."
+}

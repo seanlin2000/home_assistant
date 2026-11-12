@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The ownership percentages (one three-thousandth, halved to about 0.017 percent) are right, but the spoken value of about 333,333 dollars, the 16.7x multiple and the 313,333 dollar profit are all double the correct 166,667 dollars, 8.33x and 146,667 dollars that its own calculator returned.",
+  "judgment_reason": "It stated the pro-rata and liquidation-preference assumptions well, but it ignored its own calculator results and spoke wrong figures on the central point of the question.",
+  "spoken_fit_reason": "It leads with the headline figure in plain prose, but the long closing caveat about preferences, escrow and SAFEs makes it longer than a spoken answer needs."
+}

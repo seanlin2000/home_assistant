@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The pipeline stages are explained with sourced figures (Voice PE about $59, faster-whisper about 150 ms, an 8B model in about 5 GB of VRAM, Piper about 200 ms), but the message breaks off mid-hardware-price, so it never gives a parts list that fits $1,000, never covers the web-search tool layer, and never reaches the limitations or a build order.",
+  "judgment_reason": "Searching for current hardware prices was right and it stressed that the model must run on a GPU for usable latency, but it ran into the tool-call limit and spent its length on stage details before the budget and priorities the user asked for.",
+  "spoken_fit_reason": "It reads out headings such as 'The architecture, in five stages' and 'Where the thousand dollars should go', plus five filler search announcements, in a long wall of text the cap cut short."
+}

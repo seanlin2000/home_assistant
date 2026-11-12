@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Correctly labels economic stagnation, Afghanistan and Gorbachev's reforms as causes and the August 1991 coup as the trigger, with correct dates for 1989 and December 1991, but skips the Ukrainian referendum and Belovezha Accords and only gestures at nationalism as 'long-suppressed grievances'.",
+  "judgment_reason": "Answered stable history from knowledge without searching, and explicitly separated slow causes from the coup as the spark, as the question asked.",
+  "spoken_fit_reason": "Plain prose that leads with the answer and signposts 'First, Second, Third' aloud; its length is justified by a three-part explanation request."
+}

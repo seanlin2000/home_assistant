@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It covers DCF discounting off the risk-free rate, duration and the zero-coupon-bond analogy, the opportunity cost of Treasuries, borrowing costs and multiple compression as the reference asks, but its claim that a one-point rate rise shaves 'a quarter or more' off a twenty-year cash flow overstates the effect.",
+  "judgment_reason": "It answered a stable finance concept from knowledge without searching and framed the Treasury yield as an illustrative 'four or five percent' rather than a current quote.",
+  "spoken_fit_reason": "A wall of text of roughly six hundred fifty words ran past the word cap, so the listener heard the setup but never the discounting math or the bond analogy that answer the question."
+}

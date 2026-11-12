@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The excerpts gave Etched at $21 billion, SambaNova's $1 billion Series F at $11 billion with JPMorgan, Cerebras's May 2026 IPO at about $56 billion, Positron at $5 billion and Fractile's $720 million round, yet the answer gives no figures and even says Cerebras has 'IPO plans', contradicting the retrieved fact that it is already public.",
+  "judgment_reason": "Searching was right and it flagged its knowledge as possibly out of date, but it falsely claimed it could not verify figures it had retrieved and offered to look up what it already had.",
+  "spoken_fit_reason": "Plain prose without formatting, but it opens with a disclaimer rather than the industry picture and ends with an offer to search again."
+}

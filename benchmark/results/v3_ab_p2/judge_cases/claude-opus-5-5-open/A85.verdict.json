@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Builds a cheap, quick plan from eggs, egg whites, canned tuna, Greek yogurt and batch-cooked chicken and rice with plausible per-meal figures, and the calculator totals of 173 grams of protein and 1,665 calories meet both targets.",
+  "judgment_reason": "Calls the figures \"rough label values\", uses no protein powder, notes the roughly 800 calories of headroom, and checks the totals with the calculator instead of searching.",
+  "spoken_fit_reason": "Leads with the totals and walks through meals in spoken sentences with no list markup; the length is what a full-day plan needs."
+}

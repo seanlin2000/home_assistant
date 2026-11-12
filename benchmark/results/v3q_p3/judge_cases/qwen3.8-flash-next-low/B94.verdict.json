@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The final ASSISTANT message is empty, so no itinerary or pass comparison was given despite eight searches that retrieved Swiss Travel Pass, Half Fare Card, Jungfraujoch, Gornergrat, Rigi and Pilatus prices.",
+  "judgment_reason": "Searching was right, but it kept searching until the tool limit and never turned the results into a plan, failing the central point of the request.",
+  "spoken_fit_reason": "Only the opening tool-call preamble was produced and no answer was spoken."
+}

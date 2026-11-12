@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The answer correctly explains in plain language that air molecules scatter short blue waves more and that the long path at sunset scatters the blue away, and it notes that dust and volcanic ash help, but it never says why the sky is not violet.",
+  "judgment_reason": "Not searching was right for stable physics, and the answer is pitched at a non-scientist as the user asked.",
+  "spoken_fit_reason": "The prose is plain but long and opens with \"Great question\", and the word cap cut it off partway through the sunset explanation."
+}

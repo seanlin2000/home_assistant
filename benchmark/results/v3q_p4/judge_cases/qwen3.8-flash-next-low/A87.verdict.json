@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The audio section gives a sensible order of tests (5 GHz, USB 3.0 noise, distance, firmware, a wired fallback), but it misses the laptop also pairing with the JBL and competing for it, and most of its fixes assume the laptop is the Bluetooth source. The eye-strain section breaks off mid-sentence after covering only motion and input lag, with nothing on brightness, field of view, seating distance, focus or DLP rainbow.",
+  "judgment_reason": "It searched for a stable troubleshooting question, and it tailored many steps (laptop Bluetooth power management, hands-free profile) to a setup where the laptop drives the speaker, which is not what the user described.",
+  "spoken_fit_reason": "A filler lead-in runs into a wall of dense paragraphs that the word cap cut off after the first problem's causes, so the listener heard no troubleshooting steps and nothing about eye strain."
+}

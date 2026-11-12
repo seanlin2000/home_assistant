@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Explains parallel cores for matrix math, memory-bandwidth-bound inference and software maturity, distinguishes GPU, ASIC (TPU) and inference processors (Groq, Cerebras keeping weights on chip), and gives the sketch's win and lose conditions (fixed high-volume workload, latency, energy per token, stable architecture vs changing models).",
+  "judgment_reason": "Stable technical explanation answered from knowledge without a needless search.",
+  "spoken_fit_reason": "Plain prose that leads with why GPUs work, no lists or markup, and length proportionate to a three-part question."
+}

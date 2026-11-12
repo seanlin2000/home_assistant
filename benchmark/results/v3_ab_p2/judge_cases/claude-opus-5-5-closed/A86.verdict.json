@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Matches the sketch: bridge as local Zigbee hub, inviting people in the Hue app, Hue switches, Apple Home via a home hub or Home Assistant for local voice, and an accurate outage breakdown where the bridge, app, switches and local Home Assistant keep working while Alexa, Google and remote control stop.",
+  "judgment_reason": "Answered a stable architecture question without searching and hedged the one uncertain point by saying Siri often still works rather than always.",
+  "spoken_fit_reason": "Leads with the recommended architecture and stays in plain prose without lists, at a length the two-part question warrants."
+}

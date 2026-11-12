@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The rates and interest figures it gives trace to the excerpts (Capital One 3.20% giving $1,600, Pibank 4.40%, Laurel Road 3.50%, the 4.30%/4.00% rate-lock listing), but it names only four banks, two of them small, and says it could not verify Marcus although the November 11 Banksparency comparison lists Marcus at 3.50%.",
+  "judgment_reason": "It searched, said rates are variable, and flagged the banks it could not confirm, but it took the 4.30% rate-lock listing as American Express's rate without mentioning that the same-week Banksparency comparison shows Amex at 3.20%.",
+  "spoken_fit_reason": "It opens with a caveat rather than the answer and runs long with several percentages read as '4.30 percent', though it is plain prose with no lists or URLs."
+}

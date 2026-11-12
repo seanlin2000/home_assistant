@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Memory figures match the sketch (about 140 GB at 16-bit, 35 GB at 4-bit or about 40 in practice, 17.5 GB at 2-bit or over 20 in practice, KV cache on top) and the trade-offs cover quality loss, the speed gain from memory bandwidth, and 2-bit damage to reasoning; it does not mention that careful quantization methods reduce the loss.",
+  "judgment_reason": "Stable technical arithmetic answered without searching, and the figures are framed as approximate with real-format overhead noted.",
+  "spoken_fit_reason": "Opens with the definition and spells numbers out for speech in plain prose; long, but the question has three parts."
+}

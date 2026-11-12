@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Correct architecture (bridge as hub, shared app access, dimmer switches, voice via Alexa, Google, Apple Home or Home Assistant local voice) and outage behavior (local pieces keep working, remote control and Alexa and Google stop), but it does not say Apple Home with a home hub also keeps working locally.",
+  "judgment_reason": "Answered stable smart-home architecture without searching and tied the recommendation to the user's stated concern about outages.",
+  "spoken_fit_reason": "Leads with the recommended setup in plain prose with no lists, at a length the two-part question justifies."
+}

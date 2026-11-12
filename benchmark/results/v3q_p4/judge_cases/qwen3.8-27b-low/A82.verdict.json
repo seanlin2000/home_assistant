@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 0,
+  "answer_quality_reason": "Correctly distinguishes API, tool and MCP server and lays out a local model, an MCP server with search (SearXNG) and fetch (trafilatura, truncation) tools, and a client loop, but among safeguards it gives only output-size caps, with no tool-round limit, timeouts, or warning that fetched text is untrusted.",
+  "judgment_reason": "Answered a stable architecture question without searching and made sensible, justified design choices such as having the local model do the summarizing.",
+  "spoken_fit_reason": "Roughly a dozen paragraphs of technical detail, a wall of text the word cap cut before the architecture even began."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Every claim traces to the excerpts (Kimi K3.1 Pro weights on November 2, Muse Spark Open on October 15 at 816B/42B active, DeepSeek V4.1 Flash refreshed in mid October, Mistral Large 4 preview on October 6 with no weights yet), and older items are dated honestly, but Qwen3.8 from August is counted among the five past-30-day developments instead of saying Qwen had nothing recent in the results.",
+  "judgment_reason": "Searched for a clearly current question, flagged that the sources were secondary, and declined to rank without benchmark tables rather than inventing a comparison.",
+  "spoken_fit_reason": "Five spoken items introduced as 'One, Two...' in plain prose with numbers spelled out and no URLs or markup; the length matches a five-item request."
+}

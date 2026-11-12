@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Separates the two problems and covers 2.4 GHz interference, the speaker pairing with two devices, distance, switching to 5 GHz and one-change-at-a-time testing, plus brightness, input lag and seating distance for eye strain, but misses focus or keystone, the DLP rainbow effect and a wired audio fallback.",
+  "judgment_reason": "Answered a troubleshooting question from knowledge without searching and gave an ordered, one-variable-at-a-time test plan as the question asked.",
+  "spoken_fit_reason": "Plain prose that handles each problem in turn without lists, at a length two separate troubleshooting problems justify."
+}

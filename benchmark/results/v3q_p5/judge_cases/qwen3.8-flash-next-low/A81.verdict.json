@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 4,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It correctly lists what leaves (query, API key, IP, timestamp, parameters, and personal details leaking into model-written queries), what stays local, and sound mitigations including sanitizing queries, caching, a proxy and self-hosted SearXNG, but it never says that the websites the assistant fetches directly also see the user's IP.",
+  "judgment_reason": "A conceptual architecture question needed no search, yet it ran four searches on Brave, Tavily, Bing and Google policies, padding the answer with provider trivia such as Bing grounding pricing.",
+  "spoken_fit_reason": "Six dense paragraphs with quoted example queries and a file name, far too long for speech and cut by the word cap mid-example."
+}

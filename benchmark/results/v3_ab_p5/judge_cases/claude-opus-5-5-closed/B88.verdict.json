@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It says it couldn't verify the past month and falls back to dated background (DeepSeek V3 and R1, Llama 4), ignoring retrieved in-window releases such as Meta's Muse Spark Open (October 15), DeepSeek-V4.1-Flash-1017 (October 17), Mistral Large 4 weights (October 29), Kimi K3.1 Pro weights (November 2) and Qwen4-Max-Preview (November 11, no weights).",
+  "judgment_reason": "Searching was right and it avoided presenting stale facts as current, but it wrongly told the user the news could not be verified when the four searches had returned it.",
+  "spoken_fit_reason": "Plain prose with no formatting, but eight sentences of out-of-date background make it long for a spoken reply that admits it is not the answer."
+}

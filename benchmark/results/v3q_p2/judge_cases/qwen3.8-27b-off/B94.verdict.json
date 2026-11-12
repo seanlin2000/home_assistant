@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 3,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The Lucerne, Interlaken, Zermatt order with a lake boat, the Lake Brienz line, Harder Kulm and the Jungfraujoch is sensible, but the message breaks off on day four before any Swiss Travel Pass versus Half Fare versus point-to-point comparison, though it retrieved the prices and ran the sums, and it puts Interlaken to Zermatt at four to five hours.",
+  "judgment_reason": "It searched for current pass and excursion prices, warned that five days is tight for three bases, and correctly ruled out the Glacier Express for the Interlaken to Zermatt leg.",
+  "spoken_fit_reason": "The listener heard three run-together \"let me check\" preambles and then a day-by-day essay that the word cap cut on day one."
+}

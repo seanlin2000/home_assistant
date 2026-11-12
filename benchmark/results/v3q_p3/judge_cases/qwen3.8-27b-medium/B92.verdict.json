@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The big-bank APYs (Chase 0.01, Bank of America 0.04, Wells Fargo 0.01, Citi 0.05, U.S. Bank 0.05 with its 2.00 percent band) and their $5 to $25 interest figures match the excerpts, but it asserts 'no minimum balance required' for each bank though no source says so, calls $2,200 'about ninety times' Chase's $5 when it is roughly 440 times, and says CIT requires no minimum despite the excerpt's 0.25 percent tier below $5,000.",
+  "judgment_reason": "Searching was right and flagging that big banks do not offer real high-yield accounts was a sound push-back, but it filled the minimum-balance column without evidence and never clearly warns that the rates are variable.",
+  "spoken_fit_reason": "Leads with the key caveat in plain prose, but about five hundred words ran past the word cap so the listener missed Citi, U.S. Bank and the high-yield comparison."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It correctly lists the query, IP, timestamp, API key and headers as transmitted and gives sound mitigations, but it claims self-hosted SearXNG means 'nothing leaves your network at all' when SearXNG forwards queries to upstream engines, and it omits that fetched websites also see the IP.",
+  "judgment_reason": "This is a stable architecture question that needed no search, and it rightly flags that the model's rewritten query is the part to control.",
+  "spoken_fit_reason": "Bold markdown section headings and eight paragraphs make it a formatted wall of text, cut off by the word cap mid-explanation."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Separates the two problems and covers nearly every sketch cause and step (dual pairing, 2.4 GHz interference, laptop Bluetooth off and 5 GHz Wi-Fi, a cable test; brightness versus room light, DLP rainbow, keystone, distance, game mode), but omits a firmware update and taking breaks or blinking during play.",
+  "judgment_reason": "Answered from stable knowledge without searching and gave a one-change-at-a-time order with a decisive cable test to isolate Bluetooth as the culprit.",
+  "spoken_fit_reason": "Leads by naming two separate problems and stays in plain prose without lists, at a length that two troubleshooting procedures require."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 1,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The Lucerne-Interlaken-Zermatt order and the lake steamer, Pilatus and Jungfraujoch picks are sensible, but it routes Lucerne to Interlaken 'through Brunnen', has the Interlaken-Zermatt line reach Spiez after the Lötschberg tunnel, puts that trip at four to five hours, and the message breaks off at 'Day five' without ever comparing the Swiss Travel Pass, the Half Fare Card or point-to-point tickets as the question asked.",
+  "judgment_reason": "It answered from memory a question that needed current pass prices and seasonal schedules, so it never checked whether attractions like the Pilatus cog railway run in November.",
+  "spoken_fit_reason": "It is plain prose in day-by-day order, but the long paragraphs ran past the word cap after day one, so the listener heard almost none of the plan and nothing about tickets."
+}

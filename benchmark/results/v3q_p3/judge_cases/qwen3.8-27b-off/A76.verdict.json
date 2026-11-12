@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 3,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The cause/trigger split and the Wall, coup and Belavezha events are right, but it omits nationalism in the republics as a cause and wrongly says the USSR was formally gone by early January 1992 rather than December 26, 1991.",
+  "judgment_reason": "Correctly answered stable history without searching and explicitly separated long-term causes from immediate triggers as asked.",
+  "spoken_fit_reason": "A multi-paragraph wall of text with enumerated points that was cut by the word cap, so the listener heard only the causes and none of the three events."
+}

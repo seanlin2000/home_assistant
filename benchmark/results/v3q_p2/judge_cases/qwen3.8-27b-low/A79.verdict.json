@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 4,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It covers matrix multiplication, tensor cores, memory-bound inference, CUDA, TPUs as ASICs, Groq, Cerebras and SambaNova, and when a stable, high-volume workload favours a specialized chip, but it says hyperscaler chips 'simply aren't available to rent' (TPUs are rentable on Google Cloud), gives no architectural detail such as on-chip SRAM or wafer-scale chips, and garbles 'the less the ASIC's advantage shrinks'.",
+  "judgment_reason": "It ran search_and_read for a conceptual question it could answer from stable knowledge, which was a needless search, though the answer did not lean on the time-sensitive figures it got back.",
+  "spoken_fit_reason": "It runs to about nine paragraphs, opens with the spoken search preamble run straight into the answer, and the word cap cut it off after the first section."
+}

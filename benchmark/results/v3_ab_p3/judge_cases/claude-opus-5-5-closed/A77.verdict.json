@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Covers white light as a mix of colors, stronger scattering of short wavelengths by air molecules, why not violet, the long low path at sunset, dust and moisture, and ends with a crowded-hallway comparison.",
+  "judgment_reason": "Answered stable physics without searching and kept to plain language as the user asked, naming Rayleigh scattering only after explaining it.",
+  "spoken_fit_reason": "Plain prose that leads with the core idea and uses an everyday analogy, at a length the explanation request justifies."
+}

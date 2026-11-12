@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Builds the day from cheap quick foods (Greek yogurt, chicken and rice, canned tuna, ground turkey and potato) with plausible per-meal protein figures summing to about 175 g at roughly 2,100 kcal, under the cap, with protein powder only as an optional backup.",
+  "judgment_reason": "Respected the 2,500-calorie ceiling and the no-powder-every-meal constraint, flagged the figures as estimates since brands vary, and needed no search.",
+  "spoken_fit_reason": "Opens with the protein and calorie totals and walks meal by meal in plain spoken prose without a list, a length the meal-plan request demands."
+}

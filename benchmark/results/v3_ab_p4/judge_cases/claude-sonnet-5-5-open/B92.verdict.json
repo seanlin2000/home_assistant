@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "All four rates and minimums trace to the excerpts (CIT 3.75 percent above 5,000 with a 100-dollar opening deposit, Barclays 3.70 percent, SoFi Savings Connect 3.75 percent, Betterment 3.75 to 4.40 percent) and the calculator figures of 1,875, 1,850 and 2,200 are right, but it calls the result simple interest 'ignoring compounding' when the APY already includes it.",
+  "judgment_reason": "Searched for current rates, said plainly it could confirm only four banks rather than inventing a fifth, flagged that some figures may be dated, and noted rates could move.",
+  "spoken_fit_reason": "Leads with the caveat and then gives each bank's rate, minimum and dollar interest in plain spoken sentences with no formatting, a length the comparison request warrants."
+}

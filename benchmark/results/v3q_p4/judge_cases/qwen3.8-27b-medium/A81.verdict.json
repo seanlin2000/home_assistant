@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The answer correctly lists the query, IP address, API key, user agent, and timestamp as transmitted, and it recommends redacting queries, VPN or proxy routing, a self-hosted aggregator, and checking retention policy, but it omits that fetched websites also see the IP and that local audio and transcription stay home.",
+  "judgment_reason": "Not searching was right, and the answer honestly says retention policies vary by provider and need checking instead of claiming a specific one.",
+  "spoken_fit_reason": "This is a wall of text of over 600 words with markdown asterisks around \"not\", and the word cap cut it off before the minimization advice."
+}

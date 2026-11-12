@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "Explains DCF discounting, the compounding asymmetry on distant cash flows, tech as long-duration assets versus utilities, the Treasury opportunity cost and funding channels, and cites the 2022 selloff, covering the full reference.",
+  "judgment_reason": "Answered stable finance theory without searching and framed the sensitivity figures as a modeled illustration rather than a fact.",
+  "spoken_fit_reason": "Plain prose with no formatting, but long enough that the word cap cut it before the duration explanation, so the listener missed the core link to growth stocks."
+}

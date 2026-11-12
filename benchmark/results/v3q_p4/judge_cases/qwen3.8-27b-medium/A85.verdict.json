@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The plan uses cheap foods with no protein powder and stays near 1,700 kcal, and the egg, yogurt, and cottage cheese figures are roughly right, but a lunch of half a can of tuna with chickpeas is credited with 55 to 60 grams, which inflates the 170-gram total, and the limit is misstated as \"twenty-fifty\".",
+  "judgment_reason": "Not searching was correct, the answer respects the calorie ceiling and the limit on protein powder, and it calls its figures rough.",
+  "spoken_fit_reason": "The meal-by-meal prose is listenable but long, has em dashes and a closing upsell offer, and the word cap cut it off before dinner and the totals."
+}

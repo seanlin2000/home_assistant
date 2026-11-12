@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "A sensible Lucerne, Interlaken, Zermatt route with lake cruises, Rigi or Pilatus, Jungfrau viewpoints and the Gornergrat, and sourced 2026 prices (Half Fare Card CHF 150, 4-day pass CHF 309, break-even CHF 318 from the calculator), but it prices a 4-day pass for a five-day trip without saying which days it would cover and only gestures at point-to-point tickets.",
+  "judgment_reason": "Searched for current pass prices, chose low-effort viewpoints as asked, and hedged the pass recommendation with a break-even figure and advice to price the journeys on SBB.",
+  "spoken_fit_reason": "Day-by-day plan and ticket comparison in plain spoken sentences without lists or markup; long, but a five-day plan with a ticket comparison needs it."
+}

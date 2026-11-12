@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 0,
+  "answer_quality_reason": "Wembanyama's and Doncic's 2026-27 numbers and the Lakers' 11-2 and Spurs' 10-2 records match the excerpts, but it says the 8-4 Thunder are 'sitting at the top of the West' when the retrieved standings put them seventh, in the play-in, and the answer breaks off on Giannis without ever naming a fifth player.",
+  "judgment_reason": "Searching for current-season stats and using 2026-27 rather than last season's figures was right, and it flagged that only about twelve games had been played, but it misread the standings when building its team-impact case for Gilgeous-Alexander.",
+  "spoken_fit_reason": "The listener heard four sentences of search narration ('Let me search for that information', 'Let me dig into...') and then a long ranking that the word cap cut off at the first player."
+}

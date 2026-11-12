@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The API, tool and MCP definitions and the model-host, search, fetch-to-text and summarization architecture match the reference, but it leaves out the safeguards the sketch requires: no cap on tool rounds, no timeouts, no caching, and no warning to treat fetched pages as untrusted prompt-injection risk.",
+  "judgment_reason": "It answered a stable architecture question from knowledge without searching, and it sensibly advised a plain tool loop over MCP for a single-client hobby build.",
+  "spoken_fit_reason": "Three dense paragraphs were cut by the word cap partway through the definitions, so the listener never heard any of the architecture."
+}

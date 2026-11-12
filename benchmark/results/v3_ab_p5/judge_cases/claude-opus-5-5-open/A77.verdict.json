@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Covers white light as a mix, molecules scattering short blue waves more, why not violet, the long low sunset path stripping out blue, and dust or haze strengthening it, all matching the sketch.",
+  "judgment_reason": "Correctly answered stable physics without searching and pitched it at a non-scientist with the 'short and choppy' versus 'long and lazy' wave comparison.",
+  "spoken_fit_reason": "Plain jargon-free prose that leads with the explanation and names Rayleigh scattering only at the end, at a length the explain-the-physics request warrants."
+}

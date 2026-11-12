@@ -1,0 +1,616 @@
+instructions: 'For each entry, fill in the human block: gate_hit true/false (would you zero this answer?), the gates you would apply, and the three scores per benchmark/rubric.md. Leave a field null to skip it. Then re-run benchmark-report to compute agreement.'
+entries:
+- candidate: qwen3.8-27b-medium
+  question_id: A81
+  why_selected: random sample
+  question: &id005
+  - If I run a language model locally on my computer but use an external web-search API, what information can the search provider see? Explain what stays local, what gets transmitted, and how I can minimize data exposure.
+  searched: false
+  spoken_answer: 'The short version is that your model, your conversation, and anything you keep in local files stay on your machine, but the search provider sees the exact query you send it plus the network metadata that comes with any web request. Here''s how I''d sort it out.
+
+
+    What stays local is everything about the model and the conversation around it. The weights themselves, the full prompt you gave it, the model''s step-by-step reasoning, the intermediate text it generates, and any documents you loaded in from your own disk. None of that crosses the wire just because you''re doing a search.
+
+
+    What gets transmitted is narrower than people worry about, but it''s the part that matters. When your agent (or you) sends a search request, the provider receives the query text exactly as written, your IP address and so your approximate region and ISP, a timestamp, and whatever headers go along with the request like a User-Agent string or an API key. Then it hands the results back to you, which is fine.'
+  judge:
+    gate_hit: false
+    gates: []
+    dimension_total: 7
+    answer_quality: 4
+    judgment: 3
+    spoken_fit: 0
+    reasons:
+    - Correctly separates local conversation and reasoning from the transmitted query, IP, timestamp, User-Agent and API key, and gives query sanitizing, VPN and retention-policy advice, but omits that fetched websites also see the IP, that the API key ties queries to a billing identity, and options like searching less, caching, or a SearXNG proxy.
+    - Answering stable privacy architecture without a search was the right call, and the point that HTTPS does not hide queries from the provider is a well-judged caveat.
+    - Seven paragraphs of roughly six hundred words, with parentheticals and a quoted example, were cut by the word cap before any of the minimization advice was heard.
+  human:
+    gate_hit: null
+    gates: []
+    answer_quality: null
+    judgment: null
+    spoken_fit: null
+    notes: ''
+- candidate: qwen3.8-27b-medium
+  question_id: A82
+  why_selected: random sample
+  question: &id003
+  - Explain the difference between an API, an MCP server, and a software tool. If I wanted to give a local LLM the ability to search the web, retrieve webpages, and summarize them, how would you architect the system?
+  searched: false
+  spoken_answer: 'Great question, and the honest answer is that these three terms sit at different layers of abstraction, which is why people mix them up.
+
+
+    An API is the most general concept. It''s just an interface that one piece of software exposes to another, a contract saying "if you send me this request in this format, I''ll give you this response." A web API using HTTP and JSON is the most common kind, but APIs can be function calls inside a process, database queries, command-line interfaces, you name it. An API doesn''t care who''s calling it or why. It''s a capability with a defined shape.
+
+
+    A software tool is broader still and vaguer. A tool is anything that does work for you: a command-line program, a library, a script, a service. An API is often *how* you access a tool, but the tool is the thing doing the work. So an API is an interface, a tool is an instrument, and a single tool might be reachable through several different interfaces.'
+  judge:
+    gate_hit: false
+    gates: []
+    dimension_total: 7
+    answer_quality: 4
+    judgment: 3
+    spoken_fit: 0
+    reasons:
+    - The architecture matches the sketch (local model, agent loop with call caps and timeouts, MCP server with search and fetch-to-clean-text tools, model-side summarizing, prompt-injection and caching safeguards), but it defines a tool as any generic program rather than as a function the model may call through a name, description and schema.
+    - Answering from stable software knowledge without searching was correct, and it flags untrusted fetched content and loop limits unprompted.
+    - About eight hundred words across ten paragraphs with markdown italics such as *how* and *when* were cut by the word cap before the architecture was even reached.
+  human:
+    gate_hit: null
+    gates: []
+    answer_quality: null
+    judgment: null
+    spoken_fit: null
+    notes: ''
+- candidate: qwen3.8-27b-medium
+  question_id: A86
+  why_selected: random sample
+  question:
+  - I have Philips Hue lights connected to a Hue Bridge. I want multiple people in my apartment to control the lights, including through voice commands. What is the best architecture for this, and what happens if the internet goes down?
+  searched: true
+  spoken_answer: 'Here''s the setup I''d recommend, based on how Hue and the current assistant platforms work.
+
+
+    The foundation is what you already have: the Hue Bridge. Wire it to your router with Ethernet, and let all the lights join it over Zigbee. That Zigbee mesh is entirely separate from your Wi-Fi, so the lights don''t depend on Wi-Fi at all. For the people in your apartment, don''t share your login. In the Hue app, go to Settings, then Home access, and send an invite to each person. They sign in with their own Philips Hue account and accept the invite, and now everyone sees the same rooms and scenes and can control them from their own phone, iPhone or Android. If someone moves out, you just remove their access from that same screen.
+
+
+    For voice, the cleanest approach is to link the Bridge to whichever assistants the household actually uses, and Matter makes that multi-ecosystem control officially supported: you can link Apple Home, Google Home, and Alexa to the same Bridge at once, and that''s called multi-admin support.'
+  judge:
+    gate_hit: true
+    gates:
+    - searched_on_no_search_question
+    dimension_total: 4
+    answer_quality: 3
+    judgment: 1
+    spoken_fit: 0
+    reasons:
+    - The bridge-over-Zigbee foundation, Home access invites, multi-assistant linking, the Hue app working locally, Apple Home hubs working offline and losing remote control are right, but it suggests Alexa and Google voice keep working offline when cloud voice assistants stop taking commands, and it never mentions physical Hue switches.
+    - It searched twice for a stable architecture question it could answer from general knowledge, though it did hedge the Google offline claim as 'very likely, test it'.
+    - Roughly six hundred words in four dense paragraphs with quoted terms were cut by the word cap before the internet-outage half of the question was reached.
+  human:
+    gate_hit: null
+    gates: []
+    answer_quality: null
+    judgment: null
+    spoken_fit: null
+    notes: ''
+- candidate: qwen3.8-27b-medium
+  question_id: A87
+  why_selected: random sample
+  question: &id001
+  - My projector is connected to a JBL Bluetooth speaker. Sometimes the audio becomes choppy when I connect my laptop, and playing video games on the projector causes more eye strain than playing on my monitor. What could cause these problems, and how would you systematically troubleshoot them?
+  searched: false
+  spoken_answer: 'Let me take these one at a time, since they''re separate problems.
+
+
+    The choppiness when your laptop joins is almost certainly radio interference. Bluetooth works on 2.4 gigahertz, the same band as most home Wi-Fi. When your laptop connects, it either starts using the same crowded band, or it''s on Bluetooth itself and the speaker has to juggle two sources. The fix to try first is the cheapest: move the speaker closer to the projector, keep it away from the Wi-Fi router, and if your router supports 5 gigahertz Wi-Fi, move the laptop''s connection over there so 2.4 gigahertz is quieter for the speaker. If the choppiness persists, skip the radio altogether and wire it — a 3.5-millimeter audio cable or an optical cable from the projector to the speaker eliminates the whole class of problem and is worth doing for a permanent setup. Also check the speaker''s firmware, since JBL has shipped updates that fix exactly this kind of drop-out.'
+  judge:
+    gate_hit: false
+    gates: []
+    dimension_total: 6
+    answer_quality: 3
+    judgment: 2
+    spoken_fit: 1
+    reasons:
+    - It separates the problems and covers 2.4 GHz interference, moving to 5 GHz, wiring the audio, firmware, focus, keystone and room light, but never suggests turning off the laptop's Bluetooth or unpairing the speaker from it despite naming that cause, and misses brightness, seating distance, input lag or game mode, and the DLP rainbow effect.
+    - Not searching was right and it orders tests one variable at a time, but it calls interference 'almost certainly' the cause and asserts JBL firmware fixes 'exactly this' without basis.
+    - Plain prose split by problem, but about four hundred words ran past the word cap so the listener heard only the audio half.
+  human:
+    gate_hit: null
+    gates: []
+    answer_quality: null
+    judgment: null
+    spoken_fit: null
+    notes: ''
+- candidate: qwen3.8-27b-low
+  question_id: A76
+  why_selected: random sample
+  question: &id002
+  - How did the Cold War end? Explain the three most important events that led to the dissolution of the Soviet Union, and distinguish between the causes and the immediate triggers.
+  searched: false
+  spoken_answer: 'The Cold War ended through a combination of long-term structural decay and a short series of events in 1989 through 1991 that made collapse inevitable once the system could no longer hold itself together.
+
+
+    The three most important events are these.
+
+
+    First, Gorbachev''s reforms, glasnost and perestroika, introduced in the mid-1980s. This was the fundamental cause. Glasnost loosened state control over information, which let people in the Soviet republics air grievances that had been suppressed for decades. Perestroika attempted to restructure the economy but ended up removing the central planning controls that, however inefficient, had kept the system functioning. Gorbachev didn''t want to break up the Union, but his reforms made it impossible for the center to control the periphery by force without looking ridiculous.
+
+
+    Second, the revolutions of 1989 across Eastern Europe, culminating in the fall of the Berlin Wall in November. This was both a consequence of the first cause and a new shock in itself.'
+  judge:
+    gate_hit: false
+    gates: []
+    dimension_total: 8
+    answer_quality: 4
+    judgment: 3
+    spoken_fit: 1
+    reasons:
+    - Correctly covers Gorbachev's reforms, the 1989 revolutions and Berlin Wall, the failed August 1991 coup, the Belavezha Accords and Gorbachev's December 25 resignation with sound cause-versus-trigger framing, but omits the Ukrainian referendum and only gestures at nationalism and the arms race.
+    - Answered from stable historical knowledge without searching and explicitly drew the line the question asked for between structural causes and the coup as immediate trigger.
+    - Plain prose but far too long for voice, so the word cap cut it off before the listener heard the third event or the cause-versus-trigger summary.
+  human:
+    gate_hit: null
+    gates: []
+    answer_quality: null
+    judgment: null
+    spoken_fit: null
+    notes: ''
+- candidate: qwen3.8-27b-low
+  question_id: A79
+  why_selected: random sample
+  question: &id004
+  - Why are GPUs so effective at AI inference? Explain the differences between GPUs, ASICs, and specialized inference processors. Under what circumstances could a specialized chip outperform an NVIDIA GPU?
+  searched: false
+  spoken_answer: 'This is a great question, and it really comes down to a trade-off between flexibility and efficiency. Let me walk through it.
+
+
+    Why GPUs are so effective at AI inference
+
+
+    The core operation in most neural network inference is matrix multiplication: you take a vector of activations and multiply it against a big weight matrix to produce the next set of activations. That operation is what''s called data-parallel, which means thousands of independent multiply-and-accumulate operations can happen at the same time without waiting on each other. A GPU is essentially a massively parallel multiply-and-accumulate machine. An H100, for example, has over fourteen thousand CUDA cores plus dedicated Tensor Cores that can do matrix math at very high throughput.
+
+
+    But raw compute alone isn''t the whole story. Inference is also heavily constrained by memory bandwidth, especially for large models. You have to stream enormous weight matrices from high-bandwidth memory into the compute units. GPUs pair those thousands of cores with terabytes-per-second of HBM bandwidth, which is why the combination works so well.'
+  judge:
+    gate_hit: false
+    gates: []
+    dimension_total: 7
+    answer_quality: 4
+    judgment: 3
+    spoken_fit: 0
+    reasons:
+    - Covers matrix-multiply parallelism, HBM bandwidth limits, the CUDA ecosystem, TPU as an ASIC, Cerebras, and when fixed high-volume workloads favor specialized chips, but omits on-chip SRAM designs like Groq and latency per token as a win case, and loosely says convolutions dominate transformer inference.
+    - Answered stable technical background without searching and gave a balanced account of when specialized chips win and when GPUs' flexibility wins.
+    - Uses standalone heading lines such as 'Why GPUs are so effective at AI inference' and runs to a wall of text that the word cap cut off before the comparison was even reached.
+  human:
+    gate_hit: null
+    gates: []
+    answer_quality: null
+    judgment: null
+    spoken_fit: null
+    notes: ''
+- candidate: qwen3.8-27b-low
+  question_id: A87
+  why_selected: random sample
+  question: *id001
+  searched: false
+  spoken_answer: 'Both problems are pretty common, and the good news is that they each have a handful of likely culprits you can work through in order.
+
+
+    Starting with the choppy audio. The most likely explanation is that your JBL speaker is being pulled in two directions at once. Most Bluetooth speakers, including JBL''s, can only carry one active audio stream at a time. If the projector is paired to the speaker for its audio output and your laptop is also paired and streaming something — even just a system sound or a notification — the two sources fight for the speaker''s attention, and you get dropouts that sound like choppiness. The first thing to check is whether the laptop is actually paired to the speaker. If it is, and you don''t need the laptop sending audio through it, unpair it or turn off the laptop''s Bluetooth while you''re using the projector.
+
+
+    If the laptop isn''t paired to the speaker, the next suspect is Wi-Fi interference. Bluetooth operates on the 2.'
+  judge:
+    gate_hit: false
+    gates: []
+    dimension_total: 8
+    answer_quality: 4
+    judgment: 3
+    spoken_fit: 1
+    reasons:
+    - Separates the two problems and orders tests well for audio (laptop pairing competing, 2.4 GHz interference, placement, firmware, wired link) and covers brightness, DLP artifacts, input lag, game mode and image size for eye strain, but describes the DLP issue as flicker rather than the rainbow effect, suggests sitting closer after saying a large image adds strain, and omits breaks and reduced blinking.
+    - Answered from stable troubleshooting knowledge without searching and proposed one-change-at-a-time checks starting with the most likely cause.
+    - Plain prose with no markdown, but far too long, so the word cap cut it mid-sentence in the audio section and the listener heard nothing about eye strain.
+  human:
+    gate_hit: null
+    gates: []
+    answer_quality: null
+    judgment: null
+    spoken_fit: null
+    notes: ''
+- candidate: qwen3.8-27b-low
+  question_id: B92
+  why_selected: random sample
+  question:
+  - Compare the current high-yield savings account interest rates offered by five major US banks. If I deposit $50,000 for one year, approximately how much interest would I earn at each bank? Identify any minimum balance requirements.
+  searched: true
+  spoken_answer: 'Here''s the thing I have to flag up front: the five biggest US banks — Chase, Bank of America, Wells Fargo, Citibank, and US Bank — don''t actually offer real "high-yield" rates on their standard savings accounts. As of mid-November 2026, all of them are paying somewhere around 0.01 to 0.05 percent APY on a regular savings account, which is a fraction of what the true high-yield online accounts are paying (four to five percent). So if you walk into any of these five expecting a high-yield rate, you''re going to be disappointed. The genuinely high rates come from online and specialty banks like SoFi, Axos, Leader, or EverBank.
+
+
+    That said, here''s what the five majors are actually paying right now, and what that does to fifty thousand dollars over a year:
+
+
+    Chase pays 0.01 percent on its standard savings, which is about five dollars a year on your fifty thousand.'
+  judge:
+    gate_hit: true
+    gates:
+    - fabricated_current_fact
+    - too_many_tool_calls
+    dimension_total: 5
+    answer_quality: 2
+    judgment: 2
+    spoken_fit: 1
+    reasons:
+    - The big-bank rates and interest (Chase and Wells Fargo 0.01 percent for about five dollars, Bank of America 0.04 percent for twenty, U.S. Bank 0.05 percent for twenty-five) follow the Arca and SwitchWize excerpts, but it never gives a high-yield comparison, says fifty thousand at a four-to-five-percent account earns 'roughly four to five hundred dollars a year' when it would be about two thousand or more, and asserts no-minimum terms for Chase, Wells Fargo and Bank of America that no source gives.
+    - Reasonably flagged that the biggest banks do not pay high-yield rates and was honest about missing Citi data, but narrowed the question away from the high-yield accounts the user asked about and never noted that the rates are variable.
+    - Leads with the key caveat in plain prose, but runs long enough that the word cap cut it after the first bank.
+  human:
+    gate_hit: null
+    gates: []
+    answer_quality: null
+    judgment: null
+    spoken_fit: null
+    notes: ''
+- candidate: qwen3.8-flash-next-medium
+  question_id: A76
+  why_selected: random sample
+  question: *id002
+  searched: true
+  spoken_answer: 'I''ll check a couple of reference articles so the dates and sequence are exact.Let me pull the 1991 sequence more precisely.One more check on the sequence in December, so the triggers line up correctly.The short answer is that the Cold War ended not with a war but with the Soviet Union simply losing the will and the ability to hold itself together. It is worth separating two things that get lumped together: the Cold War as a confrontation between blocs effectively ended earlier, while the Soviet Union as a state ended on 26 December 1991.
+
+
+    On the bloc confrontation side, the turn came between 1985 and 1989. Gorbachev took over in March 1985 to break the economic stagnation of the Brezhnev years, and over four summit meetings with Reagan between 1985 and 1988 the two negotiated the Intermediate-Range Nuclear Forces Treaty, which eliminated an entire class of nuclear weapons for the first time in the Cold War.'
+  judge:
+    gate_hit: true
+    gates:
+    - searched_on_no_search_question
+    - too_many_tool_calls
+    dimension_total: 5
+    answer_quality: 4
+    judgment: 1
+    spoken_fit: 0
+    reasons:
+    - It correctly labels stagnation, the arms race, nationalism and Gorbachev's reforms as causes and gives the coup, the 1 December referendum and the 8 December Belovezha Accords with right dates, but says Yeltsin recognized Ukraine 'three days later' when the excerpt says 2 December, and puts the flag change before Alma-Ata.
+    - A stable history question needed no lookup, yet it made eight wikipedia_lookup calls and hit the tool-call limit.
+    - The answer is a many-paragraph essay that the word cap cut off after the second paragraph, with the 'let me check' preambles run together into the spoken output.
+  human:
+    gate_hit: null
+    gates: []
+    answer_quality: null
+    judgment: null
+    spoken_fit: null
+    notes: ''
+- candidate: qwen3.8-flash-next-medium
+  question_id: A78
+  why_selected: random sample
+  question:
+  - Why can a country have a strong stock market while its average citizens feel like the economy is getting worse? Give three concrete examples of how this happens.
+  searched: true
+  spoken_answer: 'Short version: the stock index measures the value of companies, not the budget of a household, and the two have come apart this year in the United States. The S&P 500 closed around 7,620 on November 11, up roughly 11 percent this year and about 2.5 percent below its October record of 7,819. Meanwhile the University of Michigan sentiment index came in at 51 in its preliminary November reading, still hovering near the all-time low of 44.8 it hit back in May. Here are three concrete mechanisms behind that gap.
+
+
+    One, the people who own the stocks are not the people who feel the economy. The Federal Reserve''s Distributional Financial Accounts for the second quarter of 2026 put 50.9 percent of household corporate equities and mutual fund shares in the hands of the top 1 percent of households, and 88.1 percent in the top 10 percent. The bottom 50 percent of households held 0.'
+  judge:
+    gate_hit: true
+    gates:
+    - searched_on_no_search_question
+    - too_many_tool_calls
+    dimension_total: 5
+    answer_quality: 4
+    judgment: 1
+    spoken_fit: 0
+    reasons:
+    - It gives three distinct, concrete mechanisms (top 10 percent holding 88.1 percent of equities, index gains concentrated in labor-cutting tech giants, and median weekly pay up 1.5 percent against CPI up 3.5 percent), all traceable to the excerpts, though it misstates the 3.7 percent year-over-year CPI figure as 'September alone'.
+    - A conceptual economics question needed no search, yet it ran six searches and two calculations and hit the tool-call limit.
+    - It is a long, number-dense essay that the word cap cut off mid-sentence in the first example.
+  human:
+    gate_hit: null
+    gates: []
+    answer_quality: null
+    judgment: null
+    spoken_fit: null
+    notes: ''
+- candidate: qwen3.8-flash-next-medium
+  question_id: A82
+  why_selected: random sample
+  question: *id003
+  searched: false
+  spoken_answer: 'Sure. These three things overlap a lot, so it helps to think of them as three different layers of the same stack.
+
+
+    An API is a contract between pieces of software. It says: send me a request shaped like this, and I''ll give you a response shaped like that. It''s designed to be called by programs, it''s deterministic, and the calling program decides when to call it. A REST endpoint that returns JSON for a weather query is an API. Nothing about an API assumes there''s a model involved anywhere.
+
+
+    A software tool, in the agent sense, is a capability packaged for a model to choose. It has a name, a description written in plain language, and a parameter schema. What makes it a "tool" rather than just a function is that the LLM decides whether and when to call it, based on the description you gave it. The model emits a structured call, your code executes it, and the result comes back as a message the model can read. So a tool is an API plus a description plus a decision-maker that happens to be a language model.'
+  judge:
+    gate_hit: false
+    gates: []
+    dimension_total: 8
+    answer_quality: 4
+    judgment: 3
+    spoken_fit: 1
+    reasons:
+    - It distinguishes API, tool (name, description, schema, model-chosen) and MCP server (JSON-RPC protocol that usually wraps an API), and lays out a sound architecture with search and fetch tools, an agent loop, timeouts, truncation and prompt-injection handling, but its loop repeats 'until the model produces an answer' with no cap on tool rounds and no caching.
+    - It answered a stable architecture question from knowledge without searching, and it offered to tailor model sizes if told the hardware rather than inventing it.
+    - The plain prose leads with the definitions, but it runs nine paragraphs and the word cap cut it before the architecture part was heard.
+  human:
+    gate_hit: null
+    gates: []
+    answer_quality: null
+    judgment: null
+    spoken_fit: null
+    notes: ''
+- candidate: qwen3.8-flash-next-medium
+  question_id: B94
+  why_selected: random sample
+  question:
+  - Plan a five-day trip to Switzerland covering Lucerne, Interlaken, and Zermatt. Prioritize scenic train rides, lakes, and mountain viewpoints. Minimize strenuous hiking and explain which train passes or tickets would be most economical.
+  searched: true
+  spoken_answer: I'll look up current prices and rail options before laying out the plan.
+  judge:
+    gate_hit: true
+    gates:
+    - no_final_answer
+    - too_many_tool_calls
+    dimension_total: 0
+    answer_quality: 0
+    judgment: 0
+    spoken_fit: 0
+    reasons:
+    - The final assistant message is empty; no itinerary or pass comparison was given, though the excerpts held Swiss Travel Pass prices (CHF 309 for 4 days, 2nd class), the Half Fare Card price and mountain fares.
+    - Searching was right, but it spent the tool budget on more lookups, including a duplicate fetch of the same page, until it hit the limit and then delivered nothing.
+    - Nothing was spoken, so there is no answer to fit.
+  human:
+    gate_hit: null
+    gates: []
+    answer_quality: null
+    judgment: null
+    spoken_fit: null
+    notes: ''
+- candidate: qwen3.8-flash-next-low
+  question_id: A79
+  why_selected: random sample
+  question: *id004
+  searched: true
+  spoken_answer: 'I''ll ground the current hardware landscape before explaining the underlying reasons.Let me verify a couple of the more striking claims before I build the answer.Here''s the core reason, and then the comparison.
+
+
+    Inference on a modern model is, almost everywhere, dense linear algebra. A transformer is a long sequence of matrix multiplies, and the attention mechanism itself is two more. That is exactly the shape of problem a GPU was built for, and NVIDIA has leaned into it deliberately: the Tensor Cores are dedicated matrix-multiply units, and they now support very low precisions like FP8 and FP4, which roughly double or quadruple usable throughput with little accuracy loss. The current shipping part, the B300 or Blackwell Ultra, lists around fifteen petaFLOPS of dense FP4 per chip with 288 gigabytes of HBM3e at eight terabytes per second, and the Rubin generation moving through the back half of this year claims fifty petaFLOPS with HBM4 at 22 terabytes per second.'
+  judge:
+    gate_hit: true
+    gates:
+    - searched_on_no_search_question
+    - too_many_tool_calls
+    dimension_total: 3
+    answer_quality: 2
+    judgment: 1
+    spoken_fit: 0
+    reasons:
+    - The GPU part is sound (matrix multiplies on Tensor Cores, bandwidth-bound decode, CUDA as the moat), but the reply breaks off mid-sentence at 'about' and never covers ASICs, specialized inference processors, or when a specialized chip beats an NVIDIA GPU.
+    - It ran four searches and four calculator calls on a conceptual question that needed no search, and spent its budget on current spec sheets rather than finishing the explanation.
+    - The listener heard two tool-call preambles run together and then dense spec figures before the word cap cut it, and the written reply itself ends mid-sentence.
+  human:
+    gate_hit: null
+    gates: []
+    answer_quality: null
+    judgment: null
+    spoken_fit: null
+    notes: ''
+- candidate: qwen3.8-flash-next-low
+  question_id: A81
+  why_selected: random sample
+  question: *id005
+  searched: true
+  spoken_answer: 'The short version is that running the model locally protects your prompts and your weights, but every search query your agent writes is a small, carefully written summary of what you were asking about. That''s the thing you''re actually sending out.
+
+
+    What leaves your machine, in practice: the literal query strings the agent generates, plus the request parameters you set, such as how many results you want, a freshness or date filter, a country or language setting, a safe-search flag, and, if you use them, the include-domains or exclude-domains filters. If you use extract, crawl or "answer" endpoints, you also send specific URLs or a whole question, which is much closer to your raw text. And alongside the query itself, the provider logs your API key, your IP address, timestamps, and your request volume and cadence.
+
+
+    What the provider does not get, in a properly local setup: the model itself, your system prompt, your full conversation history, your files, and anything you never put into a query string.'
+  judge:
+    gate_hit: true
+    gates:
+    - searched_on_no_search_question
+    dimension_total: 5
+    answer_quality: 4
+    judgment: 1
+    spoken_fit: 0
+    reasons:
+    - It correctly lists what is transmitted (query strings, parameters, API key, IP, timestamps, cadence), what stays local (model, system prompt, conversation, files), and how to minimize exposure (strip personal details from queries, skip extract endpoints, prefer independent-index providers, watch fetched pages and tracing logs), but the reply breaks off mid-sentence at 'since zero retention' and never mentions a VPN or self-hosted proxy for IP privacy.
+    - It ran three searches into vendor retention policies on a conceptual privacy question that needed no search, though it did flag Tavily's zero-retention claim as an unverified vendor statement.
+    - Seven dense paragraphs were cut by the word cap, so the listener heard what is sent and what stays local but none of the advice on minimizing exposure.
+  human:
+    gate_hit: null
+    gates: []
+    answer_quality: null
+    judgment: null
+    spoken_fit: null
+    notes: ''
+- candidate: qwen3.8-flash-next-low
+  question_id: B88
+  why_selected: random sample
+  question: &id006
+  - What are the five most important developments in open-source AI models over the past 30 days? Compare the latest releases from OpenAI's competitors, including DeepSeek, Qwen, Meta, and Mistral.
+  searched: true
+  spoken_answer: 'Here''s what I found, drawn from model trackers and vendor announcements, checked as of today. One caveat up front: none of these are "open source" in the strict sense — they''re open weights under custom licenses — and nearly every benchmark number below is the vendor''s own claim rather than an independent result.
+
+
+    The biggest single event was Moonshot''s Kimi K3.1 Pro. It was announced October 23, and the full weights landed on Hugging Face on November 4, as promised. It''s a sparse mixture-of-experts with two point eight trillion total parameters and about one hundred four billion active per token, a million-token context, and text, image and video input. Moonshot says it matches the strongest proprietary models on coding and agentic work, and at least one independent report has it overtaking OpenAI''s GPT-6 Astra on Artificial Analysis''s Intelligence Index, though Artificial Analysis tags it as commercially restricted. Two asterisks: Moonshot says it deliberately removed cyber-related training data before the open release, trading offensive-security skill for a safer model, and the launch was clouded by allegations of undisclosed paid promotion on X.'
+  judge:
+    gate_hit: true
+    gates:
+    - too_many_tool_calls
+    dimension_total: 4
+    answer_quality: 2
+    judgment: 2
+    spoken_fit: 0
+    reasons:
+    - The developments it does cover match the excerpts and fall in the window (Kimi K3.1 Pro announced October 23 with weights November 4, Mistral Large 4 weights October 29, Muse Spark Open October 15), but the reply breaks off mid-sentence during the third item, so it never reaches five developments or compares DeepSeek and Qwen as asked.
+    - Searching was right for recent releases, and it sensibly flagged that these are open weights under custom licenses and that most benchmarks are vendor claims, but it spent seven tool calls and ran out of room before covering the labs the user named.
+    - The listener heard a long preamble about licenses and one dense paragraph of parameter counts before the word cap cut it, with no comparison of the named labs.
+  human:
+    gate_hit: null
+    gates: []
+    answer_quality: null
+    judgment: null
+    spoken_fit: null
+    notes: ''
+- candidate: qwen3.8-flash-next-low
+  question_id: B95
+  why_selected: random sample
+  question:
+  - Imagine I want to build a private, locally hosted voice assistant that can answer general questions, search the web, control smart-home devices, and have natural conversations. I have a $1,000 hardware budget. Propose an architecture, explain the components, identify the biggest limitations, and prioritize what I should build first.
+  searched: true
+  spoken_answer: 'I''ll ground this in current hardware prices and the current state of local speech tooling before I lay out the design.Here''s the design I''d actually build, followed by the honest bad news.
+
+
+    One thing first, because it changes the whole plan: in November 2026 a thousand dollars does not buy a new mid-tier PC with a 16GB graphics card. The memory shortage has pushed a 32GB DDR5 kit to around four hundred and fifty dollars and a 6'
+  judge:
+    gate_hit: true
+    gates:
+    - too_many_tool_calls
+    dimension_total: 2
+    answer_quality: 1
+    judgment: 1
+    spoken_fit: 0
+    reasons:
+    - The final message stops mid-sentence at 'and a 6' after one grounded fact (a 32GB DDR5 kit at about $450, matching the $454 excerpt), so it never names the components, a hardware list within $1,000, the limitations, or a build order.
+    - Searching for current hardware prices was right and it was heading toward the honest point that the memory shortage squeezes the budget, but it spent ten tool calls, hit the tool limit, and delivered none of the requested design.
+    - The listener heard a tool-call preamble, a framing line and a single sentence cut off mid-number, with no usable answer.
+  human:
+    gate_hit: null
+    gates: []
+    answer_quality: null
+    judgment: null
+    spoken_fit: null
+    notes: ''
+- candidate: qwen3.8-flash-next-off
+  question_id: A82
+  why_selected: random sample
+  question: *id003
+  searched: true
+  spoken_answer: 'Let me check what''s current in the MCP ecosystem before I answer, since that landscape moves fast.Let me read two of those for the specifics on MCP''s current state and the local-LLM context-window issue.Let me confirm one practical detail about local serving stacks.Here''s how I''d separate the three, because they''re layers rather than three options to choose between.
+
+
+    An API is a contract between two programs. A REST API, for instance, says: hit this path with this verb, send this shape of JSON, get that shape back. Its consumer is a developer who reads documentation once and writes fixed code against it. Nothing about an API assumes the caller can figure out what to call on its own; that decision was made at build time, which is exactly why APIs are easy to audit, cache, and version.
+
+
+    A software tool is one callable action with a name, a description, and a typed input schema. It''s the unit a model actually pulls off the shelf: "search", with a query string in and results out.'
+  judge:
+    gate_hit: true
+    gates:
+    - searched_on_no_search_question
+    - too_many_tool_calls
+    dimension_total: 2
+    answer_quality: 1
+    judgment: 1
+    spoken_fit: 0
+    reasons:
+    - The listener heard sound definitions of an API and a tool, but the word cap cut it before the MCP explanation and the whole architecture (agent loop, search and fetch tools, summarizing, safeguards), which was the larger half of the question.
+    - It made five search and fetch calls for a conceptual architecture question, hitting the tool-call limit, and padded the answer with July 2026 protocol-revision trivia instead of the design asked for.
+    - Three spoken filler preambles ran together ahead of a long lecture that was cut off by the word cap.
+  human:
+    gate_hit: null
+    gates: []
+    answer_quality: null
+    judgment: null
+    spoken_fit: null
+    notes: ''
+- candidate: qwen3.8-flash-next-off
+  question_id: A87
+  why_selected: random sample
+  question: *id001
+  searched: true
+  spoken_answer: 'I’ll look into both issues before answering.Let me read a couple of the most useful sources in more depth.Let me check a couple of projector-specific technical factors that matter for gaming.Here''s what I found, split into the two problems.
+
+
+    **The choppy audio**
+
+
+    Bluetooth lives in the 2.4 GHz band, and so do a lot of things near your laptop: a 2.4 GHz Wi-Fi connection, wireless mouse and keyboard receivers, and — less obviously — USB 3.0 ports and unshielded USB 3.0 cables, which radiate broadband noise right into that band. Many laptops also share a single antenna between Wi-Fi and Bluetooth, so the two fight each other on the same chip. That''s why your speaker likely sounds fine with a phone but choppy with the laptop: phones have dedicated antennas and better-tuned audio stacks, while the laptop is jamming itself.
+
+
+    There are two other common causes worth separating out. One is host-side rather than radio: Windows can starve its Bluetooth audio threads under CPU load or aggressive power saving, causing buffer underruns that sound identical to interference.'
+  judge:
+    gate_hit: true
+    gates:
+    - searched_on_no_search_question
+    - too_many_tool_calls
+    dimension_total: 2
+    answer_quality: 1
+    judgment: 1
+    spoken_fit: 0
+    reasons:
+    - The listener heard only possible causes of the choppy audio (2.4 GHz and USB 3.0 interference, CPU starvation), missing the speaker competing with the laptop for its connection, and none of the troubleshooting steps or the eye-strain half survived the word cap.
+    - It made six searches and fetches for general troubleshooting it should have answered from knowledge, hitting the tool-call limit.
+    - Narrated tool-use preambles, markdown bold headings and a numbered list in a long reply cut off by the word cap.
+  human:
+    gate_hit: null
+    gates: []
+    answer_quality: null
+    judgment: null
+    spoken_fit: null
+    notes: ''
+- candidate: qwen3.8-flash-next-off
+  question_id: B88
+  why_selected: random sample
+  question: *id006
+  searched: true
+  spoken_answer: 'I''ll look into recent open-source model releases before answering.Good grounding so far. Let me pin down details on Mistral, Meta''s Muse, Qwen, and what happened in November specifically.Now let me check what happened in November itself — Kimi weights, any new DeepSeek or Qwen release, and Meta''s Muse details.Qwen4-Max-Preview appeared yesterday. Let me check that and Meta''s Muse situation in November.Two more checks: DeepSeek''s November activity and any other notable open-weight developments in this window.Here''s what I found for roughly mid-October through today, November 12. The short version: this month was less about one model beating another and more about open-weight models finally matching the closed frontier, at enormous scale.
+
+
+    The five developments I''d rank as most important:
+
+
+    One, Moonshot''s Kimi K3.1 Pro weights landed on November 4. The model itself launched as an API-only product on October 23, and Moonshot promised full weights two weeks later, which it kept.'
+  judge:
+    gate_hit: true
+    gates:
+    - too_many_tool_calls
+    dimension_total: 3
+    answer_quality: 1
+    judgment: 2
+    spoken_fit: 0
+    reasons:
+    - The listener heard only the first of five developments, the Kimi K3.1 Pro weights on November 4 after an October 23 API launch, which is sourced, but the word cap cut it before Mistral, Meta, Qwen and DeepSeek, so no comparison was delivered.
+    - Searching was right and the dates it used come from the excerpts, but it spent ten tool calls, hitting the limit, and built a far longer answer than a voice reply can carry.
+    - Five narrated tool-use preambles were spoken back to back before a long enumerated answer that the word cap cut after item one.
+  human:
+    gate_hit: null
+    gates: []
+    answer_quality: null
+    judgment: null
+    spoken_fit: null
+    notes: ''
+- candidate: qwen3.8-flash-next-off
+  question_id: B89
+  why_selected: random sample
+  question:
+  - What is the current state of the AI inference chip startup industry? Compare Etched, MatX, Positron, Cerebras, SambaNova, and Fractile in terms of funding, valuation, technology, and commercial progress.
+  searched: true
+  spoken_answer: 'I''ll research each of these companies to give you an accurate current picture.Good start. Let me get details on the others.Now let me check SambaNova and Fractile, plus Cerebras'' current stock price.Let me confirm Cerebras'' current stock price and check whether Positron''s big round closed.Let me check whether Etched''s rumored mega-round closed and get any news on Cerebras'' Q3 results due today.Here''s the picture as of today, November 12, 2026. The short version: this industry has gone from "longshot Nvidia challengers" to a genuinely well-capitalized second tier in about eighteen months, and the story is now less about who can design a chip than about who can actually ship racks and get them paid for.
+
+
+    **Etched** is the standout on paper. It raised 300 million dollars in July at a 10.3 billion dollar valuation, then just a month later raised another 700 million led by Jane Street at 21 billion, roughly doubling in seven months.'
+  judge:
+    gate_hit: true
+    gates:
+    - too_many_tool_calls
+    dimension_total: 3
+    answer_quality: 1
+    judgment: 2
+    spoken_fit: 0
+    reasons:
+    - The listener heard a sound overall framing and Etched's sourced $300M at $10.3B and $700M at $21B rounds, but the word cap cut it before Cerebras, MatX, Positron, SambaNova and Fractile, so five of the six companies were never compared.
+    - Searching was right and the figures trace to the excerpts, including flagging Etched's $40-50B talks as unclosed, but it spent ten tool calls, hitting the limit, and wrote a company-by-company essay that could not fit a spoken reply.
+    - Five narrated tool-use preambles and markdown bold company names precede a long answer that was cut after the first company.
+  human:
+    gate_hit: null
+    gates: []
+    answer_quality: null
+    judgment: null
+    spoken_fit: null
+    notes: ''

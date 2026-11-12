@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The API, tool and MCP definitions and the host agent loop are accurate, but the reply breaks off at 'One MCP' before describing the search and page-fetch tools, the summarization step, or any safeguards such as tool-round caps, timeouts and treating fetched text as untrusted.",
+  "judgment_reason": "It ran a web search on MCP terminology for a stable conceptual question that needed none.",
+  "spoken_fit_reason": "Plain prose without markdown, but far too long; the word cap cut it before the architecture, and the heard text runs 'before I answer.Here's' together."
+}

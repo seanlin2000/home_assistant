@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 2,
+  "spoken_fit": 0,
+  "answer_quality_reason": "Every release is sourced and in the window: Mistral Large 4 weights October 29, Muse Spark Open October 15, DeepSeek V4.1-Flash-1017 and DeepInfer, Kimi K3.1 Pro weights, Qwen4-Max preview with no weights, and Tencent Hy4. There are small slips: 'two H100-class' nodes where the source says H200, 'fourth behind only two Claude models', and a comparison that breaks off mid-sentence.",
+  "judgment_reason": "Searching was right for news from the past 30 days, and it flagged vendor numbers and promised-but-unreleased weights, but it used eight tool calls and exceeded the limit.",
+  "spoken_fit_reason": "It is a seven-paragraph wall of benchmark figures and license terms, and the word cap cut the listener off partway through the first development."
+}

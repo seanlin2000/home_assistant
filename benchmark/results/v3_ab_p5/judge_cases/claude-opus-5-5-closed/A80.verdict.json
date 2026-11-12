@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Memory figures match the sketch (about 140, 35 and 17.5 GB, roughly 40 and over 20 GB in real files, plus the key-value cache), and the trade-offs cover small loss at 4-bit, marked loss at 2-bit, and faster bandwidth-bound generation; only the named careful-quantization methods are missing.",
+  "judgment_reason": "Correctly answered from stable knowledge without searching and flagged that real file sizes run above the raw arithmetic.",
+  "spoken_fit_reason": "Numbers are spelled out for speech, prose is plain, and the answer opens with the definition, at a length the three-part question justifies."
+}

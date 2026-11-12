@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Separates the two problems and covers 2.4 GHz interference, distance, a cable fallback, brightness, seating distance, keystone softening, motion blur and the DLP rainbow effect, but misses the sketch's lead cause that the laptop may be paired with the JBL speaker and competing for it, so it never suggests turning off the laptop's Bluetooth.",
+  "judgment_reason": "Rightly answered without searching and gave a one-change-at-a-time order, but silently assumed the laptop connects to the projector by cable rather than stating that reading or checking the speaker-pairing possibility.",
+  "spoken_fit_reason": "Plain prose that takes each problem in turn with no lists or formatting, at a length two troubleshooting questions demand."
+}

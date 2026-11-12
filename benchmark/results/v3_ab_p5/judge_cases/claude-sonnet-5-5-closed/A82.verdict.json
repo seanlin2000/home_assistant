@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Defines API, tool and MCP server correctly and proposes the sketch's architecture (local model, one MCP server with search and fetch-page tools, summarizing by the model, page-length limits, timeouts, web text as untrusted), but does not describe the agent loop explicitly or mention a cap on tool rounds or caching.",
+  "judgment_reason": "Answered a stable architecture question from knowledge without searching.",
+  "spoken_fit_reason": "Plain prose with no lists or markdown that leads with the definitions; length suits a two-part design question."
+}

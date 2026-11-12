@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "States 1989 and the exact date November 9, matching the reference sketch.",
+  "judgment_reason": "Correctly recognized settled history and answered without searching.",
+  "spoken_fit_reason": "A single plain sentence that leads with the year."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Explains white light as a mix of colors, stronger scattering of short blue waves by small air molecules, why the sky is not violet (less violet from the sun, absorption, eye sensitivity), and the long low sunset path scattering blue away with dust and haze deepening it, matching every point of the sketch.",
+  "judgment_reason": "Stable physics answered from knowledge without a search, pitched in plain language as the user asked.",
+  "spoken_fit_reason": "Jargon-free plain prose that opens with the key idea; long, but the explanation the user asked for needs it."
+}

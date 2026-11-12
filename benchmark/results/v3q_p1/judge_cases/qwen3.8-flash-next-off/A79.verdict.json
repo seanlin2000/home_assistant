@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The prefill/decode explanation, the memory-bandwidth bound, CUDA's software advantage and the TPU and Groq/Cerebras descriptions are sound, but the message breaks off at 'That's why independent' and never answers when a specialized chip could beat an NVIDIA GPU.",
+  "judgment_reason": "It ran five searches and a page fetch on a conceptual question that needed none, which tripped the tool-call limit and left too little room to finish the answer.",
+  "spoken_fit_reason": "It has bold markdown headings, three spoken filler preambles run together, and a long multi-section explanation that the word cap cut partway through the decode paragraph."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Says nineteen eighty-nine, on the night of November ninth, matching the reference exactly.",
+  "judgment_reason": "Recognized settled history and answered without searching.",
+  "spoken_fit_reason": "One sentence that leads with the answer and writes the year out for speech."
+}

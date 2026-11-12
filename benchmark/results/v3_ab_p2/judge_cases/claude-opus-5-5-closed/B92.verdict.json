@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The excerpts gave dated APYs for Marcus (3.50%), American Express (3.20%), Capital One (3.20%), Synchrony (3.75%), Sallie Mae (3.85%) and Live Oak (4.00%) with no-minimum notes, yet the answer quotes no bank's rate and gives only the generic five-hundred-dollars-per-point rule, so the per-bank comparison the user asked for is missing.",
+  "judgment_reason": "It searched and correctly noted rates are variable and APY includes compounding, but saying it could not confirm today's rates when the results listed November rates per bank misjudged the evidence, and it still names Discover although a source says Discover savings now redirects to Capital One.",
+  "spoken_fit_reason": "Plain prose with no formatting, but it opens with a refusal to quote rates rather than the comparison and spends its length on general guidance."
+}

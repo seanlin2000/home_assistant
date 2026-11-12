@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 0,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The results gave each company's latest round (Etched $700M at $21B, Positron $875M at $5B, SambaNova $1B at $11B, MatX $500M, Fractile $220M, Cerebras's May 2026 IPO), yet the answer gives no figures and says Cerebras has an 'on-and-off plan to go public' and SambaNova was 'exploring a sale', both contradicted by the excerpts, leaving only the technology descriptions as correct.",
+  "judgment_reason": "Claiming it 'couldn't verify' the rounds when the excerpts plainly contained them, then answering a 'current state' question from stale memory that the sources contradict, fails the central point.",
+  "spoken_fit_reason": "Plain prose without lists or markup that moves from an overall picture to one sentence per company, a reasonable length for six companies."
+}

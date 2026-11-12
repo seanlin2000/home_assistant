@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Correctly lists query text, IP, timestamps, user agent and API key as visible, notes queries can leak conversation details and that fetched sites see you, and gives stripping personal details, no-logging providers, SearXNG and a VPN, but claims a self-hosted SearXNG mixes your traffic with other users and omits searching only when needed or caching.",
+  "judgment_reason": "Stable architecture question answered from knowledge without a search.",
+  "spoken_fit_reason": "Plain prose structured as local, transmitted, then four spoken mitigations, with no list formatting; length suits the three-part question."
+}

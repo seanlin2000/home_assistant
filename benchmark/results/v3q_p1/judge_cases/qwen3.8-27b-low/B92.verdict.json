@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The Ally, Capital One, Marcus, SoFi base and EverBank rates and the zero minimums trace to the fininfoblog and Banksparency excerpts and the yearly interest figures are correct, but it says SoFi's 4.40 percent boost for up to six months would earn 'about $2,200 in that window', which is a full year's interest at that rate, about double the six-month figure.",
+  "judgment_reason": "It searched for current rates, said they are variable and that the figures are estimates assuming a constant rate, flagged EverBank's new-account-only fine print, and noted the big branch banks pay almost nothing.",
+  "spoken_fit_reason": "Plain prose with no lists, but the tool-call preambles ('Let me verify the interest math.') ran into the spoken text, and the long five-bank paragraph was cut by the word cap at Marcus."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 5,
+  "judgment": 2,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It explains discounting with correct calculator figures (94 to 87 at two years versus 74 to 51 at ten years), frames tech as long-duration equity, and covers the risk-free rate link, costlier capital, bonds as an alternative and the 2022 example, all matching the sketch.",
+  "judgment_reason": "A conceptual finance question needed no search, but it looked up the current fed funds rate anyway, though what it reported (3.75 to 4 percent, held in October) does match the excerpts.",
+  "spoken_fit_reason": "Seven long paragraphs hit the word cap, so the listener heard only the arithmetic example and none of the explanation of why tech is hit hardest."
+}

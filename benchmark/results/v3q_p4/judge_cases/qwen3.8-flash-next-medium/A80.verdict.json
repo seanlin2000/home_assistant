@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 4,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "Memory figures match the reference (140 GB at 16-bit, 35 GB nominal and about 40 GB in practice at 4-bit, 17.5 GB nominal and about 26 GB for Q2_K), with the nonlinear quality loss, GPTQ and AWQ, and the KV cache on top, but it never mentions the faster generation that smaller weights bring.",
+  "judgment_reason": "Calculator use was appropriate, but a stable conceptual question did not need a web search, and the assistant searched anyway.",
+  "spoken_fit_reason": "Plain prose that leads with the definition, but it runs to eight paragraphs and the word cap cut it after the 4-bit figure, so the listener never heard the 2-bit numbers or the trade-offs."
+}

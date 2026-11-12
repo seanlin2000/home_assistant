@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The reply stops mid-sentence at 'something thinks' after a heading, giving no architecture, hardware, limitations or build order.",
+  "judgment_reason": "It did not search for current hardware prices on a $1,000 budget question and never addressed what the budget allows or what to build first.",
+  "spoken_fit_reason": "A markdown heading ('**The core idea**') followed by a sentence that breaks off would sound wrong aloud."
+}

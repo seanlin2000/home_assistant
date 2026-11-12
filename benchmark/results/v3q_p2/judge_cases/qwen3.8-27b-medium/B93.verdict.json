@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It never mentions Vert Frais, the only restaurant the Michelin result returned, and never says the guide had fewer than five; it pads the list from web excerpts, only one place gets a real rating (Casa Enrique's 4.4 on Tripadvisor), and it alters details (\"mole de Oaxaca\" for the excerpt's mole de Piaxtla, Rincon Melania \"near 36th Avenue\" when the excerpt places it on Queens Boulevard).",
+  "judgment_reason": "It ran web searches and page fetches before trying the restaurant tool and exceeded the tool limit, though it did flag the prices as its own estimates and asked where in LIC the user is.",
+  "spoken_fit_reason": "No markdown, but a long hedged preamble and seven paragraphs ran past the word cap after the first restaurant."
+}

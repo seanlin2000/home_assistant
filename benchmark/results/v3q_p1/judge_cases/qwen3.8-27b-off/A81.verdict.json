@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It correctly separates what stays local (weights, inference, conversation history) from what is transmitted (the query, IP address, API key headers) and suggests scrubbing queries and self-hosting SearXNG, but it leaves out timing and frequency metadata and the websites fetched afterwards, and the message breaks off before covering a VPN or retention terms.",
+  "judgment_reason": "It answered a stable architecture question without searching and rightly placed the main risk in how the outgoing query is built.",
+  "spoken_fit_reason": "It contains a bulleted list, a backticked JSON snippet and command names like lsof, which would sound wrong read aloud, and the word cap cut it partway through the list."
+}

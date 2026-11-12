@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The first mechanism, concentrated stock ownership, is well supported by the Fed figures, but the message breaks off mid-sentence during the second mechanism (index concentration) and never gives a third. It also misstates the top-decile median stake as about one million one hundred thousand when the excerpt says about 1.01 million.",
+  "judgment_reason": "This conceptual economics question needed no search, yet the assistant made four web searches and four calculator calls and went over the tool-call limit.",
+  "spoken_fit_reason": "The listener heard three filler lead-ins run together and then a long passage of dense statistics, which the word cap cut off before the first example was explained."
+}

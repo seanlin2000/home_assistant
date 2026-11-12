@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Gives three distinct concrete mechanisms from the sketch: concentrated stock ownership (richest ten percent own most stocks), rents and groceries outpacing wages while cost cutting lifts profits, and rates, a few giant tech firms and global sales driving the index while smaller businesses struggle.",
+  "judgment_reason": "Answered a stable economics question from knowledge without searching and avoided invented current figures.",
+  "spoken_fit_reason": "Leads with the core reason, then uses First, Second, Third in plain prose without lists or markdown, a length the three-example request warrants."
+}

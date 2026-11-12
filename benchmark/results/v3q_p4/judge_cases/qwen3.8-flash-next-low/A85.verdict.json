@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The final assistant message is empty, so there is no meal plan, no protein total and no calorie total.",
+  "judgment_reason": "Producing no answer at all fails the central point of a clear, self-contained request.",
+  "spoken_fit_reason": "Nothing was spoken, so the listener got no answer."
+}

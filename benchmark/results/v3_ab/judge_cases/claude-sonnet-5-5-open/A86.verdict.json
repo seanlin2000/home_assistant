@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Covers inviting people in the Hue app, Alexa, Google Home or Apple Home for voice, Home Assistant locally, and correctly says the bridge, local app, physical switches and stored schedules keep working offline while Alexa, Google and remote control stop, with Apple Home needing a HomePod or Apple TV hub.",
+  "judgment_reason": "Stable product architecture answered from knowledge without searching, and it volunteered the offline-voice option that addresses the outage concern.",
+  "spoken_fit_reason": "Leads with the recommended setup and then the outage behavior in plain prose without lists; length fits a two-part question."
+}

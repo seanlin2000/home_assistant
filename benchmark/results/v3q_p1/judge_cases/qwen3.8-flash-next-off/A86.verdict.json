@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The sharing advice (one owner, invited members with lighting rights, one voice ecosystem) is sound, but it detours into Bridge Pro specs and prices and breaks off mid-sentence at 'nothing to do with your Wi-Fi or your', so the internet-outage half of the question, which voice assistants stop working, is never answered; physical switches are never mentioned.",
+  "judgment_reason": "It made seven tool calls on a stable architecture question that needed no search, which tripped the tool-call limit and pulled in irrelevant purchase advice.",
+  "spoken_fit_reason": "Four filler preambles run together, bold markdown headings, and a long wall of text that the word cap cut after the first section."
+}

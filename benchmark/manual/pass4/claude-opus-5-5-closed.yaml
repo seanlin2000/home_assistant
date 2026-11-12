@@ -1,0 +1,178 @@
+# Closed-book pass 4 by Claude Opus 5.5 on 2026-11-12, as a fresh subagent: listed the tool calls a good assistant would make but answered from its own knowledge without reading their results.
+candidate_key: claude-opus-5-5-closed
+answered_by: Claude Opus 5.5, fresh subagent, closed book, pass 4
+questions:
+  - question_id: A76
+    exchanges:
+      - answer: >-
+          The Cold War ended largely peacefully between nineteen eighty-nine and nineteen ninety-one, first with Eastern Europe breaking away and then with the Soviet Union itself dissolving.
+          The deep causes were slow-building: a stagnant planned economy, the cost of the arms race, the war in Afghanistan, collapsing oil revenue, and rising nationalism in the republics.
+          Three events mattered most. First, Mikhail Gorbachev's reforms from nineteen eighty-five, glasnost and perestroika, which loosened censorship and exposed how badly the system was failing. Second, the revolutions of nineteen eighty-nine, when Gorbachev refused to send in tanks and the Berlin Wall fell, proving Moscow would no longer hold its empire by force. Third, the failed hardline coup of August nineteen ninety-one, which collapsed within days, discredited the Communist Party and handed power to Boris Yeltsin and the republics.
+          So the causes were economic and political decay; the immediate triggers were the coup and its aftermath, when Russia, Ukraine and Belarus agreed that December to dissolve the union and Gorbachev resigned on Christmas Day.
+  - question_id: A77
+    exchanges:
+      - answer: >-
+          It comes down to sunlight being a mix of all colors, and the air scattering some colors more than others.
+          Sunlight looks white, but it contains every color of the rainbow. Each color travels as a wave, and blue light has short, choppy waves while red has long, lazy ones. The tiny molecules of nitrogen and oxygen in the air are much better at bouncing short waves around, so blue light gets scattered in every direction across the whole sky. Wherever you look, some of that bounced blue reaches your eye, so the sky looks blue. It isn't violet mostly because there's less violet in sunlight and our eyes are less sensitive to it.
+          At sunset the sun is low, so its light has to travel sideways through far more air to reach you. By the time it arrives, most of the blue has been scattered away along the route, and what's left is the long-wave reds and oranges. Dust, smoke and moisture near the horizon can deepen those colors even further, which is why some sunsets are especially vivid.
+  - question_id: A78
+    exchanges:
+      - answer: >-
+          Because the stock market measures the profits of large companies, mostly owned by wealthier households, while people feel the economy through wages, prices and jobs. Those can move in opposite directions.
+          First, ownership is concentrated. In the United States the richest tenth of households own the large majority of stocks, so a soaring market mainly lifts people who already have savings, while a renter living paycheck to paycheck gets nothing from it.
+          Second, profits can rise at workers' expense. If companies raise prices faster than they raise pay, or cut staff and automate, margins and share prices climb even as households' real purchasing power falls. Inflation in groceries, rent and insurance hits ordinary budgets directly.
+          Third, the index is not the local economy. A handful of giant firms, often tech companies earning revenue worldwide, can drive the whole market up, while small businesses, manufacturing towns or certain regions are struggling. Add expensive housing and high borrowing costs, and an average person can feel squeezed while headlines celebrate record highs.
+  - question_id: A79
+    exchanges:
+      - answer: >-
+          GPUs are effective because running a neural network is mostly enormous numbers of multiply-and-add operations that can happen at the same time, and GPUs have thousands of small cores built for exactly that kind of parallel math, plus very fast memory and a mature software stack, especially NVIDIA's CUDA.
+          A GPU is still fairly general: it can train and run almost any model. An ASIC is a chip designed for one job, like Google's TPU, trading flexibility for efficiency. Specialized inference processors are a subset of that idea, such as designs that keep model weights in huge amounts of on-chip memory, wafer-sized chips, or chips hard-wired for transformer models.
+          A specialized chip can beat an NVIDIA GPU when the workload is fixed and well understood, when low latency for a single user matters more than flexibility, when memory bandwidth rather than raw compute is the bottleneck, which is common in token-by-token generation, or when power and cost per token at huge scale dominate. The GPU usually wins when models change quickly, when you also need training, or when software support matters most.
+  - question_id: A80
+    exchanges:
+      - calls:
+          - {name: calculate, arguments: {expression: "70 * 4 / 8"}}
+          - {name: calculate, arguments: {expression: "70 * 2 / 8"}}
+        answer: >-
+          Quantizing means storing each of the model's seventy billion weights with fewer bits. Normally each weight is a sixteen-bit number; at four-bit you round each to one of sixteen levels, and at two-bit to just four levels, with shared scale factors per small block of weights.
+          At sixteen bits the weights take about a hundred and forty gigabytes. At four bits that drops to about thirty-five gigabytes, and at two bits to about seventeen and a half. In practice add a few gigabytes, since real formats mix in scale values and keep some layers at higher precision, and you need extra memory for the context cache while it runs.
+          The trade-offs: smaller models fit on cheaper hardware and run faster, because generation speed is mostly limited by how fast memory can be read. But you lose accuracy. Four-bit is usually close to the original for everyday use, with small losses in reasoning, math and rare facts. Two-bit degrades much more noticeably, with more errors and garbled output, so a smaller model at four-bit often beats a big one at two-bit.
+  - question_id: A81
+    exchanges:
+      - answer: >-
+          The search provider sees whatever is in each search request, and nothing else from your machine.
+          What stays local is the model itself, your full conversation, your prompts, any files or smart-home data the model reads, and its reasoning. What gets sent is the search query the model writes, which can include personal details if the model copies them from your question, plus your IP address, the API key tied to your account and payment details, and timestamps. Over time the provider can build a profile from the pattern of queries. And if your system then fetches the result pages, each of those websites sees your IP address and that someone visited.
+          To minimize exposure, have the model write short, generic keyword queries and strip names, addresses and health or money details. Only search when the question really needs current information. Pick a provider with a clear no-logging policy, route requests through a VPN or proxy if your IP matters, cache repeat results, and keep anything sensitive answered from local data alone.
+  - question_id: A82
+    exchanges:
+      - answer: >-
+          An API is just an interface: a defined way for one program to ask another for something, like a search company's web endpoint that takes a query and returns results. A tool, in the language model sense, is a function the model is allowed to call, described by a name, a purpose and the arguments it takes. An MCP server is a program that speaks the Model Context Protocol, a standard way to offer a set of tools to any compatible model application, so you write the tools once and plug them into different assistants.
+          For your system, run the model locally with something like llama dot cpp or Ollama, inside a small harness that acts as the MCP client. Build one MCP server with two tools: search, which calls a search API and returns titles, links and snippets, and fetch page, which downloads a page, strips it to its main text and trims it to fit the context. Summarizing is the model's own job, so it reads those results and answers. Mark fetched text as untrusted, cap lengths, and keep the tool list short so a small model chooses well.
+  - question_id: A83
+    exchanges:
+      - calls:
+          - {name: calculate, arguments: {expression: "20000 / 60000000 * (1 - 0.5) * 1000000000"}}
+          - {name: calculate, arguments: {expression: "(20000 / 60000000 * (1 - 0.5) * 1000000000) / 20000"}}
+          - {name: calculate, arguments: {expression: "20000 / 60000000 * (1 - 0.5) * 1000000000 - 20000"}}
+        answer: >-
+          Your stake would be worth about three hundred thirty-three thousand dollars before taxes.
+          Twenty thousand dollars at a sixty million dollar post-money valuation buys you one three-thousandth of the company, about zero point zero three three percent. Fifty percent cumulative dilution halves that to about zero point zero one seven percent. At a one billion dollar sale, that's roughly three hundred thirty-three thousand, three hundred thirty-three dollars.
+          That's a multiple of about sixteen point seven times your money, and a profit of about three hundred thirteen thousand, three hundred thirty-three dollars.
+          One caution: this assumes a simple split by ownership. In real exits, later investors often hold liquidation preferences, and fees or employee carve-outs come off the top, so a common or early shareholder can receive less. At a billion dollars, well above what was likely raised, the simple estimate is usually close.
+  - question_id: A84
+    exchanges:
+      - answer: >-
+          Because a stock is worth the cash it will produce in the future, translated into today's dollars, and higher interest rates make future dollars worth less today.
+          Investors value a company with what's called a discounted cash flow: they estimate its future profits and shrink each year's amount by a discount rate, which starts from the risk-free interest rate plus a premium for risk. When the Fed raises rates, that discount rate rises, and every future dollar gets shrunk more.
+          The effect compounds with time. A dollar expected next year barely changes, but a dollar expected fifteen years from now loses a lot of its present value. Mature companies like utilities earn most of their cash soon, so they're less affected. Fast-growing tech companies often expect most of their profits far in the future, which makes them long-duration assets, a bit like long-term bonds, and so their valuations fall harder.
+          Higher rates also raise borrowing costs for growth companies, and make safe bonds a more attractive alternative, pulling money out of riskier stocks.
+  - question_id: A85
+    exchanges:
+      - calls:
+          - {name: calculate, arguments: {expression: "39 + 51 + 35 + 51"}}
+          - {name: calculate, arguments: {expression: "470 + 485 + 305 + 685"}}
+        answer: >-
+          Here's a simple day that lands around a hundred seventy-five grams of protein and just under two thousand calories, leaving room for cooking oil or fruit. The figures are approximate.
+          For breakfast, scramble three whole eggs with half a cup of liquid egg whites and have two slices of whole wheat toast, about thirty-nine grams of protein.
+          For lunch, five ounces of cooked chicken breast with a cup of rice and a cup of frozen broccoli, about fifty-one grams. Cook a few days of chicken at once to save time.
+          For a snack, a cup and a half of plain nonfat Greek yogurt with a banana, about thirty-five grams.
+          For dinner, six ounces of ninety-three percent lean ground turkey browned with a can's worth of black beans, about a cup, over rice with salsa, about fifty-one grams.
+          Cheap swaps include canned tuna, cottage cheese, chicken thighs or tofu. A protein shake can replace the snack on busy days, but you don't need it.
+  - question_id: A86
+    exchanges:
+      - answer: >-
+          The best setup keeps the Hue Bridge as the hub and has everyone control it locally, with voice layered on top.
+          Invite the other people to your Hue home in the Hue app so they get their own access instead of sharing your login. For voice, pick one ecosystem everyone can use. Apple Home works well because the Hue Bridge pairs with it directly and, with a HomePod or Apple TV as a home hub, runs on your local network. Alexa or Google work too, through Hue's cloud link. If you want one place to tie it together, Home Assistant can talk to the Bridge locally and expose the lights to every assistant, plus its own local voice control.
+          If the internet goes down, the Bridge and the bulbs keep working, because they talk over their own local Zigbee network. Hue dimmer switches, schedules and the Hue app on your home Wi-Fi still work, as do Apple Home and Home Assistant. Alexa and Google voice control stop, and so does controlling the lights from outside the apartment.
+  - question_id: A87
+    exchanges:
+      - answer: >-
+          These are two separate problems, so tackle them one at a time.
+          Choppy Bluetooth audio usually comes from radio interference or a weak link. Bluetooth shares the two point four gigahertz band with Wi-Fi, and a laptop streaming video over Wi-Fi nearby, or connecting to the projector wirelessly, can crowd it out. The projector's Bluetooth chip may also struggle when it's processing more video. To troubleshoot, move the speaker closer with a clear line of sight, switch your Wi-Fi to five gigahertz, try a different video source to see whether it's only the laptop, update the projector's firmware, and if possible use a wired audio cable, which also removes Bluetooth's lag in games.
+          For eye strain, the likely causes are input lag and motion smoothing, a soft image from imperfect focus or keystone correction, too much brightness in a dark room or too little in a bright one, the rainbow flicker some DLP projectors show, and sitting so close that your eyes sweep a huge image. Turn on game mode, turn off motion smoothing, fix focus, add soft room light, and sit farther back.
+  - question_id: A11
+    exchanges:
+      - answer: >-
+          The Berlin Wall fell in nineteen eighty-nine, on November ninth.
+  - question_id: B88
+    exchanges:
+      - calls:
+          - {name: search_and_read, arguments: {query: "open source AI model releases", time_range: month}}
+          - {name: search_and_read, arguments: {query: "DeepSeek Qwen new open weights model release", time_range: month}}
+          - {name: search_and_read, arguments: {query: "Meta Llama Mistral new open model release", time_range: month}}
+        answer: >-
+          I wasn't able to confirm what was released in the last thirty days, so I can't honestly rank this month's five biggest developments or compare the very latest versions.
+          What I can give you is the broader picture as of my training, which may be out of date. Chinese labs have been the most aggressive open-weight releasers. DeepSeek is known for large mixture-of-experts models and strong reasoning models at low training cost. Alibaba's Qwen team ships a whole family of sizes, from small models that run on a laptop to very large ones, often with permissive licenses. Meta's Llama line made open weights mainstream, though its recent direction has been less certain. Mistral, from France, mixes open-weight models with closed commercial ones and focuses on efficient, smaller models. OpenAI itself has also released open-weight models.
+          The trends to watch are mixture-of-experts designs, longer context, better tool use for agents, and small models that run well locally. If you'd like, I can try the search again for the latest releases.
+  - question_id: B89
+    exchanges:
+      - calls:
+          - {name: search_and_read, arguments: {query: "Etched MatX Positron AI inference chip funding", time_range: year}}
+          - {name: search_and_read, arguments: {query: "Cerebras SambaNova funding valuation 2026", time_range: year}}
+          - {name: search_and_read, arguments: {query: "Fractile AI chip startup funding", time_range: year}}
+          - {name: search_and_read, arguments: {query: "AI inference chip startups funding valuation", time_range: month}}
+        answer: >-
+          I couldn't verify current funding or valuations, so I'll compare them on technology and give only the general state of play from my training.
+          The field is crowded, betting that inference will outgrow training and that NVIDIA's GPUs leave room for faster, cheaper chips.
+          Cerebras is the most mature: it builds a single wafer-sized chip and sells cloud inference known for very high token speeds, and it has pursued a public listing. SambaNova uses a reconfigurable dataflow design, sells full systems and cloud access, and is older, with reports of a tougher path. Etched builds a chip hard-wired for transformer models, a bold bet on that architecture lasting. MatX, founded by former Google TPU engineers, targets large language models with high throughput. Positron focuses on efficient inference servers that drop into existing data centers, with early customer shipments. Fractile, from Britain, does computing inside memory to beat the memory bottleneck and is the earliest-stage of the group.
+          For exact figures, I'd want to check recent reporting.
+  - question_id: B90
+    exchanges:
+      - calls:
+          - {name: broadway_shows, arguments: {timing: running, sort_by: views_count, limit: 10}}
+        answer: >-
+          I couldn't read the current popularity rankings, so I can't give you a verified top ten with prices or scores. Here are long-running hits that are usually among the most in-demand on Broadway, though you should confirm each is still playing on TodayTix.
+          Wicked is the musical about the witches of Oz before Dorothy arrives. The Lion King is Disney's musical with stunning puppetry. Hamilton is the hip-hop musical about Alexander Hamilton. Moulin Rouge is a lavish jukebox musical set in a Paris nightclub. Hadestown is a folk musical retelling of the Orpheus myth. Aladdin is Disney's comic musical with a showstopping genie. The Book of Mormon is a raunchy satirical musical about two missionaries. Chicago is the long-running jazz-age musical about murder and fame. MJ is a musical about Michael Jackson's career. Six is a pop-concert musical by Henry the Eighth's wives.
+          Newer hits come and go each season, and for performance times, pick one on TodayTix.
+  - question_id: B91
+    exchanges:
+      - calls:
+          - {name: search_and_read, arguments: {query: "NBA MVP ladder rankings 2026-27 season", time_range: week}}
+        answer: >-
+          I couldn't check this season's statistics, and it's only a few weeks old, so treat this as a ranking based on recent seasons rather than current numbers.
+          First, Nikola Jokić, the Denver center who leads his team in scoring, rebounding and passing and tops nearly every advanced metric year after year. Second, Shai Gilgeous-Alexander of Oklahoma City, an elite, efficient scorer who drives a winning team and was the reigning most valuable player as of my training. Third, Giannis Antetokounmpo of Milwaukee, an overwhelming force near the basket on both ends. Fourth, Luka Dončić of the Lakers, who creates huge volumes of scoring and assists. Fifth, Victor Wembanyama of San Antonio, whose shot blocking and growing offense make him one of the most impactful players on the floor.
+          Injuries and early-season form can shuffle this quickly, so if you'd like, I can look up a specific player's current stats.
+  - question_id: B92
+    exchanges:
+      - calls:
+          - {name: search_and_read, arguments: {query: "best high yield savings account rates", time_range: month}}
+          - {name: calculate, arguments: {expression: "50000 * 0.035"}}
+          - {name: calculate, arguments: {expression: "50000 * 0.04"}}
+          - {name: calculate, arguments: {expression: "50000 * 0.045"}}
+          - {name: calculate, arguments: {expression: "50000 * 0.0001"}}
+        answer: >-
+          I couldn't confirm today's rates, so I can't honestly quote each bank's current number. Here's how to think about it, with illustrative figures.
+          The interest depends almost entirely on the annual percentage yield, which already includes compounding. On fifty thousand dollars for a year, a three and a half percent yield earns about one thousand seven hundred fifty dollars, four percent earns about two thousand, and four and a half percent about two thousand two hundred fifty. A traditional big-bank savings account paying around zero point zero one percent earns only about five dollars.
+          The high-yield accounts usually come from online banks and online arms of big banks, such as Ally, Marcus by Goldman Sachs, Capital One three sixty, American Express and Discover. As of my training, these generally had no minimum balance to open or to earn the advertised rate, but rates are variable and change with the Fed, so check each bank's current yield before you move the money.
+  - question_id: B93
+    exchanges:
+      - calls:
+          - {name: restaurant_recommendations, arguments: {location: "Long Island City", limit: 5}}
+        answer: >-
+          I couldn't read the restaurant listings just now, so I can't give you a checked list of five with prices and awards.
+          From memory, the best-known Michelin-recognized spot in Long Island City is Casa Enríque, a cozy Mexican restaurant known for dishes from Chiapas like its mole, which has held a Michelin star in the past. Beyond that I'd rather not guess at names, prices or ratings that may be out of date.
+          Also, walking distance depends on where you are, since the neighborhood stretches from the waterfront towers to Queens Plaza and Court Square. What's the nearest cross street or subway stop?
+  - question_id: B94
+    exchanges:
+      - calls:
+          - {name: search_and_read, arguments: {query: "Swiss Travel Pass vs Half Fare Card price 2026", time_range: year}}
+        answer: >-
+          Here's a relaxed five-day plan built around trains, boats and cable cars.
+          Day one, arrive in Lucerne, walk the Chapel Bridge, and take an afternoon boat on the lake. Day two, do the Mount Pilatus golden round trip: boat to Alpnachstad, cogwheel railway up, gondolas down. Day three, ride the Luzern-Interlaken Express over the Brünig Pass, then take the funicular up Harder Kulm or a boat on Lake Brienz. Day four, see the Lauterbrunnen valley and ride up to Mürren and the Schilthorn for big Alpine views with easy walking. Day five, train via Spiez and Visp to Zermatt, then the Gornergrat railway for Matterhorn views.
+          For tickets, the Swiss Travel Pass covers trains, boats and buses and discounts most mountain railways. A Half Fare Card halves almost everything and is often cheaper if you take fewer long rides. I couldn't confirm current prices, so compare both against your exact route.
+  - question_id: B95
+    exchanges:
+      - answer: >-
+          With a thousand dollars, I'd build it around one capable local computer plus a couple of cheap voice satellites.
+          The brain could be a Mac mini with sixteen or twenty-four gigabytes of memory, or a small PC with a used twelve-gigabyte graphics card, at roughly six to eight hundred dollars. Run Home Assistant for device control, Whisper for speech-to-text, Piper for text-to-speech, and a language model of roughly eight to twelve billion parameters at four-bit quantization through llama dot cpp or Ollama. Put a small voice satellite with a good microphone and wake word in each room for about fifty to sixty dollars apiece. Add web search through a tool server that calls a search API.
+          The biggest limitations are that small models know less, reason worse and sometimes skip tool calls, latency adds up across listening, thinking and speaking, and far-field microphones struggle with noise.
+          Build in this order: first Home Assistant with local voice control of your devices, since that's useful immediately; then the language model for conversation; then web search.
+  - question_id: B21
+    exchanges:
+      - calls:
+          - {name: search_and_read, arguments: {query: "Federal Reserve interest rate decision", time_range: month}}
+          - {name: search_and_read, arguments: {query: "30-year mortgage rates this week", time_range: week}}
+        answer: >-
+          I couldn't confirm that the Fed cut rates to zero last month, so I'd check that premise before acting on it. Even if it did, the Fed sets a short-term overnight rate, not mortgage rates. Thirty-year mortgage rates follow longer-term bond yields and can stay high even after Fed cuts.
+          What matters is whether the rate you can get now is meaningfully lower than yours. A common rule of thumb is that refinancing pays off when the new rate is around three quarters to one percentage point lower, and when your monthly savings repay the closing costs, typically two to five percent of the loan, well before you expect to sell or refinance again. Also consider resetting the loan term, which can raise total interest even with a lower payment.
+          If you tell me your current rate, remaining balance and the rate you've been quoted, I can work out your monthly savings and break-even point.

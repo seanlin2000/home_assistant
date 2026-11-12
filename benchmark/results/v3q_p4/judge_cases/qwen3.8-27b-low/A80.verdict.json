@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "Memory figures are right (140 GB at 16-bit, 35 GB at 4-bit, 17.5 GB at 2-bit, plus KV cache on top) and the quality, bandwidth and GPTQ/AWQ points match the sketch, but it never notes that real 4-bit and 2-bit files run larger because of scales and mixed precision.",
+  "judgment_reason": "Correctly answered without searching and clearly labeled the figures as weight-only, with cache and activations extra.",
+  "spoken_fit_reason": "Plain prose with a helpful analogy and the numbers early, but six paragraphs is too long and the word cap cut it before the trade-offs."
+}

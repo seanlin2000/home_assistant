@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 1,
+  "answer_quality_reason": "Shows one to seven follow the broadway_shows ranking with accurate venues, prices, and scores, but it breaks off mid-way through The Great Gatsby so School Girls and Chicago are missing, and it adds unsupported or wrong details: \"viewed and booked\", \"newest big draw\", a \"two-person\" Fantasticks, and The Book of Mormon having \"the deepest review base\" when Wicked has more reviews.",
+  "judgment_reason": "It correctly used the Broadway tool instead of web search and explained the ranking basis, but it spent ten extra detail calls, which pushed it past the tool limit and lengthened the reply.",
+  "spoken_fit_reason": "It is plain spoken prose without markdown, but each show gets three sentences, so the list ran past the word cap and the listener heard only two shows."
+}

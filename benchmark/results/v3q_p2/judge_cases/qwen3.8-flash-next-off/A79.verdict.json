@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It explains matrix multiplication, the memory-bandwidth limit and CUDA well, but it breaks off mid-sentence in the ASIC paragraph, so it never covers specialized inference processors such as Groq's SRAM design or when a specialized chip beats an NVIDIA GPU, which was the third part of the question.",
+  "judgment_reason": "It made three web searches for a conceptual hardware question that needed none.",
+  "spoken_fit_reason": "It has bold markdown headings ('**Why GPUs work so well for inference**'), speaks its tool-use narration aloud, and is cut off by the word cap partway through the first section."
+}

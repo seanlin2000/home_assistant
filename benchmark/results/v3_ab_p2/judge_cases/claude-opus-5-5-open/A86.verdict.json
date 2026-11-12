@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Keeps the bridge as the local Zigbee hub, covers sharing through the Hue app and invites, physical dimmer switches, cloud or local Home Assistant voice, and correctly says Alexa and Google and remote control stop during an outage, but does not say that Apple Home with a home hub keeps working locally.",
+  "judgment_reason": "Answered stable architecture without searching and offered a fully local voice option that addresses the outage concern directly.",
+  "spoken_fit_reason": "Leads with the architecture and answers the outage part in plain prose with no formatting, at a length suited to the two-part question."
+}

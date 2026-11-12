@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Names all five restaurants from the tool result with the right cuisine, price level and distinction (Meju one star at $$$$, Hupo Bib Gourmand at $$, R40 at $$$, Casa Enrique and Vert Frais at $$) and a reason for each drawn from the guide's descriptions.",
+  "judgment_reason": "Used the restaurant tool instead of web search and said plainly that Michelin gives price levels, not dollars per person, and no diner ratings, rather than inventing either.",
+  "spoken_fit_reason": "Leads with what the list is, then one short spoken sentence per restaurant with price symbols turned into words and no markup."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Five players with a sourced reason each (Doncic's 38.5 points a game, Wembanyama's 52-24-8 game and market favoritism, SGA over 30 through the Holmgren and Williams injuries, Maxey's 28, Tatum's 27 and nearly 8 assists), all this season's figures from the excerpts, but the ranking largely mirrors the NBA's first ladder and the requested advanced metrics are absent.",
+  "judgment_reason": "Searched for current-season data, said up front that it is early and that its sources had no advanced metrics, and noted Curry's fresh injury instead of overstating him.",
+  "spoken_fit_reason": "Opens with the caveat in one sentence and then gives five spoken entries in plain prose without markup, at a length a five-player ranking needs."
+}

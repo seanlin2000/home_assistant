@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 4,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It separates the two problems and gives an ordered set of tests: 2.4 GHz coexistence, the hands-free profile, multipoint competition between projector and laptop, distance, firmware and a cable test for audio; and brightness, focus and keystone, motion processing and lag, and seating geometry for eye strain. But it omits the DLP rainbow effect and taking breaks, and the message breaks off mid-sentence at 'Also consider the vertical angle'.",
+  "judgment_reason": "Stable troubleshooting knowledge needed no search, yet it ran two web searches before answering.",
+  "spoken_fit_reason": "It is a very long multi-paragraph essay with markdown asterisks around 'worse' and a spoken 'I'll check' preamble, cut by the word cap in the first paragraph."
+}

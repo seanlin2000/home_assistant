@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The five-stage Wyoming/Assist pipeline and the sourced prices ($770-810 RTX 5060 Ti, used 3090 sold at about $1,100-1,200) are accurate, but the message breaks off mid-sentence in the first hardware path, whose $770-810 card plus $200-250 of parts can already exceed $1,000, and it never reaches mics and speakers, the web-search layer, or a build order.",
+  "judgment_reason": "Searching current prices was right and it plainly flagged that the GPU shortage limits what $1,000 buys, but nine calls hit the tool-call limit, and the $200-250 figure for a used motherboard, CPU, PSU and RAM comes from no source.",
+  "spoken_fit_reason": "Five filler preambles run together and the long architecture explanation ran past the word cap, so the listener heard the price caveat and the pipeline stages but no hardware at all."
+}

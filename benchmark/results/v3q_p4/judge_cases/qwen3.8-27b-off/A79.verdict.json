@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It covers parallel matrix math, the TPU as an ASIC, Groq/Cerebras-style on-chip SRAM, and fixed-model, latency and power scenarios, but it never credits GPUs' high memory bandwidth or NVIDIA's CUDA software stack, both key elements of the sketch.",
+  "judgment_reason": "No search was needed for a conceptual hardware question, and it frames the choice honestly as a flexibility-versus-efficiency trade-off.",
+  "spoken_fit_reason": "It opens with filler ('Good question. Let me break this down.') and the word cap cut it before the specialized-processor section and the answer to when a specialized chip wins."
+}

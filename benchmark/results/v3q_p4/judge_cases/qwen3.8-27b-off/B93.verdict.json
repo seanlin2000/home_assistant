@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": false,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It never called restaurant_recommendations and padded five picks from web listicles; several figures appear in no excerpt (Takumen's 'up to 4.5 stars', Flor De Sol's '$40-60 per person', Los Tacos' '$10-20'), and it recommends Bunlicious even though the Restaurantji page for that address is marked CLOSED.",
+  "judgment_reason": "It web-searched instead of using the Michelin restaurant tool, and it claimed all five are 'within a short walk of each other' and of the user without knowing where the user is, even though Flor De Sol and Bunlicious on 35th-36th Avenue are far from the waterfront.",
+  "spoken_fit_reason": "Bold markdown, a numbered list, and '$$' price symbols would sound wrong read aloud, and the word cap cut it during the second pick."
+}

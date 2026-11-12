@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Correctly separates what stays local (model, prompts, history) from what leaves (query text that can echo personal details, IP, API key tied to billing, timing, and fetched-site visits), and gives the sketch's mitigations including stripping personal details, searching only when needed, SearXNG, retention policy and a VPN.",
+  "judgment_reason": "Answered a stable architecture question without searching and added honest caveats that SearXNG still forwards queries and the API key still identifies you behind a VPN.",
+  "spoken_fit_reason": "Leads with what stays local and uses spoken ordinals rather than a list, at a length the three-part question warrants."
+}

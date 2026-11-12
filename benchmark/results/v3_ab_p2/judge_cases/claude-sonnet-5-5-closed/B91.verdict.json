@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The results held this season's NBA.com MVP Ladder (Doncic 38.5 points, Wembanyama 29.0 and 12.4, Gilgeous-Alexander 30.1) and HoopsHype ratings, yet the answer gives no ranking or stats, naming only recent-seasons top-tier players with no reasons tied to this season.",
+  "judgment_reason": "Searching was right and it refused to dress up old reputations as this season's ranking, but it falsely said 'I could not check this season's statistics' when the results contained them, then asked the user to narrow the question.",
+  "spoken_fit_reason": "Plain prose without formatting, but it leads with a refusal and spends its length on method rather than an answer."
+}

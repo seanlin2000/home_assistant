@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It opens with a sourced overview (Cerebras down about 40 percent since its IPO, matching the $39.82B to $24.01B figures, and the $20B Nvidia-Groq deal) and gives accurate Etched and SambaNova figures, but it breaks off mid-sentence in the SambaNova paragraph, so MatX, Positron, Cerebras's own profile and Fractile, four of the six companies asked about, are never covered even though the searches returned figures for all of them.",
+  "judgment_reason": "Searching was right, and it labeled Etched's $40-50B offers as bids rather than a closed valuation, but it spent its last calls on extra searches instead of fitting the six companies into a short answer.",
+  "spoken_fit_reason": "It uses bold markdown company names and has dense, number-packed paragraphs of well over a hundred words each, a wall of text that the word cap cut in the Etched section."
+}

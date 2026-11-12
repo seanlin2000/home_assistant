@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The figures are right (35 GB at 4-bit, 17.5 GB at 2-bit, 140 GB at 16-bit, weights only) and the quality and speed trade-offs match the sketch, but it skips the real-file overhead and says a 35 GB model fits on a single consumer GPU.",
+  "judgment_reason": "It did not search, checked the arithmetic with the calculator, and said plainly that the figures cover the weights alone.",
+  "spoken_fit_reason": "Plain prose that leads with the definition, but it is four long paragraphs and the word cap cut off all of the trade-offs."
+}

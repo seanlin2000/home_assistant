@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The final ASSISTANT message is empty, so no itinerary or pass comparison reached the user despite two useful searches returning pass prices and scenic-train details.",
+  "judgment_reason": "Searching for current pass prices and seasonal schedules was right, but the turn ended with a malformed call and no answer, failing the central point.",
+  "spoken_fit_reason": "Nothing was spoken."
+}

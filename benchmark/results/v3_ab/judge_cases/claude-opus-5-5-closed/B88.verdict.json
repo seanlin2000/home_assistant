@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The searches returned dated recent releases (DeepSeek-V4.1-Flash-1017 deployed October 17, Mistral Large 4 as Mistral's October 2026 release, Meta's questioned open-weight commitment), yet the answer claims it could not check the past thirty days and offers only generic background, so it is largely unresponsive.",
+  "judgment_reason": "Searching was right and refusing to invent releases is honest, but saying it 'wasn't able to check' misrepresents the retrieved results and discards usable evidence on the central question.",
+  "spoken_fit_reason": "Plain prose with no lists or markup that leads with its (non-)answer, at a length comparable to what the multi-part question asks for."
+}

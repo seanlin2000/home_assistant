@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Every release and figure traces to the excerpts and falls in the window (Kimi K3.1 Pro weights November 2, Mistral Large 4 weights October 29 at 1.05T and 52B active, Muse Spark Open October 15 at 816B, DeepSeek V4.1-Flash-1017, Arete-27B), but the labs are listed side by side rather than actually compared and the fifth development is a loose 'wave of smaller models'.",
+  "judgment_reason": "Searched for a clearly current question, said plainly that no new Qwen release turned up instead of inventing one, and flagged that the benchmark claims are the labs' own.",
+  "spoken_fit_reason": "Plain prose with first through fifth and numbers written for speech, no lists or markup; long, but the five-item question requires it."
+}

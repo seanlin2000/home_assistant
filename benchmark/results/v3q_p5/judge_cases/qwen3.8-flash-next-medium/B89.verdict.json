@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The final ASSISTANT message is empty, even though the searches had returned funding and valuation figures for all six companies (for example Etched at $21B, Positron at $5B, Fractile at $7B).",
+  "judgment_reason": "Searching was right, but it kept searching until it hit the tool-call limit and then gave no answer even when told to answer with what it had.",
+  "spoken_fit_reason": "Nothing was spoken."
+}

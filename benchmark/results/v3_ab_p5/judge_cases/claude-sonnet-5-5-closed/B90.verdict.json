@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 0,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The broadway_shows result listed ten running shows ranked by views with audience scores (The Rocky Horror Show, Paranormal Activity, & Juliet and so on), yet the answer gives no ranking and offers only a generic list in which just Wicked and Chicago come from the result.",
+  "judgment_reason": "It called the right tool, then falsely said it 'could not see the live popularity list' and redirected the user to TodayTix and asked for preferences instead of answering from the data in hand.",
+  "spoken_fit_reason": "Plain prose with no formatting, but it opens with a disclaimer instead of the answer and ends by asking for preferences."
+}

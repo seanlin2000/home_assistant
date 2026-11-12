@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": false,
+  "answer_quality": 3,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "Casa Enrique, Meju with its Michelin star and $185-235 menu, Hupo and Chinelos are described as the Infatuation, Eater and review excerpts say, but it gives Soothr a 'three dollars' level and $70-100 a head that no result supports, and it calls Chinelos the area's best birria without a source.",
+  "judgment_reason": "It used general web search instead of the restaurant tool, claimed all five are walkable without knowing where the user is, and filled missing price levels with guesses.",
+  "spoken_fit_reason": "Plain spoken prose, but five long paragraphs plus a caveat ran past the word cap, so the listener heard only the first restaurant and a half."
+}

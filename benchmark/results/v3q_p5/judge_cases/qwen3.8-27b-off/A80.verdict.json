@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The memory figures of about 140, 35 and 17.5 GB and the trade-offs of 2-bit degradation, GPTQ and AWQ, and less data to move are right, but 'a few percent overhead' understates real file sizes and it never says the context cache comes on top.",
+  "judgment_reason": "Answering stable arithmetic and concepts from knowledge was right, and it named the overhead as an addition to the bare weight figures rather than presenting 35 GB as the exact file size.",
+  "spoken_fit_reason": "Plain prose that leads with the definition, but six paragraphs hit the word cap and the listener never heard the 2-bit figure or the trade-offs."
+}

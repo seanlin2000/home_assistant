@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": false,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It correctly rejects the zero-rate premise and asks for the user's current rate, balance and term, but it says the funds rate was at zero throughout '2008-2021' when the Fed raised rates in 2015-2019, and it gives none of the refinance logic (closing costs, break-even).",
+  "judgment_reason": "Pushing back on the premise and asking for the missing loan details was right, but it asserted the November 2026 rate is 'nowhere near' zero without searching to check it.",
+  "spoken_fit_reason": "It leads with the correction in a few plain sentences with no lists or markdown."
+}

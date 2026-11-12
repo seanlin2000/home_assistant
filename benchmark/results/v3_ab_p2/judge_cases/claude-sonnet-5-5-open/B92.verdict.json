@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "All five rates and minimums trace to the excerpts (Marcus 3.50 and Ally and Capital One 3.10 from wealthvieu, CIT 3.75 with a 5,000-dollar minimum and SoFi up to 3.80 with direct deposit from PocketGuard), and each interest figure is balance times APY as the calculator returned.",
+  "judgment_reason": "Searched for current rates, said they date from September and October and are variable, called the interest figures estimates assuming a flat rate, and flagged the CIT minimum and the SoFi direct-deposit condition.",
+  "spoken_fit_reason": "Opens with the freshness caveat and then gives each bank in one spoken sentence with no list formatting, a length five banks justify."
+}

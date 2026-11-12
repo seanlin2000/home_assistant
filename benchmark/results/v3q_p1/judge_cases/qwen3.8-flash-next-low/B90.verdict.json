@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It lists the ten running shows in the tool's views order with correct theaters, prices and audience scores, but it adds unsupported details: Wicked as \"the biggest box-office institution on the list\", School Girls produced by \"Pereship Hall's peers, the National Black Theatre\", and The Fantasticks as a \"two-person musical\".",
+  "judgment_reason": "It rightly used the broadway_shows tool instead of web search and explained its ranking, but it said views reflect \"buying\" and padded the descriptions with claims the result does not support.",
+  "spoken_fit_reason": "Ten paragraph-length entries were cut by the word cap after the second show, so the listener heard only two of the ten."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "A geographically sensible Lucerne-Interlaken-Zermatt plan with lake boats, Rigi, Pilatus and the Gornergrat, with every price traced to the excerpts (309 francs for four days, Pilatus 84 halved, Jungfraujoch 240, Gornergrat 132, Zermatt leg 72 to 86), but it gives no Half Fare Card price or point-to-point total, so the ticket comparison is thinner than the sketch asks.",
+  "judgment_reason": "Searched for current pass prices, matched a four-day pass to the four travel-heavy days, flagged the costly Jungfraujoch as optional, and told the user to check prices before booking.",
+  "spoken_fit_reason": "Leads with the plan and walks day by day in plain prose with no lists or URLs, a length a five-day itinerary plus ticket advice demands."
+}

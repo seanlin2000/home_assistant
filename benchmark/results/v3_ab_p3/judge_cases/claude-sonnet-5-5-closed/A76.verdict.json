@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Covers the economy, arms race, Afghanistan, nationalism, the 1989 revolutions, the August 1991 coup and the December 25-26 dates correctly, but lists Gorbachev's reforms as an event rather than a cause and only gestures at the Ukraine referendum and Belovezha Accords as 'the republics declaring independence'.",
+  "judgment_reason": "Answered stable history from knowledge without searching and explicitly separated deep causes from immediate triggers as asked.",
+  "spoken_fit_reason": "Leads with a one-line answer and stays in plain prose with dates spelled for speech; the length is warranted by a three-part question."
+}

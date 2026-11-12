@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 3,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It covers what stays local and what is transmitted (query text, API key, IP, timestamps, user agent, plus Brave's 90-day query log from the fetched policy), but it cuts off before the \"how to minimize exposure\" part, offering only a passing line about being deliberate with the query string.",
+  "judgment_reason": "This conceptual privacy question needed no search, yet the assistant made seven search and fetch calls, which crowded out the minimization advice.",
+  "spoken_fit_reason": "The listener heard four run-together narration lines about tool calls, then dense paragraphs that the word cap cut off."
+}

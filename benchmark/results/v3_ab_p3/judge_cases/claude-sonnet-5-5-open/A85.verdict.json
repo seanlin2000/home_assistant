@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The plan uses the cheap, quick staples the sketch lists and stays well under 2,500 calories, but the per-meal protein counts are understated (three eggs, a cup of egg whites and a cup of Greek yogurt alone come to well over the stated forty-five grams, and eight ounces of chicken to more than fifty-five), so the stated 170-gram total does not match the listed foods.",
+  "judgment_reason": "It respects the limit on protein powder by making one scoop optional, keeps prep minimal with batch cooking, and says the numbers are estimates to check in a tracking app.",
+  "spoken_fit_reason": "It opens with the totals and then walks meal by meal in plain spoken sentences, a length a full-day plan warrants."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The architecture (Ollama with Qwen3 8B, Home Assistant, openWakeWord/Whisper/Piper over Wyoming, SearXNG) and the sourced GPU prices (RTX 5060 Ti $600-830, RTX 3060 $320-400) are sound, but the reply stops at 'The biggest limitations, in order of how much', so the limitations and the build order the question asked for are missing.",
+  "judgment_reason": "Searched for current prices and was candid that a 16 GB card plus a full system will not fit under $1,000, but the 'around seven to eight hundred dollars' build total relies on CPU, RAM, drive and case prices that no source gives.",
+  "spoken_fit_reason": "Dense paragraphs of a hundred-plus words each, with a spoken 'I'll ground this' preamble, a wall of text that the word cap cut before any hardware recommendation."
+}

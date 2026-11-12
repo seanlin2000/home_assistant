@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["violated_explicit_constraint"],
+  "search_decision_correct": false,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The plan uses cheap, quick foods and no protein powder, but it totals 231 g of protein against the requested ~170 g, and its 460-calorie dinner of 200 g ground turkey, a can of lentils, and 200 g cottage cheese is badly undercounted, so the totals do not add up.",
+  "judgment_reason": "It searched and ran calculator calls until it hit the tool limit on a question that needed no search, then presented a 60 g protein overshoot as a bonus instead of adjusting the plan to the target.",
+  "spoken_fit_reason": "It is plain prose with meals in sentences, but it speaks filler ('Let me pin down the numbers') and runs to eight paragraphs, so the cap cut it off."
+}

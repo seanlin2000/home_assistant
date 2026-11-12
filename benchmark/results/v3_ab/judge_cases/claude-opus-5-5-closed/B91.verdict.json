@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Its five names match the Balladex model's top five, but it ignores the NBA.com ladder's current stats (Doncic 38.5 PPG, Wembanyama 29.0 PPG and 12.4 RPG, SGA 30.1 PPG), justifies picks with past seasons, and says Giannis 'carries Milwaukee' when the ladder lists him with the Miami Heat.",
+  "judgment_reason": "It searched and noted that early-season samples swing, but saying it 'couldn't confirm this year's numbers' when the search returned them, and ranking on recent seasons instead, is a noticeable lapse.",
+  "spoken_fit_reason": "Plain numbered-in-speech prose with one reason per player and no markup, a fitting length for five players."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Separates the two problems and covers the sketch's causes and tests: multipoint pairing with the laptop, 2.4 GHz interference, one-change-at-a-time steps (unpair, move closer, 5 GHz, cable), and for eye strain brightness, size and distance, focus and keystone, game mode and the DLP rainbow effect.",
+  "judgment_reason": "Correctly answered from stable troubleshooting knowledge without searching and gave an ordered, one-variable-at-a-time test plan as asked.",
+  "spoken_fit_reason": "Plain prose split cleanly into the two problems with no lists or markup, at a length that two separate troubleshooting questions warrant."
+}

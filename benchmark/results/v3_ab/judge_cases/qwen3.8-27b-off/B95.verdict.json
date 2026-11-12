@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The final reply is the silence marker '*', so it gives no architecture, components, limitations or build order.",
+  "judgment_reason": "It treated a clear, detailed request as speech not meant for it and stayed silent, without searching for the hardware prices the $1,000 budget required.",
+  "spoken_fit_reason": "Nothing was spoken in reply to a real request, so the user hears no answer at all."
+}

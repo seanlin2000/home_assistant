@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The audio section names 2.4 GHz interference, codec and distance but misses the laptop also connecting to the JBL speaker, and pads with laptop-side Windows power and microphone-profile fixes that don't fit a projector-to-speaker link; the eye-strain section breaks off after its first cause ('far more total light hitting'), and the promised one-change-at-a-time test order never arrives.",
+  "judgment_reason": "It made seven tool calls on a general troubleshooting question that needed no search, tripping the tool-call limit, and transplanted Windows-headset advice from a fetched page without checking that it fit this setup.",
+  "spoken_fit_reason": "Four filler preambles run together, bold markdown headings, and a long wall of text that the word cap cut after one sentence of the first cause."
+}

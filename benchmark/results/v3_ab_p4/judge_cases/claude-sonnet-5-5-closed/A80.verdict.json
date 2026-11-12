@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Gives the correct 140, 35 and 17.5 gigabyte figures, notes real files run larger from scales and mixed precision plus the context cache, and covers small loss at 4-bit, marked loss at 2-bit and faster bandwidth-bound inference.",
+  "judgment_reason": "Answered from stable knowledge without searching and flagged that real files exceed the idealized arithmetic.",
+  "spoken_fit_reason": "Plain spoken prose that leads with the definition and walks the numbers in order, appropriately sized for a three-part question."
+}
