@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Defines API, tool and MCP server correctly and lays out the local model, MCP server with search and fetch-page tools, model-side summarizing and client loop from the sketch, but of the safeguards names only untrusted web text, omitting a tool-round cap, timeouts and caching.",
+  "judgment_reason": "Answered a stable architecture question without searching and made the sound call that summarizing belongs to the model rather than a separate tool.",
+  "spoken_fit_reason": "Plain prose with no markdown or lists that leads with the definitions, at a length the two-part design question demands."
+}

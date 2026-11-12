@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The overview and the Etched and Positron figures ($21B Series D, $40-50B talks, $875M at $5B, Asimov tapeout) all trace to the excerpts, but the message breaks off mid-sentence in Positron ('TSMC's N3') and never covers MatX, Cerebras, SambaNova or Fractile, although all were retrieved.",
+  "judgment_reason": "Searching was right and the opening rightly separates proven businesses from unshipped ones, but it made ten tool calls (including a stock-price check) up to the limit and then spent its length on deep detail for the first two companies.",
+  "spoken_fit_reason": "Five filler preambles run together, bold markdown company names, and dense number-heavy paragraphs that the word cap cut during the first company."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "Five defensible picks with current figures from HoopsHype and DARKO (Wembanyama 30.3 and 11.7, Doncic 38.6, Giannis 27.7 and 12.6, Jokic's top DPM), but it says Jokic is shooting over sixty percent this season, a figure the PrizePicks excerpt gives for last season while this season's DARKO row shows 54.3 percent.",
+  "judgment_reason": "Searched for a current-season question, opened by flagging the roughly ten-game sample, and explained excluding Anthony Edwards because of his knee surgery.",
+  "spoken_fit_reason": "Leads with the caveat and uses plain prose, but is long enough that the word cap cut it after the second player."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Defines API, tool (name, description, typed arguments) and MCP server correctly, then lays out a local model, an orchestrator loop, an MCP server with search and fetch tools trimming page text, model-side summarizing, and timeouts plus treating web text as untrusted, covering the sketch except an explicit cap on tool rounds.",
+  "judgment_reason": "Answered a stable software-architecture question without searching and kept the design concrete rather than speculative.",
+  "spoken_fit_reason": "Plain prose that leads with the definitions and avoids lists or code, at a length the two-part question needs."
+}

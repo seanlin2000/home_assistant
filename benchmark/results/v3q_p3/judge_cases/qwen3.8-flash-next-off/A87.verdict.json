@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 1,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The listener heard only possible causes of the choppy audio (2.4 GHz and USB 3.0 interference, CPU starvation), missing the speaker competing with the laptop for its connection, and none of the troubleshooting steps or the eye-strain half survived the word cap.",
+  "judgment_reason": "It made six searches and fetches for general troubleshooting it should have answered from knowledge, hitting the tool-call limit.",
+  "spoken_fit_reason": "Narrated tool-use preambles, markdown bold headings and a numbered list in a long reply cut off by the word cap."
+}

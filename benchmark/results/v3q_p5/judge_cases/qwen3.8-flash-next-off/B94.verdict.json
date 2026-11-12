@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "Days one to three are sensible and low-effort (Lake Lucerne, Rigi free with the pass, the Lucerne–Interlaken Express, Harder Kulm, Jungfraujoch at 25 percent off), but the reply breaks off at \"Day 4 — Interlaken to Zerm\", so Zermatt and the promised pass comparison (Swiss Travel Pass at CHF 254 or 309 versus Half Fare versus point-to-point) never arrive, and it has slips like the garbled \"lungti cable car\".",
+  "judgment_reason": "Searching current fares was right, but it spent ten calls without fetching the Half Fare price, never mentioned that a mid-November trip affects boats and some lifts, and left no room for the economics the user asked about.",
+  "spoken_fit_reason": "It uses bold markdown day headings and long dense paragraphs, and the word cap cut it off after Day 1."
+}

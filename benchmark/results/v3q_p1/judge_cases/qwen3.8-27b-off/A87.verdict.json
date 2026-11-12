@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It separates the two problems and gives an ordered audio test sequence (disconnect the laptop, one source at a time, move closer, 5 GHz Wi-Fi, firmware, re-pair), and it names contrast, brightness, distance and input lag for eye strain, but it misses the DLP rainbow effect, focus and keystone, and blinking, and the message breaks off before the eye-strain steps.",
+  "judgment_reason": "It needed no search and sensibly began the audio troubleshooting by isolating the laptop as the variable.",
+  "spoken_fit_reason": "It is plain prose without lists, but it is very long and the word cap cut it partway through the audio steps, so the eye-strain half was never heard."
+}

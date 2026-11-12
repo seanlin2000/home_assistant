@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "All five restaurants, cuisines, price levels and Michelin distinctions (Hupo Bib Gourmand, Meju one star) match the tool result, but it says 'the first four are about three tenths of a mile' when only three are, and its closing 'can't give you star ratings' muddles the Michelin star it just reported.",
+  "judgment_reason": "Used the restaurant tool rather than a web search and said plainly it had no customer ratings or per-person prices rather than inventing them.",
+  "spoken_fit_reason": "Leads with the five picks in one plain sentence each, no lists or markup, with a brief closing caveat."
+}

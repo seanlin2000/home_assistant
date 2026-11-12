@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 4,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The memory figures are right (140 GB at 16-bit, 35 GB at 4-bit, 17.5 GB at 2-bit, plus scales and KV cache on top) and the trade-offs cover GPTQ/AWQ, QuIP#/AQLM and uneven capability loss, but it says 4-bit 'halves' 140 GB to 35 and never notes that smaller weights speed up bandwidth-bound generation.",
+  "judgment_reason": "Stable technical knowledge needed no search, yet it ran a search_and_read and a web_search and hit the tool-call limit with six calculator calls on simple arithmetic.",
+  "spoken_fit_reason": "A six-paragraph technical essay was cut by the word cap mid-figure ('At 2 bits it is 17.')."
+}

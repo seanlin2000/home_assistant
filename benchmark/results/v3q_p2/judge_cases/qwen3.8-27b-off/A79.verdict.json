@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It explains parallel cores and matrix multiplication, defines ASICs with TPUs as an example, and gives sensible win and lose conditions, but never names memory bandwidth as the inference bottleneck or NVIDIA's CUDA software advantage, and gives no concrete inference-chip examples.",
+  "judgment_reason": "Answering a stable hardware concepts question from knowledge without searching was the right call, and it states the flexibility trade-off honestly.",
+  "spoken_fit_reason": "It opens with filler (\"Great question. Let me think through this carefully.\"), runs to many paragraphs with a list-style structure, and the word cap cut it before the part on when a specialized chip wins."
+}

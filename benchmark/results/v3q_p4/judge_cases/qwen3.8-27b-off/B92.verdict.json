@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The Chase 0.01/0.02%, Bank of America 0.04%, Wells Fargo 0.01/0.05% and Citi Accelerate 4.30% rates and the $2,150 figure trace to the excerpts, but it asserts US Bank pays about 0.01% with no source, garbles the fifth-bank paragraph ('JPMorgan Chase's parent bank, Bank of America aside, Fifth Third and PNC'), and opens by saying none of the big banks offers a high-yield account before naming Citi's.",
+  "judgment_reason": "It rightly flags that Citi's rate is variable and its minimum unconfirmed, but it fills the fifth slot with an unsourced US Bank rate instead of saying it found nothing.",
+  "spoken_fit_reason": "Prose without lists, but long and loaded with fee and percentage detail; the word cap cut it after Chase, so the listener never heard the Citi answer."
+}

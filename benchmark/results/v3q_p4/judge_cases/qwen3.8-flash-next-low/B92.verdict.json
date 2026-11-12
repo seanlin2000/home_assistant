@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The rates and interest figures for Marcus (3.50%, $1,750), Ally and Capital One (3.20%, $1,600), SoFi (blended about $1,920) and Synchrony (3.75%, $1,875) follow from the results, but it states 'no minimum to open, no monthly fee' for Synchrony, which no source gives. It also says 4.20% earns 'about 350 dollars more than Ally or Capital One' when 2,100 minus 1,600 is 500.",
+  "judgment_reason": "It searched as it should, stated its assumption for SoFi's six-month boost, and flagged that the rates are variable and the interest taxable, but it went over the tool-call limit.",
+  "spoken_fit_reason": "Two filler lead-ins run into a long multi-paragraph answer, and the word cap cut it after three of the five banks."
+}

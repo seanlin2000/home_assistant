@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 3,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The five picks (Meju one star, Hupo Bib Gourmand, Casa Enrique, R40, Vert Frais) and their cuisines and price bands match the restaurant tool, but it embroiders details the result never gives, such as Meju 'on Davis Street', Casa Enrique 'known for mole', R40's 'good wine list' and Vert Frais as 'the cheapest', and it garbles Casa Enrique as 'Korean-cuisine-adjacent no — it's Mexican'.",
+  "judgment_reason": "It stated its location assumption and labelled its dollar figures as estimates, but it ran several needless web searches and page fetches alongside the restaurant tool, which spent the tool-call limit.",
+  "spoken_fit_reason": "Plain prose without markdown, but it runs eight paragraphs, includes a garbled self-correction, and was cut by the word cap after the second restaurant."
+}

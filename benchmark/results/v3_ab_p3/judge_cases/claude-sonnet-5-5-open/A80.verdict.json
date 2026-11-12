@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The memory figures match the sketch (140 GB at 16-bit, 35 GB at 4-bit, 17.5 GB at 2-bit, about 40 GB for real 4-bit files) and it covers the quality loss, faster bandwidth-bound generation, and better methods softening the loss.",
+  "judgment_reason": "Answering stable technical knowledge without a search was right, and it notes that real files run larger than the raw arithmetic.",
+  "spoken_fit_reason": "Numbers are written out for speech and the explanation is plain prose at a length the three-part question warrants."
+}

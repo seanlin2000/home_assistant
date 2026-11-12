@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "Clear API, tool and MCP definitions and a sound architecture (local model server, MCP server with search and fetch-with-readability tools, agent loop with a tool-call cap and fetched text treated as untrusted), though it never mentions timeouts or caching and muddles its three-tool count by folding summarize into retrieve_and_summarize.",
+  "judgment_reason": "Answered a stable architecture question without searching and stated its sizing assumption of a laptop-class machine with limited context.",
+  "spoken_fit_reason": "Plain prose with no markdown, but at well over a thousand words the word cap cut it after the tool definition, so the listener heard none of the architecture."
+}

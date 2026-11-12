@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 3,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Names every component in the sketch (Home Assistant, Whisper, Piper, wake word, llama.cpp or Ollama, a search tool, ESP32 or Pi satellites) and gives a sensible smart-home-first build order, but never shows that the suggested Mac mini or GPU PC fits 1,000 dollars and says it gives cost estimates when it gives none.",
+  "judgment_reason": "Did not search for current hardware prices on a question built around a 1,000-dollar budget, so whether the proposed hardware fits the budget is left unchecked.",
+  "spoken_fit_reason": "Leads with the core recommendation and keeps components and build order in plain spoken sentences without markdown, a length the four-part design question warrants."
+}

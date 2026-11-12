@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Keeps the bridge as the Zigbee hub, shares control through Hue app invites or Apple or Google Home, adds dimmer switches and voice via Siri, Alexa, Google or Home Assistant, and correctly says local control and Apple Home keep working offline while Alexa, Google and remote control stop.",
+  "judgment_reason": "Answered stable product architecture without searching and gave a single recommended setup rather than an undifferentiated list of options.",
+  "spoken_fit_reason": "Leads with the recommendation in plain prose with no lists or formatting, at a length the two-part question needs."
+}

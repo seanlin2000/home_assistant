@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It correctly lists the query text, IP address, timestamp, API key and query-pattern metadata as transmitted, the conversation and reasoning as local, and mitigations including stripping personal details, SearXNG and checking retention, but it leaves out a VPN for IP privacy and that the websites the assistant fetches also see the requests.",
+  "judgment_reason": "Answering this conceptual privacy question without searching was right, and it points to the real risk of conversation context leaking into queries.",
+  "spoken_fit_reason": "It uses markdown bold headings such as '**What stays local:**' and a five-point list, runs long, and the word cap cut it before the advice on minimizing exposure."
+}

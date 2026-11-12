@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 3,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It covers discounting, equity duration, better bond alternatives, borrowing costs and the 2022 Nasdaq drop of about 33 percent, but its worked figure garbles the numbers: it first says the rate rise 'costs about twenty-four percent' of a next-year dollar, then corrects itself mid-sentence ('no, let me be precise').",
+  "judgment_reason": "It searched a question it called 'mostly a matter of financial theory' and then hit the tool-call limit on muddled percent calculations.",
+  "spoken_fit_reason": "The plain prose leads with the core idea, but it is a long multi-paragraph essay with a spoken self-correction, and the word cap cut it off early."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 0,
+  "answer_quality_reason": "All ten shows, venues, audience scores and descriptions come from the broadway_shows and broadway_show_details results in the tool's view-count order, but it says The Fantasticks runs through 'February twenty-seventy-seven' instead of 2027 and overstates Cursed Child as 'sold largely through a lottery'.",
+  "judgment_reason": "It used the Broadway tool instead of web search, stated that the ranking rests on TodayTix views and audience scores, and noted how an awards-based ranking would differ.",
+  "spoken_fit_reason": "Three or four sentences per show across ten shows made a wall of text that the word cap cut partway through the third show."
+}

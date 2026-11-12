@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 3,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The API, tool and MCP distinctions are correct, but the answer stops mid-sentence ('This is where your') after only two of its promised four architecture parts, so the search tool, page fetch, summarization and safeguards are never described.",
+  "judgment_reason": "Answering a stable architecture question from knowledge without searching was the right call.",
+  "spoken_fit_reason": "A long multi-paragraph essay with asterisk emphasis that the word cap cut while still defining terms, so the listener never heard any of the architecture."
+}

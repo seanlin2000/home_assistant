@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The 16-bit (140 GB) and 2-bit (17.5 GB) figures are right, but it says 4-bit takes 'about 70 GB' instead of about 35 GB, and it wrongly says quantization usually slows each token compared to 16-bit.",
+  "judgment_reason": "It answered from general knowledge without searching, and it stated that the figures are weight-only and that real files run larger than the raw floor.",
+  "spoken_fit_reason": "It is plain prose that leads with the definition, but it runs five long paragraphs and the cap cut it off in the middle of the 2-bit figure."
+}

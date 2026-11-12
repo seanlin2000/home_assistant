@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 3,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The eye-strain half is thorough (refresh rate, input lag, DLP rainbow, brightness mismatch, keystone, seating distance, blinking), but the audio half assumes the laptop is streaming to the JBL when the projector is the source, so it misses the key cause in the reference: the laptop competing with the projector for the speaker connection.",
+  "judgment_reason": "It searched on a stable troubleshooting question that needed no search, misread how the speaker is connected, and invented a 'small studio apartment'.",
+  "spoken_fit_reason": "It is a very long wall of text, more than ten dense paragraphs, and the word cap cut it off mid-word ('USB 3.') before any troubleshooting steps or the eye-strain half."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 3,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The MCP explanation and three-layer architecture (local model, MCP server with search and page-fetch tools, agent loop, model doing its own summarizing, page truncation) match the reference, but \"tool\" is defined as standalone software instead of a model-callable function, the answer leaves out tool-round caps, timeouts, and prompt-injection handling, and it stops mid-sentence at \"so a model that re-checks\".",
+  "judgment_reason": "It ran a needless search on MCP spec adoption for a stable conceptual question, although the facts it took from that search (the stateless core) do appear in the excerpts.",
+  "spoken_fit_reason": "This is a wall of text of over 500 words with em dashes, the word cap cut it off before the architecture, and the full message breaks off mid-sentence."
+}

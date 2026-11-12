@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "Its audio causes (2.4 GHz interference, JBL multipoint contention, the Windows hands-free profile, drivers) are sound, but the eye-strain section breaks off mid-sentence after refresh rate and input lag, so it misses brightness against room light, field of view, seating distance and the DLP rainbow effect, and it never gives the ordered troubleshooting steps the question asked for.",
+  "judgment_reason": "It made four web searches for a troubleshooting question that could be answered from general knowledge.",
+  "spoken_fit_reason": "It uses bold markdown headings, speaks its tool-use narration aloud, and is so long that the word cap cut it after the first paragraph about audio."
+}

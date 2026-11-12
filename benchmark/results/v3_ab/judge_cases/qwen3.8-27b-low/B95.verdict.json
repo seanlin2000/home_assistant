@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The final message is only a preamble ('I'll ground this in what's actually current before I sketch the architecture'), with no architecture, hardware, limitations or build order.",
+  "judgment_reason": "It announced a search but never ran one, because the tool call was malformed, and it delivered nothing on the central question.",
+  "spoken_fit_reason": "The listener hears a promise of an answer that never comes, which does not work as a spoken reply."
+}

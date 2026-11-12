@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 0,
+  "answer_quality_reason": "Correctly covers economic stagnation, arms-race cost and Gorbachev's reforms as causes, the 1989 Eastern Bloc collapse, the August 1991 coup as trigger, the Belavezha Accords and the December 25 resignation, but omits the Ukraine referendum and Afghanistan and treats nationalism only in passing.",
+  "judgment_reason": "Answering from stable historical knowledge without searching was the right call, and it explicitly separates structural causes from the coup as the immediate trigger.",
+  "spoken_fit_reason": "Four dense paragraphs of roughly six hundred words were cut by the word cap, so the listener heard only the causes and none of the three events."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 0,
+  "answer_quality_reason": "No final answer was given: the last assistant turn is only two calculate calls ('280 + 300 + ...' and '280 + 700 + ...'), even though the results already had a used RTX 3060 at about $295, the 5060 Ti 16GB from $770 and the $59-69 Voice Preview Edition.",
+  "judgment_reason": "Searching was right for current hardware prices, but it went on fetching pages until it hit the tool-call limit and never committed to a build, a budget check or a build order.",
+  "spoken_fit_reason": "Nothing was spoken apart from one 'Good grounding so far' preamble, so the listener got no answer."
+}

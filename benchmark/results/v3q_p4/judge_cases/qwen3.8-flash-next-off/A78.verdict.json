@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It gives three distinct, concrete mechanisms (concentration in a few tech giants and in wealthy owners, profits and buybacks outpacing wages, housing and inflation outrunning pay), but 'a third to a half' of the S&P 500 in the top ten overstates the upper end, and the listener lost the third example to the word cap.",
+  "judgment_reason": "It answered a conceptual question from general knowledge without searching, and it hedged its figures as approximate ranges.",
+  "spoken_fit_reason": "It leads with the answer in plain prose, but it is far too long for speech and the word cap cut it off before the third example."
+}

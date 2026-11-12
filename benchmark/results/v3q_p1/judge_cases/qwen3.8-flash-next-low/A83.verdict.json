@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It gives about 0.0333 percent falling to 0.0167 percent, then $166,667, 8.33 times and $146,667 profit, matching every figure in the reference sketch.",
+  "judgment_reason": "It used the calculator instead of searching, and it stated both assumptions the sketch requires: dilution halves the percentage, and liquidation preferences could reduce the payout.",
+  "spoken_fit_reason": "The core numbers come first in two short paragraphs, but the convoluted caveat paragraph made the reply long enough that the word cap cut its last sentence."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 5,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The answer names the 1989 revolutions, the August 1991 coup and the December 8 Belavezha Accords with correct dates, and labels stagnation, the arms race, nationalism and Gorbachev's reforms as causes and the discrete crises as triggers, matching the reference sketch.",
+  "judgment_reason": "A stable history question needed no lookup, yet the assistant made two wikipedia_lookup calls before answering.",
+  "spoken_fit_reason": "The reply runs to several long paragraphs and the word cap cut it off mid-sentence at \"George H.\", so the listener never heard the coup, the accords, or the causes-versus-triggers distinction."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The value of about 166,667 dollars, 8.33x multiple, and 146,667 dollar profit match the sketch and the calculator results, but the stakes are described as one thirty-third and one sixty-sixth of one percent when they are one thirtieth and one sixtieth.",
+  "judgment_reason": "Used the calculator rather than searching and stated the key assumption that liquidation preferences and senior investors are ignored.",
+  "spoken_fit_reason": "Leads with the payout, spells every number out for speech, and stays in plain prose of reasonable length for a multi-part calculation."
+}

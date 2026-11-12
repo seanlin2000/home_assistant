@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 3,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It explains present value, the risk-free anchor, long duration, multiple compression, and cost of capital correctly, but its worked figure is wrong (a dollar 15 years out at 2 percent is about 74 cents, not \"about eighty-three cents\", so not \"roughly a third less\"), and the reply cuts off mid-sentence.",
+  "judgment_reason": "It said itself that this was \"mostly a matter of financial mechanics rather than anything time-sensitive\" and then searched current Treasury yields anyway.",
+  "spoken_fit_reason": "It uses bold markdown headers and italics across many long paragraphs, and the word cap cut it off early."
+}

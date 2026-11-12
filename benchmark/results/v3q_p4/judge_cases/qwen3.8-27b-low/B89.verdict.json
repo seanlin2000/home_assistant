@@ -1,0 +1,12 @@
+{
+  "gates_hit": [
+    "fabricated_current_fact"
+  ],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 0,
+  "answer_quality_reason": "Cerebras, Etched, SambaNova and MatX figures trace to the excerpts, but the reply breaks off mid-sentence in the Positron section, never covers Fractile's $720M Series C at a reported $7B despite retrieving it, and never delivers the promised overall picture.",
+  "judgment_reason": "Searching was right and it separates Etched's orders from revenue, but it says SambaNova's SN50 'began shipping in the second half of 2026' when the excerpt only says it 'will begin shipping', which is exactly the plan-versus-shipping distinction the question tests.",
+  "spoken_fit_reason": "Markdown bold company names ('**Cerebras**') in long dense paragraphs, with no leading summary, which would sound wrong read aloud."
+}

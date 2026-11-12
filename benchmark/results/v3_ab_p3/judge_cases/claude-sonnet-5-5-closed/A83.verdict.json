@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Matches the sketch exactly: one three-thousandth halved to one six-thousandth, about 166,667 dollars (confirmed by the calculator result 166,666.67), roughly 8.3 times, and about 146,667 dollars profit.",
+  "judgment_reason": "Used the calculator instead of searching and stated the proportional-sale assumption, naming liquidation preferences and option pools as things that could lower the payout.",
+  "spoken_fit_reason": "Leads with the dollar figure, walks through the steps in plain sentences and ends with a short caveat, with no formatting."
+}

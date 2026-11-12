@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It says plainly that the Fed held at 3.75 to 4 percent on October 27-28 after a September hike, citing the FOMC statement, gives 30-year mortgages near 7 percent from the retrieved surveys, and explains the refinance logic of current rate against today's rate and closing costs.",
+  "judgment_reason": "It checked the premise before answering, corrected it directly, and asked for the user's current rate, balance and time in the home instead of guessing.",
+  "spoken_fit_reason": "It leads with the correction in plain prose, but it runs five paragraphs with markdown asterisks (*increase*, *your*) and was cut by the word cap."
+}

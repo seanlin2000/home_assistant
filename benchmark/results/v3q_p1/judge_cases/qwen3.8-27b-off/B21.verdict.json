@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It says plainly that the Fed did not cut to zero and, citing the excerpts, notes the September 2026 hike to 3.75 to 4 percent, the October hold and 30-year mortgages around 7.2 percent, then gives the refinance logic (compare to your current rate, break-even) and asks for the user's rate and loan details.",
+  "judgment_reason": "It pushed back on the false premise, verified it with a search instead of relying on memory, and asked for the genuinely missing details instead of assuming them.",
+  "spoken_fit_reason": "It leads with the correction in plain prose, but the pre-search turn and the final answer both state the correction so the listener hears it twice, there is a markdown slip in '*raised*', and the word cap cut it mid-figure at 'around 7.'"
+}

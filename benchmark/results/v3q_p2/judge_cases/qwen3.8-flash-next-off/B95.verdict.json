@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The architecture (ESP32-S3 satellites, faster-whisper, Piper, Home Assistant intent matching, an Ollama agent over Wyoming) and the sourced prices (used 3090 around $1,600 sold, Arc B580 about $275 used) are sound, but the reply breaks off mid-sentence in the budget section, so it never completes a build under $1,000 and never covers the biggest limitations or what to build first, two of the four things asked.",
+  "judgment_reason": "Searching for current hardware prices was right and it labeled the unchecked 3060 and the $300-450 rest-of-box figure as estimates, but it used all ten tool calls before answering.",
+  "spoken_fit_reason": "It has bold markdown headings ('**Where the $1,000 goes**'), speaks five tool-use narration lines aloud, and is so long that the word cap cut it in the first section."
+}

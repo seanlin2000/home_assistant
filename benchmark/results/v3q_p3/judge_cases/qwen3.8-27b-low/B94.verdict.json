@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The Lucerne days and the Luzern-Interlaken Express with its 16 and 12 franc reservation follow the sources, but the message breaks off mid-sentence on day three, never reaches Zermatt or the Gornergrat, never compares the Swiss Travel Pass, Half Fare Card and point-to-point tickets the user asked about, and quotes a Pilatus fare of 'about fifty-one francs' that no source gives.",
+  "judgment_reason": "Assumed the user holds a Swiss Travel Pass without explaining why it is the economical choice, and ignored the season despite sources on winter pricing for a November trip.",
+  "spoken_fit_reason": "Uses markdown bold day headings and runs so long that the word cap cut it on day two."
+}

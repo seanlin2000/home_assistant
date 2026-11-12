@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": false,
+  "answer_quality": 1,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The restaurant_recommendations snapshot listed only Vert Frais, yet the answer never mentions it and pads five web-sourced picks, presenting Casa Enrique as a current Michelin star holder and Hupo as a Bib Gourmand though neither is in the snapshot, and inventing per-person prices (thirty to fifty dollars at Casa Enrique, forty to sixty at Soothr) that no source gives.",
+  "judgment_reason": "Instead of saying the Michelin snapshot had only one Long Island City entry, it made eight web calls to fill out five, and it claimed all five are within walking distance of each other without knowing where the user is.",
+  "spoken_fit_reason": "Five dense paragraphs that the word cap cut partway through the second restaurant."
+}

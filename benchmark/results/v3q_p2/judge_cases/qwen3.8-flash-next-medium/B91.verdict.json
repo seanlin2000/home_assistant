@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 2,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It ranks five players with this season's sourced numbers (Wembanyama 30.3 and the 35.05 HoopsHype rating, Doncic about 38.6 with the 10-2 Lakers, Jokic 23.5/10.8/9.0, Giannis 27.7/12.6, SGA 29.7 and ninth in the rating) and flags the small sample, but some claims have no source behind them, such as Wembanyama 'leading the league in blocks' and Jokic leading all centers in playmaking.",
+  "judgment_reason": "Searching was right and it fell back to the web when the sports tool failed, with honest caveats about disagreeing sources and missing plus-minus data, but it made 13 calls and exceeded the tool-call limit.",
+  "spoken_fit_reason": "The listener first heard three preambles run together, then a long multi-paragraph ranking that the word cap cut off partway through the first player."
+}

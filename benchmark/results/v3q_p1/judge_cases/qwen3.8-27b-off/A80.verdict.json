@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The memory figures are correct (about 140 GB at 16-bit, 35 GB at 4-bit, 17.5 GB at 2-bit) and the quality trade-offs at 4-bit versus 2-bit match the sketch, but it never says the context cache comes on top or that real 4-bit files run larger, and it explains the speed gain as fitting in VRAM rather than as memory bandwidth.",
+  "judgment_reason": "It rightly answered from fundamentals without searching and presented the sizes as weights-only arithmetic.",
+  "spoken_fit_reason": "It leads with plain prose and no lists, but it runs long and the word cap cut it before any of the trade-offs were heard."
+}

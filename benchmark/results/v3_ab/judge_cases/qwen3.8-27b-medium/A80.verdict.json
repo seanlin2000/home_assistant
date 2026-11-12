@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The calculator-backed 140, 35 and 17.5 GB weight figures are correct, with the KV cache and the GPTQ/AWQ quality trade-offs covered, but it leaves out the faster generation from lower memory bandwidth and puts the scale overhead at 'a few percent'.",
+  "judgment_reason": "It used the calculator for the memory arithmetic without searching and said clearly that the figures cover the weights only.",
+  "spoken_fit_reason": "Plain prose that leads with the definition, but three dense paragraphs hit the word cap partway through the 2-bit figure, so the trade-offs were never spoken."
+}

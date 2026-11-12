@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 3,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It covers what stays local and what is sent (the model-written query, API key, IP, timing, fetched URLs), and its retention details trace to Brave's and Exa's policies, but the message cuts off before giving any ways to minimize exposure, such as redacting queries, SearXNG, or a VPN.",
+  "judgment_reason": "It made seven tool calls on a conceptual privacy question that needed no search, which also used up the answer's length on vendor retention details.",
+  "spoken_fit_reason": "It speaks filler lines like 'Let me check what a couple of other providers retain', uses headings such as 'What stays local', and is a long wall of text that the cap cut short."
+}

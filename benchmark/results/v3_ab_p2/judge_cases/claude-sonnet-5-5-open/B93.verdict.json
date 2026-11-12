@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Names all five restaurants from the Michelin result with the right cuisine, price level, and distinction, including Hupo's Bib Gourmand and Meju's star, but embellishes R40's 'the nose knows' line into smoky grill aromas the result does not mention.",
+  "judgment_reason": "Used the restaurant tool rather than searching and said plainly it had no per-person dollar figures or review-site ratings instead of inventing them.",
+  "spoken_fit_reason": "Leads with what the five are and gives each a single spoken sentence with no list formatting, ending with a short value-versus-splurge takeaway."
+}

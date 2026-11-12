@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The refinance logic (Fed rate is not mortgage rate, compare your rate, closing costs of 2 to 5 percent, break-even, term reset) is sound and it asks for the user's rate, but it never says plainly that rates were not cut to zero although the excerpts showed the Fed holding at 3.75 to 4 percent after a September hike, and it omits the roughly 7 percent mortgage rates retrieved.",
+  "judgment_reason": "It searched and declined to accept the premise and asked for the missing figures, but its 'I couldn't confirm' understates sources that directly refuted the premise.",
+  "spoken_fit_reason": "Leads with the premise check and stays in plain prose without formatting at a reasonable length, ending with a concise request for the user's numbers."
+}

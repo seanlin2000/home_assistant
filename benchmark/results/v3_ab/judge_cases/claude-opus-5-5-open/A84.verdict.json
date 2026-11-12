@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Explains present value of future cash, the discount rate building on Treasury yields, compounding hitting distant cash hardest, growth stocks as long-duration assets compared to a thirty-year bond, plus the sketch's second-order effects of costlier funding and bonds as an alternative.",
+  "judgment_reason": "Stable finance concept answered without a search, and it notes this is a tendency that strong earnings growth can outweigh.",
+  "spoken_fit_reason": "Plain conversational prose with an everyday framing of today's dollars and no jargon dumps; long but the question asks for the full relationship."
+}

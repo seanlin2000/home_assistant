@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The last assistant turn is just two calculator calls with no text, so it gives no architecture, component list, limitations or build order.",
+  "judgment_reason": "It spent twelve tool calls gathering GPU prices and stack details and never turned them into an answer, which fails the central point.",
+  "spoken_fit_reason": "Nothing was spoken, so the listener got no answer."
+}

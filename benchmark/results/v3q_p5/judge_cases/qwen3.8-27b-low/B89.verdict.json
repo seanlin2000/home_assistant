@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 0,
+  "answer_quality_reason": "Etched, MatX, Positron and Cerebras figures mostly trace to the sources, but the reply breaks off mid-sentence at SambaNova and never reaches Fractile's $720M round at about $7B, and it misstates details such as 'roughly a fifth' of Etched staff from Nvidia (source: 15%) and 'seven hundred megawatts' for the OpenAI deal (source: 750).",
+  "judgment_reason": "Searching was right and it sensibly treated Etched's $40-50B offers as unclosed and flagged private valuations, but it walked through companies one by one instead of leading with the overall picture for a spoken answer.",
+  "spoken_fit_reason": "A dense multi-paragraph wall of funding figures that the word cap cut after the first company, and the written reply itself stops mid-sentence."
+}

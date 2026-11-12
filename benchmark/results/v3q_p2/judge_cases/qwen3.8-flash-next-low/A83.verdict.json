@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The value (about $166,700), the multiple (8.3x) and the profit (about $146,700) match the sketch, but it glosses the 0.0333 percent stake as 'roughly one-third of one percent', a spoken figure ten times too large.",
+  "judgment_reason": "It used the calculator, did not search, and stated the assumptions that matter: that dilution halves the percentage and that there are no liquidation preferences.",
+  "spoken_fit_reason": "It is short plain prose that gives the stake, value, multiple and profit in a few sentences, followed by one relevant caveat."
+}

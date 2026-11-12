@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 0,
+  "answer_quality_reason": "Lays out the wake word, VAD, faster-whisper, local LLM, Piper or Kokoro and Home Assistant Wyoming pipeline from the sources and notes the RAM price spike, but the message breaks off at the microphone, never covers the web-search tool layer, the limitations or the build order, and prices a 24 GB Mac mini at 'around eight to a thousand dollars', a figure no source gives.",
+  "judgment_reason": "Searched appropriately and was candid that a 12 GB GPU build would land at or past the budget, but backed its preferred path with an unsourced price and teased an unexplained 'one capability you can't make fully private'.",
+  "spoken_fit_reason": "Long dense paragraphs that the word cap cut before the hardware advice, so the listener heard only the preamble and part of the pipeline."
+}

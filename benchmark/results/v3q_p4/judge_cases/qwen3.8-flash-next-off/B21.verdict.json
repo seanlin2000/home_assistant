@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It correctly says the Fed held at 3.75 to 4 percent on October 28 after a September hike and gives sourced refi averages around 7.1 percent, but its rule of thumb wrongly names 2020-2022 loans 'in the 3 to 4 percent range' as cases where refinancing at about 7 percent makes sense.",
+  "judgment_reason": "It doubted the premise up front, checked the FOMC decision, corrected the premise plainly, and asked for the user's current rate, balance, and term instead of guessing.",
+  "spoken_fit_reason": "It leads with the correction in plain prose, but it uses asterisk emphasis (*increase*, *you*) and is long enough that the cap cut it off in the mortgage-rate paragraph."
+}

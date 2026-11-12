@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 2,
+  "spoken_fit": 0,
+  "answer_quality_reason": "Every release and date is traceable to the excerpts and falls within about 30 days: Kimi K3.1 Pro weights November 2 to 4, Mistral Large 4 weights October 29, Muse Spark Open October 15 and Muse Ember November 9, DeepSeek V4.1-Flash-1017 October 17 with no November release, and the Qwen4-Max hosted preview of November 11. It slightly misstates the Mac Studio requirement for Spark Open, and the message breaks off mid-sentence.",
+  "judgment_reason": "Searching was right, and it says plainly that DeepSeek shipped nothing in November and that Qwen4 has no open weights, with caveats on vendor claims, but it went over the tool-call limit.",
+  "spoken_fit_reason": "Three filler lead-ins run together before a multi-paragraph wall of figures, which the word cap cut off after the first of the five developments."
+}

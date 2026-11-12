@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The Mistral Large 4 (October 29) and DeepSeek V4.1-Flash-1017 (October 17) details all trace to the excerpts, and the framing note on Meta's Muse brand and Qwen4-Max being hosted-only is accurate, but the reply breaks off after only two of the five developments, so the promised comparison of Meta and Qwen never arrives.",
+  "judgment_reason": "Searching was right and it sensibly flagged that Qwen's new release has no open weights, but it spent nine tool calls on detail and ran out of room before covering what was asked.",
+  "spoken_fit_reason": "The listener heard five run-together narration lines about searching, then dense, spec-heavy paragraphs that the word cap cut off after the first item."
+}

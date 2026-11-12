@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Covers white light as a mix of colors, stronger scattering of short wavelengths, why the sky is not violet (less emitted, absorbed, eye sensitivity), the longer sunset path removing blue, and dust and haze, matching every element of the sketch.",
+  "judgment_reason": "Answered stable physics without searching and kept the jargon out, as the non-scientist framing asked.",
+  "spoken_fit_reason": "Plain prose with no jargon or formatting, and the friendly 'off to other people's daytime skies' image works aloud; the length suits an explanation request."
+}

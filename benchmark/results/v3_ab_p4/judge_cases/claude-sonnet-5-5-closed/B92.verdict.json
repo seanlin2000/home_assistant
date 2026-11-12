@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The results gave dated APYs with $0 minimums for Ally (3.20%), Marcus (3.50%), Capital One (3.20%) and American Express (3.20%), but the answer quotes no bank's rate or interest and offers only the generic rule that each percent on $50,000 is about $500.",
+  "judgment_reason": "Searching was right and it noted rates are variable, but it falsely said it could not check today's rates after retrieving them, leaving the per-bank comparison undone and offering to search again.",
+  "spoken_fit_reason": "Plain prose with numbers spoken in words, but it opens with a disclaimer instead of the comparison and ends with an offer to retry."
+}

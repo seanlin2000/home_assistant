@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 2,
+  "spoken_fit": 0,
+  "answer_quality_reason": "Only Etched and part of Cerebras are covered before the answer breaks off at \"As of yesterday I'm seeing its\", so MatX, Positron, SambaNova and Fractile are never compared; the summary that only \"two of these six\" ship is contradicted by excerpts showing Positron's Atlas and SambaNova's SN50 shipping; and \"roughly a billion and a half total raised\" understates Etched's 800M plus 300M plus 700M.",
+  "judgment_reason": "Searching was right and it flagged Etched's 20x claim as unverified, but it spent the answer on market sizing and Etched minutiae instead of fitting all six companies into a short picture.",
+  "spoken_fit_reason": "Four tool-use preambles run together, then long paragraphs of figures; the word cap cut it before a single company was described."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The Etched section matches the sources ($500M at $5B, $300M at $10.3B, $700M at $21B, over $1B in contracts), but the answer cuts off at SambaNova, so MatX, Positron, Cerebras, and Fractile are never compared, and it wrongly says only two of the six have hardware with paying customers, though the sources show Positron at Cloudflare and Cerebras deployed as well.",
+  "judgment_reason": "Searching was right, and it labelled the $40-50B Etched offers as unconfirmed, but it ran into the tool-call limit chasing stock prices and spent its length on one company instead of fitting all six into a short answer.",
+  "spoken_fit_reason": "It uses bold markdown labels, speaks four search-announcement filler lines, and is a dense wall of figures that the cap cut off during the backdrop."
+}

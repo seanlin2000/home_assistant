@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 0,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It ignores the broadway_shows result and lists seven shows absent from it (Hamilton, The Lion King, MJ, Hadestown, Moulin Rouge, Aladdin, Maybe Happy Ending); only Wicked, The Book of Mormon and Chicago match, while the result's Rocky Horror, Paranormal Activity, & Juliet and the others, with their view counts and audience scores, go unused.",
+  "judgment_reason": "The central call was to rank from the tool's listing, but it said it couldn't confirm current demand even though the tool returned recent views and audience scores, then fell back on memory.",
+  "spoken_fit_reason": "Each show gets only a few words in plain prose, but the answer opens with a disclaimer instead of the ranking and closes with a hedge and a referral to TodayTix."
+}

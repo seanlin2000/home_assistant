@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "Every figure traces to the excerpts (Cerebras's 5.55 billion IPO, SambaNova's 1 billion at 11 billion with JPMorgan, Etched's 700 to 800 million and 20 billion valuation with no revenue, Positron's 750 and 875 million rounds, Fractile's 220 million and the 7 billion headline, MatX's 500 million-plus), but the overall state of the industry gets one clause and technology and commercial progress are thin for several companies.",
+  "judgment_reason": "Searched for current funding data, flagged the figures as approximate news summaries, reconciled conflicting Etched and Positron reports openly, and said it found no valuation or customers for MatX.",
+  "spoken_fit_reason": "Plain prose with no formatting, but a long run of dollar figures across six companies that would be hard to follow aloud, with only a one-clause overall picture up front."
+}

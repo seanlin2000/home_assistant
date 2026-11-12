@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It names five players, roughly following the HoopsHype Global Rating, with this-season figures from the results (Wembanyama about 30 points and 4.4 blocks, the 52-point game, Lakers 11-2, Giannis second in PRA with Miami 5-6), but it calls Doncic's 7.6 assists 'third in the league' when the assist table has him ninth, and it treats Jokic's injury 'around the turn of the calendar', which the PrizePicks excerpt places last season, as the reason for his shorter sample this season.",
+  "judgment_reason": "Searching for current-season stats was right, and it flags that ten to twelve games is a thin sample, but the Jokic injury caveat comes from a misreading of last season's news.",
+  "spoken_fit_reason": "It is plain prose but runs to seven long paragraphs with dense stat lines, and the word cap cut it after the first player."
+}

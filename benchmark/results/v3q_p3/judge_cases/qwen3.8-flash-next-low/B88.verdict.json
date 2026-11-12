@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The developments it does cover match the excerpts and fall in the window (Kimi K3.1 Pro announced October 23 with weights November 4, Mistral Large 4 weights October 29, Muse Spark Open October 15), but the reply breaks off mid-sentence during the third item, so it never reaches five developments or compares DeepSeek and Qwen as asked.",
+  "judgment_reason": "Searching was right for recent releases, and it sensibly flagged that these are open weights under custom licenses and that most benchmarks are vendor claims, but it spent seven tool calls and ran out of room before covering the labs the user named.",
+  "spoken_fit_reason": "The listener heard a long preamble about licenses and one dense paragraph of parameter counts before the word cap cut it, with no comparison of the named labs."
+}

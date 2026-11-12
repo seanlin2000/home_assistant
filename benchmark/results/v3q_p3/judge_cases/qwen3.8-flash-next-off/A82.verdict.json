@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 1,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The listener heard sound definitions of an API and a tool, but the word cap cut it before the MCP explanation and the whole architecture (agent loop, search and fetch tools, summarizing, safeguards), which was the larger half of the question.",
+  "judgment_reason": "It made five search and fetch calls for a conceptual architecture question, hitting the tool-call limit, and padded the answer with July 2026 protocol-revision trivia instead of the design asked for.",
+  "spoken_fit_reason": "Three spoken filler preambles ran together ahead of a long lecture that was cut off by the word cap."
+}

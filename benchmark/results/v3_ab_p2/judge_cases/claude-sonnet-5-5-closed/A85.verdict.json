@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The meal protein figures (about 50, 60, 25 and 35 to 40 grams) add up to roughly 170 grams with a plausible total of about 2,300 calories from cheap staples and no protein powder, but some items are understated (eight ounces of cooked chicken is closer to 70 grams than 60) and no calorie breakdown backs the total.",
+  "judgment_reason": "Met every constraint (under 2,500 calories, minimal prep, affordable staples, no powder), hedged the totals with 'roughly' and 'around', and told the user to adjust portions.",
+  "spoken_fit_reason": "Leads with the totals and walks through the meals in plain prose without lists, a length a full-day plan needs."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The cases for Wembanyama (about 30 points and 12 rebounds over 12 games, the 50-20-5 game, Spurs net rating near 11) and Doncic (40.1 average, four straight 40-point games, Lakers 11-2) are traceable to this season's excerpts, but the message breaks off at 'If' after only two of the five players, and it calls the Wednesday Chicago game 'Tuesday'.",
+  "judgment_reason": "It searched for current-season data, said plainly that only about twelve games had been played, and noted that NBA.com and HoopsHype disagree, but it spent its whole tool budget and did not finish the ranking.",
+  "spoken_fit_reason": "Three 'let me check' preambles were spoken run together before a long essay, and the word cap cut it during the first player."
+}

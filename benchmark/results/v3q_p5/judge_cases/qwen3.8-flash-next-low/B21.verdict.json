@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It corrects the premise with the October 28 hold at 3 3/4 to 4 percent, gives 30-year rates near 7 percent that match the excerpts (6.963 to 7.233), and lays out the rate-gap, closing-cost and break-even logic, though the \"2022 to 2024 ... near 7.5 to 8\" aside and the \"two to four years at typical New York pricing\" break-even are unsourced.",
+  "judgment_reason": "It checked the Fed decision before answering, said plainly \"the Fed didn't cut to zero,\" and asked for the user's current rate and balance instead of guessing.",
+  "spoken_fit_reason": "It leads with the correction in plain prose, but at four paragraphs it ran past the word cap and the closing question was never heard."
+}

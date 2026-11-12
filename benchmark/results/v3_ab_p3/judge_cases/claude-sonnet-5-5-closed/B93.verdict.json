@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 0,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The tool returned exactly five nearby Michelin restaurants (R40, Hupo Bib Gourmand, Casa Enrique, one-star Meju, Vert Frais) with cuisine, price level and distance, yet the answer names none of them and gives only generic talk about the neighborhood.",
+  "judgment_reason": "Calling the restaurant tool instead of searching was right, but it falsely says 'I could not read the restaurant results' and asks for cuisine and budget preferences the user had no need to give.",
+  "spoken_fit_reason": "Plain prose without formatting, but it leads with a disclaimer and spends several sentences on process instead of an answer."
+}

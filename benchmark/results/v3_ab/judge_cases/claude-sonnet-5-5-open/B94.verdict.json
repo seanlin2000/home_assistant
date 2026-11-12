@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The Lucerne, Interlaken, Zermatt order is sensible and the cited prices trace to the excerpts (Half Fare Card CHF 150, Gornergrat CHF 66 versus 132, Lucerne Travel Pass CHF 240), but it says it found no Swiss Travel Pass prices although swisspasscalculator gave CHF 309 for four days, it never compares point-to-point fares, and it names no Lucerne or Jungfrau-region viewpoint such as Rigi or Pilatus.",
+  "judgment_reason": "Searched for current pass prices, kept hiking minimal as asked, hedged its Half Fare recommendation as 'likely', and flagged the sources' conflict on the Jungfraujoch discount.",
+  "spoken_fit_reason": "A day-by-day plan in plain spoken sentences with prices spelled out and no lists or URLs, at a length a five-day plan warrants."
+}

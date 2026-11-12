@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The excerpts gave per-bank APYs and minimums (Marcus 3.50% and Amex 3.20% with no minimum, Capital One 360 at 3.20%, Synchrony 3.75%), but the answer gives no per-bank rate or interest, offering only a generic three-to-four-and-a-half percent range and a rule of thumb, and wrongly says compounding adds more on top of an APY.",
+  "judgment_reason": "Searching was right and it noted rates are variable, but saying 'I could not check today's rates' after the searches returned dated per-bank figures discards the evidence the question needed.",
+  "spoken_fit_reason": "Plain prose without formatting, but it opens with a disclaimer rather than the comparison and runs long on generalities."
+}

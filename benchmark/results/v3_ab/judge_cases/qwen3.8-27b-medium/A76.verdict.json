@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "Causes and the three triggers are well chosen and labeled, but it puts Ukraine's referendum in August (it was December 1, 1991) and has Gorbachev resigning in early December (it was December 25), the date errors the sketch calls out.",
+  "judgment_reason": "It ran a wikipedia_lookup on a stable history question that needed no search, though it did note the debate over how much weight each factor deserves.",
+  "spoken_fit_reason": "Several long paragraphs of speech that hit the word cap, so the listener heard the causes and only the first of the three events."
+}

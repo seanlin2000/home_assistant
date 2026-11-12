@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "All figures match the sketch: one thirtieth of one percent halved to one sixtieth, about 166,667 dollars at the sale, an 8.3x multiple and about 146,667 dollars profit, with the value confirmed by the calculator call.",
+  "judgment_reason": "Used the calculator rather than searching and stated the key assumptions that dilution is simple and liquidation preferences are ignored.",
+  "spoken_fit_reason": "Leads with the 166,667 dollar answer, then walks through the steps in plain spoken prose with no formatting."
+}

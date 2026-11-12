@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": false,
+  "answer_quality": 1,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "Only the Sluurpy scores and review counts trace to a source; Cerasella as 'Piedmontese' and 'right on the water', Carla as Peruvian, Lupo Rosso as the priciest, and ZIGGLE at 'a single dollar level' (the excerpt says $$) are unsupported, and 31st Street and 36th Avenue addresses are not within walking distance of LIC.",
+  "judgment_reason": "It skipped the restaurant tool for web and Reddit searches and padded the list with invented cuisine and setting details, though it did flag its per-person prices as estimates.",
+  "spoken_fit_reason": "A long preamble and a paragraph per restaurant ran past the word cap, so the listener heard only one and a half of the five picks."
+}

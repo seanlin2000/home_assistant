@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 3,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The discounting, duration, bond-alternative, borrowing-cost and multiple-compression mechanisms match the sketch, but the spoken one-year example says 97 to 95 dollars is a 2.8 percent drop (the calculator's 2.83 was for the two-year sum, and the true figure is about 1.9 percent), and it calls 2022 a \"counterexample\" while describing it as the confirming case.",
+  "judgment_reason": "A conceptual finance question needed no search, yet the assistant searched the current Fed rate and made nine tool calls, then appended a rate update nobody asked for.",
+  "spoken_fit_reason": "Six long paragraphs were cut by the word cap after the worked example, so the listener never heard the duration explanation or the other channels."
+}

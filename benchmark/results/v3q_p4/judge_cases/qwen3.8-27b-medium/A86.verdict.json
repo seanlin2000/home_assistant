@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 4,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The answer correctly covers inviting users through Settings > Home access, linking one voice ecosystem, the bridge's local Zigbee control and switches surviving an outage, and Home Assistant for offline voice, but it wrongly lumps Apple Home in with cloud-dependent assistants, when it works locally with a home hub.",
+  "judgment_reason": "It ran two needless searches for a stable architecture question that general knowledge covers.",
+  "spoken_fit_reason": "The plain prose is listenable but long, and the word cap cut it off before the internet-outage part, which the user explicitly asked about."
+}

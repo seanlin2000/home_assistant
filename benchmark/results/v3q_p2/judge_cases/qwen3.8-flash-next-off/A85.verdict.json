@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The plan's own headline promises 'about 170 grams of protein', but its meals add up to roughly 2,060 calories and 147 grams, which it admits ('treat 170 as the top end'), and it puts a cup of Greek yogurt plus peanut butter at only 16 grams, well below what its own 10 grams per 100 grams figure implies.",
+  "judgment_reason": "It ran ten searches, fetches and calculations on a stable nutrition question that needed no search and hit the tool limit, though it did admit the protein shortfall rather than hide it.",
+  "spoken_fit_reason": "It has a bold markdown headline, speaks four tool-use narration lines aloud, and is long enough that the word cap cut it after breakfast."
+}

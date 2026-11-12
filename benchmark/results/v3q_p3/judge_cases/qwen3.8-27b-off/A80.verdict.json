@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 0,
+  "answer_quality_reason": "Memory figures are right (about 35 GB at 4-bit, 17.5 GB at 2-bit, 140 GB at 16-bit) and the trade-offs cover small 4-bit loss, marked 2-bit degradation, scale overhead and bandwidth-bound speedups, but it never says the context cache and activations come on top.",
+  "judgment_reason": "Correctly answered from stable knowledge without searching and labeled the figures as weights alone.",
+  "spoken_fit_reason": "Four long paragraphs overran the word cap, so the listener heard the memory math but none of the trade-offs."
+}

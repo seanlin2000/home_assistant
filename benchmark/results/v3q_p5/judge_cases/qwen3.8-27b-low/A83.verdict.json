@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The stake (one three-thousandth), diluted stake (one six-thousandth), about 167 thousand dollars, eight and a third times and about 147 thousand dollars profit all match the reference, but 'one sixty-hundredth of a percent' is a garbled way to say it.",
+  "judgment_reason": "Calculator use without searching was right, but it never states that liquidation preferences and other share classes are ignored.",
+  "spoken_fit_reason": "Four short plain sentences that walk through the numbers and end with the multiple and profit, with no formatting."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The year 1989 is right, but the extra detail 'late November' is wrong, since the wall fell on November 9.",
+  "judgment_reason": "It correctly treated settled history as needing no search.",
+  "spoken_fit_reason": "One sentence that leads with the answer."
+}

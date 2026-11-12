@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The audio half is sound (multipoint competition, 2.4 GHz interference, one source at a time, wired link, 5 GHz Wi-Fi), but the eye-strain half omits the DLP rainbow effect, blinking and breaks, and advises sitting closer, which the reference names as a cause of strain.",
+  "judgment_reason": "No search was needed, and it separated the two problems and gave an ordered sequence of tests for each.",
+  "spoken_fit_reason": "Markdown bold headings like '**The choppy audio**' and a long essay that the word cap cut before any troubleshooting steps were heard."
+}

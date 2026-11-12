@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It gives 1989, with the crossings opened on November 9, matching the reference, and adds the correct reunification date of October 3, 1990.",
+  "judgment_reason": "It recognized settled history and answered from knowledge without searching.",
+  "spoken_fit_reason": "It leads with the year in two plain sentences."
+}

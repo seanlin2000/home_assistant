@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 0,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The broadway_shows results ranked running shows by recent views and audience score (Rocky Horror, Paranormal Activity, & Juliet, Cursed Child, Hamilton at 96, and so on), but the answer ignores them and lists from memory, including The Lion King, Hadestown, Moulin Rouge and Six that appear in neither result, with no ranking basis; only the overlap (Hamilton, Wicked, Maybe Happy Ending, MJ, Book of Mormon, Chicago) is supported.",
+  "judgment_reason": "Calling the listings tool was right, but claiming it 'couldn't pull' the rankings when both calls returned data, and then answering from general knowledge, fails the central point of a current-demand ranking.",
+  "spoken_fit_reason": "Each show gets a short plain-prose phrase with no list formatting, which suits a ten-item spoken answer despite one extra padding sentence."
+}

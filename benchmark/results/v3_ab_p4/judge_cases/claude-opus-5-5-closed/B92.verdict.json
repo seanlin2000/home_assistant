@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The illustrative interest math is right ($2,000 at 4 percent, with APY already including compounding), but it gives no bank-specific rates or minimums even though the excerpts gave CIT Platinum at 3.75 percent on $5,000-plus with a $100 opening minimum, Cash App at 3.50 percent with conditions and Popular Direct's $100 minimum.",
+  "judgment_reason": "It was honest that its figures were illustrative and that rates are variable, but it discarded usable retrieved rates instead of reporting the few banks the sources covered.",
+  "spoken_fit_reason": "Plain prose with numbers spelled out, but it opens with a disclaimer and runs long before reaching any concrete figures."
+}

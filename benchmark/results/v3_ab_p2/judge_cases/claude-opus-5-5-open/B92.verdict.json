@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Rates trace to the excerpts (Synchrony 3.75%, Marcus 3.50%, Ally, Capital One 360 Performance and Amex 3.20%, PiBank 4.40%), the interest is $50,000 times APY ($1,875, $1,750, $1,600, $2,200), and the $0 minimums come from Banksparency, with Synchrony's minimum honestly marked as not found.",
+  "judgment_reason": "Searched for current rates, said the figures assume the rate holds and that rates are variable and follow the Fed, and mentioned taxes.",
+  "spoken_fit_reason": "Leads with the overall rate range, then covers each bank in a short spoken clause with no table or list markup."
+}

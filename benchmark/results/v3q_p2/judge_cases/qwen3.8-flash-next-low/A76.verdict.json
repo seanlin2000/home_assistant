@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 4,
+  "judgment": 2,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It covers the 1989 revolutions with the Berlin Wall on November 9, 1989, the August 1991 coup, and the Belavezha Accords of December 8 with Gorbachev resigning December 25 and dissolution December 26, and it separates structural causes from triggers, though it puts the 1989 refusal to use force among the triggers, which blurs the line a little.",
+  "judgment_reason": "Stable history needed no lookup, yet it made three wikipedia_lookup calls, but otherwise it made the cause versus trigger distinction the question asked for.",
+  "spoken_fit_reason": "The answer runs to many paragraphs, so the word cap cut it off before the causes and triggers section and the listener never heard the part they asked for."
+}

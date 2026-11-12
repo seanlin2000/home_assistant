@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The 4-bit (about 35 GB) and 2-bit (about 17 GB) figures and the quality trade-offs match the sketch, but the 16-bit figure is given as 130 gigabytes from a binary-gibibyte calculation while the others are decimal, and the speedup is credited to arithmetic rather than memory bandwidth.",
+  "judgment_reason": "It correctly answered from knowledge without searching and used the calculator for the memory arithmetic.",
+  "spoken_fit_reason": "A long multi-paragraph answer with a run-together \"weights:So\" join that the word cap cut before the 2-bit trade-offs."
+}

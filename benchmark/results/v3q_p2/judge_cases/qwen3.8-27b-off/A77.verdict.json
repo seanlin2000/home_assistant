@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It covers white light as a mix, shorter wavelengths scattering more, why not violet, and the long low path at sunset stripping out blue, but \"about ten times more than red\" overstates the ratio.",
+  "judgment_reason": "Answering stable physics without a search was right, and it kept the explanation in plain language with the long diagonal route comparison as asked.",
+  "spoken_fit_reason": "A five-paragraph monologue that the word cap cut at the violet question, so the listener never heard the sunset half of the answer."
+}

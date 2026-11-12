@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The API, tool and MCP definitions are accurate and well distinguished, but the architecture breaks off mid-sentence in layer one of four ('far more often than on bad prose'), so the agent loop, search and fetch tools, summarizing, and safeguards are never described.",
+  "judgment_reason": "It made eight tool calls, including search API pricing and model rankings nobody asked for, on a conceptual design question that needed no search, which tripped the tool-call limit.",
+  "spoken_fit_reason": "Four filler preambles run together, bold markdown leads each paragraph, and the long answer was cut by the word cap before the architecture was spoken."
+}

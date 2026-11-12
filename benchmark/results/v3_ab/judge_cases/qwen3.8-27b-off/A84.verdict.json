@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It correctly explains DCF discounting, why distant profits lose more value, tech as long-duration assets, and Treasuries as the competing alternative, but it describes dividing by 'a discount rate raised to the power' instead of one plus the rate, and it leaves out higher borrowing costs and any concrete example such as 2022.",
+  "judgment_reason": "Answering a stable mechanism from knowledge without searching was right, and it adds the fair nuance that fast growth can outrun a higher discount rate.",
+  "spoken_fit_reason": "It opens with two sentences about not needing current data and 'Let me think through this carefully', then runs six paragraphs that the word cap cut before the tech-stock link was even made."
+}

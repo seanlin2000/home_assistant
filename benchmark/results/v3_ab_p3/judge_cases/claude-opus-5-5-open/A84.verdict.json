@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Explains present value with a discount rate built on the risk-free rate, compounding hitting distant cash flows hardest, growth tech as long-duration assets versus a utility or bank, plus costlier borrowing and bonds as an alternative, matching the sketch.",
+  "judgment_reason": "Answered stable finance theory without searching and avoided citing any current rate or market figure.",
+  "spoken_fit_reason": "Leads with the core idea and explains in plain conversational prose with no formatting, at a length the explanation request demands."
+}

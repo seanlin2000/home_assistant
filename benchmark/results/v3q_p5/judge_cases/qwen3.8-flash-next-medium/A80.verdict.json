@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 5,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The memory figures are right (140 GB at 16-bit, 35 GB at 4-bit, 17.5 GB at 2-bit, with real files around 40 GB and 26 to 30 GB), and it covers small loss at 4-bit, severe loss at 2-bit, speed from memory bandwidth, outlier-aware methods, and the KV cache on top.",
+  "judgment_reason": "It searched and made five tool calls for stable arithmetic and concepts it could answer directly, exceeding the tool-call limit.",
+  "spoken_fit_reason": "Five long paragraphs ran past the word cap, so the listener heard only the definition and the memory figures, not the trade-offs that make up half the question."
+}

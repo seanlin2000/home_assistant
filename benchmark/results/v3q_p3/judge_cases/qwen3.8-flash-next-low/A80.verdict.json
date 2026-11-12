@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It states 'at a true 4 bits per weight it's 17.5 billion bytes' and 'at 2 bits the raw figure is 8.75 billion bytes', half the correct 35 GB and 17.5 GB, then contradicts itself with 37 GB and 20 GB once scales are added, though the trade-offs (small loss at 4-bit, a cliff below it, AWQ, bandwidth speedup) are well covered.",
+  "judgment_reason": "It searched and made seven calculator calls on a stable technical question that needed no search, and did not reconcile its raw figures with its own calculator result of 35 billion bytes for 4-bit.",
+  "spoken_fit_reason": "Five dense paragraphs were cut by the word cap mid-number ('closer to 4.'), so the listener heard the definition and the wrong 4-bit figure but none of the trade-offs."
+}

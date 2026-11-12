@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 0,
+  "answer_quality_reason": "Funding, valuations and commercial status for all six companies trace to the excerpts (Etched $21B and $40-50B offers, Positron $875M at $5B, Fractile $720M at about $7B, SambaNova $1B at $11B), but it gives the OpenAI deal as 'up to seven hundred megawatts' instead of 750 and says SambaNova has real revenue when a source says it has disclosed none.",
+  "judgment_reason": "Searched each company, separated Etched's reported offers from closed rounds and Fractile's 2027 shipping plans from shipped product, and flagged Etched's order book as undisclosed revenue.",
+  "spoken_fit_reason": "A long multi-paragraph report with bold markdown company headers that breaks off mid-word, cut by the word cap during the first company."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Every figure matches the sketch: about 0.0333 percent halved to 0.0167 percent, about 166,667 dollars at exit, roughly 8.33x and about 146,667 dollars profit, all taken from the calculator results.",
+  "judgment_reason": "It used the calculator rather than searching and stated the key assumptions, even dilution with no anti-dilution protection and liquidation preferences ignored, calling it a back-of-the-envelope figure.",
+  "spoken_fit_reason": "Short plain-prose paragraphs walk through the numbers in order with no markdown, a reasonable length for a question that asks for value, multiple and profit."
+}
