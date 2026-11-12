@@ -61,6 +61,11 @@ candidates:
     provider: llama-server
     model: qwen3.8-flash-next
     think: medium
+  - key: qwen3.8-flash-next-low
+    label: Qwen 3.8 Flash Next, GSQ-RCO IQ3_XXS (n-gram table on disk), on llama-server, thinking low (prompt 3.0)
+    provider: llama-server
+    model: qwen3.8-flash-next
+    think: low
   - key: qwen3.8-flash-next-off
     label: Qwen 3.8 Flash Next, GSQ-RCO IQ3_XXS (n-gram table on disk), on llama-server, thinking off (prompt 3.0)
     provider: llama-server

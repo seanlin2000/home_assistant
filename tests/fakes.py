@@ -20,10 +20,11 @@ def tool_reply(query: str, call_id: str = "call_0", tool_name: str = "search_and
     return [ToolCallRequest(call=call), Completion(message=Message(role=Role.ASSISTANT, content="", tool_calls=[call]), stats=stats)]
 
 
-def several_tool_calls_reply(*queries: str) -> list[LLMEvent]:
+def several_tool_calls_reply(*queries: str, prompt_tokens: int | None = None) -> list[LLMEvent]:
     """One model turn asking for a search per query at once."""
     calls = [ToolCall(id=f"call_{index}", name="search_and_read", arguments={"query": query}) for index, query in enumerate(queries)]
-    return [*(ToolCallRequest(call=call) for call in calls), Completion(message=Message(role=Role.ASSISTANT, content="", tool_calls=calls), stats=GenerationStats(model="fake", total_seconds=0.1))]
+    stats = GenerationStats(model="fake", total_seconds=0.1, prompt_tokens=prompt_tokens)
+    return [*(ToolCallRequest(call=call) for call in calls), Completion(message=Message(role=Role.ASSISTANT, content="", tool_calls=calls), stats=stats)]
 
 
 def malformed_reply(raw: str = '{"query": "fed funds') -> list[LLMEvent]:
