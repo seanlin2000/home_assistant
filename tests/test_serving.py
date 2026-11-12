@@ -24,6 +24,15 @@ def test_a_model_without_a_draft_layer_gets_no_speculative_flag() -> None:
     assert "--spec-type" not in build_command(gemma)
 
 
+def test_flash_next_keeps_its_ngram_table_on_disk_and_the_27b_gets_the_default_load() -> None:
+    config = load_serving_config()
+    flash_next = config.model_copy(update={"server": config.server.model_copy(update={"model": "qwen3.8-flash-next"})})
+    command = build_command(flash_next)
+    assert command[command.index("-lm") + 1] == "mmap"
+    assert command[command.index("-lzm") + 1] == "on"
+    assert {"-lm", "-lzm"}.isdisjoint(build_command(config))
+
+
 def test_an_unknown_key_stops_the_launch(tmp_path: Path) -> None:
     misspelt = tmp_path / "serving.toml"
     misspelt.write_text(SERVING_CONFIG_PATH.read_text().replace("swa_full = false", "swa_ful = false"))

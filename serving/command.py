@@ -49,6 +49,10 @@ def model_flags(alias: str, model: ModelSettings) -> list[str]:
         flags.append("--swa-full")
     if model.speculative != "none":
         flags.extend(["--spec-type", model.speculative])
+    if model.load_mode != "auto":
+        flags.extend(["-lm", model.load_mode])
+    if model.lazy_mode != "off":
+        flags.extend(["-lzm", model.lazy_mode])
     return flags
 
 

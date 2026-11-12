@@ -56,6 +56,16 @@ candidates:
     provider: llama-server
     model: qwen3.8-27b
     think: false
+  - key: qwen3.8-flash-next-medium
+    label: Qwen 3.8 Flash Next, GSQ-RCO IQ3_XXS (n-gram table on disk), on llama-server, thinking medium (prompt 3.0)
+    provider: llama-server
+    model: qwen3.8-flash-next
+    think: medium
+  - key: qwen3.8-flash-next-off
+    label: Qwen 3.8 Flash Next, GSQ-RCO IQ3_XXS (n-gram table on disk), on llama-server, thinking off (prompt 3.0)
+    provider: llama-server
+    model: qwen3.8-flash-next
+    think: false
   # harness: the same model through the harness's HTTP API (design doc v2/04 section 3.2); install the services first (scripts/services.sh install).
   - key: gemma4-e4b-harness
     label: Gemma 4 E4B on llama-server, through the harness service
@@ -107,6 +117,24 @@ candidates:
     label: Claude Fable 5.1, closed-book hand-written pass by a fresh subagent (reference ceiling)
     provider: manual
     model: claude-fable-5-1 (manual, pass 2)
+  # Question set 3.0's categories A and B, answered by a fresh Opus 5.5 subagent: open book called the real tools and read the results before answering;
+  # closed book listed its tool calls but answered from its own knowledge without reading them.
+  - key: claude-opus-5-5-open
+    label: Claude Opus 5.5, open-book hand-written pass by a fresh subagent (reference ceiling)
+    provider: manual
+    model: claude-opus-5-5 (manual, open book)
+  - key: claude-opus-5-5-closed
+    label: Claude Opus 5.5, closed-book hand-written pass by a fresh subagent
+    provider: manual
+    model: claude-opus-5-5 (manual, closed book)
+  - key: claude-sonnet-5-5-open
+    label: Claude Sonnet 5.5, open-book hand-written pass by a fresh subagent
+    provider: manual
+    model: claude-sonnet-5-5 (manual, open book)
+  - key: claude-sonnet-5-5-closed
+    label: Claude Sonnet 5.5, closed-book hand-written pass by a fresh subagent
+    provider: manual
+    model: claude-sonnet-5-5 (manual, closed book)
 
 judge:
   review_sample_fraction: 0.2

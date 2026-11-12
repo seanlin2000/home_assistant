@@ -60,6 +60,8 @@ class ModelSettings(StrictModel):
     reasoning: Literal["on", "off", "auto"]
     swa_full: bool
     speculative: Literal["none", "draft-mtp"]
+    load_mode: Literal["auto", "mmap"] = "auto"  # -lm; "mmap" keeps the file memory-mapped, which lazy_mode needs
+    lazy_mode: Literal["off", "on"] = "off"  # -lzm; "on" reads per-layer embedding tables (an n-gram table) from disk on demand instead of keeping them resident
     sampling: Sampling
     thinking_sampling: Sampling | None = None  # the model maker's set for thinking mode; without one, thinking uses `sampling`
 

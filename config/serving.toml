@@ -67,3 +67,44 @@ min_p = 0.0
 presence_penalty = 0.0
 repeat_penalty = 1.0
 max_output_tokens = 2048                    # thinking counts against it; medium effort writes a few hundred tokens before the answer
+
+# A 125B mixture of experts (6B active) whose 51B n-gram embedding table ships as a second shard. Only shard 1 (47.0 GB) must be resident; with
+# load_mode mmap and lazy_mode on, llama-server reads the table's rows (shard 2, 28.8 GB) from disk as tokens need them (ISTA-DASLab's model card).
+# Downloaded with `hf download ... --include "IQ3_XXS/*"`: `serving fetch` cannot fetch a split file from a subfolder. The launch checks shard 1's
+# hash; shard 2's is 316b46f3a2dbd68c900f43136ab9449f9dcc3725dfd8c794847c204bc161e113.
+[models."qwen3.8-flash-next"]
+gguf = "~/models/gguf/Qwen3.8-Flash-Next-GSQ-RCO/IQ3_XXS/Qwen3.8-Flash-Next-GSQ-RCO-IQ3_XXS-00001-of-00002.gguf"
+source = "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF"
+revision = "ed59f92082b1e93c0e96d60a8b11aab089b52f09"
+sha256 = "219ea929900dfa9ef091f3aa473fdba6874b65fcb36526d7d851ac9e95856d15"
+context_tokens = 18432
+conversation_tokens = 16384
+slots = 2
+kv_unified = true
+cache_idle_slots = false
+gpu_layers = "all"
+flash_attention = "on"
+prompt_cache_mib = 1024                     # half the 27B's: shard 1 leaves little memory on the 64 GB Studio
+reasoning = "off"                           # the server default; the harness turns thinking on per request
+swa_full = false
+speculative = "none"
+load_mode = "mmap"
+lazy_mode = "on"
+
+[models."qwen3.8-flash-next".sampling]      # Qwen's instruct (non-thinking) set (Qwen/Qwen3.8-Flash-Next model card)
+temperature = 0.7
+top_p = 0.8
+top_k = 20
+min_p = 0.0
+presence_penalty = 1.5
+repeat_penalty = 1.0
+max_output_tokens = 600
+
+[models."qwen3.8-flash-next".thinking_sampling]  # Qwen's thinking set (same card)
+temperature = 1.0
+top_p = 0.95
+top_k = 20
+min_p = 0.0
+presence_penalty = 0.0
+repeat_penalty = 1.0
+max_output_tokens = 2048
