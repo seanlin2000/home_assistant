@@ -46,8 +46,9 @@ EMPTY_COMPLETION_RETRIES = 1
 MALFORMED_RETRIES = 1
 REPEATED_CALL_NOTE = "You already made this exact call for this question; here is its result again. Use it rather than calling again."
 TOOL_LIMIT_NOTICE = "Tool call limit reached. Answer the user now with what you already know; do not call any more tools."
-CONTEXT_LIMIT_NOTICE = "No room left for this result. Answer the user now with what you already know; do not call any more tools."
-# Web text runs about four characters a token; counting three keeps the estimate on the safe side, and each message adds its template markers.
+CUT_TO_FIT_NOTE = "(The rest was cut to fit. Answer the user now from what is here; do not call any more tools.)"
+# Search results measured 3.6 characters a token on average with Qwen's tokenizer, and as few as 2 on pages of tables and numbers;
+# counting three keeps most cuts inside the room, and each message adds its template markers.
 CHARS_PER_TOKEN_ESTIMATE = 3
 MESSAGE_MARKER_TOKENS = 10
 TOOL_UNREACHABLE_NOTICE = "The web search tool is unavailable right now. Tell the user you could not check the web, then answer from your own knowledge with that caveat."
@@ -55,6 +56,11 @@ SENTENCE_END = re.compile(r"[.!?][\"')\]]?(\s|$)")
 # Gemma 4 now and then writes its tool call as text ("<tool_call> search_and_read(query=...)", "<execute_tool> ...") instead of calling the tool.
 MARKUP_START = "<"
 WRITTEN_TOOL_CALL = re.compile(r"^\s*<\|?\s*(tool_call|execute_tool|tool_code|function_call)\b", re.IGNORECASE)
+# search_and_read joins its pages with a blank line, each starting with its rank: "[2] Title".
+PAGE_SECTION_START = re.compile(r"\n\n(?=\[\d+\] )")
+SECTION_SEPARATOR_LENGTH = 2
+UNTRUSTED_OPENING = re.compile(r'^<untrusted source="[^"]*">\n')
+UNTRUSTED_CLOSING = "\n</untrusted>"
 
 
 class SpeechHold:
@@ -173,7 +179,7 @@ async def run(conversation: list[Message], llm: LLMClient, tools: ToolBox, polic
         async for event in execute_tool_calls(runner, reply.tool_calls, round_index, messages, transcript, policy):
             yield event
         if not next_request_fits(messages, transcript, policy):
-            set_aside_results_that_do_not_fit(messages, transcript)
+            cut_last_results_to_fit(messages, transcript, policy)
     restore_spoken_question(messages, spoken_question)
     finish_transcript(transcript, reply, cap, messages, started)
     transcript.untrusted = tools.untrusted
@@ -442,11 +448,48 @@ def last_reply_index(messages: list[Message]) -> int:
     return max(index for index, message in enumerate(messages) if message.role == Role.ASSISTANT)
 
 
-def set_aside_results_that_do_not_fit(messages: list[Message], transcript: Transcript) -> None:
-    """Replaces the last round's tool results with a notice to answer now; the transcript's tool call records keep the results themselves."""
-    for index in range(last_reply_index(messages) + 1, len(messages)):
-        messages[index] = messages[index].model_copy(update={"content": CONTEXT_LIMIT_NOTICE})
+def cut_last_results_to_fit(messages: list[Message], transcript: Transcript, policy: AgentPolicy) -> None:
+    """Cuts the last round's tool results down to the room left in the context, so the model answers from the start of every result instead of
+    from none of them. The context is then full, so the model must answer next; the transcript's tool call records keep the results whole."""
+    result_indices = range(last_reply_index(messages) + 1, len(messages))
+    room_in_characters = room_left_for_results(messages, transcript, policy) * CHARS_PER_TOKEN_ESTIMATE
+    shares = fair_shares([len(messages[index].content) for index in result_indices], room_in_characters)
+    for index, share in zip(result_indices, shares):
+        messages[index] = messages[index].model_copy(update={"content": cut_result_to_length(messages[index].content, share)})
     transcript.hit_context_limit = True
+
+
+def room_left_for_results(messages: list[Message], transcript: Transcript, policy: AgentPolicy) -> int:
+    reply_index = last_reply_index(messages)
+    result_markers = MESSAGE_MARKER_TOKENS * (len(messages) - reply_index - 1)
+    used_tokens = transcript.model_calls[-1].prompt_tokens + estimated_tokens(messages[reply_index]) + result_markers + policy.max_output_tokens
+    return max(policy.context_tokens - used_tokens, 0)
+
+
+def fair_shares(lengths: list[int], room: int) -> list[int]:
+    """Splits the room evenly, except that a piece shorter than its even share keeps its whole length and leaves the rest to the longer pieces."""
+    shares = [0] * len(lengths)
+    remaining = room
+    shortest_first = sorted(range(len(lengths)), key=lambda position: lengths[position])
+    for handed_out, position in enumerate(shortest_first):
+        shares[position] = min(lengths[position], remaining // (len(lengths) - handed_out))
+        remaining -= shares[position]
+    return shares
+
+
+def cut_result_to_length(content: str, length: int) -> str:
+    """A search result lists several pages one after another; each page keeps its own opening part, so a cut never drops the later pages whole.
+    The untrusted wrapper's tags stay whole, so the model still sees where the stranger's text starts and ends."""
+    if len(content) <= length:
+        return content
+    opening_match = UNTRUSTED_OPENING.match(content)
+    opening = opening_match.group(0) if opening_match else ""
+    closing = UNTRUSTED_CLOSING if opening and content.endswith(UNTRUSTED_CLOSING) else ""
+    sections = PAGE_SECTION_START.split(content[len(opening) : len(content) - len(closing)])
+    room_for_sections = max(length - len(opening) - len(closing) - len(CUT_TO_FIT_NOTE) - SECTION_SEPARATOR_LENGTH * len(sections), 0)
+    shares = fair_shares([len(section) for section in sections], room_for_sections)
+    kept = [section[:share] for section, share in zip(sections, shares) if share]
+    return opening + "\n\n".join([*kept, CUT_TO_FIT_NOTE]) + closing
 
 
 def limit_notices(calls: list[ToolCall]) -> list[Message]:
