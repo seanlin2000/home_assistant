@@ -10,126 +10,170 @@
 # version 2.3 adds category J (sports): NBA and NFL questions the sports tools answer from recorded ESPN answers (benchmark/fixtures/sports/). today pins
 # the date the prompt gives to the day of the recording, and expected_entity names the team or player a sports tool's heading must say.
 # version 2.4 adds four category J questions (J72-J75) that box_score answers: a team's last game, two teams' last meeting, and a game near a date.
+# version 3.0 replaces categories A and B with twenty broader questions (A76-A87, B88-B95; new numbers so comparisons with earlier runs never pair
+# a new question with a retired one), keeping the two traps A11 (settled history, should not search) and B21 (a false current premise, should search).
 # expected_search: "no" (should answer from knowledge or reasoning), "yes" (should decide to search), "instructed" (the question says to search).
 # constraints are what the harness or the judge checks as gates. reference_sketch is what a correct answer must contain, for the judge.
-version: "2.4"
+version: "3.0"
 questions:
-  - id: A1
+  - id: A76
     category: A
-    tests: Technical explanation without misleading simplification
+    tests: History, separating long-term causes from immediate triggers
     expected_search: "no"
     exchanges:
-      - "Why can a 16 GB GPU sometimes run an MoE model with 30 billion total parameters, but not necessarily a 30 billion parameter dense model? Explain the difference between active parameters and the memory required to store the model."
+      - "How did the Cold War end? Explain the three most important events that led to the dissolution of the Soviet Union, and distinguish between the causes and the immediate triggers."
     reference_sketch: >
-      Both models must hold all weights in memory, so the total parameter count sets the memory need for both; a 30B model at 4-bit needs roughly 15 to 18 GB either way and may not fit 16 GB.
-      An MoE activates only a few experts per token, so it is faster and needs less compute, not less memory. It runs on 16 GB only when quantized small enough or when some experts are offloaded to CPU RAM, which the sparse activation makes tolerable.
-      A correct answer separates speed and compute (active parameters) from storage (total parameters) and does not claim MoE needs less VRAM by nature.
+      Causes (long-term): a stagnant command economy that could not keep up with Western technology, the cost of the arms race and the war in Afghanistan, nationalism in the
+      republics and Eastern Europe, and Gorbachev's reforms (glasnost and perestroika, and letting Eastern Europe go) loosening the party's hold.
+      Three key events, in any defensible combination: the 1989 revolutions in Eastern Europe and the fall of the Berlin Wall (November 1989); the failed hardliner coup of
+      August 1991, which broke the central government and lifted Yeltsin; Ukraine's independence referendum (December 1, 1991) and the Belovezha Accords (December 8, 1991),
+      after which Gorbachev resigned on December 25 and the Soviet Union was dissolved on December 26, 1991.
+      A correct answer labels the economy, nationalism and reform as causes and the coup, the referendum and the accords as triggers. Wrong dates or mixing up the order is an error.
 
-  - id: A2
+  - id: A77
+    category: A
+    tests: Science explained for a non-scientist
+    expected_search: "no"
+    exchanges:
+      - "Why is the sky blue during the day but red and orange during sunset? Explain the physics in a way that someone without a science background can understand."
+    reference_sketch: >
+      Sunlight holds every color. Air molecules scatter short wavelengths (blue) far more than long ones (red), about the inverse fourth power of wavelength (Rayleigh scattering),
+      so blue light bounces around the sky and reaches you from every direction. The sky is not violet because the sun gives off less violet, some is absorbed high up, and eyes
+      are less sensitive to it. At sunset the light crosses far more air on its long, low path, so most of the blue is scattered out before it reaches you and the reds and oranges
+      are left; dust and haze strengthen the effect. Must be plain-language, ideally with an everyday comparison; heavy jargon without explanation loses spoken fit.
+
+  - id: A78
+    category: A
+    tests: Economics, nuance with concrete examples
+    expected_search: "no"
+    exchanges:
+      - "Why can a country have a strong stock market while its average citizens feel like the economy is getting worse? Give three concrete examples of how this happens."
+    reference_sketch: >
+      The stock market reflects expected profits of large, often multinational companies, and stock ownership is concentrated (in the US the richest tenth of households own the
+      large majority of stocks), while people feel the economy through wages, prices, rent and jobs.
+      Three concrete examples from any of: prices rising faster than wages while companies keep or raise margins; a handful of giant tech firms driving index gains while most
+      businesses and regions lag; companies earning much of their profit abroad; cost cutting and layoffs that raise profits and share prices; low rates or stimulus inflating
+      asset prices, which helps people who own assets (the K-shaped recovery of 2020 and 2021); housing costs climbing while the index climbs.
+      Must give three distinct, concrete mechanisms, not three restatements of "the market is not the economy".
+
+  - id: A79
+    category: A
+    tests: AI hardware architecture and trade-offs
+    expected_search: "no"
+    exchanges:
+      - "Why are GPUs so effective at AI inference? Explain the differences between GPUs, ASICs, and specialized inference processors. Under what circumstances could a specialized chip outperform an NVIDIA GPU?"
+    reference_sketch: >
+      GPUs run thousands of simple cores in parallel with dedicated matrix units and very high memory bandwidth (HBM), and neural networks are mostly matrix multiplication;
+      token-by-token generation is largely limited by memory bandwidth. NVIDIA's software stack (CUDA) is a large part of the advantage.
+      An ASIC is a chip built for one kind of job (Google's TPU), more efficient but less flexible. Specialized inference processors go further for serving models, for example
+      large on-chip SRAM instead of external memory (Groq), wafer-scale chips (Cerebras), or chips hard-wired for transformers (Etched).
+      A specialized chip can win when the model architecture is stable and matches the chip, when the workload is high-volume and fixed, when latency per token matters most,
+      or on cost or power per token; it loses when models change, when flexibility or training matters, or where software support is thin.
+
+  - id: A80
+    category: A
+    tests: Quantization, with correct memory arithmetic
+    expected_search: "no"
+    exchanges:
+      - "What does it mean to quantize a 70-billion-parameter language model to 4-bit or 2-bit precision? How much memory would the weights require in each case, and what trade-offs does quantization introduce?"
+    reference_sketch: >
+      Quantizing stores each weight in fewer bits than the usual 16. Weights alone: 16-bit about 140 GB; 4-bit 70 billion times half a byte, about 35 GB (real 4-bit files run
+      roughly 38 to 42 GB because of scales and mixed precision); 2-bit about 17.5 GB (about 20 to 25 GB in practice). The context cache and activations come on top.
+      Trade-offs: some loss of quality, small at 4-bit and marked at 2-bit (reasoning and factual accuracy suffer most); faster generation, because inference is limited by
+      memory bandwidth; careful methods (GPTQ, AWQ, importance-weighted quantization) reduce the loss. Wrong memory figures are an error.
+
+  - id: A81
+    category: A
+    tests: Privacy architecture of local model plus remote search
+    expected_search: "no"
+    exchanges:
+      - "If I run a language model locally on my computer but use an external web-search API, what information can the search provider see? Explain what stays local, what gets transmitted, and how I can minimize data exposure."
+    reference_sketch: >
+      The search provider sees each query the model writes (which can carry personal details from the conversation), the IP address it came from, the API key and so the account
+      and billing identity behind it, timing and frequency, and request metadata such as the user agent. Websites the assistant then fetches see the IP address and the requests.
+      What stays local: the audio and transcription if speech is processed locally, the full conversation and history, the model's reasoning and answers, and anything never put into a query.
+      Minimizing exposure: keep personal details out of queries (write queries from the question, not the whole conversation), search only when needed, cache results,
+      use a privacy-focused provider or a self-hosted metasearch proxy such as SearXNG, route through a VPN for IP privacy, and check the provider's data-retention terms.
+
+  - id: A82
+    category: A
+    tests: Software architecture for tool use
+    expected_search: "no"
+    exchanges:
+      - "Explain the difference between an API, an MCP server, and a software tool. If I wanted to give a local LLM the ability to search the web, retrieve webpages, and summarize them, how would you architect the system?"
+    reference_sketch: >
+      An API is an interface one program offers to others (a web search service's HTTP endpoint, for example). A tool, for an LLM, is a function the model may ask to call,
+      described by a name, a description and an argument schema; the surrounding software runs it and hands back the result. An MCP server speaks the Model Context Protocol,
+      an open standard for offering tools (and resources and prompts) to any compatible client, and often wraps one or more APIs.
+      Architecture: the model served locally; an agent loop that sends the conversation and tool list, runs any tool call, returns the result and asks again; an MCP server with
+      a search tool (calling a search API or SearXNG) and a page-fetch tool (download, extract the main text, cap its size); summarizing done by the model itself from the
+      returned text. Safeguards: a cap on tool rounds, timeouts, treating fetched text as untrusted (prompt injection), and caching.
+
+  - id: A83
     category: A
     expected_route: calculate
-    tests: Multi-step arithmetic, compounding versus flat increase
+    tests: Startup equity, dilution and exit arithmetic
     expected_search: "no"
     exchanges:
-      - "I pay $3,500 per month in rent. My landlord offers me a one-year lease at a 5% increase or a two-year lease at a 3% increase each year. Ignoring the time value of money, how much would I pay over each option, and how much would I save with the cheaper option?"
+      - "I invest $20,000 in a startup at a $60 million post-money valuation. The company subsequently raises several funding rounds, resulting in 50% cumulative dilution. If the company eventually sells for $1 billion, what is my investment worth before taxes? Calculate my multiple and profit."
     reference_sketch: >
-      One-year at 5%: 3,675 per month, 44,100 for the year. Two-year at 3% each year: year one 3,605 per month (43,260), year two 3,713.15 per month (44,557.80), total 87,817.80.
-      The options cover different lengths, so a fair comparison states that: year one alone is 840 cheaper on the two-year lease; over two years the two-year lease totals 87,817.80 versus 44,100 plus an unknown second-year renewal on the one-year path.
-      Credit answers that either compare year one (840 savings) or note that the second year of the one-year path is unknown and state an assumption. Any answer that presents a single "savings" number without saying what it is comparing is incomplete.
+      Initial stake 20,000 / 60,000,000 = one three-thousandth (about 0.0333 percent). Halved by 50 percent dilution: one six-thousandth (about 0.0167 percent).
+      At a 1 billion sale: about 166,667 dollars, an 8.33x multiple, about 146,667 dollars profit before taxes.
+      Should state the assumptions: dilution means the ownership percentage halves, and liquidation preferences and other share classes are ignored. Other figures are wrong.
 
-  - id: A3
+  - id: A84
     category: A
-    tests: Challenging a false premise
+    tests: Finance, discounting and long-duration assets
     expected_search: "no"
     exchanges:
-      - "Someone says that because an MoE model only activates 4 billion parameters per token, a 4 GB GPU should be enough to run it. Is that correct? Explain exactly why or why not."
-    gates_for_judge:
-      - agreed_with_false_premise
+      - "Why does the Federal Reserve raising interest rates generally put downward pressure on technology stock valuations? Explain the relationship between interest rates, discounted cash flows, and long-duration growth stocks."
     reference_sketch: >
-      Not correct. All experts must be resident because different tokens route to different experts, so memory is set by total parameters (plus KV cache and activations), not by the 4B active.
-      4B active parameters at 4-bit is about 2 GB of compute traffic per token, which is why it is fast, but the full model is several times larger. A clear "no" with this reasoning is required.
+      A stock is worth the present value of its future cash flows, discounted at a rate that builds on the risk-free rate. When the Fed raises rates the discount rate rises, and
+      cash flows far in the future lose much more present value than near ones (as with long-dated bonds). Growth and technology companies get most of their value from profits
+      expected years ahead, so they are long-duration assets and their valuations fall more. Also: bonds become a more attractive alternative, borrowing costs rise for
+      unprofitable companies, and valuation multiples compress (2022, when the Nasdaq fell about a third, is the standard example).
+      A worked figure helps but is optional: 100 dollars due in 10 years is worth about 74 today at 3 percent and about 56 at 6 percent.
 
-  - id: A4
+  - id: A85
     category: A
-    tests: Diagnosis under uncertainty, asking for missing information
+    tests: Constraint satisfaction with nutrition arithmetic
     expected_search: "no"
     exchanges:
-      - "My plant is growing new leaves quickly near the top, but its older lower leaves are gradually yellowing and dying. The plant is otherwise healthy. What are the most likely explanations, and what information would you want before deciding whether this is normal or a problem?"
-    reference_sketch: >
-      Likely explanations: normal senescence of old leaves as the plant puts energy into new growth; nitrogen (mobile nutrient) deficiency moving from old to new leaves; lower leaves shaded out; overwatering or root issues; pot-bound roots.
-      Information wanted: species, how many leaves and how fast, watering routine and drainage, light, fertilizer history, season, whether yellowing is uniform or patterned, soil moisture. Should ask rather than assert one cause.
-
-  - id: A5
-    category: A
-    tests: Planning under constraints, no product names
-    expected_search: "no"
-    exchanges:
-      - "I live in a 500-square-foot studio and want a voice assistant that can hear me from across the room. I care more about microphone quality and natural conversation than smart-home automation. Give me the main hardware design considerations without recommending specific products."
-    constraints:
-      no_product_names: true
+      - "Design a practical high-protein daily meal plan that provides approximately 170 grams of protein while staying below 2,500 calories. Keep preparation time minimal, use affordable grocery-store ingredients, and avoid relying on protein powder for every meal."
     gates_for_judge:
       - violated_explicit_constraint
     reference_sketch: >
-      Far-field microphone array with beamforming and echo cancellation; placement away from walls and noise sources; a dedicated wake-word chip so the mic is always listening locally; low-latency path from mic to speech recognition; speaker quality and separation from the mic; where the compute runs (local box with enough memory and a fast path for speech models); network reliability; privacy of always-on audio.
-      Must not name specific products or brands.
+      A plausible plan built from cheap, quick foods (eggs and egg whites, Greek yogurt, cottage cheese, canned tuna, chicken breast, lean ground beef or turkey, beans, rice,
+      potatoes, oats, frozen vegetables), with at most one protein shake. The per-item figures must be roughly right: cooked chicken breast about 31 g protein and 165 kcal per
+      100 g; a large egg about 6 g and 70 kcal; 200 g of nonfat Greek yogurt about 20 g and 120 kcal; a cup of low-fat cottage cheese about 25 g and 180 kcal; a can of tuna
+      about 30 to 40 g. The totals must come to about 170 g of protein and stay under 2,500 kcal. Totals that do not add up, or more than 2,500 kcal, are errors.
 
-  - id: A6
+  - id: A86
     category: A
-    tests: Two-turn context
+    tests: Smart-home architecture, local versus cloud control
     expected_search: "no"
     exchanges:
-      - "I'm deciding between a computer with 16 GB of VRAM and one with 24 GB. I primarily care about running a local LLM."
-      - "Suppose the 24 GB machine costs $400 more. Does that change your recommendation?"
-    gates_for_judge:
-      - lost_prior_exchange_context
+      - "I have Philips Hue lights connected to a Hue Bridge. I want multiple people in my apartment to control the lights, including through voice commands. What is the best architecture for this, and what happens if the internet goes down?"
     reference_sketch: >
-      Turn one should favor 24 GB for local LLMs because memory sets which models fit and at what quantization and context.
-      Turn two must build on that without asking what the two machines were: weigh $400 against the step from roughly 13B-class to 30B-class models, or higher quantization and longer context, and give a conditional recommendation (still 24 GB for someone whose primary goal is local LLMs, unless budget is tight or their target models fit in 16 GB).
+      The Hue Bridge is the local hub: it talks to the bulbs over Zigbee and keeps scenes and automations. Share control by inviting the other people in the Hue app or letting
+      them use it on the home network, add physical Hue switches for anyone without a phone, and connect a voice assistant (Apple Home through the bridge, Alexa, Google
+      Home, or a local controller such as Home Assistant).
+      If the internet goes down: the bridge, its automations, the Hue app on the local network and physical switches keep working; Apple Home with a home hub keeps working
+      locally; cloud voice assistants such as Alexa and Google stop taking commands, and control from outside the home stops. A local voice setup avoids that dependency.
 
-  - id: A7
+  - id: A87
     category: A
-    expected_route: calculate
-    tests: Estimation with explicit assumptions
+    tests: Systematic troubleshooting of two unrelated problems
     expected_search: "no"
     exchanges:
-      - "I have a computer that consumes 50 watts when idle and 300 watts during active inference. If I interact with it for roughly one hour per day, estimate the monthly electricity cost. State your assumptions instead of pretending you know exactly how much time it spends under load."
-    gates_for_judge:
-      - presented_estimate_as_fact
+      - "My projector is connected to a JBL Bluetooth speaker. Sometimes the audio becomes choppy when I connect my laptop, and playing video games on the projector causes more eye strain than playing on my monitor. What could cause these problems, and how would you systematically troubleshoot them?"
     reference_sketch: >
-      Assume 1 hour at 300 W and 23 hours at 50 W per day: 0.3 kWh plus 1.15 kWh, about 1.45 kWh per day, about 43.5 kWh per month.
-      At an assumed rate, e.g. 0.15 to 0.30 dollars per kWh, that is roughly 6.50 to 13 dollars per month. Must state the electricity rate as an assumption and note that the machine is probably not at 300 W for the whole hour.
-
-  - id: A8
-    category: A
-    tests: Systems thinking, comparing designs
-    expected_search: "no"
-    exchanges:
-      - "For a personal AI assistant, compare these two designs: one large LLM handles every request, versus a smaller router that sends simple commands to deterministic tools and only uses a larger LLM for complex questions. Which would you recommend and why?"
-    reference_sketch: >
-      Router design: lower latency and cost for common commands, deterministic behavior for things like music and timers, and the large model reserved for open questions; costs are routing errors and more moving parts.
-      Single large LLM: simpler, more flexible, but slower and more expensive on every request and less predictable for simple commands.
-      A reasoned recommendation for the router design for a personal assistant (most requests are simple and latency matters) with a note on when the single-model design is fine.
-
-  - id: A9
-    category: A
-    tests: Recognizing ambiguity instead of inventing preferences
-    expected_search: "no"
-    exchanges:
-      - "I say: \"I want to go somewhere warm but not too expensive, preferably with good public transportation.\" What information is missing before you can make a good recommendation, and what assumptions should you avoid making?"
-    reference_sketch: >
-      Missing: departure location, dates and trip length, budget number, what "warm" means, domestic or international, passport and visa, travel companions, interests, tolerance for crowds.
-      Avoid assuming: home city, currency and budget level, that warm means beach, that they want a city, a specific season. Should not name a destination as if the answer were known.
-
-  - id: A10
-    category: A
-    tests: Spoken concision, under 45 seconds
-    expected_search: "no"
-    exchanges:
-      - "Explain why VRAM capacity can matter more than raw GPU speed when choosing hardware for a local LLM. Answer in a way that would sound natural if spoken aloud in under 45 seconds."
-    constraints:
-      max_words: 120
-    reference_sketch: >
-      If the model does not fit in VRAM it either cannot run or spills to slower memory and crawls, so capacity decides which models are possible at all; speed only decides how fast a model that already fits will run. Bigger memory also allows less aggressive quantization and longer context. Short, spoken, no lists.
+      Choppy audio: the speaker may also be paired with the laptop, so the laptop competes for the connection (multipoint); 2.4 GHz interference from Wi-Fi and the laptop's own
+      Bluetooth; distance or obstacles; a weak Bluetooth chip or codec in the projector. Steps, one change at a time: turn off the laptop's Bluetooth or unpair the speaker from it,
+      move the devices closer, put the laptop on 5 GHz Wi-Fi, update the firmware, and test a wired audio link or a low-latency transmitter.
+      Eye strain: brightness against room light, an image that fills more of the field of view so the eyes and head move more, sitting too close, soft focus or keystone
+      distortion, motion blur or input lag, and with DLP projectors the rainbow effect from the color wheel; also blinking less during games. Suggestions: a darker room or
+      balanced brightness, a game mode, correct focus and seating distance, and breaks. Should separate the two problems and give an order of tests.
 
   - id: A11
     category: A
@@ -140,104 +184,122 @@ questions:
     reference_sketch: >
       1989 (November 9, 1989). A one-sentence answer with no search.
 
-  - id: B11
+  - id: B88
     category: B
-    tests: Freshness detection, source synthesis
+    tests: Recent AI news across several labs
     expected_search: "yes"
     exchanges:
-      - "What is the current federal funds rate, and how has it changed over the last year?"
+      - "What are the five most important developments in open-source AI models over the past 30 days? Compare the latest releases from OpenAI's competitors, including DeepSeek, Qwen, Meta, and Mistral."
     gates_for_judge:
       - fabricated_current_fact
+    reference_sketch: >
+      The search results in the transcript are the ground truth; grade against them, not against what the judge knows. Releases and dates must come from the sources and fall
+      within about the last 30 days of the date the prompt gives; anything older presented as recent, or a release no source mentions, is fabricated. Where a lab has no recent
+      release in the results, a good answer says so instead of inventing one.
 
-  - id: B12
+  - id: B89
     category: B
-    tests: Current prices under a budget
+    tests: Multi-company research, funding and valuation figures
     expected_search: "yes"
     exchanges:
-      - "I'm looking for a computer to run a local LLM with approximately $1,000 total budget. What hardware can I buy today that gives me the most usable VRAM for the money?"
+      - "What is the current state of the AI inference chip startup industry? Compare Etched, MatX, Positron, Cerebras, SambaNova, and Fractile in terms of funding, valuation, technology, and commercial progress."
+    gates_for_judge:
+      - fabricated_current_fact
+    reference_sketch: >
+      The search results in the transcript are the ground truth. Funding totals, valuations and customer or revenue claims must come from them; a figure no source gives is
+      fabricated. A good answer separates announced plans from shipping products, says which companies it found little on, and fits six companies into a short spoken answer
+      by leading with the overall picture.
+
+  - id: B90
+    category: B
+    tests: Local listings ranked, through the Broadway tool
+    expected_search: "no"
+    expected_route: shows
+    required_tools:
+      - shows
+    today: 2026-10-25
+    exchanges:
+      - "What are the 10 most popular Broadway shows currently playing in Manhattan? Rank them using recent audience demand, reviews, awards, or ticket sales, and include a short description of each."
+    gates_for_judge:
+      - fabricated_current_fact
+    reference_sketch: >
+      The broadway_shows result in the transcript (one night's TodayTix listing) is the ground truth. A correct answer lists ten shows that the result shows as running, in an
+      order it explains (popularity, reviews or audience score from the result), with a few words on each. A show not in the result, or a rating or award the result does not
+      support, is fabricated. Ten shows is a long spoken answer, so brevity per show matters.
+
+  - id: B91
+    category: B
+    tests: Current-season sports judgment from live statistics
+    expected_search: "yes"
+    exchanges:
+      - "Who are the five best NBA players this season? Rank them using current statistical performance, team impact, and advanced metrics. Explain why you chose each player."
+    gates_for_judge:
+      - fabricated_current_fact
+    reference_sketch: >
+      The search and sports tool results in the transcript are the ground truth. Statistics must be this season's (the season under way on the date the prompt gives) and come
+      from the results; last season's numbers presented as this season's, or numbers no result shows, are fabricated. A good answer names five players with a reason each and
+      notes that early-season samples are small.
+
+  - id: B92
+    category: B
+    tests: Current rates, then interest computed per bank
+    expected_search: "yes"
+    required_tools:
+      - search
+      - calculate
+    exchanges:
+      - "Compare the current high-yield savings account interest rates offered by five major US banks. If I deposit $50,000 for one year, approximately how much interest would I earn at each bank? Identify any minimum balance requirements."
+    gates_for_judge:
+      - fabricated_current_fact
+    reference_sketch: >
+      The search results in the transcript are the ground truth for the rates and minimums; the interest must follow from them (50,000 times the APY, about 2,000 dollars at
+      4.00 percent APY; compounding is already in the APY). A rate or minimum no source gives is fabricated. A good answer notes that rates change often and are variable.
+
+  - id: B93
+    category: B
+    tests: Nearby restaurants through the restaurant tool
+    expected_search: "no"
+    expected_route: restaurants
+    required_tools:
+      - restaurants
+    exchanges:
+      - "Find five highly rated restaurants within walking distance of me in Long Island City. Compare their cuisine, approximate price per person, ratings, and what makes each one worth visiting."
+    gates_for_judge:
+      - fabricated_current_fact
+    reference_sketch: >
+      The restaurant_recommendations result in the transcript (the Michelin Guide snapshot) is the ground truth. A correct answer names restaurants from the result that are in or
+      near Long Island City, with the cuisine and price level the result gives and its Michelin distinction as the rating. Restaurants, prices or star ratings the result does
+      not give are fabricated; if the result has fewer than five nearby, a good answer says so instead of padding the list.
+
+  - id: B94
+    category: B
+    tests: Multi-step travel planning with current transport and passes
+    expected_search: "yes"
+    exchanges:
+      - "Plan a five-day trip to Switzerland covering Lucerne, Interlaken, and Zermatt. Prioritize scenic train rides, lakes, and mountain viewpoints. Minimize strenuous hiking and explain which train passes or tickets would be most economical."
+    gates_for_judge:
+      - fabricated_current_fact
+    reference_sketch: >
+      The search results in the transcript are the ground truth for prices, pass rules and schedules. A good plan is geographically sensible (Lucerne, then Interlaken, then
+      Zermatt or the reverse, with realistic travel times), includes lakes and easy viewpoints (for example a lake cruise, Pilatus or Rigi, Jungfrau region viewpoints, the
+      Gornergrat), and compares the Swiss Travel Pass, the Half Fare Card and point-to-point tickets with prices taken from the sources. Seasonal closures in the sources must be respected.
+
+  - id: B95
+    category: B
+    tests: System design under a budget, with current prices
+    expected_search: "yes"
+    exchanges:
+      - "Imagine I want to build a private, locally hosted voice assistant that can answer general questions, search the web, control smart-home devices, and have natural conversations. I have a $1,000 hardware budget. Propose an architecture, explain the components, identify the biggest limitations, and prioritize what I should build first."
     constraints:
       budget_usd: 1000
     gates_for_judge:
       - fabricated_current_fact
       - violated_explicit_constraint
-
-  - id: B13
-    category: B
-    tests: Combining current sources
-    expected_search: "yes"
-    exchanges:
-      - "I'm staying in Lucerne and want to take a scenic day trip tomorrow using public transportation. What are my best options, considering current schedules and weather?"
-    gates_for_judge:
-      - fabricated_current_fact
-
-  - id: B14
-    category: B
-    tests: Research synthesis, not snippet parroting
-    expected_search: "yes"
-    exchanges:
-      - "Why have NVIDIA GPU prices increased recently? I don't just want the current prices—I want to understand what changed in the supply chain or market."
-    gates_for_judge:
-      - fabricated_current_fact
-
-  - id: B15
-    category: B
-    tests: Shopping research with a hard constraint
-    expected_search: "yes"
-    exchanges:
-      - "Find me the best current option for a 16 GB NVIDIA GPU under $500. Used hardware is acceptable."
-    constraints:
-      budget_usd: 500
-    gates_for_judge:
-      - fabricated_current_fact
-      - violated_explicit_constraint
-
-  - id: B16
-    category: B
-    tests: Search plus skepticism about the comparison
-    expected_search: "yes"
-    exchanges:
-      - "I'm considering signing a two-year lease. Based on current rental conditions in Long Island City, does accepting a 4% annual increase seem competitive? Compare my offer against the current market, but also explain the risks of using advertised rents as the comparison."
-    gates_for_judge:
-      - fabricated_current_fact
-
-  - id: B17
-    category: B
-    tests: Source selection (instructed search)
-    expected_search: "instructed"
-    exchanges:
-      - "Search for the answer to this question: \"Is the Home Assistant Voice Preview Edition capable of running a custom wake word?\" Give me the answer and explain which source you trusted and why."
-    gates_for_judge:
-      - fabricated_current_fact
-
-  - id: B18
-    category: B
-    tests: Technical research synthesis (instructed search)
-    expected_search: "instructed"
-    exchanges:
-      - "Search for the latest information about the Qwen open-source model family. I want to know which currently available models are realistic to run locally on approximately 16 GB of GPU memory. Don't just list models—explain the tradeoffs between model quality, quantization, memory usage, and speed."
-    gates_for_judge:
-      - fabricated_current_fact
-
-  - id: B19
-    category: B
-    tests: Critical reading of results (instructed search)
-    expected_search: "instructed"
-    exchanges:
-      - "Search for whether an RTX 4060 Ti 16 GB can run Qwen3.8. Then tell me whether the answer you found is actually enough to predict whether it will provide a good voice-assistant experience."
-    gates_for_judge:
-      - fabricated_current_fact
-
-  - id: B20
-    category: B
-    tests: Research with conflicting constraints, willingness to say no
-    expected_search: "yes"
-    exchanges:
-      - "I want to build a local voice assistant for under $1,000 all-in. It should answer general questions at roughly ChatGPT-like quality, perform web searches when necessary, and work entirely locally except for those searches. Find the best hardware approach available today. If my requirements cannot realistically be met within the budget, tell me explicitly instead of quietly increasing the budget."
-    constraints:
-      budget_usd: 1000
-    gates_for_judge:
-      - fabricated_current_fact
-      - violated_explicit_constraint
+    reference_sketch: >
+      The search results in the transcript are the ground truth for hardware prices. A good answer names the pieces (wake word and speech-to-text, a local model, a tool layer for
+      web search, a smart-home controller such as Home Assistant, text-to-speech, microphones and speakers) and hardware that fits 1,000 dollars at the prices found, says
+      plainly what the budget limits (model size and quality against cloud assistants, speed), and gives a build order (smart-home control and speech first, then the model
+      and search). Hardware over budget at the sources' prices, or prices no source gives, are errors.
 
   - id: B21
     category: B
