@@ -1,5 +1,6 @@
 from benchmark.records import load_config
 from benchmark.run import CONFIG_PATH, candidate_policy, candidate_sampling
+from serving.settings import load_serving_config
 
 
 def test_a_llama_server_candidate_takes_its_models_sampling_for_its_thinking() -> None:
@@ -7,6 +8,13 @@ def test_a_llama_server_candidate_takes_its_models_sampling_for_its_thinking() -
     policy = candidate_policy(config.candidate("qwen3.8-27b-medium"), config)
     assert (policy.think, policy.temperature, policy.top_k, policy.max_output_tokens) == ("medium", 1.0, 20, 2048)
     assert policy.route_questions is False and policy.history_exchanges == 6
+
+
+def test_a_llama_server_candidate_budgets_against_its_models_conversation_slot_as_the_harness_does() -> None:
+    config = load_config(CONFIG_PATH)
+    policy = candidate_policy(config.candidate("qwen3.8-flash-next-low"), config)
+    assert policy.context_tokens == load_serving_config().models["qwen3.8-flash-next"].conversation_tokens
+    assert candidate_policy(config.candidate("gemma4-e4b"), config).context_tokens == config.policy.context_tokens
 
 
 def test_an_ollama_candidate_keeps_the_shared_temperature_and_ollamas_defaults() -> None:

@@ -181,11 +181,12 @@ def build_llm(candidate: Candidate, config: BenchmarkConfig) -> LLMClient | None
 
 def candidate_policy(candidate: Candidate, config: BenchmarkConfig) -> AgentPolicy:
     """The shared policy with the candidate's thinking. A llama-server candidate also takes its model's own sampling from config/serving.toml, in the
-    set for its thinking, as the harness does; an Ollama candidate keeps the shared temperature and Ollama's defaults."""
+    set for its thinking, and its conversation slot's context, as the harness does; an Ollama candidate keeps the shared temperature and Ollama's defaults."""
     policy = config.policy.model_copy(update={"think": candidate.think})
     if candidate.provider != "llama-server":
         return policy
-    return policy.model_copy(update=load_serving_config().models[candidate.model].sampling_for(candidate.think).policy_fields())
+    model = load_serving_config().models[candidate.model]
+    return policy.model_copy(update={**model.sampling_for(candidate.think).policy_fields(), "context_tokens": model.conversation_tokens})
 
 
 def llama_server_client(candidate: Candidate) -> LlamaServerClient:

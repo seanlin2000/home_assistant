@@ -11,7 +11,7 @@ from serving.settings import SERVING_CONFIG_PATH, load_serving_config
 
 def test_the_checked_in_file_builds_the_documented_command() -> None:
     command = build_command(load_serving_config())
-    for flag, value in (("--host", "127.0.0.1"), ("--port", "8090"), ("-c", "18432"), ("-np", "2"), ("-cram", "2048"), ("--reasoning", "off"), ("-fa", "on")):
+    for flag, value in (("--host", "127.0.0.1"), ("--port", "8090"), ("-c", "34816"), ("-np", "2"), ("-cram", "2048"), ("--reasoning", "off"), ("-fa", "on")):
         assert command[command.index(flag) + 1] == value
     assert {"--kv-unified", "--no-cache-idle-slots", "--no-ui", "--jinja", "--metrics"} <= set(command)
     assert "--swa-full" not in command
