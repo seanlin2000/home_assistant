@@ -606,3 +606,9 @@ def test_a_season_range_with_one_end_given_never_runs_backwards() -> None:
     assert season_range([2009, 2025], 2015, None) == (2015, 2025)
     assert season_range([2024, 2025], 2026, None) == (2026, 2026)  # last played 2025-26, asked from 2026-27
     assert season_range([2012, 2025], None, 2010) == (2010, 2010)
+
+
+async def test_team_stats_says_so_when_the_roster_names_no_player_it_can_read() -> None:
+    """The benchmark's recorded rosters were trimmed before player ids were kept."""
+    reply = await ask("team_stats", league="nba", team="Warriors")
+    assert reply.endswith("ESPN's roster for this team names no player whose statistics can be read.")
