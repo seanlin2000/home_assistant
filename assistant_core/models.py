@@ -178,7 +178,8 @@ class GenerationStats(BaseModel):
     prompt_tokens: int | None = None
     fresh_prompt_tokens: int | None = None  # read from nothing on this request; the rest came from the prompt cache
     cached_prompt_tokens: int | None = None
-    output_tokens: int | None = None
+    output_tokens: int | None = None  # thinking included
+    thinking_tokens: int | None = None  # the streamed thinking pieces, which llama-server sends one token at a time; None on Ollama
     time_to_first_token_seconds: float | None = None
     total_seconds: float
     prompt_eval_seconds: float | None = None
