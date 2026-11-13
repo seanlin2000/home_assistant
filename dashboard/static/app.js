@@ -287,8 +287,9 @@ function assistantTurn(detail) {
 
 function turnElements(turn) {
   return [
+    turn.asked_again && el("div", { class: "activity" }, "↻ reply set aside and asked again: it was empty, or only a broken tool call"),
     turn.thinking && fold(`💭 Thought for ${turn.thinking.split(/\s+/).length} words`, turn.thinking),
-    turn.text.trim() && el("div", { class: "said-beside" }, el("span", { class: "label" }, "written beside the tool calls"), turn.text),
+    turn.text.trim() && el("div", { class: "said-beside" }, el("span", { class: "label" }, turn.asked_again ? "written in the set-aside reply" : "written beside the tool calls"), turn.text),
     turn.tools.map(toolCard),
   ];
 }

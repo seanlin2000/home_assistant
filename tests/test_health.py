@@ -1,6 +1,7 @@
 """The health policy is a pure function; these tests pin the thresholds and cooldowns from design doc 10 §3.5 and the housekeeping from §3.6."""
 
 import json
+import subprocess
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
@@ -16,6 +17,12 @@ VM_UP = Check(ok=True, detail="started")
 VM_DOWN = Check(ok=False, detail="stopped")
 NOW = 1_000_000.0
 PACIFIC = timezone(timedelta(hours=-7))
+UTMCTL_FROM_SSH_STDERR = (
+    "Error from event: The operation couldn’t be completed. (OSStatus error -1743.)\n"
+    "NOTE: utmctl does not work from SSH sessions or before logging in.\n"
+    "Error from event: The operation couldn’t be completed. (OSStatus error -1743.)\n"
+    "Error: Virtual machine not found.\n"
+)
 
 
 def healthy_checks() -> dict[str, Check]:
@@ -244,3 +251,42 @@ def test_a_health_check_told_to_leave_the_vm_still_restarts_services_but_never_t
     assert keys(health.decide_actions(checks, after_failures(checks, 9), leave_vm, NOW, maintenance=False)) == ["kickstart:mcp"]
     running = healthy_checks() | {"home_assistant": DOWN}
     assert health.decide_actions(running, after_failures(running, 9), leave_vm, NOW, maintenance=False) == []
+
+
+@pytest.mark.parametrize(
+    "stderr",
+    [
+        UTMCTL_FROM_SSH_STDERR,
+        "Error from event: The operation couldn’t be completed. (OSStatus error -1743.)\n",
+        "NOTE: utmctl does not work from SSH sessions or before logging in.\n",
+    ],
+)
+def test_a_vm_check_from_an_ssh_session_is_skipped_and_says_the_scheduled_agent_can_check_it(stderr: str, monkeypatch: pytest.MonkeyPatch) -> None:
+    calls: list[list[str]] = []
+
+    def fake_which(name: str) -> str:
+        return f"/opt/homebrew/bin/{name}"
+
+    def fake_run(command: list[str], **kwargs: object) -> subprocess.CompletedProcess[str]:
+        calls.append(command)
+        return subprocess.CompletedProcess(command, 1, "", stderr)
+
+    monkeypatch.setattr(health.shutil, "which", fake_which)
+    monkeypatch.setattr(health.subprocess, "run", fake_run)
+    check = health.check_vm("Home Assistant")
+    assert calls == [["utmctl", "status", "Home Assistant"]]
+    assert check.ok is None
+    assert "SSH session or before login" in check.detail and "scheduled health agent" in check.detail
+    assert "not found" not in check.detail
+
+
+def test_other_utmctl_failures_keep_reporting_what_utmctl_said() -> None:
+    assert health.parse_vm_status(1, "", "Error: Virtual machine not found.\n") == Check(ok=None, detail="utmctl failed: Error: Virtual machine not found.")
+
+
+def test_a_vm_that_cannot_be_reached_from_this_session_is_neither_started_nor_restarted() -> None:
+    unreachable = health.parse_vm_status(1, "", UTMCTL_FROM_SSH_STDERR)
+    checks = healthy_checks() | {"vm": unreachable, "home_assistant": DOWN}
+    state = after_failures(checks, 9)
+    assert state.consecutive_failures["vm"] == 0
+    assert health.decide_actions(checks, state, Policy(), NOW, maintenance=False) == []

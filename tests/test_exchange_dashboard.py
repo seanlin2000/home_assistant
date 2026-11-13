@@ -12,11 +12,11 @@ import pytest
 
 from assistant_core.converse_protocol import ConverseRequest
 from assistant_core.exchange_record import ExchangeRecord, exchange_record_from_transcript
-from assistant_core.models import AgentEvent, AnswerDelta, Done, FillerSpoken, GenerationStats, Message, Role, RouteDecision, ToolCall, ToolCallRecord, Transcript
+from assistant_core.models import AgentEvent, AnswerDelta, Done, FillerSpoken, GenerationStats, Message, RetriedReply, Role, RouteDecision, ToolCall, ToolCallRecord, Transcript
 from assistant_service.exchange_log import ExchangeArchive, ExchangeLog, TraceLog
 from dashboard.app import Converse, build_app
 from dashboard.evidence import distinctive_terms, tool_evidence
-from dashboard.exchange_views import ExchangeStore
+from dashboard.exchange_views import ExchangeStore, last_question_index, turns_from_transcript
 from dashboard.generation_speed import response_speed, today_speed
 from dashboard.pipeline_collector import PipelineRunCollector
 from dashboard.pipeline_match import matching_run
@@ -179,6 +179,19 @@ async def test_the_api_lists_a_day_and_opens_an_exchange_with_its_trace_and_spee
     assert detail["turns"][0]["tools"][0]["evidence"]["sources"][0]["starred"]
     assert detail["speech"]["heard"] == QUESTION
     assert detail["summary"]["model"] == "small"
+
+
+def test_a_reply_asked_again_shows_its_thinking_before_the_turn_of_its_round() -> None:
+    retried = RetriedReply(round_index=0, message=Message(role=Role.ASSISTANT, thinking="Search? Maybe not."))
+    transcript = search_transcript().model_copy(update={"retried_replies": [retried]})
+    turns = turns_from_transcript(transcript, last_question_index(transcript.conversation), exchange_record_from_transcript(transcript))
+    assert [(turn.asked_again, turn.thinking) for turn in turns] == [(True, "Search? Maybe not."), (False, "A past result; search."), (False, "")]
+
+
+def test_a_trace_written_before_retried_replies_were_kept_still_loads() -> None:
+    old_line = search_transcript().model_dump(mode="json")
+    del old_line["retried_replies"]
+    assert Transcript.model_validate(old_line).retried_replies == []
 
 
 async def test_an_exchange_without_a_trace_still_shows_its_tool_calls(tmp_path: Path) -> None:
