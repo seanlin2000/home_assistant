@@ -42,13 +42,13 @@ def register_broadway_tools(server: MCPServer, settings: BroadwaySettings) -> No
         ] = "views_count",
         limit: Annotated[int, Field(description="how many")] = DEFAULT_LIMIT,
     ) -> str:
-        """Broadway and Off-Broadway shows in New York, from TodayTix, with theater, cheapest ticket, scores, and rush or lottery. Name shows in the order given, saying musical or play; say prices and scores as given. No performance times: tell the user to pick one on TodayTix."""
+        """Broadway and Off-Broadway shows in New York, from TodayTix, with theater, cheapest ticket, scores, and rush or lottery. Use this first for what is playing or worth seeing, before searching the web. Name shows in the order given, saying musical or play; say prices and scores as given. No performance times: tell the user to pick one on TodayTix."""
         query = ShowQuery(venue_tier=venue_tier, show_type=show_type, genre=genre, max_price=max_price, ticket_deal=ticket_deal, timing=timing, sort_by=sort_by, limit=limit)
         return snapshot_answer(settings, lambda snapshot, today: clip_to_whole_lines(shows_text(matching_shows(snapshot.shows, query, today), query, today), settings.max_words))
 
     @server.tool(name=BROADWAY_DETAILS_TOOL_NAME)
     async def broadway_show_details(show: Annotated[str, Field(description='title as the user said it, e.g. "Hadestown"; part is enough')]) -> str:
-        """What one Broadway or Off-Broadway show is about, from TodayTix, with theater, cheapest ticket and scores. No performance times: tell the user to pick one on TodayTix. If the show is not found or has no description, search the web."""
+        """What one Broadway or Off-Broadway show is about, from TodayTix, with theater, cheapest ticket and scores. Use this first for any one show. No performance times: tell the user to pick one on TodayTix. If the show is not found or has no description, search the web."""
         return snapshot_answer(settings, lambda snapshot, today: show_details_text(shows_named(snapshot.shows, show), show, today))
 
 

@@ -42,7 +42,7 @@ def register_restaurants_tools(server: MCPServer, settings: RestaurantsSettings,
         award: Annotated[AwardFilter, Field(description="starred: any star; bib_gourmand: good value; selected: no star")] = "any",
         limit: Annotated[int, Field(ge=1, le=MOST_RESTAURANTS_LISTED, description="how many")] = DEFAULT_LIMIT,
     ) -> str:
-        """Michelin Guide restaurants with award, price, cuisine and an inspector's line. If the user named no place, ask where. Name them in the order given, with each award and price in Michelin's words. No hours, menus or reservations: search the web for those."""
+        """Michelin Guide restaurants with award, price, cuisine and an inspector's line. Use this first for any restaurant recommendation, before searching the web. If the user named no place, ask where. Name them in the order given, with each award and price in Michelin's words. No hours, menus or reservations: search the web only for those."""
         filters = RestaurantFilters(cuisine=cuisine, max_price=max_price, award=award)
         return await answers.recommendations(location, filters, limit)
 
@@ -51,5 +51,5 @@ def register_restaurants_tools(server: MCPServer, settings: RestaurantsSettings,
         restaurant: Annotated[str, Field(description="name as the user said it; part is enough")],
         location: Annotated[str, Field(description="city or district, if the name is in several cities")] = "",
     ) -> str:
-        """One Michelin Guide restaurant in full: description, award, price, cuisine, address, Michelin page. No hours, menus or reservations: search the web for those."""
+        """One Michelin Guide restaurant in full: description, award, price, cuisine, address, Michelin page. Use this first for what one restaurant is like. No hours, menus or reservations: search the web only for those."""
         return await answers.details(restaurant, location)

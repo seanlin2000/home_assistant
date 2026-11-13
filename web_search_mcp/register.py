@@ -26,7 +26,7 @@ RecentOnly = Annotated[str | None, Field(description='day, week, month or year: 
 def register_web_search_tools(server: MCPServer, settings: SearchSettings, search: SearchEngine, extractor: PageExtractor) -> None:
     @server.tool()
     async def search_and_read(query: SearchQuery, time_range: RecentOnly = None) -> str:
-        """Search the web and read the top pages, returning numbered sources with their best-matching passages. Prefer one good search over several vague ones. Synthesize the sources; do not repeat snippets."""
+        """Search the web and read the top pages, returning numbered sources with their best-matching passages. For questions no other tool covers: not for restaurants, Broadway, movies in Manhattan, the weather, NBA or NFL statistics, or what Reddit says. Prefer one good search over several vague ones. Synthesize the sources; do not repeat snippets."""
         results = await search.search(query, time_range)
         excerpts = await extractor.read_pages(results, query)
         return render_grounded_context(query, results, excerpts, settings.results_to_return)
@@ -39,7 +39,7 @@ def register_web_search_tools(server: MCPServer, settings: SearchSettings, searc
 
     @server.tool()
     async def fetch_page(url: Annotated[str, Field(description="a public http(s) URL")]) -> str:
-        """Fetch one public web page's main text, trimmed to a readable length."""
+        """Read the main text of a web page whose address the user gave, trimmed to a readable length."""
         try:
             text = await extractor.read_page(url)
         except UnsafeUrl as error:

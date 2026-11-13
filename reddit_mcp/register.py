@@ -49,7 +49,7 @@ def register_reddit_tools(server: MCPServer, settings: RedditSettings, web_searc
         ] = None,
         time_range: Annotated[TimeRange, Field(description="day to year only if the user asks about recent posts; all for older too")] = DEFAULT_TIME_RANGE,
     ) -> str:
-        """What people on Reddit say: top threads with subreddit, date, upvotes, post and top comments. Answer with what they agree on and recommend most, saying it is from Reddit; give a thread's age if over a year. If it says Reddit did not answer, the user was already told: do not apologize, search the web as it says."""
+        """What people on Reddit say: top threads with subreddit, date, upvotes, post and top comments. Use this when the user asks what Reddit or a subreddit says. Answer with what they agree on and recommend most, saying it is from Reddit; give a thread's age if over a year. If it says Reddit did not answer, the user was already told: do not apologize, search the web as it says."""
         reddit_query = RedditQuery(subreddits=subreddit_names(subreddits or [], settings.max_subreddits), query=query, time_range=time_range)
         return await reddit_answer(reddit_query, web_search, ArcticShiftSession(settings, transport), settings)
 
