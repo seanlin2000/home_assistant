@@ -34,7 +34,7 @@ COMPETITION = {
     "leaders": [LEADER],
 }
 GAMES = {"events": [{"id": KEEP, "date": KEEP, "seasonType": {"type": KEEP}, "season": {"type": KEEP}, "competitions": [COMPETITION]}]}
-ROSTER_PLAYER = {"displayName": KEEP, "jersey": KEEP, "position": {"abbreviation": KEEP}, "injuries": [{"status": KEEP}]}
+ROSTER_PLAYER = {"id": KEEP, "displayName": KEEP, "jersey": KEEP, "position": {"abbreviation": KEEP}, "injuries": [{"status": KEEP}]}
 # An NBA roster lists players; an NFL roster lists groups, each with a position name and its players as items. One shape covers both, because a
 # field shaped as a mapping is kept as it is when the answer holds a plain value there, as a group's position is.
 ROSTER = {"season": {"displayName": KEEP}, "athletes": [{**ROSTER_PLAYER, "items": [ROSTER_PLAYER]}]}

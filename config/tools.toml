@@ -39,6 +39,10 @@ marks_untrusted = true                      # numbers, but under names and game 
 tier = "read_public"
 marks_untrusted = true                      # names from ESPN, free text cut to four words
 
+[tools.team_stats]
+tier = "read_public"
+marks_untrusted = true                      # numbers, but under names and injury notes from ESPN
+
 [tools.player_stats]
 tier = "read_public"
 marks_untrusted = true                      # numbers, but under names from ESPN
