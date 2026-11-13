@@ -37,6 +37,10 @@ LAUNCHD_SERVICES = ("llama", "mcp", "harness", "whisper", "kokoro")
 LLAMA_SERVER_PROCESS = "llama-server"
 LLAMA_RESTART_KEY = "kickstart:llama"
 DEFAULT_VM_NAME = "Home Assistant"
+# utmctl talks to UTM through Apple Events, which an SSH session or a Mac nobody has logged in to cannot send (OSStatus -1743). It then also
+# reports "Virtual machine not found.", which reads as a missing VM when the VM was never asked about.
+UTM_UNREACHABLE_MARKERS = ("OSStatus error -1743", "does not work from SSH sessions")
+UTM_UNREACHABLE_DETAIL = "cannot check the VM from an SSH session or before login (utmctl cannot reach UTM); the scheduled health agent can check it"
 PROJECT_DIR = Path(__file__).resolve().parent.parent
 SNAPSHOT_HISTORY_DAYS = 90
 CHROME_RELEASE_STALE_DAYS = 14  # the listings refresh records it nightly, and Chrome ships a major version about every four weeks
@@ -280,9 +284,15 @@ def check_vm(vm_name: str) -> Check:
 
 def parse_vm_status(returncode: int, stdout: str, stderr: str) -> Check:
     status = stdout.strip().lower()
+    if utm_unreachable(stdout + stderr):
+        return Check(ok=None, detail=UTM_UNREACHABLE_DETAIL)
     if returncode != 0:
         return Check(ok=None, detail=f"utmctl failed: {stderr.strip()[:120] or status}")
     return Check(ok=status == "started", detail=status or "unknown")
+
+
+def utm_unreachable(utmctl_output: str) -> bool:
+    return any(marker in utmctl_output for marker in UTM_UNREACHABLE_MARKERS)
 
 
 def check_browser_agent(path: Path, today: date) -> Check:
