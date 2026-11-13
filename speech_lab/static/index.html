@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Speech Lab</title>
+  <link rel="stylesheet" href="/static/lab.css">
+</head>
+<body>
+<header>
+  <h1>Speech Lab</h1>
+  <p class="lede">Qwen3-ASR, Qwen3-TTS and OmniVoice through mlx-audio, on this Mac. Nothing leaves the machine.</p>
+  <button id="unload" class="quiet">Unload models</button>
+</header>
+
+<main>
+  <section id="listen" class="panel">
+    <h2>Listen <span class="model-tag">Qwen3-ASR</span></h2>
+    <div class="record-row">
+      <button id="record" class="primary">● Record</button>
+      <label class="file">or a file <input id="audio-file" type="file" accept="audio/*"></label>
+      <span id="record-status" class="status"></span>
+    </div>
+    <audio id="recording" controls hidden></audio>
+
+    <details>
+      <summary>Recognizer settings</summary>
+      <div class="grid">
+        <label>Model <select id="asr-size"><option value="1.7B">1.7B, 8-bit</option><option value="0.6B">0.6B, 8-bit</option></select></label>
+        <label>Language <select id="asr-language"><option value="">Detect</option></select></label>
+        <label class="wide">Context: names and terms to listen for <textarea id="asr-context" rows="2" placeholder="Giannis Antetokounmpo, Nikola Jokic, Superdome"></textarea></label>
+        <label>Temperature <input id="asr-temperature" type="number" step="0.05" min="0" max="2" value="0"></label>
+        <label>Top p <input id="asr-top-p" type="number" step="0.05" min="0.05" max="1" value="1"></label>
+        <label>Top k (0 = off) <input id="asr-top-k" type="number" step="1" min="0" max="1000" value="0"></label>
+        <label>Min p <input id="asr-min-p" type="number" step="0.01" min="0" max="1" value="0"></label>
+        <label>Repetition penalty (blank = off) <input id="asr-repetition" type="number" step="0.05" min="1" max="3" placeholder="off"></label>
+        <label>Max tokens <input id="asr-max-tokens" type="number" step="16" min="16" max="8192" value="1024"></label>
+      </div>
+    </details>
+
+    <button id="transcribe" disabled>Transcribe</button>
+    <div id="transcript-box" class="result" hidden>
+      <p id="transcript" lang=""></p>
+      <p id="transcript-stats" class="stats"></p>
+      <div class="row">
+        <button id="speak-transcript" class="quiet">Speak this back</button>
+        <button id="use-as-reference" class="quiet">Use recording as the voice to clone</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="speak" class="panel">
+    <h2>Speak <span id="engine-tag" class="model-tag">Qwen3-TTS</span></h2>
+
+    <div class="row">
+      <label>Engine
+        <select id="engine">
+          <option value="qwen">Qwen3-TTS: speakers, styles, described voices, streamed</option>
+          <option value="omnivoice">OmniVoice: voice attributes, accents, dialects, one clip at a time</option>
+        </select>
+      </label>
+    </div>
+
+    <div id="qwen-controls">
+    <div class="grid">
+      <label>Model
+        <select id="variant">
+          <option value="CustomVoice">CustomVoice: preset speakers + style</option>
+          <option value="VoiceDesign">VoiceDesign: describe any voice</option>
+          <option value="Base">Base: preset speakers or clone a recording</option>
+        </select>
+      </label>
+      <label>Size <select id="size"><option value="1.7B">1.7B</option><option value="0.6B">0.6B</option></select></label>
+      <label>Precision <select id="precision"><option value="8bit">8-bit</option><option value="bf16">bf16</option></select></label>
+      <label>Language <select id="language"><option value="auto">auto</option></select></label>
+      <label id="speaker-field">Speaker <select id="speaker"></select></label>
+    </div>
+    <p id="model-note" class="note"></p>
+    </div>
+
+    <div id="omnivoice-controls" hidden>
+      <div class="grid">
+        <label>Language <select id="omni-language"></select></label>
+      </div>
+      <p class="note">mlx-community/OmniVoice-bf16. Pick at most one attribute per category; OmniVoice ignores anything else, so moods like "soothing" belong in Qwen3-TTS VoiceDesign. English accents work on English text, Chinese dialects on Chinese text.</p>
+      <div id="omni-attributes" class="grid"></div>
+      <label class="wide">Voice attributes sent (editable; empty lets the model pick)
+        <input id="omni-instruct" type="text" placeholder="male, middle-aged, low pitch, british accent">
+      </label>
+    </div>
+
+    <label class="wide">Text
+      <textarea id="text" rows="4"></textarea>
+    </label>
+    <div id="sentence-buttons" class="chips"></div>
+    <div id="nonverbal-field" hidden>
+      <p class="note">Sounds OmniVoice can make: click to insert at the cursor.</p>
+      <div id="nonverbal-chips" class="chips"></div>
+    </div>
+
+    <div id="instruct-field">
+      <label class="wide"><span id="instruct-label">Style or emotion</span>
+        <textarea id="instruct" rows="2"></textarea>
+      </label>
+      <div id="instruct-chips" class="chips"></div>
+    </div>
+
+    <div id="reference-field" hidden>
+      <label class="wide"><span id="reference-label">Voice to clone (24 kHz is best)</span> <input id="reference-file" type="file" accept="audio/*"></label>
+      <audio id="reference-audio" controls hidden></audio>
+      <label class="wide">Words spoken in that recording <textarea id="reference-text" rows="2"></textarea></label>
+      <button id="clear-reference" type="button" class="quiet">Clear the recording</button>
+    </div>
+
+    <details id="omni-settings" hidden>
+      <summary>Diffusion</summary>
+      <div class="grid">
+        <label>Steps <input id="omni-steps" type="number" step="1" min="4" max="128" value="32"></label>
+        <label>Guidance scale <input id="omni-guidance" type="number" step="0.1" min="0" max="10" value="2"></label>
+        <label>Class temperature <input id="omni-class-temperature" type="number" step="0.05" min="0" max="5" value="0"></label>
+        <label>Position temperature <input id="omni-position-temperature" type="number" step="0.5" min="0" max="20" value="5"></label>
+        <label>Layer penalty factor <input id="omni-layer-penalty" type="number" step="0.5" min="0" max="20" value="5"></label>
+        <label>Time shift <input id="omni-t-shift" type="number" step="0.01" min="0" max="1" value="0.1"></label>
+        <label>Duration, s (blank = estimate) <input id="omni-duration" type="number" step="0.5" min="0.5" max="120" placeholder="estimate"></label>
+        <label>Clone: seconds of the recording used <input id="omni-reference-seconds" type="number" step="1" min="1" max="30" value="10"></label>
+      </div>
+      <p class="note">More steps is slower and usually cleaner. Guidance scale is how strongly the text and attributes steer the voice. Class temperature 0 picks the likeliest sound at each step; raise it for variety. Duration fixes the clip length, so a short value makes it speak faster.</p>
+    </details>
+
+    <details id="qwen-settings">
+      <summary>Sampling</summary>
+      <div class="grid">
+        <label>Temperature <input id="temperature" type="number" step="0.05" min="0" max="2" value="0.9"></label>
+        <label>Top k <input id="top-k" type="number" step="1" min="0" max="1000" value="50"></label>
+        <label>Top p <input id="top-p" type="number" step="0.05" min="0.05" max="1" value="1"></label>
+        <label>Repetition penalty <input id="repetition" type="number" step="0.01" min="1" max="3" value="1.05"></label>
+        <label>Max tokens <input id="max-tokens" type="number" step="64" min="64" max="8192" value="4096"></label>
+        <label>Streaming interval, s <input id="streaming-interval" type="number" step="0.04" min="0.08" max="4" value="0.32"></label>
+        <label>Streaming context, frames <input id="streaming-context" type="number" step="1" min="0" max="200" value="25"></label>
+        <label>Speed <input type="number" value="1" disabled title="mlx-audio 0.6.5 accepts speed but ignores it"></label>
+      </div>
+      <p class="note">Speed is listed because Qwen3-TTS's generate() takes it, but mlx-audio 0.6.5 ignores it. Streaming context is how many earlier frames each streamed piece is decoded with; too few can click at the joins. A cloned voice always uses a repetition penalty of at least 1.5; mlx-audio raises it to stop the audio degenerating.</p>
+    </details>
+
+    <button id="speak-button" class="primary">Speak</button>
+    <span id="speak-status" class="status"></span>
+    <div id="clips"></div>
+  </section>
+</main>
+
+<script src="/static/lab.js"></script>
+</body>
+</html>
