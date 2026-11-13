@@ -58,6 +58,7 @@ class ModelSettings(StrictModel):
     flash_attention: Literal["on", "off", "auto"]
     prompt_cache_mib: int
     reasoning: Literal["on", "off", "auto"]
+    reasoning_budget_tokens: int | None = None  # --reasoning-budget; past it the server ends the thinking block, so the answer keeps the rest of the cap
     swa_full: bool
     speculative: Literal["none", "draft-mtp"]
     load_mode: Literal["auto", "mmap"] = "auto"  # -lm; "mmap" keeps the file memory-mapped, which lazy_mode needs

@@ -18,6 +18,16 @@ def test_the_checked_in_file_builds_the_documented_command() -> None:
     assert command[command.index("--spec-type") + 1] == "draft-mtp"
 
 
+def test_both_qwen_models_stop_thinking_at_their_budget_and_a_model_without_one_gets_no_flag() -> None:
+    config = load_serving_config()
+    for model in ("qwen3.8-27b", "qwen3.8-flash-next"):
+        command = build_command(config.model_copy(update={"server": config.server.model_copy(update={"model": model})}))
+        assert command[command.index("--reasoning-budget") + 1] == "3072"
+        assert command[command.index("--reasoning-budget-message") + 1]
+    gemma = config.model_copy(update={"server": config.server.model_copy(update={"model": "gemma-4-e4b"})})
+    assert "--reasoning-budget" not in build_command(gemma)
+
+
 def test_a_model_without_a_draft_layer_gets_no_speculative_flag() -> None:
     config = load_serving_config()
     gemma = config.model_copy(update={"server": config.server.model_copy(update={"model": "gemma-4-e4b"})})

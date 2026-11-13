@@ -8,6 +8,8 @@ LLAMA_SERVER_PROGRAM = "llama-server"
 # Flags that let the server run commands, read files, call MCP servers, or change its own settings. No setting can produce them, and the launcher
 # refuses a command line that contains one, so a future edit to this module cannot slip one in either.
 REFUSED_FLAGS = frozenset({"--tools", "--mcp-servers-config", "--media-path", "--slot-save-path", "--props"})
+# Injected before the end of thinking when the budget runs out, so the model moves to its answer instead of continuing a cut-off thought.
+REASONING_BUDGET_MESSAGE = "That is enough thinking; answer now."
 
 
 def llama_server_program() -> str:
@@ -53,6 +55,8 @@ def model_flags(alias: str, model: ModelSettings) -> list[str]:
         flags.extend(["-lm", model.load_mode])
     if model.lazy_mode != "off":
         flags.extend(["-lzm", model.lazy_mode])
+    if model.reasoning_budget_tokens is not None:
+        flags.extend(["--reasoning-budget", str(model.reasoning_budget_tokens), "--reasoning-budget-message", REASONING_BUDGET_MESSAGE])
     return flags
 
 
