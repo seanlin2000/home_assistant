@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Rates and minimums trace to the excerpts (CIT 3.75% above $5,000, Marcus 3.50%, SoFi 3.30% with direct deposit, Capital One 3.20%, Ally 3.10%) and each interest figure is computed correctly from them, though the Ally and SoFi rates come from September data and SoFi's current boost offer goes unmentioned.",
+  "judgment_reason": "Searched for current rates, said the rates are variable and the figures pre-tax estimates that assume the rate holds, and flagged the CIT tier and the SoFi direct-deposit condition.",
+  "spoken_fit_reason": "Leads with the caveat and then gives one plain sentence per bank, a length the five-bank, three-part question justifies."
+}

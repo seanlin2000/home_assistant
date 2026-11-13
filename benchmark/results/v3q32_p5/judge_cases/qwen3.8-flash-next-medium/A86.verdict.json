@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 4,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It recommends Home access invites, one linked voice ecosystem and physical Hue switches, and correctly says local app control, scenes and switches survive an outage while remote and cloud voice control stop, but it misses that Apple Home with a home hub keeps working locally and that a local voice setup avoids the cloud dependency.",
+  "judgment_reason": "It ran two web searches for a stable smart-home architecture question that needed none, which the harness flagged as searched_on_no_search_question.",
+  "spoken_fit_reason": "Plain prose that leads with the setup, but at about 140 words over two dense paragraphs it is long for speech."
+}

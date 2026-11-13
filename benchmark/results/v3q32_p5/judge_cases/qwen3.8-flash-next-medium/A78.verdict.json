@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 4,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It gives three distinct mechanisms (mega-cap concentration, with the roughly 40 percent top-ten share taken from the Fidelity excerpt, profits and buybacks outpacing wages, and rent and grocery costs the index ignores), though the 'pricing power in a higher-for-longer rate regime' link to wages is muddled.",
+  "judgment_reason": "It ran a web search for a conceptual economics question that needed none, which the harness flagged as searched_on_no_search_question.",
+  "spoken_fit_reason": "It opens with the core reason, but the 'One, Two, Three' paragraphs run past 120 words and read like a spoken list."
+}

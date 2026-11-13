@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "All ten shows come from the broadway_shows result in its views order, which the answer explains, each with a short accurate description, though it leaves out that School Girls closes November 15 and never uses the audience scores the result gave.",
+  "judgment_reason": "It used the Broadway listings tool instead of a web search and stated its ranking basis, recent TodayTix demand, up front.",
+  "spoken_fit_reason": "It names the ranking basis first and then reads the ten shows as brief numbered spoken phrases rather than a formatted list, as short as ten shows allow."
+}

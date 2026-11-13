@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "Every figure traces to an excerpt (Cerebras's $185 IPO and $210.8 million Q3 revenue, Etched's $700 million at $21 billion, SambaNova's $1 billion at $11 billion, Positron's $875 million at $5 billion, MatX's $500 million, Fractile's $720 million at about $7 billion), but the technology comparison is thin for MatX, Fractile and SambaNova.",
+  "judgment_reason": "It searched for current funding data, led with the shipping-versus-pre-shipment split the sketch asks for, and flagged that the performance multiples are the companies' own claims.",
+  "spoken_fit_reason": "It leads with the overall picture, but seven paragraphs ran past the word cap, so the listener never heard Positron, MatX or Fractile."
+}

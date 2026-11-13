@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The figures trace to the excerpts (Cerebras's 56.43 billion IPO valuation, about 26 billion market cap and 231 million core revenue, Etched's 10.3 then 21 billion valuations, Positron's 5 billion valuation with Jump Trading as a customer, Fractile's 720 million round at roughly 7 billion), and it separates shipping from not-yet, but Etched's '1.1 billion raised' predates the 700 million Series D it mentions in the same breath, and SambaNova gets no technology or commercial detail and no note that little was found.",
+  "judgment_reason": "It searched for current funding data, followed up on Cerebras and SambaNova, and flagged that the performance claims are self-reported.",
+  "spoken_fit_reason": "It leads with the overall picture, but the company-by-company rundown full of figures ran long enough for the harness word cap to cut it."
+}

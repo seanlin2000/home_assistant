@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The stated meal totals add up (35+48+28+55 = 166 g, 2,170 kcal) and use cheap quick foods, but several per-meal figures are off, for example lunch's chicken thigh, a whole can of black beans and two ounces of cheddar listed at only 650 kcal, and pasta sauce served over Greek yogurt is an odd dinner.",
+  "judgment_reason": "Kept protein powder optional and hedged with 'roughly' and typical values, but spent eight calculator calls on four rebuilt drafts and exceeded the tool-call limit.",
+  "spoken_fit_reason": "Plain prose with no lists, but at about 180 words it was cut by the word cap, so the label caveat was never heard."
+}

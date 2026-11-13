@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 2,
+  "spoken_fit": 1,
+  "answer_quality_reason": "Mistral Large 4 (October 29), Muse Spark Open (October 15), DeepSeek V4.1-Flash-1017, Tencent Hy4 (November 4) and the Kimi K3.1 Pro weights (November 5) all trace to the excerpts, but the Qwen item has no in-window date and counts Qwen4-Max as open-source, and the closing comparison calls Meta 'the most capable Western model' without support.",
+  "judgment_reason": "Searching with a month time range was right, but it presented the Qwen 3.8 family as a past-30-days development without any source dating it to that window.",
+  "spoken_fit_reason": "A numbered run of spec-heavy items ('816B total, 42B active, ... 1M context') went past the word cap and was cut mid-item, so the comparison was never heard."
+}

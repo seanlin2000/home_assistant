@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The API and MCP explanations and the local model plus one MCP server with search and fetch tools match the reference. But it defines a tool as 'any program that does a job, runnable on its own' instead of a function the model asks to call through a name and argument schema, and it leaves out the agent loop and safeguards like round caps, timeouts and treating fetched text as untrusted.",
+  "judgment_reason": "This is a stable design question, so answering without a search was right.",
+  "spoken_fit_reason": "Two short prose paragraphs that answer the definitions first, then the architecture, with no lists or markup."
+}

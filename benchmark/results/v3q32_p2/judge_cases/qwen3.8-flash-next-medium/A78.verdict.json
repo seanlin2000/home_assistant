@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 4,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It gives three sourced mechanisms (the top ten percent owning about 87 percent of equities, real wages up about 1.4 percent while the S&P 500 climbed, and housing and debt costs), but the first two overlap as asset-versus-wage stories, and it rounds 1.4 to 'one and a half'.",
+  "judgment_reason": "It ran a web search for a conceptual economics question that should have been answered from knowledge.",
+  "spoken_fit_reason": "It leads with the answer in plain prose, but at four paragraphs and about 150 words it runs well past the 110-word limit it was given."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 4,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Inviting users via Settings, Home access, then linking Siri, Alexa or Google, and the point that the bridge, app, scenes and dimmer switches keep working locally offline, all match the sketch, but it says voice commands break offline right after calling HomeKit the option that keeps control local.",
+  "judgment_reason": "It ran two web searches for a stable smart-home architecture question that should have been answered from knowledge.",
+  "spoken_fit_reason": "It leads with the recommended setup in three plain-prose paragraphs covering sharing, voice and outages, with no lists or URLs."
+}

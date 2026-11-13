@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": false,
+  "answer_quality": 3,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "Vert Frais as the only Michelin-listed LIC restaurant, Chef Papa's 4.7 from about 1,700 reviews and The Beast Next Door's 4.6 and $40 per person trace to results, but Chef Papa's 'thirty to forty dollars' appears in no excerpt (only a $$ tier), Go Nonna's 'over 200 positive reviews' overstates a bare review count, and it delivers four places with no price or rating for Go Nonna.",
+  "judgment_reason": "When the Michelin tool returned one restaurant it went to repeated web searches until it hit the tool-call limit instead of telling the user and offering to drop a filter, though it was honest that it could not pin down Gulp.",
+  "spoken_fit_reason": "Plain prose but long, and it reads symbols like '$$' and '$1' that a TTS engine will mangle."
+}

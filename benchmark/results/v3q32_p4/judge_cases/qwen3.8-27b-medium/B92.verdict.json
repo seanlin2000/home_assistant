@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The big-bank rates match the Arca excerpt, but it says \"twenty at TD\" when 0.02 percent of 50,000 dollars is 10 dollars (the calculator was never run for TD), it gives no interest figure for Wells Fargo, and it never names five high-yield accounts with their rates and minimums.",
+  "judgment_reason": "Pointing out that the big banks pay almost nothing and steering toward online banks was a sensible reading, but it asserts \"zero required to earn these base rates\" with no source and leaves out the high-yield comparison the user asked for.",
+  "spoken_fit_reason": "It opens with the key catch in plain prose, but it is long enough that the word cap cut it mid-sentence at \"roughly 3.\", and it packs in many percentages."
+}

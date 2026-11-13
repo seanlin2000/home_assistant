@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The memory figures match the sketch (35 GB at 4-bit, 17.5 GB at 2-bit, about 140 GB at 16-bit, plus overhead) and the quality trade-offs are right, but it omits the speed gain from lower memory bandwidth and only notes that 2-bit can be slower.",
+  "judgment_reason": "Used calculator calls for the memory arithmetic instead of searching, and flagged that real footprints run higher than weights alone.",
+  "spoken_fit_reason": "Plain spoken prose with numbers in words-friendly form, at a length the three-part question warrants and with no lists or markup."
+}

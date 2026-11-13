@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "All ten shows come from the broadway_shows result in its views order with correct audience scores and closing dates, but several descriptions are wrong: it calls Shakespeare's wife his 'girlfriend' in & Juliet, The Fantasticks a 'two-actor' show and Cursed Child 'two-part', and it gives The Great Gatsby and Chicago almost no description.",
+  "judgment_reason": "It used the Broadway listings tool instead of a web search and stated its ranking basis, recent demand on TodayTix.",
+  "spoken_fit_reason": "The 'One, Two, ...' run reads as prose, but it went past the word cap and the listener never heard the tenth show."
+}

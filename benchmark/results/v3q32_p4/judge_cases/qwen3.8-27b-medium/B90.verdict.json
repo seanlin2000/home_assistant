@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "All ten shows and their theatres come from the broadway_shows result in its most-viewed order, which the opening sentence explains, though the descriptions are very thin and calling School Girls \"a new play\" goes slightly beyond the result.",
+  "judgment_reason": "It used the Broadway tool instead of a web search, ranked by a stated measure the tool supports, and claimed no awards or sales the result lacks.",
+  "spoken_fit_reason": "It opens with what the ranking is based on and gives each show in one short spoken line with \"One, Two\" numbering, which is about as brief as ten items allow."
+}

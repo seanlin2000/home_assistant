@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The audio section gives a sound one-change-at-a-time order (distance, other Bluetooth devices, 5 GHz Wi-Fi, firmware, phone test), but the eye-strain causes leave out the projector-specific ones in the sketch: the larger field of view, seating distance and the DLP rainbow effect.",
+  "judgment_reason": "No search was needed, and it treats the two problems separately with an isolation-based test order, as asked.",
+  "spoken_fit_reason": "Three dense paragraphs ran long enough for the word cap to cut every eye-strain fix the listener needed."
+}

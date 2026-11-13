@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The big-bank rates come from the Arca excerpt and the interest follows correctly ($5, $20, $25 on $50,000), and it is honest that Citi could not be verified. But 'None require minimum balances for these base rates' appears in no excerpt, and LendingClub at 4.20% and CIT at 3.75% are lumped together as 'about $2,100' when CIT works out to about $1,875.",
+  "judgment_reason": "Searching was right and it usefully pointed out that big banks are not high-yield, but it asserted minimum-balance terms it had not found and never noted that these rates are variable.",
+  "spoken_fit_reason": "It leads with the answer, but three paragraphs of percentages and dollar figures ran past the word cap and cut off mid-figure on the high-yield alternatives."
+}

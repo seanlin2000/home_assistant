@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Names every component (openWakeWord, faster-whisper, an Ollama-served model, Piper, SearxNG search, Home Assistant Assist), gives a sound build order and real limitations, but it never names hardware or prices, and its claim that $1,000 buys 12 to 16 GB of VRAM plus a used desktop sits badly with the retrieved $830 price for the 16 GB RTX 5060 Ti.",
+  "judgment_reason": "Was candid that the budget limits model size and reliability and warned against letting the LLM drive locks, but asserted what the budget buys without checking it against the prices the search returned.",
+  "spoken_fit_reason": "Plain prose in short labeled sections that leads with the architecture, at a length the four-part question justifies."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": false,
+  "answer_quality": 3,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The pipeline (openWakeWord, Whisper, local model, search tool, Home Assistant, Piper), the limitations and the risk-based build order match the reference, but the hardware prices, such as '$400–500 on a used RTX 3090', come from no search, and the parts list leaves out a CPU, case and storage, so it is not shown to fit 1,000 dollars.",
+  "judgment_reason": "It quoted current hardware prices for a budget build without searching, which the harness flagged as did_not_search_on_search_question.",
+  "spoken_fit_reason": "Bold markdown section headings and several dense paragraphs make a wall of text that the harness word cap cut."
+}

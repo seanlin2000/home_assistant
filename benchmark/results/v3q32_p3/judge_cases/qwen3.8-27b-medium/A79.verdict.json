@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It covers parallel cores for matrix math, the TPU as an ASIC, and fixed-workload conditions for a specialized chip winning, but omits memory bandwidth and CUDA, gives no concrete inference-chip designs, and its last line wrongly credits the specialized chip with 'lower efficiency'.",
+  "judgment_reason": "Stable hardware concepts answered from knowledge without searching, which was right.",
+  "spoken_fit_reason": "Three short plain-prose paragraphs that lead with the answer and suit a three-part question, with no lists or markup."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 5,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Gives three distinct, concrete mechanisms that match the sketch (concentrated stock ownership, a narrow tech-led index while autos and manufacturing lag, inflation-adjusted wages falling), and every figure it cites (sentiment 51, 3.7 percent inflation, top 0.1 percent wealth) appears in the excerpts.",
+  "judgment_reason": "Ran a web search for a conceptual economics question that needed none, although it used the results sensibly.",
+  "spoken_fit_reason": "Leads with the core idea and gives the three examples as spoken 'One, Two, Three' prose with no markdown, which suits a request for three examples."
+}

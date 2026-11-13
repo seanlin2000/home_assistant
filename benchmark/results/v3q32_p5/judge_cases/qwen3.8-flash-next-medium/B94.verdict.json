@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The route (Lucerne with Rigi, Interlaken lakes, Zermatt with Gornergrat) is sensible and the 399 and 309 franc pass prices are sourced, but it never compares the Half Fare Card, point-to-point tickets or the 4-day Flex pass, and it claims the 6-day pass covers 'every train, boat and funicular leg except Gornergrat', which contradicts the sources saying most mountain transport is only half price.",
+  "judgment_reason": "Searching current pass prices and coverage was right, but it recommended a 6-day pass for a five-day trip without weighing cheaper alternatives the sources listed.",
+  "spoken_fit_reason": "It opens with a one-line frame, but the day-by-day itinerary plus pass explanation ran long enough for the harness word cap to cut it."
+}

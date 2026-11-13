@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It correctly covers the query string, IP, headers and timing going out, the conversation staying local, and SearXNG and retention policies as mitigations. But it advises using 'an API key rather than an account' as a privacy step, when the key itself ties every query to the account and billing identity, and it never mentions that fetched websites also see the IP.",
+  "judgment_reason": "This is a stable conceptual question, so answering without a search was right, and it covered all three parts the user asked for.",
+  "spoken_fit_reason": "One compact paragraph whose spoken signposts ('What stays local', 'What gets transmitted', 'To minimize exposure') map onto the three parts, with no markdown or URLs."
+}

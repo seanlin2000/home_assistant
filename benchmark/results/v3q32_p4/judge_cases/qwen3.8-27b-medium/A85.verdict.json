@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The four meals add to about 170 g of protein from cheap, quick foods with at most one optional shake, and the per-meal figures are roughly right, though the 1,900 calorie total is asserted without any per-meal calories and the cottage cheese is slightly high at thirty grams.",
+  "judgment_reason": "It needed no search, kept under the calorie ceiling with stated cushion, avoided protein powder as asked, and added a practical batch-cooking tip for minimal prep.",
+  "spoken_fit_reason": "It leads with the totals and walks through the meals in short spoken sentences without bullets, a length the meal-plan request justifies."
+}

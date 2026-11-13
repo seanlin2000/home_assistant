@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It correctly links the policy rate to discount rates and explains why distant cash flows in long-duration tech stocks lose the most present value, but omits the other channels (bonds as an alternative, higher borrowing costs, multiple compression).",
+  "judgment_reason": "Stable finance theory answered from knowledge without searching, which was right.",
+  "spoken_fit_reason": "One compact plain-prose paragraph that leads with the mechanism and has no lists or markup."
+}

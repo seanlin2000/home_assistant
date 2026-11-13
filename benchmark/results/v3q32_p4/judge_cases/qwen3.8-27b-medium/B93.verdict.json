@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": false,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "Only Vert Frais comes from the restaurant tool, its $$ price is garbled as \"about two dollars a sign\", and the other four get price levels (\"moderate\", \"affordable\", \"mid-range\", \"a bit pricier\") and no ratings, none of which any excerpt gives.",
+  "judgment_reason": "When the Michelin tool returned only one Long Island City restaurant, it searched the web and padded the list to five with unsourced prices instead of telling the user that only one was found.",
+  "spoken_fit_reason": "One plain-prose paragraph without formatting, but it is long and the \"two dollars a sign\" reading of $$ would sound wrong aloud."
+}

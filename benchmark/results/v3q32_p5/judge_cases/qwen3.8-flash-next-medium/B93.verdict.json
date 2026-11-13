@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 3,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The five picks and their Infatuation ratings trace to web excerpts, but it drops Vert Frais, the only restaurant the Michelin result returned, and calls Meju 'the only Michelin-starred restaurant in Queens' on the strength of a listicle when the Michelin snapshot does not list Meju at all.",
+  "judgment_reason": "When the Michelin tool returned only one Long Island City entry, it padded the list from web searches instead of telling the user the guide lists just one nearby, and it claimed all five are 'clustered near the Vernon and Court Square subway stops' without knowing where the user is.",
+  "spoken_fit_reason": "Dash-heavy, list-like paragraphs with dollar figures that ran long enough for the harness word cap to cut the last entry."
+}

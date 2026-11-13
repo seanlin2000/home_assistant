@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The API and MCP definitions and the local model, tool loop, search, fetch and summarize architecture match the sketch, but 'tool' is described generically instead of as a schema-described function the model asks to call, and it gives no safeguard for treating fetched text as untrusted or capping tool rounds.",
+  "judgment_reason": "Answering a conceptual architecture question without searching was right, and it adds practical points such as keeping search keys server-side.",
+  "spoken_fit_reason": "Two plain-prose paragraphs, definitions first and then the design, with no lists or markup."
+}

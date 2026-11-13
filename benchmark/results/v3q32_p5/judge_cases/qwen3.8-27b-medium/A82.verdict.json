@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The API, tool and MCP definitions are broadly right and it proposes search and fetch-and-strip tools behind an MCP server, but it never describes the agent loop that runs tool calls and returns results, treats summarization as a separate tool, and gives no safeguards such as round caps or treating fetched text as untrusted.",
+  "judgment_reason": "Stable software-architecture question answered without searching, which was the right call.",
+  "spoken_fit_reason": "Two compact plain-prose paragraphs with no lists or markup."
+}
