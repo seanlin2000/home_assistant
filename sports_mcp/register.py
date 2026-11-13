@@ -34,6 +34,7 @@ MAX_PLAYER_CHARS = 60
 MAX_DATE_CHARS = 10
 SERVICE_DOWN_MESSAGE = "Sports error: ESPN did not answer. Search the web with search_and_read instead."
 SPOKEN_DAYS = {"today": 0, "yesterday": -1, "tomorrow": 1}
+USE_BEFORE_SEARCH = "Use the sports tools, never a web search, for NBA and NFL games, players and teams."
 READ_AS_GIVEN = "Say numbers as given; never add, round or estimate. If the heading names a different team or player than the user meant, say so."
 SEASON_FORMAT = "year the season started (2015-16 is 2015)"
 _LOGGER = logging.getLogger(__name__)
@@ -56,7 +57,7 @@ def register_sports_tools(server: MCPServer, settings: SportsSettings, transport
     async def answered(ask: Ask, max_words: int = settings.max_words) -> str:
         return await answered_from_espn(EspnSession(settings, cache, sports_today(settings), transport), ask, max_words)
 
-    @server.tool(name=GAME_SCORES_TOOL_NAME, description=f"NBA or NFL scores: live, final or scheduled, with clock, playoff series and top players. {READ_AS_GIVEN}")
+    @server.tool(name=GAME_SCORES_TOOL_NAME, description=f"NBA or NFL scores: live, final or scheduled, with clock, playoff series and top players. {USE_BEFORE_SEARCH} {READ_AS_GIVEN}")
     async def game_scores(
         league: LeagueName,
         team: Annotated[TeamName, Field(description='as the user said it, e.g. "Warriors"; alone: its last, current and next game')] = "",
@@ -66,7 +67,7 @@ def register_sports_tools(server: MCPServer, settings: SportsSettings, transport
     ) -> str:
         return await answered(lambda espn: scores_answer(espn, League(league), team, date, season, playoffs))
 
-    @server.tool(name=BOX_SCORE_TOOL_NAME, description=f"One NBA or NFL game's box score: player statistics and team totals. {READ_AS_GIVEN}")
+    @server.tool(name=BOX_SCORE_TOOL_NAME, description=f"One NBA or NFL game's box score: player statistics and team totals. {USE_BEFORE_SEARCH} {READ_AS_GIVEN}")
     async def box_score(
         league: LeagueName,
         team: Annotated[TeamName, Field(description='as the user said it, e.g. "49ers"; alone: its last game')],
@@ -75,11 +76,11 @@ def register_sports_tools(server: MCPServer, settings: SportsSettings, transport
     ) -> str:
         return await answered(lambda espn: box_score_answer(espn, League(league), team, opponent, date), settings.box_score_max_words)
 
-    @server.tool(name=TEAM_ROSTER_TOOL_NAME, description=f"An NBA or NFL team's roster: number, name, position, injury status. {READ_AS_GIVEN}")
+    @server.tool(name=TEAM_ROSTER_TOOL_NAME, description=f"An NBA or NFL team's roster: number, name, position, injury status. {USE_BEFORE_SEARCH} {READ_AS_GIVEN}")
     async def roster(league: LeagueName, team: Annotated[TeamName, Field(description='as the user said it, e.g. "Niners"')]) -> str:
         return await answered(lambda espn: team_roster(espn, League(league), one_team(League(league), team)))
 
-    @server.tool(name=PLAYER_STATS_TOOL_NAME, description=f"An NBA or NFL player's regular-season statistics by season, with career totals. {READ_AS_GIVEN}")
+    @server.tool(name=PLAYER_STATS_TOOL_NAME, description=f"An NBA or NFL player's regular-season statistics by season, with career totals. {USE_BEFORE_SEARCH} {READ_AS_GIVEN}")
     async def stats(
         league: LeagueName,
         player: Annotated[PlayerName, Field(description='full name, e.g. "Stephen Curry"')],
@@ -90,7 +91,7 @@ def register_sports_tools(server: MCPServer, settings: SportsSettings, transport
 
     @server.tool(
         name=PLAYER_MATCHUP_TOOL_NAME,
-        description=f"Every game an NBA or NFL player played against another player or a team: record, averages, and each game's score and stat lines. {READ_AS_GIVEN}",
+        description=f"Every game an NBA or NFL player played against another player or a team: record, averages, and each game's score and stat lines. {USE_BEFORE_SEARCH} {READ_AS_GIVEN}",
     )
     async def matchup(
         league: LeagueName,

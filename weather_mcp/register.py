@@ -42,7 +42,7 @@ def register_weather_tools(server: MCPServer, settings: WeatherSettings, store: 
         part_of_day: Annotated[Literal["all", "morning", "afternoon", "evening", "night"], Field(description="night follows that day's evening")] = "all",
         place: Annotated[str, Field(max_length=MAX_PLACE_CHARS, description='empty for home; else as the user said it, e.g. "Portland, Maine"')] = "",
     ) -> str:
-        """Weather forecast for home or any place, in local time. Give the conditions, temperature range and chance of rain or snow, numbers rounded. If the heading names a different place than the user meant, say so."""
+        """Weather forecast for home or any place, in local time. Use this, never a web search, for the weather. Give the conditions, temperature range and chance of rain or snow, numbers rounded. If the heading names a different place than the user meant, say so."""
         if not place.strip():
             return await home_forecast(client, settings, clock(), day, part_of_day)
         return await place_forecast(client, geocoder, settings, clock(), place.strip(), day, part_of_day)

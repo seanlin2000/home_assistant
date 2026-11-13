@@ -27,6 +27,7 @@ from assistant_core.tools import ToolBox
 TOOLS_CONFIG_PATH = Path(__file__).resolve().parent.parent / "config" / "tools.toml"
 FETCH_PAGE = "fetch_page"
 URL = re.compile(r"https?://[^\s<>\"')\]]+")
+WEB_ADDRESS = re.compile(r"https?://|\b[a-z0-9-]+\.[a-z]{2,}\b", re.IGNORECASE)  # a full address, or a site as said aloud: "nytimes.com"
 # Zero-width characters, bidirectional controls, and Unicode tag characters: invisible on screen, read by the model.
 HIDDEN_CHARACTERS = re.compile("[​-‏‪-‮⁠-⁤⁦-⁩﻿\U000e0000-\U000e007f]")
 UNTRUSTED_TAG = re.compile(r"</?\s*untrusted", re.IGNORECASE)
@@ -54,9 +55,16 @@ class StrictModel(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
 
+class Offer(StrEnum):
+    ALWAYS = "always"
+    NEVER = "never"  # still listed, so a call the model invents anyway is refused by name rather than as an unknown tool
+    WHEN_THE_USER_GIVES_AN_ADDRESS = "when_the_user_gives_an_address"
+
+
 class ToolRule(StrictModel):
     tier: Tier
     marks_untrusted: bool
+    offer: Offer = Offer.ALWAYS
 
 
 class Limits(StrictModel):
@@ -89,7 +97,7 @@ class GuardedToolBox:
         self.untrusted = False
 
     async def list_tools(self) -> list[ToolSpec]:
-        specs = [spec for spec in await self._inner.list_tools() if spec.name in self._table.tools]
+        specs = [spec for spec in await self._inner.list_tools() if spec.name in self._table.tools and self._offered(self._table.tools[spec.name])]
         self._specs = {spec.name: spec for spec in specs}
         return specs
 
@@ -116,6 +124,12 @@ class GuardedToolBox:
             raise ToolRefused(PROVENANCE_REFUSAL)
         if self._table.tools[call.name].tier == Tier.READ_PUBLIC and leaked_terms(call.arguments, self._private_terms, self._question):
             raise ToolRefused(EGRESS_REFUSAL)
+
+    def _offered(self, rule: ToolRule) -> bool:
+        """Overlapping tools cost wrong picks and extra calls, so the model sees one web search tool, and fetch_page only when the user gave an address."""
+        if rule.offer == Offer.WHEN_THE_USER_GIVES_AN_ADDRESS:
+            return bool(WEB_ADDRESS.search(self._question))
+        return rule.offer == Offer.ALWAYS
 
     def _address_has_provenance(self, url: str) -> bool:
         """The address came back in a result this exchange, or the user said it (as written, or by its host name)."""

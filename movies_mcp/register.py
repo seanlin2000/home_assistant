@@ -40,13 +40,13 @@ def register_movies_tools(server: MCPServer, settings: MoviesSettings) -> None:
         ] = "most_theaters",
         limit: Annotated[int, Field(description="how many")] = DEFAULT_LIMIT,
     ) -> str:
-        """Movies at Manhattan theaters, from Fandango, with rating, length, Rotten Tomatoes scores and theaters. Name movies in the order given; say scores as given. Horror is left out unless asked for; if the reply says how many were left out, mention they can be included. No showtimes: tell the user to check Fandango or the theater."""
+        """Movies at Manhattan theaters, from Fandango, with rating, length, Rotten Tomatoes scores and theaters. Use this first for what is showing or coming up, before searching the web. Name movies in the order given; say scores as given. Horror is left out unless asked for; if the reply says how many were left out, mention they can be included. No showtimes: tell the user to check Fandango or the theater."""
         query = MovieQuery(when=when, genre=genre, include_horror=include_horror, title=title, theater=theater, sort_by=sort_by, limit=limit)
         return snapshot_answer(settings, lambda snapshot, today: clip_to_whole_lines(movies_text(found_movies(snapshot, query, today), query, snapshot, today), settings.max_words))
 
     @server.tool(name=MOVIE_DETAILS_TOOL_NAME)
     async def movie_details(title: Annotated[str, Field(description='title as the user said it, e.g. "Clayface"; part is enough')]) -> str:
-        """What one movie at Manhattan theaters is about, from Fandango, with cast, Rotten Tomatoes scores, opening date and theaters. No showtimes: tell the user to check Fandango or the theater. If it is not found or has no synopsis, search the web."""
+        """What one movie at Manhattan theaters is about, from Fandango, with cast, Rotten Tomatoes scores, opening date and theaters. Use this first for any one movie in theaters. No showtimes: tell the user to check Fandango or the theater. If it is not found or has no synopsis, search the web."""
         return snapshot_answer(settings, lambda snapshot, today: movie_details_text(movies_named(snapshot.movies, title), title, snapshot, today))
 
 
