@@ -45,6 +45,7 @@ uv run manual-check           # every diagram in operator_manual/ renders, every
 uv run manual-check --png out/ operator_manual/04_conversation_agent.md   # also write that page's diagrams as PNGs, to look at
 uv run draw-diagram diagram.mmd --png out/diagram.png                      # render one loose diagram the way the site does
 uv run mkdocs serve           # read the operator manual at http://127.0.0.1:8000/home_assistant/
+scripts/speech_lab.sh         # try speech models in the browser at http://127.0.0.1:8795: Qwen3-ASR, Qwen3-TTS, OmniVoice (own .venv-speech-lab)
 ```
 
 Upgrade dependencies deliberately with `scripts/dev_setup.sh --upgrade`, review the `uv.lock` diff, run the tests, commit.

@@ -1,5 +1,6 @@
 # Python
 .venv/
+.venv-speech-lab/
 __pycache__/
 *.pyc
 .pytest_cache/
