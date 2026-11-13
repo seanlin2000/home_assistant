@@ -165,7 +165,7 @@ async def run(conversation: list[Message], llm: LLMClient, tools: ToolBox, polic
         transcript.route = route_to_offered_tools(await decide_route(llm, conversation, policy), tool_specs)
         transcript.route.started_seconds = route_started
         directive = directive_for(transcript.route)
-    transcript.per_question_block = per_question_block(today or date.today(), directive, memory.get_context(conversation))
+    transcript.per_question_block = per_question_block(today or date.today(), latest_question(conversation), directive, memory.get_context(conversation))
     spoken_question = put_block_before_question(messages, transcript.per_question_block)
     max_tool_rounds = tool_round_cap(transcript.route, policy.max_tool_rounds)
     runner = ToolCallRunner(tools, policy, started)
@@ -258,6 +258,10 @@ def set_aside_unusable_reply(reply: ModelReply, transcript: Transcript) -> None:
         transcript.malformed_retries += 1
         transcript.malformed_tool_calls.extend(reply.malformed or [reply.text])
     transcript.model_calls.append(reply.completion.stats)
+
+
+def latest_question(conversation: list[Message]) -> str:
+    return next((message.content for message in reversed(conversation) if message.role == Role.USER), "")
 
 
 def put_block_before_question(messages: list[Message], block: str) -> tuple[int, Message] | None:
