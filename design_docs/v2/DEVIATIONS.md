@@ -7,6 +7,7 @@ Every place the build departs from the v2 design, with the reason. Grouped by th
 | Date | Part of the system | Also touches | Deviation | Why |
 |---|---|---|---|---|
 | 2026-11-11 | `config/serving.toml` (`speculative`), `serving/command.py` | 10 | Qwen 3.8 27B is served with `--spec-type draft-mtp`, so its own multi-token-prediction layer drafts tokens, and with a 2,048 MiB prompt cache instead of 1,024. Thinking stays off on the server and the harness turns it on per request. | Decode measured 19 tok/s without drafting and 34 to 37 with it on the M5 Max, with the same model file. One slot's prompt state is about 1,091 MiB, so a 1,024 MiB cache skipped it. |
+| 2026-11-13 | `config/serving.toml` (`speculative`, `[models."qwen3.8-flash-next".draft]`), `serving/settings.py` (`DraftModel`), `serving/command.py` | 10 | Qwen 3.8 Flash Next is served with `--spec-type draft-dflash` and a separate drafter, Inco AI's DFlash2 at Q8_0 (`-md`), proposing up to 3 tokens a step. The drafter is pinned by revision and SHA-256 like the model, and the launch refuses a drafter whose hash differs. It needs Homebrew llama.cpp 0.9.0 or newer. | The ISTA-DASLab file has no multi-token-prediction layer. With the drafter, decode measured 71.6 tok/s against 53.7 on the Studio, with unchanged benchmark quality (A+B, three passes each). Drafting 5 or 7 tokens was slower, because fewer drafts were accepted. |
 
 ## 03. Tool server
 

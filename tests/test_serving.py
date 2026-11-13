@@ -7,7 +7,7 @@ from assistant_service.settings import load_harness_config
 from serving import cli as serving_cli
 from serving.command import build_command, refuse_dangerous_flags
 from serving.model_file import ModelFileMismatch, file_sha256, model_file_matches, verify_model_file
-from serving.settings import SERVING_CONFIG_PATH, ServingConfig, load_serving_config
+from serving.settings import SERVING_CONFIG_PATH, ModelSettings, ServingConfig, load_serving_config
 
 
 def serving_model(model: str) -> ServingConfig:
@@ -22,7 +22,37 @@ def test_the_checked_in_file_serves_flash_next_with_the_documented_command() -> 
     assert command[command.index("--alias") + 1] == "qwen3.8-flash-next"
     assert {"--kv-unified", "--no-cache-idle-slots", "--no-ui", "--jinja", "--metrics"} <= set(command)
     assert "--swa-full" not in command
-    assert "--spec-type" not in command
+
+
+def test_flash_next_drafts_with_its_pinned_dflash_model_three_tokens_at_a_time() -> None:
+    serving = load_serving_config()
+    command = build_command(serving)
+    draft = serving.served_model.draft
+    assert command[command.index("--spec-type") + 1] == "draft-dflash"
+    assert command[command.index("-md") + 1] == str(draft.gguf_path)
+    assert command[command.index("--spec-draft-n-max") + 1] == "3"
+    assert command[command.index("-ngld") + 1] == "99"
+    assert serving.served_model.pinned_files == [serving.served_model, draft]
+
+
+def test_dflash_needs_a_drafter_and_a_drafter_needs_dflash() -> None:
+    flash_next = load_serving_config().models["qwen3.8-flash-next"].model_dump()
+    with pytest.raises(ValidationError, match="draft-dflash"):
+        ModelSettings.model_validate({**flash_next, "draft": None})
+    with pytest.raises(ValidationError, match="draft-dflash"):
+        ModelSettings.model_validate({**flash_next, "speculative": "draft-mtp"})
+
+
+def test_launch_refuses_a_drafter_that_differs_from_its_pinned_hash(tmp_path: Path) -> None:
+    model_file, draft_file = tmp_path / "model.gguf", tmp_path / "draft.gguf"
+    model_file.write_bytes(b"the model")
+    draft_file.write_bytes(b"not the drafter")
+    config = load_serving_config()
+    flash_next = config.served_model
+    draft = flash_next.draft.model_copy(update={"gguf": str(draft_file)})
+    model = flash_next.model_copy(update={"gguf": str(model_file), "sha256": file_sha256(model_file), "draft": draft})
+    with pytest.raises(SystemExit, match="draft.gguf"):
+        serving_cli.launch(config.model_copy(update={"models": {**config.models, config.server.model: model}}))
 
 
 def test_production_answers_with_flash_next_thinking_at_medium_within_its_budget() -> None:
@@ -49,7 +79,11 @@ def test_both_qwen_models_stop_thinking_at_their_budget_and_a_model_without_one_
 
 
 def test_a_model_without_a_draft_layer_gets_no_speculative_flag() -> None:
-    assert "--spec-type" not in build_command(serving_model("gemma-4-e4b"))
+    assert {"--spec-type", "-md"}.isdisjoint(build_command(serving_model("gemma-4-e4b")))
+
+
+def test_the_27b_drafts_from_its_own_file_and_loads_no_separate_drafter() -> None:
+    assert "-md" not in build_command(serving_model("qwen3.8-27b"))
 
 
 def test_flash_next_keeps_its_ngram_table_on_disk_and_the_27b_gets_the_default_load() -> None:

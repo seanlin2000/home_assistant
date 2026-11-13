@@ -89,9 +89,21 @@ prompt_cache_mib = 1024                     # half the 27B's: shard 1 leaves lit
 reasoning = "off"                           # the server default; the harness turns thinking on per request
 reasoning_budget_tokens = 3072              # thinking stops here, leaving at least 1,024 of the 4,096-token cap for the answer
 swa_full = false
-speculative = "none"
+speculative = "draft-dflash"                # a separate drafter (the table below): the model file has no draft layer of its own
 load_mode = "mmap"
 lazy_mode = "on"
+
+# Inco AI's DFlash2 drafter, converted by ggml-org (llama.cpp's own organisation). It proposes a block of tokens from the model's hidden states, and
+# the model checks every one, so answers are unchanged. On the Studio (2026-11-13, A+B three passes each) decode went from 53.7 to 71.6 tok/s and
+# prefill lost 1.6%; 49% of drafted tokens were accepted. GPU memory in use went from 45.6 to 48.6 GiB: the 0.65 GB file plus the drafter's cache
+# and working buffers.
+[models."qwen3.8-flash-next".draft]
+gguf = "~/models/gguf/Qwen3.8-Flash-Next-drafts/dflash-Qwen3.8-Flash-Next-Q8_0.gguf"
+source = "ggml-org/Qwen3.8-Flash-Next-GGUF"
+revision = "a3e717e66206086bffa2be26abbbf22e84e93f36"
+sha256 = "4670408ccf79cf36b5f2cad2d6f214d0b47b93b1ff693c3a5bc68126007e64e2"
+gpu_layers = 99                             # -ngld, every layer of the drafter on the GPU
+max_draft_tokens = 3                        # --spec-draft-n-max; 5 and 7 were slower (69.3 and 62.6 tok/s) as fewer drafts were accepted
 
 [models."qwen3.8-flash-next".sampling]      # Qwen's instruct (non-thinking) set (Qwen/Qwen3.8-Flash-Next model card)
 temperature = 0.7
