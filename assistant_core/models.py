@@ -239,12 +239,21 @@ class ToolCallRecord(BaseModel):
     started_seconds: float | None = None  # from the start of the exchange; None in records written before it was kept
 
 
+class RetriedReply(BaseModel):
+    """A reply the loop left out of the conversation and asked again for (empty, or only a broken tool call). The conversation keeps every other
+    reply with its thinking; this keeps the thinking of these too, so a reviewer can read what the model meant before it was asked again."""
+
+    round_index: int
+    message: Message
+
+
 class Transcript(BaseModel):
     model: str
     system_prompt: str
     conversation: list[Message]
     tool_call_records: list[ToolCallRecord] = Field(default_factory=list)
     model_calls: list[GenerationStats] = Field(default_factory=list)
+    retried_replies: list[RetriedReply] = Field(default_factory=list)  # empty in records written before they were kept
     malformed_tool_calls: list[str] = Field(default_factory=list)
     spoken_text: str = ""
     filler_text: str = ""  # the phrase spoken while the first tools ran

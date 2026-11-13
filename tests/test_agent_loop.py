@@ -1,10 +1,13 @@
 import asyncio
+import json
 
 from assistant_core import agent_loop
 from assistant_core.agent_loop import SpeechHold, SpokenAnswerCap
+from assistant_core.llama_server_client import response_request_body
+from assistant_core.llm_client import to_ollama_message
 from assistant_core.models import AgentEvent, AgentPolicy, AnswerDelta, Done, FillerSpoken, Message, Role, ToolCall, ToolFinished, ToolStarted
 from assistant_core.prompts import SILENCE_MARKER, question_with_block
-from tests.fakes import FakeToolBox, ScriptedLLM, empty_reply, malformed_reply, several_tool_calls_reply, text_reply, tool_replies_past_the_cap, tool_reply
+from tests.fakes import FakeToolBox, ScriptedLLM, empty_reply, malformed_reply, several_tool_calls_reply, text_reply, tool_replies_past_the_cap, tool_reply, with_thinking
 
 
 async def collect(llm: ScriptedLLM, tools: FakeToolBox, policy: AgentPolicy | None = None) -> list[AgentEvent]:
@@ -440,3 +443,30 @@ async def test_the_transcript_keeps_the_block_and_tool_definitions_the_model_was
     assert transcript.conversation[0].content == "What is the fed funds rate?"
     assert transcript.per_question_block.startswith("For reference, not to be read aloud: today is")
     assert [tool.name for tool in transcript.tool_specs] == ["search_and_read"]
+
+
+def sent_to_the_model(messages: list[Message]) -> str:
+    """Every byte either client would send for these messages: llama-server's request body and Ollama's messages."""
+    return json.dumps(response_request_body(messages, [], AgentPolicy())) + json.dumps([to_ollama_message(message) for message in messages])
+
+
+async def test_thinking_is_recorded_on_the_transcript_but_never_spoken_or_sent_back_to_the_model() -> None:
+    search_thought, answer_thought = "The rate changes often; search for it.", "The source says 4.25 percent."
+    llm = ScriptedLLM([with_thinking(tool_reply("fed funds rate"), search_thought), with_thinking(text_reply("It is 4.25 percent."), answer_thought)])
+    events = await collect(llm, FakeToolBox())
+    transcript = events[-1].transcript
+    spoken = " ".join(event.text for event in events if isinstance(event, (AnswerDelta, FillerSpoken)))
+    assert [message.thinking for message in transcript.conversation if message.role == Role.ASSISTANT] == [search_thought, answer_thought]
+    assert search_thought not in spoken and answer_thought not in spoken
+    assert search_thought not in sent_to_the_model(llm.seen_messages[1])
+    assert answer_thought not in sent_to_the_model(transcript.conversation)
+
+
+async def test_a_reply_asked_again_keeps_its_thinking_on_the_transcript_and_out_of_the_next_request() -> None:
+    thought = "Maybe search, maybe not."
+    llm = ScriptedLLM([with_thinking(empty_reply(), thought), tool_reply("fed funds rate"), with_thinking(malformed_reply(), "Answer now."), text_reply("It is 4.25 percent.")])
+    transcript = (await collect(llm, FakeToolBox()))[-1].transcript
+    assert [(retried.round_index, retried.message.thinking) for retried in transcript.retried_replies] == [(0, thought), (1, "Answer now.")]
+    assert llm.seen_messages[1] == llm.seen_messages[0]
+    assert thought not in sent_to_the_model(llm.seen_messages[3])
+    assert all(message.thinking != thought for message in transcript.conversation)

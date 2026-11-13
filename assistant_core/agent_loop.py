@@ -28,6 +28,7 @@ from assistant_core.models import (
     GenerationStats,
     MalformedToolCall,
     Message,
+    RetriedReply,
     Role,
     TextDelta,
     ToolCall,
@@ -176,7 +177,7 @@ async def run(conversation: list[Message], llm: LLMClient, tools: ToolBox, polic
         async for event in stream_model_reply(llm, messages, tool_specs, policy, reply, cap, transcript, started):
             yield event
         if may_ask_again(reply, transcript):
-            set_aside_unusable_reply(reply, transcript)
+            set_aside_unusable_reply(reply, transcript, round_index)
             reply = ModelReply()
             async for event in stream_model_reply(llm, messages, tool_specs, policy, reply, cap, transcript, started):
                 yield event
@@ -253,14 +254,15 @@ def may_ask_again(reply: ModelReply, transcript: Transcript) -> bool:
     return reply_is_broken(reply) and transcript.malformed_retries < MALFORMED_RETRIES
 
 
-def set_aside_unusable_reply(reply: ModelReply, transcript: Transcript) -> None:
-    """Count the reply and keep its cost and any broken call on the transcript, but leave it out of the messages the model sees next."""
+def set_aside_unusable_reply(reply: ModelReply, transcript: Transcript, round_index: int) -> None:
+    """Count the reply and keep its cost, its thinking, and any broken call on the transcript, but leave it out of the messages the model sees next."""
     if reply_is_empty(reply):
         transcript.empty_completion_retries += 1
     else:
         transcript.malformed_retries += 1
         transcript.malformed_tool_calls.extend(reply.malformed or [reply.text])
     transcript.model_calls.append(reply.completion.stats)
+    transcript.retried_replies.append(RetriedReply(round_index=round_index, message=reply.completion.message))
 
 
 def latest_question(conversation: list[Message]) -> str:

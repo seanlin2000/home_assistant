@@ -42,6 +42,11 @@ def empty_reply() -> list[LLMEvent]:
     return [Completion(message=Message(role=Role.ASSISTANT, content=""), stats=GenerationStats(model="fake", total_seconds=0.1))]
 
 
+def with_thinking(reply: list[LLMEvent], thinking: str) -> list[LLMEvent]:
+    """The same reply, its completed message carrying the thinking the model streamed before it."""
+    return [event.model_copy(update={"message": event.message.model_copy(update={"thinking": thinking})}) if isinstance(event, Completion) else event for event in reply]
+
+
 class ScriptedLLM:
     def __init__(self, replies: list[list[LLMEvent]]) -> None:
         self._replies = list(replies)

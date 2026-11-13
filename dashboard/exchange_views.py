@@ -7,7 +7,7 @@ from pathlib import Path
 from pydantic import BaseModel, Field
 
 from assistant_core.exchange_record import ExchangeRecord, ExchangeTrace, ToolCallSummary
-from assistant_core.models import Message, Role, ToolCallRecord, Transcript
+from assistant_core.models import Message, RetriedReply, Role, ToolCallRecord, Transcript
 from assistant_service.exchange_log import ExchangeLog, TraceLog
 from dashboard.evidence import ToolEvidence, tool_evidence
 from dashboard.generation_speed import response_speed
@@ -53,11 +53,13 @@ class ToolCard(BaseModel):
 
 
 class Turn(BaseModel):
-    """One model call that the conversation kept: what it thought, what it wrote beside its tool calls, and those calls."""
+    """One model call: what it thought, what it wrote beside its tool calls, and those calls. A call whose reply was set aside and asked again for
+    shows only its thinking and what it wrote."""
 
     thinking: str = ""
     text: str = ""
     tools: list[ToolCard]
+    asked_again: bool = False
 
 
 class SpeechRun(BaseModel):
@@ -198,15 +200,21 @@ def last_question_index(conversation: list[Message]) -> int:
 
 
 def turns_from_transcript(transcript: Transcript, question_index: int, record: ExchangeRecord) -> list[Turn]:
-    """Each assistant message after the question is a turn, holding the tool calls it asked for; calls no kept message asked for go in a last turn."""
+    """Each assistant message after the question is a turn, holding the tool calls it asked for, after the replies of its round that were asked again;
+    calls no kept message asked for go in a last turn. The loop keeps one reply a round, so the n-th kept reply is round n's."""
     cards = {tool_call.call.id: card_with_result(tool_call, record) for tool_call in transcript.tool_call_records}
+    kept_replies = [message for message in transcript.conversation[question_index + 1 :] if message.role == Role.ASSISTANT]
     turns = []
-    for message in transcript.conversation[question_index + 1 :]:
-        if message.role == Role.ASSISTANT:
-            turns.append(Turn(thinking=message.thinking, text=message.content if message.tool_calls else "", tools=[cards.pop(call.id) for call in message.tool_calls if call.id in cards]))
+    for round_index, message in enumerate(kept_replies):
+        turns.extend(retried_turns(transcript.retried_replies, round_index))
+        turns.append(Turn(thinking=message.thinking, text=message.content if message.tool_calls else "", tools=[cards.pop(call.id) for call in message.tool_calls if call.id in cards]))
     if cards:
         turns.append(Turn(tools=list(cards.values())))
     return turns
+
+
+def retried_turns(retried_replies: list[RetriedReply], round_index: int) -> list[Turn]:
+    return [Turn(thinking=retried.message.thinking, text=retried.message.content, tools=[], asked_again=True) for retried in retried_replies if retried.round_index == round_index]
 
 
 def card_with_result(tool_call: ToolCallRecord, record: ExchangeRecord) -> ToolCard:
