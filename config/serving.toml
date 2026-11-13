@@ -47,6 +47,7 @@ gpu_layers = "all"
 flash_attention = "on"
 prompt_cache_mib = 2048                     # one slot's prompt state is about 1,091 MiB, which a 1,024 MiB cache skipped
 reasoning = "off"                           # the server default; the harness turns thinking on per request (config/harness.toml think)
+reasoning_budget_tokens = 3072              # thinking stops here, leaving at least 1,024 of the 4,096-token cap for the answer
 swa_full = false                            # no sliding-window layers in this model
 speculative = "draft-mtp"                   # the model's own multi-token-prediction layer drafts tokens: decode 19 -> about 36 tok/s on the M5 Max
 
@@ -66,7 +67,7 @@ top_k = 20
 min_p = 0.0
 presence_penalty = 0.0
 repeat_penalty = 1.0
-max_output_tokens = 2048                    # thinking counts against it; medium effort writes a few hundred tokens before the answer
+max_output_tokens = 4096                    # thinking and the answer share it; at 2,048, 10 of 110 medium answers ended at the cap
 
 # A 125B mixture of experts (6B active) whose 51B n-gram embedding table ships as a second shard. Only shard 1 (47.0 GB) must be resident; with
 # load_mode mmap and lazy_mode on, llama-server reads the table's rows (shard 2, 28.8 GB) from disk as tokens need them (ISTA-DASLab's model card).
@@ -86,6 +87,7 @@ gpu_layers = "all"
 flash_attention = "on"
 prompt_cache_mib = 1024                     # half the 27B's: shard 1 leaves little memory on the 64 GB Studio
 reasoning = "off"                           # the server default; the harness turns thinking on per request
+reasoning_budget_tokens = 3072              # thinking stops here, leaving at least 1,024 of the 4,096-token cap for the answer
 swa_full = false
 speculative = "none"
 load_mode = "mmap"
@@ -107,4 +109,4 @@ top_k = 20
 min_p = 0.0
 presence_penalty = 0.0
 repeat_penalty = 1.0
-max_output_tokens = 2048
+max_output_tokens = 4096                    # thinking and the answer share it; at 2,048, 37 of 110 medium answers ended at the cap
