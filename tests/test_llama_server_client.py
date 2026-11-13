@@ -73,6 +73,14 @@ def test_thinking_is_kept_on_the_message_but_never_streamed_as_spoken_text() -> 
     assert (message.thinking, message.content) == ("Twelve percent of 250 is 30.", "It is thirty.")
 
 
+def test_each_streamed_thinking_piece_counts_as_one_thinking_token() -> None:
+    reply = StreamedReply()
+    reply.absorb(chunk({"reasoning_content": "Twelve"}), 0.0)
+    reply.absorb(chunk({"reasoning_content": " percent"}), 0.0)
+    reply.absorb(chunk({"content": "Thirty."}, "stop", {"predicted_n": 4}), 0.0)
+    assert reply.stats("qwen3.8-27b", 0.0).thinking_tokens == 2
+
+
 def test_the_model_reads_tool_schemas_without_the_titles_that_repeat_each_argument_name() -> None:
     schema = {"title": "percentArguments", "type": "object", "properties": {"title": {"title": "Title", "type": "string"}, "a": {"title": "A", "type": "number"}}}
     sent = to_openai_tool(ToolSpec(name="percent", description="Percent questions.", input_schema=schema))["function"]["parameters"]

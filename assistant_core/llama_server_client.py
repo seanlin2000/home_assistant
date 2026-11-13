@@ -252,6 +252,7 @@ class StreamedReply:
             fresh_prompt_tokens=fresh,
             cached_prompt_tokens=cached,
             output_tokens=self.timings.get("predicted_n"),
+            thinking_tokens=len(self.thinking_parts),
             time_to_first_token_seconds=self.first_token_at,
             total_seconds=time.perf_counter() - started,
             prompt_eval_seconds=milliseconds_to_seconds(self.timings.get("prompt_ms")),
