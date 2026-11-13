@@ -8,18 +8,20 @@ import asyncio
 from datetime import date
 
 from sports_mcp.espn_client import EspnSession
-from sports_mcp.espn_records import FINISHED, NOT_PLAYED, BoxScore, FoundPlayer, Game, LoggedGame
+from sports_mcp.espn_records import FINISHED, NOT_PLAYED, BoxScore, FoundPlayer, Game, LoggedGame, RosterPlayer
 from sports_mcp.game_finder import closest_game, game_near_day, last_meeting, plays_in, whole_season
 from sports_mcp.leagues import League
 from sports_mcp.render import (
     box_score_text,
     day_heading,
     games_text,
+    has_stat_table,
     matchup_text,
     player_stats_text,
     roster_text,
     season_games_text,
     team_games_text,
+    team_stats_text,
 )
 from sports_mcp.teams import Team
 
@@ -77,10 +79,28 @@ async def team_roster(session: EspnSession, league: League, team: Team) -> str:
     return roster_text(league, team, await session.roster(league, team))
 
 
+async def team_stats(session: EspnSession, league: League, team: Team) -> str:
+    """Each player's statistics page, read a few at a time; ESPN's league-wide statistics ignore a team filter and run to megabytes."""
+    players = [player for player in (await session.roster(league, team)).players if player.espn_id and has_stat_table(league, player)]
+    seasons = await asyncio.gather(*(session.player_seasons(league, as_found_player(player, team)) for player in players))
+    return team_stats_text(league, team, league.current_season(session.today), list(zip(players, seasons, strict=True)))
+
+
+def as_found_player(player: RosterPlayer, team: Team) -> FoundPlayer:
+    return FoundPlayer(espn_id=player.espn_id, name=player.name, team=team.display_name)
+
+
 async def player_stats(session: EspnSession, league: League, player: FoundPlayer, first_season: int | None, last_season: int | None) -> str:
     seasons = await session.player_seasons(league, player)
     played = sorted(league.start_year(espn_season) for espn_season in seasons.espn_seasons) or [league.current_season(session.today)]
-    return player_stats_text(league, player, seasons, first_season or played[0], last_season or played[-1])
+    return player_stats_text(league, player, seasons, *season_range(played, first_season, last_season))
+
+
+def season_range(played: list[int], first_season: int | None, last_season: int | None) -> tuple[int, int]:
+    """An end not asked for is the career's end, but never past the end that was asked for: a player last seen in 2025-26 asked about from
+    2026-27 gets 2026-27 to 2026-27, which says he has no statistics then, not a backwards 2026-27 to 2025-26."""
+    last = last_season or max(played[-1], first_season or played[0])
+    return first_season or min(played[0], last), last
 
 
 async def player_against_player(session: EspnSession, league: League, player: FoundPlayer, opponent: FoundPlayer) -> str:

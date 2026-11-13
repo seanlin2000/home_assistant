@@ -78,6 +78,7 @@ class Game(BaseModel):
 
 class RosterPlayer(BaseModel):
     name: str
+    espn_id: str = ""  # empty in the benchmark's rosters, recorded before team_stats needed it
     jersey: str = ""
     position: str = ""
     group: str = ""
@@ -309,6 +310,7 @@ def read_roster_player(athlete: dict[str, Any], group: str) -> RosterPlayer:
     injuries = athlete.get("injuries") or []
     return RosterPlayer(
         name=cleaned_name(athlete["displayName"]),
+        espn_id=str(athlete.get("id", "")),
         jersey=cleaned_name(athlete.get("jersey", "")),
         position=cleaned_name((athlete.get("position") or {}).get("abbreviation", "")),
         group=group,

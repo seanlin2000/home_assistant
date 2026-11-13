@@ -64,7 +64,7 @@ This question is about the weather. Call weather_forecast first, with place set 
 Example call: weather_forecast(day="saturday", part_of_day="all", place="Lisbon")
 """
 SPORTS_DIRECTIVE = """Routing for this question: SPORTS.
-This question is about NBA or NFL scores, rosters, or statistics. Call game_scores for scores, box_score for one game's player statistics, team_roster for a roster, player_stats for a player's seasons, or player_matchup for a head-to-head; do not search the web and do not answer from memory. Answer from the numbers the tool returns.
+This question is about NBA or NFL scores, rosters, or statistics. Call game_scores for scores, box_score for one game's player statistics, team_roster for a roster, team_stats for every player's season on one team, player_stats for a player's seasons, or player_matchup for a head-to-head; do not search the web and do not answer from memory. Answer from the numbers the tool returns.
 Example call: player_stats(league="nba", player="Stephen Curry", from_season=2011, to_season=2025)
 """
 SHOWS_DIRECTIVE = """Routing for this question: SHOWS.

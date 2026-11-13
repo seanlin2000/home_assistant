@@ -53,6 +53,9 @@ checks:
   - id: sports-roster
     question: Who's injured on the Giants right now?
     expected: [team_roster]
+  - id: sports-team-leaders
+    question: Who are the Warriors' top five scorers this season?
+    expected: [team_stats]
   - id: sports-matchup
     question: How has LeBron done against Steph Curry over his career?
     expected: [player_matchup]

@@ -19,7 +19,7 @@ from assistant_core.tools import McpToolBox
 from benchmark.mcp_process import SPORTS_FIXTURES_DIR, SPORTS_RECORDED_ON
 from benchmark.record_sports_fixtures import INJECTED_NOTE, trimmed
 from benchmark.records import Category, load_questions
-from sports_mcp.answers import faced_each_other
+from sports_mcp.answers import faced_each_other, season_range
 from sports_mcp.cache import FOREVER, LIVE_SECONDS, SCHEDULE_SECONDS, SportsCache
 from sports_mcp.espn_client import EspnSession
 from sports_mcp.espn_records import BoxScore, FoundPlayer, Game, LoggedGame, TeamLine, read_box_score, read_player_seasons
@@ -484,3 +484,125 @@ def test_every_category_j_question_is_pinned_to_the_recording_day() -> None:
     assert len(questions) == 15
     assert {question.today for question in questions} == {RECORDED_ON}
     assert all(question.required_tools == [Route.SPORTS] and question.needs_benchmark_tool_server for question in questions)
+
+
+THIS_SEASON_DAY = date(2026, 11, 13)  # NBA 2026-27 (ESPN 2027) and NFL 2026 are both in progress
+NBA_AVERAGE_NAMES = ["gamesPlayed", "avgPoints", "avgRebounds", "avgAssists", "fieldGoalPct"]
+NFL_STAT_NAMES = {
+    "passing": ["gamesPlayed", "completions", "passingAttempts", "passingYards", "passingTouchdowns", "interceptions", "QBRating"],
+    "rushing": ["gamesPlayed", "rushingAttempts", "rushingYards", "rushingTouchdowns"],
+    "receiving": ["gamesPlayed", "receptions", "receivingYards", "receivingTouchdowns"],
+}
+
+
+class TeamEspn:
+    """A roster and each player's statistics page, by ESPN player id, recording which pages were asked for."""
+
+    def __init__(self, roster: dict[str, Any], stats_by_player: dict[str, dict[str, Any]]) -> None:
+        self.roster, self.stats_by_player = roster, stats_by_player
+        self.asked_players: list[str] = []
+
+    def handle(self, request: httpx.Request) -> httpx.Response:
+        if request.url.path.endswith("/roster"):
+            return httpx.Response(200, json=self.roster)
+        player_id = request.url.path.split("/athletes/")[1].split("/")[0]
+        self.asked_players.append(player_id)
+        return httpx.Response(200, json=self.stats_by_player[player_id])
+
+    @property
+    def transport(self) -> httpx.MockTransport:
+        return httpx.MockTransport(self.handle)
+
+
+def stats_page(categories: dict[str, dict[int, list[Any]]], names: dict[str, list[str]], team_ids: tuple[str, ...] = ("9",)) -> dict[str, Any]:
+    """One row per season on the team in team_ids, or for a player traded that season a row per team and a totals row without a team."""
+
+    def rows(espn_season: int, stats: list[Any]) -> list[dict[str, Any]]:
+        if len(team_ids) == 1:
+            return [{"season": {"year": espn_season}, "teamId": team_ids[0], "stats": stats}]
+        return [*({"season": {"year": espn_season}, "teamId": team_id, "stats": stats} for team_id in team_ids), {"season": {"year": espn_season}, "stats": stats}]
+
+    return {
+        "teams": {team_id: {"id": team_id, "abbreviation": {"9": "GS", "1": "ATL"}.get(team_id, "SF")} for team_id in team_ids},
+        "categories": [
+            {"name": name, "labels": [], "names": names[name], "statistics": [row for season, stats in seasons.items() for row in rows(season, stats)], "totals": []}
+            for name, seasons in categories.items()
+        ],
+    }
+
+
+def nba_page(seasons: dict[int, list[Any]], team_ids: tuple[str, ...] = ("9",)) -> dict[str, Any]:
+    return stats_page({"averages": seasons}, {"averages": NBA_AVERAGE_NAMES}, team_ids)
+
+
+async def test_team_stats_ranks_this_seasons_scorers_and_names_who_has_not_played() -> None:
+    roster = {
+        "season": {"displayName": "2026-27"},
+        "athletes": [
+            {"id": "6430", "displayName": "Jimmy Butler III", "injuries": [{"status": "Out"}]},
+            {"id": "3975", "displayName": "Stephen Curry"},
+            {"id": "3102531", "displayName": "Kristaps Porzingis"},
+            {"id": "5175737", "displayName": "Yaxel Lendeborg"},
+        ],
+    }
+    espn = TeamEspn(
+        roster,
+        {
+            "6430": nba_page({2026: [38, 20.0, 5.6, 4.9, 51.9]}),
+            "3975": nba_page({2026: [43, 26.6, 3.6, 4.7, 46.8], 2027: [10, 27.8, 3.7, 3.9, 50.0]}),
+            "3102531": nba_page({2027: [9, 16.0, 6.1, 2.0, 44.0]}, team_ids=("1", "9")),
+            "5175737": nba_page({2027: [10, 21.7, 6.0, 2.2, 49.5]}),
+        },
+    )
+    reply = await ask("team_stats", espn.transport, SportsSettings(cache_dir=None, today=THIS_SEASON_DAY), league="nba", team="Warriors")
+    assert reply.splitlines() == [
+        "NBA: Golden State Warriors players, 2026-27 regular season, most points per game first",
+        "player | games | points per game | rebounds per game | assists per game | 3-pointers made-attempted (season total) | field goal %",
+        "Stephen Curry | 10 | 27.8 | 3.7 | 3.9 |  | 50.0",
+        "Yaxel Lendeborg | 10 | 21.7 | 6.0 | 2.2 |  | 49.5",
+        "Kristaps Porzingis (with ATL/GS) | 9 | 16.0 | 6.1 | 2.0 |  | 44.0",
+        "No games this season: Jimmy Butler III (Out)",
+    ]
+
+
+async def test_nfl_team_stats_reads_only_the_positions_with_tables_and_leaves_out_players_without_yards() -> None:
+    def player(espn_id: str, name: str, position: str) -> dict[str, Any]:
+        return {"id": espn_id, "displayName": name, "position": {"abbreviation": position}}
+
+    roster = {
+        "athletes": [
+            {"position": "offense", "items": [player("1", "Brock Purdy", "QB"), player("2", "Trent Williams", "OT"), player("3", "George Kittle", "TE"), player("4", "Ricky Pearsall", "WR")]},
+            {"position": "practiceSquad", "items": [player("5", "Practice Receiver", "WR")]},
+        ],
+    }
+    espn = TeamEspn(
+        roster,
+        {
+            "1": stats_page({"passing": {2026: [9, 190, 290, 2210, 15, 6, 98.1]}, "rushing": {2026: [9, 30, 120, 2]}}, NFL_STAT_NAMES, ("25",)),
+            "3": stats_page({"receiving": {2025: [16, 70, 900, 6], 2026: [3, 0, 0, 0]}}, NFL_STAT_NAMES, ("25",)),
+            "4": stats_page({"receiving": {2026: [9, 40, 610, 3]}, "rushing": {2026: [9, 2, 11, 0]}}, NFL_STAT_NAMES, ("25",)),
+        },
+    )
+    reply = await ask("team_stats", espn.transport, SportsSettings(cache_dir=None, today=THIS_SEASON_DAY), league="nfl", team="Niners")
+    assert sorted(espn.asked_players) == ["1", "3", "4"]  # not the tackle, not the practice squad
+    assert reply.splitlines() == [
+        "NFL: San Francisco 49ers players, 2026 regular season, each table with the most yards first",
+        "Passing:",
+        "player | games | completions | attempts | yards | touchdowns | interceptions | passer rating",
+        "Brock Purdy | 9 | 190 | 290 | 2210 | 15 | 6 | 98.1",
+        "Rushing:",
+        "player | games | carries | yards | touchdowns",
+        "Brock Purdy | 9 | 30 | 120 | 2",
+        "Ricky Pearsall | 9 | 2 | 11 | 0",
+        "Receiving:",
+        "player | games | catches | yards | touchdowns",
+        "Ricky Pearsall | 9 | 40 | 610 | 3",
+        "No passing, rushing or receiving yards this season: George Kittle",
+    ]
+
+
+def test_a_season_range_with_one_end_given_never_runs_backwards() -> None:
+    assert season_range([2009, 2025], None, None) == (2009, 2025)
+    assert season_range([2009, 2025], 2015, None) == (2015, 2025)
+    assert season_range([2024, 2025], 2026, None) == (2026, 2026)  # last played 2025-26, asked from 2026-27
+    assert season_range([2012, 2025], None, 2010) == (2010, 2010)

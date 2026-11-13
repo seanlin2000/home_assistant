@@ -1,6 +1,6 @@
 """Expose NBA and NFL scores, box scores, rosters, statistics and head-to-heads from ESPN as MCP tools on an existing server, so the agent sees one tool list.
 
-Five tools rather than one, split by the kind of question, so a small model picks by what was asked (design doc v2/03 section 3.4). Every failure is
+Six tools rather than one, split by the kind of question, so a small model picks by what was asked (design doc v2/03 section 3.4). Every failure is
 one sentence telling the model what to do next, never an exception, as the weather and Wikipedia tools do.
 """
 
@@ -14,7 +14,7 @@ import httpx
 from mcp.server.mcpserver import MCPServer
 from pydantic import Field
 
-from sports_mcp.answers import day_scores, game_box_score, player_against_player, player_against_team, player_stats, recent_team_scores, season_scores, team_roster
+from sports_mcp.answers import day_scores, game_box_score, player_against_player, player_against_team, player_stats, recent_team_scores, season_scores, team_roster, team_stats
 from sports_mcp.cache import SportsCache
 from sports_mcp.espn_client import EspnSession, EspnUnavailable
 from sports_mcp.espn_records import FoundPlayer
@@ -29,6 +29,7 @@ BOX_SCORE_TOOL_NAME = "box_score"
 TEAM_ROSTER_TOOL_NAME = "team_roster"
 PLAYER_STATS_TOOL_NAME = "player_stats"
 PLAYER_MATCHUP_TOOL_NAME = "player_matchup"
+TEAM_STATS_TOOL_NAME = "team_stats"
 MAX_TEAM_CHARS = 40
 MAX_PLAYER_CHARS = 60
 MAX_DATE_CHARS = 10
@@ -79,6 +80,16 @@ def register_sports_tools(server: MCPServer, settings: SportsSettings, transport
     @server.tool(name=TEAM_ROSTER_TOOL_NAME, description=f"An NBA or NFL team's roster: number, name, position, injury status. {USE_BEFORE_SEARCH} {READ_AS_GIVEN}")
     async def roster(league: LeagueName, team: Annotated[TeamName, Field(description='as the user said it, e.g. "Niners"')]) -> str:
         return await answered(lambda espn: team_roster(espn, League(league), one_team(League(league), team)))
+
+    @server.tool(
+        name=TEAM_STATS_TOOL_NAME,
+        description=(
+            "This season's statistics for every player on an NBA or NFL team, ranked by points per game or by yards, with who has not played:"
+            f" for a team's leaders or top scorers. {USE_BEFORE_SEARCH} {READ_AS_GIVEN}"
+        ),
+    )
+    async def team_season(league: LeagueName, team: Annotated[TeamName, Field(description='as the user said it, e.g. "Warriors"')]) -> str:
+        return await answered(lambda espn: team_stats(espn, League(league), one_team(League(league), team)))
 
     @server.tool(name=PLAYER_STATS_TOOL_NAME, description=f"An NBA or NFL player's regular-season statistics by season, with career totals. {USE_BEFORE_SEARCH} {READ_AS_GIVEN}")
     async def stats(

@@ -89,7 +89,7 @@ class EspnSession:
 
     async def roster(self, league: League, team: Team) -> Roster:
         url = f"{self._settings.site_base_url}/{league.espn_path}/teams/{team.espn_id}/roster"
-        return await self._kept(f"roster:{league}:{team.espn_id}", ROSTER_SECONDS, TypeAdapter(Roster), lambda: self._read(url, {}, read_roster))
+        return await self._kept(f"roster-with-ids:{league}:{team.espn_id}", ROSTER_SECONDS, TypeAdapter(Roster), lambda: self._read(url, {}, read_roster))
 
     async def find_player(self, league: League, spoken: str) -> FoundPlayer | None:
         """ESPN's best-known player of that name in the league. A miss is not kept, so a player ESPN adds later is found."""
