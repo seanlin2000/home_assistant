@@ -47,7 +47,9 @@ MALFORMED_RETRIES = 1
 REPEATED_CALL_NOTE = "You already made this exact call for this question; here is its result again. Use it rather than calling again."
 TOOL_LIMIT_NOTICE = "Tool call limit reached. Answer the user now with what you already know; do not call any more tools."
 TOOL_UNREACHABLE_NOTICE = "The web search tool is unavailable right now. Tell the user you could not check the web, then answer from your own knowledge with that caveat."
-SENTENCE_END = re.compile(r"[.!?][\"')\]]?(\s|$)")
+# A sentence end counts only once the space after it has arrived, so "$3." or "version 2." at the end of a streamed chunk does not close the answer.
+SENTENCE_END = re.compile(r"[.!?][\"')\]]?\s")
+WORD = re.compile(r"\S+")
 # Gemma 4 now and then writes its tool call as text ("<tool_call> search_and_read(query=...)", "<execute_tool> ...") instead of calling the tool.
 MARKUP_START = "<"
 WRITTEN_TOOL_CALL = re.compile(r"^\s*<\|?\s*(tool_call|execute_tool|tool_code|function_call)\b", re.IGNORECASE)
@@ -101,24 +103,35 @@ class ModelReply:
 
 
 class SpokenAnswerCap:
-    """Soft word cap: past the budget, speech stops at the end of the current sentence."""
+    """Soft word cap: past the budget, speech stops at the end of the current sentence, and the rest of the answer is dropped."""
 
     def __init__(self, word_budget: int) -> None:
         self._word_budget = word_budget
-        self._words_spoken = 0
         self._closed = False
         self.truncated = False
         self.spoken_parts: list[str] = []
 
     def admit(self, text: str) -> str:
         if self._closed:
-            self.truncated = True
+            self.truncated = self.truncated or bool(text.strip())
             return ""
-        self._words_spoken += len(text.split())
-        if self._words_spoken > self._word_budget and SENTENCE_END.search(text):
-            self._closed = True
-        self.spoken_parts.append(text)
-        return text
+        admitted = self._text_through_closing_sentence(text)
+        self.truncated = bool(text[len(admitted) :].strip())
+        self.spoken_parts.append(admitted)
+        return admitted
+
+    def _text_through_closing_sentence(self, text: str) -> str:
+        # Count words over everything spoken so far: a streamed chunk can carry half a word, or only the space after a sentence's full stop.
+        spoken_before = "".join(self.spoken_parts)
+        answer_so_far = spoken_before + text
+        words = list(WORD.finditer(answer_so_far))
+        if len(words) <= self._word_budget:
+            return text
+        closing_sentence_end = SENTENCE_END.search(answer_so_far, words[self._word_budget].start())
+        if closing_sentence_end is None:
+            return text
+        self._closed = True
+        return text[: closing_sentence_end.end() - len(spoken_before)]
 
     @property
     def spoken_text(self) -> str:

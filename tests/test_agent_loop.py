@@ -104,6 +104,36 @@ async def test_word_cap_stops_speech_at_sentence_end() -> None:
     assert cap.spoken_text == "One two three. Four five six seven."
 
 
+async def test_word_cap_counts_a_word_split_across_chunks_once() -> None:
+    cap = SpokenAnswerCap(word_budget=4)
+    spoken = [cap.admit(chunk) for chunk in ["Twen", "ty one. ", "Two three. ", "Four."]]
+    assert spoken == ["Twen", "ty one. ", "Two three. ", "Four."]
+    assert cap.truncated is False
+
+
+async def test_word_cap_ignores_a_decimal_point_at_the_end_of_a_chunk() -> None:
+    cap = SpokenAnswerCap(word_budget=2)
+    spoken = [cap.admit(chunk) for chunk in ["It costs $3.", "50 a month. ", "Plus tax."]]
+    assert spoken == ["It costs $3.", "50 a month. ", ""]
+    assert cap.spoken_text == "It costs $3.50 a month."
+
+
+async def test_word_cap_drops_the_rest_of_the_chunk_after_the_closing_sentence() -> None:
+    cap = SpokenAnswerCap(word_budget=2)
+    spoken = [cap.admit(chunk) for chunk in ["One two three. Four five", " six."]]
+    assert spoken == ["One two three. ", ""]
+    assert cap.truncated is True
+    assert cap.spoken_text == "One two three."
+
+
+async def test_word_cap_closes_when_the_space_after_a_full_stop_arrives_in_the_next_chunk() -> None:
+    cap = SpokenAnswerCap(word_budget=2)
+    spoken = [cap.admit(chunk) for chunk in ["One two three.", " Four five."]]
+    assert spoken == ["One two three.", " "]
+    assert cap.truncated is True
+    assert cap.spoken_text == "One two three."
+
+
 async def test_multi_exchange_conversation_carries_history() -> None:
     llm = ScriptedLLM([text_reply("Pick 24 GB."), text_reply("Still 24 GB.")])
     tools = FakeToolBox()
