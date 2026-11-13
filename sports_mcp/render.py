@@ -277,6 +277,8 @@ def team_stats_text(league: League, team: Team, start_year: int, players: list[t
     names who is out rather than skipping them or reading last season's numbers."""
     espn_season = league.espn_season(start_year)
     heading = f"{league.label}: {team.display_name} players, {league.season_label(start_year)} regular season, {TEAM_RANKING[league]}"
+    if not players:
+        return f"{heading}\nESPN's roster for this team names no player whose statistics can be read."
     tables = [NBA_TEAM_TABLE] if league is League.NBA else list(NFL_TEAM_TABLES)
     lines = [heading]
     listed: set[str] = set()
