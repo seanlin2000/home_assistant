@@ -52,6 +52,15 @@ async def test_tool_round_cap_forces_a_final_answer() -> None:
     assert agent_loop.TOOL_LIMIT_NOTICE in [message.content for message in llm.seen_messages[-1]]
 
 
+async def test_the_last_result_ends_with_the_word_limit_raised_for_each_call_and_the_record_keeps_the_result_alone() -> None:
+    llm = ScriptedLLM([several_tool_calls_reply("gold price", "silver price"), text_reply("Done.")])
+    events = await collect(llm, FakeToolBox())
+    sent = llm.seen_messages[1]
+    assert sent[-1].content.endswith("the answer word limit is now about 59 spoken words.")
+    assert "word limit" not in sent[-2].content
+    assert all("word limit" not in record.result for record in events[-1].transcript.tool_call_records)
+
+
 CONTEXT_POLICY = AgentPolicy(filler_phrases=["Checking."], context_tokens=16384, max_output_tokens=600)
 PAGE_TOO_LONG_TO_FIT = "word " * 8000
 TWO_PAGES_TOO_LONG_TO_FIT = f"Read 2 of 8 results for \"q1\".\n\n[1] First page\nURL: https://a.example\n{'alpha ' * 4000}\n\n[2] Second page\nURL: https://b.example\n{'beta ' * 4000}"
@@ -63,7 +72,7 @@ async def test_results_that_would_overflow_the_context_are_cut_to_the_room_left(
     transcript = events[-1].transcript
     passed_on = llm.seen_messages[1][-1].content
     assert transcript.hit_context_limit is True and transcript.hit_tool_round_cap is False
-    assert passed_on.startswith('<untrusted source="search_and_read">\nword word') and passed_on.endswith(f"{agent_loop.CUT_TO_FIT_NOTE}\n</untrusted>")
+    assert passed_on.startswith('<untrusted source="search_and_read">\nword word') and f"{agent_loop.CUT_TO_FIT_NOTE}\n</untrusted>" in passed_on
     assert 6000 + len(passed_on) // agent_loop.CHARS_PER_TOKEN_ESTIMATE + 600 <= 16384
     assert PAGE_TOO_LONG_TO_FIT.strip() in transcript.tool_call_records[0].result
     assert transcript.final_answer == "Here is what I know."
@@ -98,7 +107,7 @@ async def test_results_of_one_round_share_the_room_and_a_short_one_stays_whole()
 async def test_with_no_room_left_only_the_note_is_passed_on() -> None:
     llm = ScriptedLLM([tool_reply("q1", prompt_tokens=16000), text_reply("Here is what I know.")])
     await collect(llm, FakeToolBox(result=PAGE_TOO_LONG_TO_FIT), CONTEXT_POLICY)
-    assert llm.seen_messages[1][-1].content == f'<untrusted source="search_and_read">\n{agent_loop.CUT_TO_FIT_NOTE}\n</untrusted>'
+    assert llm.seen_messages[1][-1].content.startswith(f'<untrusted source="search_and_read">\n{agent_loop.CUT_TO_FIT_NOTE}\n</untrusted>\n\n')
 
 
 async def test_a_call_after_a_cut_is_not_run_and_the_model_must_answer() -> None:

@@ -37,7 +37,7 @@ from assistant_core.models import (
     ToolStarted,
     Transcript,
 )
-from assistant_core.prompts import SILENCE_MARKER, per_question_block, question_with_block, system_prompt
+from assistant_core.prompts import MAXIMUM_WORD_LIMIT, SILENCE_MARKER, WORD_LIMIT_AFTER_TOOLS_LINE, per_question_block, question_with_block, system_prompt, word_limit_after_tools_line
 from assistant_core.router import decide_route, directive_for, route_to_offered_tools, tool_round_cap
 from assistant_core.tool_guards import GuardedToolBox, ToolRefused, load_tool_table, untrusted_block_opening
 from assistant_core.tools import ToolBox
@@ -50,6 +50,7 @@ CUT_TO_FIT_NOTE = "(The rest was cut to fit. Answer the user now from what is he
 # Search results measured 3.6 characters a token on average with Qwen's tokenizer, and as few as 2 on pages of tables and numbers;
 # counting three keeps most cuts inside the room, and each message adds its template markers.
 CHARS_PER_TOKEN_ESTIMATE = 3
+WORD_LIMIT_NOTE_TOKENS = len(WORD_LIMIT_AFTER_TOOLS_LINE.format(words=MAXIMUM_WORD_LIMIT)) // CHARS_PER_TOKEN_ESTIMATE + 2  # room kept for the note after the results
 MESSAGE_MARKER_TOKENS = 10
 TOOL_UNREACHABLE_NOTICE = "The web search tool is unavailable right now. Tell the user you could not check the web, then answer from your own knowledge with that caveat."
 SENTENCE_END = re.compile(r"[.!?][\"')\]]?(\s|$)")
@@ -152,7 +153,8 @@ async def run(conversation: list[Message], llm: LLMClient, tools: ToolBox, polic
         transcript.route = route_to_offered_tools(await decide_route(llm, conversation, policy), tool_specs)
         transcript.route.started_seconds = route_started
         directive = directive_for(transcript.route)
-    transcript.per_question_block = per_question_block(today or date.today(), latest_question(conversation), directive, memory.get_context(conversation))
+    question = latest_question(conversation)
+    transcript.per_question_block = per_question_block(today or date.today(), question, directive, memory.get_context(conversation))
     spoken_question = put_block_before_question(messages, transcript.per_question_block)
     max_tool_rounds = tool_round_cap(transcript.route, policy.max_tool_rounds)
     runner = ToolCallRunner(tools, policy, started)
@@ -180,6 +182,7 @@ async def run(conversation: list[Message], llm: LLMClient, tools: ToolBox, polic
             yield event
         if not next_request_fits(messages, transcript, policy):
             cut_last_results_to_fit(messages, transcript, policy)
+        add_word_limit_after_results(messages, question, len(transcript.tool_call_records))
     restore_spoken_question(messages, spoken_question)
     finish_transcript(transcript, reply, cap, messages, started)
     transcript.untrusted = tools.untrusted
@@ -440,7 +443,7 @@ def next_request_fits(messages: list[Message], transcript: Transcript, policy: A
     if last_prompt_tokens is None:
         return True
     added_tokens = sum(estimated_tokens(message) for message in messages[last_reply_index(messages) :])
-    return last_prompt_tokens + added_tokens + policy.max_output_tokens <= policy.context_tokens
+    return last_prompt_tokens + added_tokens + WORD_LIMIT_NOTE_TOKENS + policy.max_output_tokens <= policy.context_tokens
 
 
 def estimated_tokens(message: Message) -> int:
@@ -466,8 +469,15 @@ def cut_last_results_to_fit(messages: list[Message], transcript: Transcript, pol
 def room_left_for_results(messages: list[Message], transcript: Transcript, policy: AgentPolicy) -> int:
     reply_index = last_reply_index(messages)
     result_markers = MESSAGE_MARKER_TOKENS * (len(messages) - reply_index - 1)
-    used_tokens = transcript.model_calls[-1].prompt_tokens + estimated_tokens(messages[reply_index]) + result_markers + policy.max_output_tokens
+    used_tokens = transcript.model_calls[-1].prompt_tokens + estimated_tokens(messages[reply_index]) + result_markers + WORD_LIMIT_NOTE_TOKENS + policy.max_output_tokens
     return max(policy.context_tokens - used_tokens, 0)
+
+
+def add_word_limit_after_results(messages: list[Message], question: str, tool_calls_made: int) -> None:
+    """Each tool call raises the word limit, so it is restated after the last result, the last thing the model reads before answering, where it
+    leaves the cached prompt before it untouched. The note before the question could count only the question."""
+    last_result = messages[-1]
+    messages[-1] = last_result.model_copy(update={"content": f"{last_result.content}\n\n{word_limit_after_tools_line(question, tool_calls_made)}"})
 
 
 def fair_shares(lengths: list[int], room: int) -> list[int]:
