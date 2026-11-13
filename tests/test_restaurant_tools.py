@@ -33,6 +33,9 @@ REFRESHED_AT = datetime(2026, 11, 1, 12, tzinfo=UTC)
 UNION_SQUARE = {"name": "Union Square", "lat": "40.7361", "lon": "-73.9902", "category": "place", "address": {"city": "New York", "state": "New York"}}
 
 
+SHORT_LIST_NOTE = "The guide lists {how_many} for this. Tell the user so, and do not search the web to add more; offer to drop a filter or look in a wider area."
+
+
 def restaurant(name: str, where: tuple[str, str, str, str], award: Award, price_level: int, cuisine: str, position: tuple[float, float], description: str = "") -> Restaurant:
     town, district, region, guide_city = where
     return Restaurant(
@@ -220,6 +223,7 @@ async def test_recommendations_list_an_area_best_awarded_first_with_a_sentence_e
         "1. Le Bernardin | three Michelin stars | $$$$ | Seafood | New York, Manhattan | Seafood has long been the calling card.",
         "2. Casa Mono | one Michelin star | $$$ | Spanish | New York, Manhattan | There is something reassuring about a kitchen that butchers.",
         "3. Dim Sum Go Go | Bib Gourmand | $$ | Chinese | New York, Manhattan | Dumplings in Chinatown.",
+        SHORT_LIST_NOTE.format(how_many="only 3 restaurants"),
     ]
 
 
@@ -233,6 +237,18 @@ async def test_the_heading_names_the_filters_and_an_empty_answer_offers_to_drop_
     assert empty == "No Michelin Guide restaurants in Brooklyn, with three stars. Tell the user, and offer to drop a filter."
 
 
+async def test_fewer_restaurants_than_asked_for_says_so_and_steers_away_from_the_web(tmp_path: Path) -> None:
+    settings = settings_in(tmp_path)
+    write_restaurants(settings)
+    one_found = await call(settings, RESTAURANTS_TOOL_NAME, {"location": "NYC", "cuisine": "Mexican", "max_price": 2, "limit": 5})
+    near_place = await call(settings, RESTAURANTS_TOOL_NAME, {"location": "near Union Square, Manhattan", "limit": 6})
+    as_many_as_asked = await call(settings, RESTAURANTS_TOOL_NAME, {"location": "Manhattan", "limit": 3})
+
+    assert one_found.splitlines()[-1] == SHORT_LIST_NOTE.format(how_many="only one restaurant")
+    assert near_place.splitlines()[-1] == SHORT_LIST_NOTE.format(how_many="only 4 restaurants")
+    assert "The guide lists" not in as_many_as_asked
+
+
 async def test_a_description_the_snapshot_lacks_is_read_once_and_kept_until_the_next_refresh(tmp_path: Path) -> None:
     settings = settings_in(tmp_path)
     write_restaurants(settings)
@@ -240,7 +256,7 @@ async def test_a_description_the_snapshot_lacks_is_read_once_and_kept_until_the_
     first = await call(settings, RESTAURANTS_TOOL_NAME, {"location": "Miami"}, pages)
     await call(settings, RESTAURANTS_TOOL_NAME, {"location": "Miami"}, pages)
     assert pages.paths == ["/us/en/restaurant/ariete"]
-    assert first.endswith("| Contemporary | Miami | Well-heeled patrons continue to hold court in this iconic Midtown restaurant led by the ever-gracious Chef Eric Ripert.")
+    assert first.splitlines()[1].endswith("| Contemporary | Miami | Well-heeled patrons continue to hold court in this iconic Midtown restaurant led by the ever-gracious Chef Eric Ripert.")
 
     write_restaurants(settings, refreshed_at=datetime(2026, 12, 1, tzinfo=UTC))
     await call(settings, RESTAURANTS_TOOL_NAME, {"location": "Miami"}, pages)
