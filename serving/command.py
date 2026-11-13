@@ -2,7 +2,7 @@
 
 import shutil
 
-from serving.settings import ModelSettings, ServerSettings, ServingConfig
+from serving.settings import DraftModel, ModelSettings, ServerSettings, ServingConfig
 
 LLAMA_SERVER_PROGRAM = "llama-server"
 # Flags that let the server run commands, read files, call MCP servers, or change its own settings. No setting can produce them, and the launcher
@@ -51,6 +51,8 @@ def model_flags(alias: str, model: ModelSettings) -> list[str]:
         flags.append("--swa-full")
     if model.speculative != "none":
         flags.extend(["--spec-type", model.speculative])
+    if model.draft:
+        flags.extend(draft_flags(model.draft))
     if model.load_mode != "auto":
         flags.extend(["-lm", model.load_mode])
     if model.lazy_mode != "off":
@@ -58,6 +60,10 @@ def model_flags(alias: str, model: ModelSettings) -> list[str]:
     if model.reasoning_budget_tokens is not None:
         flags.extend(["--reasoning-budget", str(model.reasoning_budget_tokens), "--reasoning-budget-message", REASONING_BUDGET_MESSAGE])
     return flags
+
+
+def draft_flags(draft: DraftModel) -> list[str]:
+    return ["-md", str(draft.gguf_path), "-ngld", str(draft.gpu_layers), "--spec-draft-n-max", str(draft.max_draft_tokens)]
 
 
 def refuse_dangerous_flags(command: list[str]) -> None:
