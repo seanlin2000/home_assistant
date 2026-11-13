@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Distinguishes API, MCP server and tool correctly and lays out a local model, an MCP server with search and fetch-page tools, summarizing by the model, an agent loop, untrusted results, timeouts and a tool-call cap, but omits the tool's name/description/schema definition, capping fetched text size and caching.",
+  "judgment_reason": "Answered a conceptual architecture question without searching and included the safety points the design needs, like treating fetched text as untrusted.",
+  "spoken_fit_reason": "Plain prose that names the three tools inline rather than as a list, at a length the two-part question warrants."
+}

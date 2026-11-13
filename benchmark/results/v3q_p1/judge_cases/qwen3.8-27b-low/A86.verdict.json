@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": false,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The bridge-over-Zigbee foundation, local app control during an outage and the loss of remote access are right, but it claims Google voice commands keep working offline, which the sketch says stop, and it misses physical Hue switches, inviting other users, and Apple Home's local control with a home hub.",
+  "judgment_reason": "It searched a stable architecture question and then stretched the 9to5google excerpt, which says only that the Home app should control Hue during an outage, into 'confirmed local, offline voice control', steering the user toward Google on that basis.",
+  "spoken_fit_reason": "Five very long paragraphs of dense prose make a wall of text that the word cap cut off before the outage section was heard."
+}

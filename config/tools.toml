@@ -12,10 +12,12 @@ marks_untrusted = true
 [tools.web_search]
 tier = "read_public"
 marks_untrusted = true
+offer = "never"                             # search_and_read searches and reads in one call; offering both doubled Qwen's calls (v3, 2026-11-12)
 
 [tools.fetch_page]
 tier = "read_public"
 marks_untrusted = true
+offer = "when_the_user_gives_an_address"    # otherwise search_and_read has already read the pages worth reading
 
 [tools.wikipedia_lookup]
 tier = "read_public"

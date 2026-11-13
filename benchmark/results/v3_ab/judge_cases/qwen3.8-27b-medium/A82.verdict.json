@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The API and MCP definitions and the search/fetch MCP server with an agent loop, iteration cap, and caching are sound, but it defines a tool as a generic program like 'a text editor' instead of a function the model asks the harness to call, and it leaves out timeouts and treating fetched text as untrusted.",
+  "judgment_reason": "It answered without searching and closed by asking about RAM and GPU, which is genuinely missing and does decide the model choice.",
+  "spoken_fit_reason": "Plain prose with no markdown, but nine paragraphs ran past the word cap before the architecture part was reached."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "Every release it names traces to the excerpts (Muse Spark Open on October 15 at 816B/42B active, Mistral Large 4 from an October 6 preview to October 29 weights, Kimi K3.1 Pro weights on November 4, Tencent Hy4), but it attributes the new 552B base to the V4.1-Flash-1017 refresh rather than to V4.1-Flash, gives no date for Qwen 3.8, and the message breaks off mid-sentence in the fifth item.",
+  "judgment_reason": "Searching was essential here, and it flags tracker-sourced dates as uncertain, calls the Qwen 4 status unconfirmed, and labels DeepSeek V4.1 Pro as expected rather than released.",
+  "spoken_fit_reason": "It is mostly plain prose with ordinal structure, but it opens with a long caveat and runs so long that the word cap cut it after the first of the five developments."
+}

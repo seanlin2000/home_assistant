@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Correctly says the Knicks trail the 76ers 104 to 98 and the game is still on in the fourth, but rounds the tool's 1:52 left to 'about two minutes'.",
+  "judgment_reason": "Called game_scores for the Knicks without searching and presented the game as live, not final.",
+  "spoken_fit_reason": "Three short plain sentences that lead with the live matchup and score."
+}

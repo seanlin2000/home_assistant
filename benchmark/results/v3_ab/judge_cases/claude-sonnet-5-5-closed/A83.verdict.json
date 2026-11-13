@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "States one three-thousandth halved to about 0.0167 percent, about 166,667 dollars (matching the calculator result), a roughly 8.3x multiple and about 146,667 dollars profit, exactly as the sketch requires.",
+  "judgment_reason": "Used the calculator rather than searching and named the assumptions (even dilution, no follow-on investment, liquidation preferences ignored) that the sketch asks for.",
+  "spoken_fit_reason": "Leads with the 166,667 dollar answer and walks through the steps in plain prose; the length suits a multi-part calculation with caveats."
+}

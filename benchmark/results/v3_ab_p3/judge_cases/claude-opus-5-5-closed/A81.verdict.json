@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Names query text, IP address, timing and the API key tied to billing as transmitted, notes fetched sites also see the IP, explains that model-written queries can leak personal details, and lists mitigations including stripping details, VPN, SearXNG and caching.",
+  "judgment_reason": "Correctly answered a conceptual privacy question without searching and highlighted the non-obvious leak path through model-written queries.",
+  "spoken_fit_reason": "Leads with a direct one-line answer and follows the transmitted, local, minimize structure in plain spoken prose."
+}

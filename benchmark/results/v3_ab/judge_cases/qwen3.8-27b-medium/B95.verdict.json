@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 2,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It names every component the sketch asks for (wake word and VAD, faster-whisper, a quantized 8-14B model with tool calling, web search, Home Assistant, Piper), ranks honest limitations, and gives a speech-then-smart-home-then-search build order, but its Mac mini pick at 'nine hundred to a thousand dollars' leaves nothing for microphones and speakers.",
+  "judgment_reason": "All three searches came back empty and it said so, labeling its prices as planning estimates, but it never checked that the whole build, mic and speakers included, stays under the $1,000 limit.",
+  "spoken_fit_reason": "A long wall of text with markdown emphasis ('*local*') and colon-led list-style paragraphs, cut by the word cap partway through the components."
+}

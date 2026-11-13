@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It gives three distinct mechanisms that match the reference (buybacks and job cuts raising share prices, mega-cap tech driving index gains, prices and margins rising while real wages lag) and adds that the top decile holds most equities.",
+  "judgment_reason": "It answered from knowledge without searching and offered to pull current figures rather than state them, which was the right call.",
+  "spoken_fit_reason": "It uses bold markdown headings ('**One: buybacks...**') and runs so long that the word cap cut it off partway through the second example."
+}

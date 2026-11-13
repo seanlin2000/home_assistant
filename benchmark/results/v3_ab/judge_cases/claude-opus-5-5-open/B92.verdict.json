@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Rates for Synchrony 3.75, Marcus 3.50 and Capital One, Ally and Amex 3.20 all match the excerpts, the calculator interest of 1,875, 1,750 and 1,600 dollars follows directly from the APYs, and the minimums stated (Amex none to open or earn, Capital One and Ally on all balances) are sourced.",
+  "judgment_reason": "Searched for current rates, said rates are variable and can change any day, noted that APY already includes compounding, and admitted it found no clear minimum terms for Marcus or Synchrony instead of guessing from the jumbled issuer notes.",
+  "spoken_fit_reason": "Leads with the rate date caveat, then one short sentence per bank with spelled-out figures and no lists or URLs; long, but five banks plus minimums were asked for."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The Lucerne, Interlaken, Zermatt route is sensible, with a lake cruise, the Luzern-Interlaken Express, easy viewpoints and the Gornergrat, and the 399-franc six-day pass price matches the sources, but it never prices the Half Fare Card (about 150 francs in the results) or point-to-point tickets, so the economy comparison it was asked for is missing.",
+  "judgment_reason": "It searched appropriately and avoided strenuous hikes, but it dismisses the Half Fare Card without numbers and ignores the sources' warning to avoid November, even though today is November 12.",
+  "spoken_fit_reason": "A day-by-day plan in plain spoken sentences with a short transport paragraph, about as long as a five-day plan needs."
+}

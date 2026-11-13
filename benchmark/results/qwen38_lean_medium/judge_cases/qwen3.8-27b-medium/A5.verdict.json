@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It covers the microphone array, adaptive beamforming, echo cancellation, wake-word front end, speaker isolation, latency and placement well, but never addresses where the compute runs, network reliability, or the privacy of always-on audio from the sketch.",
+  "judgment_reason": "It names no products or brands, states its ten-to-fifteen-foot assumption for across the room, and weights the answer toward microphones and conversation as asked.",
+  "spoken_fit_reason": "Four dense paragraphs of technical detail ran far past the word cap, so the listener heard only the mic-spacing explanation and half of the beamforming point."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "Four of the five items carry in-window dates straight from the excerpts (Muse Spark Open on October 15, Mistral Large 4 weights on October 29, DeepSeek V4.1-Flash-1017 on October 17, Kimi K3.1 Pro weights on November 4), but the Qwen 3.8 2.4T item has no date in any source, and another excerpt places Qwen3.8 availability back in August.",
+  "judgment_reason": "Searched for a current-news question, said up front that the figures come from third-party trackers, and hedged the uncertain Qwen and Kimi items with 'reportedly'.",
+  "spoken_fit_reason": "Plain numbered prose with no markup, but it is spec-dense and ran past the word cap, so it was cut off mid-way through the fifth item."
+}

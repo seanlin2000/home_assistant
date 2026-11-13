@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 4,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The memory figures are right (140, 35 and 17.5 GB, with real Q4_K_M files around 38 to 43 GB and 2-bit files near 20 GB), and it covers the cache, faster bandwidth-bound generation, and quality loss that is small at 4-bit and steep at 2-bit. It never names GPTQ or AWQ, and it wrongly says a 4-bit 70B model uses about the same memory as a full-precision 8B model.",
+  "judgment_reason": "It ran a web search for GGUF file sizes on a stable conceptual question it could answer from knowledge plus the calculator.",
+  "spoken_fit_reason": "Six dense paragraphs hit the word cap, so the listener heard the definition and nominal sizes but none of the trade-offs that were asked for."
+}

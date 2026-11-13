@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 4,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The written answer gets 140 GB, 35 GB and 17.5 GB right, notes real files near 40 GB at Q4_K_M and 22 to 26 GB at 2-bit plus KV cache on top, and covers quality loss, faster generation and AWQ/GPTQ, with only small muddles such as published weights being 'a little under 130 GB'.",
+  "judgment_reason": "It ran a web search and eight calculator calls, exceeding the tool-call limit, on a question answerable from stable knowledge and simple arithmetic.",
+  "spoken_fit_reason": "It is a multi-paragraph wall of text, and the word cap cut it off after the 16-bit figure, so the listener never heard the 4-bit or 2-bit memory numbers."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The full reply covers white light as a mix of colors, short 'choppy' blue waves scattering more than long red ones, why the sky is not violet (eye sensitivity and absorption), the longer low-sun path stripping out blue at sunset, and dust and haze deepening the reds, all in plain language.",
+  "judgment_reason": "It answered stable physics from knowledge without searching, which was right.",
+  "spoken_fit_reason": "The plain prose is easy to listen to, but six paragraphs ran past the word cap, so the listener heard only the daytime-blue part and none of the sunset explanation."
+}

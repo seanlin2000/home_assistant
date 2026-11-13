@@ -5,7 +5,7 @@
 host = "127.0.0.1"
 port = 8090
 api_key_file = "~/Library/Application Support/studio-assistant/llama-server.key"
-model = "qwen3.8-27b"                       # which table below is served
+model = "qwen3.8-flash-next"                # which table below is served
 
 [models.gemma-4-e4b]
 gguf = "~/models/gguf/gemma-4-E4B_q4_0-it.gguf"
@@ -22,9 +22,15 @@ flash_attention = "on"                      # -fa
 prompt_cache_mib = 1024                     # -cram
 reasoning = "off"                           # --reasoning
 swa_full = false                            # --swa-full
+speculative = "none"                        # --spec-type; Gemma 4 E4B has no draft layer
 
-[models.gemma-4-e4b.sampling]               # defaults; the harness may override per request
+[models.gemma-4-e4b.sampling]               # sent with every request; top_p, top_k, min_p and the penalties are llama-server's defaults
 temperature = 0.7
+top_p = 0.95
+top_k = 40
+min_p = 0.05
+presence_penalty = 0.0
+repeat_penalty = 1.0
 max_output_tokens = 600
 
 [models."qwen3.8-27b"]
@@ -32,17 +38,75 @@ gguf = "~/models/gguf/Qwen3.8-27B-Q8_0.gguf"
 source = "unsloth/Qwen3.8-27B-GGUF"
 revision = "43f522df59109a037f64f1e29ab1eff5c00e8e1e"
 sha256 = "a680f44a06920e5d689774823782006aa3acc8db95750323373b24139b67e348"
-context_tokens = 18432
-conversation_tokens = 16384
+context_tokens = 34816
+conversation_tokens = 32768
 slots = 2
 kv_unified = true
 cache_idle_slots = false
 gpu_layers = "all"
 flash_attention = "on"
-prompt_cache_mib = 1024
-reasoning = "off"                           # thinking is on by default in Qwen 3.8; the voice turn cannot wait for it
+prompt_cache_mib = 2048                     # one slot's prompt state is about 1,091 MiB, which a 1,024 MiB cache skipped
+reasoning = "off"                           # the server default; the harness turns thinking on per request (config/harness.toml think)
+reasoning_budget_tokens = 3072              # thinking stops here, leaving at least 1,024 of the 4,096-token cap for the answer
 swa_full = false                            # no sliding-window layers in this model
+speculative = "draft-mtp"                   # the model's own multi-token-prediction layer drafts tokens: decode 19 -> about 36 tok/s on the M5 Max
 
-[models."qwen3.8-27b".sampling]
+[models."qwen3.8-27b".sampling]             # Qwen's set without thinking (Unsloth's model card)
 temperature = 0.7
+top_p = 0.8
+top_k = 20
+min_p = 0.0
+presence_penalty = 1.5
+repeat_penalty = 1.0
 max_output_tokens = 600
+
+[models."qwen3.8-27b".thinking_sampling]    # Qwen's set with thinking on (Unsloth's model card)
+temperature = 1.0
+top_p = 0.95
+top_k = 20
+min_p = 0.0
+presence_penalty = 0.0
+repeat_penalty = 1.0
+max_output_tokens = 4096                    # thinking and the answer share it; at 2,048, 10 of 110 medium answers ended at the cap
+
+# A 125B mixture of experts (6B active) whose 51B n-gram embedding table ships as a second shard. Only shard 1 (47.0 GB) must be resident; with
+# load_mode mmap and lazy_mode on, llama-server reads the table's rows (shard 2, 28.8 GB) from disk as tokens need them (ISTA-DASLab's model card).
+# Downloaded with `hf download ... --include "IQ3_XXS/*"`: `serving fetch` cannot fetch a split file from a subfolder. The launch checks shard 1's
+# hash; shard 2's is 316b46f3a2dbd68c900f43136ab9449f9dcc3725dfd8c794847c204bc161e113.
+[models."qwen3.8-flash-next"]
+gguf = "~/models/gguf/Qwen3.8-Flash-Next-GSQ-RCO/IQ3_XXS/Qwen3.8-Flash-Next-GSQ-RCO-IQ3_XXS-00001-of-00002.gguf"
+source = "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF"
+revision = "ed59f92082b1e93c0e96d60a8b11aab089b52f09"
+sha256 = "219ea929900dfa9ef091f3aa473fdba6874b65fcb36526d7d851ac9e95856d15"
+context_tokens = 34816
+conversation_tokens = 32768
+slots = 2
+kv_unified = true
+cache_idle_slots = false
+gpu_layers = "all"
+flash_attention = "on"
+prompt_cache_mib = 1024                     # half the 27B's: shard 1 leaves little memory on the 64 GB Studio
+reasoning = "off"                           # the server default; the harness turns thinking on per request
+reasoning_budget_tokens = 3072              # thinking stops here, leaving at least 1,024 of the 4,096-token cap for the answer
+swa_full = false
+speculative = "none"
+load_mode = "mmap"
+lazy_mode = "on"
+
+[models."qwen3.8-flash-next".sampling]      # Qwen's instruct (non-thinking) set (Qwen/Qwen3.8-Flash-Next model card)
+temperature = 0.7
+top_p = 0.8
+top_k = 20
+min_p = 0.0
+presence_penalty = 1.5
+repeat_penalty = 1.0
+max_output_tokens = 600
+
+[models."qwen3.8-flash-next".thinking_sampling]  # Qwen's thinking set (same card)
+temperature = 1.0
+top_p = 0.95
+top_k = 20
+min_p = 0.0
+presence_penalty = 0.0
+repeat_penalty = 1.0
+max_output_tokens = 4096                    # thinking and the answer share it; at 2,048, 37 of 110 medium answers ended at the cap

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The causes and the Berlin Wall and August 1991 coup are right with correct dates, but it counts perestroika and glasnost as a triggering event when the sketch treats reform as a cause, and it leaves out the Ukrainian referendum and the Belovezha Accords.",
+  "judgment_reason": "Answering from knowledge without a search was right, but the cause-versus-trigger split the question asked for is blurred by listing Gorbachev's reforms among the 'events that did the actual work'.",
+  "spoken_fit_reason": "One plain-prose paragraph that leads with the causes and walks through first, second and third events, a fitting length for a three-part history question."
+}

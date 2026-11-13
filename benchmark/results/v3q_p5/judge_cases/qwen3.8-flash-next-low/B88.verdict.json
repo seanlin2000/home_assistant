@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The Mistral Large 4, Kimi K3.1 Pro, Tencent Hy4 and DeepSeek items are dated and sourced from the excerpts with sensible caveats, but it garbles Large 4's 1.05T size as \"a trillion-and-a-half-billion\", and the answer stops mid-sentence in the fifth item before giving any detail on Meta's closed Muse Ember.",
+  "judgment_reason": "It searched for a current-news question, kept to the 30-day window, and flagged that Tencent's ranking is its own evaluation and that Hy4's weights are still only promised.",
+  "spoken_fit_reason": "Two tool-use preambles run together into a dense, number-heavy monologue that the word cap cut in the middle of the first item."
+}

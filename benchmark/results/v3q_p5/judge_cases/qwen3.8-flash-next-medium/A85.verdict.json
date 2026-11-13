@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The final ASSISTANT message is empty, so no meal plan was delivered, even though the model had summed a protein list to 183 g with the calculator.",
+  "judgment_reason": "It spent three searches on current grocery prices for a meal-planning question that needed no search and then produced no answer at all, failing the central point.",
+  "spoken_fit_reason": "Nothing was spoken."
+}

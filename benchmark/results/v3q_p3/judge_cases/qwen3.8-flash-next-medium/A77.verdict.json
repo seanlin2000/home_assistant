@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It covers white light as a mix of colors, short waves scattering more (Rayleigh scattering), why the sky is not violet, the long low path at sunset stripping out blue, and dust and haze deepening sunsets, with a sieve analogy in plain language.",
+  "judgment_reason": "It answered stable physics from knowledge without searching and pitched it at a non-scientist, as asked.",
+  "spoken_fit_reason": "The plain-prose explanation is clear but ran six paragraphs and was cut by the word cap before the sunset part was heard, and it includes a parenthetical aside."
+}

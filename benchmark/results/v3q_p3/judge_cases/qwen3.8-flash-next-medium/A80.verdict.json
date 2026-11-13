@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 5,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It gives the correct weights-only figures of 140, 35 and 17.5 GB, explains why real files run about 40 GB at 4-bit and 19 to 26 GB at 2-bit, and covers the quality cliff below 4 bits, the speedup from memory-bandwidth-bound inference, the KV cache on top, and AWQ and K-quants.",
+  "judgment_reason": "The memory arithmetic needed only the calculator, but it also ran a web search on a stable conceptual question.",
+  "spoken_fit_reason": "The plain prose leads with the definition and the numbers, but it runs six paragraphs and was cut off by the word cap mid-number in the second paragraph."
+}

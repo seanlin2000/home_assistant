@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The plan runs sensibly from Lucerne to Interlaken to Zermatt with low-effort lake and viewpoint picks (steamer, Rigi or Pilatus, Harder Kulm, Schilthorn, Gornergrat), and its prices (Half Fare Card CHF 150, CHF 17 and 43 legs, Travel Pass from CHF 254) match the excerpts, but it never compares plain point-to-point or Supersaver tickets and does not mention the Travel Pass's mountain discounts.",
+  "judgment_reason": "Searched for current pass prices, attributed the Half Fare Card verdict to 2026 guides, and kept the plan free of strenuous hikes as asked.",
+  "spoken_fit_reason": "Day-by-day spoken prose with no list formatting and prices written as francs, at a length a five-day plan with a ticket comparison requires."
+}

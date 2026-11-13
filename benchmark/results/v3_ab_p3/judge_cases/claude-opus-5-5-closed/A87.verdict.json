@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Separates the two problems, names 2.4 GHz interference and JBL multipoint pairing with one-change-at-a-time tests (laptop Bluetooth off, 5 GHz Wi-Fi, distance, firmware, wired cable), and lists refresh rate, input lag, brightness, DLP rainbow, keystone softness and seating distance for eye strain.",
+  "judgment_reason": "Answered a general troubleshooting question without searching and framed the audio problem as a systematic one-variable-at-a-time process.",
+  "spoken_fit_reason": "Opens by saying these are two separate problems and walks through each in plain prose with spoken units, at a length the question calls for."
+}

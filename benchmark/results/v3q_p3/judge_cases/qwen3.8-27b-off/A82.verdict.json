@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The API, tool and MCP server definitions are sound and it names search, fetch and model summarizing, but the message stops at the fetch_page tool, with no agent loop and none of the safeguards (round caps, timeouts, treating fetched text as untrusted).",
+  "judgment_reason": "Ran a search_and_read on MCP's 2026 spec for a conceptual question that needed no current facts, then used none of what it retrieved.",
+  "spoken_fit_reason": "Markdown headings, bold text, bullet lists and code-formatted names, cut by the word cap after the first two definitions."
+}

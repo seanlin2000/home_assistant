@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It correctly compares 4% against LIC's 1.7 to 2.3 percent, Queens' 3.9 percent, and citywide 4.5 percent, computes about 8.2% over two years, and explains the asking-versus-contract gap using the Realtor.com figures, but it cites a '20% surge' in LIC sales above $2 million (the source says 25%, and these are condo sales, not rentals) and leaves out StreetEasy's 0.9% figure.",
+  "judgment_reason": "It searched for current neighborhood data, gave a conditional verdict (above LIC's pace, in line with the city), and addressed the asked-for limits of advertised rents.",
+  "spoken_fit_reason": "It leads with the comparison in plain prose, but six long paragraphs hit the word cap, the reply breaks off mid-sentence, and a search preamble was spoken first."
+}

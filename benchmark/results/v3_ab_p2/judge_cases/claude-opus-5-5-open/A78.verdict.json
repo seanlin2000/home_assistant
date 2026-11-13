@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Gives the expected-profits versus wages framing and concentrated ownership, then three distinct mechanisms (prices outpacing pay, layoffs raising margins, a few global tech giants driving the index), plus rising rents, all as in the sketch.",
+  "judgment_reason": "Answered conceptual economics without searching and avoided invented current figures.",
+  "spoken_fit_reason": "Leads with the answer and uses spoken \"First, Second, Third\" prose instead of a list; the length suits a request for three examples."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 4,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It covers inviting users in the Hue app, one voice assistant, physical switches, local app control and bridge automations surviving an outage, and Alexa and Google failing, but it overstates switches working \"even when the Bridge itself has problems\" and never mentions a local voice controller such as Home Assistant as the way around the cloud dependency.",
+  "judgment_reason": "It searched four times on a stable architecture question that needed no search.",
+  "spoken_fit_reason": "Bold markdown section headers, two tool-use preambles spoken back to back, and six long paragraphs make it sound wrong aloud, and the word cap cut it before the outage answer."
+}

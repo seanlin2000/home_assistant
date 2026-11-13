@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The Lucerne-Interlaken-Zermatt plan is geographically sensible and low-effort (lake boat, Pilatus round trip, Luzern-Interlaken Express, Schilthorn, Gornergrat), but the pass comparison gives no prices even though the excerpts listed the Half Fare Card at CHF 150 and the Swiss Travel Pass at CHF 254 for 3 days and CHF 309 for 4.",
+  "judgment_reason": "It searched appropriately and avoided inventing prices, but wrongly said it could not confirm current prices when the sources gave them clearly, leaving the 'most economical' question unresolved.",
+  "spoken_fit_reason": "Leads with the plan and walks day by day in plain prose without lists or markdown, a length a five-day itinerary warrants."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The final assistant message is empty, so no meal plan was ever given; its only draft, the calculator's 2,620 kcal total, would already have broken the 2,500 kcal limit.",
+  "judgment_reason": "Instead of revising the over-budget plan, it spent its tool calls searching grocery prices the question never asked for, and it ended with no answer.",
+  "spoken_fit_reason": "Nothing was produced to be spoken, so the listener got no answer at all."
+}

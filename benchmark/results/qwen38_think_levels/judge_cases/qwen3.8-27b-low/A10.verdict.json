@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Explains that a model that does not fit spills to slower system RAM and loses to a slower card that holds it, and mentions context headroom, but leaves out that more memory allows less aggressive quantization.",
+  "judgment_reason": "It answers within the length limit with no search and ends on a clear 'VRAM first, speed second' rule.",
+  "spoken_fit_reason": "About ninety words of plain conversational prose with no lists, well under 45 seconds aloud."
+}

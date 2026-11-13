@@ -3,8 +3,10 @@ fetch_page. The server builds the search client and the page reader and hands th
 
 import html
 import re
+from typing import Annotated
 
 from mcp.server.mcpserver import MCPServer
+from pydantic import Field
 
 from utils.text_utils import clip_to_words, word_count
 from web_search_mcp.page_extractor import PageExcerpt, PageExtractor
@@ -17,24 +19,27 @@ from web_search_mcp.url_guard import UnsafeUrl
 HTML_TAG = re.compile(r"<[^>]+>")
 NOT_FOUND_INSTRUCTION = "If these sources do not answer the question, say plainly that you could not find it."
 
+SearchQuery = Annotated[str, Field(description='short keywords, e.g. "fed funds rate september 2026"')]
+RecentOnly = Annotated[str | None, Field(description='day, week, month or year: only pages this recent, for "latest" questions')]
+
 
 def register_web_search_tools(server: MCPServer, settings: SearchSettings, search: SearchEngine, extractor: PageExtractor) -> None:
     @server.tool()
-    async def search_and_read(query: str, time_range: str | None = None) -> str:
-        """Search the web and read the top pages. Returns the ranked results, numbered, with the parts of each readable page that best match the query and the snippet of each page that could not be read, ready to synthesize an answer from. Use short keyword queries, e.g. "federal funds rate september 2026". time_range: optional "day", "week", "month", or "year" to keep only recent pages; use it for "latest" or "this week" questions."""
+    async def search_and_read(query: SearchQuery, time_range: RecentOnly = None) -> str:
+        """Search the web and read the top pages, returning numbered sources with their best-matching passages. For questions no other tool covers: not for restaurants, Broadway, movies in Manhattan, the weather, NBA or NFL statistics, or what Reddit says. Prefer one good search over several vague ones. Synthesize the sources; do not repeat snippets."""
         results = await search.search(query, time_range)
         excerpts = await extractor.read_pages(results, query)
         return render_grounded_context(query, results, excerpts, settings.results_to_return)
 
     @server.tool()
-    async def web_search(query: str, time_range: str | None = None) -> str:
-        """Search the web and return only the ranked result list (title, URL, snippet) without reading the pages. Use when you want to pick which page to read with fetch_page. time_range: optional "day", "week", "month", or "year" to keep only recent pages; use it for "latest" or "this week" questions."""
+    async def web_search(query: SearchQuery, time_range: RecentOnly = None) -> str:
+        """Search the web for ranked results (title, URL, snippet) without reading them; use it to pick a page for fetch_page."""
         results = await search.search(query, time_range)
         return render_result_list(results[: settings.results_to_return])
 
     @server.tool()
-    async def fetch_page(url: str) -> str:
-        """Fetch one public web page and return its main text, trimmed to a readable length. Only public http(s) addresses are allowed."""
+    async def fetch_page(url: Annotated[str, Field(description="a public http(s) URL")]) -> str:
+        """Read the main text of a web page whose address the user gave, trimmed to a readable length."""
         try:
             text = await extractor.read_page(url)
         except UnsafeUrl as error:

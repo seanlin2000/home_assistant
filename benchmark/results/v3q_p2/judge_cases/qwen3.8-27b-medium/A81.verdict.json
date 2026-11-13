@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It correctly names the query, IP address, timestamp, API key, and user agent as transmitted, the conversation and model output as local, and gives sound minimization steps (minimal queries, VPN, retention policy), but it omits that fetched websites also see the IP and does not mention a privacy-focused or self-hosted proxy such as SearXNG.",
+  "judgment_reason": "Answering from knowledge without a search was correct, and it flagged that exposure depends on how the tool builds its queries rather than assuming.",
+  "spoken_fit_reason": "Plain prose without markdown, but at four long paragraphs it ran past the word cap and the listener never heard the minimization steps."
+}

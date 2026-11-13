@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "All five restaurants, cuisines, price levels and distinctions (Meju's one star, Hupo's Bib Gourmand, the other three in the guide without a star) match the restaurant_recommendations result, with a draw for each taken from the listing text.",
+  "judgment_reason": "Used the restaurant tool, said it measured from the middle of Long Island City because it lacked the exact spot, and stated that Michelin gives price levels not dollars per person and that it has no Google or Yelp scores.",
+  "spoken_fit_reason": "Leads with the standout and gives one plain sentence per restaurant with dollar signs spoken as words, at a length five comparisons need."
+}

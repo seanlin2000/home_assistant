@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It correctly centers the Hue Bridge, shared app access and a Home Assistant local option, but it wrongly claims Alexa and Google handle simple on/off commands locally during an internet outage, when the sketch says those cloud assistants stop, and it omits physical switches and Apple Home.",
+  "judgment_reason": "Not searching was reasonable, but it gave confident outage advice ('lean on simple local commands') on a point it got wrong, which could mislead the owner.",
+  "spoken_fit_reason": "It opens with filler and ran long enough that the word cap cut it before any voice or outage details, and the text itself ends mid-sentence."
+}

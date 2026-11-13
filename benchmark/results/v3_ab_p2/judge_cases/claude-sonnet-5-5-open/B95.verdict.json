@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 3,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Names the right layers (local model, Whisper speech-to-text, text-to-speech over Wyoming, Home Assistant, a search tool, microphones and speakers), the key limitations, and a sensible build order, but omits wake word and never proposes concrete hardware shown to fit 1,000 dollars.",
+  "judgment_reason": "Did not search for current hardware prices on a budget question and pushed the budget check back to the user with 'check that your chosen machine fits the budget', though it avoided inventing prices.",
+  "spoken_fit_reason": "Leads with the layered architecture and stays in plain prose with no lists, at a length the four-part question warrants."
+}

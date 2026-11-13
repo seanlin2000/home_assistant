@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 5,
+  "judgment": 2,
+  "spoken_fit": 1,
+  "answer_quality_reason": "All ten shows, theatres, audience scores and closing dates match the broadway_shows and details results, the order follows TodayTix recent views as it explains, and each gets a short accurate description.",
+  "judgment_reason": "It honestly caveats that views and audience scores stand in for box-office sales, but it ran a needless web search for & Juliet instead of retrying the listings tool, on top of ten detail calls.",
+  "spoken_fit_reason": "Plain spoken prose that leads with how the list is ranked, but two or three sentences per show made it long enough that the word cap cut it after the third show."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The written answer covers the economic causes, 1989 and the August coup but breaks off at \"Then on 1 December\" before the Ukrainian referendum, Belovezha Accords and Gorbachev's resignation, attributes John W. Young's demonstration argument to John Lewis Gaddis, and misreads the Ukrainian March 1991 vote, while the listener heard only the preamble and none of the three events.",
+  "judgment_reason": "It ran four searches on a stable history question that needed none, though it did separate causes from triggers as asked.",
+  "spoken_fit_reason": "A multi-paragraph wall of text with markdown emphasis (*form*, *speed*) that hit the word cap before reaching the answer."
+}

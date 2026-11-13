@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It gives exactly the reference answer, 1989, on November 9th.",
+  "judgment_reason": "It recognized settled history and answered without searching, as the reference expects.",
+  "spoken_fit_reason": "One short sentence that leads with the year."
+}

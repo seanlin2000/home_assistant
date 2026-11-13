@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The value (about $166,667), the 8.33x multiple and the $146,667 profit match the sketch, but the spoken stakes are wrong: the diluted stake is about one sixtieth of one percent, not 'one sixth of one percent' (ten times too high), and the starting stake is one thirtieth, not 'one thirty-third'.",
+  "judgment_reason": "It used the calculator rather than searching and stated the assumption that liquidation preferences and other deal terms are ignored, as the sketch asks.",
+  "spoken_fit_reason": "It leads with the dollar answer and walks through the steps in short spoken sentences with the numbers written out."
+}

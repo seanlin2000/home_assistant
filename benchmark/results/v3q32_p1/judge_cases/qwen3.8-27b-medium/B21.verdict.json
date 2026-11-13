@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It correctly rejects the premise with the sourced October 28 hold at 3.75 to 4 percent after the September hike, but it then gives a flat \"no\" without the refinance logic the sketch requires (current mortgage rates against the user's rate, closing costs, break-even).",
+  "judgment_reason": "It searched and pushed back on the false premise well, but it concluded refinancing is a worse deal without knowing or asking for the user's current mortgage rate.",
+  "spoken_fit_reason": "It leads with the correction in four short plain sentences within the word limit."
+}

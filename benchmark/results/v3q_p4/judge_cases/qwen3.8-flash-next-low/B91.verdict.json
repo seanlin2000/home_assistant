@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The first three picks use this season's figures from the results (Wembanyama 30.3 and 11.7 with 3.9 blocks, Doncic 38.6 with 68 percent true shooting, Jokic 23.5, 10.8 and 9.0). However, the message breaks off mid-sentence at number four and never names a fifth player, and it says Doncic's rating of about 30 is 'more than seven points clear' of third when HoopsHype shows 30.48 against 26.15.",
+  "judgment_reason": "Searching was right, and it flagged the dozen-game sample and its failure to read the EPM table, but it went over the tool-call limit before writing an answer that could fit.",
+  "spoken_fit_reason": "Four filler lead-ins run together, and the methodology preamble used up the word cap, so the listener heard no player at all."
+}

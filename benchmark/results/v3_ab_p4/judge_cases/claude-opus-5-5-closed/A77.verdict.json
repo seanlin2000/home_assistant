@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Covers every element of the sketch in plain language: white sunlight, air molecules scattering short 'choppy' blue waves more, why not violet, the longer sunset path scattering blue away, and dust and moisture deepening the colors.",
+  "judgment_reason": "Answered stable physics without searching and pitched the explanation for a non-scientist as asked, avoiding jargon like 'Rayleigh'.",
+  "spoken_fit_reason": "Leads with the one-line gist and continues in plain prose with no formatting, at a length an explain-the-physics request warrants."
+}

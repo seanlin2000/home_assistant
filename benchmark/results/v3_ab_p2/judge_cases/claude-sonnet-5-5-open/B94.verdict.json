@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The Lucerne-Interlaken-Zermatt order, lake boats, and Gornergrat are sensible and the four-day pass prices (309 and 492 francs, Flex 349) match the SBB excerpt, but the plan is not laid out across five days with travel times and it never weighs the Half Fare Card against the pass.",
+  "judgment_reason": "Searched for current pass prices and said plainly it could not find point-to-point fares, so it could not prove the pass beats separate tickets, and flagged extra reservation costs.",
+  "spoken_fit_reason": "Leads with the itinerary and keeps the pass comparison to a few spoken sentences with prices in words and no lists."
+}

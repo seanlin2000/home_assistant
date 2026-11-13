@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It correctly lists the query, IP, timestamps and API-key identity as visible to the provider, keeps conversation and reasoning local, and gives sound mitigations (de-identified queries, proxy or Tor, retention policy, local index), but it misses that fetched websites also see the IP, omits a self-hosted metasearch option, and the text ends mid-sentence at 'Worth'.",
+  "judgment_reason": "Not searching was right for a conceptual privacy question, and the advice focuses on the biggest lever, keeping personal details out of queries.",
+  "spoken_fit_reason": "It opens with an italic meta note about tools and uses bold markdown headings and a bulleted list, which would sound wrong read aloud, and the word cap cut it before the exposure section."
+}

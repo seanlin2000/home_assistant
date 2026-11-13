@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 3,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The cheap, low-prep, powder-free plan of yogurt, rotisserie chicken, cottage cheese, a turkey-and-bean dinner, and eggs sums to about 167 g at a plausible 1,700 to 1,900 kcal, but it calls two cups of Greek yogurt 'a third of a pound' worth 32 g, and the message breaks off at 'Add it up: 32 plus' without giving the total.",
+  "judgment_reason": "It ran a needless 2026 grocery-price search for a nutrition-planning question and then barely used the results, though it did respect the calorie ceiling and the protein-powder constraint.",
+  "spoken_fit_reason": "Conversational meal-by-meal prose with no formatting, but too long for the word cap and it ends mid-sentence."
+}

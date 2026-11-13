@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 4,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It correctly gives seven to nine hours with seven as the floor, but the reply states the answer twice, so it needs fixing.",
+  "judgment_reason": "The user said 'Look up', and it answered from memory without searching.",
+  "spoken_fit_reason": "The reply has a leaked '</think>' tag followed by a second full version of the same answer, so it would sound broken read aloud."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Gives about 19,091 from the annuity formula and notes 18,000 is contributions with roughly 1,091 interest, matching the reference.",
+  "judgment_reason": "Used the calculator with the correct monthly-compounding annuity formula and hedged the result with 'about'.",
+  "spoken_fit_reason": "Two plain sentences that lead with the total, with numbers written out for speech."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It correctly says ChatGPT-like quality cannot be had locally for $1,000, but recommends an RTX 3090 or 4090 build that lands 'right at or just over a thousand' and says a Mac Studio with 32 to 64 GB can be had under a thousand, both badly understating prices from general knowledge.",
+  "judgment_reason": "It says explicitly that the quality requirement breaks the budget and admits it could not pull fresh prices, but then offers hardware it claims nearly fits without the evidence to back that.",
+  "spoken_fit_reason": "Markdown italics around 'ChatGPT-like' and 'quality' in six long paragraphs that ran past the word cap would sound wrong read aloud."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 0,
+  "answer_quality_reason": "Funding, valuations and commercial status for all six (Cerebras IPO and $26B October market cap, Etched $10.3B then $21B, Positron $875M at $5B, SambaNova $1B at $11B, MatX $500M Series B, Fractile $720M at $7B) trace to the excerpts, but it states Sohu 'can't run any other kind of model' despite the retrieved TechCrunch quote saying the systems run any model, and the message ends mid-sentence at 'wasn't'.",
+  "judgment_reason": "Searching was essential, it led with the overall picture, said plainly that MatX had no disclosed valuation or customers, and separated Fractile's unshipped chip and unconfirmed Anthropic deal from shipping products.",
+  "spoken_fit_reason": "More than a thousand words in eight dense paragraphs of figures were cut by the word cap after Cerebras, a wall of text for a spoken answer."
+}

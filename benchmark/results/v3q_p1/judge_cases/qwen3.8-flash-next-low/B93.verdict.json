@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It picks the five nearest restaurants from the Michelin result and gives correct distinctions and details for Meju, Casa Enrique, R40 and Hupo, but the final message breaks off mid-sentence at Hupo (\"Tripadvisor has only four\") and never covers Vert Frais, and it says all five are within a third of a mile when Meju and Vert Frais are 0.4 miles away.",
+  "judgment_reason": "The restaurant tool was the right source and it labeled its per-person prices as estimates, but it added five web searches beyond the tool and ran into the tool-call limit.",
+  "spoken_fit_reason": "Five spoken preamble lines run together, followed by long paragraphs that the word cap cut during the first restaurant, so the listener heard almost none of the comparison."
+}

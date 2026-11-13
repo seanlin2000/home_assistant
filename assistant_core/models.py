@@ -65,6 +65,11 @@ class AgentPolicy(BaseModel):
     temperature: float = 0.7
     max_tool_rounds: int = 4
     max_output_tokens: int = 600
+    top_p: float | None = None  # None leaves llama-server's default; serving.toml sets each model's own
+    top_k: int | None = None
+    min_p: float | None = None
+    presence_penalty: float | None = None
+    repeat_penalty: float | None = None
     word_budget: int = 200
     context_tokens: int = 16384
     think: bool | str | None = None
@@ -173,7 +178,8 @@ class GenerationStats(BaseModel):
     prompt_tokens: int | None = None
     fresh_prompt_tokens: int | None = None  # read from nothing on this request; the rest came from the prompt cache
     cached_prompt_tokens: int | None = None
-    output_tokens: int | None = None
+    output_tokens: int | None = None  # thinking included
+    thinking_tokens: int | None = None  # the streamed thinking pieces, which llama-server sends one token at a time; None on Ollama
     time_to_first_token_seconds: float | None = None
     total_seconds: float
     prompt_eval_seconds: float | None = None
@@ -247,6 +253,7 @@ class Transcript(BaseModel):
     truncated: bool = False
     tool_call_count: int = 0
     hit_tool_round_cap: bool = False
+    hit_context_limit: bool = False  # a round's tool results were cut to fit the context budget, and the model was told to answer from what was kept
     empty_completion_retries: int = 0  # times the model returned neither text nor a tool call and was asked again
     malformed_retries: int = 0  # times the model's only output was a tool call that could not be parsed, and it was asked again without it
     stayed_silent: bool = False  # the final reply was the silence marker, so no answer was spoken

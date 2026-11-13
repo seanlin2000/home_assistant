@@ -1,0 +1,115 @@
+# Closed-book pass 4 by Claude Sonnet 5.5 on 2026-11-12, as a fresh subagent: listed the tool calls a good assistant would make but answered from its own knowledge without reading their results.
+candidate_key: claude-sonnet-5-5-closed
+answered_by: Claude Sonnet 5.5, fresh subagent, closed book, pass 4
+questions:
+  - question_id: A76
+    exchanges:
+      - answer: >-
+          The Cold War ended because the Soviet system ran out of the money, legitimacy and will to hold its empire together, and it ended peacefully. The three events I would stress are these. First, Mikhail Gorbachev's reforms, glasnost and perestroika, from 1985 on, which opened up criticism and weakened the party's grip without fixing the economy. Second, the 1989 revolutions in Eastern Europe, capped by the fall of the Berlin Wall, when Gorbachev refused to send tanks and the satellite regimes collapsed. Third, the failed hardliner coup of August 1991, which discredited the Communist Party and handed power to Boris Yeltsin and the republics. The causes were deep and slow: a stagnant planned economy, the cost of the arms race and the war in Afghanistan, falling oil prices, and rising nationalism in the republics. The immediate triggers were the things that set off the collapse: the coup attempt, the republics declaring independence, and the December 1991 agreement by Russia, Ukraine and Belarus to dissolve the union. Gorbachev resigned on December 25, 1991.
+  - question_id: A77
+    exchanges:
+      - answer: >-
+          Sunlight looks white, but it is really a mix of all the colors. When it enters the atmosphere, it bumps into air molecules, and those molecules scatter short wavelengths, blue and violet, far more than long wavelengths like red. So blue light gets bounced all around the sky and reaches your eyes from every direction, which is why the sky looks blue. We see blue rather than violet because the sun puts out less violet and our eyes are less sensitive to it. At sunset the sun is low, so its light has to travel through much more air to reach you. Along that long path, most of the blue gets scattered away from your line of sight, sideways and out into space. What is left is the longer wavelengths, the oranges and reds, so the sun and the clouds near it glow warm colors. Dust and haze can make sunsets even redder. Same physics, just a short path at noon and a very long path at sunset.
+  - question_id: A78
+    exchanges:
+      - answer: >-
+          A stock market measures the profits and expectations of large listed companies, not how ordinary households are doing, so the two can drift apart. Here are three examples. First, ownership is concentrated. The richest ten percent of households own most of the stocks, so when prices rise, the gains go mostly to people who were already well off, while a typical family with little or no stock sees nothing. Second, inflation and housing costs. If rent, groceries and insurance climb faster than wages, people feel poorer even while corporate profits and share prices soar. Third, profits can grow without jobs or wages growing: companies can boost earnings through automation, offshoring, buybacks or a handful of giant firms, especially in tech, doing very well, which lifts the index while hiring is weak. Other factors include low interest rates inflating asset prices, and the market looking forward while people feel today's bills. So a strong market and a gloomy public are not contradictory.
+  - question_id: A79
+    exchanges:
+      - answer: >-
+          GPUs are good at inference because running a neural network is mostly huge amounts of matrix multiplication, and a GPU has thousands of small cores that do that math in parallel, plus very fast memory and a mature software ecosystem. A GPU is a flexible chip that also handles graphics and training. An ASIC is a chip built for one job, so it can cut out everything unneeded and use less power per operation. Google's TPU is the best known example. Specialized inference processors are ASICs tuned further for serving models, for example by putting model weights in large on-chip memory, as Groq and Cerebras do, or by hard-wiring the transformer pattern. A specialized chip can beat an NVIDIA GPU when the workload is stable and known, when you need very low latency per token, when energy cost matters most, or when you run at such a large scale that the design cost pays off. The catch is that they are less flexible, and software support is usually weaker.
+  - question_id: A80
+    exchanges:
+      - answer: >-
+          Quantizing means storing each weight with fewer bits, so the model gets much smaller, at some cost in accuracy. A 70-billion-parameter model has seventy billion weights. At 16 bits, two bytes each, that is about 140 gigabytes. At 4 bits, half a byte each, it is about 35 gigabytes. At 2 bits, a quarter of a byte each, it is about 17.5 gigabytes. Real files run a bit larger, maybe ten to twenty percent, because some layers stay at higher precision and there are scaling factors stored alongside, and you also need extra memory for the context cache. The trade-offs: 4-bit is usually a good compromise with a small quality loss. At 2-bit, quality drops noticeably, with weaker reasoning, more mistakes and sometimes broken output, though clever schemes help. The upside is that smaller models fit on cheaper hardware and often run faster, since inference is limited by how fast memory can be read.
+  - question_id: A81
+    exchanges:
+      - answer: >-
+          If the model runs locally, your prompts, your conversation history and the model's own reasoning stay on your machine. What leaves is the search query, and whatever the model decides to type into it. The provider can see that query, your IP address, the time, your API key or account, and usually headers like your software's user agent. They can link repeated queries to you through the key or the IP address, and they may log them. Queries can be revealing, because a model may paste in details from your conversation, such as a name or address. To minimize exposure, do these things. Have the model write short, generic queries and strip personal details, and tell it not to include names or locations unless needed. Use a privacy-focused provider with a no-logging policy, or a self-hosted metasearch engine. Route traffic through a VPN, and use a separate key not tied to your identity. Finally, when the model fetches web pages, remember those sites see your IP address as well.
+  - question_id: A82
+    exchanges:
+      - answer: >-
+          An API is a general way for programs to talk to a service, for example a web search company's HTTP endpoint. A software tool, in the language model sense, is a function the model is allowed to call, described by a name, a purpose and its inputs. An MCP server is a standard wrapper: it exposes tools through the Model Context Protocol, so any compatible client can discover and call them without custom glue code. So an MCP server usually sits in front of one or more APIs and presents them as tools. To give a local model web access, I would run the model behind a local server such as llama.cpp, with an agent loop that sends your question and the tool list to it. I would build one MCP server with three tools: search, which calls a search API, fetch page, which downloads and cleans the text, and optionally read, which returns trimmed passages. The model decides when to call them, the loop runs the call, and the results come back as untrusted text, which the model summarizes. Add limits on length and number of calls.
+  - question_id: A83
+    exchanges:
+      - calls:
+          - {name: calculate, arguments: {expression: "20000 / 60000000 * 0.5 * 1000000000"}}
+        answer: >-
+          Your investment would be worth about 166,667 dollars before taxes. Here is how it works. Twenty thousand dollars at a sixty million dollar post-money valuation buys one thirty-third of one percent of the company, about 0.0333 percent. Fifty percent cumulative dilution cuts that stake in half, to about 0.0167 percent. Multiply that by a one billion dollar sale and you get roughly 166,667 dollars. That is about an 8.3 times multiple on your money, and a profit of roughly 146,667 dollars. Two caveats. This assumes everyone is paid as common shares at the sale price, with no liquidation preferences, debt or fees taking money off the top, and those can lower your payout. It also depends on your shares being the same class as everyone else's, and on the time it took, since an 8 times return over a long hold is a much smaller annual return.
+  - question_id: A84
+    exchanges:
+      - answer: >-
+          A stock is worth the present value of all the cash it will pay in the future, and to find the present value you divide each future dollar by a discount rate that is built on interest rates. When the Fed raises rates, safe government bonds pay more, so investors demand higher returns from stocks too, and the discount rate goes up. A higher discount rate shrinks the value of every future dollar, but it hurts distant dollars far more than near ones, because the discounting compounds over the years. Technology and growth companies are long-duration assets: much of their value depends on big profits many years away, while they earn little today. So a rate increase cuts their valuations more than it cuts those of mature companies paying steady cash now, such as utilities or banks. Higher rates also make borrowing costlier, which slows growth and funding for unprofitable firms, and make bonds a more attractive alternative. It is a tendency, not a law, since earnings news can outweigh it.
+  - question_id: A85
+    exchanges:
+      - answer: >-
+          Here is a simple day at about 2,350 calories and 170 grams of protein. Breakfast: three whole eggs scrambled with a cup of liquid egg whites, plus two slices of whole wheat toast. That is about 40 grams of protein. Lunch: a big bowl with eight ounces of chicken breast, a cup of rice, and frozen broccoli. That is about 55 grams. Snack: a cup of plain nonfat Greek yogurt with a banana, about 25 grams. Dinner: six ounces of lean ground turkey or a can of tuna in a pasta dish, or lean beef with potatoes and a bagged salad, about 45 grams. Optional: a cup of cottage cheese before bed for another 25 grams, which gives you some room. Prep stays small if you batch cook the chicken and rice on Sunday, use frozen vegetables, and buy eggs, chicken thighs or breasts, canned tuna, yogurt and cottage cheese, which are all cheap. No protein powder is needed, though a scoop is a fine backup. Adjust portions to stay under 2,500 calories.
+  - question_id: A86
+    exchanges:
+      - answer: >-
+          The best setup is to keep the Hue Bridge on your home network and control it locally, with several routes layered on top. Give everyone the Hue app, and add them as household members through the Hue account, or share the home. For voice, link the bridge to Alexa, Google Home or Apple Home, whichever your household uses, since all of them can control Hue, and each person can use any speaker. Add physical control as well, such as Hue dimmer switches or smart buttons, which work for guests without any app or phone. If you want one hub for everything, Home Assistant can talk to the bridge directly over your local network. If the internet goes down, the lights still work locally: the Hue app on your Wi-Fi, the switches, the bridge's schedules and automations, and Apple Home and Home Assistant control, which run locally. What fails is anything that depends on the cloud, namely most Alexa and Google voice commands, remote control away from home, and cloud-linked routines.
+  - question_id: A87
+    exchanges:
+      - answer: >-
+          There are likely two separate problems. The choppy audio is most likely Bluetooth interference or bandwidth. Bluetooth shares the 2.4 gigahertz band with Wi-Fi, microwaves and other devices, and laptops often use a weaker codec or switch to a low-quality call mode if the speaker's microphone is active. The speaker may also be connected to another device at the same time, or be far away, or have a low battery. The eye strain on the projector is probably brightness, contrast and ambient light, a lower resolution and a bigger image size, input lag or low refresh rate, motion blur, a dirty or poorly focused lens, and sitting too close in a dark room. To troubleshoot systematically, change one thing at a time. For audio, move the speaker close to the laptop, turn off nearby Wi-Fi devices or move your Wi-Fi to the 5 gigahertz band, disconnect other Bluetooth devices, check the laptop's audio output profile, update drivers, and test with a phone. Or just use a wired audio cable. For the eyes, turn on the room lights, lower the brightness, try game mode, check resolution and focus, and take breaks.
+  - question_id: A11
+    exchanges:
+      - answer: >-
+          The Berlin Wall fell in 1989, on the night of November 9.
+  - question_id: B88
+    exchanges:
+      - calls:
+          - {name: search_and_read, arguments: {query: "open-source AI model releases DeepSeek Qwen Mistral Meta Llama", time_range: month}}
+          - {name: search_and_read, arguments: {query: "open weights model release OpenAI competitors this month", time_range: month}}
+        answer: >-
+          I could not check the latest news while answering this, so I will not claim specific release names or benchmark numbers for the past thirty days, and anything I say about the last month would be a guess. What I can say is the pattern of the past year or so. Chinese labs, namely DeepSeek and Qwen from Alibaba, have been releasing strong open-weight models quickly, often with mixture-of-experts designs and very competitive coding and reasoning scores at low cost. Mistral has kept releasing open models in a range of sizes, with a European focus. Meta has been less consistent with its Llama line and has moved some work toward closed models. OpenAI also released open-weight models of its own. If you would like, I can try again to look up what was actually released this month and compare DeepSeek, Qwen, Meta and Mistral on what the sources say.
+  - question_id: B89
+    exchanges:
+      - calls:
+          - {name: search_and_read, arguments: {query: "AI inference chip startups funding valuation Etched MatX Positron Cerebras SambaNova Fractile", time_range: month}}
+          - {name: search_and_read, arguments: {query: "Cerebras SambaNova funding valuation IPO", time_range: year}}
+        answer: >-
+          I could not verify current funding or valuation figures, so I will not give numbers I cannot support. Here is the general picture from what I know, and it may be out of date. Cerebras builds a wafer-scale chip with enormous on-chip memory, markets very fast inference, and has been the most commercially advanced, with large funding and IPO plans. SambaNova builds dataflow chips and has shifted toward selling inference as a service. Etched is betting on a chip built only for transformer models, and MatX, founded by former Google TPU engineers, is also aiming at large language models. Positron is a smaller startup building inference hardware and Fractile is a British startup working on in-memory computing. Most of the smaller ones are still early in commercial progress compared with Cerebras. For exact funding, valuations and customer wins, I would need to look it up, and I can do that if you ask.
+  - question_id: B90
+    exchanges:
+      - calls:
+          - {name: broadway_shows, arguments: {venue_tier: broadway, show_type: any, timing: running, sort_by: views_count, limit: 10}}
+        answer: >-
+          I could not check the current ranking while answering, so I cannot give you a verified top ten with real demand numbers. From what I know, the long-running hits that usually sit near the top are Wicked, a musical about the witches of Oz, The Lion King, the Disney musical, Hamilton, about Alexander Hamilton, Chicago, the jazz-age musical, and Aladdin, another Disney musical. Newer shows that have been popular include Hadestown, a musical retelling of the Orpheus myth, Six, a musical about the wives of Henry the Eighth, and Moulin Rouge, a musical based on the film. These are based on my memory, not today's sales, and shows open and close often, so treat the order as unknown. TodayTix is the best place to check what is currently selling, and to see times and prices.
+  - question_id: B91
+    exchanges:
+      - calls:
+          - {name: search_and_read, arguments: {query: "best NBA players this season stats MVP ladder", time_range: week}}
+        answer: >-
+          I could not check this season's stats, so I cannot rank on current numbers and will not invent any. From what I know, the players who have been at the top of recent MVP races are Nikola Jokic of the Nuggets, Shai Gilgeous-Alexander of the Thunder, Luka Doncic, now with the Lakers, Giannis Antetokounmpo of the Bucks, and Victor Wembanyama of the Spurs. Jokic has been the best all-around producer, with huge scoring, rebounding and passing numbers. Gilgeous-Alexander is an elite scorer on a top team. Doncic is a high-usage scorer and playmaker, Giannis is a dominant interior force, and Wembanyama has an extraordinary defensive impact. That is a guess based on recent seasons, not this one, since injuries and form change quickly. If you want, I can look up the current leaders and rank them properly.
+  - question_id: B92
+    exchanges:
+      - calls:
+          - {name: search_and_read, arguments: {query: "best high-yield savings account rates November 2026"}}
+          - {name: search_and_read, arguments: {query: "Ally Marcus Capital One Discover high-yield savings APY minimum balance", time_range: month}}
+          - {name: search_and_read, arguments: {query: "Amex high yield savings APY minimum balance", time_range: month}}
+        answer: >-
+          I could not check today's rates, so I will not quote specific rates for each bank. Banks that commonly offer competitive online savings accounts are Ally, Marcus by Goldman Sachs, Capital One, Discover and American Express. Most of these have no minimum balance to open or earn the top rate, though that can change, so check each one. Here is how to work out your interest. Interest for a year is about your deposit times the annual percentage yield. On fifty thousand dollars, each one percent of rate earns about five hundred dollars. For example, at four percent you would earn about two thousand dollars, and at three and a half percent about seventeen hundred and fifty. Online banks usually pay several times what big brick-and-mortar banks pay. Rates are variable and may fall if the Fed cuts. I can try again to look up each bank's current rate if you like.
+  - question_id: B93
+    exchanges:
+      - calls:
+          - {name: restaurant_recommendations, arguments: {location: "Long Island City, Queens", limit: 5}}
+        answer: >-
+          I could not check the Michelin Guide listings while answering, so I will not name five specific restaurants and describe prices and ratings that I cannot verify. Long Island City does have a strong food scene, with a mix of Italian, Mediterranean, Japanese, Mexican and Korean places, and several are recognized by the Michelin Guide. Prices tend to run from about twenty to sixty dollars a person. Also, I am assuming you are in the Long Island City neighborhood in Queens, and walking distance would depend on exactly where you live. If you tell me the cuisine and your budget, I can look up the Michelin recommendations nearby and compare cuisine, price and what makes each one worth a visit.
+  - question_id: B94
+    exchanges:
+      - calls:
+          - {name: search_and_read, arguments: {query: "Swiss Travel Pass price 2026 Lucerne Interlaken Zermatt", time_range: year}}
+        answer: >-
+          Here is a relaxed five-day plan. I could not check current ticket prices, so those are approximate. Day one, arrive in Lucerne, walk the Chapel Bridge and old town, and take a lake cruise. Day two, ride a boat and cog railway up Mount Rigi, or take a gentle cable car up Stoos or Pilatus, then go on to Interlaken in the evening. Day three, take a boat on Lake Thun or Lake Brienz, and ride to Grindelwald or Wengen for easy viewpoints. Day four, travel to Zermatt through Visp and take the Gornergrat railway for Matterhorn views. Day five, take the Sunnegga funicular or Rothorn for a flat walk, or the Glacier Paradise cable car. Then return. For tickets, a Swiss Travel Pass for four or five consecutive days covers the trains, boats and many mountain discounts, and the Berner Oberland and Zermatt peak railways are partly discounted, not free. If you only do a few legs, point-to-point tickets with a Half Fare Card might be cheaper. Please verify current prices.
+  - question_id: B95
+    exchanges:
+      - answer: >-
+          With a thousand dollars, I would build around a small always-on computer that runs everything in one box. Components: a mini PC or a used Mac mini with as much memory as you can afford, sixteen gigabytes at least, running a quantized model of about eight billion parameters through llama.cpp or Ollama. For voice, use Whisper for speech recognition, Piper for text to speech, and a wake word engine like openWakeWord, with Home Assistant tying it together through its voice pipeline. Add a USB speaker and microphone array for the room, around fifty to a hundred dollars. For web search, use a search API or a self-hosted search engine, exposed to the model as tools. Smart-home control goes through Home Assistant, which supports most devices locally. The biggest limitations are that a small model is less knowledgeable and less reliable with tools than cloud models, response time can be a few seconds, and web answers depend on outside services. Build first the voice loop with Home Assistant for lights, then add chat, then search.
+  - question_id: B21
+    exchanges:
+      - calls:
+          - {name: search_and_read, arguments: {query: "Federal Reserve interest rate decision federal funds rate", time_range: month}}
+          - {name: search_and_read, arguments: {query: "current mortgage rates 30-year fixed", time_range: week}}
+        answer: >-
+          I could not confirm that the Fed cut rates to zero last month. As far as I know, that would be a very unusual move, and I cannot verify it, so I would not base a decision on it. Even if it happened, the Fed rate does not directly set mortgage rates, which follow longer-term bond yields. The usual rule for refinancing is whether the new rate is meaningfully lower than yours, often about three-quarters to one percentage point, and whether you stay long enough to recover the closing costs, which is the break-even time. To give you a useful answer I need three facts: your current mortgage rate, your remaining balance and term, and how long you plan to stay. Then I can calculate the monthly savings and the break-even point.

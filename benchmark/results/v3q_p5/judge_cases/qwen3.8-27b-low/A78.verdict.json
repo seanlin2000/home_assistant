@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "Gives three distinct concrete mechanisms (top ten percent holding most equities, buybacks lifting share prices instead of wages, and prices outpacing wages while a few tech stocks drive the index), though the buyback point overreaches with 'driven entirely by companies shrinking their own payrolls'.",
+  "judgment_reason": "Answering from knowledge was right, and it hedged the ownership share as 'roughly eighty-five to ninety percent'.",
+  "spoken_fit_reason": "Opens with filler ('This is a really good question') and ran past the word cap, so the listener heard only the first example and half of the second."
+}

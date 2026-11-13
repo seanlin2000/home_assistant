@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It names the economy, arms race and nationalism as causes and the August 1991 coup as the trigger, but leaves out the Ukrainian referendum and the Belovezha Accords, counts perestroika and glasnost as a triggering event when the sketch treats reform as a cause, and gives December 25 as the dissolution date when that was Gorbachev's resignation.",
+  "judgment_reason": "Answering from general knowledge without a search was right for a stable history question.",
+  "spoken_fit_reason": "It leads with the dissolution and the causes in a short run of plain spoken sentences, a reasonable length for a three-part question."
+}

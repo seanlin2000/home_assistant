@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Separates the two problems and gives an ordered, one-variable-at-a-time test plan (laptop off, Wi-Fi to 5 GHz, unpair others, firmware, wired path; refresh rate, motion processing, brightness, distance), but only touches the laptop competing for the speaker through 'extra paired devices' and leaves out the DLP rainbow effect, larger field of view, and breaks.",
+  "judgment_reason": "Answered a troubleshooting question from knowledge without a needless search and structured it as the systematic process the user asked for.",
+  "spoken_fit_reason": "Three plain-prose paragraphs with no lists or markdown, a reasonable length for two problems with test plans."
+}

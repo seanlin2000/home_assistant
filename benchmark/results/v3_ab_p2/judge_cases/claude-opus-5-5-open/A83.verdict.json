@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The calculator results give about $166,667, roughly 8.3 times and about $146,667 profit, and the stake goes from one three-thousandth to one six-thousandth, all matching the sketch.",
+  "judgment_reason": "Used the calculator rather than a search and stated the key assumption that the sale goes straight to common holders, ignoring liquidation preferences, fees and debt.",
+  "spoken_fit_reason": "Leads with the dollar figure, spells numbers out for speech, and walks through the steps in plain prose."
+}

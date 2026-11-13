@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The transcript ends with calculator calls and no final ASSISTANT text, so no architecture, components, limitations or build order were given.",
+  "judgment_reason": "Searching current hardware prices was right, but it kept searching past the tool-call limit and never produced an answer, failing the central point.",
+  "spoken_fit_reason": "Nothing was spoken because there is no final reply."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The mechanisms (concentrated ownership, buybacks and layoffs lifting share prices, a few AI giants driving a cap-weighted index, housing costs) are distinct and concrete, but it says the top ten percent hold 'roughly half' of stocks when they hold the large majority, which understates its own first point.",
+  "judgment_reason": "Answering from knowledge was right, but it leans on recent specifics (2025 tariffs, Argentina's 2024-25 Merval, AI capex) without hedging that they come from memory.",
+  "spoken_fit_reason": "It uses bold markdown headings and a bulleted list and ran long enough that the word cap cut it partway through the second example."
+}

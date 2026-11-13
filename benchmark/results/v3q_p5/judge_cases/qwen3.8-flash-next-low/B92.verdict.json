@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The five rates (CIT 3.75, Marcus 3.50, SoFi 3.30, Ally and Capital One 3.20), their conditions and the interest figures (1,875 down to 1,600 dollars) all follow from the excerpts, but it wrongly states the FDIC limit as \"25,000 dollars per depositor per bank\" (it is 250,000) and tells the user to split the 50,000 across banks.",
+  "judgment_reason": "It searched for current rates, said they are variable, spelled out SoFi's direct-deposit condition and CIT's balance tier, and covered the other reading of \"major banks\" by quoting Chase and Wells Fargo.",
+  "spoken_fit_reason": "Four tool-use preambles are spoken back to back, then a seven-paragraph comparison that the word cap cut mid-number at \"you fall to 0.\""
+}

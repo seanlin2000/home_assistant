@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Defines API, tool and MCP server as the sketch does, then lays out a local model server, an agent loop, one MCP server with search and fetch tools, summarizing by the model itself, and safeguards of trimming pages, treating fetched text as untrusted and capping calls.",
+  "judgment_reason": "Answered a stable design question from knowledge without searching and included the prompt-injection safeguard the design needs.",
+  "spoken_fit_reason": "Plain prose with no lists or code, leading with the definitions, at a length that the two-part design question warrants."
+}

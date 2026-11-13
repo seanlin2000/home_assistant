@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Names five players whose per-game figures all match the HoopsHype table (Wembanyama 30.3 and 11.7, Doncic 38.6 and 7.6, Jokic 23.5, 10.8 and 9.0, Giannis 27.7 and 12.6, SGA 29.7), but the reasons are mostly stat recitals with little on team impact beyond SGA's injury-hit Thunder.",
+  "judgment_reason": "Searched for current-season data and was upfront that it is about a dozen games in, that it found no deeper advanced metrics, and that the ranking is a judgment call.",
+  "spoken_fit_reason": "Opens with the early-season caveat and then speaks one through five in plain sentences with numbers spelled out, a reasonable length for a five-player ranking."
+}

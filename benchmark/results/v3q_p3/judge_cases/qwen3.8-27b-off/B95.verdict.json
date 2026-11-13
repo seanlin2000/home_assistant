@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The pipeline (openWakeWord, VAD, faster-whisper, Ollama LLM, Piper or Kokoro, Home Assistant) and limitations like search, memory and local-API reach match the sources, and the RTX 3060 at about $199 is sourced, but the message is cut before the build-order priorities the user asked for, and the eight-to-nine-hundred-dollar total rests on CPU, RAM, SSD and mic prices no source gives.",
+  "judgment_reason": "It stayed within the $1,000 budget and was candid about limits, but it searched only for software stacks and filled most hardware costs from its own assumptions without saying so.",
+  "spoken_fit_reason": "Bold markdown section headings over long dense paragraphs, cut by the word cap after the architecture section."
+}

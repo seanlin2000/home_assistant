@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 0,
+  "answer_quality_reason": "Rates, minimums and interest for Marcus (3.50%, $1,750), Ally and Capital One (3.20%, $1,600), CIT (3.75% above $5,000, $1,875) and SoFi (4.40% promo, $2,200) all trace to the excerpts with correct math, but it gives CIT's boosted 4.35% as about $2,175 for the year when the source says the boost lasts only 6 months.",
+  "judgment_reason": "It searched for current rates, spelled out the promotional and direct-deposit conditions, and warned that every rate is variable and should be confirmed on the bank's site.",
+  "spoken_fit_reason": "Eight long paragraphs hit the word cap, so the listener heard only Marcus and Ally before being cut off."
+}

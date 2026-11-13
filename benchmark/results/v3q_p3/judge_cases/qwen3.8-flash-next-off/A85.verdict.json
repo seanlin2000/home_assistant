@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It opens by claiming the day 'hits about 170 grams of protein at roughly 2,200 calories', but its own calculator total for the food was 132.73 g (the gap is filled by a shake mentioned later), and the listener heard only breakfast and part of lunch before the cut.",
+  "judgment_reason": "It spent nine tool calls looking up grocery prices that a meal-plan question did not need, hitting the tool-call limit before finishing its calorie check.",
+  "spoken_fit_reason": "Three narrated tool-use preambles ran into a long multi-meal monologue that the word cap cut mid-plan."
+}

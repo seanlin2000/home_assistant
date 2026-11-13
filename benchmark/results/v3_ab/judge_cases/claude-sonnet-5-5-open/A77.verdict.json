@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Covers white light as a mix of colors, stronger scattering of short wavelengths, why the sky is not violet (less violet from the sun, eyes less sensitive), the longer sunset path scattering blue away, and dust and haze, all in plain language.",
+  "judgment_reason": "Stable physics answered from knowledge without a search, pitched for a non-scientist as asked.",
+  "spoken_fit_reason": "Plain prose with the one technical term ('scattering') explained, ending with a clean one-line summary; length suits an explanation request."
+}

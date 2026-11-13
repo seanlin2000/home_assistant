@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "Its five names happen to match the Balladex top five, but it ignores the retrieved season stats (Doncic 38.5 points, Wembanyama 29.0 points and 12.4 rebounds, the HoopsHype ratings), gives only generic reasons, and places Giannis with the Bucks although every retrieved table lists him with Miami.",
+  "judgment_reason": "Searching was right and it labeled its list a guess from recent seasons, but it falsely said it could not check this season's stats while holding them, and offered to look up what it already had.",
+  "spoken_fit_reason": "Plain prose with one line per player, but it opens with a disclaimer rather than the ranking and closes with an offer to search again."
+}

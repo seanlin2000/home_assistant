@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Names every component in the sketch (wake word, Whisper, local model via llama.cpp, SearXNG or API search through MCP, Home Assistant, Piper, voice satellites), states the 8-to-14B model, latency and microphone limits, and gives a sensible build order, with a $700-800 brain consistent with the retrieved $780 16GB Mac mini, though it never cites the source's figures.",
+  "judgment_reason": "It stays within the $1,000 budget and is candid about limits, but it says it couldn't check today's prices when the search returned a $780 Mac mini and sub-$650 mini PCs.",
+  "spoken_fit_reason": "Leads with the architecture in plain prose with no lists or markup, at a length the four-part design question justifies."
+}

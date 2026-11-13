@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Every figure traces to the excerpts (Cerebras's May IPO at about $56 billion, Etched's $700M at $21B plus its Jane Street rack, SambaNova's $1B at $11B with JPMorgan, Positron's $750M at $5B, Fractile's $720M on November 11, MatX's $500M at 'several billion'), but it skips some retrieved technology and traction details, such as Positron's racks at Oracle and Fractile's DRAM-on-logic design.",
+  "judgment_reason": "It searched for current funding data, ran a follow-up search on MatX's valuation, and marked unconfirmed figures ('reportedly', 'described only as several billion') and Fractile's unshipped chip.",
+  "spoken_fit_reason": "It leads with the overall picture and then gives one compact sentence per company in plain prose, a reasonable fit for six companies."
+}

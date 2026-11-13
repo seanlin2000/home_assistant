@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 4,
+  "judgment": 2,
+  "spoken_fit": 1,
+  "answer_quality_reason": "Correctly centers the Hue Bridge and Zigbee, inviting users via Home access, physical dimmers, voice via Google or Apple, and that local app and switches keep working offline while remote control stops (backed by the Philips accounts page), but claims Alexa does local control rather than noting cloud assistants stop, and omits a local controller like Home Assistant.",
+  "judgment_reason": "Searched on a stable architecture question that needed no search, though it used the retrieved October 2026 Google local-Matter news carefully and honestly advised testing offline voice because Google has not guaranteed it.",
+  "spoken_fit_reason": "Plain prose that leads with the bridge, but far too long, so the word cap cut it before the voice and internet-outage parts the user asked about."
+}

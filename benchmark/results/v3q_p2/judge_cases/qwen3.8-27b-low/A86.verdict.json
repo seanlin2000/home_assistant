@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 4,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It gives a sound architecture with the Bridge as the local Zigbee hub, member invites with Lighting or Administrator rights, and voice through Alexa, Google or Apple Home, and it covers outages correctly (local app and physical switches work, cloud voice and remote control stop, local Matter and Home Assistant as exceptions), but it does not mention that Apple Home with a home hub keeps working locally.",
+  "judgment_reason": "It ran two search_and_read calls for an architecture question it could answer from stable knowledge, though it hedges the newer local Matter voice behavior sensibly as device-dependent.",
+  "spoken_fit_reason": "It is plain prose but runs to seven long paragraphs with menu paths, and the word cap cut it before voice setup and the outage answer, which was half of what the user asked."
+}

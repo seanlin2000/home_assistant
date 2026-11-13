@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It names every component (openWakeWord, faster-whisper, Ollama, a Home Assistant tool layer, Piper, a satellite mic), builds within budget from sourced prices (Mac mini M5 24 GB about $600, N100 $150-200), states the limits, and gives the sketch's build order, but the $60-100 satellite price comes from no source, it reads the MLX \"up to 90% faster\" figure as faster than CPUs, and it implies a 30B model plus Whisper-large fit together in 24 GB.",
+  "judgment_reason": "It searched for current hardware, stayed under the $1,000 budget with headroom, and was candid that web search breaks pure locality and that small models fall short of cloud assistants.",
+  "spoken_fit_reason": "It opens with \"Great project\" and runs to five dense paragraphs, so the word cap cut it after the architecture and before the hardware, limits, and build order."
+}

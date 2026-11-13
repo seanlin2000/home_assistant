@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The LIC figures ($4,595 up 0.9 percent, RentCafe 1.7 to 2.3 percent) and citywide figures (4.5 percent, 7.1 percent for small units, Queens 3.9 percent) trace to the excerpts, and the advertised-rent risks are well explained, but the lead sentence inverts the comparison ('better than the neighborhood's current pace') and the verdict leans on citywide growth when the local LIC data shows 4 percent is above market.",
+  "judgment_reason": "It explains the advertised-rent risks honestly but never asks how the user's current rent compares with LIC comparables, which decides whether the offer is competitive, and it calls the deal 'decent protection' on the strength of the less relevant citywide trend.",
+  "spoken_fit_reason": "Six long paragraphs ran far past the word cap, so the listener heard a confusing lead and statistics but none of the verdict or the risks it was asked to explain."
+}

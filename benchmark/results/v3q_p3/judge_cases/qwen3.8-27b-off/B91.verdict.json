@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The Wembanyama, Doncic and SGA stats trace to the HoopsHype and DeepMetric tables, but the answer says Miami is in the East's top tier with Kawhi and Anthony Davis alongside Giannis, while the results put Leonard on Toronto, Davis on Washington, and give no Heat standing, and it stops before naming a fifth player.",
+  "judgment_reason": "Searching was right and it fell back to the web when ESPN failed and noted the season was about ten games in, but it filled Giannis's team context with an invented roster claim.",
+  "spoken_fit_reason": "Paragraph-length entries per player overran the word cap, so the listener heard only Wembanyama in full."
+}

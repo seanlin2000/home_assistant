@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It gives three distinct mechanisms (concentrated stock ownership, a few big tech names carrying the S&P 500, and markets pricing future profits while people feel prices rising faster than wages), but the examples stay generic, with no named episode such as the 2020-21 K-shaped recovery and no figures.",
+  "judgment_reason": "Answering stable economics from knowledge without searching was right, and it avoids made-up current statistics.",
+  "spoken_fit_reason": "It is plain prose that opens with the core idea, but at five paragraphs it ran past the word cap, so the listener heard only two of the three examples."
+}

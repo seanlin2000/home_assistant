@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The answer gives three distinct, concrete mechanisms that match the reference: megacap concentration in the S&P 500, buybacks and expected future profits against present wages and rent, and inflation raising nominal earnings while eroding real pay, and it adds that stock ownership is concentrated.",
+  "judgment_reason": "Not searching was correct for a conceptual economics question, and the answer stays general without inventing current figures.",
+  "spoken_fit_reason": "The plain prose is well organized but long, and the word cap cut it off during the second example, so the listener missed the third."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It explains present value with a risk-free plus premium discount rate, the long-bond duration analogy for growth stocks, falling growth expectations, and costlier borrowing, but it is cut off mid-point on the Treasury-yield alternative and never gives a historical example such as 2022.",
+  "judgment_reason": "It answered a mechanics question without searching and labelled its eight-percent duration illustration as a heuristic approximation.",
+  "spoken_fit_reason": "It uses bold markdown headings and asterisk emphasis, and it is a long multi-section essay that the cap cut short."
+}

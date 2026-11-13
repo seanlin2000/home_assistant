@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "Names a sensible stack (Home Assistant voice pipeline with openWakeWord, faster-whisper and Piper, Ollama with an 8B model, SearXNG) and a roughly $830 build, but the prices come from no search, and the message breaks off mid-sentence in the limitations, so the build order the user asked for never arrives.",
+  "judgment_reason": "Gave used-GPU and accessory prices without searching for current prices, though it did label them ballpark and tell the user to check before buying.",
+  "spoken_fit_reason": "Plain prose that leads with a clear framing, but it reads a label line aloud and was cut by the word cap after the parts list."
+}

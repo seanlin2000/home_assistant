@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Names exactly the three quarterbacks in the roster (Purdy, Mac Jones and Rourke) with correct numbers, but labels them starter, backup and third string, which the tool result does not say.",
+  "judgment_reason": "Called team_roster without searching, but stated the depth-chart order as fact instead of offering it as general knowledge.",
+  "spoken_fit_reason": "Two plain sentences that lead with the three names."
+}

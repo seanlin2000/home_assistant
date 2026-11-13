@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "All ten shows come from the broadway_shows result in its order with the ranking basis stated, but two descriptions slip: & Juliet is called a garbled 'Shaker-jukebox' rom-com and Chicago 'the jukebox revival' when the result tags it Drama, Revival, Classic.",
+  "judgment_reason": "It used the Broadway listings tool instead of a web search and explained the ranking as recent views and reviews, without inventing awards or sales figures.",
+  "spoken_fit_reason": "Ten items is long by necessity, and it keeps each to a short spoken 'One, ... Two, ...' line with no markup."
+}

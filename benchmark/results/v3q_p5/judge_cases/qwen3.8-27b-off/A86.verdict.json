@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The bridge as a local Zigbee hub, shared app users, physical Hue switches as a fallback, and cloud voice failing offline are all right, but it says Apple HomePod and Siri need the internet for Hue when Apple Home with a home hub keeps working locally, and it never mentions a local voice option.",
+  "judgment_reason": "Answering stable smart-home architecture from knowledge without a search was the right call, and it was upfront about the voice-assistant caveat during outages.",
+  "spoken_fit_reason": "The reply is built from bold headings, bullet lists and numbered items, wrapped in stray quotation marks, and was cut by the word cap before the outage section."
+}

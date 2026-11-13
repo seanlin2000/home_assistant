@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It separates the two problems and covers 2.4 GHz interference, multipoint juggling, distance, weak radio, a one-change-at-a-time order ending in a wired cable, and brightness, distance, lag, focus, keystone and DLP rainbow for eye strain, but it omits a firmware update and taking breaks.",
+  "judgment_reason": "Rightly answered a troubleshooting question without searching and imposed an ordered one-change-at-a-time test sequence as asked.",
+  "spoken_fit_reason": "Opens by saying these are two separate problems and stays in plain prose without lists, at a length the two-problem question warrants."
+}

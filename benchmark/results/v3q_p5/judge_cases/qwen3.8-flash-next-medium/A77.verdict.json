@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It covers scattering by small air molecules, the strong wavelength dependence (blue scattered roughly four times more than red, checked with the calculator), why the sky is not violet, the longer sunset path removing blue, and dust and haze, all in plain language with everyday images.",
+  "judgment_reason": "It answered from stable knowledge without searching and used the calculator only to check the scattering ratio it quoted.",
+  "spoken_fit_reason": "The answer is long enough that the word cap cut it before the sunset explanation, so the listener never heard half the question answered, and it contains markdown italics (*away*)."
+}

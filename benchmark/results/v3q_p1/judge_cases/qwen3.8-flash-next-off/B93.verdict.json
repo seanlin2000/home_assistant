@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "Casa Enrique ($$, Michelin-listed, Mexican) and Meju (one star, $$$$, $235 menu) are described accurately from the Michelin result and retrieved pages, but the message breaks off mid-sentence in the third entry (Hupo) and never reaches R40 or Vert Frais, so only two of the five restaurants are fully covered.",
+  "judgment_reason": "The Michelin tool answered the question, yet it added web searches for ratings and availability and made sixteen tool calls, though it did sensibly state its assumption about where in Long Island City the user is.",
+  "spoken_fit_reason": "Six filler preambles run together and the long per-restaurant detail hit the word cap partway through the first entry, so the listener did not hear a single restaurant in full."
+}

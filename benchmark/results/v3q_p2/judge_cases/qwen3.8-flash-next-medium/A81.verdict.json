@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 4,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It correctly lists the query, API key, IP, timestamp, user agent and usage pattern as transmitted, notes model-written queries leaking context and fetched sites seeing the IP, and gives sound mitigations (strip identifiers, cache, VPN, check retention), but never mentions a self-hosted metasearch proxy like SearXNG.",
+  "judgment_reason": "It made six tool calls, including two full page fetches of Tavily policies, on a conceptual privacy question the reference expects answered without searching.",
+  "spoken_fit_reason": "It is several long paragraphs with labelled sections, and the word cap cut it off partway through what gets transmitted, so the listener never heard how to minimize exposure."
+}

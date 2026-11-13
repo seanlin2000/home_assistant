@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "States the tip as 11 dollars 61 cents and the total as 76 dollars 11 cents, both matching the reference exactly.",
+  "judgment_reason": "Used the calculator for the tip without searching, as expected for explicit arithmetic.",
+  "spoken_fit_reason": "One sentence leading with both figures in plain spoken prose."
+}

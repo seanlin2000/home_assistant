@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It correctly explains white light as mixed colors, Rayleigh scattering of short blue waves, and the much longer sunset path stripping out blue, but it never says why the sky is not violet and its 'molecules can't see it, get startled' analogy is muddled.",
+  "judgment_reason": "No search was needed for stable physics, and it pitched the explanation at a non-scientist as asked.",
+  "spoken_fit_reason": "Plain prose with everyday comparisons, but it ran so long that the word cap cut it before the sunset explanation, which was half the question."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The 27 points and 11 assists are right, but it says 12 rebounds when the reference box score has 11.",
+  "judgment_reason": "It answered from memory without calling box_score, so its stat line went unverified and one figure was wrong.",
+  "spoken_fit_reason": "One plain sentence that leads with the stat line."
+}

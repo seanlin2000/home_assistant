@@ -22,6 +22,9 @@ MONITORING_TIMEOUT_SECONDS = 5.0
 STREAM_DATA_PREFIX = "data: "
 STREAM_END = "[DONE]"
 MILLISECONDS_PER_SECOND = 1000
+# Qwen 3.8 now and then writes its answer, a stray "</think>", then the same answer again, in the text it means to say; llama-server passes the tag
+# through, most often with thinking off. Everything from the tag on is dropped, so the answer is said once and the tag never reaches speech.
+STRAY_THINK_END = "</think>"
 
 
 class LlamaServerClient:
@@ -47,6 +50,8 @@ class LlamaServerClient:
                         continue
                     for text in stream.absorb(chunk, started):
                         yield TextDelta(text=text)
+        for text in stream.release_held_text():
+            yield TextDelta(text=text)
         for event in stream.tool_call_events():
             yield event
         yield Completion(message=stream.assistant_message(), stats=stream.stats(self._model_alias, started))
@@ -122,7 +127,7 @@ def weights_bytes(models_reply: dict[str, Any]) -> int:
 
 
 def response_request_body(messages: list[Message], tools: list[ToolSpec], policy: AgentPolicy) -> dict[str, Any]:
-    return {
+    body = {
         "messages": [to_openai_message(message) for message in messages],
         "tools": [to_openai_tool(tool) for tool in tools] or None,
         "temperature": policy.temperature,
@@ -131,6 +136,35 @@ def response_request_body(messages: list[Message], tools: list[ToolSpec], policy
         "id_slot": CONVERSATION_SLOT,
         "cache_prompt": True,
     }
+    body.update(sampling_options(policy))
+    thinking = thinking_template_options(policy.think)
+    if thinking:
+        body["chat_template_kwargs"] = thinking
+    return body
+
+
+def sampling_options(policy: AgentPolicy) -> dict[str, float | int]:
+    """The sampling settings the policy names; the ones it leaves unset keep llama-server's defaults."""
+    fields = {"top_p": policy.top_p, "top_k": policy.top_k, "min_p": policy.min_p, "presence_penalty": policy.presence_penalty, "repeat_penalty": policy.repeat_penalty}
+    return {name: value for name, value in fields.items() if value is not None}
+
+
+def thinking_template_options(think: bool | str | None) -> dict[str, Any]:
+    """The chat template's thinking switch for one request: a level such as "medium" turns thinking on at that effort, a bool turns it on or off, and
+    None leaves the server's setting. A request's options win over the server's --reasoning off, so the harness decides per request."""
+    if think is None:
+        return {}
+    if isinstance(think, str):
+        return {"enable_thinking": True, "reasoning_effort": think}
+    return {"enable_thinking": think}
+
+
+def start_of_partial_tag(text: str) -> int:
+    """Where the end of text begins a stray </think> that the next chunk may finish; len(text) when it does not."""
+    for length in range(min(len(STRAY_THINK_END) - 1, len(text)), 0, -1):
+        if STRAY_THINK_END.startswith(text[-length:]):
+            return len(text) - length
+    return len(text)
 
 
 def parse_stream_line(line: str) -> dict[str, Any] | None:
@@ -147,10 +181,13 @@ class StreamedReply:
 
     def __init__(self) -> None:
         self.text_parts: list[str] = []
+        self.thinking_parts: list[str] = []
         self.tool_fragments: dict[int, dict[str, str]] = {}
         self.finish_reason: str | None = None
         self.timings: dict[str, Any] = {}
         self.first_token_at: float | None = None
+        self.held_text = ""  # the end of the text so far when it could be the start of a stray </think>
+        self.reached_stray_think_end = False
 
     def absorb(self, chunk: dict[str, Any], started: float) -> list[str]:
         """Take in one chunk and return the text it adds, in order."""
@@ -161,12 +198,36 @@ class StreamedReply:
             delta = choice.get("delta") or {}
             if (delta.get("content") or delta.get("tool_calls")) and self.first_token_at is None:
                 self.first_token_at = time.perf_counter() - started
+            if delta.get("reasoning_content"):
+                self.thinking_parts.append(delta["reasoning_content"])
             if delta.get("content"):
-                self.text_parts.append(delta["content"])
-                texts.append(delta["content"])
+                texts.extend(self.text_before_stray_think_end(delta["content"]))
             for fragment in delta.get("tool_calls") or []:
                 self.add_tool_fragment(fragment)
         return texts
+
+    def text_before_stray_think_end(self, content: str) -> list[str]:
+        if self.reached_stray_think_end:
+            return []
+        text = self.held_text + content
+        if STRAY_THINK_END in text:
+            self.reached_stray_think_end = True
+            self.held_text = ""
+            return self.keep_text(text.split(STRAY_THINK_END)[0].rstrip())
+        held_from = start_of_partial_tag(text)
+        self.held_text = text[held_from:]
+        return self.keep_text(text[:held_from])
+
+    def release_held_text(self) -> list[str]:
+        """The held end of the text once the stream is over, when no tag followed it."""
+        text, self.held_text = self.held_text, ""
+        return self.keep_text(text)
+
+    def keep_text(self, text: str) -> list[str]:
+        if not text:
+            return []
+        self.text_parts.append(text)
+        return [text]
 
     def add_tool_fragment(self, fragment: dict[str, Any]) -> None:
         collected = self.tool_fragments.setdefault(fragment.get("index", 0), {"id": "", "name": "", "arguments": ""})
@@ -180,7 +241,7 @@ class StreamedReply:
 
     def assistant_message(self) -> Message:
         calls = [event.call for event in self.tool_call_events() if isinstance(event, ToolCallRequest)]
-        return Message(role=Role.ASSISTANT, content="".join(self.text_parts), tool_calls=calls)
+        return Message(role=Role.ASSISTANT, content="".join(self.text_parts), thinking="".join(self.thinking_parts), tool_calls=calls)
 
     def stats(self, model: str, started: float) -> GenerationStats:
         fresh = self.timings.get("prompt_n")
@@ -191,6 +252,7 @@ class StreamedReply:
             fresh_prompt_tokens=fresh,
             cached_prompt_tokens=cached,
             output_tokens=self.timings.get("predicted_n"),
+            thinking_tokens=len(self.thinking_parts),
             time_to_first_token_seconds=self.first_token_at,
             total_seconds=time.perf_counter() - started,
             prompt_eval_seconds=milliseconds_to_seconds(self.timings.get("prompt_ms")),
@@ -221,7 +283,17 @@ def to_openai_message(message: Message) -> dict[str, Any]:
 
 
 def to_openai_tool(tool: ToolSpec) -> dict[str, Any]:
-    return {"type": "function", "function": {"name": tool.name, "description": tool.description, "parameters": tool.input_schema}}
+    return {"type": "function", "function": {"name": tool.name, "description": tool.description, "parameters": without_titles(tool.input_schema)}}
+
+
+def without_titles(schema: Any) -> Any:
+    """The schema without the "title" pydantic writes for every argument ("Max Price" for max_price): the model reads it on every request and it
+    only repeats the name. The guards still validate against the full schema."""
+    if isinstance(schema, dict):
+        return {key: without_titles(value) for key, value in schema.items() if not (key == "title" and isinstance(value, str))}
+    if isinstance(schema, list):
+        return [without_titles(item) for item in schema]
+    return schema
 
 
 def milliseconds_to_seconds(value: float | None) -> float | None:

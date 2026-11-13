@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The calculator returned 166,666.67 and the answer correctly gives the 0.0333 percent initial stake, about 0.0167 percent after dilution, an 8.3x multiple and about 146,667 dollars of profit, matching the sketch.",
+  "judgment_reason": "Used the calculator rather than searching and stated the key assumption that the sale price is what shareholders split, flagging debt and liquidation preferences.",
+  "spoken_fit_reason": "Leads with the dollar value and spells numbers out for speech in plain prose; the walk-through is justified by the request to calculate multiple and profit."
+}

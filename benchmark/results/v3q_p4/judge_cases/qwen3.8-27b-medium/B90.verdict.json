@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "All ten shows come from the broadway_shows result in its view-count order, with correct theaters, prices, and scores and short descriptions from the details calls, but it calls Wicked's 94 \"the highest audience score on this list\" when Rocky Horror also scores 94.",
+  "judgment_reason": "It correctly used the Broadway tool instead of a web search, said it was ranking by recent ticket-site views, and noted that School Girls closes November 15.",
+  "spoken_fit_reason": "The numbered spoken prose has no markup, but each show carries a price, view count, and review count, which makes it far too long, and the word cap cut it off after the third show."
+}

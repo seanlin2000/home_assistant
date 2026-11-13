@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Every figure traces to the excerpts (Cerebras's 5.55 billion May IPO, Etched at 21 billion, SambaNova at 11 billion with JPMorgan, Positron at 5 billion with 50 racks at Oracle, MatX's 500 million with 2027 shipping, Fractile's 220 million and Anthropic deal) and it covers all six companies across the four dimensions asked.",
+  "judgment_reason": "Searched as needed, flagged that sources disagree (giving Cerebras's 27 to 66 billion range rather than picking one), and separated shipping companies like Positron from MatX's 2027 plans.",
+  "spoken_fit_reason": "Leads with the overall picture in one sentence and then covers each company in a plain sentence or two with no lists or URLs, a length six companies justify."
+}

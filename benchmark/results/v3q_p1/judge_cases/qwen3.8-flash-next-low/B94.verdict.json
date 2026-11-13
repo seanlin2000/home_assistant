@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The final ASSISTANT message is empty, so no itinerary or pass comparison was given despite eight searches that returned pass prices, mountain fares and seasonal closures.",
+  "judgment_reason": "Searching was right, but the assistant kept searching until told to stop and then produced no answer, which fails the central point.",
+  "spoken_fit_reason": "No final answer was spoken."
+}

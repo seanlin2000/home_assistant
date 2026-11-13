@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 3,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It covers what stays local and what gets sent (the distilled query, IP address, headers, API-key account identity, fetched URLs) well, but it is cut off in the retention paragraph and never gives the minimization advice the question asked for, such as keeping personal details out of queries, SearXNG, or a VPN.",
+  "judgment_reason": "It made eight search and fetch calls on a conceptual privacy question that needed no search.",
+  "spoken_fit_reason": "It uses bold markdown headings and italics, speaks four tool-use narration lines aloud, and is so long that the word cap cut it after the first section."
+}

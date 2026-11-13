@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It states today's mid-market rate of about 1.113 (Key Currency's 1.1133, timestamped November 11), and its 1,336 dollars is the calculator's 1,335.96 rounded to the dollar.",
+  "judgment_reason": "It searched with a one-day time range, used a dated retrieved rate rather than one from memory, converted with the calculator, and noted that a bank would quote less after fees.",
+  "spoken_fit_reason": "Three plain sentences with the rate and amount up front and no formatting; the fee caveat is a little long but fine."
+}

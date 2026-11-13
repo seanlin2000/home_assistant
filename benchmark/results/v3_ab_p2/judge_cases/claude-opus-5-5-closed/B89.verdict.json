@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The results gave current figures for every company (Cerebras's May 2026 IPO, SambaNova's $1 billion at $11 billion, Etched's $10.3 billion Series C and $1 billion in orders, MatX's $500 million Series B, Positron's $875 million at $5 billion with Oracle racks, Fractile's $720 million at $7 billion), yet the answer ignores them and gives stale training-era numbers like Fractile's fifteen million seed and SambaNova exploring a sale.",
+  "judgment_reason": "Searching was right and it labelled its figures as training background rather than verified, but claiming it could not verify the latest rounds when the excerpts plainly did misjudged the evidence and leaves the user with an outdated picture.",
+  "spoken_fit_reason": "Plain prose without formatting, but it opens with a disclaimer rather than the picture and walks six companies at length with outdated detail."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 3,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Names a sound stack (llama.cpp or Ollama with an 8B quantized model, Whisper, Piper, openWakeWord, Home Assistant, a search tool, a mic array), states the main limitations and a build order of voice loop and lights, then chat, then search, but never shows the hardware fits $1,000 at any checked price, and its only price (fifty to a hundred dollars for the speaker and mic) comes from no source.",
+  "judgment_reason": "It did not search for current hardware prices on a question explicitly bounded by a $1,000 budget, so the budget fit rests on unchecked assumptions it never states.",
+  "spoken_fit_reason": "Leads with the one-box architecture and moves through components, limits and priorities in plain spoken prose at a length the four-part question demands."
+}

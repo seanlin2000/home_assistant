@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The voice pipeline (openWakeWord, faster-whisper, Ollama, Piper, Home Assistant), the sourced RTX 3060 price of $250 to $330, the limitations and the build order all match the sketch, but web search, which the user asked for, is left out of the architecture as a bolt-on, and the rest of the hardware is never priced against the $1,000 budget.",
+  "judgment_reason": "It searched for current GPU prices and put device control and speech first, but it treated the requested web search as something that breaks the local premise instead of designing the tool layer, and never showed the build fits $1,000.",
+  "spoken_fit_reason": "Organized plain prose with no markup, but four dense paragraphs ran past the word cap, so the build-first advice was cut off."
+}

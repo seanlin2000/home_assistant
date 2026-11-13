@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The pipeline (openWakeWord, faster-whisper, Ollama, Piper, Wyoming, Home Assistant, SearXNG) and limitations match the sources and the 3090 at $650 to $700 is sourced, but the '$300 or so' desktop with 32 GB RAM, 1 TB SSD and 750 W supply and the '$30 to $50' voice satellites per room appear in no excerpt, and the build order puts the LLM loop ahead of smart-home control.",
+  "judgment_reason": "Searching for current hardware prices was right and the limitations are stated honestly, but it ignored the retrieved $850 to $1,200 used-3090 range and the doubled RAM prices when claiming the build fits, and never totals per-room satellites against the $1,000 cap.",
+  "spoken_fit_reason": "Roughly a thousand words in seven dense paragraphs were cut by the word cap before the hardware pick was even named."
+}

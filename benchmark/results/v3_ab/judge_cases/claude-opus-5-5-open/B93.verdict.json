@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Names exactly the five restaurants from the restaurant_recommendations result with matching cuisine, price level, distance and Michelin distinction (Hupo's Bib Gourmand, Meju's one star, the others in the guide without a star) and draws each 'worth visiting' note from the result's own blurbs.",
+  "judgment_reason": "Used the restaurant tool instead of a web search, stated that distances are from the middle of Long Island City because it lacks the user's location, and said Michelin gives price levels rather than dollars per person instead of inventing figures.",
+  "spoken_fit_reason": "Leads with the framing and assumption, then a short spoken sentence per restaurant with no list formatting; long, but five comparisons were requested."
+}

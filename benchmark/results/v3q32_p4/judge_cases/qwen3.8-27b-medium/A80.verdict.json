@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The memory figures of about 35 GB at 4-bit and 17.5 GB at 2-bit are correct and the quality trade-off is well described, but it leaves out the speed benefit from lower memory bandwidth, that real files run larger because of scales, and that the context cache comes on top.",
+  "judgment_reason": "It used the calculator rather than search for the arithmetic, which suits a stable technical question, and it calls the figures \"just for the weights\".",
+  "spoken_fit_reason": "Plain prose that defines the term first and then gives the numbers, and its length is justified by a three-part question."
+}

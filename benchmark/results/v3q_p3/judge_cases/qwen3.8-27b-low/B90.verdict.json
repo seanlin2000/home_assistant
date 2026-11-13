@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "Lists all ten running shows from the broadway_shows result in its views order with the correct theaters, audience scores and closing dates, but several descriptions are wrong or unsupported, such as Rocky Horror being about 'a 1927 graduate student', Chicago called a jukebox musical, and Cursed Child having 'held a 92 percent audience score since it opened'.",
+  "judgment_reason": "Used the Broadway tool instead of web search, explained that the ranking is by TodayTix views, and honestly noted it reflects demand and reviews rather than ticket sales or awards.",
+  "spoken_fit_reason": "Plain prose that leads with the ranking basis, but the per-show descriptions run long enough that the word cap cut it after the fourth show."
+}

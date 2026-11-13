@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 4,
+  "judgment": 2,
+  "spoken_fit": 1,
+  "answer_quality_reason": "Correctly describes the Bridge as hub, Home access invites, a shared Alexa or Google household, and that local app control and automations survive an outage while cloud voice and remote access fail, but adds an irrelevant multi-bridge aside, never suggests a local voice option, and the physical-switch point was cut before the listener heard it.",
+  "judgment_reason": "Searched twice on a question stable smart-home knowledge answers, though the results were used accurately and the answer advises testing the exact setup.",
+  "spoken_fit_reason": "Plain prose, but at about 190 words it was cut by the word cap and includes a tangent about multiple bridges."
+}

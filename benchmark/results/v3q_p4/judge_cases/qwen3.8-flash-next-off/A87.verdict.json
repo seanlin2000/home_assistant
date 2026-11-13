@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The audio section gives a sensible ordered test plan (Wi-Fi off, 5 GHz, distance, drivers, a phone-only test), but it misses the speaker being paired to both laptop and projector, and the eye-strain section stops after the 60 Hz motion point, with no brightness, seating distance, focus, or rainbow effect.",
+  "judgment_reason": "It searched three times on a troubleshooting question that needed no search, and its audio steps assume an unstated Windows laptop with the speaker paired directly to it.",
+  "spoken_fit_reason": "It uses bold markdown headings and a numbered list, and it is long enough that the cap cut it off at '1.'"
+}

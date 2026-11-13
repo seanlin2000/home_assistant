@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It correctly separates what stays local from the query text, IP, user agent and API key that are sent, and gives sound mitigations like stripping personal details, VPN and retention review, but omits that fetched websites also see the IP and misses searching only when needed or a metasearch proxy like SearXNG.",
+  "judgment_reason": "Stable architecture question answered without a needless search, with a concrete example of how a query can leak personal details.",
+  "spoken_fit_reason": "Two plain-prose paragraphs with no lists or markup, a reasonable length for a three-part question."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 3,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It names a sound pipeline (openWakeWord, Whisper, a local model, Piper or Kokoro, Home Assistant, a search tool), an honest model-size limitation and a build order, but it leaves out microphones and speakers, calls the 3060 a 16 GB card, and gives no prices to show the hardware fits 1,000 dollars.",
+  "judgment_reason": "It skipped the search the budget question needed, so it never checked that the 32 GB Mac or GPU box fits 1,000 dollars, though it does admit the hardware line is an estimate.",
+  "spoken_fit_reason": "It leads with the key constraint, but the single dense paragraph covering architecture, limitations and build order runs long for listening."
+}

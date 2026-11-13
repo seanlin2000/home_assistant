@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Builds a plausible plan from cheap foods whose meal totals (55 + 50 + 30 + 40) add to about 175 grams under a stated 2,300 calories with no protein powder, but the snack alternative of two cans of tuna is credited with only about 30 grams when it would give well over that.",
+  "judgment_reason": "Respected the calorie ceiling, the no-powder and minimal-prep constraints, framed the totals as approximate with 'should land around', and told the user to adjust portions to body size.",
+  "spoken_fit_reason": "Plain prose walking meal by meal with no list markup or formatting, at a length a full-day plan requires."
+}

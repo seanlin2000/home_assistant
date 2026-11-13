@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It corrects the premise with sourced figures (3.88 percent effective rate, the October 28 hold at 3.75 to 4 percent after a September hike) and gives sound refinance logic with break-even, but it leaves out the retrieved fact that 30-year mortgage rates are above 7 percent, which bears directly on the decision.",
+  "judgment_reason": "It searched, rejected the false premise outright, and asked for the genuinely missing details (current rate, balance, time in the home) instead of guessing.",
+  "spoken_fit_reason": "It opens with 'The premise is wrong' and stays in short plain sentences ending in a clear request."
+}

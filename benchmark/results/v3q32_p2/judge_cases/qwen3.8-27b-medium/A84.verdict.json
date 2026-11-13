@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It correctly links a higher discount rate to a disproportionate cut in the present value of distant cash flows for long-duration growth stocks, with a 2035 dollar as the illustration. It leaves out the competing bond yields, higher borrowing costs and the 2022 example, and 'looks cheaper on paper' is a loose way to say the stock is worth less.",
+  "judgment_reason": "This is stable finance theory, so answering without a search was right.",
+  "spoken_fit_reason": "Six short plain sentences that lead with the mechanism."
+}

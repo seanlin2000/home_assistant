@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "Gives distinct mechanisms matching the sketch (index gains concentrated in a few giant firms, skewed stock ownership, and rate cuts or margin-boosting layoffs lifting prices while rents and groceries worsen), though the third example bundles several mechanisms together and none is tied to a concrete instance.",
+  "judgment_reason": "Answered a stable economics question from knowledge without searching and delivered three mechanisms rather than restating that the market is not the economy.",
+  "spoken_fit_reason": "Plain, well-paced prose that leads with the answer, but it contains a markdown slip in the asterisks around *effects* that a TTS engine may read aloud."
+}

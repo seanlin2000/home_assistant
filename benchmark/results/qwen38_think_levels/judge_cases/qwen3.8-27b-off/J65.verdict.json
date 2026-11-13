@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It names exactly the three roster quarterbacks, Purdy, Jones and Rourke, with the correct jersey numbers.",
+  "judgment_reason": "It called team_roster correctly, but its line that Purdy is \"the starter\" with \"two backups behind him\" goes beyond the tool result and is not framed as general knowledge.",
+  "spoken_fit_reason": "Two plain sentences that lead with the three quarterbacks."
+}

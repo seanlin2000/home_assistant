@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The Lucerne, Interlaken, Zermatt order and the low-effort viewpoints (lake cruise, Pilatus, Harder Kulm, Gornergrat) suit the brief, but it promises 'Matterhorn-and-Eiger views' from the Jungfrau region, routes Interlaken to Zermatt 'through the Gotthard tunnel' instead of via Spiez and Visp, and builds its 650 to 660 franc pass total on 135.60 francs for the Jungfraujoch, which assumes half price when the source gives 25 percent off with the Swiss Travel Pass; the message also breaks off mid-way through the Half Fare Card comparison.",
+  "judgment_reason": "Searching for current pass prices was right, but it never asked when the trip is or flagged the Gornergrat closure from 2 to 14 November 2026 found in its own results, and its pass math contradicts the excerpts it retrieved.",
+  "spoken_fit_reason": "It is laid out with bold markdown day headings, it is far too long for speech, and the word cap cut it on Day 2, before any of the pass advice."
+}

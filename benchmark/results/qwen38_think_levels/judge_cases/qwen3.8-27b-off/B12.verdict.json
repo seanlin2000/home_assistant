@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The used RTX 3090 price (about $1,600 from 284 eBay sales in 14 days, asks of $1,500 to $1,900) and the RX 7900 XTX at about $1,200 trace to the retrieved trackers, but the in-budget advice ('sixteen gigabytes as the realistic ceiling', a 4060 Ti or 5060 Ti 16 GB) has no retrieved price behind it, so no concrete under-$1,000 build is named.",
+  "judgment_reason": "It was honest that the 3090 and the 7900 XTX overshoot $1,000 and labeled the stretch to $1,500 as over budget, but it asserted that 16 GB cards fit the budget without any price for them, and it ignored the lower $1,203 completed-sales figure it had also retrieved.",
+  "spoken_fit_reason": "It leads with an honest framing in plain prose, but four long paragraphs plus a follow-up question hit the word cap, so the listener was cut off before the in-budget options."
+}

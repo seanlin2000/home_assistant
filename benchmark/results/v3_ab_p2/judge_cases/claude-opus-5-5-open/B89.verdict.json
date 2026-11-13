@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Every figure traces to the excerpts (Cerebras's May IPO raising about $5.5 billion, Etched's $1 billion at $21 billion, SambaNova's $1 billion at $11 billion with JPMorgan, Positron's 50+ Oracle racks, MatX's $500 million Series B, Fractile's $220 million and Anthropic deal), but it gives no funding figure for Positron and rounds Fractile's $5.5 to $7.3 billion range down to seven.",
+  "judgment_reason": "Searched as needed, separated shipping products (Positron, SambaNova) from plans (MatX shipping in 2027), and flagged that performance claims are the companies' own.",
+  "spoken_fit_reason": "Leads with the overall picture (\"flush with money but still thin on proof\") and fits six companies into plain spoken sentences without lists."
+}

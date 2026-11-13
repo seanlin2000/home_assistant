@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Correctly distinguishes API, tool, and MCP server and lays out an MCP server with search and fetch tools, a tool-calling local model, untrusted-text and call-limit safeguards, and model-written summaries, but leaves the agent loop and tool schemas implicit and omits timeouts and caching.",
+  "judgment_reason": "Answered a stable design question from knowledge without searching and included the security safeguard that matters most.",
+  "spoken_fit_reason": "Leads with the definitions and describes the layers as spoken first, second, third prose with no list formatting, at a length the question warrants."
+}

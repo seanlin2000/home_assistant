@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The headline figures match the sketch (about 166,670 dollars, 8.3x, about 146,670 dollars profit), but it first misstates the stake as \"thirty-three hundredths of one percent\", which is ten times too large, and its caveat wrongly says the 8.33x is just one billion divided by sixty million, which is 16.7.",
+  "judgment_reason": "It used the calculator without searching and named both assumptions that matter: how the 50 percent dilution is defined and the liquidation preferences it ignores.",
+  "spoken_fit_reason": "It leads with the answer in plain prose, but the garbled caveat paragraph makes it long enough that the word cap cut the liquidation-preference warning."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The totals of 140, 35 and 17.5 gigabytes and the real-file overhead caveat match the sketch, but it says a 4-bit weight needs 'a quarter of a byte' and a 2-bit weight 'a sixth of a byte', which contradict its own calculator results of 70e9 * 0.5 and 70e9 * 0.25.",
+  "judgment_reason": "It answered from knowledge without searching, used the calculator for the memory arithmetic, and flagged that real checkpoints land above the clean lower bound.",
+  "spoken_fit_reason": "Plain prose with no markdown, but three long paragraphs were cut by the word cap and the spoken text includes the slip 'fourteen hundred... I mean one hundred forty gigabytes'."
+}

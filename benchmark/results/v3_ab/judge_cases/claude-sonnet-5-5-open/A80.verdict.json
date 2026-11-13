@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Memory figures match the sketch (about 35 GB at 4-bit, 17.5 GB at 2-bit, 140 GB at 16-bit, verified by the calculator calls), it notes real files run larger plus the context cache, and covers small 4-bit loss, marked 2-bit loss and faster bandwidth-limited generation.",
+  "judgment_reason": "Used the calculator for the arithmetic, did not search for stable knowledge, and labelled the figures as weights-only approximations.",
+  "spoken_fit_reason": "Numbers are spelled out for speech, plain prose leads with the definition, and length fits a three-part question."
+}

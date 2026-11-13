@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The GPU part is sound (matrix multiplies on Tensor Cores, bandwidth-bound decode, CUDA as the moat), but the reply breaks off mid-sentence at 'about' and never covers ASICs, specialized inference processors, or when a specialized chip beats an NVIDIA GPU.",
+  "judgment_reason": "It ran four searches and four calculator calls on a conceptual question that needed no search, and spent its budget on current spec sheets rather than finishing the explanation.",
+  "spoken_fit_reason": "The listener heard two tool-call preambles run together and then dense spec figures before the word cap cut it, and the written reply itself ends mid-sentence."
+}

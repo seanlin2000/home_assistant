@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 3,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The ranking by TodayTix views, the scores, venues, prices and descriptions all trace to the broadway_shows and detail results, but the reply breaks off at 'School Girls; Or, The African Mean', so shows nine and ten are missing.",
+  "judgment_reason": "It ran a web search for an & Juliet description that the listing tool could supply by exact name, and it spent ten separate detail calls on top of the listing.",
+  "spoken_fit_reason": "Plain numbered prose without markdown, but each show carries views, score, review count and price, so it ran far past a listenable length and the word cap cut it after the third show."
+}

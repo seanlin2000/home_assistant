@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It gives Purdy's own 264 yards on 21 of 29 with one touchdown and no interceptions, not the team's 249 net passing yards.",
+  "judgment_reason": "It used box_score for the last game and picked out Purdy's individual line rather than the team total.",
+  "spoken_fit_reason": "It is three short plain sentences, with the yardage in the second."
+}

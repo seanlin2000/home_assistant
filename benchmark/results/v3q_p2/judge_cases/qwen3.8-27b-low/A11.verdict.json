@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It gives the correct year, 1989, and the correct date, November 9th.",
+  "judgment_reason": "It answered this settled history question from knowledge without searching, as it should.",
+  "spoken_fit_reason": "It leads with the answer in two short plain sentences."
+}

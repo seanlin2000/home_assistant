@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 2,
+  "spoken_fit": 1,
+  "answer_quality_reason": "Rates and $0 minimums for Marcus (3.50%), SoFi (3.30%), Ally and Capital One (3.20%) and EverBank (4.20%) trace to the excerpts and the $1,750, $1,650, $1,600 and $2,100 figures follow, but it says SoFi's 4.40% promo, which lasts only six months, 'would reach roughly 2,200' for the year.",
+  "judgment_reason": "It searched current rates, flagged the big-bank fee and minimum, and noted that rates are variable, but it applied a six-month promotional rate to a full year without saying so.",
+  "spoken_fit_reason": "It leads with the comparison in plain prose, but it went past the word cap and the closing caveat that rates are variable was cut."
+}

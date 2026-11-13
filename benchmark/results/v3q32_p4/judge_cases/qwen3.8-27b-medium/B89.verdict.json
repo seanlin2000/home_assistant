@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "Every figure traces to the excerpts (Etched at $21 billion with $40 to 50 billion offers, Positron's $875 million at $5 billion, Cerebras's $56 billion IPO and roughly $26 billion as of October 22, Fractile's $720 million on November 11), and it marks MatX and Fractile as shipping in 2027, but the opening \"consolidating around inference\" gives only a thin overall picture.",
+  "judgment_reason": "Searching was clearly needed for current funding figures, and it separates shipping products (Atlas racks at Oracle, Etched production) from 2027 plans without inventing numbers.",
+  "spoken_fit_reason": "Plain prose with no markdown, but it is one dense paragraph packed with valuations for six companies, which is hard to follow aloud."
+}

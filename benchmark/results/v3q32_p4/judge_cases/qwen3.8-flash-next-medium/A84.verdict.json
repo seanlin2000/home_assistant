@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Covers the higher discount rate, far-future earnings making tech a long-duration asset like a late-paying bond, and the extra effects of borrowing costs, bond competition and multiple compression, matching the sketch.",
+  "judgment_reason": "Answered a stable finance concept from knowledge without searching, which was the right call.",
+  "spoken_fit_reason": "Five plain sentences that lead with the mechanism and use no lists or markup."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 3,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The bridge-as-local-hub design, shared Hue app access, Apple Home's local operation and what survives an outage are right, but it claims Google's local Matter update means 'basic voice control now survives an outage' when the excerpts say only Home app control survives and Google voice commands are cloud dependent, and it omits physical switches.",
+  "judgment_reason": "It searched a stable architecture question that needed no search, and then over-read the 9to5google excerpt into a claim about offline voice control.",
+  "spoken_fit_reason": "Plain prose with no markup, but three paragraphs of about 160 words run long for a spoken reply."
+}

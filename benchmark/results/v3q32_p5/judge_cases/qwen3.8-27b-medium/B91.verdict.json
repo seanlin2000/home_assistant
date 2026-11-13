@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Wembanyama's 38.5 PER and plus 225, Doncic's 38.6 points and 7.6 assists, Jokic's league-leading 9 assists and Giannis's 27.7 and 12.6 all match the 2026-27 excerpts, but Gilgeous-Alexander's 'most efficient scorers' reason has no supporting figure and team impact is barely addressed.",
+  "judgment_reason": "Searching for current-season statistics was right, it used this season's tables rather than last season's, and it noted that it is still early so the order may shift.",
+  "spoken_fit_reason": "Five short spoken items with a reason each, rounded numbers that read well aloud and no markdown, at the length five players demand."
+}

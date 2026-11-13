@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Every release and figure traces to the excerpts (Muse Spark Open on October 15 with 816B and 1M context, DeepSeek V4.1 Flash's 552B base and mid-October refresh, Mistral Large 4 preview on October 6 with no weights yet, LFM2.5 and MiniCPM), but it counts Qwen 3.8, an August release, as one of the five past-30-day developments.",
+  "judgment_reason": "It searched as needed and was honest that sources ran to late October and benchmark tables were missing, but rather than saying Qwen had no release in the window it filled the slot with the August Qwen 3.8, though it gave that date openly.",
+  "spoken_fit_reason": "It uses spoken 'First' through 'Fifth' signposts in plain prose with no URLs or markdown, at a length a five-item comparison warrants."
+}

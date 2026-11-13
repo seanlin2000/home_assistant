@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Corrects the premise with figures from the results (target range 3.75 to 4.00 percent, a September hike, held in October) and then asks for the current mortgage rate, balance and time in the home, as the sketch allows.",
+  "judgment_reason": "Searched to check the claimed cut instead of accepting it, pushed back plainly, and asked for the genuinely missing details instead of guessing.",
+  "spoken_fit_reason": "Leads with the correction in short plain sentences and ends with a focused follow-up question."
+}

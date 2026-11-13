@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The five developments (DeepSeek V4.1-Flash-1017 on October 17, Mistral Large 4 weights on October 29, Kimi K3.1 Pro around November 2 to 5, Meta Muse Spark Open on October 15 and Muse Ember, Qwen4-Max preview) and their specs trace to the retrieved excerpts and fall in the window, with small stretches such as Mistral 'claiming first place among open models on several coding indexes' and the undated Qwen-Image-2.1 presented as recent.",
+  "judgment_reason": "Searching was required for a past-30-days question, it labeled Qwen4-Max as preview without weights, and it flagged the benchmark numbers as vendor-reported.",
+  "spoken_fit_reason": "About eight hundred words in seven dense paragraphs packed with parameter counts and scores were cut by the word cap after the second development."
+}

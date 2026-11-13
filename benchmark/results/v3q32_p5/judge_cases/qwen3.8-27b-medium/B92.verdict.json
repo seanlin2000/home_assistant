@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The big-bank rates (Chase 0.01, Bank of America 0.04, U.S. Bank 0.05) and the $5, $20 and $25 interest figures follow correctly from the excerpts, but it names only one actual high-yield account (Happen at 4.20 percent), skips retrieved ones like CIT and Vio, and says no minimums were given when CIT's $100 opening minimum and $5,000 tier were in the results.",
+  "judgment_reason": "Searching was right and it usefully flagged that big banks do not offer high-yield rates and admitted it could not find Citibank, but it did not steer to five high-yield options the results supported.",
+  "spoken_fit_reason": "Plain prose without markup, but a dense run of percentages and dollar figures that is hard to follow by ear and runs to the word cap."
+}

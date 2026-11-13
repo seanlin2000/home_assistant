@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It correctly says the Fed did not cut to zero, citing the September hike to 3.75-4 percent and the October 28 hold, gives the sourced 7.18 and 6.57 percent mortgage averages and sound break-even logic, but its claim that rates were near zero about a year and a half ago is wrong and has no source.",
+  "judgment_reason": "It searched, pushed back plainly on the false premise, and asked for the user's current rate and remaining term instead of guessing.",
+  "spoken_fit_reason": "It leads with the correction in plain prose, but three paragraphs ran past the word cap, so the closing question asking for the user's rate was never heard."
+}

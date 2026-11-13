@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Builds a cheap, quick plan from eggs, canned tuna, Greek yogurt and chicken with plausible per-meal figures that the calculator sums to 172 grams of protein and 1,610 calories, well under 2,500 and with no protein powder.",
+  "judgment_reason": "Respected every constraint, used the calculator for the totals instead of searching, and flagged that the figures are estimates from typical labels.",
+  "spoken_fit_reason": "Leads with the totals and reads meal by meal in plain sentences with no markdown, at a length a full-day meal plan demands."
+}

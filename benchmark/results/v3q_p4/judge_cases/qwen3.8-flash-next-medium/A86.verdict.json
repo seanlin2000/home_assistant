@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 4,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "Covers the bridge as the local Zigbee hub, inviting housemates under Home access, Matter multi-admin voice, and physical dimmer switches, and correctly says app, bridge automations and switches survive an outage while cloud voice and remote control stop, but it hedges rather than saying Apple Home with a home hub keeps working locally, and never mentions a local voice option.",
+  "judgment_reason": "A stable architecture question needed no search, yet it ran three searches and spoke two status preambles, though it was honest in flagging its uncertainty about Matter-local voice offline.",
+  "spoken_fit_reason": "Plain prose without markdown, but the listener first heard two search preambles and then a seven-paragraph answer that the word cap cut before the voice or outage sections."
+}

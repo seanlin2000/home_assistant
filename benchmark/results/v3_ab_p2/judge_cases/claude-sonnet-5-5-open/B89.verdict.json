@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Every figure traces to the excerpts (Cerebras's 185-dollar IPO, SambaNova's 1 billion at about 11 billion, Etched's conflicting 10.3 versus 19-24 billion, Positron's 50 Oracle racks and Jump Trading, Fractile's 220 million Series B and 2027 deliveries), but it skips Cerebras's valuation and the technology of SambaNova and MatX.",
+  "judgment_reason": "Searched for current funding data, flagged source disagreements on Etched and Positron, separated Positron's shipping chip from others' plans, and said it found no named MatX customer.",
+  "spoken_fit_reason": "Opens with the overall picture and the caveat, then covers each company in plain prose with no lists, a length the six-company comparison justifies."
+}

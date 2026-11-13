@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The big-bank rates and interest (Chase and Wells Fargo 0.01 percent for about five dollars, Bank of America 0.04 percent for twenty, U.S. Bank 0.05 percent for twenty-five) follow the Arca and SwitchWize excerpts, but it never gives a high-yield comparison, says fifty thousand at a four-to-five-percent account earns 'roughly four to five hundred dollars a year' when it would be about two thousand or more, and asserts no-minimum terms for Chase, Wells Fargo and Bank of America that no source gives.",
+  "judgment_reason": "Reasonably flagged that the biggest banks do not pay high-yield rates and was honest about missing Citi data, but narrowed the question away from the high-yield accounts the user asked about and never noted that the rates are variable.",
+  "spoken_fit_reason": "Leads with the key caveat in plain prose, but runs long enough that the word cap cut it after the first bank."
+}
