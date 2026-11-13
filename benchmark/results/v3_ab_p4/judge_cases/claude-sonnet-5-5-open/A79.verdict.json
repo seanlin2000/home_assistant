@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Covers parallel matrix math, memory-bandwidth-bound generation and the software stack, distinguishes GPU, ASIC and inference chips with Groq on-chip memory and Cerebras wafer-scale examples, and lists stable workloads, latency, power per token and memory fit as the conditions for a specialized chip to win.",
+  "judgment_reason": "Answered a conceptual hardware question from stable knowledge without searching and avoided unverifiable current benchmark claims.",
+  "spoken_fit_reason": "Plain prose that leads with the answer to the first question and has no formatting, at a length the three-part question calls for."
+}

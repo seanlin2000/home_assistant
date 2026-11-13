@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "Every figure traces to the excerpts (Cerebras's 5.55 billion dollar IPO, Etched at 21 billion with about 1 billion in orders, SambaNova 1 billion at 11 billion, Positron's 50-plus Atlas racks at 5 billion, MatX about 600 million, Fractile 220 million), and it separates orders from shipping, but it says almost nothing about each company's technology, which the question asked for.",
+  "judgment_reason": "Searched across all six companies, noted the conflicting Cerebras valuations instead of picking one, and flagged that orders are not revenue and that performance claims are self-reported.",
+  "spoken_fit_reason": "Leads with the overall picture in plain prose, but the dense run of figures is long enough that the word cap cut the closing caveat."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The Etched, MatX and Positron figures all trace to the excerpts, but the message stops mid-sentence at Positron and never covers Cerebras, SambaNova or Fractile, though their IPO, $11 billion and $720 million figures had been retrieved.",
+  "judgment_reason": "It searched appropriately and kept Etched's $40 to 50 billion offers separate from closed rounds, but it built a per-company essay that could not fit six companies, and it opened with a caveat about Cerebras' stock price that it never reached.",
+  "spoken_fit_reason": "Bold markdown headers and dense figure-heavy paragraphs, cut by the word cap after Etched."
+}

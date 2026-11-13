@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The used 3090 figures (about $1,200 in completed eBay sales, asks of $1,500 and up) trace to the Get PC Parts and Silicon Comps excerpts and the 3060 12GB as budget pick traces to the Starmorph excerpt, but the 3060's 'few hundred dollars used' and the $1,400 to $1,500 complete-machine figure are unsourced approximations.",
+  "judgment_reason": "It says plainly that the 3090 breaks the $1,000 budget, gives a within-budget alternative, and admits it could not pin down the 4060 Ti's street price.",
+  "spoken_fit_reason": "Four long paragraphs ran far past the word cap, so the listener heard only the over-budget 3090 discussion and never the within-budget recommendation."
+}

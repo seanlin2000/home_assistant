@@ -7,7 +7,7 @@ from pathlib import Path
 
 from deslop.checks import Finding, check_source
 
-EXCLUDED_DIRS = frozenset({".venv", ".git", "vm", "__pycache__"})
+EXCLUDED_DIRS = frozenset({".venv", ".venv-speech-lab", ".git", "vm", "__pycache__"})
 
 
 def main() -> None:

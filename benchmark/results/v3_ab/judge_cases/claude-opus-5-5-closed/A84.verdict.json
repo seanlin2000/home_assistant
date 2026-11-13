@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Explains that value is discounted future cash flow built on the risk-free rate, that distant cash loses more as discounting compounds, that growth stocks behave like long-duration bonds, and adds costlier borrowing and bonds as an alternative, covering the sketch's required points.",
+  "judgment_reason": "Answered a conceptual finance question from knowledge without searching, using an illustrative one-versus-five percent comparison rather than claiming current rates.",
+  "spoken_fit_reason": "Leads with the mechanism in plain spoken prose with no formatting, at a length suited to an explanation request."
+}

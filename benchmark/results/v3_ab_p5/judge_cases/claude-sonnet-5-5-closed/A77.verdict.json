@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Covers every element of the sketch: white light as a mix, stronger scattering of short wavelengths, why the sky is not violet, the longer path at sunset removing blue, and dust and haze deepening the red.",
+  "judgment_reason": "Answered settled physics from knowledge without searching and kept it free of unexplained jargon for a non-scientist.",
+  "spoken_fit_reason": "Plain prose with no jargon terms or formatting, ending on a neat one-line summary; the length suits an explanation request."
+}

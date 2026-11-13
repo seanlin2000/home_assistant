@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Correctly separates stagnation, the arms race, Gorbachev's reforms and nationalism as causes from the Berlin Wall (Nov 1989), the August 1991 coup and the Belavezha Accords (8 Dec 1991) with correct dates, but omits Afghanistan and the Ukrainian referendum and labels the 1989 Wall fall a trigger rather than an Eastern European cause.",
+  "judgment_reason": "Answered stable history from knowledge without searching, as expected, and explicitly drew the cause-versus-trigger distinction the question asked for.",
+  "spoken_fit_reason": "Plain prose that leads with the answer, and its length is justified by the three-part question with no lists or markdown."
+}

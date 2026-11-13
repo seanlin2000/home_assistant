@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It states the 3.75 to 4.00 percent target range, held on October 28, and gives the calculator's $937.50, $1,000 and $970 for the low end, the high end and the 3.88 effective rate, plus the useful caveat that savings rates differ.",
+  "judgment_reason": "It searched as instructed, used the calculator for every figure, and named which rate each figure assumes.",
+  "spoken_fit_reason": "The answer is a markdown bullet list with '3.75%' style figures, then a long caveat paragraph, which would sound wrong read aloud."
+}

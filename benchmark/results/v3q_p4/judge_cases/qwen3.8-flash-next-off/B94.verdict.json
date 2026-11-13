@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 0,
+  "answer_quality_reason": "Days one and two are geographically sensible and sourced (Rigi and Stanserhorn included, the Luzern-Interlaken Express at CHF 34 and free with the pass, Harder Kulm CHF 17-21), but the message stops in day three, so Zermatt and the pass versus Half Fare versus point-to-point comparison it promised never arrive.",
+  "judgment_reason": "It searched sensibly and thought about seasonal closures, but it assumed mid-November travel without saying the user had not given dates, and stated closures for Schynige Platte and Jungfraujoch that no retrieved source supports.",
+  "spoken_fit_reason": "It has a spoken heading ('The itinerary'), six filler search announcements, and a dense multi-day wall of text that the cap cut off at day one."
+}

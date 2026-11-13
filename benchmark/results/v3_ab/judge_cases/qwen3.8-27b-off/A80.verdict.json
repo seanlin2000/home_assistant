@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It explains integer codes with shared scale factors, gives the correct figures of about 35 GB at 4-bit, 17.5 GB at 2-bit and 140 GB at 16-bit, notes that the KV cache and overhead come on top, and covers the quality loss (modest at 4-bit, marked at 2-bit for reasoning and recall), GPTQ/AWQ and the faster data movement.",
+  "judgment_reason": "Answering stable technical material from knowledge without searching was right, and it flags that real memory use lands above the weight-only figures.",
+  "spoken_fit_reason": "It is plain prose that starts with the definition, but at four long paragraphs it was cut by the word cap, so the listener never heard the trade-offs the question asked for."
+}

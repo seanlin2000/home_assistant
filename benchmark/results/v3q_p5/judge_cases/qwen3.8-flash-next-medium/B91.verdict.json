@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 0,
+  "answer_quality_reason": "Most figures are traceable to this season's excerpts (Doncic 38.6 points with 66 percent true shooting, Wembanyama 30.3, 11.7 and 4.4 blocks, Spurs 10-2 with him, Giannis 27.7 and 12.6), but it says Jokic \"leads the league in assists\", which no excerpt shows and the one league-leader excerpt contradicts, and it turns SGA's 3.9 points per game on-court edge into \"per possession\".",
+  "judgment_reason": "Searching was right and it opened by warning that eleven or twelve games is a small sample, but it used eight tool calls, over the limit.",
+  "spoken_fit_reason": "Six long paragraphs dense with percentages and records, with a tail of honorable mentions, ran past the word cap after the first player."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Covers sharing through the Hue app, linking Alexa, Google or Apple Home, Home Assistant for local voice, Zigbee to a local bridge, and correctly says the app on wifi, switches, bridge automations, Apple Home and Home Assistant survive an outage while cloud voice and remote access fail, matching the sketch.",
+  "judgment_reason": "Answered stable architecture knowledge without searching and offered options keyed to whichever ecosystem the household uses instead of inventing a preference.",
+  "spoken_fit_reason": "Leads with the recommended setup and stays in plain prose with no lists, at a length the two-part question warrants."
+}

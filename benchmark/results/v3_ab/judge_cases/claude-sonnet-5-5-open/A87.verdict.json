@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Separates the two problems and gives a one-change-at-a-time audio plan (2.4 GHz interference, moving closer, 5 GHz Wi-Fi, updates), but it treats the laptop as the audio source and misses the sketch's central cause that the laptop competes for the speaker's Bluetooth connection, and for eye strain it omits field of view, seating distance and the DLP rainbow effect.",
+  "judgment_reason": "Troubleshooting from general knowledge without a search was right, and it framed causes as likely rather than certain.",
+  "spoken_fit_reason": "Plain prose that opens with 'two separate issues' and handles each in turn with no lists or markup; length suits two problems."
+}

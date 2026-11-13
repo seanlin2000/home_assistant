@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Separates the two problems and covers 2.4 GHz interference, distance, codec issues, and the speaker connected to two sources, with sensible tests, plus brightness, blur, input lag, and flicker for the eye strain, but omits focus or keystone and the DLP rainbow effect and does not stress testing one change at a time.",
+  "judgment_reason": "Answered from stable troubleshooting knowledge without searching and structured the answer as two separate diagnoses as the question warranted.",
+  "spoken_fit_reason": "Leads by splitting the problems and stays in plain prose with gigahertz spelled out for speech, at a length the two-problem question needs."
+}

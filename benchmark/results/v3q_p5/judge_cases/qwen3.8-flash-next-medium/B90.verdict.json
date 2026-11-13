@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": false,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The message stops mid-sentence at show seven of ten, says Hamilton has the highest average ticket price before giving Other Desert Cities a higher one, credits Other Desert Cities to Theresa Rebeck, and ranks that show as currently playing although broadway_show_details said it is not on the TodayTix listing.",
+  "judgment_reason": "It called the Broadway listing tool correctly, but then added web searches for grosses and Tonys, exceeded the tool-call limit, and overrode the tool's explicit note that Other Desert Cities is probably not playing.",
+  "spoken_fit_reason": "It is a long list of shows packed with dollar figures and review counts, with a parenthetical aside, and the word cap cut it after the second show."
+}

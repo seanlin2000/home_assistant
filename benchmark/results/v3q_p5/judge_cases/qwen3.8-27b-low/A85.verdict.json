@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "A cheap, quick plan of eggs, Greek yogurt, tuna, cottage cheese, chicken, beans and rice whose per-meal figures (33, 48, 27 and 60 g; 460, 430, 220 and 600 kcal) do add to the stated 168 g and about 1,700 kcal, though the breakfast protein is understated and its calculator sums (175 g, 1,865 kcal) do not match the plan it gave.",
+  "judgment_reason": "No search was needed, it kept clear of protein powder and the calorie cap, and it hedged its nutrition numbers with 'roughly' and 'about'.",
+  "spoken_fit_reason": "Leads with the totals in plain prose, but the long plan and practical notes ran past the word cap, cutting off dinner and the daily total."
+}

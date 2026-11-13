@@ -8,7 +8,7 @@ from assistant_core.prompts import ACKNOWLEDGEMENT_REPLY, SILENCE_MARKER
 from assistant_core.tool_guards import as_untrusted_block
 from benchmark.gates import allowed_tool_calls, harness_gates, sports_named_entity
 from benchmark.judge import render_case
-from benchmark.records import Candidate, Category, ExpectedReply, Gate, JudgeVerdict, QuestionResult, Score, load_config, load_questions
+from benchmark.records import Candidate, Category, Constraints, ExpectedReply, Gate, JudgeVerdict, QuestionResult, Score, load_config, load_questions
 from benchmark.report import CandidateReport, render_summary_table
 
 
@@ -31,10 +31,9 @@ QUESTIONS = load_questions(Path("benchmark/questions.yaml"))
 def test_question_set_shape() -> None:
     assert len(QUESTIONS.questions) == 75
     assert {question.id for question in QUESTIONS.questions if question.route.value == "weather"} == {"E36", "E37", "E38", "I47", "I48", "I49", "I50", "I51", "I52", "F54", "F59"}
-    assert QUESTIONS.by_id("B13").route.value == "search"
-    assert QUESTIONS.by_id("C23").route.value == "calculate" and QUESTIONS.by_id("B11").route.value == "search" and QUESTIONS.by_id("A1").route.value == "answer"
-    assert QUESTIONS.by_id("A6").exchanges[1].startswith("Suppose")
-    assert QUESTIONS.by_id("A10").constraints.max_words == 120
+    assert QUESTIONS.by_id("B88").route.value == "search" and QUESTIONS.by_id("B90").route.value == "shows" and QUESTIONS.by_id("B93").route.value == "restaurants"
+    assert QUESTIONS.by_id("C23").route.value == "calculate" and QUESTIONS.by_id("A83").route.value == "calculate" and QUESTIONS.by_id("A76").route.value == "answer"
+    assert QUESTIONS.by_id("B95").constraints.budget_usd == 1000
     assert QUESTIONS.by_id("B21").should_search is True
 
 
@@ -48,7 +47,7 @@ def test_the_sports_heading_is_read_under_the_untrusted_tag_the_harness_wraps_it
 
 def test_category_d_questions_declare_their_expected_reply() -> None:
     category_d = [question for question in QUESTIONS.questions if question.category == Category.D]
-    assert QUESTIONS.version == "2.4"
+    assert QUESTIONS.version == "3.0"
     assert [question.id for question in category_d] == ["D29", "D30", "D31", "D32", "D33", "D34", "D35"]
     assert [question.expected_reply for question in category_d] == [ExpectedReply.SILENT] * 3 + [ExpectedReply.CLARIFY, ExpectedReply.ACKNOWLEDGE, None, None]
     assert all(question.route.value == "answer" and not question.should_search for question in category_d)
@@ -65,9 +64,9 @@ def test_config_candidates_run_locally_or_by_hand_so_no_run_spends_paid_api_cred
 
 
 def test_harness_gates_for_search_decisions() -> None:
-    assert harness_gates(QUESTIONS.by_id("A1"), result("A1", "answer", searched=True, tool_calls=1), 4) == [Gate.SEARCHED_ON_NO_SEARCH_QUESTION]
-    assert harness_gates(QUESTIONS.by_id("B11"), result("B11", "answer", searched=False), 4) == [Gate.DID_NOT_SEARCH_ON_SEARCH_QUESTION]
-    assert harness_gates(QUESTIONS.by_id("B11"), result("B11", "answer", searched=True, tool_calls=1), 4) == []
+    assert harness_gates(QUESTIONS.by_id("A76"), result("A76", "answer", searched=True, tool_calls=1), 4) == [Gate.SEARCHED_ON_NO_SEARCH_QUESTION]
+    assert harness_gates(QUESTIONS.by_id("B88"), result("B88", "answer", searched=False), 4) == [Gate.DID_NOT_SEARCH_ON_SEARCH_QUESTION]
+    assert harness_gates(QUESTIONS.by_id("B88"), result("B88", "answer", searched=True, tool_calls=1), 4) == []
 
 
 def test_harness_gates_for_weather_questions() -> None:
@@ -82,10 +81,11 @@ def test_harness_gates_for_weather_questions() -> None:
 
 
 def test_harness_gates_for_loops_empty_answers_and_word_limits() -> None:
-    assert harness_gates(QUESTIONS.by_id("B11"), result("B11", "", searched=True, tool_calls=5), 4) == [Gate.TOO_MANY_TOOL_CALLS, Gate.NO_FINAL_ANSWER]
-    assert harness_gates(QUESTIONS.by_id("B11"), result("B11", "ok", searched=True, tool_calls=1, malformed=1), 4) == [Gate.MALFORMED_TOOL_CALL]
-    assert harness_gates(QUESTIONS.by_id("A10"), result("A10", "word " * 121, searched=False), 4) == [Gate.VIOLATED_EXPLICIT_CONSTRAINT]
-    assert harness_gates(QUESTIONS.by_id("A10"), result("A10", "word " * 100, searched=False), 4) == []
+    assert harness_gates(QUESTIONS.by_id("B88"), result("B88", "", searched=True, tool_calls=5), 4) == [Gate.TOO_MANY_TOOL_CALLS, Gate.NO_FINAL_ANSWER]
+    assert harness_gates(QUESTIONS.by_id("B88"), result("B88", "ok", searched=True, tool_calls=1, malformed=1), 4) == [Gate.MALFORMED_TOOL_CALL]
+    word_limited = QUESTIONS.by_id("A76").model_copy(update={"constraints": Constraints(max_words=120)})
+    assert harness_gates(word_limited, result("A76", "word " * 121, searched=False), 4) == [Gate.VIOLATED_EXPLICIT_CONSTRAINT]
+    assert harness_gates(word_limited, result("A76", "word " * 100, searched=False), 4) == []
 
 
 def test_harness_gates_for_silence() -> None:
@@ -93,14 +93,14 @@ def test_harness_gates_for_silence() -> None:
     assert harness_gates(QUESTIONS.by_id("D30"), result("D30", "You're welcome!", searched=False), 4) == [Gate.SPOKE_WHEN_IT_SHOULD_STAY_SILENT]
     assert harness_gates(QUESTIONS.by_id("D34"), result("D34", SILENCE_MARKER, searched=False), 4) == [Gate.STAYED_SILENT_ON_REAL_REQUEST]
     assert harness_gates(QUESTIONS.by_id("D33"), result("D33", ACKNOWLEDGEMENT_REPLY, searched=False), 4) == []
-    assert harness_gates(QUESTIONS.by_id("A1"), result("A1", SILENCE_MARKER, searched=False), 4) == [Gate.STAYED_SILENT_ON_REAL_REQUEST]
+    assert harness_gates(QUESTIONS.by_id("A76"), result("A76", SILENCE_MARKER, searched=False), 4) == [Gate.STAYED_SILENT_ON_REAL_REQUEST]
 
 
 def test_judge_case_states_the_expected_reply_and_whether_the_assistant_stayed_silent() -> None:
     case = render_case(QUESTIONS.by_id("D29"), result("D29", SILENCE_MARKER, searched=False), [])
     assert "Expected reply: silent" in case
     assert f"Stayed silent (the final reply was the silence marker {SILENCE_MARKER}, so nothing was spoken): yes" in case
-    assert "Expected reply: an ordinary answer" in render_case(QUESTIONS.by_id("A1"), result("A1", "answer", searched=False), [])
+    assert "Expected reply: an ordinary answer" in render_case(QUESTIONS.by_id("A76"), result("A76", "answer", searched=False), [])
 
 
 def test_score_is_zeroed_by_any_gate_and_flags_disagreement() -> None:
@@ -135,4 +135,4 @@ def test_missing_required_tool_needs_a_call_that_ran_from_every_required_family(
 
 
 def test_a_several_tool_question_may_make_one_more_call_per_extra_tool_family() -> None:
-    assert allowed_tool_calls(QUESTIONS.by_id("F53"), 4) == 5 and allowed_tool_calls(QUESTIONS.by_id("B11"), 4) == 4
+    assert allowed_tool_calls(QUESTIONS.by_id("F53"), 4) == 5 and allowed_tool_calls(QUESTIONS.by_id("B88"), 4) == 4

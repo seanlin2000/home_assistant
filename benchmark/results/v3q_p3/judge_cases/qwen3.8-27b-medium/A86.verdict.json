@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 3,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The bridge-over-Zigbee foundation, Home access invites, multi-assistant linking, the Hue app working locally, Apple Home hubs working offline and losing remote control are right, but it suggests Alexa and Google voice keep working offline when cloud voice assistants stop taking commands, and it never mentions physical Hue switches.",
+  "judgment_reason": "It searched twice for a stable architecture question it could answer from general knowledge, though it did hedge the Google offline claim as 'very likely, test it'.",
+  "spoken_fit_reason": "Roughly six hundred words in four dense paragraphs with quoted terms were cut by the word cap before the internet-outage half of the question was reached."
+}

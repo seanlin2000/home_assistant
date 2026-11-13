@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Sets up the distinction (expected profits of big firms, concentrated ownership) and gives three distinct mechanisms from the sketch: margins rising while wages lag, inflation and rates hitting renters and borrowers unevenly versus asset holders, and a few global tech giants carrying the index while local jobs and housing worsen.",
+  "judgment_reason": "Stable economics answered from knowledge without a search, and the examples are concrete mechanisms rather than restatements.",
+  "spoken_fit_reason": "Leads with a one-sentence answer and uses spoken ordinals instead of a list; long, but three examples were requested."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 4,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It covers the query string, API key, IP, user agent, timing patterns, fetched sites seeing the IP, plus query hygiene, VPN, SearXNG, local caching and retention terms, but it claims 'the fact that you were the one asking' stays local and then says the API key makes every query attributable to you.",
+  "judgment_reason": "A conceptual privacy question needed no search, yet it made three search calls, though it did flag the 90-day retention claim as something to verify.",
+  "spoken_fit_reason": "Six long paragraphs with dashes and enumerations ran past the word cap, which cut it off mid-list."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The stake (0.0333% then 0.0167%), value (about 166,700 dollars), 8.3x multiple and 146,700 dollar profit all match the sketch, but it calls 0.0333% 'one three-hundredth of one percent' (off by ten) and the closing preference caveat is muddled.",
+  "judgment_reason": "Used the calculator and stated the proportional-dilution and no-liquidation-preference assumptions the sketch requires.",
+  "spoken_fit_reason": "Plain prose that walks to the dollar value in the first paragraph and gives the multiple and profit in one short sentence."
+}

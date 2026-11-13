@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The three developments it reaches are all sourced and within the window (Mistral Large 4 weights on October 29, Muse Spark Open in mid-October, Kimi K3.1 Pro weights on November 5), but the message breaks off mid-sentence at 'what I' before the other two developments and before any comparison of DeepSeek's V4.1-Flash-1017 or Qwen4-Max-Preview, both of which the results covered, and it places Muse Wonder after Muse Spark Open when it came first.",
+  "judgment_reason": "Searching was right for a recent-news question, and flagging open weights versus open source was a good call, but it spread the work over five searches and never delivered the comparison the user asked for.",
+  "spoken_fit_reason": "The spoken search preamble runs straight into a long, multi-paragraph answer that stops mid-sentence, and the word cap cut it after the second item."
+}

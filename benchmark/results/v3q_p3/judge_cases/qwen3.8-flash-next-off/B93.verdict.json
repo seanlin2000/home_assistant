@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 1,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The listener heard only Casa Enrique, described by its 2014 Michelin star although the restaurant_recommendations result lists it as 'in the guide, no star', with no price; the other four restaurants were cut by the word cap.",
+  "judgment_reason": "The Michelin result already listed five nearby restaurants with cuisine, price level and distinction, yet it ran web searches for reviews, hitting the tool-call limit, and leaned on a weaker web source over the tool's rating.",
+  "spoken_fit_reason": "Four narrated tool-use preambles were spoken back to back before a long answer that the word cap cut after the first restaurant."
+}

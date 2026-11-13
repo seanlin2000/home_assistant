@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Covers white light as a mix, stronger scattering of short blue waves by small molecules, why not violet (less in sunlight, eyes less sensitive), the long low sunset path stripping blue, and dust deepening the colors, all in plain language with the choppy-versus-lazy wave image.",
+  "judgment_reason": "Stable physics answered without searching and pitched at the non-scientist the question asked for, avoiding unexplained jargon.",
+  "spoken_fit_reason": "Leads straight into the explanation in plain prose with no formatting; the length suits a request for an explanation."
+}

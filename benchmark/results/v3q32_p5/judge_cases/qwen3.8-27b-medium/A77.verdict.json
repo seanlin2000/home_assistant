@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It correctly explains that blue bounces around more than red and that the sunset path through a thicker wall of air strips out the blue, but omits why the sky is not violet.",
+  "judgment_reason": "Stable physics answered without searching and pitched in plain language for a non-scientist as asked.",
+  "spoken_fit_reason": "Short plain sentences with no jargon or formatting that read naturally aloud."
+}

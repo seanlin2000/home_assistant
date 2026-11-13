@@ -1,0 +1,404 @@
+instructions: 'For each entry, fill in the human block: gate_hit true/false (would you zero this answer?), the gates you would apply, and the three scores per benchmark/rubric.md. Leave a field null to skip it. Then re-run benchmark-report to compute agreement.'
+entries:
+- candidate: claude-opus-5-5-open
+  question_id: A81
+  why_selected: random sample
+  question: &id005
+  - If I run a language model locally on my computer but use an external web-search API, what information can the search provider see? Explain what stays local, what gets transmitted, and how I can minimize data exposure.
+  searched: false
+  spoken_answer: 'The search provider sees what leaves your machine in each request: the exact query text, your IP address, your API key, which ties every query to your account, and the time. It doesn''t see your conversation, the model''s reasoning, your documents or the final answer; those stay local. The catch is that the model writes the queries, so if you ask about your medical results or your landlord by name, those details can end up in the query. And if your system then fetches the pages it found, each of those websites sees your IP address and which page you read. To minimize exposure, have the model write short, generic queries with names and personal details stripped out. Choose a provider with a no-logging or short-retention policy. Route requests through a VPN or proxy so your home IP isn''t attached. You can also self-host a metasearch engine like SearXNG, though the engines behind it still see the query text. And only search when a question truly needs current information.'
+  judge:
+    gate_hit: false
+    gates: []
+    dimension_total: 10
+    answer_quality: 5
+    judgment: 3
+    spoken_fit: 2
+    reasons:
+    - Names the query text, IP, API key tied to the account and timing as transmitted, the conversation and reasoning as local, points out that personal details can leak into queries and that fetched sites see the IP, and gives the sketch's mitigations (generic queries, retention policy, VPN, SearXNG, searching only when needed).
+    - Answered from knowledge without searching and added the useful caveat that SearXNG's upstream engines still see the query text.
+    - Plain prose with no lists or URLs that answers the provider question first; the length fits the three-part request.
+  human:
+    gate_hit: null
+    gates: []
+    answer_quality: null
+    judgment: null
+    spoken_fit: null
+    notes: ''
+- candidate: claude-opus-5-5-open
+  question_id: A87
+  why_selected: random sample
+  question: &id001
+  - My projector is connected to a JBL Bluetooth speaker. Sometimes the audio becomes choppy when I connect my laptop, and playing video games on the projector causes more eye strain than playing on my monitor. What could cause these problems, and how would you systematically troubleshoot them?
+  searched: false
+  spoken_answer: 'These are two separate problems. For the choppy audio, likely causes are interference, since Bluetooth shares the crowded two point four gigahertz band with Wi-Fi; the projector''s weak Bluetooth chip struggling under the extra load of a laptop video stream; the speaker paired to the laptop and projector at once; or distance. Change one thing at a time: play the same content from the projector''s own apps, pair the laptop directly to the speaker, move the speaker closer, move your Wi-Fi to five gigahertz, and unpair the speaker from other devices. A cable, aux or optical, is the most reliable fix and also removes Bluetooth lag in games. For eye strain, projectors often have lower refresh rates and more motion blur than monitors, single-chip DLP models can cause flicker or rainbow effects, keystone correction softens the image, and a bright screen in a dark room makes your eyes keep adjusting. Try game mode, native resolution with keystone off, sitting farther back and some
+    soft room light, testing one change at a time.'
+  judge:
+    gate_hit: false
+    gates: []
+    dimension_total: 9
+    answer_quality: 4
+    judgment: 3
+    spoken_fit: 2
+    reasons:
+    - Separates the two problems and gives one-change-at-a-time steps for the audio (interference, a weak projector chip, multipoint pairing, distance, 5 GHz, a cable) and the eye strain (motion blur, DLP rainbow, keystone softening, brightness against a dark room), but leaves out breaks, blinking less and firmware updates.
+    - Correctly treated this as general troubleshooting needing no search and framed the causes as likely rather than certain.
+    - Opens by splitting the two problems and stays in plain prose with no lists; long, but the question asks for two troubleshooting plans.
+  human:
+    gate_hit: null
+    gates: []
+    answer_quality: null
+    judgment: null
+    spoken_fit: null
+    notes: ''
+- candidate: claude-opus-5-5-open
+  question_id: B92
+  why_selected: random sample
+  question: &id002
+  - Compare the current high-yield savings account interest rates offered by five major US banks. If I deposit $50,000 for one year, approximately how much interest would I earn at each bank? Identify any minimum balance requirements.
+  searched: true
+  spoken_answer: Among the big-name online banks, rates are mostly between three point two and three point seven five percent right now. Synchrony pays about three point seven five percent, so fifty thousand dollars would earn about eighteen hundred seventy-five dollars in a year. Marcus by Goldman Sachs pays three point five percent, about seventeen hundred fifty dollars. Ally, Capital One 360 Performance Savings, and American Express each pay three point two percent, about sixteen hundred dollars. Ally, Capital One and Amex have no minimum balance to earn that rate, and Marcus has none listed either; I didn't find Synchrony's minimum. If you'll consider smaller banks, PiBank pays four point four percent with no minimum to open, which would earn about twenty-two hundred dollars. These assume the rate holds all year, but they're variable and follow the Fed, which raised rates in September. Interest is also taxable, so check each bank's site before moving money.
+  judge:
+    gate_hit: false
+    gates: []
+    dimension_total: 10
+    answer_quality: 5
+    judgment: 3
+    spoken_fit: 2
+    reasons:
+    - Rates trace to the excerpts (Synchrony 3.75%, Marcus 3.50%, Ally, Capital One 360 Performance and Amex 3.20%, PiBank 4.40%), the interest is $50,000 times APY ($1,875, $1,750, $1,600, $2,200), and the $0 minimums come from Banksparency, with Synchrony's minimum honestly marked as not found.
+    - Searched for current rates, said the figures assume the rate holds and that rates are variable and follow the Fed, and mentioned taxes.
+    - Leads with the overall rate range, then covers each bank in a short spoken clause with no table or list markup.
+  human:
+    gate_hit: null
+    gates: []
+    answer_quality: null
+    judgment: null
+    spoken_fit: null
+    notes: ''
+- candidate: claude-opus-5-5-open
+  question_id: B95
+  why_selected: random sample
+  question: &id003
+  - Imagine I want to build a private, locally hosted voice assistant that can answer general questions, search the web, control smart-home devices, and have natural conversations. I have a $1,000 hardware budget. Propose an architecture, explain the components, identify the biggest limitations, and prioritize what I should build first.
+  searched: true
+  spoken_answer: 'Here''s a design that fits a thousand dollars. The brain is one always-on box: a new Mac mini, which starts at eight hundred ninety-nine dollars with sixteen gigabytes, or a used RTX 3090, around six hundred fifty to eight hundred dollars, in a PC you already own. On it run Home Assistant for the smart home, Whisper for speech recognition, a language model of roughly eight to fourteen billion parameters through llama.cpp or Ollama, and Piper for the voice. Web search is a tool the model calls, through a search API or self-hosted SearXNG. Spend what''s left on small voice satellites with microphones. The biggest limitations: a model this size is less capable than cloud assistants, the pipeline adds seconds of delay, far-field wake words are hard to get right, and memory prices have spiked this year. Build in this order: voice control of your devices first, since it''s most useful and works offline; then conversation with the local model; then web search; then polish like
+    better voices and memory.'
+  judge:
+    gate_hit: false
+    gates: []
+    dimension_total: 10
+    answer_quality: 5
+    judgment: 3
+    spoken_fit: 2
+    reasons:
+    - Proposes a $899 16 GB Mac mini or a $650 to $800 used RTX 3090 (both from the excerpts), names Home Assistant, Whisper, an 8 to 14 billion parameter local model, Piper, a search tool and voice satellites, lists the limits (weaker than cloud, latency, far-field wake words, memory prices), and gives the sketch's build order.
+    - Stayed within $1,000 at the sources' prices, made it explicit that the 3090 route assumes a PC the user already owns, and searched only for the current hardware prices.
+    - Leads with "a design that fits a thousand dollars" and covers architecture, limits and build order in plain prose without lists, at a length the four-part request needs.
+  human:
+    gate_hit: null
+    gates: []
+    answer_quality: null
+    judgment: null
+    spoken_fit: null
+    notes: ''
+- candidate: claude-opus-5-5-closed
+  question_id: A76
+  why_selected: random sample
+  question:
+  - How did the Cold War end? Explain the three most important events that led to the dissolution of the Soviet Union, and distinguish between the causes and the immediate triggers.
+  searched: false
+  spoken_answer: The Cold War ended largely peacefully between nineteen eighty-nine and nineteen ninety-one, as the Soviet bloc broke away and then the Soviet Union itself dissolved. The underlying causes were a stagnant economy that couldn't keep up with the West, the heavy cost of the arms race and the war in Afghanistan, collapsing oil revenue, and rising nationalism in the republics. Three events mattered most. First, Gorbachev's reforms, glasnost and perestroika, from the mid nineteen eighties, which loosened political control without fixing the economy. Second, the revolutions of nineteen eighty-nine in Eastern Europe, symbolized by the fall of the Berlin Wall, when Moscow chose not to intervene, showing the empire could be left. Third, the failed hardline coup of August nineteen ninety-one, which collapsed within days, discredited the Communist Party and handed momentum to Boris Yeltsin and the republics. The causes were the economy, nationalism and the reforms themselves. The immediate
+    triggers were the coup, Ukraine's independence vote that December, and the agreement by Russia, Ukraine and Belarus to dissolve the Union, which formally ended on December twenty-sixth, nineteen ninety-one.
+  judge:
+    gate_hit: false
+    gates: []
+    dimension_total: 9
+    answer_quality: 4
+    judgment: 3
+    spoken_fit: 2
+    reasons:
+    - Causes, the 1989 revolutions, the August 1991 coup, Ukraine's December vote, the dissolution agreement and the December 26, 1991 date are all correct, but it counts Gorbachev's reforms as one of the three key events and then also labels them a cause, which blurs the distinction slightly.
+    - Answered stable history from knowledge without searching and explicitly separated the causes (economy, nationalism, reforms) from the immediate triggers (coup, Ukraine vote, dissolution agreement).
+    - Plain prose that leads with the answer and spells out dates for speech; the length is what a three-event explanation with a cause/trigger distinction demands.
+  human:
+    gate_hit: null
+    gates: []
+    answer_quality: null
+    judgment: null
+    spoken_fit: null
+    notes: ''
+- candidate: claude-opus-5-5-closed
+  question_id: A87
+  why_selected: random sample
+  question: *id001
+  searched: false
+  spoken_answer: 'These are likely two separate problems. Choppy audio usually means Bluetooth trouble: the speaker paired to both the projector and the laptop so they fight over it, interference from two point four gigahertz Wi-Fi, distance or obstacles, or a weak Bluetooth chip in the projector. Eye strain from projector gaming often comes from a very bright image in a dark room, a low refresh rate or lag, the rainbow effect on single-chip DLP projectors, soft focus or heavy keystone correction, or sitting too close to a huge image. Troubleshoot one change at a time. For audio, unpair the speaker from everything except the projector, then test with the laptop''s Bluetooth off and its Wi-Fi on five gigahertz, move the speaker closer, and try a cable from the projector''s audio out; if the cable sounds clean, Bluetooth is the culprit. For your eyes, add some room light, lower the brightness, turn on game mode, check the refresh rate, refocus, fix the placement instead of using keystone,
+    and sit farther back, then compare an hour on each setup.'
+  judge:
+    gate_hit: false
+    gates: []
+    dimension_total: 9
+    answer_quality: 4
+    judgment: 3
+    spoken_fit: 2
+    reasons:
+    - Separates the two problems and covers nearly every sketch cause and step (dual pairing, 2.4 GHz interference, laptop Bluetooth off and 5 GHz Wi-Fi, a cable test; brightness versus room light, DLP rainbow, keystone, distance, game mode), but omits a firmware update and taking breaks or blinking during play.
+    - Answered from stable knowledge without searching and gave a one-change-at-a-time order with a decisive cable test to isolate Bluetooth as the culprit.
+    - Leads by naming two separate problems and stays in plain prose without lists, at a length that two troubleshooting procedures require.
+  human:
+    gate_hit: null
+    gates: []
+    answer_quality: null
+    judgment: null
+    spoken_fit: null
+    notes: ''
+- candidate: claude-opus-5-5-closed
+  question_id: B92
+  why_selected: random sample
+  question: *id002
+  searched: true
+  spoken_answer: 'I couldn''t confirm today''s rates, so I won''t quote a specific APY for each bank; online savings rates change often and move with Fed policy. Here''s how to think about it. The big online savings accounts, at Marcus by Goldman Sachs, Ally, American Express, Capital One''s three sixty Performance Savings, and Discover, usually sit close to one another, and none of them has historically required a minimum balance to open or to earn the advertised rate. Because an APY already includes compounding, the math is simple: a year''s interest on fifty thousand dollars is five hundred dollars for every percentage point. So at three and a half percent you''d earn about one thousand seven hundred fifty dollars, and each quarter point higher or lower changes that by one hundred twenty-five dollars. Compare a standard savings account at a big branch bank like Chase or Bank of America, which often pays about one hundredth of a percent, around five dollars a year. These rates are variable,
+    so check each bank''s current rate before you move money.'
+  judge:
+    gate_hit: false
+    gates: []
+    dimension_total: 3
+    answer_quality: 1
+    judgment: 1
+    spoken_fit: 1
+    reasons:
+    - The excerpts gave dated APYs for Marcus (3.50%), American Express (3.20%), Capital One (3.20%), Synchrony (3.75%), Sallie Mae (3.85%) and Live Oak (4.00%) with no-minimum notes, yet the answer quotes no bank's rate and gives only the generic five-hundred-dollars-per-point rule, so the per-bank comparison the user asked for is missing.
+    - It searched and correctly noted rates are variable and APY includes compounding, but saying it could not confirm today's rates when the results listed November rates per bank misjudged the evidence, and it still names Discover although a source says Discover savings now redirects to Capital One.
+    - Plain prose with no formatting, but it opens with a refusal to quote rates rather than the comparison and spends its length on general guidance.
+  human:
+    gate_hit: null
+    gates: []
+    answer_quality: null
+    judgment: null
+    spoken_fit: null
+    notes: ''
+- candidate: claude-opus-5-5-closed
+  question_id: B95
+  why_selected: random sample
+  question: *id003
+  searched: true
+  spoken_answer: 'I''d build it on Home Assistant, which already handles smart-home control and has a local voice pipeline. The pieces are small microphone satellites, like Home Assistant''s own Voice Preview Edition, listening for a wake word; Whisper for speech-to-text; a local language model served by llama.cpp or Ollama; Piper for text-to-speech; and a small MCP tool server that gives the model web search through an API like Brave or a self-hosted SearXNG. For the main box, I couldn''t check today''s prices, but the choice is a Mac mini with as much memory as the budget allows, or a used PC with a sixteen-gigabyte graphics card, keeping about a hundred dollars for satellites. The biggest limitations: at this budget you''ll run models of roughly eight to thirty billion parameters, which know less and call tools less reliably than cloud models; long conversations get slow; and wake words misfire on the TV. Build in this order: voice control of your devices first, since it''s the most useful;
+    then conversation; then web search; then speed and polish.'
+  judge:
+    gate_hit: false
+    gates: []
+    dimension_total: 8
+    answer_quality: 4
+    judgment: 2
+    spoken_fit: 2
+    reasons:
+    - Names every component the sketch asks for (wake-word satellites, Whisper, llama.cpp or Ollama, Piper, an MCP search tool, Home Assistant), states the budget's limits on model size, tool reliability and speed, and gives a sensible build order, but the hardware pick stays vague and unpriced although the results gave a used 24 GB RTX 3090 at about $600 to $800.
+    - Stayed within budget and invented no prices, but said it could not check today's prices when the search returned used-GPU price ranges, so the hardware recommendation was not grounded in what it found.
+    - Leads with the architecture in plain prose without lists or markup, at a length the four-part question warrants.
+  human:
+    gate_hit: null
+    gates: []
+    answer_quality: null
+    judgment: null
+    spoken_fit: null
+    notes: ''
+- candidate: claude-sonnet-5-5-open
+  question_id: A77
+  why_selected: random sample
+  question: &id004
+  - Why is the sky blue during the day but red and orange during sunset? Explain the physics in a way that someone without a science background can understand.
+  searched: false
+  spoken_answer: Sunlight looks white, but it is really a mix of all the colors. When it hits the air, the tiny gas molecules bounce blue light around much more than red light, so blue gets scattered across the whole sky and reaches your eyes from every direction. That is why the daytime sky looks blue. At sunset the sun is low, so its light has to travel through far more air to reach you, a much longer path than at noon. Along that long path, most of the blue gets scattered out and sent off in other directions before it ever gets to you. What is left is the colors that scatter least, the reds and oranges, and those are what you see glowing near the horizon. Dust and haze can make the colors even stronger. So it is the same effect in both cases. Air scatters blue the most, and at sunset you are looking through so much air that the blue has already been stripped away.
+  judge:
+    gate_hit: false
+    gates: []
+    dimension_total: 9
+    answer_quality: 4
+    judgment: 3
+    spoken_fit: 2
+    reasons:
+    - Correctly explains that air scatters blue more than red and that the long low sunset path strips the blue out, adding dust and haze, but skips why the sky is not violet and offers no everyday comparison.
+    - Answered stable physics from knowledge without searching and kept the explanation jargon-free as the user asked.
+    - Plain conversational prose with no jargon, lists, or formatting, at a length suited to an explanation request.
+  human:
+    gate_hit: null
+    gates: []
+    answer_quality: null
+    judgment: null
+    spoken_fit: null
+    notes: ''
+- candidate: claude-sonnet-5-5-open
+  question_id: B91
+  why_selected: random sample
+  question:
+  - Who are the five best NBA players this season? Rank them using current statistical performance, team impact, and advanced metrics. Explain why you chose each player.
+  searched: true
+  spoken_answer: It is early, only about ten to thirteen games in, so this is a snapshot, not a verdict. I ranked by HoopsHype's rating, which blends individual and team results, and I could not find advanced metrics like PER or win shares. First, Victor Wembanyama, averaging thirty point three points and eleven point seven rebounds, with the top rating. Second, Luka Doncic, averaging thirty-eight point six points, seven point five rebounds and seven point six assists; a separate model also lists him as the MVP favorite. Third, Nikola Jokic, at twenty-three point five points, ten point eight rebounds and nine assists. Fourth, Giannis Antetokounmpo, at twenty-seven point seven points and twelve point six rebounds. Fifth by that rating is Jamal Murray, at twenty-six point two points. Shai Gilgeous-Alexander, at twenty-nine point seven points, rates ninth but is a strong case if you weigh scoring and team success. With such a small sample, this list could change quickly.
+  judge:
+    gate_hit: false
+    gates: []
+    dimension_total: 9
+    answer_quality: 4
+    judgment: 3
+    spoken_fit: 2
+    reasons:
+    - Names five players with 2026-27 stat lines that match the HoopsHype table exactly and adds the Balladex MVP-favorite note for Doncic, but each reason is little more than a stat line, with no discussion of team impact.
+    - Searched for current-season data, said it was only ten to thirteen games in, admitted it found no advanced metrics, and named the rating it ranked by.
+    - Leads with the small-sample caveat and ranking basis, then gives each player in one spoken sentence with no list formatting.
+  human:
+    gate_hit: null
+    gates: []
+    answer_quality: null
+    judgment: null
+    spoken_fit: null
+    notes: ''
+- candidate: claude-sonnet-5-5-open
+  question_id: B93
+  why_selected: random sample
+  question:
+  - Find five highly rated restaurants within walking distance of me in Long Island City. Compare their cuisine, approximate price per person, ratings, and what makes each one worth visiting.
+  searched: false
+  spoken_answer: Here are five Michelin Guide restaurants in Long Island City, closest first, all within about half a mile. R40 is Argentinian, in the guide, priced at three dollar signs, with a line about its smoky grill aromas. Hupo is Chinese, a Bib Gourmand, meaning good value, at two dollar signs, known for sizzling woks. Casa Enrique is a Mexican favorite, at two dollar signs, with crowds out front. Meju is a Korean chef's counter hidden behind a banchan shop, with one Michelin star and the top price level of four dollar signs, so it is the splurge. Vert Frais is a sunny Japanese café, at two dollar signs, with communal tables and a relaxed daytime feel. I only have Michelin's award and price level, not dollar amounts per person or star ratings from review sites, so I cannot compare those. For Michelin's picks, Hupo is the best value, and Meju is the special occasion.
+  judge:
+    gate_hit: false
+    gates: []
+    dimension_total: 9
+    answer_quality: 4
+    judgment: 3
+    spoken_fit: 2
+    reasons:
+    - Names all five restaurants from the Michelin result with the right cuisine, price level, and distinction, including Hupo's Bib Gourmand and Meju's star, but embellishes R40's 'the nose knows' line into smoky grill aromas the result does not mention.
+    - Used the restaurant tool rather than searching and said plainly it had no per-person dollar figures or review-site ratings instead of inventing them.
+    - Leads with what the five are and gives each a single spoken sentence with no list formatting, ending with a short value-versus-splurge takeaway.
+  human:
+    gate_hit: null
+    gates: []
+    answer_quality: null
+    judgment: null
+    spoken_fit: null
+    notes: ''
+- candidate: claude-sonnet-5-5-open
+  question_id: B21
+  why_selected: random sample
+  question:
+  - Since the Fed cut rates to zero last month, should I refinance my mortgage?
+  searched: true
+  spoken_answer: The premise is not right. The Fed has not cut rates to zero. At its October twenty-eighth meeting it held its target range at three point seven five to four percent, after raising rates a quarter point in September, and two members wanted a further hike. Mortgage rates have gone up this year, not down. Freddie Mac's thirty-year average was seven point three two percent on October twenty-second, compared with five point nine eight percent in late February. So whether you should refinance depends on your current rate. If you locked in at around three to five percent, refinancing now would almost certainly cost you more. If you have a rate well above seven and a half percent, or an adjustable loan about to reset, it could be worth pricing. A refinance pays off only if your monthly savings cover the closing costs within the time you will stay in the home. What is your current mortgage rate, and how long do you expect to stay?
+  judge:
+    gate_hit: false
+    gates: []
+    dimension_total: 10
+    answer_quality: 5
+    judgment: 3
+    spoken_fit: 2
+    reasons:
+    - Corrects the premise with the October 28 hold at 3.75 to 4 percent after a September hike and Freddie Mac's 7.32 percent rate, all from the excerpts, then gives the compare-your-rate and closing-cost break-even logic the sketch requires.
+    - Searched to check the claimed cut, said plainly the premise is wrong, and asked for the user's current rate and time horizon, the genuinely missing information.
+    - Leads with 'The premise is not right' and stays in plain spoken prose with numbers in words, ending with one short follow-up question.
+  human:
+    gate_hit: null
+    gates: []
+    answer_quality: null
+    judgment: null
+    spoken_fit: null
+    notes: ''
+- candidate: claude-sonnet-5-5-closed
+  question_id: A77
+  why_selected: random sample
+  question: *id004
+  searched: false
+  spoken_answer: Sunlight looks white, but it is really a mix of all the colors. When that light enters the atmosphere, it bumps into air molecules, which are much smaller than the wavelength of light. Those molecules bounce short wavelengths, blue and violet, around far more strongly than long wavelengths like red. So blue light gets scattered all over the sky, and wherever you look, some of that scattered blue reaches your eyes. Violet is scattered even more, but the sun gives off less of it, the upper atmosphere absorbs some, and our eyes are less sensitive to it, so the sky looks blue rather than violet. At sunset, the sun is low, so its light has to cross a much longer stretch of air to reach you. Along that long path, most of the blue has been scattered away from your line of sight, off to other people's daytime skies. What is left is the longer wavelengths, orange and red, so the sun and the clouds near it glow in those colors. Dust and haze can make sunsets even more vivid.
+  judge:
+    gate_hit: false
+    gates: []
+    dimension_total: 10
+    answer_quality: 5
+    judgment: 3
+    spoken_fit: 2
+    reasons:
+    - Covers white light as a mix of colors, stronger scattering of short wavelengths, why the sky is not violet (less emitted, absorbed, eye sensitivity), the longer sunset path removing blue, and dust and haze, matching every element of the sketch.
+    - Answered stable physics without searching and kept the jargon out, as the non-scientist framing asked.
+    - Plain prose with no jargon or formatting, and the friendly 'off to other people's daytime skies' image works aloud; the length suits an explanation request.
+  human:
+    gate_hit: null
+    gates: []
+    answer_quality: null
+    judgment: null
+    spoken_fit: null
+    notes: ''
+- candidate: claude-sonnet-5-5-closed
+  question_id: A81
+  why_selected: random sample
+  question: *id005
+  searched: false
+  spoken_answer: 'If the model runs locally, your conversation, your files and the model itself stay on your machine. What leaves is whatever you send to the search API, which is the query text. The provider can see that query, your IP address, the time, and technical details like your software''s user agent and any API key tied to your account. They can link queries together through the key or IP address, and they may keep logs. They do not see your full chat, unless your assistant puts it into the query. That is the real risk: a model that writes queries may include personal details, names or an address you mentioned earlier. To limit exposure, have the assistant send short, generic keyword queries, and strip names and private details before sending. You can add a filter or review step. Use a privacy-oriented search service, check its retention and logging policy, and prefer one that promises no logging. Route requests through a VPN or proxy to hide your address, avoid mixing accounts,
+    and fetch pages locally, since reading a page also reveals your address to that site.'
+  judge:
+    gate_hit: false
+    gates: []
+    dimension_total: 9
+    answer_quality: 4
+    judgment: 3
+    spoken_fit: 2
+    reasons:
+    - Correctly lists the query text, IP, timing, user agent and API key as visible, flags personal details leaking into model-written queries, and recommends generic queries, privacy providers, retention checks and a VPN, but omits searching only when needed, caching, and a self-hosted proxy like SearXNG, and its 'fetch pages locally' tip is muddled.
+    - Answered a stable privacy-architecture question without searching and named the real risk, personal details leaking into model-written queries.
+    - Leads with what stays local and what leaves, in plain prose with no lists or formatting, at a length the three-part question warrants.
+  human:
+    gate_hit: null
+    gates: []
+    answer_quality: null
+    judgment: null
+    spoken_fit: null
+    notes: ''
+- candidate: claude-sonnet-5-5-closed
+  question_id: A11
+  why_selected: random sample
+  question:
+  - What year did the Berlin Wall fall?
+  searched: false
+  spoken_answer: The Berlin Wall fell in 1989, on the night of November ninth.
+  judge:
+    gate_hit: false
+    gates: []
+    dimension_total: 10
+    answer_quality: 5
+    judgment: 3
+    spoken_fit: 2
+    reasons:
+    - States 1989, on the night of November ninth, exactly matching the sketch.
+    - Recognized settled history despite the current-sounding phrasing and answered without searching.
+    - A single short sentence that leads with the year.
+  human:
+    gate_hit: null
+    gates: []
+    answer_quality: null
+    judgment: null
+    spoken_fit: null
+    notes: ''
+- candidate: claude-sonnet-5-5-closed
+  question_id: B89
+  why_selected: random sample
+  question:
+  - What is the current state of the AI inference chip startup industry? Compare Etched, MatX, Positron, Cerebras, SambaNova, and Fractile in terms of funding, valuation, technology, and commercial progress.
+  searched: true
+  spoken_answer: I could not check current funding figures, so I will not quote valuations or amounts. What I can say from general knowledge, which may be stale, is how the six differ in approach. Cerebras builds a giant wafer-scale chip with lots of on-chip memory, sells cloud inference, and is the most established of the group, with its stock market plans being the thing to check. SambaNova makes its own dataflow chips and has shifted toward selling inference as a cloud service. Etched is betting everything on a chip specialized for the transformer architecture, which could be very fast but risky if models change. MatX is founded by former Google TPU engineers and is aiming at chips for large language models. Positron is a smaller startup focused on affordable inference hardware. Fractile, a British company, is working on in-memory computing to cut the cost of moving data. Commercial progress and money raised change quickly, so please ask me to look again if you need the current numbers.
+  judge:
+    gate_hit: false
+    gates: []
+    dimension_total: 3
+    answer_quality: 1
+    judgment: 1
+    spoken_fit: 1
+    reasons:
+    - The results gave Cerebras's May 2026 IPO and roughly 24 billion dollar market cap, Etched at 21 billion, SambaNova's 1 billion dollar round at 11 billion, Positron at 5 billion with racks at Oracle, and Fractile's 220 million dollar round, yet the answer quotes none of it, and its 'stock market plans being the thing to check' and 'smaller startup' for Positron contradict those sources.
+    - Searching was right and it avoided inventing numbers, but it falsely claimed it 'could not check current funding figures' when the results held them, discarding the sources the question needed.
+    - Plain prose without formatting, but it opens with a refusal instead of the overall picture and runs long on generic descriptions.
+  human:
+    gate_hit: null
+    gates: []
+    answer_quality: null
+    judgment: null
+    spoken_fit: null
+    notes: ''

@@ -1,0 +1,106 @@
+# Which tool the model should call first for each question. A first call named in `expected` is right; "answer" means answering without a tool.
+# The questions are short and spoken, one or more per tool family, plus knowledge questions that need no tool, so a wrong first pick shows up
+# as a web search where a domain tool, the calculator or no tool at all was the right move.
+checks:
+  - id: restaurants-italian
+    question: Can you recommend a good Italian restaurant in the West Village?
+    expected: [restaurant_recommendations]
+  - id: restaurants-walking
+    question: Find five highly rated restaurants within walking distance of me in Long Island City.
+    expected: [restaurant_recommendations]
+  - id: restaurants-birthday
+    question: Where should I take my parents for a special birthday dinner in Brooklyn?
+    expected: [restaurant_recommendations]
+  - id: restaurants-cheap
+    question: Is there a cheap Michelin-recognized ramen spot near Union Square?
+    expected: [restaurant_recommendations]
+  - id: restaurant-one
+    question: What's Le Bernardin like?
+    expected: [restaurant_details]
+  - id: broadway-musicals
+    question: What are the best musicals on Broadway right now?
+    expected: [broadway_shows]
+  - id: broadway-rush
+    question: Are there any rush tickets for plays this week?
+    expected: [broadway_shows]
+  - id: broadway-one
+    question: What is Hadestown about?
+    expected: [broadway_show_details, broadway_shows]
+  - id: movies-weekend
+    question: What movies are playing in Manhattan this weekend?
+    expected: [movies_showing]
+  - id: movies-comedy
+    question: Is there a good comedy in theaters right now?
+    expected: [movies_showing]
+  - id: movie-one
+    question: What's the movie Wicked For Good about, and is it still in theaters?
+    expected: [movie_details, movies_showing]
+  - id: weather-umbrella
+    question: Do I need an umbrella today?
+    expected: [weather_forecast]
+  - id: weather-boston
+    question: What's the weather going to be like in Boston this weekend?
+    expected: [weather_forecast]
+  - id: weather-tonight
+    question: How cold will it get tonight?
+    expected: [weather_forecast]
+  - id: sports-score
+    question: Did the Knicks win last night?
+    expected: [game_scores]
+  - id: sports-player
+    question: How many points is Wembanyama averaging this season?
+    expected: [player_stats]
+  - id: sports-roster
+    question: Who's injured on the Giants right now?
+    expected: [team_roster]
+  - id: sports-matchup
+    question: How has LeBron done against Steph Curry over his career?
+    expected: [player_matchup]
+  - id: reddit-keyboards
+    question: What does Reddit say about the best mechanical keyboards?
+    expected: [reddit_search]
+  - id: reddit-subreddit
+    question: What do people on r/AskNYC recommend for a first apartment in Queens?
+    expected: [reddit_search]
+  - id: calculator-tip
+    question: If I tip 18 percent on a sixty-four fifty bill, what's the total?
+    expected: [calculate, percent]
+  - id: calculator-mortgage
+    question: What would the monthly payment be on a four hundred thousand dollar mortgage at six and a half percent over thirty years?
+    expected: [loan_payment]
+  - id: calculator-date
+    question: How many days until Christmas?
+    expected: [date_math]
+  - id: settled-president
+    question: Who was the president of France in 1995?
+    expected: [answer, wikipedia_lookup]
+  - id: settled-list
+    question: Which cities have hosted the Summer Olympics more than once?
+    expected: [wikipedia_lookup, answer]
+  - id: current-rate
+    question: What is the federal funds rate right now?
+    expected: [search_and_read]
+  - id: current-phone
+    question: What's the newest iPhone and how much does it cost?
+    expected: [search_and_read]
+  - id: current-subway
+    question: Is the Q train running normally right now?
+    expected: [search_and_read]
+  - id: current-news
+    question: What's the biggest news story today?
+    expected: [search_and_read]
+  - id: knowledge-sky
+    question: Why is the sky blue?
+    expected: [answer]
+  - id: knowledge-egg
+    question: How do I hard-boil an egg?
+    expected: [answer]
+  - id: knowledge-virus
+    question: What's the difference between a virus and a bacterium?
+    expected: [answer]
+  - id: knowledge-planets
+    question: What's a good way to remember the order of the planets?
+    expected: [answer]
+  - id: address-given
+    question: Can you summarize what's on https://www.weather.gov/okx/ right now?
+    expected: [fetch_page]

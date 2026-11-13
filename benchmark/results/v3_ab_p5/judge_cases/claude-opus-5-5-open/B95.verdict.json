@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It names every component from the sketch (wake word, Whisper, llama.cpp or Ollama, a tool layer, Home Assistant, Piper, mic and speaker), sourced prices for the 32 GB Mac mini at about $900 and a used RTX 3090 at $650 to $800, honest limitations and the sketch's build order, but it never costs the 3090 route's surrounding PC against the $1,000 budget.",
+  "judgment_reason": "Searched for current hardware prices, attributed the Mac mini figure to 'one 2026 guide', flagged that the 3090 needs a PC around it, and was candid that local models trail cloud models.",
+  "spoken_fit_reason": "Leads with the core hardware advice and runs architecture, limitations and build order as plain prose, at a length the four-part question requires."
+}

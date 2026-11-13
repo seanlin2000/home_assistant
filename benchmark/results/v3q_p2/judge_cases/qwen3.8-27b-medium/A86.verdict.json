@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 3,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It correctly makes the bridge the local Zigbee hub and correctly says that app, switches, sensors and bridge automations survive an outage while Alexa, Google and remote access stop, but it claims a HomePod mini runs Siri locally so voice keeps working offline, a doubtful claim that drives its main recommendation, and it never mentions a local option such as Home Assistant.",
+  "judgment_reason": "It searched a stable architecture question that needed no search, and the troubleshooting pages it got back added nothing to the design.",
+  "spoken_fit_reason": "No formatting, but five long paragraphs that the word cap cut before the listener heard what happens when the internet goes down."
+}

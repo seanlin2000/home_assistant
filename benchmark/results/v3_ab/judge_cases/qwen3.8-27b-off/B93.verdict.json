@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": false,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "Meju's star, its $235 menu and Hupo's Bib Gourmand trace to the results, but the dollar ranges for Hupo ($40 to $60), Casa Enrique ($40 to $70) and R40 ($60 to $90) and Casa Enrique's 47th Avenue address appear in no result, and the message breaks off at the fourth restaurant, so the fifth is never named.",
+  "judgment_reason": "The restaurant tool already gave the cuisine, price level and distinction, yet it ran five extra web searches and then filled the remaining gaps with invented per-person prices instead of reporting the tool's $$ and $$$ levels.",
+  "spoken_fit_reason": "It is plain prose, but each restaurant gets a long paragraph of detail, so the word cap cut it after Meju and the listener heard one restaurant out of five."
+}

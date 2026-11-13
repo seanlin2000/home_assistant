@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It separates the two problems and names the laptop's Bluetooth traffic and 2.4 GHz interference, but its steps never include the obvious test of turning off the laptop's Bluetooth or unpairing it, and the eye-strain part misses focus and keystone, input lag, the DLP rainbow effect, game mode and breaks.",
+  "judgment_reason": "Troubleshooting from knowledge without searching was right, and it proposes changing one variable at a time with a wired control test.",
+  "spoken_fit_reason": "Two compact plain-prose paragraphs, one per problem, with no lists or formatting."
+}

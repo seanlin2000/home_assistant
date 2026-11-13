@@ -29,8 +29,19 @@ class ServerSettings(StrictModel):
 
 
 class Sampling(StrictModel):
+    """How the model picks each next token, with the names llama-server takes per request."""
+
     temperature: float
+    top_p: float
+    top_k: int
+    min_p: float
+    presence_penalty: float
+    repeat_penalty: float
     max_output_tokens: int
+
+    def policy_fields(self) -> dict[str, float | int]:
+        """The fields of an AgentPolicy these settings fill."""
+        return self.model_dump()
 
 
 class ModelSettings(StrictModel):
@@ -47,8 +58,17 @@ class ModelSettings(StrictModel):
     flash_attention: Literal["on", "off", "auto"]
     prompt_cache_mib: int
     reasoning: Literal["on", "off", "auto"]
+    reasoning_budget_tokens: int | None = None  # --reasoning-budget; past it the server ends the thinking block, so the answer keeps the rest of the cap
     swa_full: bool
+    speculative: Literal["none", "draft-mtp"]
+    load_mode: Literal["auto", "mmap"] = "auto"  # -lm; "mmap" keeps the file memory-mapped, which lazy_mode needs
+    lazy_mode: Literal["off", "on"] = "off"  # -lzm; "on" reads per-layer embedding tables (an n-gram table) from disk on demand instead of keeping them resident
     sampling: Sampling
+    thinking_sampling: Sampling | None = None  # the model maker's set for thinking mode; without one, thinking uses `sampling`
+
+    def sampling_for(self, think: bool | str | None) -> Sampling:
+        """The set for answering with thinking on (a level or True) or off (False or None)."""
+        return self.thinking_sampling if think not in (None, False) and self.thinking_sampling else self.sampling
 
     @property
     def gguf_path(self) -> Path:

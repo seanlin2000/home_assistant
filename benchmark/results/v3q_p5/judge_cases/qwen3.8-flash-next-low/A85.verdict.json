@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The final ASSISTANT message is empty, so no meal plan, protein figures or calorie total were given.",
+  "judgment_reason": "Not searching was right, but producing no answer at all fails the central point of the request.",
+  "spoken_fit_reason": "Nothing was spoken, so there is no answer for the listener to hear."
+}

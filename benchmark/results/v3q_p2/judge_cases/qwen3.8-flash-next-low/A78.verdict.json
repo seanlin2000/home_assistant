@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 5,
+  "judgment": 2,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It gives three distinct, concrete mechanisms (concentrated ownership with the top 10 percent holding about 88 percent, real hourly earnings down 0.7 percent while energy and premiums rose, and cost cutting plus buybacks in a low-hire labor market), and every figure traces to the retrieved excerpts.",
+  "judgment_reason": "A conceptual economics question needed no search, but it ran two search_and_read calls, though it used the results carefully and did not invent anything.",
+  "spoken_fit_reason": "Five dense paragraphs full of statistics hit the word cap, and the listener was cut off at the start of the second example."
+}

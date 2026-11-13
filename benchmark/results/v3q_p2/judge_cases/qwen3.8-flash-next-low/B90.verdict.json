@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 4,
+  "judgment": 2,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The ten shows and their order match the broadway_shows most-viewed result exactly, with correct theaters, prices, scores and closing dates, but it calls Cursed Child a 'two part play', garbles The Fantasticks as 'a two person story', and calls page views 'viewing and buying tickets'.",
+  "judgment_reason": "It used the Broadway tool and explained its ranking basis and the missing grosses, but it also ran a wikipedia_lookup and a web search on a listings question and hit the tool-call limit.",
+  "spoken_fit_reason": "Each of the ten shows gets three or four sentences, so the word cap cut the listener off after the second show."
+}

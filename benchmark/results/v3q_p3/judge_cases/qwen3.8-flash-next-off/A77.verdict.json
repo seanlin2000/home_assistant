@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 3,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The heard portion explains Rayleigh scattering and why blue light fills the sky correctly, but the word cap cut it before the sunset explanation and the violet point, so half the question never reached the listener.",
+  "judgment_reason": "It correctly answered from knowledge without searching and pitched the explanation at a non-scientist with plain comparisons like short choppy waves.",
+  "spoken_fit_reason": "Seven long paragraphs that overran the word cap and were cut off mid-sentence, a wall of text for a voice reply."
+}

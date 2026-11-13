@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Explains present value discounted off the risk-free rate, that compounding over more years shrinks distant cash flows more so long-duration growth stocks fall hardest, and adds bonds as an alternative and higher borrowing costs, covering every required point in the sketch.",
+  "judgment_reason": "Answered a stable finance concept from knowledge without searching or inventing current market figures.",
+  "spoken_fit_reason": "Plain prose leading with the valuation principle, no formatting, at a length the explain-the-relationship question warrants."
+}

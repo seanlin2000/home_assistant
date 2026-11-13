@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 4,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It correctly makes the bridge the hub, recommends per-person Home access invites, physical switches and one voice ecosystem (Apple Home with a hub, or Home Assistant locally), and says local app, switches and bridge automations survive an outage while Alexa and remote control stop, but the message itself ends mid-sentence ('Your last-resort fallback is').",
+  "judgment_reason": "Stable smart-home architecture needed no search, yet it made five search calls, though it was honest about not finding the permission tier names.",
+  "spoken_fit_reason": "Bold markdown headings and three very long paragraphs would read badly aloud, and the word cap cut the reply off inside the first section."
+}

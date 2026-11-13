@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Separates the two problems and gives one-change-at-a-time steps for the audio (interference, a weak projector chip, multipoint pairing, distance, 5 GHz, a cable) and the eye strain (motion blur, DLP rainbow, keystone softening, brightness against a dark room), but leaves out breaks, blinking less and firmware updates.",
+  "judgment_reason": "Correctly treated this as general troubleshooting needing no search and framed the causes as likely rather than certain.",
+  "spoken_fit_reason": "Opens by splitting the two problems and stays in plain prose with no lists; long, but the question asks for two troubleshooting plans."
+}

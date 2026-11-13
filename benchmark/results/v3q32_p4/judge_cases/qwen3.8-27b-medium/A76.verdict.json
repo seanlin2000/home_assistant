@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It names reform, economic stagnation and Afghanistan as causes and the August 1991 coup correctly, but omits nationalism in the republics and the December 1991 referendum and Belovezha Accords, splits the 1989 revolutions and the Berlin Wall into two of the three events, and garbles glasnost as \"glass\".",
+  "judgment_reason": "Answering a stable history question from knowledge without searching was the right call, and it explicitly separates causes from triggers as asked.",
+  "spoken_fit_reason": "Plain prose with no formatting that leads with the answer, and its four short paragraphs suit a question asking for three events plus a causes-versus-triggers distinction."
+}

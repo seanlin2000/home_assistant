@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The big-bank APYs and the $2,100 at EverBank's 4.20% trace to the Arca excerpt, but the Bank of America $500 opening minimum and the \"no minimum\" claims for Chase and U.S. Bank appear in no source, the answer treats U.S. Bank's 2.00% band as applying marginally to the first $25,000 of a $50,000 balance, and it says $2,100 is \"forty times\" Chase's $5 when it is about 420 times.",
+  "judgment_reason": "It pushed back usefully that big banks pay almost nothing and noted that rates are variable and promotional, but it stated minimums it never retrieved and did not use the calculator for the interest figures.",
+  "spoken_fit_reason": "It leads with the key point in plain prose but runs too long, with em dashes and a parenthetical date, and the word cap cut it off after Bank of America."
+}

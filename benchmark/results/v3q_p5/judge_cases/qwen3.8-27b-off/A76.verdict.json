@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The answer covers Gorbachev's reforms, the 1989 revolutions and starts on the August 1991 coup, but it breaks off mid-sentence and never reaches the Ukrainian referendum, the Belovezha Accords or the December 1991 dissolution, and the listener heard only the Gorbachev section.",
+  "judgment_reason": "Not searching was right for a stable history question and it does separate causes from triggers, but it treats Gorbachev's accession as one of the three key events instead of the end-stage triggers the question was after.",
+  "spoken_fit_reason": "Multiple long paragraphs ran into the word cap and were cut off mid-thought, a wall of text for a voice reply."
+}

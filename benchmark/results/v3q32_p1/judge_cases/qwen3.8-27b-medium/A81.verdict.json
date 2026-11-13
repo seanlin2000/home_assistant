@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It names the query, IP and metadata, what stays local, and sound mitigations like paraphrasing queries and using a VPN, but it leaves out that the API key ties queries to an account, timing patterns, and the websites fetched afterwards, and it never suggests a self-hosted proxy or searching less.",
+  "judgment_reason": "Answering a stable architecture question from knowledge without a search was correct.",
+  "spoken_fit_reason": "It leads with the answer in plain prose, but three paragraphs and a long list of mitigations run longer than a spoken reply needs."
+}

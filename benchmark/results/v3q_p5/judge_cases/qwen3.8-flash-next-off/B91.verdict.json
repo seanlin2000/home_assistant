@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 0,
+  "answer_quality_reason": "Dončić (38-40 PPG, the 35/5/5/5 streak, Lakers 11-2 at +7.7), Wembanyama (52/24/8, HoopsHype 35.05), and Jokić (ARC +10.8, Nuggets 6-4) are ranked with this season's figures from the results, but the reply breaks off during Gilgeous-Alexander and never names a fifth player.",
+  "judgment_reason": "It searched as needed, opened with the right small-sample caveat, and labeled Wembanyama's +16 on/off as last season's, but it burned through the tool limit and the answer ran out before the ranking was complete.",
+  "spoken_fit_reason": "The listener heard five run-together narration lines about searching before the ranking, then long dense paragraphs that the word cap cut off during the first player."
+}

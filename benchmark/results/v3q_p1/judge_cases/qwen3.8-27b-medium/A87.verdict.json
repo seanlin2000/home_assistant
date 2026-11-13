@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It separates the two problems and gives an ordered one-variable-at-a-time plan covering multipoint pairing, 2.4 GHz contention, 5 GHz Wi-Fi, firmware and a wired test, plus room brightness, focus, keystone, DLP flicker and blinking, though it misses the larger field of view and input lag or game mode.",
+  "judgment_reason": "Answering a troubleshooting question from knowledge without searching was right, and it gave an order of tests instead of guessing a single cause.",
+  "spoken_fit_reason": "Plain prose, but five long paragraphs meant the word cap cut it at the start of the audio troubleshooting steps, so the eye-strain half was never heard."
+}

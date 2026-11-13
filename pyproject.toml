@@ -28,6 +28,7 @@ benchmark-judge = "benchmark.judge:main"
 benchmark-report = "benchmark.report:main"
 benchmark-manual = "benchmark.manual_run:main"
 benchmark-bake-off = "benchmark.bake_off:main"
+benchmark-tool-choice = "benchmark.tool_choice:main"
 triviabench-run = "benchmark.triviabench.run:main"
 triviabench-report = "benchmark.triviabench.report:main"
 deslop = "deslop.cli:main"
@@ -39,6 +40,7 @@ serving = "serving.cli:main"
 assistant-service = "assistant_service.__main__:main"
 exchange-dashboard = "dashboard.__main__:main"
 listings-refresh = "ops.listings_refresh:main"
+speech-lab = "speech_lab.__main__:main"
 
 [dependency-groups]
 deploy = [
@@ -53,6 +55,11 @@ dev = [
 docs = [
     "mkdocs-material>=9.7",
 ]
+speech-lab = [
+    "mlx-audio>=0.6.5",
+    "soundfile>=0.14.0",
+    "torchaudio>=2.11.1",
+]
 voice = [
     "wyoming-kokoro-torch>=3.2.0",
     "wyoming-mlx-whisper>=1.5.0",
@@ -63,11 +70,14 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
-packages = ["assistant_core", "assistant_mcp", "web_search_mcp", "calculator_mcp", "weather_mcp", "wikipedia_mcp", "sports_mcp", "broadway_mcp", "movies_mcp", "reddit_mcp", "benchmark", "voice", "ops", "utils", "deslop", "pr_references", "manual_checks", "diagrams", "serving", "assistant_service", "dashboard"]
+packages = ["assistant_core", "assistant_mcp", "web_search_mcp", "calculator_mcp", "weather_mcp", "wikipedia_mcp", "sports_mcp", "broadway_mcp", "movies_mcp", "reddit_mcp", "benchmark", "voice", "ops", "utils", "deslop", "pr_references", "manual_checks", "diagrams", "serving", "assistant_service", "dashboard", "speech_lab"]
 
 [tool.uv]
 required-version = ">=0.5"
 default-groups = ["dev", "voice", "deploy", "docs"]
+# The speech lab needs mlx-audio 0.6.5 (transformers 5.14+), which cannot share an environment with wyoming-kokoro-torch's pinned sentence-stream.
+# scripts/speech_lab.sh installs it into an environment of its own, .venv-speech-lab, and starts the lab.
+conflicts = [[{ group = "voice" }, { group = "speech-lab" }]]
 
 [tool.black]
 line-length = 200
@@ -76,6 +86,7 @@ target-version = ["py312"]
 [tool.isort]
 profile = "black"
 line_length = 200
+extend_skip = [".venv-speech-lab"]
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Covers scattering of short blue waves by molecules, why the sky is not violet (less violet in sunlight and less eye sensitivity), and the long low path at sunset leaving reds, with a hallway-and-balloons comparison, matching the sketch.",
+  "judgment_reason": "Correctly answered stable physics without searching and pitched it at a non-scientist as asked, avoiding unexplained jargon.",
+  "spoken_fit_reason": "Plain conversational prose with no jargon or formatting, and its length suits a request for an explanation."
+}

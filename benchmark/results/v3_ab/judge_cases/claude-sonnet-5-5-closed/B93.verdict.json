@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 0,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The tool returned five Michelin Guide restaurants within 0.4 miles (R40, Hupo, Casa Enrique, Meju with one star, Vert Frais) with cuisine and price levels, yet the answer names none and offers only a generic sketch of the neighborhood's dining scene.",
+  "judgment_reason": "It used the right restaurant tool, then falsely said 'I could not see the results' and asked the user for a street and preferences it did not need, failing the central task.",
+  "spoken_fit_reason": "Plain prose without lists, but it opens with two disclaimers and never reaches an answer."
+}

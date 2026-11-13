@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The five rates (Capital One and Ally 3.20%, Marcus 3.50%, Chase 0.01%, Bank of America 0.04%) and the interest figures of $1,600, $1,600, $1,750, $5 and $20 all follow from the excerpts, but it closes with a meaningless $4,975 total across all five and says every one has no minimum when no excerpt gives Bank of America's.",
+  "judgment_reason": "Searching current rates and noting that they are variable was right, but it summed interest across banks as if the user deposited at all five and turned 'no stated minimum' into a flat claim.",
+  "spoken_fit_reason": "Leads with the comparison and walks through five banks in plain spoken sentences, a length the question demands, with no lists or markup."
+}

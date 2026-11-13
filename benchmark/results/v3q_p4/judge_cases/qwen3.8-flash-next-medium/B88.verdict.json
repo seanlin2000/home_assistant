@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "All five developments fall inside the 30-day window and trace to the excerpts (Mistral Large 4 weights October 29, DeepSeek-V4.1-Flash-1017 October 17, Kimi K3.1 Pro weights November 4, Muse Spark Open October 15, Qwen4-Max hosted preview November 11 with no weights), followed by a clear comparison of the four named labs.",
+  "judgment_reason": "Searching was required, and it correctly reported that Meta shipped no new Llama and Qwen published no open weights rather than inventing releases, while flagging vendor benchmark claims and the November 17 Reddit rumor as unverified.",
+  "spoken_fit_reason": "Plain prose without markdown, but at roughly a thousand words dense with parameter counts and prices it was cut by the word cap during the first development."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 4,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It correctly lists what is transmitted (query strings, parameters, API key, IP, timestamps, cadence), what stays local (model, system prompt, conversation, files), and how to minimize exposure (strip personal details from queries, skip extract endpoints, prefer independent-index providers, watch fetched pages and tracing logs), but the reply breaks off mid-sentence at 'since zero retention' and never mentions a VPN or self-hosted proxy for IP privacy.",
+  "judgment_reason": "It ran three searches into vendor retention policies on a conceptual privacy question that needed no search, though it did flag Tavily's zero-retention claim as an unverified vendor statement.",
+  "spoken_fit_reason": "Seven dense paragraphs were cut by the word cap, so the listener heard what is sent and what stays local but none of the advice on minimizing exposure."
+}

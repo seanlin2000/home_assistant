@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 5,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Explains present value with a discount rate anchored to the risk-free rate, why distant cash flows shrink more under compounding so long-duration tech falls most, and adds borrowing costs, bonds as an alternative and multiple compression, covering the sketch.",
+  "judgment_reason": "Searched for the November 2026 federal funds rate, a current figure the conceptual answer never used, which was a needless search.",
+  "spoken_fit_reason": "Two plain-prose paragraphs that lead with the valuation mechanism and stay within the word budget."
+}

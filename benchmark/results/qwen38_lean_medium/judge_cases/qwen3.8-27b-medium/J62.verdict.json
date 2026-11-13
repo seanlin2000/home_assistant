@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Correctly says the 49ers beat the Commanders 23 to 17 at home with accurate leader stats, but calls McCaffrey's 16 carries, 64 yards and 2 touchdowns 'a tough night', which misreads the line.",
+  "judgment_reason": "Worked out last night as October 19 and called game_scores rather than searching.",
+  "spoken_fit_reason": "Leads with the winner and score in three plain sentences."
+}

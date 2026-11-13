@@ -2,10 +2,12 @@
 policy:
   temperature: 0.7
   max_tool_rounds: 4
-  max_output_tokens: 600
+  max_output_tokens: 600  # a llama-server candidate takes its model's own cap and sampling from config/serving.toml instead
   word_budget: 200
   context_tokens: 16384
   tool_timeout_seconds: 60
+  route_questions: false  # from prompt 3.0 every candidate chooses its tools from the definitions, as the harness now does
+  history_exchanges: 6
 
 services:
   ollama_host: http://127.0.0.1:11434
@@ -38,6 +40,36 @@ candidates:
     label: Gemma 4 E4B, QAT q4_0, on llama-server (prompt 2.0)
     provider: llama-server
     model: gemma-4-e4b
+    think: false
+  - key: qwen3.8-27b-medium
+    label: Qwen 3.8 27B, Q8_0, on llama-server, thinking medium (prompt 3.2)
+    provider: llama-server
+    model: qwen3.8-27b
+    think: medium
+  - key: qwen3.8-27b-low
+    label: Qwen 3.8 27B, Q8_0, on llama-server, thinking low (prompt 3.2)
+    provider: llama-server
+    model: qwen3.8-27b
+    think: low
+  - key: qwen3.8-27b-off
+    label: Qwen 3.8 27B, Q8_0, on llama-server, thinking off (prompt 3.2)
+    provider: llama-server
+    model: qwen3.8-27b
+    think: false
+  - key: qwen3.8-flash-next-medium
+    label: Qwen 3.8 Flash Next, GSQ-RCO IQ3_XXS (n-gram table on disk), on llama-server, thinking medium (prompt 3.2)
+    provider: llama-server
+    model: qwen3.8-flash-next
+    think: medium
+  - key: qwen3.8-flash-next-low
+    label: Qwen 3.8 Flash Next, GSQ-RCO IQ3_XXS (n-gram table on disk), on llama-server, thinking low (prompt 3.2)
+    provider: llama-server
+    model: qwen3.8-flash-next
+    think: low
+  - key: qwen3.8-flash-next-off
+    label: Qwen 3.8 Flash Next, GSQ-RCO IQ3_XXS (n-gram table on disk), on llama-server, thinking off (prompt 3.2)
+    provider: llama-server
+    model: qwen3.8-flash-next
     think: false
   # harness: the same model through the harness's HTTP API (design doc v2/04 section 3.2); install the services first (scripts/services.sh install).
   - key: gemma4-e4b-harness
@@ -90,6 +122,24 @@ candidates:
     label: Claude Fable 5.1, closed-book hand-written pass by a fresh subagent (reference ceiling)
     provider: manual
     model: claude-fable-5-1 (manual, pass 2)
+  # Question set 3.0's categories A and B, answered by a fresh Opus 5.5 subagent: open book called the real tools and read the results before answering;
+  # closed book listed its tool calls but answered from its own knowledge without reading them.
+  - key: claude-opus-5-5-open
+    label: Claude Opus 5.5, open-book hand-written pass by a fresh subagent (reference ceiling)
+    provider: manual
+    model: claude-opus-5-5 (manual, open book)
+  - key: claude-opus-5-5-closed
+    label: Claude Opus 5.5, closed-book hand-written pass by a fresh subagent
+    provider: manual
+    model: claude-opus-5-5 (manual, closed book)
+  - key: claude-sonnet-5-5-open
+    label: Claude Sonnet 5.5, open-book hand-written pass by a fresh subagent
+    provider: manual
+    model: claude-sonnet-5-5 (manual, open book)
+  - key: claude-sonnet-5-5-closed
+    label: Claude Sonnet 5.5, closed-book hand-written pass by a fresh subagent
+    provider: manual
+    model: claude-sonnet-5-5 (manual, closed book)
 
 judge:
   review_sample_fraction: 0.2

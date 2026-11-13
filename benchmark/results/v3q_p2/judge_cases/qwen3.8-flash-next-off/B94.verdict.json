@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The days it does cover respect sourced closures and prices (Pilatus cableway closed until November 27, Rigi free with the pass, Luzern-Interlaken Express at CHF 34, Harder Kulm reopening November 29, Jungfraujoch about CHF 224 in low season), but the reply breaks off on day three, so the Zermatt days, the Gornergrat and the Swiss Travel Pass versus Half Fare Card versus point-to-point comparison the user asked for never appear.",
+  "judgment_reason": "Searching was right and it checked seasonal closures and offered to rebuild for fixed dates, but it assumed undated travel starts now and moved the trip partly to avoid Glacier Express and GoldenPass interruptions on routes this itinerary does not need.",
+  "spoken_fit_reason": "It is plain prose without markdown, but five tool-use narration lines are spoken and the day-by-day paragraphs are long, so the word cap cut it during the opening closures paragraph."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The route is geographically sensible and the CHF 399 six-day pass, CHF 309 four-day pass, CHF 54 Glacier reservation and October 11 to December 4 closure all match the excerpts, but it never compares the Half Fare Card or point-to-point tickets as the question asks.",
+  "judgment_reason": "It searched and respected the Glacier Express seasonal closure, but stated pass rules no excerpt gives (Rigi fully free, Gornergrat at 50 percent off, 25 to 50 percent off mountain railways) as settled facts.",
+  "spoken_fit_reason": "Day-by-day plain prose with no markup, but it ran past the word cap, so the spoken output cut off the Glacier Express advice."
+}

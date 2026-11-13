@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 5,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "Correctly makes the bridge the local Zigbee hub, uses per-person Home access invites, one voice ecosystem, and physical switches, and says that during an outage local app control and bridge automations keep working while cloud-linked voice stops unless paired locally via Matter or HomeKit.",
+  "judgment_reason": "It ran two search_and_read calls on a stable architecture question that did not need searching.",
+  "spoken_fit_reason": "A roughly nine-paragraph answer that the word cap cut before the voice and internet-outage parts the user asked about."
+}

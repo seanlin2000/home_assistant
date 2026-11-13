@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The final reply is the silence marker \"*\", so the privacy question got no answer at all.",
+  "judgment_reason": "It treated a clear, direct question as speech not meant for it and stayed silent, failing the central point.",
+  "spoken_fit_reason": "Nothing was spoken in response to a real request, so there is no answer for the listener to hear."
+}

@@ -8,8 +8,10 @@ one sentence telling the model what to do next, never an exception, as the weath
 import logging
 from collections.abc import Callable
 from datetime import date
+from typing import Annotated
 
 from mcp.server.mcpserver import MCPServer
+from pydantic import Field
 
 from broadway_mcp.details import show_details_text
 from broadway_mcp.render import shows_text
@@ -28,22 +30,25 @@ _LOGGER = logging.getLogger(__name__)
 def register_broadway_tools(server: MCPServer, settings: BroadwaySettings) -> None:
     @server.tool(name=BROADWAY_TOOL_NAME)
     async def broadway_shows(
-        venue_tier: VenueTier = "broadway",
-        show_type: ShowType = "any",
-        genre: Genre = "",
-        max_price: float | None = None,
-        ticket_deal: TicketDeal = "any",
-        timing: Timing = "running",
-        sort_by: SortBy = "views_count",
-        limit: int = DEFAULT_LIMIT,
+        venue_tier: Annotated[VenueTier, Field(description="off_broadway or both only if the user says Off-Broadway")] = "broadway",
+        show_type: Annotated[ShowType, Field(description="kind of show")] = "any",
+        genre: Annotated[Genre, Field(description="empty for all")] = "",
+        max_price: Annotated[float | None, Field(description="top price per ticket, in dollars")] = None,
+        ticket_deal: Annotated[TicketDeal, Field(description="cheap same-day tickets")] = "any",
+        timing: Annotated[Timing, Field(description="playing now, or not open yet")] = "running",
+        sort_by: Annotated[
+            SortBy,
+            Field(description="views_count: popular now; reviews_count: most reviewed; audience_score: Show-Score; todaytix_rating: TodayTix buyers"),
+        ] = "views_count",
+        limit: Annotated[int, Field(description="how many")] = DEFAULT_LIMIT,
     ) -> str:
-        """What is playing on Broadway and Off-Broadway in New York, from TodayTix's listings: each show's name, musical or play, genres, theater, cheapest ticket, audience score out of 100 from Show-Score's reviews, TodayTix's own rating out of 5 where it has one, and rush or lottery tickets. No performance times. venue_tier: "broadway", "off_broadway", or "both". show_type: "musical", "play", or "any". genre: empty for every genre, or one of comedy, drama, family, romance, thriller, horror, sci_fi_fantasy, adventure, history, biography, satire, jukebox, revival, classic, contemporary, holiday, immersive. max_price: the most the user will pay for one ticket, in dollars. ticket_deal: "rush" or "lottery" for shows with those cheap same-day tickets, or "any". timing: "running" for shows playing now, "upcoming" for shows that have not started. sort_by: "views_count" for what people are looking at now, "reviews_count" for the most reviewed, "audience_score" for the best reviewed on Show-Score, "todaytix_rating" for the best rated by TodayTix buyers (most shows have no rating and come last). limit: how many shows to list."""
+        """Broadway and Off-Broadway shows in New York, from TodayTix, with theater, cheapest ticket, scores, and rush or lottery. Use this first for what is playing or worth seeing, before searching the web. Name shows in the order given, saying musical or play; say prices and scores as given. No performance times: tell the user to pick one on TodayTix."""
         query = ShowQuery(venue_tier=venue_tier, show_type=show_type, genre=genre, max_price=max_price, ticket_deal=ticket_deal, timing=timing, sort_by=sort_by, limit=limit)
         return snapshot_answer(settings, lambda snapshot, today: clip_to_whole_lines(shows_text(matching_shows(snapshot.shows, query, today), query, today), settings.max_words))
 
     @server.tool(name=BROADWAY_DETAILS_TOOL_NAME)
-    async def broadway_show_details(show: str) -> str:
-        """What one Broadway or Off-Broadway show in New York is about, from TodayTix: its description, musical or play, genres, theater, cheapest ticket, audience score and TodayTix rating, rush or lottery tickets, and whether it is running. No performance times. show: the show's title alone, as the user said it, such as "Hadestown" or "Rocky Horror"; part of a title is enough."""
+    async def broadway_show_details(show: Annotated[str, Field(description='title as the user said it, e.g. "Hadestown"; part is enough')]) -> str:
+        """What one Broadway or Off-Broadway show is about, from TodayTix, with theater, cheapest ticket and scores. Use this first for any one show. No performance times: tell the user to pick one on TodayTix. If the show is not found or has no description, search the web."""
         return snapshot_answer(settings, lambda snapshot, today: show_details_text(shows_named(snapshot.shows, show), show, today))
 
 

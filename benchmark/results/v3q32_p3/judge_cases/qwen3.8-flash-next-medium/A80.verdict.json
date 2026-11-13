@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Gives the correct 140, 35 and 17.5 GB figures, notes real 4-bit files run higher, and covers quality loss and the bandwidth speed gain, but omits that the context cache comes on top and ends with a muddled speed caveat.",
+  "judgment_reason": "Used the calculator for the memory arithmetic rather than searching and flagged that practical sizes exceed the raw figure.",
+  "spoken_fit_reason": "Plain prose that leads with the definition and runs long only because the question asks three things."
+}

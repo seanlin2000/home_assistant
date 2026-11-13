@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The pipeline (wake word, faster-whisper, Silero VAD, Ollama with tool calls, Piper, Home Assistant Assist through Wyoming), the used RTX 3060 at roughly $300 to $400, and the limitations on latency, model size and turn-taking all trace to the excerpts, but the '$950' PC total rests on RAM, drive and case prices no source gives, microphones and speakers are never mentioned, and the message breaks off before the build order the user asked for.",
+  "judgment_reason": "Searching for current hardware prices was right and it stayed inside the $1,000 budget while being candid about model quality against cloud assistants, but it presented an unsourced whole-system figure alongside the one price it had actually checked.",
+  "spoken_fit_reason": "It uses bold markdown section headings over long dense paragraphs, and the word cap cut it after the architecture section."
+}

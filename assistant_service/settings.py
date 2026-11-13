@@ -35,11 +35,12 @@ class ServiceSettings(StrictModel):
 
 
 class AnswerSettings(StrictModel):
-    temperature: float
     word_budget: int
     max_tool_rounds: int
     tool_timeout_seconds: float
     history_exchanges: int
+    route_questions: bool
+    think: bool | str | None = None  # "low", "medium" or "xhigh" turns the model's thinking on at that effort, per request
 
 
 class HarnessConfig(StrictModel):
@@ -51,16 +52,18 @@ class HarnessConfig(StrictModel):
         return allowed_hosts_from_environment(ALLOWED_HOSTS_VARIABLE, self.service.port)
 
     def policy(self, serving: ServingConfig) -> AgentPolicy:
-        """The loop policy: the answer settings from this file, the window and output cap from the served model's settings."""
+        """The loop policy: the answer settings from this file; the window, the sampling and the output cap from the served model's settings, in
+        the set for thinking when this file turns thinking on."""
         model = serving.served_model
         return AgentPolicy(
-            temperature=self.answer.temperature,
+            **model.sampling_for(self.answer.think).policy_fields(),
             word_budget=self.answer.word_budget,
             max_tool_rounds=self.answer.max_tool_rounds,
             tool_timeout_seconds=self.answer.tool_timeout_seconds,
             history_exchanges=self.answer.history_exchanges,
+            route_questions=self.answer.route_questions,
+            think=self.answer.think,
             context_tokens=model.conversation_tokens,
-            max_output_tokens=model.sampling.max_output_tokens,
         )
 
 

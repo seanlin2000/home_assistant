@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 1,
+  "answer_quality_reason": "Most figures trace to the 2026-27 leader tables (Wembanyama 30.2 points and +18.8, Doncic 38.6 points and 66.3 percent true shooting, Lakers 11-2, Spurs 10-2, Curry 71.9 percent true shooting), but it says the Thunder are 'ten and two, sitting second in the West' when no result gives OKC's record and the sources put the 10-2 Spurs second, it calls Giannis second in rebounding when the table has him third behind Towns and Sabonis, and it rounds 4.4 blocks and 4.3 threes up to four and a half.",
+  "judgment_reason": "It rightly searched for this season's numbers and opened by noting that about a dozen games is a small sample, but it filled gaps with unsupported team-standing claims for OKC, Miami and Golden State.",
+  "spoken_fit_reason": "It is ordinal plain prose without markdown, but each player gets a dense paragraph of stats, the message ends on a dangling 'Honorable mentions if you want them', and the word cap cut it during the second player."
+}

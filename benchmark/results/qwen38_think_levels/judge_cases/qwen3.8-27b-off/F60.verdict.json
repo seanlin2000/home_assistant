@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The final reply is the silence marker '*' with no search or calculator call, so no price or total is given.",
+  "judgment_reason": "It treated a clear instruction to look up a price and compute a total as speech not meant for it.",
+  "spoken_fit_reason": "Nothing is spoken in reply to a real request."
+}

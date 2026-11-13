@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It gives the correct year and date, 'in 1989, on the night of November 9th', with accurate supporting context.",
+  "judgment_reason": "It answered settled history from knowledge without searching, as it should have.",
+  "spoken_fit_reason": "It leads with the answer in plain prose, and the three short sentences of context that follow keep it brief enough to hear comfortably."
+}

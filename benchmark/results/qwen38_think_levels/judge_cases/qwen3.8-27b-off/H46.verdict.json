@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 4,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The seven to nine hours figure matches the reference, but it comes from memory, and the National Sleep Foundation attribution was never retrieved.",
+  "judgment_reason": "The user explicitly said \"Look up\", but it answered from memory without searching.",
+  "spoken_fit_reason": "The message says the answer twice, once wrapped in asterisks and quotes and once after a literal </think> tag, which would sound broken read aloud."
+}

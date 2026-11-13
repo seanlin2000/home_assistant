@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It says plainly the Fed did not cut to zero, cites the September quarter-point hike and the October 28 hold at 3.75 to 4 percent with the effective rate near 3.9 as the sources show, gives refinance rates of 6.9 to 7.4 matching Zillow and LendingTree, then lays out the rate gap, closing cost and break-even logic.",
+  "judgment_reason": "It checked the premise with two searches before answering, corrected it directly, and asked for the user's current rate, balance, term and closing-cost quote to work out the break-even.",
+  "spoken_fit_reason": "The prose is plain and conversational with no lists or markup, but four paragraphs plus a spoken preamble ran past the word cap before the refinance logic and the closing request for the user's rate."
+}

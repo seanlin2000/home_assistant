@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 4,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "Gives the correct 11 to 6 overall record with the 9 to 3 regular-season and 3 to 2 playoff split from the Wikipedia page, but calls Manning's 2013 and 2015 AFC title wins 'back-to-back'.",
+  "judgment_reason": "Used web_search and fetch_page instead of the player_matchup sports tool this question called for.",
+  "spoken_fit_reason": "Leads with 11 to 6, but then runs to three paragraphs of breakdown and trivia, and the closing recap repeats it."
+}

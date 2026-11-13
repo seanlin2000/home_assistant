@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Gives three distinct, concrete mechanisms from the sketch: concentrated ownership by the wealthiest tenth, pricing power and layoffs lifting margins while wages lag rent and groceries, and foreign earnings plus a handful of tech giants driving the index.",
+  "judgment_reason": "Correctly answered a stable economics question from knowledge without searching and avoided restating 'the market is not the economy' three times.",
+  "spoken_fit_reason": "Leads with a one-sentence answer and uses spoken 'First, Second, Third' prose rather than a list, a length the request for three examples justifies."
+}

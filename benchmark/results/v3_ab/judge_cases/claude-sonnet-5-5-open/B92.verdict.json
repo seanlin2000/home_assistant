@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Rates and minimums match the fininfoblog table and the banksparency excerpt (Marcus 3.50 percent, Ally, Capital One 360 Performance and American Express 3.20 percent, zero to open), and the interest of about 1,750 and 1,600 dollars follows from the calculator, but it covers four banks rather than the five asked.",
+  "judgment_reason": "Searched for current rates, said plainly it could confirm only four banks rather than inventing a fifth, noted rates are variable, and flagged that higher promotional rates carry conditions.",
+  "spoken_fit_reason": "Leads with the four-bank caveat and the Marcus figure, amounts spelled out for speech in plain prose, though the compounding sentence is clumsy and the closing repeats the missing-fifth-bank point."
+}

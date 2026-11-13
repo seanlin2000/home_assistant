@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Keeps the bridge as the local Zigbee hub, shares control via the Hue app and physical switches, offers Apple Home, Google, Alexa or Home Assistant for voice, and correctly says the bridge, app, switches and Apple Home or Home Assistant keep working offline while Alexa, Google and remote control stop.",
+  "judgment_reason": "Answered a stable architecture question without searching and recommended a local voice option that removes the internet dependency.",
+  "spoken_fit_reason": "Leads with the recommendation and covers the outage case in plain prose without lists, at a length the two-part question warrants."
+}

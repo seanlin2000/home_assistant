@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The Lucerne-Interlaken-Zermatt order, the lake cruise, Pilatus/Rigi, Jungfraujoch, Gornergrat and the CHF 309 four-day pass price are sound, but it routes to Zermatt on the 'Bernina' line, sends the Golden Pass 'east', includes a garbled 'Goldmead', asserts a 50 percent Gornergrat discount no excerpt gives, and never compares the Half Fare Card although a source listed it at CHF 150.",
+  "judgment_reason": "It declared the pass cheaper than point-to-point fares without retrieving a single point-to-point price, and picked a four-day pass for a five-day trip without explaining the gap.",
+  "spoken_fit_reason": "One plain-prose paragraph of about 125 words that walks day by day, a length a five-day plan reasonably needs, with no lists or markup."
+}

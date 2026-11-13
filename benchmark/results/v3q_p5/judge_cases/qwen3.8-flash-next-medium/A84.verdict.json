@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It explains present value, the worked figure ($100 in ten years worth about $61 at 5 percent and $46 at 8 percent), long-duration growth stocks, competition from bonds, borrowing costs and the 2022 example, but it says \"Compress the discount rate and their valuations shrink the most\", which gets the direction backwards in a key sentence.",
+  "judgment_reason": "It answered from stable knowledge without searching, used the calculator for the illustration, and noted that rising rates driven by strong demand can offset the effect.",
+  "spoken_fit_reason": "Six dense paragraphs ran past the word cap, so the listener heard only the core idea, the worked example and the start of the bond comparison."
+}

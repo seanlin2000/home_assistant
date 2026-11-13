@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Memory figures match the sketch (about 140 GB at sixteen bits, 35 at four, 17.5 at two), it notes real files run larger because of scales and higher-precision layers plus context memory, and it covers bandwidth-limited speed gains and small versus marked quality loss.",
+  "judgment_reason": "Correctly answered stable technical arithmetic without searching and hedged the figures as 'about' and 'roughly', adding that real files run larger.",
+  "spoken_fit_reason": "Numbers are written out for speech in plain prose with no lists, and the length suits a question with three parts."
+}

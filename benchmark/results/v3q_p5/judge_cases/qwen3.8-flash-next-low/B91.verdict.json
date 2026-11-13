@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 0,
+  "answer_quality_reason": "Five current-season picks with sourced lines (Wembanyama 30.3 and 4.4 blocks, Doncic 40.1, Jokic plus 7.0 DPM, SGA 29.7, Tatum's week) are well reasoned, but it says Wembanyama's defense is \"the single best component of anyone on that board\" when the DARKO table shows Gobert at +3.9 against his +2.3, and it credits Boston with a \"league-leading net rating\" that no result gives.",
+  "judgment_reason": "It searched for live stats, weighed impact metrics against team records, flagged the twelve-game sample, and explained why Kawhi Leonard's two-game, injured run kept him out of the five.",
+  "spoken_fit_reason": "Four tool-use preambles are spoken back to back before a long, stat-dense answer that the word cap cut after the first player."
+}

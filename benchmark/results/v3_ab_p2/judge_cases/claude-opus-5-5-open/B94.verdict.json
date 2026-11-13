@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The Lucerne, Interlaken, Zermatt route is geographically sensible and low-effort (lake cruise, Rigi or Pilatus, Jungfrau viewpoints, Gornergrat), and the CHF 150 card, the 17 and 43 franc legs and the STP from CHF 254 all come from the sources, but it never prices plain point-to-point tickets as the third option.",
+  "judgment_reason": "Searched for 2026 pass prices, hedged with \"likely the best value\", noted that mountain excursions come on top of the 210-franc total and that panoramic trains need reservations, and told the user to check SBB.",
+  "spoken_fit_reason": "Leads with the pass recommendation, then walks day by day in spoken prose with no list markup, at a length a five-day plan needs."
+}

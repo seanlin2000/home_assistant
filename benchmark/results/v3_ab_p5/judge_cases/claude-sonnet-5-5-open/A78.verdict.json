@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "Gives three distinct concrete mechanisms from the sketch (concentrated ownership, inflation outrunning wages, profits from layoffs, offshoring and buybacks) plus mega-cap concentration and forward-looking pricing.",
+  "judgment_reason": "Answered a stable economics question from knowledge without searching and framed the core distinction between profits and household costs up front.",
+  "spoken_fit_reason": "Plain prose that leads with the answer, but after the three requested examples it adds a fourth point and another 'also', making it longer than asked."
+}

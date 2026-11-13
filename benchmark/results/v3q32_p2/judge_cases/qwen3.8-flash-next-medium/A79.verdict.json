@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "GPU parallelism, memory bandwidth, CUDA and when a specialized chip wins are covered correctly, but it puts TPUs, Groq's LPU and Cerebras under one 'ASICs' heading and so never draws the asked-for difference between ASICs and specialized inference processors.",
+  "judgment_reason": "Answering a stable hardware-architecture question from knowledge without searching was the right call.",
+  "spoken_fit_reason": "Two plain-prose paragraphs that lead with why GPUs win, a sensible length for a three-part question."
+}

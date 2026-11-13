@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 3,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "Separates the two problems and covers 2.4 GHz interference, 60 Hz motion blur, brightness against room light, focus and keystone, and breaks, but misses the key point that the laptop competes for the speaker's connection, and it borrows Windows PC fixes (hands-free mode, adapter power management, drivers) that don't fit a speaker paired to the projector.",
+  "judgment_reason": "Ran two needless searches on stable troubleshooting knowledge, and the Windows headphone articles they returned pulled the advice away from this projector-plus-speaker setup.",
+  "spoken_fit_reason": "Plain prose with no markup, but at about 180 words with a long checklist sentence, it was cut by the word cap before the closing test-order advice."
+}

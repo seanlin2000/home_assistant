@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 3,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The causes (stagnation, arms race and Afghanistan, nationalism, glasnost and perestroika) and the 1989 revolutions and August 1991 coup are correct and labeled, but the third event breaks off at \"the Ukrainian independence referendum of December 1, 1991, and the Bel\", so the Belovezha Accords and the end are never explained.",
+  "judgment_reason": "This is stable history that needed no search, yet the assistant made six wikipedia and search calls before answering.",
+  "spoken_fit_reason": "The reply is several long paragraphs that the word cap cut off before any of the three events was heard, so it is a wall of text for a listener."
+}

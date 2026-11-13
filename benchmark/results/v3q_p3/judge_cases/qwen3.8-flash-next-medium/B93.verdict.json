@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The restaurant tool returned only Vert Frais, but the answer filled the list with web-sourced picks and relegated Vert Frais to an honorable mention; it recommends Sushi Nikko as 'a genuine find' though its listing says CLOSED, and it calls Serafina part of the Marea group, which no excerpt says.",
+  "judgment_reason": "It stated its location and price-estimate assumptions and asked for a cross street, but instead of saying the Michelin result had only one nearby place it ran eight more searches and hit the tool-call limit.",
+  "spoken_fit_reason": "It is plain prose, but it opens with a long caveat paragraph and runs seven paragraphs, and the word cap cut it at the second restaurant."
+}

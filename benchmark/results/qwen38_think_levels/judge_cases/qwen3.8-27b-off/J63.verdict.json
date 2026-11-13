@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The winner, the 93 to 89 score and LeBron's 27 are right, but it names Stephen Curry with 29 as Golden State's top scorer when the reference has Draymond Green with 32.",
+  "judgment_reason": "It answered from memory without calling game_scores, so every figure went unverified and one was wrong.",
+  "spoken_fit_reason": "Two plain sentences that lead with the winner and score."
+}

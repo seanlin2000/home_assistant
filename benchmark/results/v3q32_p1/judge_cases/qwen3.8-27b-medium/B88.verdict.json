@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The DeepSeek V4.1 Flash 1017, Muse Spark Open, Mistral Large 4 weights, Muse Ember and Qwen4-Max dates all come from the excerpts and fall within 30 days, but it calls all five \"open-weight\" when no source gives weights for Qwen4-Max or Muse Ember, and it passes over the open-weight Qwen3.6 27B and Tencent Hy4 that were retrieved.",
+  "judgment_reason": "Searching was right, but it overstates the sources: DeepSeek is said to be \"actually beating Claude Opus 5 on code\" when the excerpt says it trails on Terminal-Bench and the numbers are self-reported, and the closing \"gaps narrowed to single digits\" claim has no source.",
+  "spoken_fit_reason": "It leads with the answer in plain prose, but the single dense paragraph runs well past the 120-word limit and crowds in many benchmark figures."
+}

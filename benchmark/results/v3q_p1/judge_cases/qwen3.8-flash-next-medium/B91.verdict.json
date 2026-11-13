@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It names five players with this season's figures from the results (Doncic 38.6 ppg with the Lakers at 11-2, Wembanyama 30.2/11.7 and a 35.05 HoopsHype rating, SGA 29.7, Giannis 27.7/12.6, Jokic 9.0 apg) and a reason for each, but says Jokic was hurt 'late last season' when the source puts it around the turn of the year, and the message breaks off mid-sentence.",
+  "judgment_reason": "It searched for current-season data, opened by flagging that eleven or twelve games is a small sample, and explained its ranking trade-offs, such as putting Wembanyama second despite his top rating.",
+  "spoken_fit_reason": "Six long, statistic-dense paragraphs ran past the word cap, so the listener heard only the caveat and the first player."
+}

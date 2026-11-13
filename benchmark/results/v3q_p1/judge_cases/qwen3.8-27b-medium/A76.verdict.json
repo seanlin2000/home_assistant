@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The Berlin Wall, August coup and Belavezha Accords are right, but it describes the December 1991 referendum as the Russian republic voting to keep a reformed union instead of Ukraine's independence vote, and it leaves nationalism out of the causes.",
+  "judgment_reason": "Answering stable history from knowledge without searching was the right call, and it separates long-term causes from triggers as asked.",
+  "spoken_fit_reason": "Plain prose that leads with the answer, but at four long paragraphs it was cut by the word cap before the listener heard the causes-versus-triggers distinction."
+}

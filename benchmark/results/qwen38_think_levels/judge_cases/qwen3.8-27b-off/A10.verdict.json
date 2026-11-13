@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["violated_explicit_constraint"],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The core point (models that don't fit spill to slow system RAM, and speed only matters once the model fits) is right, but the closing example says a 24 GB card wins for a 70-billion-parameter model, which would not fit in 24 GB either, and 'seconds per token to minutes' overstates the slowdown.",
+  "judgment_reason": "It answered without searching as it should, but ignored the user's explicit under-45-seconds limit.",
+  "spoken_fit_reason": "Plain prose with no lists that leads with the answer, but at about 130 words it runs past the 120-word, 45-second budget the user set."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Hits every element of the sketch: parallel matrix math, fast memory and software stack, the TPU as an ASIC, Groq and Cerebras on-chip memory, memory-bound generation, and when specialized chips win or lose.",
+  "judgment_reason": "Answered a stable architecture question from knowledge without searching and gave the trade-off conditions rather than a one-sided verdict.",
+  "spoken_fit_reason": "Plain prose that leads with why GPUs work and answers the three parts in order, at a length the three-part question demands."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It gives a sound synthesis from the excerpts (HBM taking DRAM capacity, the GPU-plus-memory kit pricing, the CFO and Micron quotes, the stuck 50 Super refresh, and the 12.5M shipments), but misstates TrendForce's 58 to 63 percent second-quarter jump as 'the second half of 2026' and turns a reported 'could trim' into 'trimmed'.",
+  "judgment_reason": "It searched for a current market question and contrasted the cause with 2021 rather than just listing prices, as the user asked.",
+  "spoken_fit_reason": "Plain prose that leads with the main cause, but five long paragraphs hit the word cap and the text breaks off mid-word at '202'."
+}

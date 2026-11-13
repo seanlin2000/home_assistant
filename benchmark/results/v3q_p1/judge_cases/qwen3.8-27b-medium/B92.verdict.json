@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The big-bank APYs from Arca and SwitchWize and the interest math ($5, $20, $25 on $50,000) are right, but it says Chase and Bank of America have no minimum balance, which no source gives, calls Bank of America's 0.04% the second-lowest when it is second-highest, and never compares five actual high-yield accounts beyond one closing line.",
+  "judgment_reason": "Pointing out that the big branch banks do not offer real high-yield savings was useful pushback, but it filled the minimum-balance part from assumption and never said the rates are variable and change often.",
+  "spoken_fit_reason": "Plain prose that opens with the key point, but bank-by-bank paragraphs full of percentages made it long enough that the word cap cut it at the third bank."
+}

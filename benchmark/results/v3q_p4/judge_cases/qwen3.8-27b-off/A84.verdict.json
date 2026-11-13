@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It correctly explains present value, the risk-free rate in the discount rate, the heavier hit to distant cash flows and equity duration, plus the bond-alternative and borrowing-cost channels and the 2022 example, but the claim that large cash balances make tech firms more rate-sensitive is dubious and the rate path to 'over five percent' is placed loosely in 2021-2022.",
+  "judgment_reason": "No search was needed for a conceptual finance question, and it adds the useful nuance that strong earnings growth can outrun the rate effect.",
+  "spoken_fit_reason": "It opens with throat-clearing ('Let me walk through the mechanics') and ran long enough that the word cap cut it before the rate-hike mechanism itself."
+}

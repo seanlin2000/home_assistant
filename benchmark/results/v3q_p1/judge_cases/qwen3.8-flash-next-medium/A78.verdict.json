@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 5,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It gives three distinct mechanisms (top ten percent holding about 88 percent of equities, gains concentrated in a few AI mega-caps, and buybacks with real wages lagging inflation), each with figures traceable to the Fed, Lazard, J.P. Morgan and Neuberger excerpts.",
+  "judgment_reason": "A conceptual economics question needed no search, but the assistant ran four search_and_read calls plus two pointless calculator calls such as 50.9 / 1.",
+  "spoken_fit_reason": "Four dense, statistic-heavy paragraphs were cut by the word cap mid-number, leaving the listener with only the first mechanism."
+}

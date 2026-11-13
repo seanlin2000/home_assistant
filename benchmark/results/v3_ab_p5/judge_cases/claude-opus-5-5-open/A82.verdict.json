@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The API, tool and MCP definitions and the architecture (local model, tool-calling harness loop, MCP server with search and fetch tools, extracted text trimmed to the context, model-side summarizing, untrusted text) match the sketch, but it omits the tool-round cap, timeouts and caching safeguards.",
+  "judgment_reason": "Rightly answered a stable design question without searching and kept the architecture concrete rather than inventing requirements.",
+  "spoken_fit_reason": "Plain prose that defines the three terms, sums them up in one line, then gives the design, at a length the two-part question justifies."
+}

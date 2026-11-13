@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Replied with the silence marker * alone to the Whisper artifact 'Thank you for watching.', as the reference requires.",
+  "judgment_reason": "Correctly recognised the phrase was not addressed to it and made no tool calls.",
+  "spoken_fit_reason": "Nothing was spoken, which is the ideal for this case."
+}

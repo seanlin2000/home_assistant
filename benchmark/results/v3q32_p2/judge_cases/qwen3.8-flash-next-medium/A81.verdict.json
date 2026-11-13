@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It correctly lists the query text, IP, API key identity, timestamps and user agent as transmitted, and gives sound mitigations including SearXNG, a VPN and caching, but it leaves out that the websites fetched afterwards also see the IP.",
+  "judgment_reason": "No search was needed, and it rightly flags the query text built from private material as the subtle risk.",
+  "spoken_fit_reason": "Three plain-prose paragraphs that follow the local, transmitted and minimize structure of the question, with no lists or markup."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It separates the two problems, gives ordered checks (dual-source pairing, the laptop's own Bluetooth, 2.4 GHz interference, distance, a wired cable; brightness and room light, refresh rate and game mode, native resolution, seating distance), but it misses the DLP rainbow effect, switching Wi-Fi to 5 GHz, and taking breaks.",
+  "judgment_reason": "Answering a troubleshooting question from knowledge without searching was right, and it ordered tests from easiest to hardest as asked.",
+  "spoken_fit_reason": "Two very long paragraphs that the word cap cut after the audio section, so the listener heard nothing about eye strain."
+}

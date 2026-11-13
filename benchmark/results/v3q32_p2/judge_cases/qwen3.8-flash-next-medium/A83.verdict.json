@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The 0.0333 to 0.0167 percent stake, about $166,667 value, about 8.3x multiple and roughly $146,667 profit all match the sketch and the calculator result of 166,666.67.",
+  "judgment_reason": "It used the calculator and stated both key assumptions: proportional dilution, and that liquidation preferences are ignored.",
+  "spoken_fit_reason": "It leads with the stake and value in short plain sentences and ends with brief caveats."
+}

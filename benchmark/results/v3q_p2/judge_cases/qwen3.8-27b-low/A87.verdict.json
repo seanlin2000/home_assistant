@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It separates the two problems and gives an ordered test sequence: Bluetooth congestion and competing sources, a wired aux test, distance, and 5 GHz Wi-Fi for the audio; contrast against room light, focus and keystone, DLP color-wheel flicker, and image size for the eye strain. It never says to unpair the speaker from the laptop or update firmware, it leaves out game mode, input lag and seating distance, and it oddly suggests a 2.4 GHz dongle to relieve 2.4 GHz congestion.",
+  "judgment_reason": "Answering this troubleshooting question from knowledge without searching was right, and it changes one thing at a time as the user asked.",
+  "spoken_fit_reason": "It is plain prose but runs to about eleven paragraphs, and the word cap cut it early in the audio steps, so the listener never heard the eye-strain half."
+}

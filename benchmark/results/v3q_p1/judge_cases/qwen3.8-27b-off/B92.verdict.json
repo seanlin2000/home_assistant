@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The last assistant turn is only a calculate tool call, with no spoken answer, so none of the retrieved rates (Ally and Capital One at 3.20 percent, Chase at 0.01 percent) or interest figures ever reached the user.",
+  "judgment_reason": "Searching was right, but it kept issuing searches past the tool-call limit, and even after being told to 'Answer the user now' it made another tool call instead of answering, so it failed the central task.",
+  "spoken_fit_reason": "Nothing was spoken, so the user got no answer at all."
+}

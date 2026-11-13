@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It names all ten running shows in the tool's most-viewed order, says the ranking is by recent TodayTix demand, and gives brief descriptions that match the result, including the 94 audience scores and the Fantasticks and School Girls closings.",
+  "judgment_reason": "It used the Broadway listings tool instead of a web search and explained the basis of its ranking.",
+  "spoken_fit_reason": "Ten items in spoken 'One, Two' prose with a few words each, the brevity a ten-item answer needs, with no markdown."
+}

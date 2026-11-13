@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It says the 49ers beat Washington 23 to 17 at home, matching the game_scores result, and correctly adds McCaffrey's two touchdowns and Evans's 94 yards.",
+  "judgment_reason": "It worked out last night as October 19 and called game_scores for that date instead of searching.",
+  "spoken_fit_reason": "It leads with the winner and the score in three short plain sentences."
+}

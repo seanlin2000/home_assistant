@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 4,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It covers everything in the reference: one Bridge, per-person invites, physical Hue dimmers, a voice ecosystem, local app and automations surviving an outage, cloud Alexa and Google failing, Apple Home with a hub, and Home Assistant as the local option. The one flaw is that it calls the user's place a 'studio apartment' when they never said so.",
+  "judgment_reason": "It made seven tool calls, including two page fetches, exceeding the tool-call limit on a question the reference expects answered without searching, and it invented that the apartment is a studio.",
+  "spoken_fit_reason": "It is a seven-paragraph wall of text with prices and menu paths, and the word cap cut it off before voice setup and the entire internet-outage answer."
+}

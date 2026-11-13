@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Covers parallel matrix math, memory bandwidth limiting per-word generation, CUDA, ASICs like the TPU and Inferentia, Groq and Cerebras on-chip memory, and when a specialized chip wins or loses (stable large workloads, latency or energy per word, weaker software, models changing), matching the sketch.",
+  "judgment_reason": "Answered stable architecture knowledge without searching and presented the trade-offs on both sides rather than overselling either.",
+  "spoken_fit_reason": "Plain spoken prose with no formatting that leads with why GPUs fit inference; its length matches the three-part question."
+}

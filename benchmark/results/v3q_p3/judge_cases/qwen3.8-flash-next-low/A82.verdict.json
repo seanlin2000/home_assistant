@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 3,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The API, tool and MCP definitions are correct, and the architecture covers a tool-calling model, an agent loop with a round cap, web_search via SearXNG, a fetch tool that cleans and truncates text, and summarizing by the model itself, but it announces four layers, breaks off mid-sentence at 'map-reduce summarization with', and never covers timeouts, caching, or treating fetched pages as untrusted input.",
+  "judgment_reason": "It made six tool calls, including a page fetch, on a conceptual architecture question that needed no search, and pulled in incidental details like the MCP spec date and Ollama's HTTP 400 behavior.",
+  "spoken_fit_reason": "It is a long multi-paragraph essay with markdown emphasis asterisks and backticked tool names, and the word cap cut it before the architecture began."
+}

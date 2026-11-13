@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It gives three distinct mechanisms that match the sketch: index concentration in a few tech giants, profits going to buybacks while hiring and raises are cut, and rents and groceries rising regardless of stocks, with concentrated ownership framed up front.",
+  "judgment_reason": "Answering from knowledge was right for a conceptual question, and it offered to look up current concentration figures instead of inventing them.",
+  "spoken_fit_reason": "The prose is plain but long, opens with 'Great question' filler, and hit the word cap partway through the second example, so the listener never heard the third."
+}

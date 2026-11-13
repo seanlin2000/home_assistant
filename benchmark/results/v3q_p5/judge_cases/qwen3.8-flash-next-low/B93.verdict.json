@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": false,
+  "answer_quality": 1,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The restaurant tool returned one Long Island City entry, Vert Frais, which the answer never mentions; it instead builds a list from web pages, says Casa Enrique has \"held a Michelin star since 2014\" though no result gives a current star, leans on Restaurantji for Soothr's Michelin listing, and breaks off mid-sentence on the fifth pick.",
+  "judgment_reason": "It rightly hedged that walking distance is approximate without the user's cross street, but instead of saying the Michelin snapshot had only one nearby restaurant it padded to five with eight web searches and fetches and hit the tool-call limit.",
+  "spoken_fit_reason": "Each restaurant gets a long, dense paragraph of addresses, review counts and dishes, and the word cap cut the spoken answer after the opening two sentences."
+}

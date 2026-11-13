@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 3,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The GPU explanation (matrix multiply, tensor cores, memory-bound decode, CUDA-style software moat) and the TPU, Groq SRAM and Cerebras wafer contrasts match the reference, but the reply breaks off mid-sentence ('about ') after only the first of the circumstances where a specialized chip wins, so the third part of the question is mostly unanswered.",
+  "judgment_reason": "It spent four searches and three calculator calls, exceeding the tool-call limit, on a stable architecture question that needed no search.",
+  "spoken_fit_reason": "It uses section headings like 'Why GPUs work so well', runs far too long, and the word cap cut the listener off before the ASIC comparison."
+}

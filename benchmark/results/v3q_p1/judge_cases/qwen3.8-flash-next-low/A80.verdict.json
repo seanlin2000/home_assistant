@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 4,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The memory figures match the reference (about 140, 35 and 17.5 GB, with 40 to 42 GB and about 38 GB for real 4-bit files), and so do the trade-offs on quality, bandwidth-bound speed and the KV cache, but it says 4-bit \"cut that in half\" from 140 GB and names a nonexistent \"Mamba-style codebook quantization\".",
+  "judgment_reason": "Stable conceptual arithmetic needed no search, yet the assistant made three web searches and nine tool calls in all, including a redundant second set of calculations.",
+  "spoken_fit_reason": "The eight-paragraph reply was cut by the word cap after the caveats paragraph, so the listener heard the memory numbers but none of the trade-offs the question asked for."
+}

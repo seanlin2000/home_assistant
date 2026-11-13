@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": false,
+  "answer_quality": 3,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It names most of the stack (Whisper, an 8B local model, Piper, Home Assistant, a search function) and a sensible build order, but it leaves out the wake word and the microphones and speakers, and its hardware rests on an unsourced \"around four hundred dollars\" price along with a claim that any GPU \"busts your budget\".",
+  "judgment_reason": "It never searched for current hardware prices on a budget question that depends on them, and instead stated a mini PC price and a GPU verdict from memory.",
+  "spoken_fit_reason": "Three short plain-prose paragraphs covering architecture, limits and build order, which answers a four-part question briefly."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Every release named traces to the excerpts (Muse Spark Open on 15 October with 816B parameters and 1M context, DeepSeek V4.1-Flash as a new 552B base, Qwen3.8's split licensing, LFM2.5 and MiniCPM-V 4.7), but the lab-by-lab comparison the user asked for is thin and Qwen's undated licensing change is offered as a past-30-day development.",
+  "judgment_reason": "Searched for a current-news question, flagged that the sources were roundups, and said plainly it could not tell what Mistral shipped in the last thirty days instead of inventing a release.",
+  "spoken_fit_reason": "Plain prose with spoken first through fifth and numbers spelled out, a length the five-item request warrants, though a few model names like MiniCPM-V 4.7 are awkward aloud."
+}

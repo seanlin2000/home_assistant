@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The 0.033 to 0.0167 percent stake, about $166,700 value, 8.3x multiple, and $146,700 profit all match the sketch, but it misstates the initial stake as \"one three-hundredth of one percent\", which is ten times too small, before giving the correct 0.033 percent.",
+  "judgment_reason": "It used the calculator, said it read dilution as the percentage halving, and flagged that liquidation preferences were ignored.",
+  "spoken_fit_reason": "It gives the answer in the second paragraph after a preamble, and the caveat paragraph pushed it past the word cap."
+}

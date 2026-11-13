@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The 140, 35 and 17.5 GB figures are correct and calculator-checked, but it overstates 4-bit loss as 'a lot' and 'noticeably worse', wrongly claims inference needs 'a separate copy of the original higher-precision weights', and never ties the speed gain to memory bandwidth.",
+  "judgment_reason": "It answered from knowledge without searching, used the calculator for the memory arithmetic, and said that 35 GB covers weight storage rather than the total footprint.",
+  "spoken_fit_reason": "It leads with a plain definition and the figures, but it ran past the word cap, so the listener heard only part of the trade-offs and nothing about 2-bit or speed."
+}

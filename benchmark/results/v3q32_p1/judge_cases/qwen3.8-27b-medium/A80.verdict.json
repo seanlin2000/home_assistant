@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The 140, 35 and 17.5 gigabyte figures match the calculator results and the sketch, and the quality trade-off at 4-bit versus 2-bit is right, but it skips that real files run larger and that the context cache comes on top, and it never names faster generation from lower memory bandwidth.",
+  "judgment_reason": "It used the calculator for the memory figures and rightly did not search a stable technical question.",
+  "spoken_fit_reason": "It opens with the definition, which is what was asked first, then gives the figures and trade-offs in plain sentences of reasonable length."
+}

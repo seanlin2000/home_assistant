@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Most claims trace to the excerpts: V4.1-Flash-1017 on October 17 with a 552B base, Large 4's 1.05T and 5.2B active, Muse Spark Open on October 15 with 816B and gated access, the LLMBoard ranks, and 61.7 percent on DeepSWE. But 'Apache 2.0' for Large 4 rests only on a generic note that Mistral models use Apache, and it says both Kimi K3 and K3.1 Pro top the rankings.",
+  "judgment_reason": "Searching was right for a 30-day news question, and it said plainly that Qwen shipped nothing new in the window instead of inventing a release.",
+  "spoken_fit_reason": "Two plain paragraphs that open with the five developments and then compare the four labs, the length a five-item question needs, with no lists, URLs or citation markers."
+}

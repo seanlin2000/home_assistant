@@ -8,8 +8,10 @@ one sentence telling the model what to do next, never an exception, as the other
 import logging
 from collections.abc import Callable
 from datetime import date
+from typing import Annotated
 
 from mcp.server.mcpserver import MCPServer
+from pydantic import Field
 
 from movies_mcp.details import movie_details_text, movies_named
 from movies_mcp.movies import DEFAULT_LIMIT, MovieGenre, MovieQuery, MovieSortBy, MoviesSnapshot, MovieWhen, found_movies
@@ -27,21 +29,24 @@ _LOGGER = logging.getLogger(__name__)
 def register_movies_tools(server: MCPServer, settings: MoviesSettings) -> None:
     @server.tool(name=MOVIES_TOOL_NAME)
     async def movies_showing(
-        when: MovieWhen = "this_week",
-        genre: MovieGenre = "",
-        include_horror: bool = False,
-        title: str = "",
-        theater: str = "",
-        sort_by: MovieSortBy = "most_theaters",
-        limit: int = DEFAULT_LIMIT,
+        when: Annotated[MovieWhen, Field(description="this_week: next 7 days; coming_up: opening later")] = "this_week",
+        genre: Annotated[MovieGenre, Field(description="empty for all")] = "",
+        include_horror: Annotated[bool, Field(description="true if the user asks for horror")] = False,
+        title: Annotated[str, Field(description='part of a title, e.g. "Clayface", to see where it shows')] = "",
+        theater: Annotated[str, Field(description='part of a theater name, e.g. "Angelika"')] = "",
+        sort_by: Annotated[
+            MovieSortBy,
+            Field(description="most_theaters: widest; release_date: newest or soonest; critics_score, audience_score: best reviewed"),
+        ] = "most_theaters",
+        limit: Annotated[int, Field(description="how many")] = DEFAULT_LIMIT,
     ) -> str:
-        """What movies are showing at Manhattan movie theaters, from Fandango: each movie's genres, rating, running time, Rotten Tomatoes critics and audience scores, and how many theaters show it, or which ones when three or fewer do. No showtimes. when: "this_week" for today through the next six days, "coming_up" for movies whose first Manhattan showing is later, as far ahead as theaters sell tickets (new releases, anniversary re-releases, concerts, opera). genre: empty for every genre, or one of action, animation, anime, biography, comedy, concert_or_event, documentary, drama, family, foreign, history, holiday, horror, lgbtq, music, romance, sci_fi_fantasy, sports, thriller, war, western. include_horror: horror movies are left out unless this is true, genre is "horror", or a title is asked for. title: part of a movie's title, to ask whether and where it is showing, such as "Clayface". theater: part of a theater's name, for what one theater shows, such as "Angelika" or "AMC Empire". sort_by: "most_theaters" for the widest releases first, "release_date" for the newest releases first this week or the soonest first coming up, "critics_score" for the best reviewed by critics, "audience_score" for the best rated by audiences (movies without a score come last). limit: how many movies to list."""
+        """Movies at Manhattan theaters, from Fandango, with rating, length, Rotten Tomatoes scores and theaters. Use this first for what is showing or coming up, before searching the web. Name movies in the order given; say scores as given. Horror is left out unless asked for; if the reply says how many were left out, mention they can be included. No showtimes: tell the user to check Fandango or the theater."""
         query = MovieQuery(when=when, genre=genre, include_horror=include_horror, title=title, theater=theater, sort_by=sort_by, limit=limit)
         return snapshot_answer(settings, lambda snapshot, today: clip_to_whole_lines(movies_text(found_movies(snapshot, query, today), query, snapshot, today), settings.max_words))
 
     @server.tool(name=MOVIE_DETAILS_TOOL_NAME)
-    async def movie_details(title: str) -> str:
-        """What one movie showing or on sale at Manhattan theaters is about, from Fandango: its synopsis, director, lead actors, genres, rating, running time, Rotten Tomatoes critics and audience scores, when it opens, and every Manhattan theater showing it. No showtimes. title: the movie's title alone, as the user said it, such as "Clayface" or "Avengers Doomsday"; part of a title is enough."""
+    async def movie_details(title: Annotated[str, Field(description='title as the user said it, e.g. "Clayface"; part is enough')]) -> str:
+        """What one movie at Manhattan theaters is about, from Fandango, with cast, Rotten Tomatoes scores, opening date and theaters. Use this first for any one movie in theaters. No showtimes: tell the user to check Fandango or the theater. If it is not found or has no synopsis, search the web."""
         return snapshot_answer(settings, lambda snapshot, today: movie_details_text(movies_named(snapshot.movies, title), title, snapshot, today))
 
 

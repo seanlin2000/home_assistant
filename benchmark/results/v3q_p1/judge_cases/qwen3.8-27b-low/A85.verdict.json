@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The meal totals add up to 170 grams at about 1,700 calories and the egg breakfast is right, but several item figures are well off the sketch's standard: a 20-ounce tub of Greek yogurt with granola at 34 grams and 250 to 300 calories, ten ounces of deli turkey at only 24 grams, and a cup and a half of lentils at 17 grams; it also contradicts itself on '8 ounces' versus 'a full pound of chicken'.",
+  "judgment_reason": "It met the constraints and caveated that the figures are estimates, but the numbers it summed on the calculator (183.5 grams, 2,015 calories) do not match the plan it then presented, a lapse in checking its own arithmetic.",
+  "spoken_fit_reason": "Plain prose with no markdown, but eight paragraphs is far too long for speech, and the word cap cut it off at lunch."
+}

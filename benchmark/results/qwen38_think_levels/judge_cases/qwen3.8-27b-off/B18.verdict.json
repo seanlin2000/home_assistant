@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It gives sourced sizes (Qwen3 14B about 9.3 GB, 8B about 5 GB, 32B about 20 GB, Qwen 3.6 27B about 16 to 17 GB at Q4) and real tradeoffs between context headroom, quality, and speed, but overstates 'All of it is Apache 2.0' where the source said 'most', and the text breaks off before finishing the MoE option.",
+  "judgment_reason": "It searched as instructed and flagged the 262K-context 16 GB result as needing a specialized fork rather than presenting it as typical.",
+  "spoken_fit_reason": "It leads with the landscape in mostly plain prose, but it is long enough to hit the word cap, uses a backticked 'ollama ps', and ends mid-sentence."
+}

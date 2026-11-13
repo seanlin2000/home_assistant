@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Covers parallel cores and high-bandwidth memory for matrix math, CUDA's role, the TPU as an ASIC, Groq, Cerebras and Etched as inference chips, and when a specialized chip wins (stable narrow workload, per-user speed given memory-bandwidth limits, power and cost per token) and when it loses.",
+  "judgment_reason": "Answered stable architecture concepts without searching and made the trade-off explicit by noting a narrow chip can become obsolete if model designs change.",
+  "spoken_fit_reason": "Leads with why GPUs work and stays in plain prose without lists, at a length the three-part question calls for."
+}

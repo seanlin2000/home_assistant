@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Every figure traces to the excerpts (Cerebras's May IPO raising $5.55 billion with the $10 billion OpenAI contract, Etched's $500 million and its range of over $5 billion to about $20 billion, SambaNova's $1 billion at about $11 billion, Positron's $750 million at $5 billion with 50 racks at Oracle, Fractile's $220 million), but it leaves out the valuations the sources gave for Cerebras and MatX.",
+  "judgment_reason": "Searched for current funding data, warned that figures vary by source, gave Etched's valuation as a range, and kept shipping progress (Cerebras, Positron racks) apart from future chips (Asimov, MatX One).",
+  "spoken_fit_reason": "Leads with the overall picture and then gives each company a sentence or two in plain prose without lists, which is about as compact as a six-company comparison can be."
+}

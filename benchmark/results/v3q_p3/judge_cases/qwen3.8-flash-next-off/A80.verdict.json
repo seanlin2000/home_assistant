@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 3,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The heard part gives correct figures of 140 GB at 16-bit and about 35 GB (roughly 40 with overhead) at 4-bit, but it was cut at 'At 2 bits it's about 17.', so the listener got no complete 2-bit figure and none of the quality and speed trade-offs.",
+  "judgment_reason": "It answered from knowledge without searching, used the calculator for the memory arithmetic, and labeled the figures as weights only with overhead noted.",
+  "spoken_fit_reason": "Five dense paragraphs that ran past the word cap and were cut off mid-number."
+}

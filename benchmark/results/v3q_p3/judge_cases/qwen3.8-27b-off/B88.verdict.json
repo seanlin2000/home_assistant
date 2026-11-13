@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The Kimi K3.1 Pro, DeepSeek V4.1 Flash 1017, Mistral Large 4 and Muse Spark Open details all trace to the retrieved excerpts, but the message stops mid-sentence after four items without the Qwen comparison the user asked for, though Qwen4-Max-Preview (November 11) was in the results.",
+  "judgment_reason": "Searching was right and the dates were flagged, but it wrongly calls October 15 and October 17 releases borderline or outside a 30-day window ending November 12, which understates releases that are within it.",
+  "spoken_fit_reason": "A long multi-paragraph spec rundown full of figures that the word cap cut during the second item."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The daily ranges and Sunday's heavy rain of nearly an inch and a half match the tool result, but it gives Monday and Tuesday lows as 'around forty-five to forty-seven' when both are 47, and it attributes the rain to an unsourced 'cold front'.",
+  "judgment_reason": "It used weather_forecast for Paris, Texas rather than searching and pointed out Saturday as the last dry day.",
+  "spoken_fit_reason": "It is plain prose, but three paragraphs going through every day is longer than the short answer the reference asks for."
+}

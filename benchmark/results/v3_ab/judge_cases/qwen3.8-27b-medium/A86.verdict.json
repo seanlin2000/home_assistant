@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The bridge-as-local-hub, multi-user app, and local app control during an outage are right, but it says Alexa and Google have an offline local mode so on/off 'often still work', when the sketch says cloud voice assistants stop, and it leaves out physical switches and a local voice option.",
+  "judgment_reason": "It ran two needless searches on a stable architecture question, though it was candid that its details had not been re-verified.",
+  "spoken_fit_reason": "It uses bold markdown headings such as '**Voice control**', glues the pre-search preamble onto the answer, and ran past the word cap."
+}

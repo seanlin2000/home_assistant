@@ -13,7 +13,6 @@ from mcp.server.mcpserver import MCPServer
 
 from assistant_core.agent_loop import filler_for
 from assistant_core.models import DEFAULT_RESTAURANTS_FILLER_PHRASES, RESTAURANTS_TOOL_NAMES, AgentPolicy, Route, RouteDecision, ToolCall, ToolSpec
-from assistant_core.prompts import SYSTEM_PROMPT
 from assistant_core.router import RESTAURANTS_DIRECTIVE, directive_for, route_to_offered_tools, rule_route
 from assistant_core.tools import McpToolBox
 from assistant_mcp.server import build_server
@@ -359,9 +358,14 @@ def test_a_restaurants_question_gets_the_restaurants_directive_and_is_searched_w
     assert route_to_offered_tools(decision, [ToolSpec(name="search_and_read", description="", input_schema={})]).route == Route.SEARCH
 
 
-def test_restaurants_get_their_own_filler_line_and_the_prompt_says_michelins_price_levels_in_words() -> None:
+async def test_restaurants_get_their_own_filler_line_and_max_price_says_michelins_price_levels_in_words(tmp_path: Path) -> None:
     policy = AgentPolicy()
     assert RESTAURANTS_TOOL_NAMES == {RESTAURANTS_TOOL_NAME, RESTAURANT_DETAILS_TOOL_NAME}
     assert filler_for(RESTAURANT_DETAILS_TOOL_NAME, policy) in DEFAULT_RESTAURANTS_FILLER_PHRASES
     assert set(DEFAULT_RESTAURANTS_FILLER_PHRASES) <= set(policy.every_filler_phrase)
-    assert '"Three dollar signs or less" is max_price=3' in SYSTEM_PROMPT
+    server = MCPServer("restaurants-test")
+    register_restaurants_tools(server, settings_in(tmp_path))
+    async with McpToolBox(server) as toolbox:
+        recommendations = next(spec for spec in await toolbox.list_tools() if spec.name == RESTAURANTS_TOOL_NAME)
+    max_price_description = recommendations.input_schema["properties"]["max_price"]["description"]
+    assert '"three dollar signs or less" is 3' in max_price_description and '"cheap" is 1' in max_price_description

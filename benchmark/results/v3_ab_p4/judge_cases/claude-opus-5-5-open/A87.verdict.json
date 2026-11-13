@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Treats the two problems separately with the sketch's causes (2.4 GHz interference, the speaker juggling projector and laptop, distance; bright image in a dark room, sitting close, focus and keystone, input lag, DLP rainbow) and ordered tests such as unpairing the laptop, 5 GHz Wi-Fi, a wired cable, game mode and changing one thing at a time.",
+  "judgment_reason": "Answered stable troubleshooting knowledge without searching and gave a one-change-at-a-time method as the question asked.",
+  "spoken_fit_reason": "Leads each problem with its likely cause in plain prose without bullets or markup, at a length the two-problem question warrants."
+}

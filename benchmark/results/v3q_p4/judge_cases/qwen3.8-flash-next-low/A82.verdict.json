@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It defines API, tool and MCP server correctly (including resources and prompts) and lays out a sound architecture: a local server, an agent loop with an iteration cap, search via SearXNG or Brave, fetch with extraction, a size cap and a timeout, and caching. It never mentions treating fetched text as untrusted against prompt injection, and the message stops mid-sentence.",
+  "judgment_reason": "It answered a stable architecture question from knowledge without searching and gave sensible guidance on when MCP is worth the extra machinery.",
+  "spoken_fit_reason": "The reply is a long essay of a dozen paragraphs that the word cap cut off before the MCP definition was even finished, so the listener heard none of the architecture."
+}

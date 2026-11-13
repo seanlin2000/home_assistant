@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The architecture (one Bridge, per-person Hue accounts invited to a shared Home, Matter multi-admin for voice) is sound and sourced, but the reply stops at the heading '**What happens when the internet goes down', so the second half of the question, which local paths keep working and that cloud voice stops, is never answered.",
+  "judgment_reason": "It made six searches and fetches for a question whose architecture and outage behavior are stable enough to answer from knowledge.",
+  "spoken_fit_reason": "It uses bold markdown paragraph headings, speaks three tool-use narration lines aloud, and is so long that the word cap cut it in the second section."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "Causes and triggers are separated well and the three events are defensible, but it puts the Belovezha Accords in mid-December and calls Ukraine's referendum later, when the referendum (December 1) came before the accords (December 8), an order error the sketch penalizes.",
+  "judgment_reason": "Answering from knowledge without a search was the right call for stable history, and it explicitly draws the cause-versus-trigger line the question asked for.",
+  "spoken_fit_reason": "Plain prose with no formatting, but it runs to six long paragraphs and the word cap cut it before the listener heard any of the three triggering events."
+}

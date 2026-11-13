@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": false,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It never mentions Vert Frais, the only Long Island City entry in the restaurant_recommendations result, and calls Casa Enrique 'Michelin-starred' although the Michelin snapshot does not list it and an excerpt says it holds a Michelin Plate; it also turns the 128-year-old soy sauce into 'twelve-year-old'.",
+  "judgment_reason": "Instead of saying the Michelin snapshot had only one nearby restaurant, it padded the list from web searches until it hit the tool-call limit, though it did label its per-person prices as its own estimates.",
+  "spoken_fit_reason": "Seven long paragraphs hit the word cap, so the listener heard only the introduction and Casa Enrique."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The final assistant message is empty, so no meal plan, protein totals or calorie totals were given.",
+  "judgment_reason": "It went searching for grocery prices nobody asked for, made four calls, and never delivered the plan the question was about.",
+  "spoken_fit_reason": "The listener heard only the preambles about looking up prices and then nothing, with no answer."
+}

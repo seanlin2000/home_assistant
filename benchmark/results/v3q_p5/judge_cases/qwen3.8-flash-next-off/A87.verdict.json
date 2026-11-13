@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 3,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The audio half is solid (the speaker paired to both devices, 2.4 GHz interference, distance, a weak projector radio, one-change-at-a-time tests, a dedicated transmitter), but the eye-strain half breaks off at \"This one is almost always about brightness, flick\", so half the question goes unanswered.",
+  "judgment_reason": "It answered from knowledge without searching and separated the two problems with an ordered test plan, as the question asked.",
+  "spoken_fit_reason": "It uses bold markdown headers and a long multi-paragraph structure, and the word cap cut it off early in the audio section."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It covers present value, the higher discount rate hitting distant cash flows hardest, growth stocks as long-duration assets with the long-bond analogy, and the bond-alternative and borrowing-cost effects, matching the sketch.",
+  "judgment_reason": "Answering stable finance theory without searching was right.",
+  "spoken_fit_reason": "It leads with the core valuation idea and builds the explanation in plain spoken sentences at a length the question warrants."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 2,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The listener heard a sound overall framing and Etched's sourced $300M at $10.3B and $700M at $21B rounds, but the word cap cut it before Cerebras, MatX, Positron, SambaNova and Fractile, so five of the six companies were never compared.",
+  "judgment_reason": "Searching was right and the figures trace to the excerpts, including flagging Etched's $40-50B talks as unclosed, but it spent ten tool calls, hitting the limit, and wrote a company-by-company essay that could not fit a spoken reply.",
+  "spoken_fit_reason": "Five narrated tool-use preambles and markdown bold company names precede a long answer that was cut after the first company."
+}

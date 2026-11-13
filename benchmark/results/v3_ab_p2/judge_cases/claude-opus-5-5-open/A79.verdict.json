@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Covers parallel cores for matrix math, CUDA, the TPU as the ASIC example, on-chip-memory and transformer-specific inference chips, and when a specialized chip wins or loses, but says only \"very fast memory\" without explaining that token generation is limited by memory bandwidth.",
+  "judgment_reason": "Treated a conceptual hardware question as not needing a search and stated the win and lose conditions as trade-offs rather than absolutes.",
+  "spoken_fit_reason": "Leads with why GPUs fit AI and stays in plain prose with no lists or markup, at a length the three-part question warrants."
+}

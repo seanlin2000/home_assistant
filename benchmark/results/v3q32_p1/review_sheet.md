@@ -1,0 +1,186 @@
+# Review sheet
+
+Read the answer, decide on gates and scores, then record them in review_sheet.yaml.
+
+## Contents
+
+- [qwen3.8-27b-medium](#review-qwen3-8-27b-medium): [A81](#review-qwen3-8-27b-medium-a81), [A82](#review-qwen3-8-27b-medium-a82), [A86](#review-qwen3-8-27b-medium-a86), [A87](#review-qwen3-8-27b-medium-a87)
+- [qwen3.8-flash-next-medium](#review-qwen3-8-flash-next-medium): [A76](#review-qwen3-8-flash-next-medium-a76), [A78](#review-qwen3-8-flash-next-medium-a78), [A82](#review-qwen3-8-flash-next-medium-a82), [B94](#review-qwen3-8-flash-next-medium-b94)
+
+<a id="review-qwen3-8-27b-medium"></a>
+
+## qwen3.8-27b-medium (4 to review)
+
+<a id="review-qwen3-8-27b-medium-a81"></a>
+
+### qwen3.8-27b-medium / A81 (random sample)
+
+**Question:** If I run a language model locally on my computer but use an external web-search API, what information can the search provider see? Explain what stays local, what gets transmitted, and how I can minimize data exposure.
+
+**Searched:** False
+
+**Spoken answer:**
+
+> The search provider sees only what you send it: the search query string, your IP address, and whatever metadata the API includes. It never sees your local files, your full conversation history, or the model's internal reasoning, because none of that is transmitted.
+
+Everything else stays local: the model weights, your prompts and chat history, the tool calls your agent makes, and the model's generated answer.
+
+To minimize exposure, use a query that carries no sensitive context — have the model paraphrase the search need rather than forwarding raw prompt text. Strip any personal names or details from queries. Use a VPN or proxy to mask your IP, and check the provider's privacy policy for logging. If possible, prefer a search API that states it does not retain queries.
+
+**Judge:** gates=none, quality 3/5, judgment 3/3, spoken 1/2
+
+- It names the query, IP and metadata, what stays local, and sound mitigations like paraphrasing queries and using a VPN, but it leaves out that the API key ties queries to an account, timing patterns, and the websites fetched afterwards, and it never suggests a self-hosted proxy or searching less.
+- Answering a stable architecture question from knowledge without a search was correct.
+- It leads with the answer in plain prose, but three paragraphs and a long list of mitigations run longer than a spoken reply needs.
+
+<a id="review-qwen3-8-27b-medium-a82"></a>
+
+### qwen3.8-27b-medium / A82 (random sample)
+
+**Question:** Explain the difference between an API, an MCP server, and a software tool. If I wanted to give a local LLM the ability to search the web, retrieve webpages, and summarize them, how would you architect the system?
+
+**Searched:** False
+
+**Spoken answer:**
+
+> An API is a contract: a set of functions with defined inputs and outputs. A tool is concrete code an LLM calls to act, often wrapping an API. An MCP server is a standardized server exposing tools over the Model Context Protocol, so any client can discover and invoke them without custom glue.
+
+For web search, run your local model through a tool-calling harness like Ollama or LM Studio, wire up an MCP client, and stand up an MCP server with three tools. A search tool takes a query and returns links and snippets, a fetch tool takes a URL and returns the page as text, and a summarize tool takes text and returns a summary, which can just call your own LLM. The harness runs a loop: the model requests a tool, the server executes it, the result feeds back, repeating until the model answers.
+
+**Judge:** gates=none, quality 4/5, judgment 3/3, spoken 1/2
+
+- It defines all three correctly and lays out a sound harness, MCP server, search, fetch and summarize tools, and agent loop, but it gives no safeguards such as a cap on tool rounds, timeouts, or treating fetched text as untrusted.
+- No search was needed for a stable software-architecture explanation, and none was made.
+- It is plain prose with no markup, but the second paragraph is a dense architecture walkthrough that runs long for a spoken reply.
+
+<a id="review-qwen3-8-27b-medium-a86"></a>
+
+### qwen3.8-27b-medium / A86 (random sample)
+
+**Question:** I have Philips Hue lights connected to a Hue Bridge. I want multiple people in my apartment to control the lights, including through voice commands. What is the best architecture for this, and what happens if the internet goes down?
+
+**Searched:** False
+
+**Spoken answer:**
+
+> The Hue Bridge is a Zigbee hub, so your lights talk to it over a short-range radio, not Wi-Fi. That local network works without any internet. For shared control, the cleanest setup is to keep the Bridge and have everyone use the Hue app, or better, run Home Assistant or Apple HomeKit on the local network. Both can drive the Bridge over your Wi-Fi, so several people each get their own app and voice options.
+
+If the internet drops, everything local keeps working: the Hue app, Home Assistant, and Apple HomePod voice commands still control the lights through the Bridge on your LAN. What breaks is cloud-dependent stuff — remote access from outside the house, and the usual cloud voice assistants like Alexa or Google Assistant, since they need the internet to process your voice. Apple HomeKit is the exception, doing voice locally on the HomePod.
+
+So the rule of thumb: put your control stack on the local network, and voice stays mostly alive offline; anything routed through the cloud goes dark.
+
+**Judge:** gates=none, quality 3/5, judgment 3/3, spoken 1/2
+
+- It gets the Zigbee bridge, local Hue app and Home Assistant control, and Alexa, Google and remote access failing offline right, but it overclaims that HomePod voice commands keep working locally so "voice stays mostly alive offline", which the sketch does not support, and it never mentions physical switches.
+- Answering stable smart-home architecture without searching was correct.
+- It leads with the answer in plain prose, but three paragraphs with a closing rule of thumb run longer than needed aloud.
+
+<a id="review-qwen3-8-27b-medium-a87"></a>
+
+### qwen3.8-27b-medium / A87 (random sample)
+
+**Question:** My projector is connected to a JBL Bluetooth speaker. Sometimes the audio becomes choppy when I connect my laptop, and playing video games on the projector causes more eye strain than playing on my monitor. What could cause these problems, and how would you systematically troubleshoot them?
+
+**Searched:** False
+
+**Spoken answer:**
+
+> Choppy audio is usually Bluetooth bandwidth or interference. If your speaker is paired with the projector and your laptop also sends Bluetooth audio, two connections sharing one radio can cause drops. Wi-Fi on 2.4 gigahertz is a common culprit too. To test, move the speaker closer, disconnect the laptop, and check whether Wi-Fi on another channel changes things. If the audio only chops when the laptop connects, the pairing conflict is almost certainly it.
+
+For eye strain, projectors refresh more slowly than monitors and often flicker slightly, with softer edges and motion blur. To confirm, compare the same game side by side, and check the projector's refresh rate setting. Switching to a higher rate, lowering the throw distance so the image isn't huge, and cutting brightness to match the room should help. If strain persists, that's the projector's limits, not a fixable fault.
+
+**Judge:** gates=none, quality 4/5, judgment 3/3, spoken 1/2
+
+- It separates the two problems, names the laptop pairing conflict and 2.4 GHz interference with a sensible isolate-the-laptop test, and covers motion blur, image size and brightness for eye strain, though it leaves out focus or keystone, the DLP rainbow effect, breaks, and a wired audio fallback.
+- It troubleshot from general knowledge without a needless search and laid out an order of tests for each problem.
+- Plain prose split by problem, but two dense paragraphs run long for a spoken reply.
+
+[Back to top](#review-sheet)
+
+<a id="review-qwen3-8-flash-next-medium"></a>
+
+## qwen3.8-flash-next-medium (4 to review)
+
+<a id="review-qwen3-8-flash-next-medium-a76"></a>
+
+### qwen3.8-flash-next-medium / A76 (random sample)
+
+**Question:** How did the Cold War end? Explain the three most important events that led to the dissolution of the Soviet Union, and distinguish between the causes and the immediate triggers.
+
+**Searched:** False
+
+**Spoken answer:**
+
+> The Cold War ended not by conquest but by the Soviet Union unravelling from within. The deep causes were structural: a stagnant, over-militarised economy unable to match Western living standards, and the loss of legitimacy that glasnost and perestroika unleashed once open criticism became possible. The immediate triggers were three events. First, 1989, when Poland, Hungary and the rest of the Eastern Bloc broke away peacefully and the Berlin Wall fell, removing the empire the USSR had to defend. Second, the failed hardliner coup in August 1991, which discredited Moscow's centre and handed real power to Yeltsin and the republics. Third, the December 1991 Belovezha Accords, after which Gorbachev resigned and the USSR was formally dissolved.
+
+**Judge:** gates=none, quality 4/5, judgment 3/3, spoken 2/2
+
+- Correctly separates structural causes (stagnant economy, glasnost and perestroika) from three triggers (1989 revolutions, August 1991 coup, Belovezha Accords) with correct order, but omits nationalism in the republics, the arms race and Afghanistan, and the Ukrainian referendum.
+- Answered stable history from knowledge without searching and drew the cause-versus-trigger distinction the question asked for.
+- Plain prose that leads with the answer, and its length fits a question asking for three events plus causes.
+
+<a id="review-qwen3-8-flash-next-medium-a78"></a>
+
+### qwen3.8-flash-next-medium / A78 (random sample)
+
+**Question:** Why can a country have a strong stock market while its average citizens feel like the economy is getting worse? Give three concrete examples of how this happens.
+
+**Searched:** True
+
+**Spoken answer:**
+
+> A stock index measures companies, not households, so the two can move apart. Three concrete ways that shows up.
+
+One, ownership is concentrated. Michigan's consumer sentiment sits around 51 now, and its own data shows confidence surged among high earners with big stock holdings while households with no stocks stayed dismal. The top 0.1 percent own about five times the wealth of the bottom half, so a market boom mostly enriches people who already own equities.
+
+Two, the index is narrow. Recent gains lean heavily on a handful of AI and tech names, with prices outrunning earnings, so a strong average hides weaker sectors like auto and traditional manufacturing, where loans stay expensive and demand is soft.
+
+Three, prices still bite. Inflation is about 3.7 percent, well below the 2022 peak, but inflation-adjusted wages have recently been falling, so paychecks feel worse even as the index hits records.
+
+**Judge:** gates=['searched_on_no_search_question'], quality 5/5, judgment 1/3, spoken 2/2
+
+- Gives three distinct, concrete mechanisms that match the sketch (concentrated stock ownership, a narrow tech-led index while autos and manufacturing lag, inflation-adjusted wages falling), and every figure it cites (sentiment 51, 3.7 percent inflation, top 0.1 percent wealth) appears in the excerpts.
+- Ran a web search for a conceptual economics question that needed none, although it used the results sensibly.
+- Leads with the core idea and gives the three examples as spoken 'One, Two, Three' prose with no markdown, which suits a request for three examples.
+
+<a id="review-qwen3-8-flash-next-medium-a82"></a>
+
+### qwen3.8-flash-next-medium / A82 (random sample)
+
+**Question:** Explain the difference between an API, an MCP server, and a software tool. If I wanted to give a local LLM the ability to search the web, retrieve webpages, and summarize them, how would you architect the system?
+
+**Searched:** False
+
+**Spoken answer:**
+
+> An API is a contract: a published way for one program to ask another for data or action, usually HTTP with defined endpoints and responses. A software tool is the concrete capability itself — code that does something, like a function that fetches a URL. An MCP server is neither exactly; it's a standardized host process that advertises its tools, prompts, and resources to an LLM over a shared protocol, so any compliant model can discover and call them without bespoke glue code. Think API as the interface, tool as the ability, MCP as the wiring that exposes tools to agents uniformly.
+
+For a local LLM, I'd build tool functions — search, fetch-and-read, summarize — run them in an MCP server the model connects to, and have the model loop: search, pick URLs, fetch, then summarize with retrieved text supplied as context.
+
+**Judge:** gates=none, quality 3/5, judgment 3/3, spoken 2/2
+
+- Distinguishes API, tool, and MCP server reasonably and sketches an MCP server with search and fetch tools in a model loop, but never describes a tool as a schema the model asks the host to run, and gives no safeguards (round cap, timeouts, untrusted fetched text, caching).
+- Answered a conceptual architecture question from knowledge without a needless search.
+- Plain prose that leads with the definitions, includes a crisp one-line summary, and has no markdown, at a reasonable length.
+
+<a id="review-qwen3-8-flash-next-medium-b94"></a>
+
+### qwen3.8-flash-next-medium / B94 (random sample)
+
+**Question:** Plan a five-day trip to Switzerland covering Lucerne, Interlaken, and Zermatt. Prioritize scenic train rides, lakes, and mountain viewpoints. Minimize strenuous hiking and explain which train passes or tickets would be most economical.
+
+**Searched:** True
+
+**Spoken answer:**
+
+> Five days, low effort, big views. Two nights Lucerne, two Interlaken, one Zermatt. Day one: Zurich to Lucerne, then a Lake Lucerne boat and the Rigi cog railway, which the pass covers in full, no walking needed. Day two: Pilatus by aerial cableway, half price with a pass. Day three: the Luzern–Interlaken Express over the Brünig Pass, about two hours, free with the pass; a seat reservation is twelve francs in November. Afternoon on Lake Brienz or the Harder Kulm funicular. Day four: Interlaken to Spiez, Visp and Zermatt, then the Gornergrat railway for the Matterhorn, half price. Day five: Zermatt back to Zurich.
+
+Cheapest: the Swiss Travel Pass, second class, four consecutive days at 309 francs or six at 399, since it also covers boats and city transit.
+
+**Judge:** gates=none, quality 4/5, judgment 2/3, spoken 1/2
+
+- The plan is geographically sensible and low-effort (Lake Lucerne boat, Rigi, Pilatus, the Luzern-Interlaken Express, Lake Brienz or Harder Kulm, Gornergrat), and pass prices of CHF 309 and 399 and the CHF 12 November reservation come from the sources, but 'two nights Lucerne, two Interlaken, one Zermatt' contradicts its own four-night itinerary, and a four-day pass does not fit five travel days.
+- Searched appropriately and compared the pass, Half Fare Card, and point-to-point tickets, but stated pass-coverage rules for Rigi, Pilatus, and Gornergrat that none of the excerpts give, and never mentioned checking seasonal operation.
+- Leads with the plan in plain spoken prose, but the day-by-day plan plus ticket comparison ran past the word cap and was cut.
+
+[Back to top](#review-sheet)

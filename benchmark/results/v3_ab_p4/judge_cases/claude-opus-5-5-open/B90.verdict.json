@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Lists exactly the ten running shows from the broadway_shows result in its views order, with the correct Show-Score audience scores (94, 91, 92, 92, then 91, 94, 90, 93, 86), closing dates where given, and a stable one-line description of each.",
+  "judgment_reason": "Used the Broadway tool instead of web search, explained the ranking basis, and said plainly that it has no ticket-sales or awards data instead of inventing any.",
+  "spoken_fit_reason": "Ten shows in numbered spoken sentences with a few words and a score each and no markup, as brief per show as a ten-item answer allows."
+}

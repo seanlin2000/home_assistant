@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It explains discounting, long duration, bonds as competition, higher borrowing costs, multiple compression and the 2022 example, with a correct worked figure (67.56 versus 46.32), but has small slips such as 'ten times the damage' for a roughly 31 versus 4 percent drop and the shaky claim that only the percentage change in the rate drives revaluation.",
+  "judgment_reason": "It answered from knowledge without searching, used the calculator for the illustration, and added a fair caveat on when the relationship does not hold.",
+  "spoken_fit_reason": "The opening paragraphs lead with the core mechanism in plain prose, but the six-paragraph reply was cut by the word cap before the worked numbers and amplifying channels."
+}

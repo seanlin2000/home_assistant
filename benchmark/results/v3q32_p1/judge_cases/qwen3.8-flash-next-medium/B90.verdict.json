@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Lists the ten running shows from the broadway_shows result in view-count order, explains the ranking, and cites only scores and closing dates the result gives, but calls Cursed Child 'two-part' when the Broadway production now runs as one, and several shows get no score.",
+  "judgment_reason": "Used the Broadway tool instead of a web search, named its ranking basis, and avoided inventing awards or sales figures.",
+  "spoken_fit_reason": "Ten shows in spoken 'One, Two, Three' sentences with only a few words each, about as compact as a ten-item answer can be."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 3,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "Vert Frais is correctly given as Japanese, $$, in the guide without a star, and the other four come from the fetched Infatuation page, but those four carry no rating at all, their per-person prices are invented (disclosed only at the very end), and details drift from the source, such as 'mole de Puebla' for mole de Piaxtla and Casa Enrique placed 'on the waterfront'.",
+  "judgment_reason": "When the Michelin tool returned only one nearby restaurant, it padded the list with a web search instead of saying so plainly, and it assumed 'walking distance' without knowing where the user is.",
+  "spoken_fit_reason": "About seven hundred words in seven long paragraphs were cut by the word cap during the second restaurant."
+}
