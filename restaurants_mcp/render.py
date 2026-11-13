@@ -47,6 +47,14 @@ def nearby_text(listed: list[NearbyRestaurant], total: int, place: str, filters:
     return "\n".join(lines)
 
 
+def short_list_note(found: int, asked_for: int) -> str:
+    """Asked for ten and given one, models padded the list from a web search with places and prices the guide never gave (benchmark B93)."""
+    if found == 0 or found >= asked_for:
+        return ""
+    how_many = "only one restaurant" if found == 1 else f"only {found} restaurants"
+    return f"The guide lists {how_many} for this. Tell the user so, and do not search the web to add more; offer to drop a filter or look in a wider area."
+
+
 def filter_text(filters: RestaurantFilters) -> str:
     labels = [f"{filters.cuisine} cuisine"] if filters.cuisine else []
     if filters.max_price is not None:

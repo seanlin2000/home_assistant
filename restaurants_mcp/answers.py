@@ -9,7 +9,7 @@ from collections.abc import Awaitable, Callable
 
 from restaurants_mcp.descriptions import DescriptionReader
 from restaurants_mcp.locations import area_named, is_near_request, place_named_near
-from restaurants_mcp.render import nearby_text, no_match_text, restaurant_details_text, restaurants_text, several_matches_text
+from restaurants_mcp.render import nearby_text, no_match_text, restaurant_details_text, restaurants_text, several_matches_text, short_list_note
 from restaurants_mcp.restaurant_names import restaurants_named
 from restaurants_mcp.restaurants import RestaurantsSnapshot
 from restaurants_mcp.selection import RestaurantFilters, best_awarded_first, nearest_first
@@ -43,7 +43,7 @@ class RestaurantAnswers:
             return NO_SNAPSHOT_MESSAGE
         text = clip_to_whole_lines(await answer(snapshot), self.settings.max_words)
         stale_note = age_note(snapshot.refreshed_at, listing_today(self.settings), self.settings.stale_after_days)
-        return f"{text}\n{stale_note}" if stale_note else text
+        return with_note(text, stale_note)
 
     async def recommend(self, snapshot: RestaurantsSnapshot, location: str, filters: RestaurantFilters, limit: int) -> str:
         area = None if is_near_request(location) else area_named(snapshot.restaurants, location)
@@ -51,7 +51,7 @@ class RestaurantAnswers:
             return await self.recommend_near(snapshot, place_named_near(location), filters, limit)
         found = best_awarded_first([restaurant for restaurant in area.restaurants if filters.admits(restaurant)])
         listed = await self.descriptions.with_descriptions(found[:limit], snapshot.refreshed_at)
-        return restaurants_text(listed, len(found), area.label, filters)
+        return with_note(restaurants_text(listed, len(found), area.label, filters), short_list_note(len(found), limit))
 
     async def recommend_near(self, snapshot: RestaurantsSnapshot, place_name: str, filters: RestaurantFilters, limit: int) -> str:
         try:
@@ -64,7 +64,7 @@ class RestaurantAnswers:
         nearby = nearest_first([restaurant for restaurant in snapshot.restaurants if filters.admits(restaurant)], place)
         described = await self.descriptions.with_descriptions([near.restaurant for near in nearby[:limit]], snapshot.refreshed_at)
         listed = [near.model_copy(update={"restaurant": restaurant}) for near, restaurant in zip(nearby, described)]
-        return nearby_text(listed, len(nearby), place.label, filters)
+        return with_note(nearby_text(listed, len(nearby), place.label, filters), short_list_note(len(nearby), limit))
 
     async def describe(self, snapshot: RestaurantsSnapshot, asked: str, location: str) -> str:
         area = area_named(snapshot.restaurants, location) if location else None
@@ -75,3 +75,7 @@ class RestaurantAnswers:
             return several_matches_text(named.restaurants, asked)
         [restaurant] = await self.descriptions.with_descriptions(named.restaurants, snapshot.refreshed_at)
         return restaurant_details_text(restaurant)
+
+
+def with_note(text: str, note: str) -> str:
+    return f"{text}\n{note}" if note else text
