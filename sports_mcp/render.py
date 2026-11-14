@@ -18,14 +18,17 @@ from sports_mcp.espn_records import (
     Game,
     LoggedGame,
     PlayerSeasons,
+    RankedPlayer,
     Roster,
     RosterPlayer,
     StatCategory,
     TeamLine,
+    TeamSeason,
     box_score_columns,
 )
 from sports_mcp.game_finder import MOST_SEASONS_AWAY
 from sports_mcp.leagues import League
+from sports_mcp.rankings import OPPONENT, PlayerRankingAsk, RankedList, StatField, TeamRankingAsk, counted_position, position_plural
 from sports_mcp.teams import Team
 from utils.text_utils import clip_to_whole_lines, word_count
 
@@ -48,6 +51,17 @@ class StatGroup:
     category: str
     yards: str
     columns: tuple[Column, ...]
+
+
+@dataclass(frozen=True)
+class RosterTable:
+    """One table of a team's players for the season, ranked by one column. An NFL table leaves out players with no yards in it, so a
+    receiver's single carry gets a row but a tight end who only blocks does not; an NBA player who played gets a row even with no points."""
+
+    title: str
+    columns: tuple[Column, ...]
+    ranked_by: Column
+    leaves_out_zero: bool
 
 
 @dataclass(frozen=True)
@@ -104,6 +118,11 @@ NFL_STAT_GROUPS = (
     ),
 )
 MIN_CAREER_YARDS_FOR_A_SIDE_TABLE = 500
+NFL_POSITIONS_WITH_STAT_TABLES = frozenset({"QB", "RB", "FB", "WR", "TE"})  # the passing, rushing and receiving tables; a lineman's page has none of them
+NBA_ROSTER_TABLE = RosterTable("", NBA_SEASON_COLUMNS, NBA_SEASON_COLUMNS[1], leaves_out_zero=False)
+NFL_ROSTER_TABLES = tuple(RosterTable(f"{group.category.capitalize()}:", group.columns, Column(group.category, group.yards, "yards"), leaves_out_zero=True) for group in NFL_STAT_GROUPS)
+ROSTER_RANKING = {League.NBA: "most points per game first", League.NFL: "each table with the most yards first"}
+NO_STATISTICS_LABEL = {League.NBA: "No games this season", League.NFL: "No passing, rushing or receiving yards this season"}
 NBA_GAME_LINES = (GameStatLine("minutes", "{points} PTS, {totalRebounds} REB, {assists} AST, {" + THREES + "} 3PT"),)
 NFL_GAME_LINES = (
     GameStatLine(PASSING_ATTEMPTS, "{completions}/{passingAttempts}, {passingYards} pass YDS, {passingTouchdowns} TD, {interceptions} INT"),
@@ -252,6 +271,53 @@ def roster_line(player: RosterPlayer) -> str:
     return " | ".join(part for part in parts if part)
 
 
+def has_stat_table(league: League, player: RosterPlayer) -> bool:
+    return league is League.NBA or player.position in NFL_POSITIONS_WITH_STAT_TABLES
+
+
+def roster_stats_text(league: League, team: Team, start_year: int, players: list[tuple[RosterPlayer, PlayerSeasons]]) -> str:
+    """Every rostered player's season in one table per kind of statistic, then the players with none, with their injury status, so the model
+    names who is out rather than skipping them or reading last season's numbers."""
+    espn_season = league.espn_season(start_year)
+    heading = f"{league.label}: {team.display_name} players, {league.season_label(start_year)} regular season, {ROSTER_RANKING[league]}"
+    if not players:
+        return f"{heading}\nESPN's roster for this team names no player whose statistics can be read."
+    tables = [NBA_ROSTER_TABLE] if league is League.NBA else list(NFL_ROSTER_TABLES)
+    lines = [heading]
+    listed: set[str] = set()
+    for table in tables:
+        rows = ranked_rows(table, espn_season, players)
+        listed.update(player.name for player, _ in rows)
+        lines.extend(roster_table_lines(team, table, espn_season, rows))
+    unlisted = [player for player, _ in players if player.name not in listed]
+    if unlisted:
+        lines.append(f"{NO_STATISTICS_LABEL[league]}: " + ", ".join(f"{player.name} ({player.injury})" if player.injury else player.name for player in unlisted))
+    return "\n".join(lines)
+
+
+def ranked_rows(table: RosterTable, espn_season: int, players: list[tuple[RosterPlayer, PlayerSeasons]]) -> list[tuple[RosterPlayer, PlayerSeasons]]:
+    ranked = []
+    for player, seasons in players:
+        rank = stat_number(table.ranked_by.name, stat_value(seasons, table.ranked_by, espn_season))
+        if rank is not None and not (table.leaves_out_zero and rank == 0):
+            ranked.append((rank, player, seasons))
+    return [(player, seasons) for _, player, seasons in sorted(ranked, key=lambda entry: entry[0], reverse=True)]
+
+
+def roster_table_lines(team: Team, table: RosterTable, espn_season: int, rows: list[tuple[RosterPlayer, PlayerSeasons]]) -> list[str]:
+    if not rows:
+        return []
+    header = " | ".join(["player", *(column.label for column in table.columns)])
+    lines = [(player_with_other_teams(team, player, seasons, espn_season), [stat_value(seasons, column, espn_season) for column in table.columns]) for player, seasons in rows]
+    return [*([table.title] if table.title else []), header, *(" | ".join([name, *values]) for name, values in lines)]
+
+
+def player_with_other_teams(team: Team, player: RosterPlayer, seasons: PlayerSeasons, espn_season: int) -> str:
+    """A player who joined during the season has one row for the whole of it; naming the teams he played for says the figures are not all this team's."""
+    played_for = season_team(seasons, espn_season)
+    return f"{player.name} (with {played_for})" if played_for and played_for != team.abbreviation else player.name
+
+
 def player_heading(league: League, player: FoundPlayer) -> str:
     return f"{league.label}: {player.name}" + (f" ({player.team})" if player.team else "")
 
@@ -296,20 +362,28 @@ def season_table(league: League, seasons: PlayerSeasons, columns: tuple[Column, 
     if not in_range:
         return []
     header = " | ".join(["season", "team", *(column.label for column in present)])
-    rows = [season_line(league, espn_season, present, rows_by_category) for espn_season in in_range]
+    rows = [season_line(league, espn_season, present, seasons) for espn_season in in_range]
     career = " | ".join(["Career (every season)", "", *(career_value(rows_by_category[column.category], column.name) for column in present)])
     return [header, *rows, career]
 
 
-def season_line(league: League, espn_season: int, columns: list[Column], rows_by_category: dict[str, StatCategory]) -> str:
-    rows = {name: next((row for row in category.rows if row.espn_season == espn_season), None) for name, category in rows_by_category.items()}
-    team = next((row.team for row in rows.values() if row is not None and row.team), "")
-    values = []
-    for column in columns:
-        row = rows[column.category]
-        names = rows_by_category[column.category].names
-        values.append(row.stats[names.index(column.name)] if row is not None and names.index(column.name) < len(row.stats) else "")
-    return " | ".join([league.season_label(league.start_year(espn_season)), team, *values])
+def season_line(league: League, espn_season: int, columns: list[Column], seasons: PlayerSeasons) -> str:
+    values = [stat_value(seasons, column, espn_season) for column in columns]
+    return " | ".join([league.season_label(league.start_year(espn_season)), season_team(seasons, espn_season), *values])
+
+
+def season_team(seasons: PlayerSeasons, espn_season: int) -> str:
+    return next((row.team for category in seasons.categories for row in category.rows if row.espn_season == espn_season and row.team), "")
+
+
+def stat_value(seasons: PlayerSeasons, column: Column, espn_season: int) -> str:
+    """One season's figure as ESPN wrote it, or empty when the player has no row that season or ESPN left the stat out."""
+    category = seasons.category(column.category)
+    if category is None or column.name not in category.names:
+        return ""
+    row = next((row for row in category.rows if row.espn_season == espn_season), None)
+    index = category.names.index(column.name)
+    return row.stats[index] if row is not None and index < len(row.stats) else ""
 
 
 def career_value(category: StatCategory, name: str) -> str:
@@ -387,3 +461,71 @@ def played(lines: Iterable[GameStatLine], game: LoggedGame) -> list[GameStatLine
 
 def did(game: LoggedGame, stat: str) -> bool:
     return stat_number(stat, game.stats.get(stat, "")) not in (None, 0.0)
+
+
+def player_rankings_text(ask: PlayerRankingAsk, start_year: int, ranked: RankedList) -> str:
+    """ESPN's own order, which is its qualified list sorted by the statistic; the heading says who is on that list, so a short or empty answer
+    reads as few qualified players, not as a fault."""
+    heading = f"{ask.league.label}: {player_ranking_who(ask, ranked)}, {ask.league.season_label(start_year)} regular season, {ranking_order(ask.ranked.ranked, ask.ascending)}"
+    if not ranked.players:
+        return f"{heading}\n{no_players_note(ask, ranked)}"
+    columns = [ask.ranked.ranked, *(field for field in ask.ranked.context if field.key != ask.ranked.ranked.key)]
+    header = " | ".join(["player", "position", "team", *(field.label for field in columns)])
+    rows = [" | ".join([player.name, player.position, player.team, *(player.stats.get(field.key, "-") for field in columns)]) for player in ranked.players]
+    return "\n".join([heading, *shortfall_note(ask, ranked), header, *rows, *all_zero_note([player.stats for player in ranked.players], ask.ranked.ranked, ask.ascending)])
+
+
+def player_ranking_who(ask: PlayerRankingAsk, ranked: RankedList) -> str:
+    qualified = f"ESPN's {ranked.qualified_count} qualified {ask.ranked.pool}"
+    if not ask.position:
+        return f"{len(ranked.players)} of {qualified}"
+    return f"{counted_position(ask.position, len(ranked.players))} from {qualified}"
+
+
+def ranking_order(ranked: StatField, ascending: bool) -> str:
+    return f"by {ranked.label}, {'fewest' if ascending else 'most'} first"
+
+
+def no_players_note(ask: PlayerRankingAsk, ranked: RankedList) -> str:
+    if not ask.position:
+        return f"ESPN lists no qualified {ask.ranked.pool} yet this season."
+    return f"No {position_plural(ask.position)} are among the first {ranked.read_count} of them."
+
+
+def shortfall_note(ask: PlayerRankingAsk, ranked: RankedList) -> list[str]:
+    if not ask.position or not ranked.players or len(ranked.players) >= ask.count:
+        return []
+    where = "on the whole list" if ranked.read_count >= ranked.qualified_count else f"among the first {ranked.read_count} of them"
+    verb = "is" if len(ranked.players) == 1 else "are"
+    return [f"Only {counted_position(ask.position, len(ranked.players))} {verb} {where}."]
+
+
+def all_zero_note(rows: list[dict[str, str]], ranked: StatField, ascending: bool) -> list[str]:
+    """A fewest-first list of a statistic most players never record is all zeros, and its order then means nothing."""
+    if ascending and rows and all(stat_number(ranked.name, row.get(ranked.key, "")) == 0 for row in rows):
+        return [f"Every one listed has 0 {ranked.label}, so their order says nothing; many more are tied at 0."]
+    return []
+
+
+def team_rankings_text(ask: TeamRankingAsk, start_year: int, teams: list[TeamSeason]) -> str:
+    ranked = ranked_teams(ask, teams)
+    heading = f"{ask.league.label}: {len(ranked)} of {len(teams)} teams, {ask.league.season_label(start_year)} regular season, {ranking_order(ask.ranked.ranked, ask.ascending)}"
+    if not ranked:
+        return f"{heading}\nESPN lists no {ask.ranked.ranked.label} for any team yet this season."
+    columns = [ask.ranked.ranked, *(field for field in ask.ranked.context if (field.key, field.side) != (ask.ranked.ranked.key, ask.ranked.ranked.side))]
+    header = " | ".join(["team", *(field.label for field in columns)])
+    rows = [" | ".join([team.name, *(team_figure(team, field) for field in columns)]) for team in ranked]
+    return "\n".join([heading, header, *rows, *all_zero_note([team_side(team, ask.ranked.ranked) for team in ranked], ask.ranked.ranked, ask.ascending)])
+
+
+def ranked_teams(ask: TeamRankingAsk, teams: list[TeamSeason]) -> list[TeamSeason]:
+    figured = [(number, team) for team in teams if (number := stat_number(ask.ranked.ranked.name, team_figure(team, ask.ranked.ranked))) is not None]
+    return [team for _, team in sorted(figured, key=lambda entry: entry[0], reverse=not ask.ascending)][: ask.count]
+
+
+def team_figure(team: TeamSeason, field: StatField) -> str:
+    return team_side(team, field).get(field.key, "-")
+
+
+def team_side(team: TeamSeason, field: StatField) -> dict[str, str]:
+    return team.opponent if field.side == OPPONENT else team.own

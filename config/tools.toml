@@ -39,6 +39,10 @@ marks_untrusted = true                      # numbers, but under names and game 
 tier = "read_public"
 marks_untrusted = true                      # names from ESPN, free text cut to four words
 
+[tools.roster_stats]
+tier = "read_public"
+marks_untrusted = true                      # numbers, but under names and injury notes from ESPN
+
 [tools.player_stats]
 tier = "read_public"
 marks_untrusted = true                      # numbers, but under names from ESPN
@@ -46,6 +50,14 @@ marks_untrusted = true                      # numbers, but under names from ESPN
 [tools.player_matchup]
 tier = "read_public"
 marks_untrusted = true                      # numbers, but under names and game notes from ESPN
+
+[tools.player_rankings]
+tier = "read_public"
+marks_untrusted = true                      # numbers, but under names from ESPN
+
+[tools.team_rankings]
+tier = "read_public"
+marks_untrusted = true                      # numbers, but under team names from ESPN
 
 [tools.broadway_shows]
 tier = "read_public"

@@ -1,4 +1,4 @@
-"""Reads ESPN's public JSON for the sports tools: scoreboards, team schedules, box scores, rosters, player search, season statistics and game logs.
+"""Reads ESPN's public JSON for the sports tools: scoreboards, team schedules, box scores, rosters, player search, season statistics, game logs, and the league-wide player and team lists.
 
 The hosts are fixed by settings, not chosen by the model, so requests skip the public-address guard that fetch_page applies, as the Wikipedia and
 Met.no clients do; a redirect is refused instead of followed. ESPN publishes no rate limit, so the client sends at most a few requests at a time,
@@ -23,13 +23,17 @@ from sports_mcp.espn_records import (
     Game,
     LoggedGame,
     PlayerSeasons,
+    RankedPage,
     Roster,
+    TeamSeason,
     read_box_score,
     read_found_player,
     read_game_log,
     read_games,
     read_player_seasons,
+    read_ranked_page,
     read_roster,
+    read_team_seasons,
 )
 from sports_mcp.leagues import League
 from sports_mcp.settings import SportsSettings
@@ -39,6 +43,8 @@ OK = 200
 REGULAR_SEASON_TYPE = 2
 PLAYOFFS_SEASON_TYPE = 3
 PLAYERS_TO_SEARCH = 10
+TEAMS_PER_LEAGUE_AT_MOST = 50
+LIST_PARAMS = {"region": "us", "lang": "en", "contentorigin": "espn"}  # what ESPN's own statistics pages send
 Parsed = TypeVar("Parsed")
 
 
@@ -89,7 +95,7 @@ class EspnSession:
 
     async def roster(self, league: League, team: Team) -> Roster:
         url = f"{self._settings.site_base_url}/{league.espn_path}/teams/{team.espn_id}/roster"
-        return await self._kept(f"roster:{league}:{team.espn_id}", ROSTER_SECONDS, TypeAdapter(Roster), lambda: self._read(url, {}, read_roster))
+        return await self._kept(f"roster-with-ids:{league}:{team.espn_id}", ROSTER_SECONDS, TypeAdapter(Roster), lambda: self._read(url, {}, read_roster))
 
     async def find_player(self, league: League, spoken: str) -> FoundPlayer | None:
         """ESPN's best-known player of that name in the league. A miss is not kept, so a player ESPN adds later is found."""
@@ -106,6 +112,18 @@ class EspnSession:
     async def player_seasons(self, league: League, player: FoundPlayer) -> PlayerSeasons:
         url = f"{self._settings.web_base_url}/common/v3/sports/{league.espn_path}/athletes/{player.espn_id}/stats"
         return await self._kept(f"seasons:{league}:{player.espn_id}", CURRENT_SEASON_SECONDS, TypeAdapter(PlayerSeasons), lambda: self._read(url, {}, read_player_seasons))
+
+    async def player_ranking_page(self, league: League, espn_category: str, sort: str, page: int, limit: int) -> RankedPage:
+        """One page of the season's qualified players, sorted by ESPN; a category narrows the NFL's list to passers, rushers, receivers or defenders."""
+        url = f"{self._settings.web_base_url}/common/v3/sports/{league.espn_path}/statistics/byathlete"
+        params = {**LIST_PARAMS, "isqualified": "true", "sort": sort, "page": page, "limit": limit} | ({"category": espn_category} if espn_category else {})
+        key = f"rankings:{league}:{espn_category}:{sort}:{page}:{limit}"
+        return await self._kept(key, CURRENT_SEASON_SECONDS, TypeAdapter(RankedPage), lambda: self._read(url, params, read_ranked_page))
+
+    async def team_seasons(self, league: League) -> list[TeamSeason]:
+        url = f"{self._settings.web_base_url}/common/v3/sports/{league.espn_path}/statistics/byteam"
+        params = {**LIST_PARAMS, "limit": TEAMS_PER_LEAGUE_AT_MOST}
+        return await self._kept(f"teamseasons:{league}", CURRENT_SEASON_SECONDS, TypeAdapter(list[TeamSeason]), lambda: self._read(url, params, read_team_seasons))
 
     async def game_logs(self, league: League, player: FoundPlayer, espn_seasons: list[int]) -> list[LoggedGame]:
         """Every regular-season and playoff game of those seasons, read a few seasons at a time."""

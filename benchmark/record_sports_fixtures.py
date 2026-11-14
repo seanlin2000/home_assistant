@@ -34,7 +34,7 @@ COMPETITION = {
     "leaders": [LEADER],
 }
 GAMES = {"events": [{"id": KEEP, "date": KEEP, "seasonType": {"type": KEEP}, "season": {"type": KEEP}, "competitions": [COMPETITION]}]}
-ROSTER_PLAYER = {"displayName": KEEP, "jersey": KEEP, "position": {"abbreviation": KEEP}, "injuries": [{"status": KEEP}]}
+ROSTER_PLAYER = {"id": KEEP, "displayName": KEEP, "jersey": KEEP, "position": {"abbreviation": KEEP}, "injuries": [{"status": KEEP}]}
 # An NBA roster lists players; an NFL roster lists groups, each with a position name and its players as items. One shape covers both, because a
 # field shaped as a mapping is kept as it is when the answer holds a plain value there, as a group's position is.
 ROSTER = {"season": {"displayName": KEEP}, "athletes": [{**ROSTER_PLAYER, "items": [ROSTER_PLAYER]}]}
@@ -63,7 +63,24 @@ BOX_SCORE = {
         "players": [{"team": {"id": KEEP, "displayName": KEEP, "abbreviation": KEEP}, "statistics": [BOX_SCORE_PLAYERS]}],
     },
 }
-SHAPES_BY_PATH_END = {"scoreboard": GAMES, "schedule": GAMES, "summary": BOX_SCORE, "roster": ROSTER, "v2": SEARCH, "stats": STATS, "gamelog": GAME_LOG}
+LIST_CATEGORY = {"name": KEEP, "displayName": KEEP, "splitId": KEEP, "names": KEEP, "totals": KEEP}
+RANKED_PLAYERS = {
+    "pagination": {"count": KEEP, "pages": KEEP},
+    "categories": [LIST_CATEGORY],
+    "athletes": [{"athlete": {"displayName": KEEP, "teamShortName": KEEP, "position": {"abbreviation": KEEP}}, "categories": [LIST_CATEGORY]}],
+}
+TEAM_SEASONS = {"categories": [LIST_CATEGORY], "teams": [{"team": {"displayName": KEEP, "abbreviation": KEEP}, "categories": [LIST_CATEGORY]}]}
+SHAPES_BY_PATH_END = {
+    "scoreboard": GAMES,
+    "schedule": GAMES,
+    "summary": BOX_SCORE,
+    "roster": ROSTER,
+    "v2": SEARCH,
+    "stats": STATS,
+    "gamelog": GAME_LOG,
+    "byathlete": RANKED_PLAYERS,
+    "byteam": TEAM_SEASONS,
+}
 
 # Category J's calls, with the spellings and argument shapes a small model is likely to use for each question, so any of them finds a recording.
 CALLS = (

@@ -32,7 +32,7 @@ ROUTER_SYSTEM_PROMPT = """You sort spoken questions for a home voice assistant. 
 search: the correct answer depends on facts that change over time or that the assistant cannot know without checking: current prices, rates, news, schedules, product availability, recent releases, market conditions, what to buy today, whether an offer is competitive right now, or a claim about a recent event. Also anything the user explicitly asks to be searched or looked up.
 calculate: the correct answer requires arithmetic on numbers in the question: percentages, totals over time, compounding, unit or temperature conversions, energy costs, loan payments, tips, splits, or date differences.
 weather: the coming or current weather or forecast, at home or in any named place: whether it will rain, how warm or cold it will get, whether to take an umbrella or a coat, the weekend forecast.
-sports: NBA or NFL game scores (live, recent, or long past), how a player did in one game, a team's roster, a player's season or career statistics, or how a player or team did against another. Other leagues and sports are search.
+sports: NBA or NFL game scores (live, recent, or long past), how a player did in one game, a team's roster, a player's season or career statistics, league leaders or rankings of players or teams, or how a player or team did against another. Other leagues and sports are search.
 shows: what is playing on Broadway or Off-Broadway in New York, now or soon: which musicals or plays are running, the most popular or best reviewed, shows of a genre or under a price, rush and lottery tickets, and what one of those shows is about.
 movies: what movies are showing in movie theaters in Manhattan this week: what is playing, the widest or newest releases, movies of a genre, whether and where one movie is showing, what one theater shows. A movie's plot, cast, or reviews is search.
 restaurants: where to eat in a city or neighbourhood, or near a place: restaurant recommendations by cuisine, price, or Michelin award, and what one restaurant is like. They come from the Michelin Guide. A restaurant's opening hours, menu, or reservations, and the best place for one dish, are search.
@@ -64,7 +64,7 @@ This question is about the weather. Call weather_forecast first, with place set 
 Example call: weather_forecast(day="saturday", part_of_day="all", place="Lisbon")
 """
 SPORTS_DIRECTIVE = """Routing for this question: SPORTS.
-This question is about NBA or NFL scores, rosters, or statistics. Call game_scores for scores, box_score for one game's player statistics, team_roster for a roster, player_stats for a player's seasons, or player_matchup for a head-to-head; do not search the web and do not answer from memory. Answer from the numbers the tool returns.
+This question is about NBA or NFL scores, rosters, or statistics. Call game_scores for scores, box_score for one game's player statistics, team_roster for a roster, roster_stats for every player's season on one team, player_stats for a player's seasons, player_matchup for a head-to-head, or player_rankings and team_rankings for league leaders or the worst in the league; do not search the web and do not answer from memory. Answer from the numbers the tool returns.
 Example call: player_stats(league="nba", player="Stephen Curry", from_season=2011, to_season=2025)
 """
 SHOWS_DIRECTIVE = """Routing for this question: SHOWS.
@@ -135,7 +135,7 @@ SPORTS_STATISTIC = re.compile(
     re.IGNORECASE,
 )
 SPORTS_LEAGUE = re.compile(r"\b(nba|nfl)\b", re.IGNORECASE)
-SPORTS_ASK = re.compile(r"\b(scores?|box score|stat line|won|win|beat|lost|roster|stats|statistics|record|standings|career|season)\b", re.IGNORECASE)
+SPORTS_ASK = re.compile(r"\b(scores?|box score|stat line|won|win|beat|lost|roster|stats|statistics|record|standings|career|season|leaders?|leading|rank\w*|fewest)\b", re.IGNORECASE)
 # The shows rule fires on Off-Broadway alone, or on Broadway with a theater word: Broadway is also a street, so "the best pizza on Broadway" or
 # "a hotel near Broadway and 42nd" is left to the model layer.
 OFF_BROADWAY = re.compile(r"\boff[- ]broadway\b", re.IGNORECASE)
