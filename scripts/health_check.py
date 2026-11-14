@@ -5,7 +5,7 @@ launchd runs this every five minutes (scripts/services.sh installs the agent). R
     uv run python scripts/health_check.py                  # probe, record, act
     uv run python scripts/health_check.py --dry-run        # probe and say what it would do; writes nothing
     uv run python scripts/health_check.py --no-remediate   # probe and record, take no action
-    uv run python scripts/health_check.py --leave-vm       # restart services, but never start or restart the VM
+    uv run python scripts/health_check.py --leave-vm       # restart services, but never start the VM
     uv run python scripts/health_check.py --full           # also run a real SearXNG query (hits upstream engines)
     uv run python scripts/health_check.py --json           # the snapshot as JSON
 """
@@ -28,7 +28,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="Probe the assistant's services, record a health snapshot, and self-heal per policy.")
     parser.add_argument("--json", action="store_true", help="print the snapshot as JSON instead of a table")
     parser.add_argument("--no-remediate", action="store_true", help="record only; never restart anything")
-    parser.add_argument("--leave-vm", action="store_true", help="restart services, but never start or restart the Home Assistant VM")
+    parser.add_argument("--leave-vm", action="store_true", help="restart services, but never start the Home Assistant VM")
     parser.add_argument("--dry-run", action="store_true", help="print what would happen; write nothing")
     parser.add_argument("--full", action="store_true", help="run the SearXNG query probe too")
     parser.add_argument("--last", action="store_true", help="print the last recorded snapshot in one line and exit")

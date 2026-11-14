@@ -218,17 +218,18 @@ Each run checks these conditions in order, and when the maintenance flag is pres
 | A launchd agent (Ollama, the tool server, Whisper, Kokoro) failed 2 checks in a row | `launchctl kickstart -k` that agent | 30 minutes, per agent |
 | SearXNG failed 2 checks in a row | `scripts/searxng.sh up` | 30 minutes |
 | `utmctl status` says the VM is not started | `utmctl start` | 30 minutes |
-| The VM is started and Home Assistant failed 5 checks in a row | `utmctl stop`, wait 10 seconds, `utmctl start` | 2 hours |
+| The VM is started and Home Assistant fails checks | None: the failures are recorded and the VM keeps running | Not applicable |
 
 Why the thresholds are staged:
 
 - **Two failures before a restart.** One slow probe must not restart Ollama, because a restart unloads the model.
-- **Five failures before the VM restarts.** Home Assistant disappears for minutes during its own updates and add-on installs, so it gets 25 minutes.
-- **A two-hour cooldown on the VM.** If Home Assistant is truly broken, the VM restarts at most twelve times a day, the report shows the pattern, and a person fixes it.
+- **No restart of a running VM.** On the Studio, Home Assistant failing its checks has meant the Mac lost its own path to the VM over the Wi-Fi bridge, not that Home Assistant was broken. A restart does not cure that, and it does harm:
+    - `utmctl stop` powers the VM off, so Home Assistant never closes its connection to the voice puck. The puck keeps the dead connection, turns the new one away, and flashes red after the wake word until it is unplugged.
+    - The bad bridge entry was seen to come back within a minute of each boot.
 
 Every action goes into the snapshot as one line, such as `kickstart:mcp (mcp failed 2 checks in a row): ok`, so the report can show what the machine did to itself. `tests/test_health.py` pins every threshold and cooldown without touching launchd or UTM.
 
-On the laptop the agent is installed with `HEALTH_CHECK_FLAGS=--leave-vm scripts/services.sh install`, so it restarts failed services and a stuck llama-server but never starts or restarts the VM, because the laptop's VM is stopped on purpose most of the time. `--no-remediate` records and never acts. The mini uses the default and acts on everything.
+On the laptop the agent is installed with `HEALTH_CHECK_FLAGS=--leave-vm scripts/services.sh install`, so it restarts failed services and a stuck llama-server but never starts the VM, because the laptop's VM is stopped on purpose most of the time. `--no-remediate` records and never acts. The mini uses the default and acts on everything.
 
 ### Logs and the report {#the-report}
 
@@ -429,7 +430,8 @@ When something goes wrong, find the symptom here:
 | `MAINTENANCE FLAG SET` in `status` | a deploy died halfway, or a rollback did not answer | `scripts/mini.sh logs`, then `scripts/mini.sh rollback` or `ssh` in and `python -m ops.deploy clear-maintenance` |
 | `deploy` refuses before contacting the mini | uncommitted changes, or the commit is not pushed | `git status`, `git push`, or pass `--ref` |
 | `deploy` reports `applied false` | the preflight or the tests failed on the mini | the `tests` field in the printed JSON; the checkout is back on the old commit |
-| The same `vm_restart:vm` action every two hours in the report | Home Assistant is broken and the cooldown is bounding the restarts | Settings, System, Logs in Home Assistant; `scripts/mini.sh logs` |
+| `home_assistant` fails in the report from the Studio, but Home Assistant opens from the laptop | the Wi-Fi bridge lists the Studio's own address on the Wi-Fi port, so the Studio cannot reach its VM | on the Studio, `ifconfig en1` shows its own address after `ether`; if `ifconfig bridge100` lists that address under `Address cache` on `en1`, the bad entry is there; it expires after 20 minutes |
+| The voice puck beeps after the wake word, then flashes red, and Home Assistant shows no pipeline run | the VM was powered off without a clean shutdown and the puck is holding the old connection (`Multiple API Clients` in Home Assistant's log) | unplug the puck for 5 seconds |
 | `push-vm` fails with `Operation not permitted` | the terminal lacks Full Disk Access to UTM's sandboxed folder | System Settings, Privacy & Security, Full Disk Access |
 | The Mac gets sluggish and apps get killed | the VM, the speech services, and something else heavy at once | the shutdown commands in step 9, then Activity Monitor, Memory |
 

@@ -100,8 +100,6 @@ class Policy(BaseModel):
     searxng_failures: int = 2
     searxng_cooldown_seconds: float = 30 * 60
     vm_start_cooldown_seconds: float = 30 * 60
-    ha_failures: int = 5
-    vm_restart_cooldown_seconds: float = 2 * 60 * 60
     manage_vm: bool = True  # False on the laptop, where the VM is stopped on purpose
     daily_restart_hour: int = 4  # local time
     daily_restart_window_hours: int = 2  # a night busy all through the window skips that day's restart rather than restart in the day
@@ -116,7 +114,7 @@ class LlamaWatch(BaseModel):
 
 
 class Action(BaseModel):
-    kind: str  # kickstart | searxng_up | vm_start | vm_restart
+    kind: str  # kickstart | searxng_up | vm_start
     target: str
     reason: str
 
@@ -387,11 +385,11 @@ def decide_actions(checks: dict[str, Check], state: State, policy: Policy, now: 
             actions.append(Action(kind="kickstart", target=name, reason=f"{name} failed {failures[name]} checks in a row"))
     if failures.get("searxng", 0) >= policy.searxng_failures and cooled("searxng_up:searxng", policy.searxng_cooldown_seconds):
         actions.append(Action(kind="searxng_up", target="searxng", reason=f"searxng failed {failures['searxng']} checks in a row"))
+    # A running VM is never restarted when Home Assistant stops answering: on the Studio that is usually the Wi-Fi bridge losing the path
+    # from this Mac to the VM, which a reboot does not cure, and utmctl stop powers the VM off, which leaves the voice puck holding a dead connection.
     vm_check = checks.get("vm") if policy.manage_vm else None
     if vm_check is not None and vm_check.ok is False and cooled("vm_start:vm", policy.vm_start_cooldown_seconds):
         actions.append(Action(kind="vm_start", target="vm", reason=f"vm is {vm_check.detail}"))
-    elif vm_check is not None and vm_check.ok and failures.get("home_assistant", 0) >= policy.ha_failures and cooled("vm_restart:vm", policy.vm_restart_cooldown_seconds):
-        actions.append(Action(kind="vm_restart", target="vm", reason=f"home assistant failed {failures['home_assistant']} checks while the vm runs"))
     restart = llama_restart(checks.get("llama"), llama_watch or LlamaWatch())
     if restart is not None and cooled(LLAMA_RESTART_KEY, policy.agent_cooldown_seconds) and LLAMA_RESTART_KEY not in {action.key for action in actions}:
         actions.append(restart)
@@ -429,10 +427,6 @@ def execute(action: Action, settings: Settings) -> str:
     elif action.kind == "searxng_up":
         result = subprocess.run([str(PROJECT_DIR / "scripts" / "searxng.sh"), "up"], capture_output=True, text=True, timeout=120)
     elif action.kind == "vm_start":
-        result = subprocess.run(["utmctl", "start", settings.vm_name], capture_output=True, text=True, timeout=60)
-    elif action.kind == "vm_restart":
-        subprocess.run(["utmctl", "stop", settings.vm_name], capture_output=True, text=True, timeout=120)
-        time.sleep(10)
         result = subprocess.run(["utmctl", "start", settings.vm_name], capture_output=True, text=True, timeout=60)
     else:
         raise ValueError(f"unknown action {action.kind}")
