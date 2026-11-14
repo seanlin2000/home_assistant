@@ -264,7 +264,7 @@ function userTurn(text, notes, extraClass = "") {
 function questionNotes(detail) {
   const record = detail.record;
   const notes = [record.source === "home_assistant" ? `🎤 spoken · ${localTime(record.recorded_at)}` : `typed · ${record.source} · ${localTime(record.recorded_at)}`];
-  if (detail.speech && detail.speech.heard && wordsOnly(detail.speech.heard) !== wordsOnly(record.user_text)) notes.push(`Whisper heard: “${detail.speech.heard}”`);
+  if (detail.speech && detail.speech.heard && wordsOnly(detail.speech.heard) !== wordsOnly(record.user_text)) notes.push(`Speech to text heard: “${detail.speech.heard}”`);
   return notes;
 }
 

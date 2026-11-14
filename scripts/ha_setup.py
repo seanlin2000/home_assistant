@@ -3,15 +3,15 @@
 Steps (each is skipped when already done, so the script can be re-run):
   1. onboarding: create the owner account, finish the onboarding wizard, mint a long-lived token (saved to .env as HA_TOKEN)
   2. add-ons: Samba (for deploys), Piper (the alternative text to speech), Music Assistant, ESPHome (for the puck), openWakeWord (optional server-side wake word)
-  3. integrations: Wyoming entries for Whisper and Kokoro on this Mac (replacing ones that point at another Mac), confirm the discovered Piper add-on,
+  3. integrations: Wyoming entries for the speech server's two ports on this Mac (replacing ones that point at another Mac), confirm the discovered Piper add-on,
      and point studio_assistant at the harness
-  4. pipeline: an Assist pipeline "Jarvis" using Whisper, studio_assistant, and Kokoro's Fable voice, set as preferred (--tts piper for Piper)
+  4. pipeline: an Assist pipeline "Jarvis" using the speech server's speech to text, studio_assistant, and its Ryan voice, set as preferred (--tts piper for Piper)
   5. weather: copy the home location, time zone, and units into .env for the weather_forecast tool, and hide every weather entity from Assist so
      Home Assistant's built-in weather intent finds nothing to answer with and every weather question reaches studio_assistant
 
     uv run python scripts/ha_setup.py --host 192.168.1.60          # first run
     uv run python scripts/ha_setup.py --host 192.168.1.60 --only pipeline
-    uv run python scripts/ha_setup.py --host 192.168.1.60 --only pipeline --tts-voice bm_george   # another Kokoro voice
+    uv run python scripts/ha_setup.py --host 192.168.1.60 --only pipeline --tts-voice serena   # another of the speech server's voices
     uv run python scripts/ha_setup.py --host 192.168.1.60 --only weather   # then scripts/services.sh install, so the tool server sees the coordinates
 
 Credentials: HA_ADMIN_USER / HA_ADMIN_PASSWORD / HA_SAMBA_PASSWORD are read from .env and generated if missing. Everything lives on the LAN.
@@ -49,11 +49,15 @@ ADDONS = {
     "5c53de3b_esphome": {"options": None},
     "core_openwakeword": {"options": {"threshold": 0.5, "trigger_level": 1}},
 }
-WYOMING_SERVICES = {"whisper": ("Whisper on the Mac", 10300), "kokoro": ("Kokoro on the Mac", 10210)}
+# The keys name the .env entries (HA_WYOMING_WHISPER_ENTRY, HA_WYOMING_KOKORO_ENTRY) that record each Wyoming entry's id. They keep the names of the
+# services that first answered on these ports, so an existing setup keeps its entries: the speech server took over both ports.
+WYOMING_SERVICES = {"whisper": ("speech to text on the Mac", 10300), "kokoro": ("text to speech on the Mac", 10210)}
 PIPELINE_NAME = "Jarvis"
-# The language and voice each text-to-speech engine is given when none is named. Both engines advertise region codes (en_US, en_GB); a bare "en" is
-# rejected at run time with tts-not-supported. Kokoro's Fable is a British voice, so it needs en_GB. Piper's voice is set on its add-on (ADDONS).
-TTS_DEFAULTS = {"kokoro": ("en_GB", "bm_fable"), "piper": ("en_US", None)}
+# The language and voice each text-to-speech engine is given when none is named. Home Assistant matches the language exactly against the voice's
+# region codes (en_US, en_GB); a bare "en" that Piper does not list is accepted by the pipeline editor and then fails every run with
+# tts-not-supported. The speech server lists en_GB because the pipeline built for Kokoro's British Fable asked for it. Piper's voice is set on its
+# add-on (ADDONS).
+TTS_DEFAULTS = {"speech": ("en_GB", "ryan"), "piper": ("en_US", None)}
 
 
 def env_value(name: str, generate: bool = False) -> str:
@@ -280,8 +284,9 @@ async def pipeline(ha: HomeAssistant, args: argparse.Namespace) -> None:
     pipelines = await ha.ws({"type": "assist_pipeline/pipeline/list"})
     existing = next((item for item in pipelines["pipelines"] if item["name"] == PIPELINE_NAME), None)
     registry = await ha.ws({"type": "config/entity_registry/list"})
-    stt = entity_id(registry, "stt", "wyoming", "whisper")
-    tts = entity_id(registry, "tts", "wyoming", args.tts)
+    saved = dotenv_values(ENV_PATH)
+    stt = wyoming_entity_id(registry, "stt", saved.get("HA_WYOMING_WHISPER_ENTRY"))
+    tts = wyoming_entity_id(registry, "tts", saved.get("HA_WYOMING_KOKORO_ENTRY")) if args.tts == "speech" else entity_id(registry, "tts", "wyoming", args.tts)
     agent = entity_id(registry, "conversation", "studio_assistant", "")
     payload = pipeline_payload(stt, agent, TextToSpeech(tts, args.tts_language, args.tts_voice))
     if existing:
@@ -292,6 +297,15 @@ async def pipeline(ha: HomeAssistant, args: argparse.Namespace) -> None:
         pipeline_id = created["id"]
     await ha.ws({"type": "assist_pipeline/pipeline/set_preferred", "pipeline_id": pipeline_id})
     print(f"pipeline: '{PIPELINE_NAME}' uses {stt} -> {agent} -> {tts} ({args.tts_language}, voice {args.tts_voice or 'the engine default'}) (preferred)")
+
+
+def wyoming_entity_id(registry: list[dict[str, Any]], domain: str, entry_id: str | None) -> str:
+    """The entity the recorded Wyoming entry made. Its name comes from whichever program answered when the entry was made (stt.mlx_whisper and
+    tts.kokoro on a setup older than the speech server), so the entry, not the name, says which one is the speech server's."""
+    matches = [entry["entity_id"] for entry in registry if entry["entity_id"].startswith(f"{domain}.") and entry.get("config_entry_id") == entry_id]
+    if entry_id is None or not matches:
+        raise LookupError(f"no {domain} entity for the Wyoming entry {entry_id!r} recorded in .env; run --only integrations first")
+    return matches[0]
 
 
 class TextToSpeech(NamedTuple):
@@ -356,11 +370,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--mac-ip",
         default=os.environ.get("MAC_LAN_IP") or this_mac_address(),
-        help="LAN address of the Mac where Whisper, Kokoro, and the harness listen (default: this Mac's, from scripts/network_identity.sh)",
+        help="LAN address of the Mac where the speech server and the harness listen (default: this Mac's, from scripts/network_identity.sh)",
     )
-    parser.add_argument("--tts", default="kokoro", choices=sorted(TTS_DEFAULTS), help="which text-to-speech entity the pipeline uses")
-    parser.add_argument("--tts-voice", help="the voice the pipeline asks for (default: bm_fable for Kokoro, the add-on's voice for Piper)")
-    parser.add_argument("--tts-language", help="the text-to-speech language, a region code such as en_US (default: en_GB for Kokoro, en_US for Piper)")
+    parser.add_argument("--tts", default="speech", choices=sorted(TTS_DEFAULTS), help="which text-to-speech entity the pipeline uses")
+    parser.add_argument("--tts-voice", help="the voice the pipeline asks for (default: ryan for the speech server, the add-on's voice for Piper)")
+    parser.add_argument("--tts-language", help="the text-to-speech language, a region code such as en_US (default: en_GB for the speech server, en_US for Piper)")
     parser.add_argument("--only", action="append", choices=STEPS, help="run only these steps")
     parser.add_argument("--latitude", type=float, default=40.7484)
     parser.add_argument("--longitude", type=float, default=-73.9857)

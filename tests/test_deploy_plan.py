@@ -53,12 +53,17 @@ def test_component_only_change_redeploys_the_component() -> None:
 
 
 def test_lock_change_syncs_first_and_restarts_every_python_service() -> None:
-    assert actions("uv.lock") == ["sync_env", "restart:mcp", "restart:harness", "restart:dashboard", "restart:kokoro", "restart:whisper"]
-    assert actions("pyproject.toml", "voice/kokoro_server.py")[0] == "sync_env"
+    assert actions("uv.lock") == ["sync_env", "restart:mcp", "restart:harness", "restart:dashboard", "restart:speech"]
+    assert actions("pyproject.toml", "speech_server/models.py")[0] == "sync_env"
+
+
+def test_a_speech_server_change_restarts_only_the_speech_server() -> None:
+    assert actions("speech_server/handlers.py") == ["restart:speech"]
+    assert actions("config/speech.toml") == ["restart:speech"]
 
 
 def test_services_script_change_reinstalls_agents_instead_of_individual_restarts() -> None:
-    assert actions("scripts/services.sh", "assistant_mcp/server.py", "voice/kokoro_server.py") == ["reinstall_agents"]
+    assert actions("scripts/services.sh", "assistant_mcp/server.py", "speech_server/models.py") == ["reinstall_agents"]
     assert actions("scripts/services.sh", "uv.lock") == ["sync_env", "reinstall_agents"]
 
 

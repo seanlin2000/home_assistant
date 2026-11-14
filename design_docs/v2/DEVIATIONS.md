@@ -27,6 +27,12 @@ Every place the build departs from the v2 design, with the reason. Grouped by th
 | 2026-11-11 | `assistant_core/prompts.py` (prompt 3.0), `config/harness.toml` | 02 | For Qwen 3.8 27B the router is off (`route_questions = false`), so the note before each question carries only the date; six earlier exchanges are replayed instead of three; thinking is on at medium effort per request (`think = "medium"`); the system prompt drops from 8,909 to 2,470 characters. | The router, the per-tool prompt sections and the three-exchange window were added for Gemma 4 E4B's failures; the larger model chooses tools from their definitions. The benchmark measures the change. |
 
 
+## 08. Hardware and deployment
+
+| Date | Part of the system | Also touches | Deviation | Why |
+|---|---|---|---|---|
+| 2026-11-14 | `speech_server/`, `config/speech.toml`, `scripts/services.sh` (the `speech` agent), `ops/health.py`, `ops/deploy.py` | 10 | One speech server, Qwen3-ASR 1.7B and Qwen3-TTS 0.6B CustomVoice (voice Ryan) in one MLX process from its own `.venv-speech`, replaces Whisper large-v3-turbo and Kokoro on the same ports, 10300 and 10210 (sections 3.1 and 4). It takes about 3.9 GB against about 2.5 GB for the two it replaces. Home Assistant's Wyoming entries and pipeline stay as they were: the server lists `en_GB`, the language the pipeline asks for. | Kokoro mispronounced names and harder words ("Xi Jinping" came out as "Zaijimping") and Whisper was slower on short commands (0.71 s against 0.28 s on the laptop). Qwen3-TTS streams sentence by sentence, as Kokoro did, and Qwen3-ASR was chosen at 1.7B for accuracy. |
+
 ## 10. Operations
 
 | Date | Part of the system | Also touches | Deviation | Why |

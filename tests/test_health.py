@@ -1,5 +1,6 @@
 """The health policy is a pure function; these tests pin the thresholds and cooldowns from design doc 10 §3.5 and the housekeeping from §3.6."""
 
+import asyncio
 import json
 import subprocess
 from datetime import date, datetime, timedelta, timezone
@@ -26,7 +27,7 @@ UTMCTL_FROM_SSH_STDERR = (
 
 
 def healthy_checks() -> dict[str, Check]:
-    return {name: OK for name in ("llama", "mcp", "whisper", "kokoro", "searxng", "home_assistant")} | {"vm": VM_UP}
+    return {name: OK for name in ("llama", "mcp", "speech", "searxng", "home_assistant")} | {"vm": VM_UP}
 
 
 def after_failures(checks: dict[str, Check], runs: int, state: State | None = None) -> State:
@@ -58,18 +59,18 @@ def test_a_recovery_resets_the_count() -> None:
 
 
 def test_kickstart_respects_the_cooldown() -> None:
-    checks = healthy_checks() | {"whisper": DOWN}
+    checks = healthy_checks() | {"speech": DOWN}
     state = after_failures(checks, 5)
-    state.last_action_at["kickstart:whisper"] = NOW - 10 * 60
+    state.last_action_at["kickstart:speech"] = NOW - 10 * 60
     assert health.decide_actions(checks, state, Policy(), NOW, maintenance=False) == []
-    state.last_action_at["kickstart:whisper"] = NOW - 31 * 60
-    assert keys(health.decide_actions(checks, state, Policy(), NOW, maintenance=False)) == ["kickstart:whisper"]
+    state.last_action_at["kickstart:speech"] = NOW - 31 * 60
+    assert keys(health.decide_actions(checks, state, Policy(), NOW, maintenance=False)) == ["kickstart:speech"]
 
 
 def test_unloaded_agent_is_skipped_not_failed() -> None:
-    checks = healthy_checks() | {"kokoro": Check(ok=None, detail="not loaded")}
+    checks = healthy_checks() | {"speech": Check(ok=None, detail="not loaded")}
     state = after_failures(checks, 4)
-    assert state.consecutive_failures["kokoro"] == 0
+    assert state.consecutive_failures["speech"] == 0
     assert health.decide_actions(checks, state, Policy(), NOW, maintenance=False) == []
 
 
@@ -154,6 +155,24 @@ async def test_harness_check_sends_its_key_and_names_what_the_harness_cannot_rea
         check = await health.check_harness(client, health.Settings(harness_key_path=key_path))
     assert seen["authorization"] == "Bearer secret"
     assert (check.ok, check.detail) == (True, "cannot reach llama-server")
+
+
+async def test_the_speech_check_needs_both_of_the_speech_servers_ports_open() -> None:
+    async def accept(reader: asyncio.StreamReader, writer: asyncio.StreamWriter) -> None:
+        writer.close()
+
+    listening = await asyncio.start_server(accept, "127.0.0.1", 0)
+    closed = await asyncio.start_server(accept, "127.0.0.1", 0)
+    open_port, closed_port = listening.sockets[0].getsockname()[1], closed.sockets[0].getsockname()[1]
+    closed.close()
+    await closed.wait_closed()
+    try:
+        both_open = health.Settings(speech_to_text_port=open_port, text_to_speech_port=open_port, harness_key_path=Path("unused"), llama_key_path=Path("unused"))
+        assert (await health.check_speech_server(both_open)).ok
+        with pytest.raises(OSError):
+            await health.check_speech_server(both_open.model_copy(update={"text_to_speech_port": closed_port}))
+    finally:
+        listening.close()
 
 
 def test_full_searxng_check_passes_on_one_engine_but_says_there_is_no_fallback() -> None:

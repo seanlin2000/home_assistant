@@ -114,7 +114,7 @@ def test_the_setup_adds_llama_servers_model_weights_and_lists_components_not_run
     llama = by_name["llama-server"]
     assert (llama.ram_bytes, llama.model_weights_bytes, llama.compressed_bytes) == (384 * 1024**2 + MODEL_WEIGHTS_BYTES, MODEL_WEIGHTS_BYTES, 128 * 1024**2)
     assert llama.model_memory == served(MODEL_WEIGHTS_BYTES)
-    assert (by_name["harness"].processes, by_name["Kokoro, text to speech"].processes) == (1, 0)
+    assert (by_name["harness"].processes, by_name["speech server, Qwen3-ASR and Qwen3-TTS"].processes) == (1, 0)
     assert view.setup[0].name == "llama-server"
     assert view.setup_ram_bytes == sum(group.ram_bytes for group in view.setup)
 

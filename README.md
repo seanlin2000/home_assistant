@@ -15,7 +15,7 @@ Phase 2 (proof of concept) is running. Benchmark passes 1 to 5 are complete (`be
                                                  │                       │ tool call
                                                  │                 assistant_mcp, the tool server ──▶ the web
                                                  │                 (web search, calculator, and every other tool package)
-                                                 └──▶ Kokoro / Piper ──▶ puck speaker
+                                                 └──▶ Qwen3-TTS / Piper ──▶ puck speaker
   Music Assistant + Spotify ──▶ Sonos
 ```
 
@@ -46,7 +46,7 @@ uv run manual-check --png out/ operator_manual/04_conversation_agent.md   # also
 uv run draw-diagram diagram.mmd --png out/diagram.png                      # render one loose diagram the way the site does
 uv run mkdocs serve           # read the operator manual at http://127.0.0.1:8000/home_assistant/
 scripts/speech_lab.sh         # try speech models in the browser at http://127.0.0.1:8795: Qwen3-ASR, Qwen3-TTS, OmniVoice (own .venv-speech-lab)
-scripts/speech_server.sh --asr-port 10301 --tts-port 10211   # Qwen3-ASR + Qwen3-TTS over Wyoming beside Whisper and Kokoro (own .venv-speech; config/speech.toml)
+scripts/speech_server.sh --asr-port 10301 --tts-port 10211   # the speech server by hand, beside the speech agent: Qwen3-ASR + Qwen3-TTS over Wyoming (own .venv-speech; config/speech.toml)
 ```
 
 Upgrade dependencies deliberately with `scripts/dev_setup.sh --upgrade`, review the `uv.lock` diff, run the tests, commit.

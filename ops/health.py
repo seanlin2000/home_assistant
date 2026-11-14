@@ -33,7 +33,7 @@ from utils.snapshot_utils import SnapshotMissing, read_snapshot
 from web_search_mcp.searxng_client import describe_unresponsive_engines
 
 LAUNCHD_PREFIX = "com.studio-assistant"
-LAUNCHD_SERVICES = ("llama", "mcp", "harness", "whisper", "kokoro")
+LAUNCHD_SERVICES = ("llama", "mcp", "harness", "speech")
 LLAMA_SERVER_PROCESS = "llama-server"
 LLAMA_RESTART_KEY = "kickstart:llama"
 DEFAULT_VM_NAME = "Home Assistant"
@@ -129,8 +129,8 @@ class Settings(BaseModel):
     mcp_url: str = "http://127.0.0.1:8765"
     harness_url: str = "http://127.0.0.1:8770"
     harness_key_path: Path = Field(default_factory=lambda: load_harness_config().service.api_key_path)
-    whisper_port: int = 10300
-    kokoro_port: int = 10210
+    speech_to_text_port: int = 10300
+    text_to_speech_port: int = 10210
     searxng_url: str = "http://127.0.0.1:8080"
     ha_base: str | None = None
     ha_token: str | None = None
@@ -157,8 +157,7 @@ async def run_checks(settings: Settings, full: bool = False) -> dict[str, Check]
             timed("llama", check_llama_server(client, settings)),
             timed("mcp", check_mcp(client, settings)),
             timed("harness", check_harness(client, settings)),
-            timed("whisper", check_tcp("127.0.0.1", settings.whisper_port, settings.probe_timeout_seconds)),
-            timed("kokoro", check_tcp("127.0.0.1", settings.kokoro_port, settings.probe_timeout_seconds)),
+            timed("speech", check_speech_server(settings)),
             timed("searxng", check_searxng(client, settings, full)),
             timed("home_assistant", check_home_assistant(client, settings)),
             timed("vm", asyncio.to_thread(check_vm, settings.vm_name)),
@@ -238,6 +237,13 @@ async def check_tcp(host: str, port: int, timeout: float) -> Check:
     writer.close()
     await writer.wait_closed()
     return Check(ok=True, detail=f"port {port} open")
+
+
+async def check_speech_server(settings: Settings) -> Check:
+    """One process serves both ports, so either one closed is the speech agent failing."""
+    for port in (settings.speech_to_text_port, settings.text_to_speech_port):
+        await check_tcp("127.0.0.1", port, settings.probe_timeout_seconds)
+    return Check(ok=True, detail=f"ports {settings.speech_to_text_port} and {settings.text_to_speech_port} open")
 
 
 async def check_searxng(client: httpx.AsyncClient, settings: Settings, full: bool) -> Check:

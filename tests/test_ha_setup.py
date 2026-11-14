@@ -17,10 +17,10 @@ def parsed(monkeypatch: pytest.MonkeyPatch, *flags: str) -> argparse.Namespace:
     return ha_setup.parse_args()
 
 
-def test_the_pipeline_speaks_with_kokoros_fable_voice_by_default(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_the_pipeline_speaks_with_the_speech_servers_ryan_voice_by_default(monkeypatch: pytest.MonkeyPatch) -> None:
     args = parsed(monkeypatch)
 
-    assert (args.tts, args.tts_language, args.tts_voice) == ("kokoro", "en_GB", "bm_fable")
+    assert (args.tts, args.tts_language, args.tts_voice) == ("speech", "en_GB", "ryan")
 
 
 def test_piper_keeps_its_add_on_voice_and_us_english(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -30,9 +30,9 @@ def test_piper_keeps_its_add_on_voice_and_us_english(monkeypatch: pytest.MonkeyP
 
 
 def test_a_named_voice_and_language_override_the_engine_defaults(monkeypatch: pytest.MonkeyPatch) -> None:
-    args = parsed(monkeypatch, "--tts-voice", "af_heart", "--tts-language", "en_US")
+    args = parsed(monkeypatch, "--tts-voice", "serena", "--tts-language", "en_US")
 
-    assert (args.tts, args.tts_language, args.tts_voice) == ("kokoro", "en_US", "af_heart")
+    assert (args.tts, args.tts_language, args.tts_voice) == ("speech", "en_US", "serena")
 
 
 def test_the_payload_carries_the_text_to_speech_choice_with_a_region_code() -> None:
@@ -40,6 +40,19 @@ def test_the_payload_carries_the_text_to_speech_choice_with_a_region_code() -> N
 
     assert (payload["tts_engine"], payload["tts_language"], payload["tts_voice"]) == ("tts.kokoro", "en_GB", "bm_fable")
     assert (payload["stt_engine"], payload["conversation_engine"], payload["name"]) == ("stt.mlx_whisper", "conversation.studio_assistant", "Jarvis")
+
+
+def test_the_speech_servers_entities_are_found_by_the_recorded_entry_whatever_their_names() -> None:
+    registry = [
+        {"entity_id": "stt.mlx_whisper", "platform": "wyoming", "config_entry_id": "whisper-2"},
+        {"entity_id": "tts.kokoro", "platform": "wyoming", "config_entry_id": "kokoro-2"},
+        {"entity_id": "tts.piper", "platform": "wyoming", "config_entry_id": "piper-1"},
+    ]
+
+    assert ha_setup.wyoming_entity_id(registry, "stt", "whisper-2") == "stt.mlx_whisper"
+    assert ha_setup.wyoming_entity_id(registry, "tts", "kokoro-2") == "tts.kokoro"
+    with pytest.raises(LookupError, match="--only integrations"):
+        ha_setup.wyoming_entity_id(registry, "tts", None)
 
 
 @pytest.mark.parametrize("engine", sorted(ha_setup.TTS_DEFAULTS))

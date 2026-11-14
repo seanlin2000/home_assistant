@@ -40,8 +40,8 @@ class Rule(BaseModel):
 RULES: tuple[Rule, ...] = (
     Rule(
         prefixes=("uv.lock", "pyproject.toml"),
-        actions=("sync_env", "restart:mcp", "restart:harness", "restart:dashboard", "restart:whisper", "restart:kokoro"),
-        why="dependencies changed: sync the venv and restart every long-running Python service",
+        actions=("sync_env", "restart:mcp", "restart:harness", "restart:dashboard", "restart:speech"),
+        why="dependencies changed: sync both environments and restart every long-running Python service",
     ),
     Rule(
         prefixes=(
@@ -68,7 +68,7 @@ RULES: tuple[Rule, ...] = (
         actions=("restart:llama", "restart:harness"),
         why="llama-server's settings or its launcher changed; the harness reads the model's budget from them",
     ),
-    Rule(prefixes=("voice/",), actions=("restart:kokoro",), why="Kokoro server wrapper changed"),
+    Rule(prefixes=("speech_server/", "config/speech.toml"), actions=("restart:speech",), why="the speech server's code or settings changed"),
     Rule(prefixes=("scripts/services.sh",), actions=("reinstall_agents",), why="launchd definitions changed"),
     Rule(prefixes=("docker/searxng/",), actions=("restart_searxng",), why="SearXNG configuration changed"),
     Rule(prefixes=("config/tools.toml",), actions=("restart:harness",), why="the tools the harness may call changed; it reads them at start"),
@@ -85,12 +85,11 @@ ACTION_ORDER = (
     "restart:mcp",
     "restart:harness",
     "restart:dashboard",
-    "restart:kokoro",
-    "restart:whisper",
+    "restart:speech",
     "restart_searxng",
     "deploy_component",
 )
-RESTARTS_COVERED_BY_REINSTALL = {"restart:llama", "restart:mcp", "restart:harness", "restart:dashboard", "restart:kokoro", "restart:whisper"}
+RESTARTS_COVERED_BY_REINSTALL = {"restart:llama", "restart:mcp", "restart:harness", "restart:dashboard", "restart:speech"}
 
 
 class Plan(BaseModel):
@@ -160,6 +159,7 @@ def execute(action: str) -> None:
     scripts = PROJECT_DIR / "scripts"
     if action == "sync_env":
         run([str(scripts / "dev_setup.sh")])
+        run([str(scripts / "speech_env.sh")])
     elif action == "reinstall_agents":
         run([str(scripts / "services.sh"), "install"])
     elif action.startswith("restart:"):
