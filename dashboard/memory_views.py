@@ -3,8 +3,8 @@
 The tab splits the RAM into pieces that add up to it: what each app holds in RAM as-is, llama-server's model weights, the compressed memory of every
 app packed together, macOS itself, and what is free. An app's physical footprint, the figure Activity Monitor shows, also counts what macOS has
 compressed for it or moved to disk, so footprints can add up to far more than the RAM; `top` reports that part per process, and the footprint minus
-it is what the app holds in RAM. llama-server's model weights are mapped from the model file and held by the GPU, outside any footprint, so the size
-llama-server reports for its loaded model is added to its own.
+it is what the app holds in RAM. llama-server's model weights are mapped from the model files and held by the GPU, outside any footprint, so the
+part of each file macOS holds in RAM is added to its own; its KV cache is inside its own, and is named there (dashboard/model_memory.py).
 """
 
 import re
@@ -12,6 +12,8 @@ from collections import defaultdict
 from pathlib import PurePosixPath
 
 from pydantic import BaseModel
+
+from dashboard.model_memory import ModelMemory
 
 OTHER_GROUPS_SHOWN = 7
 UNIT_BYTES = {"B": 1, "K": 1024, "M": 1024**2, "G": 1024**3, "T": 1024**4}
@@ -21,7 +23,7 @@ VM_STAT_LINE = re.compile(r'^"?([^":]+)"?:\s+(\d+)\.?$')
 PAGE_SIZE = re.compile(r"page size of (\d+) bytes")
 APP_BUNDLE = re.compile(r"/([^/]+)\.app/")
 LLAMA_SERVER = "llama-server"
-UNKNOWN_WEIGHTS_NOTE = "model weights not counted: llama-server did not say which model it has loaded"
+UNKNOWN_WEIGHTS_NOTE = "model weights not counted: the served model's files, named in config/serving.toml, could not be read"
 
 
 class SetupComponent(BaseModel):
@@ -71,7 +73,8 @@ class ProcessGroup(BaseModel):
     processes: int
     ram_bytes: int  # held in RAM as-is, llama-server's model weights included
     compressed_bytes: int  # compressed in RAM or moved to disk, which `top` does not tell apart
-    model_weights_bytes: int = 0
+    model_weights_bytes: int = 0  # the part of the model files in RAM
+    model_memory: ModelMemory | None = None  # llama-server's: each model file, the KV cache, and the prompt cache's limit
     note: str = ""
 
 
@@ -95,11 +98,11 @@ class RunningProcess(BaseModel):
     memory: ProcessMemory
 
 
-def memory_view(outputs: MemoryOutputs, model_weights_bytes: int | None) -> MemoryView:
+def memory_view(outputs: MemoryOutputs, model_memory: ModelMemory | None) -> MemoryView:
     processes = running_processes(outputs)
     setup_processes = {component.name: [process for process in processes if matches(component, process)] for component in SETUP_COMPONENTS}
     claimed = {process.pid for members in setup_processes.values() for process in members}
-    setup_groups = (setup_group(name, members, model_weights_bytes) for name, members in setup_processes.items())
+    setup_groups = (setup_group(name, members, model_memory) for name, members in setup_processes.items())
     setup = sorted(setup_groups, key=lambda group: (-group.ram_bytes, -group.compressed_bytes))
     others = other_groups([process for process in processes if process.pid not in claimed])
     setup_ram = sum(group.ram_bytes for group in setup)
@@ -149,13 +152,14 @@ def program_text(process: RunningProcess) -> str:
     return f"{process.executable}\n{' '.join(process.command_line.split()[:2])}"
 
 
-def setup_group(name: str, members: list[RunningProcess], model_weights_bytes: int | None) -> ProcessGroup:
+def setup_group(name: str, members: list[RunningProcess], model_memory: ModelMemory | None) -> ProcessGroup:
     group = plain_group(name, members)
     if name != LLAMA_SERVER or not members:
         return group
-    if model_weights_bytes is None:
+    if model_memory is None:
         return group.model_copy(update={"note": UNKNOWN_WEIGHTS_NOTE})
-    return group.model_copy(update={"model_weights_bytes": model_weights_bytes, "ram_bytes": group.ram_bytes + model_weights_bytes})
+    weights = model_memory.weights_bytes
+    return group.model_copy(update={"model_weights_bytes": weights, "model_memory": model_memory, "ram_bytes": group.ram_bytes + weights})
 
 
 def other_groups(processes: list[RunningProcess]) -> list[ProcessGroup]:

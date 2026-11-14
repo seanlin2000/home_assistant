@@ -314,6 +314,7 @@ table.parts .number { text-align: right; }
 .memory-ticks .end { transform: translateX(-100%); }
 .mem-setup { background: var(--seg-question); }
 .mem-weights { background: repeating-linear-gradient(135deg, var(--seg-question) 0 3px, color-mix(in srgb, var(--seg-question) 40%, var(--surface)) 3px 6px); }
+.mem-kv { background: repeating-linear-gradient(90deg, var(--seg-question) 0 2px, color-mix(in srgb, var(--seg-question) 55%, var(--surface)) 2px 4px); }
 .mem-other { background: var(--cached); }
 .mem-compressed { background: repeating-linear-gradient(45deg, var(--router) 0 2px, var(--cached) 2px 5px); }
 .mem-macos { background: var(--router); }

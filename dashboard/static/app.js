@@ -1008,15 +1008,36 @@ function setupPieces(view) {
   ];
 }
 
-// llama-server's model weights sit next to its own memory, hatched: the GPU holds them, so they are never compressed or moved to disk.
+// llama-server's KV cache is named within its own memory; its model weights sit next to it, hatched, one piece per model file: the GPU holds
+// them, so they are never compressed or moved to disk, and a file's rows not yet read stay on the SSD.
 function setupGroupPieces(group) {
-  const ownBytes = group.ram_bytes - group.model_weights_bytes;
+  const model = group.model_memory;
+  const kvBytes = kvCacheBytes(group);
+  const ownBytes = group.ram_bytes - group.model_weights_bytes - kvBytes;
   return [
-    memoryPiece("mem-setup", ownBytes, groupTooltip(group, ownBytes), [group.name]),
-    group.model_weights_bytes > 0 &&
-      memoryPiece("mem-weights", group.model_weights_bytes, `${group.name}'s model weights: ${memorySize(group.model_weights_bytes)}\nheld in RAM by the GPU, never compressed or moved to disk`, [group.name]),
+    memoryPiece("mem-setup", ownBytes, model ? llamaOwnTooltip(group, ownBytes) : groupTooltip(group, ownBytes), [group.name]),
+    kvBytes > 0 && memoryPiece("mem-kv", kvBytes, `${group.name}'s KV cache: ${memorySize(kvBytes)}\n${kvCacheBasis(model)}; held by the GPU`, [group.name]),
+    ...(model ? model.files : []).map((file, index) => memoryPiece("mem-weights", file.resident_bytes, modelFileTooltip(group, file, index), [group.name])),
   ];
 }
+
+// Never more than llama-server holds in RAM itself, so the pieces still add up if the worked-out figure is off.
+const kvCacheBytes = (group) => Math.min(group.model_memory?.kv_cache_bytes || 0, group.ram_bytes - group.model_weights_bytes);
+const kvCacheBasis = (model) => `worked out from the model file for a ${model.context_tokens.toLocaleString()}-token context and ${model.slots} slots`;
+const promptCacheLimit = (model) => `its prompt cache, up to ${memorySize(model.prompt_cache_limit_bytes)} (its limit; llama-server does not report its use)`;
+
+function llamaOwnTooltip(group, ramBytes) {
+  return `${group.name}: ${memorySize(ramBytes)} more in RAM\n${promptCacheLimit(group.model_memory)}, context checkpoints, and GPU work buffers\n${memorySize(group.compressed_bytes)} more compressed or on disk`;
+}
+
+function modelFileTooltip(group, file, index) {
+  const files = group.model_memory.files.length;
+  const which = files > 1 ? `model file ${index + 1} of ${files}` : "model file";
+  return `${group.name}'s ${which}: ${memorySize(file.resident_bytes)} of ${memorySize(file.size_bytes)} in RAM\n${fileResidency(file)}`;
+}
+
+const mostlyOnDisk = (file) => file.resident_bytes < 0.9 * file.size_bytes;
+const fileResidency = (file) => (mostlyOnDisk(file) ? "the rest stays on the SSD until a token needs it" : "held in RAM by the GPU, never compressed or moved to disk");
 
 function groupTooltip(group, ramBytes = group.ram_bytes) {
   return `${group.name}: ${memorySize(ramBytes)} in RAM\n${memorySize(group.compressed_bytes)} more compressed or on disk`;
@@ -1045,11 +1066,13 @@ function memoryTicks(totalBytes) {
 function ramLegend(view) {
   const machine = view.machine;
   const weights = view.setup.reduce((total, group) => total + group.model_weights_bytes, 0);
+  const kvCache = view.setup.reduce((total, group) => total + kvCacheBytes(group), 0);
   const entry = (className, text) => el("span", {}, el("i", { class: className }), text);
   return el(
     "div",
     { class: "legend" },
-    entry("mem-setup", `Home Assistant setup ${memorySize(view.setup_ram_bytes - weights)}`),
+    entry("mem-setup", `Home Assistant setup ${memorySize(view.setup_ram_bytes - weights - kvCache)}`),
+    kvCache > 0 && entry("mem-kv", `llama-server's KV cache ${memorySize(kvCache)}`),
     weights > 0 && entry("mem-weights", `llama-server's model weights ${memorySize(weights)}`),
     entry("mem-other", `other apps ${memorySize(view.others_ram_bytes)}`),
     entry("mem-compressed", `compressed, all apps ${memorySize(machine.compressed_bytes)}`),
@@ -1087,10 +1110,25 @@ function setupTable(view) {
 }
 
 function setupRowNotes(group) {
+  const model = group.model_memory;
   return [
-    group.model_weights_bytes > 0 && el("span", { class: "row-note" }, el("i", { class: "swatch mem-weights" }), `${memorySize(group.model_weights_bytes)} of it model weights, held by the GPU`),
+    ...(model ? model.files : []).map((file, index) => el("span", { class: "row-note" }, el("i", { class: "swatch mem-weights" }), modelFileNote(model, file, index))),
+    model && el("span", { class: "row-note" }, el("i", { class: "swatch mem-kv" }), kvCacheNote(group)),
+    model && el("span", { class: "row-note" }, el("i", { class: "swatch mem-setup" }), `prompt cache: up to ${memorySize(model.prompt_cache_limit_bytes)}, its limit`),
     group.note && el("span", { class: "row-note warn" }, group.note),
   ];
+}
+
+function modelFileNote(model, file, index) {
+  const which = model.files.length > 1 ? `file ${index + 1} of ${model.files.length}` : "model file";
+  if (mostlyOnDisk(file)) return `${which}: ${memorySize(file.resident_bytes)} of ${memorySize(file.size_bytes)} in RAM, the rest on the SSD`;
+  return `${which}: ${memorySize(file.resident_bytes)} of model weights`;
+}
+
+function kvCacheNote(group) {
+  const model = group.model_memory;
+  if (model.kv_cache_bytes === null) return "KV cache: not worked out for this model";
+  return `KV cache: ${memorySize(kvCacheBytes(group))}, ${model.context_tokens.toLocaleString()} tokens × ${model.slots} slots`;
 }
 
 // More of the service compressed or on disk than in RAM: it waits for its memory to come back whenever it is asked something.
