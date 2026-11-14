@@ -30,7 +30,7 @@ def recognizer_info(settings: SpeechSettings) -> Info:
 def voice_info(settings: SpeechSettings) -> Info:
     tts = settings.tts
     voices = [
-        TtsVoice(name=voice, attribution=QWEN_ATTRIBUTION, installed=True, description=f"{voice} ({language})", version=tts.revision[:7], languages=[LANGUAGE_TAGS[language]])
+        TtsVoice(name=voice, attribution=QWEN_ATTRIBUTION, installed=True, description=f"{voice} ({language})", version=tts.revision[:7], languages=LANGUAGE_TAGS[language])
         for voice, language in tts.voices.items()
     ]
     program = TtsProgram(name="qwen3-tts", attribution=QWEN_ATTRIBUTION, installed=True, description="Qwen3-TTS CustomVoice on MLX", version=None, voices=voices)

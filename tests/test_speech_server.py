@@ -148,9 +148,9 @@ async def test_each_port_describes_what_it_offers() -> None:
         await client.write_event(Describe().event())
         recognizer_program = Info.from_event((await events_until(client, Info().event().type))[-1]).asr[0]
 
-    assert {voice.name: voice.languages for voice in voice_program.voices} == {"ryan": ["en"], "serena": ["zh"], "uncle_fu": ["zh"]}
+    assert {voice.name: voice.languages for voice in voice_program.voices} == {"ryan": ["en", "en_GB", "en_US"], "serena": ["zh", "zh_CN"], "uncle_fu": ["zh", "zh_CN"]}
     assert voice_program.supports_synthesize_streaming
-    assert recognizer_program.models[0].languages == ["en"]
+    assert recognizer_program.models[0].languages == ["en", "en_GB", "en_US"]
 
 
 def test_a_sentence_is_handed_back_as_soon_as_it_ends() -> None:

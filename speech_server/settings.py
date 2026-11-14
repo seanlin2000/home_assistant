@@ -8,8 +8,9 @@ from pydantic import Field, model_validator
 from serving.settings import StrictModel
 
 SPEECH_CONFIG_PATH = Path(__file__).resolve().parent.parent / "config" / "speech.toml"
-# Qwen3's language names, and the BCP-47 tags Home Assistant matches a pipeline's language against.
-LANGUAGE_TAGS = {"English": "en", "Chinese": "zh"}
+# Qwen3's language names, and the tags Home Assistant matches a pipeline's language against. The match is exact, and the pipeline built for Kokoro
+# asks for en_GB, so English lists the regions too: the existing pipeline keeps working once Home Assistant reloads the Wyoming entries.
+LANGUAGE_TAGS = {"English": ["en", "en_GB", "en_US"], "Chinese": ["zh", "zh_CN"]}
 
 
 class ServerSettings(StrictModel):
@@ -35,7 +36,8 @@ class RecognizerSettings(StrictModel):
 
     @property
     def language_tags(self) -> list[str]:
-        return [LANGUAGE_TAGS[self.language]] if self.language else list(LANGUAGE_TAGS.values())
+        languages = [self.language] if self.language else list(LANGUAGE_TAGS)
+        return [tag for language in languages for tag in LANGUAGE_TAGS[language]]
 
 
 class SpeechLength(StrictModel):
