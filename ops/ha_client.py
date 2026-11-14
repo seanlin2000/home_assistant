@@ -13,6 +13,10 @@ import httpx
 import websockets
 
 DEFAULT_PORT_CANDIDATES = ("8123", "")
+COMPONENT_DOMAIN = "studio_assistant"
+RUNNING = "RUNNING"
+LOADED = "loaded"
+UNREACHABLE = (OSError, asyncio.TimeoutError, httpx.HTTPError, websockets.WebSocketException, RuntimeError)
 
 
 def discover_base(host: str) -> str:
@@ -100,6 +104,43 @@ async def wait_for_api(ha: HomeAssistant, timeout_seconds: int = 900, ok_statuse
             pass
         await asyncio.sleep(poll_seconds)
     raise TimeoutError(f"Home Assistant did not answer at {ha.base} within {timeout_seconds}s")
+
+
+async def wait_until_stopped(ha: HomeAssistant, timeout_seconds: float = 90, poll_seconds: float = 1) -> bool:
+    """True once Home Assistant stops answering or leaves the running state after a restart call. The call returns while the old instance still
+    runs, with the component loaded, so waiting for the component right away would pass before the restart had begun."""
+    deadline = time.monotonic() + timeout_seconds
+    while time.monotonic() < deadline:
+        if not await core_is_running(ha):
+            return True
+        await asyncio.sleep(poll_seconds)
+    return False
+
+
+async def wait_for_component(ha: HomeAssistant, timeout_seconds: float = 300, poll_seconds: float = 5) -> None:
+    """Block until Home Assistant runs with the studio_assistant component loaded. /api/ answers some seconds before the component is set up,
+    and a question sent then is refused with "invalid agent ID" (2026-11-14 deploy of #82)."""
+    deadline = time.monotonic() + timeout_seconds
+    while time.monotonic() < deadline:
+        if await component_is_loaded(ha):
+            return
+        await asyncio.sleep(poll_seconds)
+    raise TimeoutError(f"Home Assistant at {ha.base} did not load the {COMPONENT_DOMAIN} component within {timeout_seconds:.0f}s")
+
+
+async def core_is_running(ha: HomeAssistant) -> bool:
+    try:
+        return (await ha.ws({"type": "get_config"})).get("state") == RUNNING
+    except UNREACHABLE:
+        return False
+
+
+async def component_is_loaded(ha: HomeAssistant) -> bool:
+    try:
+        entries = await ha.ws({"type": "config_entries/get", "domain": COMPONENT_DOMAIN})
+    except UNREACHABLE:
+        return False
+    return any(entry.get("state") == LOADED for entry in entries) and await core_is_running(ha)
 
 
 def entity_id(registry: list[dict[str, Any]], domain: str, platform: str, needle: str) -> str:

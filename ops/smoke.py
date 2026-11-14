@@ -17,7 +17,7 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
-from ops.ha_client import HomeAssistant, conversation_entity_id, converse, wait_for_api
+from ops.ha_client import HomeAssistant, conversation_entity_id, converse, wait_for_api, wait_for_component
 
 PROJECT_DIR = Path(__file__).resolve().parent.parent
 CALCULATOR_QUESTION = "What is 12 percent of 250?"
@@ -28,6 +28,7 @@ SEARCH_EXPECTED = re.compile(r"\b(20\d\d|two thousand (twenty|thirty))\b", re.IG
 
 async def smoke(ha: HomeAssistant, timeout_seconds: float, full: bool) -> list[tuple[str, bool, str, float]]:
     await wait_for_api(ha, timeout_seconds=300, ok_statuses=(200,), poll_seconds=5)
+    await wait_for_component(ha)  # a restart still loading the component refuses the question
     agent = await conversation_entity_id(ha)
     questions = [(CALCULATOR_QUESTION, CALCULATOR_EXPECTED)] + ([(SEARCH_QUESTION, SEARCH_EXPECTED)] if full else [])
     results = []
