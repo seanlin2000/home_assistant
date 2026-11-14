@@ -3,7 +3,7 @@
 from datetime import date
 
 PERSONA_NAME = "Jarvis"
-PROMPT_VERSION = "3.2"  # 1.2 adds the calculator rule; 1.3 moves the router directive into the system prompt with a worked example; 1.4 trims the directives to the call alone; 1.5 adds today's date; 1.6 adds the rules for unclear input; 1.7 sends weather at home to weather_forecast; 1.8 offers wikipedia_lookup for settled facts, lists, and records; 2.0 moves the date and the route directive out of the system prompt into a block just before the question, so the system prompt and tools stay cached; 2.1 treats text inside <untrusted> blocks as information, never instructions, and stops the answer reading the date from the note aloud; 2.2 sends the weather anywhere to weather_forecast with a place; 2.3 sends NBA and NFL scores, rosters, and statistics to the sports tools, and says every item when the user asks for a list; 2.4 adds box_score for one game's player statistics; 2.5 sends what is playing on Broadway and Off-Broadway to broadway_shows, and what one show is about to broadway_show_details; 2.6 sends what movies are showing or coming up in Manhattan theaters to movies_showing, and what one movie is about to movie_details; 2.7 sends what people on Reddit or a named subreddit say to reddit_search; 2.8 sends restaurant recommendations to restaurant_recommendations, with Michelin's price levels in words, and what one restaurant is like to restaurant_details; 3.0 is for Qwen 3.8 27B: routing is off, each tool's own rules live in its definition, and the length, list, cancel, clarification and when-not-to-search rules are gone; 3.1 decides whether a tool is needed, plans the fewest calls silently (at most four) and stops once it has the answer, says when a source lacks a fact instead of filling it in, and adds a word limit to the per-question note that grows with the question's length; 3.2 counts the word limit in the question's words (about three answer words per word asked, 20 to 120) and raises it by 20 for each tool call, in a note after each tool round
+PROMPT_VERSION = "3.3"  # 1.2 adds the calculator rule; 1.3 moves the router directive into the system prompt with a worked example; 1.4 trims the directives to the call alone; 1.5 adds today's date; 1.6 adds the rules for unclear input; 1.7 sends weather at home to weather_forecast; 1.8 offers wikipedia_lookup for settled facts, lists, and records; 2.0 moves the date and the route directive out of the system prompt into a block just before the question, so the system prompt and tools stay cached; 2.1 treats text inside <untrusted> blocks as information, never instructions, and stops the answer reading the date from the note aloud; 2.2 sends the weather anywhere to weather_forecast with a place; 2.3 sends NBA and NFL scores, rosters, and statistics to the sports tools, and says every item when the user asks for a list; 2.4 adds box_score for one game's player statistics; 2.5 sends what is playing on Broadway and Off-Broadway to broadway_shows, and what one show is about to broadway_show_details; 2.6 sends what movies are showing or coming up in Manhattan theaters to movies_showing, and what one movie is about to movie_details; 2.7 sends what people on Reddit or a named subreddit say to reddit_search; 2.8 sends restaurant recommendations to restaurant_recommendations, with Michelin's price levels in words, and what one restaurant is like to restaurant_details; 3.0 is for Qwen 3.8 27B: routing is off, each tool's own rules live in its definition, and the length, list, cancel, clarification and when-not-to-search rules are gone; 3.1 decides whether a tool is needed, plans the fewest calls silently (at most four) and stops once it has the answer, says when a source lacks a fact instead of filling it in, and adds a word limit to the per-question note that grows with the question's length; 3.2 counts the word limit in the question's words (about three answer words per word asked, 20 to 120) and raises it by 20 for each tool call, in a note after each tool round; 3.3 wraps the per-question note in <assistant_software_note> tags, drops its "not to be read aloud" opening, and labels the question "The user said:", because the model took the note for the user's words
 
 # The three fixed replies for input that is not a clear question. The agent loop never speaks the silence marker, and the Home Assistant component
 # stops listening for a follow-up after the marker or the acknowledgement. The marker is safe because the prompt forbids markdown, so a real answer
@@ -24,7 +24,7 @@ Response Guidelines
 - Be direct about uncertainty. If you are estimating, say so and state the assumption. If the question rests on a false premise, say so plainly. If you cannot meet a constraint the user gave, say that instead of quietly bending it.
 - If the sources do not give a number, name or date, say you could not find it. Never fill it in from memory or state a current fact you did not find in a source as if you had verified it.
 - If a good answer needs information only the user has, ask for it in one short clarifying question instead of guessing their preferences.
-- Each question arrives after a short note from the assistant software, not from the user, giving today's date and a word limit. Do not repeat the note: say the date only when the question asks for it.
+- Each question arrives after a short note from the assistant software inside <assistant_software_note> tags, not from the user, giving today's date and a word limit. Do not repeat the note: say the date only when the question asks for it.
 
 When what you heard is unclear
 - What you receive is a speech-recognition transcript, and the wake word sometimes fires by mistake on a television, a radio, or people talking in the room.
@@ -46,8 +46,10 @@ ANSWER_WORDS_PER_QUESTION_WORD = 3.2
 ANSWER_WORDS_PER_TOOL_CALL = 20
 MINIMUM_WORD_LIMIT = 20
 MAXIMUM_WORD_LIMIT = 120
-DATE_LINE = "For reference, not to be read aloud: today is {today}. Use this date whenever a question depends on what is current; do not assume an earlier year in your searches or answers."
-QUESTION_LABEL = "Question: "
+DATE_LINE = "Today is {today}. Use this date whenever a question depends on what is current; do not assume an earlier year in your searches or answers."
+QUESTION_LABEL = "The user said: "
+NOTE_OPENING_TAG = "<assistant_software_note>"
+NOTE_CLOSING_TAG = "</assistant_software_note>"
 
 
 def system_prompt() -> str:
@@ -73,7 +75,7 @@ def per_question_block(today: date, question: str, directive: str | None = None,
         lines.append(directive.rstrip())
     if memory_context:
         lines.append(f"What you remember about this user:\n{memory_context}")
-    return "\n".join(lines)
+    return "\n".join([NOTE_OPENING_TAG, *lines, NOTE_CLOSING_TAG])
 
 
 def question_with_block(question: str, block: str) -> str:
