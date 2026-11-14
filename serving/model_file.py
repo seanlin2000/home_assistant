@@ -1,11 +1,11 @@
-"""The model's GGUF file: check it against its pinned SHA-256, and download it from Hugging Face at its pinned revision."""
+"""The model's GGUF files (the model and any drafter): check each against its pinned SHA-256, and download it from Hugging Face at its pinned revision."""
 
 import hashlib
 from pathlib import Path
 
 import httpx
 
-from serving.settings import ModelSettings
+from serving.settings import PinnedFile
 
 HASH_CHUNK_BYTES = 8 * 1024 * 1024
 DOWNLOAD_TIMEOUT_SECONDS = 60.0
@@ -23,7 +23,7 @@ def file_sha256(path: Path) -> str:
     return digest.hexdigest()
 
 
-def verify_model_file(model: ModelSettings) -> None:
+def verify_model_file(model: PinnedFile) -> None:
     path = model.gguf_path
     if not path.is_file():
         raise ModelFileMismatch(f"{path} does not exist; run `uv run serving fetch`")
@@ -32,7 +32,7 @@ def verify_model_file(model: ModelSettings) -> None:
         raise ModelFileMismatch(f"{path} has SHA-256 {actual}, but config/serving.toml pins {model.sha256}")
 
 
-def model_file_matches(model: ModelSettings) -> bool:
+def model_file_matches(model: PinnedFile) -> bool:
     try:
         verify_model_file(model)
     except ModelFileMismatch:
@@ -40,7 +40,7 @@ def model_file_matches(model: ModelSettings) -> bool:
     return True
 
 
-def fetch_model_file(model: ModelSettings) -> Path:
+def fetch_model_file(model: PinnedFile) -> Path:
     """Download into a partial file, check its hash, then move it into place, so a broken download never sits where the launcher looks."""
     path = model.gguf_path
     path.parent.mkdir(parents=True, exist_ok=True)

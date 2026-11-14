@@ -4,7 +4,7 @@ import tomllib
 from pathlib import Path
 from typing import Literal
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 SERVING_CONFIG_PATH = Path(__file__).resolve().parent.parent / "config" / "serving.toml"
 
@@ -44,11 +44,31 @@ class Sampling(StrictModel):
         return self.model_dump()
 
 
-class ModelSettings(StrictModel):
+class PinnedFile(StrictModel):
+    """A GGUF file pinned to one Hugging Face revision and SHA-256, so the launch serves exactly the file the benchmark measured."""
+
     gguf: str
     source: str
     revision: str
     sha256: str
+
+    @property
+    def gguf_path(self) -> Path:
+        return Path(self.gguf).expanduser()
+
+    @property
+    def download_url(self) -> str:
+        return f"https://huggingface.co/{self.source}/resolve/{self.revision}/{self.gguf_path.name}"
+
+
+class DraftModel(PinnedFile):
+    """A separate small model that proposes tokens for the served model to check (-md), for a model whose own file has no draft layer."""
+
+    gpu_layers: int | Literal["all", "auto"]  # -ngld
+    max_draft_tokens: int  # --spec-draft-n-max; each step the drafter proposes up to this many tokens and the served model checks them all at once
+
+
+class ModelSettings(PinnedFile):
     context_tokens: int
     conversation_tokens: int
     slots: int
@@ -60,23 +80,27 @@ class ModelSettings(StrictModel):
     reasoning: Literal["on", "off", "auto"]
     reasoning_budget_tokens: int | None = None  # --reasoning-budget; past it the server ends the thinking block, so the answer keeps the rest of the cap
     swa_full: bool
-    speculative: Literal["none", "draft-mtp"]
+    speculative: Literal["none", "draft-mtp", "draft-dflash"]  # --spec-type; draft-mtp uses the model file's own layer, draft-dflash needs `draft`
+    draft: DraftModel | None = None
     load_mode: Literal["auto", "mmap"] = "auto"  # -lm; "mmap" keeps the file memory-mapped, which lazy_mode needs
     lazy_mode: Literal["off", "on"] = "off"  # -lzm; "on" reads per-layer embedding tables (an n-gram table) from disk on demand instead of keeping them resident
     sampling: Sampling
     thinking_sampling: Sampling | None = None  # the model maker's set for thinking mode; without one, thinking uses `sampling`
+
+    @model_validator(mode="after")
+    def require_a_draft_model_exactly_for_dflash(self) -> "ModelSettings":
+        if (self.speculative == "draft-dflash") != (self.draft is not None):
+            raise ValueError('speculative = "draft-dflash" needs a [draft] table, and a [draft] table needs speculative = "draft-dflash"')
+        return self
 
     def sampling_for(self, think: bool | str | None) -> Sampling:
         """The set for answering with thinking on (a level or True) or off (False or None)."""
         return self.thinking_sampling if think not in (None, False) and self.thinking_sampling else self.sampling
 
     @property
-    def gguf_path(self) -> Path:
-        return Path(self.gguf).expanduser()
-
-    @property
-    def download_url(self) -> str:
-        return f"https://huggingface.co/{self.source}/resolve/{self.revision}/{self.gguf_path.name}"
+    def pinned_files(self) -> list[PinnedFile]:
+        """Every file the launch loads: the model, then its drafter if it has one."""
+        return [self, self.draft] if self.draft else [self]
 
 
 class ServingConfig(StrictModel):
