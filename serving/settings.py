@@ -28,6 +28,14 @@ class ServerSettings(StrictModel):
         return Path(self.api_key_file).expanduser()
 
 
+class EngineSettings(StrictModel):
+    """The llama.cpp release the benchmark measured. `brew pin llama.cpp ggml` holds it, and the launch refuses any other (doc 10 section 3.8)."""
+
+    llama_cpp_version: str
+    llama_cpp_build: int
+    ggml_version: str  # llama-server loads its compute libraries from Homebrew's separate ggml package, so pinning llama.cpp alone does not hold them
+
+
 class Sampling(StrictModel):
     """How the model picks each next token, with the names llama-server takes per request."""
 
@@ -105,6 +113,7 @@ class ModelSettings(PinnedFile):
 
 class ServingConfig(StrictModel):
     server: ServerSettings
+    engine: EngineSettings
     models: dict[str, ModelSettings] = Field(min_length=1)
 
     @property

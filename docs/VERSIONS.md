@@ -1,12 +1,15 @@
 # Versions in the running system
 
-What the proof of concept was built and measured with, so a future upgrade can be compared against a known state. Updates are applied deliberately, never automatically. The laptop column was recorded on 2026-09-07; the mini's column is filled in when the mini exists.
+What the proof of concept was built and measured with, so a future upgrade can be compared against a known state. Updates are applied deliberately, never automatically. The laptop column was recorded on 2026-09-07 and its llama.cpp rows on 2026-11-14. The Mac Studio replaced the planned Mac mini as the serving Mac; its column holds what has been recorded for it so far.
 
-| Part | Laptop (M1 Pro, 16 GB) | Mac mini | How to check |
+| Part | Laptop (M1 Pro, 16 GB) | Mac Studio (M5 Max, 64 GB, serving) | How to check |
 |---|---|---|---|
 | macOS | 15.7.3 (24G419) | | `sw_vers` |
 | Homebrew uv | 0.12.10 | | `uv --version` |
 | Python in `.venv` | 3.12.14 | | `.venv/bin/python --version` |
+| llama.cpp (Homebrew, pinned) | 0.6.0 (build 11429) | 0.9.0 (build 12110, commit cd959bae9), as `config/serving.toml` `[engine]` records | `llama-server --version`, `brew list --pinned` |
+| ggml (Homebrew, the libraries llama-server loads) | 0.26.0, not pinned | 0.29.0, pinned | `brew list --versions ggml` |
+| Served model files | | Each file's source, revision and SHA-256 are in `config/serving.toml` | `uv run serving show` |
 | Ollama | 0.33.3 | | `ollama --version` |
 | Default model | `gemma4:e4b-it-qat` id `ee6656371218` (6.1 GB) | | `ollama list` |
 | Other models pulled | `gemma4:12b` `4eb23ef187e2`, `qwen3.5:9b` `6488c96fa5fa`, `qwen3.5:4b` `2a654d98e6fb` | | `ollama list` |
@@ -25,7 +28,8 @@ What the proof of concept was built and measured with, so a future upgrade can b
 
 1. Python packages: `scripts/dev_setup.sh --upgrade`, review the `uv.lock` diff, `uv run pytest`, then update the wheels row. The component's `manifest.json` pins must move with the lock (`uv run python -m ops.deploy status` reports a mismatch).
 2. Homebrew software: `brew upgrade uv ollama` (and `brew upgrade --cask docker-desktop utm` when wanted), then rerun the checks in the last column. A new Ollama can change model quantization defaults; rerun `uv run python scripts/benchmark_llm.py --run <run> --candidate <key>` for the resident model before trusting old latency numbers.
-3. Models: never re-pull a tag casually. `ollama pull` under the same tag can fetch a different build; note the new id here and rerun the benchmark pass that chose the model.
-4. Home Assistant: monthly, from Settings → System → Updates, after reading the release notes, then `uv run python -m ops.smoke`; no deploy is needed.
-5. KaTeX: download the new release's tarball from `https://registry.npmjs.org/katex/-/katex-<version>.tgz`, copy `katex.min.css`, `katex.min.js`, `contrib/auto-render.min.js`, `fonts/`, and `LICENSE` from its `package/` folder over `operator_manual/assets/katex/`, check the formulas on the handbook page "LLMs on Apple Silicon" in both colour schemes, then update the KaTeX row.
-6. Commit the updated table with the change that caused it.
+3. llama.cpp and ggml: never upgrade them in passing. `brew upgrade` leaves them alone while they are pinned; a deliberate upgrade unpins both, upgrades, pins again, runs the benchmark, and records the new release in `config/serving.toml` `[engine]` and in the rows above (design doc v2/10 section 3.8). Until `[engine]` matches, `serving launch` refuses to start llama-server.
+4. Models: never re-pull a tag casually. `ollama pull` under the same tag can fetch a different build; note the new id here and rerun the benchmark pass that chose the model.
+5. Home Assistant: monthly, from Settings → System → Updates, after reading the release notes, then `uv run python -m ops.smoke`; no deploy is needed.
+6. KaTeX: download the new release's tarball from `https://registry.npmjs.org/katex/-/katex-<version>.tgz`, copy `katex.min.css`, `katex.min.js`, `contrib/auto-render.min.js`, `fonts/`, and `LICENSE` from its `package/` folder over `operator_manual/assets/katex/`, check the formulas on the handbook page "LLMs on Apple Silicon" in both colour schemes, then update the KaTeX row.
+7. Commit the updated table with the change that caused it.

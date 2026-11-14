@@ -7,6 +7,11 @@ port = 8090
 api_key_file = "~/Library/Application Support/studio-assistant/llama-server.key"
 model = "qwen3.8-flash-next"                # which table below is served
 
+[engine]                                    # the llama.cpp release the benchmark measured; `brew pin llama.cpp ggml` holds it and the launch refuses any other
+llama_cpp_version = "0.9.0"
+llama_cpp_build = 12110                     # from `llama-server --version`: version: 0.9.0 (build 12110, commit cd959bae9)
+ggml_version = "0.29.0"                     # Homebrew's ggml, which llama-server loads its compute libraries from
+
 [models.gemma-4-e4b]
 gguf = "~/models/gguf/gemma-4-E4B_q4_0-it.gguf"
 source = "google/gemma-4-E4B-it-qat-q4_0-gguf"

@@ -1,12 +1,14 @@
-"""`serving launch | show | fetch`: start llama-server from config/serving.toml, print the command it would run, or download the served model and its drafter."""
+"""`serving launch | show | fetch`: start llama-server from config/serving.toml, print the command it would run, or download the served model and its drafter.
+The launch first checks that the installed llama.cpp and ggml are the release config/serving.toml records, then the model files' hashes."""
 
 import argparse
 import os
 import sys
 
 from serving.command import build_command, printable_command
+from serving.engine import EngineMismatch, installed_engine, verify_engine
 from serving.model_file import ModelFileMismatch, fetch_model_file, model_file_matches, verify_model_file
-from serving.settings import PinnedFile, ServingConfig, load_serving_config
+from serving.settings import EngineSettings, PinnedFile, ServingConfig, load_serving_config
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -14,7 +16,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "action",
         choices=("launch", "show", "fetch"),
-        help="launch: check the model's and drafter's hashes and replace this process with llama-server; show: print the command; fetch: download the model and drafter",
+        help="launch: check llama.cpp's release and the model's and drafter's hashes, then replace this process with llama-server; show: print the command and those checks; fetch: download the model and drafter",
     )
     return parser
 
@@ -32,9 +34,19 @@ def main() -> None:
 
 
 def show(config: ServingConfig) -> None:
-    print(printable_command(build_command(config)))
+    command = build_command(config)
+    print(printable_command(command))
+    report_engine(config.engine, command[0])
     for pinned_file in config.served_model.pinned_files:
         report_pinned_file(pinned_file)
+
+
+def report_engine(engine: EngineSettings, program: str) -> None:
+    try:
+        verify_engine(engine, installed_engine(program))
+        print(f"llama.cpp {engine.llama_cpp_version} (build {engine.llama_cpp_build}) and ggml {engine.ggml_version} match config/serving.toml")
+    except EngineMismatch as error:
+        print(f"engine problem: {error}")
 
 
 def report_pinned_file(pinned_file: PinnedFile) -> None:
@@ -57,9 +69,10 @@ def launch(config: ServingConfig) -> None:
     """Replace this process with llama-server, so launchd supervises the server itself and a crash restarts it."""
     command = build_command(config)
     try:
+        verify_engine(config.engine, installed_engine(command[0]))
         for pinned_file in config.served_model.pinned_files:
             verify_model_file(pinned_file)
-    except ModelFileMismatch as error:
+    except (EngineMismatch, ModelFileMismatch) as error:
         sys.exit(f"serving: {error}")
     if not config.server.api_key_path.is_file():
         sys.exit(f"serving: no API key at {config.server.api_key_path}; scripts/services.sh install creates it")
