@@ -213,10 +213,10 @@ Nobody sits at this Mac, so a power cut must end with the assistant answering ag
 3. **launchd agents and login items.** Once the user is logged in, launchd starts the five `com.studio-assistant` agents. Ollama loads the model on the first request and keeps it. At the same time macOS opens the two login items, Docker Desktop and UTM, both hidden. Docker's engine starts and brings the SearXNG container back, because the compose file says `restart: unless-stopped`.
 4. **The VM, through the health check.** UTM opens but does not start the VM; the health check does. It runs at login and every 300 seconds after, and applies the defaults in `Policy`:
     - A VM whose `utmctl status` is anything but `started` gets `utmctl start`, at most once every 30 minutes.
-    - A VM that is running while Home Assistant has failed five checks in a row is stopped and started, at most once every two hours.
+    - A VM that is running is never restarted, even when Home Assistant stops answering. [Operations](10_operations.md#the-health-check) explains why.
     - Home Assistant then needs a few minutes to boot and answer on port 80.
 
-On the prototype MacBook the health check is installed with `HEALTH_CHECK_FLAGS="--leave-vm"`, so it restarts a failed service but never the VM, which stays stopped until you start it. [Operations](10_operations.md#the-health-check) covers the rest of the health check and the maintenance flag that pauses it during a deploy.
+On the prototype MacBook the health check is installed with `HEALTH_CHECK_FLAGS="--leave-vm"`, so it restarts a failed service but never starts the VM, which stays stopped until you start it. [Operations](10_operations.md#the-health-check) covers the rest of the health check and the maintenance flag that pauses it during a deploy.
 
 The bootstrap sets the login items and the power settings in these steps:
 
@@ -306,7 +306,7 @@ Everything below runs on the Mac from the repository folder, and all of it excep
 | [`scripts/haos_vm.sh`](https://github.com/seanlin2000/home_assistant/blob/main/scripts/haos_vm.sh) | The UTM virtual machine: memory, cores, UEFI, the virtio disk, the bridged interface, and the `utmctl` wrappers |
 | [`docker/searxng/docker-compose.yml`](https://github.com/seanlin2000/home_assistant/blob/main/docker/searxng/docker-compose.yml) | The SearXNG container: the loopback-only port, `restart: unless-stopped`, and the dropped capabilities |
 | [`scripts/searxng.sh`](https://github.com/seanlin2000/home_assistant/blob/main/scripts/searxng.sh) | `up`, `down`, `restart`, `status`, and `logs` for the container, and the path fix for Docker Desktop's command line tool |
-| [`ops/health.py`](https://github.com/seanlin2000/home_assistant/blob/main/ops/health.py) | `Policy` and `decide_actions`: when the health check starts or restarts the VM, brings SearXNG back up, or kickstarts an agent, with the cooldowns |
+| [`ops/health.py`](https://github.com/seanlin2000/home_assistant/blob/main/ops/health.py) | `Policy` and `decide_actions`: when the health check starts the VM, brings SearXNG back up, or kickstarts an agent, with the cooldowns |
 | [`docs/VERSIONS.md`](https://github.com/seanlin2000/home_assistant/blob/main/docs/VERSIONS.md) | The versions of record for macOS, Homebrew tools, Docker, UTM, Home Assistant OS, the add-ons, and the models, with the refresh procedure |
 
 ## Further reading

@@ -84,14 +84,10 @@ def test_stopped_vm_is_started_at_once_and_ha_failures_do_not_restart_it() -> No
     assert keys(health.decide_actions(checks, after_failures(checks, 9), Policy(), NOW, maintenance=False)) == ["vm_start:vm"]
 
 
-def test_ha_down_while_vm_runs_restarts_the_vm_after_five_checks() -> None:
+def test_ha_down_while_vm_runs_never_restarts_the_vm() -> None:
     checks = healthy_checks() | {"home_assistant": DOWN}
-    assert health.decide_actions(checks, after_failures(checks, 4), Policy(), NOW, maintenance=False) == []
-    actions = health.decide_actions(checks, after_failures(checks, 5), Policy(), NOW, maintenance=False)
-    assert keys(actions) == ["vm_restart:vm"]
-    state = after_failures(checks, 6)
-    state.last_action_at["vm_restart:vm"] = NOW - 60 * 60
-    assert health.decide_actions(checks, state, Policy(), NOW, maintenance=False) == []
+    assert health.decide_actions(checks, after_failures(checks, 5), Policy(), NOW, maintenance=False) == []
+    assert health.decide_actions(checks, after_failures(checks, 100), Policy(), NOW, maintenance=False) == []
 
 
 def test_maintenance_flag_suspends_every_action() -> None:
