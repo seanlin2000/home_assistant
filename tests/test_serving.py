@@ -6,6 +6,7 @@ from pydantic import ValidationError
 from assistant_service.settings import load_harness_config
 from serving import cli as serving_cli
 from serving.command import build_command, refuse_dangerous_flags
+from serving.engine import EngineMismatch, InstalledEngine, llama_cpp_release, verify_engine
 from serving.model_file import ModelFileMismatch, file_sha256, model_file_matches, verify_model_file
 from serving.settings import SERVING_CONFIG_PATH, ModelSettings, ServingConfig, load_serving_config
 
@@ -43,7 +44,12 @@ def test_dflash_needs_a_drafter_and_a_drafter_needs_dflash() -> None:
         ModelSettings.model_validate({**flash_next, "speculative": "draft-mtp"})
 
 
-def test_launch_refuses_a_drafter_that_differs_from_its_pinned_hash(tmp_path: Path) -> None:
+def installed_as_recorded(config: ServingConfig) -> InstalledEngine:
+    return InstalledEngine(llama_cpp_version=config.engine.llama_cpp_version, llama_cpp_build=config.engine.llama_cpp_build, ggml_version=config.engine.ggml_version)
+
+
+def test_launch_refuses_a_drafter_that_differs_from_its_pinned_hash(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(serving_cli, "installed_engine", lambda program: installed_as_recorded(load_serving_config()))
     model_file, draft_file = tmp_path / "model.gguf", tmp_path / "draft.gguf"
     model_file.write_bytes(b"the model")
     draft_file.write_bytes(b"not the drafter")
@@ -142,3 +148,27 @@ def test_thinking_takes_the_models_thinking_sampling_and_no_thinking_its_plain_s
     assert qwen.sampling_for(False).temperature == 0.7 and qwen.sampling_for(None).presence_penalty == 1.5
     gemma = load_serving_config().models["gemma-4-e4b"]
     assert gemma.sampling_for("medium") == gemma.sampling
+
+
+def test_the_recorded_release_is_read_from_llama_servers_version_line() -> None:
+    assert llama_cpp_release("load_backend: loaded MTL\nversion: 0.9.0 (build 12110, commit cd959bae9)\nbuilt with AppleClang") == ("0.9.0", 12110)
+    with pytest.raises(EngineMismatch, match="could not read"):
+        llama_cpp_release("error: unknown argument")
+
+
+def test_a_llama_cpp_or_ggml_other_than_the_recorded_release_is_named_in_the_refusal() -> None:
+    engine = load_serving_config().engine
+    verify_engine(engine, InstalledEngine(llama_cpp_version=engine.llama_cpp_version, llama_cpp_build=engine.llama_cpp_build, ggml_version=engine.ggml_version))
+    upgraded_ggml = InstalledEngine(llama_cpp_version=engine.llama_cpp_version, llama_cpp_build=engine.llama_cpp_build, ggml_version="9.9.9")
+    with pytest.raises(EngineMismatch, match="ggml is 9.9.9") as refusal:
+        verify_engine(engine, upgraded_ggml)
+    assert "llama.cpp is" not in str(refusal.value) and "brew pin llama.cpp ggml" in str(refusal.value)
+
+
+def test_launch_stops_before_hashing_the_model_when_llama_cpp_is_not_the_recorded_build(monkeypatch: pytest.MonkeyPatch) -> None:
+    config = load_serving_config()
+    older = InstalledEngine(llama_cpp_version="0.6.0", llama_cpp_build=11429, ggml_version=config.engine.ggml_version)
+    monkeypatch.setattr(serving_cli, "installed_engine", lambda program: older)
+    monkeypatch.setattr(serving_cli, "verify_model_file", lambda pinned_file: pytest.fail("the model was hashed before the engine was checked"))
+    with pytest.raises(SystemExit, match="build is 11429, but config/serving.toml records 12110"):
+        serving_cli.launch(config)

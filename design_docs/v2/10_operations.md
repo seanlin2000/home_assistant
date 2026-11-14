@@ -183,12 +183,14 @@ In v1, `mini.sh push-models` copied Ollama's blobs by digest. In v2 a model is o
 ### 3.8 Versions
 
 llama.cpp comes from homebrew-core and is held at the version the benchmark measured:
-- **Holding it.** `brew pin llama.cpp` stops `brew upgrade` from moving it.
-- **Recording it.** `docs/VERSIONS.md` gains rows for the llama.cpp version and build, and for each served model's source, revision and SHA-256. The Ollama rows are kept until M2 and then removed.
+- **Holding it.** `brew pin llama.cpp ggml` stops `brew upgrade`, and any other install, from moving it. llama-server loads its compute libraries from Homebrew's separate `ggml` package, so both are pinned. The setup script pins them right after installing them.
+- **Recording it.** `config/serving.toml` `[engine]` records the llama.cpp version and build and the ggml version. `docs/VERSIONS.md` shows the same rows for each Mac, and each served model's source, revision and SHA-256 are already in `config/serving.toml`.
+- **Checking it.** `serving launch` runs `llama-server --version` and reads the installed ggml before it hashes the model files. On any difference from `[engine]` it refuses to start, as it does for a model file whose hash differs. `serving show` prints the same check.
 - **Upgrading it.**
-  1. `brew unpin`, upgrade, and pin again.
+  1. `brew unpin llama.cpp ggml`, upgrade, and pin again.
   2. Run the benchmark.
   3. Run the slot timing test from doc 02 §3.4.
+  4. Record the new release in `[engine]` and `docs/VERSIONS.md`, in the pull request that reports the benchmark.
 
   A release that fixes llama.cpp issue 28139 changes how idle slots are cached. When one arrives, M1's measurements decide whether `--no-cache-idle-slots` stays.
 
@@ -262,7 +264,7 @@ Added 2026-11-11. Section 3.3's deploy is driven from the laptop over SSH by `sc
 | `ops` (ours) | As in v1, plus the new probes, the slow-request count, and the new restart list |
 | `serving` launcher (ours, doc 02) | `launch`, `show` and `fetch`: starts llama-server from `config/serving.toml`, prints its command, and downloads a model at its pinned revision, checking the hash each time |
 | launchd | Runs llama-server and the harness, and restarts them if they exit |
-| `brew pin` | Holds llama.cpp at the measured version |
+| `brew pin` | Holds llama.cpp and ggml at the measured version |
 | `openssl rand` | Makes the API keys at install |
 | rsync over SSH | Copies the models to the Mac and the memory notes to the laptop |
 
@@ -279,7 +281,7 @@ Added 2026-11-11. Section 3.3's deploy is driven from the laptop over SSH by `sc
 | The slow-request threshold | `ops/health.py` | More than 600 tokens read fresh |
 | The grace while the model loads | `ops/health.py` | Five minutes after llama-server starts |
 | The notes backup on the laptop | `scripts/mini.sh` | `~/Library/Application Support/studio-assistant/notes-backup/`; deleted notes kept 30 days |
-| llama.cpp's version | `brew pin`, recorded in `docs/VERSIONS.md` | 0.6.0 (build 11429) on the laptop |
+| llama.cpp's and ggml's versions | `brew pin`, recorded in `config/serving.toml` `[engine]` and `docs/VERSIONS.md`, checked by `serving launch` | llama.cpp 0.9.0 (build 12110) and ggml 0.29.0 on the Mac Studio |
 
 ## 6. Failure modes
 

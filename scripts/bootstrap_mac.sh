@@ -137,6 +137,11 @@ fi
 step "brew bundle from $BREWFILE"
 run brew bundle --file="$BREWFILE" --no-upgrade
 
+# The Brewfile cannot name a version, so a new Mac gets the newest llama.cpp. The pin stops a later install or upgrade from moving it or the ggml it
+# loads; the launch then refuses a release other than the one config/serving.toml records (design_docs/v2/10_operations.md section 3.8).
+step "holding llama.cpp and ggml where they are (brew pin)"
+run brew pin llama.cpp ggml
+
 step "Python 3.12 for uv (the version uv.lock was resolved for)"
 run uv python install 3.12
 
@@ -268,6 +273,9 @@ step "nothing below needs you: the model download can take an hour, then the ser
 # ---------------------------------------------------------------- 6. the model and the services
 step "the model config/serving.toml serves (the first time this downloads tens of GB; a file already matching its hash is kept)"
 run "$TARGET_DIR/.venv/bin/serving" fetch
+
+step "llama.cpp, ggml and the model files against config/serving.toml (llama-server will not start on any difference)"
+run "$TARGET_DIR/.venv/bin/serving" show
 
 step "launchd agents: llama, mcp, harness, dashboard, whisper, kokoro, health, listings"
 run "$TARGET_DIR/scripts/services.sh" install
