@@ -234,7 +234,7 @@ async def test_earlier_answers_reach_the_model_without_the_filler_spoken_before_
     events = [event async for event in agent_loop.run(conversation, llm, FakeToolBox(), AgentPolicy(filler_phrases=["One moment, checking the web."]))]
     sent = llm.seen_messages[0]
     assert sent[2].content == "It was built from 1933 to 1937."
-    assert sent[3].content.endswith("Question: Checking the forecast. And the Bay Bridge?")
+    assert sent[3].content.endswith("The user said: Checking the forecast. And the Bay Bridge?")
     assert events[-1].transcript.conversation[1].content == "It was built from 1933 to 1937."
 
 
@@ -258,7 +258,7 @@ async def test_only_the_last_few_exchanges_reach_the_model_and_the_transcript() 
     events = [event async for event in agent_loop.run(conversation, llm, FakeToolBox(), AgentPolicy(history_exchanges=2))]
     sent = llm.seen_messages[0]
     assert [message.content for message in sent[1:-1]] == ["Question 4?", "Answer 4.", "Question 5?", "Answer 5."]
-    assert sent[-1].content.endswith("Question: Question 6?")
+    assert sent[-1].content.endswith("The user said: Question 6?")
     assert [message.content for message in events[-1].transcript.conversation] == ["Question 4?", "Answer 4.", "Question 5?", "Answer 5.", "Question 6?", "Answer 6."]
 
 
@@ -361,7 +361,7 @@ async def test_the_model_sees_the_block_before_the_question_but_the_history_keep
     llm = ScriptedLLM([text_reply("It is four percent.")])
     events = await collect(llm, FakeToolBox())
     sent_question = llm.seen_messages[0][-1].content
-    assert sent_question.startswith("For reference, not to be read aloud: today is ") and sent_question.endswith("\nQuestion: What is the fed funds rate?")
+    assert sent_question.startswith("<assistant_software_note>\nToday is ") and sent_question.endswith("</assistant_software_note>\nThe user said: What is the fed funds rate?")
     assert "today is" not in llm.seen_messages[0][0].content.lower()
     transcript = events[-1].transcript
     assert transcript.conversation[0].content == "What is the fed funds rate?"
@@ -441,7 +441,7 @@ async def test_the_transcript_keeps_the_block_and_tool_definitions_the_model_was
     transcript = (await collect(llm, FakeToolBox()))[-1].transcript
     assert llm.seen_messages[0][-1].content == question_with_block("What is the fed funds rate?", transcript.per_question_block)
     assert transcript.conversation[0].content == "What is the fed funds rate?"
-    assert transcript.per_question_block.startswith("For reference, not to be read aloud: today is")
+    assert transcript.per_question_block.startswith("<assistant_software_note>\nToday is") and transcript.per_question_block.endswith("</assistant_software_note>")
     assert [tool.name for tool in transcript.tool_specs] == ["search_and_read"]
 
 
@@ -450,7 +450,7 @@ def sent_to_the_model(messages: list[Message]) -> str:
     return json.dumps(response_request_body(messages, [], AgentPolicy())) + json.dumps([to_ollama_message(message) for message in messages])
 
 
-async def test_thinking_is_recorded_on_the_transcript_but_never_spoken_or_sent_back_to_the_model() -> None:
+async def test_thinking_is_recorded_and_never_spoken_and_the_plan_behind_a_tool_call_reaches_the_next_round() -> None:
     search_thought, answer_thought = "The rate changes often; search for it.", "The source says 4.25 percent."
     llm = ScriptedLLM([with_thinking(tool_reply("fed funds rate"), search_thought), with_thinking(text_reply("It is 4.25 percent."), answer_thought)])
     events = await collect(llm, FakeToolBox())
@@ -458,8 +458,7 @@ async def test_thinking_is_recorded_on_the_transcript_but_never_spoken_or_sent_b
     spoken = " ".join(event.text for event in events if isinstance(event, (AnswerDelta, FillerSpoken)))
     assert [message.thinking for message in transcript.conversation if message.role == Role.ASSISTANT] == [search_thought, answer_thought]
     assert search_thought not in spoken and answer_thought not in spoken
-    assert search_thought not in sent_to_the_model(llm.seen_messages[1])
-    assert answer_thought not in sent_to_the_model(transcript.conversation)
+    assert search_thought in json.dumps(response_request_body(llm.seen_messages[1], [], AgentPolicy()))
 
 
 async def test_a_reply_asked_again_keeps_its_thinking_on_the_transcript_and_out_of_the_next_request() -> None:
