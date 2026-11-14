@@ -40,7 +40,12 @@ def gguf_string(text: str) -> bytes:
 
 
 def served_model(gguf: Path) -> ModelSettings:
-    return load_serving_config().models["qwen3.8-flash-next"].model_copy(update={"gguf": str(gguf)})
+    return load_serving_config().models["qwen3.8-flash-next"].model_copy(update={"gguf": str(gguf), "speculative": "none", "draft": None})
+
+
+def served_model_with_drafter(gguf: Path, drafter_gguf: Path) -> ModelSettings:
+    flash_next = load_serving_config().models["qwen3.8-flash-next"]
+    return flash_next.model_copy(update={"gguf": str(gguf), "draft": flash_next.draft.model_copy(update={"gguf": str(drafter_gguf)})})
 
 
 def test_the_header_keeps_short_arrays_and_steps_over_the_vocabulary(tmp_path: Path) -> None:
@@ -84,6 +89,16 @@ def test_every_shard_of_a_split_model_is_measured() -> None:
     first = Path("/models/Flash-Next-IQ3_XXS-00001-of-00002.gguf")
     assert model_files(first) == [first, Path("/models/Flash-Next-IQ3_XXS-00002-of-00002.gguf")]
     assert model_files(Path("/models/gemma.gguf")) == [Path("/models/gemma.gguf")]
+
+
+async def test_the_drafters_file_is_measured_after_the_models_shards_and_named_as_the_drafter(tmp_path: Path) -> None:
+    header = gguf_bytes([("general.architecture", STRING, gguf_string("unknown"))])
+    shards = [tmp_path / f"model-{number:05d}-of-00002.gguf" for number in (1, 2)]
+    drafter = tmp_path / "dflash.gguf"
+    for path in [*shards, drafter]:
+        path.write_bytes(header)
+    measured = await ServedModelMemory(load_model=lambda: served_model_with_drafter(shards[0], drafter)).current()
+    assert [(model_file.name, model_file.is_drafter) for model_file in measured.files] == [(shards[0].name, False), (shards[1].name, False), (drafter.name, True)]
 
 
 def test_a_file_just_written_is_in_ram_and_never_counts_past_its_pages(tmp_path: Path) -> None:
