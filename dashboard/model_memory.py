@@ -1,6 +1,6 @@
 """What the served model holds in RAM, measured without touching llama-server, for the memory tab (design doc v2/13 section 3.11).
 
-Model weights: llama-server maps its model files, so how much of a file is in RAM is how many of its pages macOS holds, which mincore reports from
+Model weights: llama-server maps its model files (and a speculative drafter's, when serving.toml names one), so how much of a file is in RAM is how many of its pages macOS holds, which mincore reports from
 a mapping of our own. A model whose n-gram table stays on the SSD (Qwen 3.8 Flash Next, lazy_mode on) has only the rows read so far in RAM, so a
 file's size would overstate it by tens of gigabytes. vmmap would show the same per process, but it pauses the process for a second or two.
 
@@ -47,6 +47,7 @@ class ModelFileMemory(BaseModel):
     name: str
     resident_bytes: int
     size_bytes: int
+    is_drafter: bool = False  # the speculative drafter's file (-md), which llama-server maps beside the model's
 
 
 class ModelMemory(BaseModel):
@@ -72,9 +73,11 @@ class ServedModelMemory:
 
     async def current(self) -> ModelMemory:
         model = self._load_model()
-        paths = model_files(model.gguf_path)
-        files = [ModelFileMemory(name=path.name, resident_bytes=await self._resident(path), size_bytes=path.stat().st_size) for path in paths]
-        metadata = await self._header(paths[0])
+        model_paths = model_files(model.gguf_path)
+        drafter_paths = model_files(model.draft.gguf_path) if model.draft else []
+        drafter_files = [(await self._file_memory(path)).model_copy(update={"is_drafter": True}) for path in drafter_paths]
+        files = [await self._file_memory(path) for path in model_paths] + drafter_files
+        metadata = await self._header(model_paths[0])
         return ModelMemory(
             files=files,
             kv_cache_bytes=kv_cache_bytes(metadata, model.context_tokens, model.slots),
@@ -82,6 +85,9 @@ class ServedModelMemory:
             slots=model.slots,
             prompt_cache_limit_bytes=model.prompt_cache_mib * MIB,
         )
+
+    async def _file_memory(self, path: Path) -> ModelFileMemory:
+        return ModelFileMemory(name=path.name, resident_bytes=await self._resident(path), size_bytes=path.stat().st_size)
 
     async def _resident(self, path: Path) -> int:
         kept = self._residency.get(path)

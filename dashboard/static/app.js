@@ -1031,9 +1031,14 @@ function llamaOwnTooltip(group, ramBytes) {
 }
 
 function modelFileTooltip(group, file, index) {
-  const files = group.model_memory.files.length;
-  const which = files > 1 ? `model file ${index + 1} of ${files}` : "model file";
+  const which = file.is_drafter ? "drafter, which proposes tokens for the model to check" : modelFileName(group.model_memory, index);
   return `${group.name}'s ${which}: ${memorySize(file.resident_bytes)} of ${memorySize(file.size_bytes)} in RAM\n${fileResidency(file)}`;
+}
+
+// The model's shards are numbered among themselves; the drafter's file is named apart from them.
+function modelFileName(model, index) {
+  const modelFiles = model.files.filter((file) => !file.is_drafter).length;
+  return modelFiles > 1 ? `model file ${index + 1} of ${modelFiles}` : "model file";
 }
 
 const mostlyOnDisk = (file) => file.resident_bytes < 0.9 * file.size_bytes;
@@ -1120,7 +1125,7 @@ function setupRowNotes(group) {
 }
 
 function modelFileNote(model, file, index) {
-  const which = model.files.length > 1 ? `file ${index + 1} of ${model.files.length}` : "model file";
+  const which = file.is_drafter ? "drafter" : modelFileName(model, index);
   if (mostlyOnDisk(file)) return `${which}: ${memorySize(file.resident_bytes)} of ${memorySize(file.size_bytes)} in RAM, the rest on the SSD`;
   return `${which}: ${memorySize(file.resident_bytes)} of model weights`;
 }
