@@ -57,11 +57,20 @@ def test_every_response_request_is_pinned_to_the_conversation_slot() -> None:
 
 
 def test_a_thinking_level_turns_thinking_on_at_that_effort_and_a_bool_switches_it() -> None:
-    assert thinking_template_options("medium") == {"enable_thinking": True, "reasoning_effort": "medium"}
+    assert thinking_template_options("medium") == {"enable_thinking": True, "reasoning_effort": "medium", "preserve_thinking": False}
+    assert thinking_template_options(True) == {"enable_thinking": True, "preserve_thinking": False}
     assert thinking_template_options(False) == {"enable_thinking": False}
     assert thinking_template_options(None) == {}
     body = response_request_body([Message(role=Role.USER, content="hi")], [], AgentPolicy(think="medium"))
-    assert body["chat_template_kwargs"] == {"enable_thinking": True, "reasoning_effort": "medium"}
+    assert body["chat_template_kwargs"] == {"enable_thinking": True, "reasoning_effort": "medium", "preserve_thinking": False}
+
+
+def test_a_tool_call_goes_back_with_the_thinking_that_planned_it() -> None:
+    call = ToolCall(id="c1", name="search_and_read", arguments={"query": "new Pokemon games"})
+    planned = to_openai_message(Message(role=Role.ASSISTANT, content="", thinking="The user wants upcoming Pokemon games. Search.", tool_calls=[call]))
+    assert planned["reasoning_content"] == "The user wants upcoming Pokemon games. Search."
+    replayed = to_openai_message(Message(role=Role.ASSISTANT, content="Pokemon Winds and Waves comes out in 2027."))
+    assert "reasoning_content" not in replayed
 
 
 def test_thinking_is_kept_on_the_message_but_never_streamed_as_spoken_text() -> None:

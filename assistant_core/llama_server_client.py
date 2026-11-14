@@ -142,12 +142,16 @@ def sampling_options(policy: AgentPolicy) -> dict[str, float | int]:
 
 def thinking_template_options(think: bool | str | None) -> dict[str, Any]:
     """The chat template's thinking switch for one request: a level such as "medium" turns thinking on at that effort, a bool turns it on or off, and
-    None leaves the server's setting. A request's options win over the server's --reasoning off, so the harness decides per request."""
+    None leaves the server's setting. A request's options win over the server's --reasoning off, so the harness decides per request.
+    With thinking on, earlier exchanges render without thinking tags: Home Assistant replays them as bare answers, and Qwen 3.8's template otherwise
+    puts an empty thinking block before each one, which the model read as answers given without reasoning or tools (2026-11-14 trace review)."""
     if think is None:
         return {}
     if isinstance(think, str):
-        return {"enable_thinking": True, "reasoning_effort": think}
-    return {"enable_thinking": think}
+        return {"enable_thinking": True, "reasoning_effort": think, "preserve_thinking": False}
+    if think:
+        return {"enable_thinking": True, "preserve_thinking": False}
+    return {"enable_thinking": False}
 
 
 def start_of_partial_tag(text: str) -> int:
@@ -268,6 +272,8 @@ def to_openai_message(message: Message) -> dict[str, Any]:
     if message.role == Role.TOOL:
         return {"role": "tool", "tool_call_id": message.tool_call_id, "content": message.content}
     converted: dict[str, Any] = {"role": message.role.value, "content": message.content}
+    if message.thinking:
+        converted["reasoning_content"] = message.thinking  # the plan behind a tool call, so the next round sees why it made the call
     if message.tool_calls:
         converted["tool_calls"] = [{"id": call.id, "type": "function", "function": {"name": call.name, "arguments": json.dumps(call.arguments)}} for call in message.tool_calls]
     return converted

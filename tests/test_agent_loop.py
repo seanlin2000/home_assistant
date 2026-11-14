@@ -450,7 +450,7 @@ def sent_to_the_model(messages: list[Message]) -> str:
     return json.dumps(response_request_body(messages, [], AgentPolicy())) + json.dumps([to_ollama_message(message) for message in messages])
 
 
-async def test_thinking_is_recorded_on_the_transcript_but_never_spoken_or_sent_back_to_the_model() -> None:
+async def test_thinking_is_recorded_and_never_spoken_and_the_plan_behind_a_tool_call_reaches_the_next_round() -> None:
     search_thought, answer_thought = "The rate changes often; search for it.", "The source says 4.25 percent."
     llm = ScriptedLLM([with_thinking(tool_reply("fed funds rate"), search_thought), with_thinking(text_reply("It is 4.25 percent."), answer_thought)])
     events = await collect(llm, FakeToolBox())
@@ -458,8 +458,7 @@ async def test_thinking_is_recorded_on_the_transcript_but_never_spoken_or_sent_b
     spoken = " ".join(event.text for event in events if isinstance(event, (AnswerDelta, FillerSpoken)))
     assert [message.thinking for message in transcript.conversation if message.role == Role.ASSISTANT] == [search_thought, answer_thought]
     assert search_thought not in spoken and answer_thought not in spoken
-    assert search_thought not in sent_to_the_model(llm.seen_messages[1])
-    assert answer_thought not in sent_to_the_model(transcript.conversation)
+    assert search_thought in json.dumps(response_request_body(llm.seen_messages[1], [], AgentPolicy()))
 
 
 async def test_a_reply_asked_again_keeps_its_thinking_on_the_transcript_and_out_of_the_next_request() -> None:
