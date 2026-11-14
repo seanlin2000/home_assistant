@@ -32,7 +32,7 @@ uv run isort "${ISORT_OPTS[@]}" .
 
 # Shell: every .sh file plus the git hooks, which have no extension (skip the virtual environments, which ship their own .sh files)
 shell_files() {
-    find . \( -path ./.venv -o -path ./.venv-speech-lab \) -prune -o \( -name "*.sh" -o -path "./.githooks/*" \) -type f -print0
+    find . \( -path ./.venv -o -path ./.venv-speech-lab -o -path ./.venv-speech \) -prune -o \( -name "*.sh" -o -path "./.githooks/*" \) -type f -print0
 }
 shell_files | xargs -0 shfmt -i 4 "${SHFMT_OPTS[@]}"
 shell_files | xargs -0 shellcheck
