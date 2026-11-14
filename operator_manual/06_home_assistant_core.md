@@ -245,13 +245,14 @@ class stage,mount,swap,restart,wait,restore ours
 
 Home Assistant loads the Python packages under `/config/custom_components/` at startup, and that folder is on the VM's disk, so shipping our code means copying files across the network and restarting. The copy carries `assistant_core` under `vendor/` because it is not on PyPI; the component's `__init__.py` adds `vendor/` to the import path when the folder exists, so the same source runs from the repository in tests and from the vendored copy in the VM.
 
-`scripts/deploy_component.py` does it in five steps:
+`scripts/deploy_component.py` does it in six steps:
 
 1. **Stage.** Copy the component, with `assistant_core` under `vendor/`, into a temporary folder: the exact tree that will land in the VM.
 2. **Mount.** Mount the Samba add-on's `config` share with `mount_smbfs`, as `HA_SAMBA_USER` with `HA_SAMBA_PASSWORD`.
 3. **Swap.** Rename the deployed folder to `studio_assistant.prev`, copy the staged one in, then delete `.prev`. If the copy fails, delete the partial copy, rename `.prev` back, and stop.
 4. **Restart.** Call `POST /api/services/homeassistant/restart`. Home Assistant often drops the connection as it shuts down instead of answering, and the script treats that as success.
-5. **Wait.** Poll `/api/` every 5 seconds, for up to 300 seconds, until it answers with an authenticated 200.
+5. **Wait for the old instance to stop.** Poll Home Assistant's state every second, for up to 90 seconds, until it stops answering or leaves the running state. The restart call returns while the old instance still runs with the component loaded, so the next step would otherwise pass at once.
+6. **Wait for the component.** Poll every 5 seconds, for up to 300 seconds, until Home Assistant is running and the `studio_assistant` config entry is loaded. `/api/` answers some seconds before that, and a question sent in those seconds is refused with "invalid agent ID".
 
 Whether the copy succeeds or fails, a `finally` block unmounts the share and deletes the staging folder. Home Assistant is usually back about thirty seconds after the restart.
 
@@ -349,7 +350,7 @@ If you have changed the component and want the VM to run it, deploy it; the copy
 uv run python scripts/deploy_component.py
 ```
 
-You see `deployed to //192.168.1.156/config/custom_components/studio_assistant`, then `Home Assistant restarting ...` and `Home Assistant back up`. Pass `--no-restart` to copy without restarting.
+You see `deployed to //192.168.1.156/config/custom_components/studio_assistant`, then `Home Assistant restarting ...` and `Home Assistant is back with the component loaded`. Pass `--no-restart` to copy without restarting.
 
 When you are done, stop the VM so the memory is free for the next benchmark pass:
 
@@ -373,7 +374,7 @@ The rows of the troubleshooting table that belong to this page:
 |---|---|
 | [`scripts/haos_vm.sh`](https://github.com/seanlin2000/home_assistant/blob/main/scripts/haos_vm.sh) | `create_vm`, which builds the VM through UTM's AppleScript interface with bridged networking; the `start`, `stop`, and `status` wrappers around `utmctl`; `resolve_ip` for `homeassistant.local` |
 | [`scripts/ha_setup.py`](https://github.com/seanlin2000/home_assistant/blob/main/scripts/ha_setup.py) | The five rerunnable steps: `onboarding`, `addons` with the option tables, `integrations` with `run_flow` and `confirm_discovered_flows`, `pipeline` with the Jarvis payload, and `weather` with `save_home_location` and `hide_weather_entities_from_assist` |
-| [`ops/ha_client.py`](https://github.com/seanlin2000/home_assistant/blob/main/ops/ha_client.py) | `HomeAssistant`: `discover_base`, REST `get` and `post`, the one-shot `ws` command, the `supervisor` proxy; `wait_for_api`, `entity_id`, and `converse`, the text-only call |
+| [`ops/ha_client.py`](https://github.com/seanlin2000/home_assistant/blob/main/ops/ha_client.py) | `HomeAssistant`: `discover_base`, REST `get` and `post`, the one-shot `ws` command, the `supervisor` proxy; `wait_for_api`, `wait_until_stopped`, `wait_for_component`, `entity_id`, and `converse`, the text-only call |
 | [`scripts/deploy_component.py`](https://github.com/seanlin2000/home_assistant/blob/main/scripts/deploy_component.py) | `stage_component`, which vendors `assistant_core`; `mount` and `sync` over the Samba share; `restart_and_wait` |
 | [`ops/deploy.py`](https://github.com/seanlin2000/home_assistant/blob/main/ops/deploy.py) | The `RULES` table that maps changed paths to actions, `deploy_component` among them, and `manifest_lock_mismatches`, the preflight that compares `manifest.json` with `uv.lock` |
 | [`custom_components/studio_assistant/manifest.json`](https://github.com/seanlin2000/home_assistant/blob/main/custom_components/studio_assistant/manifest.json) | The domain, the `conversation` dependency, the pinned requirements, and the component version |

@@ -20,7 +20,7 @@ from pathlib import Path
 import httpx
 from dotenv import load_dotenv
 
-from ops.ha_client import HomeAssistant, wait_for_api
+from ops.ha_client import HomeAssistant, wait_for_component, wait_until_stopped
 from ops.paths import VENDORED_CORE_FILES
 
 PROJECT = Path(__file__).resolve().parent.parent
@@ -104,10 +104,11 @@ async def restart_and_wait(ha: HomeAssistant) -> None:
     except httpx.RemoteProtocolError:
         pass  # Home Assistant 2026.9 often drops the connection as it shuts down instead of answering the restart call; the restart still happens.
     print("Home Assistant restarting ...", flush=True)
-    await asyncio.sleep(5)
-    await wait_for_api(ha, timeout_seconds=300, ok_statuses=(200,), poll_seconds=5)
+    if not await wait_until_stopped(ha):
+        print("Home Assistant was never seen stopping; waiting for the component anyway", flush=True)
+    await wait_for_component(ha)
+    print("Home Assistant is back with the component loaded", flush=True)
     await ha.close()
-    print("Home Assistant back up")
 
 
 if __name__ == "__main__":
