@@ -63,7 +63,24 @@ BOX_SCORE = {
         "players": [{"team": {"id": KEEP, "displayName": KEEP, "abbreviation": KEEP}, "statistics": [BOX_SCORE_PLAYERS]}],
     },
 }
-SHAPES_BY_PATH_END = {"scoreboard": GAMES, "schedule": GAMES, "summary": BOX_SCORE, "roster": ROSTER, "v2": SEARCH, "stats": STATS, "gamelog": GAME_LOG}
+LIST_CATEGORY = {"name": KEEP, "displayName": KEEP, "splitId": KEEP, "names": KEEP, "totals": KEEP}
+RANKED_PLAYERS = {
+    "pagination": {"count": KEEP, "pages": KEEP},
+    "categories": [LIST_CATEGORY],
+    "athletes": [{"athlete": {"displayName": KEEP, "teamShortName": KEEP, "position": {"abbreviation": KEEP}}, "categories": [LIST_CATEGORY]}],
+}
+TEAM_SEASONS = {"categories": [LIST_CATEGORY], "teams": [{"team": {"displayName": KEEP, "abbreviation": KEEP}, "categories": [LIST_CATEGORY]}]}
+SHAPES_BY_PATH_END = {
+    "scoreboard": GAMES,
+    "schedule": GAMES,
+    "summary": BOX_SCORE,
+    "roster": ROSTER,
+    "v2": SEARCH,
+    "stats": STATS,
+    "gamelog": GAME_LOG,
+    "byathlete": RANKED_PLAYERS,
+    "byteam": TEAM_SEASONS,
+}
 
 # Category J's calls, with the spellings and argument shapes a small model is likely to use for each question, so any of them finds a recording.
 CALLS = (

@@ -28,6 +28,7 @@ PLAYOFF_SEASON_TYPE_NAME = "Postseason"
 EVENT_CATEGORY = "event"
 NOT_PLAYED = "pre"  # a game's state, as ESPN names it
 FINISHED = "post"
+OPPONENT_SPLIT_ID = "900"  # ESPN's split for what a team's opponents did against it
 FINAL_ONLY_STAT_KEYS = frozenset({"adjQBR"})  # listed among a live NFL game's passing keys, though its label and values only arrive once the game is final
 
 
@@ -78,7 +79,7 @@ class Game(BaseModel):
 
 class RosterPlayer(BaseModel):
     name: str
-    espn_id: str = ""  # empty in the benchmark's rosters, recorded before team_stats needed it
+    espn_id: str = ""  # empty in the benchmark's rosters, recorded before roster_stats needed it
     jersey: str = ""
     position: str = ""
     group: str = ""
@@ -94,6 +95,30 @@ class FoundPlayer(BaseModel):
     espn_id: str
     name: str
     team: str = ""
+
+
+class RankedPlayer(BaseModel):
+    """One player on ESPN's league-wide list, with every figure of that list keyed "category.name"."""
+
+    name: str
+    team: str = ""
+    position: str = ""
+    stats: dict[str, str] = {}
+
+
+class RankedPage(BaseModel):
+    players: list[RankedPlayer]
+    qualified_count: int  # every qualified player on the list, across its pages
+    pages: int
+
+
+class TeamSeason(BaseModel):
+    """One team's season figures, its own and what its opponents did against it, each keyed "category.name"."""
+
+    name: str
+    abbreviation: str = ""
+    own: dict[str, str] = {}
+    opponent: dict[str, str] = {}
 
 
 class SeasonRow(BaseModel):
@@ -474,3 +499,57 @@ def did_not_play(athlete: dict[str, Any]) -> str:
 def read_team_stats(team_totals: list[dict[str, Any]], wanted: tuple[tuple[str, str], ...]) -> list[str]:
     values = {total.get("name"): cleaned_stat(total.get("displayValue", "")) for total in team_totals}
     return [f"{values[key]} {label}" for key, label in wanted if values.get(key)]
+
+
+def read_ranked_page(body: dict[str, Any]) -> RankedPage:
+    """One page of ESPN's league-wide player list: each athlete's category totals line up with the list's names for that category."""
+    try:
+        names = category_names(body["categories"])
+        pagination = body["pagination"]
+        players = [read_ranked_player(entry, names) for entry in body["athletes"]]
+        return RankedPage(players=players, qualified_count=int(pagination["count"]), pages=int(pagination["pages"]))
+    except (KeyError, IndexError, TypeError, ValueError) as error:
+        raise EspnShapeError(f"rankings: {type(error).__name__} {error}") from error
+
+
+def read_ranked_player(entry: dict[str, Any], names: dict[str, list[str]]) -> RankedPlayer:
+    athlete = entry["athlete"]
+    position = (athlete.get("position") or {}).get("abbreviation", "")
+    stats = {key: value for category in entry["categories"] for key, value in keyed_totals(category, names)}
+    return RankedPlayer(name=cleaned_name(athlete["displayName"]), team=cleaned_name(athlete.get("teamShortName", "")), position=cleaned_name(position), stats=stats)
+
+
+def read_team_seasons(body: dict[str, Any]) -> list[TeamSeason]:
+    """ESPN's league-wide team list: each team's categories come twice, its own figures and its opponents' (split 900)."""
+    try:
+        names = category_names(body["categories"])
+        return [read_team_season(entry, names) for entry in body["teams"]]
+    except (KeyError, IndexError, TypeError, ValueError) as error:
+        raise EspnShapeError(f"team statistics: {type(error).__name__} {error}") from error
+
+
+def read_team_season(entry: dict[str, Any], names: dict[str, list[str]]) -> TeamSeason:
+    own: dict[str, str] = {}
+    opponent: dict[str, str] = {}
+    for category in entry["categories"]:
+        side = opponent if is_opponent_split(category) else own
+        side.update(keyed_totals(category, names))
+    team = entry["team"]
+    return TeamSeason(name=cleaned_name(team["displayName"]), abbreviation=cleaned_name(team.get("abbreviation", "")), own=own, opponent=opponent)
+
+
+def is_opponent_split(category: dict[str, Any]) -> bool:
+    return str(category.get("splitId", "")) == OPPONENT_SPLIT_ID or str(category.get("displayName", "")).startswith("Opponent")
+
+
+def category_names(categories: list[dict[str, Any]]) -> dict[str, list[str]]:
+    """Each category's figure names; ESPN lists a team category twice and names only the first."""
+    names: dict[str, list[str]] = {}
+    for category in categories:
+        if category.get("names"):
+            names.setdefault(category["name"], category["names"])
+    return names
+
+
+def keyed_totals(category: dict[str, Any], names: dict[str, list[str]]) -> list[tuple[str, str]]:
+    return [(f"{category['name']}.{name}", cleaned_stat(value)) for name, value in zip(names.get(category["name"], []), category["totals"], strict=False)]

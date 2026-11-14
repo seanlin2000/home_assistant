@@ -1,6 +1,7 @@
 """Expose NBA and NFL scores, box scores, rosters, statistics and head-to-heads from ESPN as MCP tools on an existing server, so the agent sees one tool list.
 
-Six tools rather than one, split by the kind of question, so a small model picks by what was asked (design doc v2/03 section 3.4). Every failure is
+Eight tools rather than one, split by the kind of question, so a small model picks by what was asked (design doc v2/03 section 3.4); the two
+ranking tools answer league-wide lists in one call, which a model limited to a few tool calls cannot build from the team and player tools. Every failure is
 one sentence telling the model what to do next, never an exception, as the weather and Wikipedia tools do.
 """
 
@@ -14,12 +15,36 @@ import httpx
 from mcp.server.mcpserver import MCPServer
 from pydantic import Field
 
-from sports_mcp.answers import day_scores, game_box_score, player_against_player, player_against_team, player_stats, recent_team_scores, season_scores, team_roster, team_stats
+from sports_mcp.answers import (
+    day_scores,
+    game_box_score,
+    player_against_player,
+    player_against_team,
+    player_rankings,
+    player_stats,
+    recent_team_scores,
+    roster_stats,
+    season_scores,
+    team_rankings,
+    team_roster,
+)
 from sports_mcp.cache import SportsCache
 from sports_mcp.espn_client import EspnSession, EspnUnavailable
 from sports_mcp.espn_records import FoundPlayer
 from sports_mcp.fixtures import FixtureTransport
 from sports_mcp.leagues import FIRST_SEASON, League
+from sports_mcp.rankings import (
+    PLAYER_RANKED_STATS,
+    POSITION_CODES,
+    TEAM_RANKED_STATS,
+    PlayerRankedStat,
+    PlayerRankingAsk,
+    PlayerStat,
+    Position,
+    TeamRankedStat,
+    TeamRankingAsk,
+    TeamStat,
+)
 from sports_mcp.render import clipped
 from sports_mcp.settings import SportsSettings, sports_today
 from sports_mcp.teams import Team, find_teams
@@ -29,7 +54,10 @@ BOX_SCORE_TOOL_NAME = "box_score"
 TEAM_ROSTER_TOOL_NAME = "team_roster"
 PLAYER_STATS_TOOL_NAME = "player_stats"
 PLAYER_MATCHUP_TOOL_NAME = "player_matchup"
-TEAM_STATS_TOOL_NAME = "team_stats"
+ROSTER_STATS_TOOL_NAME = "roster_stats"
+PLAYER_RANKINGS_TOOL_NAME = "player_rankings"
+TEAM_RANKINGS_TOOL_NAME = "team_rankings"
+MOST_RANKED = 10
 MAX_TEAM_CHARS = 40
 MAX_PLAYER_CHARS = 60
 MAX_DATE_CHARS = 10
@@ -45,6 +73,8 @@ TeamName = Annotated[str, Field(max_length=MAX_TEAM_CHARS)]
 PlayerName = Annotated[str, Field(max_length=MAX_PLAYER_CHARS)]
 DayText = Annotated[str, Field(max_length=MAX_DATE_CHARS)]
 Ask = Callable[[EspnSession], Awaitable[str]]
+Ascending = Annotated[bool, Field(description="true: fewest first; false: most first")]
+RankedCount = Annotated[int, Field(ge=1, le=MOST_RANKED, description="how many to list")]
 
 
 class SportsRequestError(ValueError):
@@ -82,14 +112,14 @@ def register_sports_tools(server: MCPServer, settings: SportsSettings, transport
         return await answered(lambda espn: team_roster(espn, League(league), one_team(League(league), team)))
 
     @server.tool(
-        name=TEAM_STATS_TOOL_NAME,
+        name=ROSTER_STATS_TOOL_NAME,
         description=(
             "This season's statistics for every player on an NBA or NFL team, ranked by points per game or by yards, with who has not played:"
             f" for a team's leaders or top scorers. {USE_BEFORE_SEARCH} {READ_AS_GIVEN}"
         ),
     )
-    async def team_season(league: LeagueName, team: Annotated[TeamName, Field(description='as the user said it, e.g. "Warriors"')]) -> str:
-        return await answered(lambda espn: team_stats(espn, League(league), one_team(League(league), team)))
+    async def roster_season(league: LeagueName, team: Annotated[TeamName, Field(description='as the user said it, e.g. "Warriors"')]) -> str:
+        return await answered(lambda espn: roster_stats(espn, League(league), one_team(League(league), team)))
 
     @server.tool(name=PLAYER_STATS_TOOL_NAME, description=f"An NBA or NFL player's regular-season statistics by season, with career totals. {USE_BEFORE_SEARCH} {READ_AS_GIVEN}")
     async def stats(
@@ -111,6 +141,33 @@ def register_sports_tools(server: MCPServer, settings: SportsSettings, transport
         opponent_team: Annotated[TeamName, Field(description='team faced, e.g. "Lakers"; or opponent_player')] = "",
     ) -> str:
         return await answered(lambda espn: matchup_answer(espn, League(league), player, opponent_player, opponent_team))
+
+    @server.tool(
+        name=PLAYER_RANKINGS_TOOL_NAME,
+        description=f"League-wide NBA or NFL player rankings this season by one statistic, among ESPN's qualified players: league leaders, most or fewest. {USE_BEFORE_SEARCH} {READ_AS_GIVEN}",
+    )
+    async def player_leaders(
+        league: LeagueName,
+        stat: Annotated[PlayerStat, Field(description="the statistic ranked by")],
+        ascending: Ascending = False,
+        position: Annotated[Position, Field(description="only players at this position; empty for all")] = "",
+        count: RankedCount = 5,
+    ) -> str:
+        return await answered(
+            lambda espn: player_rankings(espn, PlayerRankingAsk(League(league), player_ranked_stat(League(league), stat), ascending, league_position(League(league), position), count))
+        )
+
+    @server.tool(
+        name=TEAM_RANKINGS_TOOL_NAME,
+        description=f"League-wide NBA or NFL team rankings this season by one statistic, including points and yards allowed: best and worst teams. {USE_BEFORE_SEARCH} {READ_AS_GIVEN}",
+    )
+    async def team_leaders(
+        league: LeagueName,
+        stat: Annotated[TeamStat, Field(description="the statistic ranked by")],
+        ascending: Ascending = False,
+        count: RankedCount = 5,
+    ) -> str:
+        return await answered(lambda espn: team_rankings(espn, TeamRankingAsk(League(league), team_ranked_stat(League(league), stat), ascending, count)))
 
 
 async def answered_from_espn(session: EspnSession, ask: Ask, max_words: int) -> str:
@@ -200,3 +257,23 @@ def checked_season(league: League, season: int | None, today: datetime.date) -> 
     if not FIRST_SEASON <= start_year <= current + 1:
         raise SportsRequestError(f"pass a season as the year it started, from {FIRST_SEASON} to {current}; the {league.label} season in progress is {league.season_label(current)}.")
     return start_year
+
+
+def player_ranked_stat(league: League, stat: str) -> PlayerRankedStat:
+    ranked = PLAYER_RANKED_STATS[stat]
+    if ranked.league is not league:
+        same_league = ", ".join(name for name, other in PLAYER_RANKED_STATS.items() if other.league is league)
+        raise SportsRequestError(f"{stat} is an {ranked.league.label} statistic; for the {league.label} pass one of: {same_league}.")
+    return ranked
+
+
+def league_position(league: League, position: str) -> str:
+    if position and position not in POSITION_CODES[league]:
+        raise SportsRequestError(f"{position} is not an {league.label} position; pass one of: {', '.join(POSITION_CODES[league])}, or leave it empty.")
+    return position
+
+
+def team_ranked_stat(league: League, stat: str) -> TeamRankedStat:
+    if stat not in TEAM_RANKED_STATS[league]:
+        raise SportsRequestError(f"{stat} is not ranked for {league.label} teams; pass one of: {', '.join(TEAM_RANKED_STATS[league])}.")
+    return TEAM_RANKED_STATS[league][stat]

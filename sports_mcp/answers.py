@@ -8,22 +8,28 @@ import asyncio
 from datetime import date
 
 from sports_mcp.espn_client import EspnSession
-from sports_mcp.espn_records import FINISHED, NOT_PLAYED, BoxScore, FoundPlayer, Game, LoggedGame, RosterPlayer
+from sports_mcp.espn_records import FINISHED, NOT_PLAYED, BoxScore, FoundPlayer, Game, LoggedGame, RankedPlayer, RosterPlayer
 from sports_mcp.game_finder import closest_game, game_near_day, last_meeting, plays_in, whole_season
 from sports_mcp.leagues import League
+from sports_mcp.rankings import POSITION_CODES, PlayerRankingAsk, RankedList, TeamRankingAsk
 from sports_mcp.render import (
     box_score_text,
     day_heading,
     games_text,
     has_stat_table,
     matchup_text,
+    player_rankings_text,
     player_stats_text,
+    roster_stats_text,
     roster_text,
     season_games_text,
     team_games_text,
-    team_stats_text,
+    team_rankings_text,
 )
 from sports_mcp.teams import Team
+
+POSITION_PAGE_SIZE = 50
+MOST_POSITION_PAGES = 8  # 400 players: past that a position this rare on the list is better told as scarce than searched for
 
 
 async def day_scores(session: EspnSession, league: League, day: date, team: Team | None) -> str:
@@ -79,11 +85,11 @@ async def team_roster(session: EspnSession, league: League, team: Team) -> str:
     return roster_text(league, team, await session.roster(league, team))
 
 
-async def team_stats(session: EspnSession, league: League, team: Team) -> str:
+async def roster_stats(session: EspnSession, league: League, team: Team) -> str:
     """Each player's statistics page, read a few at a time; ESPN's league-wide statistics ignore a team filter and run to megabytes."""
     players = [player for player in (await session.roster(league, team)).players if player.espn_id and has_stat_table(league, player)]
     seasons = await asyncio.gather(*(session.player_seasons(league, as_found_player(player, team)) for player in players))
-    return team_stats_text(league, team, league.current_season(session.today), list(zip(players, seasons, strict=True)))
+    return roster_stats_text(league, team, league.current_season(session.today), list(zip(players, seasons, strict=True)))
 
 
 def as_found_player(player: RosterPlayer, team: Team) -> FoundPlayer:
@@ -119,3 +125,28 @@ async def player_against_team(session: EspnSession, league: League, player: Foun
     seasons = sorted((await session.player_seasons(league, player)).espn_seasons)
     games = [game for game in await session.game_logs(league, player, seasons) if game.opponent_id == team.espn_id]
     return matchup_text(league, player, f"the {team.display_name}", [(game, None) for game in games], None)
+
+
+async def player_rankings(session: EspnSession, ask: PlayerRankingAsk) -> str:
+    start_year = ask.league.current_season(session.today)
+    if not ask.position:
+        page = await session.player_ranking_page(ask.league, ask.ranked.espn_category, ask.ranked.sort(ask.ascending), 1, ask.count)
+        return player_rankings_text(ask, start_year, RankedList(page.players[: ask.count], page.qualified_count, page.qualified_count))
+    return player_rankings_text(ask, start_year, await players_at_position(session, ask))
+
+
+async def players_at_position(session: EspnSession, ask: PlayerRankingAsk) -> RankedList:
+    """ESPN's list has no position filter, so its sorted pages are read in order until enough players at the position turn up."""
+    code = POSITION_CODES[ask.league][ask.position]
+    found: list[RankedPlayer] = []
+    for page_number in range(1, MOST_POSITION_PAGES + 1):
+        page = await session.player_ranking_page(ask.league, ask.ranked.espn_category, ask.ranked.sort(ask.ascending), page_number, POSITION_PAGE_SIZE)
+        found.extend(player for player in page.players if player.position == code)
+        if len(found) >= ask.count or page_number >= page.pages:
+            break
+    read_count = min(page_number * POSITION_PAGE_SIZE, page.qualified_count)
+    return RankedList(found[: ask.count], page.qualified_count, read_count)
+
+
+async def team_rankings(session: EspnSession, ask: TeamRankingAsk) -> str:
+    return team_rankings_text(ask, ask.league.current_season(session.today), await session.team_seasons(ask.league))
