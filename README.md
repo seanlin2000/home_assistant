@@ -46,7 +46,7 @@ uv run manual-check --png out/ operator_manual/04_conversation_agent.md   # also
 uv run draw-diagram diagram.mmd --png out/diagram.png                      # render one loose diagram the way the site does
 uv run mkdocs serve           # read the operator manual at http://127.0.0.1:8000/home_assistant/
 scripts/speech_lab.sh         # try speech models in the browser at http://127.0.0.1:8795: Qwen3-ASR, Qwen3-TTS, OmniVoice (own .venv-speech-lab)
-scripts/speech_server.sh --asr-port 10301   # Qwen3-ASR over Wyoming beside Whisper (own .venv-speech; config/speech.toml)
+scripts/speech_server.sh --asr-port 10301   # the speech server by hand, beside the speech agent: Qwen3-ASR over Wyoming (own .venv-speech; config/speech.toml)
 ```
 
 Upgrade dependencies deliberately with `scripts/dev_setup.sh --upgrade`, review the `uv.lock` diff, run the tests, commit.

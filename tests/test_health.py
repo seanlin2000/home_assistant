@@ -26,7 +26,7 @@ UTMCTL_FROM_SSH_STDERR = (
 
 
 def healthy_checks() -> dict[str, Check]:
-    return {name: OK for name in ("llama", "mcp", "whisper", "kokoro", "searxng", "home_assistant")} | {"vm": VM_UP}
+    return {name: OK for name in ("llama", "mcp", "speech", "kokoro", "searxng", "home_assistant")} | {"vm": VM_UP}
 
 
 def after_failures(checks: dict[str, Check], runs: int, state: State | None = None) -> State:
@@ -58,12 +58,12 @@ def test_a_recovery_resets_the_count() -> None:
 
 
 def test_kickstart_respects_the_cooldown() -> None:
-    checks = healthy_checks() | {"whisper": DOWN}
+    checks = healthy_checks() | {"speech": DOWN}
     state = after_failures(checks, 5)
-    state.last_action_at["kickstart:whisper"] = NOW - 10 * 60
+    state.last_action_at["kickstart:speech"] = NOW - 10 * 60
     assert health.decide_actions(checks, state, Policy(), NOW, maintenance=False) == []
-    state.last_action_at["kickstart:whisper"] = NOW - 31 * 60
-    assert keys(health.decide_actions(checks, state, Policy(), NOW, maintenance=False)) == ["kickstart:whisper"]
+    state.last_action_at["kickstart:speech"] = NOW - 31 * 60
+    assert keys(health.decide_actions(checks, state, Policy(), NOW, maintenance=False)) == ["kickstart:speech"]
 
 
 def test_unloaded_agent_is_skipped_not_failed() -> None:

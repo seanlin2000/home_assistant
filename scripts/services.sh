@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
 # Install, start, stop, and inspect the native macOS services that Home Assistant talks to over the LAN.
 #
-#   scripts/services.sh install      write launchd agents for whisper, kokoro, the harness and the exchange dashboard (LAN), llama-server and mcp (127.0.0.1), the health check, and the nightly listings refresh, and load them
+#   scripts/services.sh install      write launchd agents for speech to text, kokoro, the harness and the exchange dashboard (LAN), llama-server and mcp (127.0.0.1), the health check, and the nightly listings refresh, and load them
 #   scripts/services.sh start|stop   load/unload the agents
-#   scripts/services.sh restart NAME restart one agent (llama|mcp|harness|dashboard|whisper|kokoro|health|listings)
+#   scripts/services.sh restart NAME restart one agent (llama|mcp|harness|dashboard|speech|kokoro|health|listings)
 #   scripts/services.sh status       show what is listening on each port and the last health snapshot
 #   scripts/services.sh dashboard    start the exchange dashboard if it is not running and open it in the browser
-#   scripts/services.sh logs NAME    tail a service log (whisper|kokoro|mcp|harness|dashboard|llama|health|listings)
+#   scripts/services.sh logs NAME    tail a service log (speech|kokoro|mcp|harness|dashboard|llama|health|listings)
 #   scripts/services.sh uninstall    unload and remove the agents
 #
-# Ports: Whisper 10300, Kokoro 10210 and the harness 8770 (with an API key) bind 0.0.0.0 so the VM can reach them, and the
+# Ports: speech to text 10300 (the speech server, config/speech.toml), Kokoro 10210 and the harness 8770 (with an API key) bind 0.0.0.0 so the VM can reach them, and the
 # exchange dashboard 8775 does so a laptop on the home network can open it. llama-server 127.0.0.1:8090 (with an API key, from config/serving.toml)
 # and the tool server 127.0.0.1:8765 answer only this Mac (design_docs/v2/08 section 3.2).
 set -euo pipefail
@@ -18,9 +18,10 @@ PROJECT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 AGENTS_DIR="$HOME/Library/LaunchAgents"
 LOG_DIR="$HOME/Library/Logs/studio-assistant"
 PREFIX="com.studio-assistant"
-SERVICES=(llama mcp harness dashboard whisper kokoro health listings)
-# Agents an older install wrote and install now removes: llama-server replaced Ollama (design_docs/v2/10 section 3.1).
-RETIRED_SERVICES=(ollama)
+SERVICES=(llama mcp harness dashboard speech kokoro health listings)
+# Agents an older install wrote and install now removes: llama-server replaced Ollama (design_docs/v2/10 section 3.1), and the speech server's
+# Qwen3-ASR replaced Whisper.
+RETIRED_SERVICES=(ollama whisper)
 APP_SUPPORT_DIR="$HOME/Library/Application Support/studio-assistant"
 HEALTH_INTERVAL_SECONDS="${HEALTH_INTERVAL_SECONDS:-300}"
 LISTINGS_REFRESH_HOUR="${LISTINGS_REFRESH_HOUR:-4}"
@@ -102,6 +103,12 @@ prepare_kokoro() {
     fi
 }
 
+prepare_speech() {
+    # The speech server's own environment, and its model at the pinned revision, so the agent's first start loads it instead of downloading 2.5 GiB.
+    "$PROJECT_DIR/scripts/speech_env.sh"
+    "$PROJECT_DIR/.venv-speech/bin/speech-server" --download-only
+}
+
 ensure_api_key() {
     # $1 the key's name. Made once, readable only by this user, and kept on later installs; delete the file to change the key (design_docs/v2/10 section 3.2).
     local path="$APP_SUPPORT_DIR/$1.key"
@@ -130,6 +137,7 @@ host_names_with_port() {
 install_agents() {
     mkdir -p "$AGENTS_DIR" "$LOG_DIR"
     prepare_kokoro
+    prepare_speech
     # launchd keeps running the definition it loaded, so every agent is unloaded before its plist is rewritten; start_agents then loads the new ones.
     stop_agents
     remove_retired_agents
@@ -167,7 +175,8 @@ install_agents() {
     ENV_VALUES=("${DASHBOARD_ALLOWED_HOSTS:-$(host_names_with_port 8775)}")
     write_plist dashboard "$PROJECT_DIR/.venv/bin/exchange-dashboard"
     ENV_KEYS=() ENV_VALUES=()
-    write_plist whisper "$PROJECT_DIR/.venv/bin/wyoming-mlx-whisper" --uri tcp://0.0.0.0:10300 --model mlx-community/whisper-large-v3-turbo --language en
+    # Qwen3-ASR on MLX, on the port and model in config/speech.toml. It loads and warms the model before it listens (a few seconds).
+    write_plist speech "$PROJECT_DIR/.venv-speech/bin/speech-server"
     # --volume 2 (+6 dB) brings answers level with the speaker's wake sound, which was about 8 dB louder. Kokoro lowers a sentence that would clip.
     write_plist kokoro "$PROJECT_DIR/.venv/bin/kokoro-server" --uri tcp://0.0.0.0:10210 --voice bm_fable --data-dir "$HOME/.cache/wyoming-kokoro" --streaming --volume 2 --device cpu
     # HEALTH_CHECK_FLAGS="--leave-vm" restarts services but never the VM (used on the laptop, where the VM is stopped on purpose most of the time);
@@ -247,7 +256,7 @@ status() {
     for name in "${SERVICES[@]}"; do
         agent_loaded "$name" || echo "$name: agent NOT loaded"
     done
-    local ports=("llama:8090" "mcp:8765" "harness:8770" "dashboard:8775" "whisper:10300" "kokoro:10210")
+    local ports=("llama:8090" "mcp:8765" "harness:8770" "dashboard:8775" "speech:10300" "kokoro:10210")
     for entry in "${ports[@]}"; do
         local name="${entry%%:*}" port="${entry##*:}"
         if lsof -nP -iTCP:"$port" -sTCP:LISTEN >/dev/null 2>&1; then

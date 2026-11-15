@@ -34,7 +34,7 @@ class SetupComponent(BaseModel):
 SETUP_COMPONENTS = [
     SetupComponent(name=LLAMA_SERVER, pattern=r"/llama-server\b"),
     SetupComponent(name="Home Assistant VM (UTM)", pattern=r"/QEMULauncher\b"),
-    SetupComponent(name="Whisper, speech to text", pattern=r"wyoming-mlx-whisper"),
+    SetupComponent(name="Qwen3-ASR, speech to text", pattern=r"speech-server"),
     SetupComponent(name="Kokoro, text to speech", pattern=r"kokoro-server"),
     SetupComponent(name="harness", pattern=r"assistant-service"),
     SetupComponent(name="tool server", pattern=r"assistant-mcp"),
