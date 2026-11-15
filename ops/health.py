@@ -26,6 +26,7 @@ from assistant_service.exchange_log import ExchangeLog, TraceLog
 from assistant_service.settings import load_harness_config
 from ops import paths
 from ops.pipeline_runs import PipelineRunLog
+from ops.searxng_demand import SearxngPolicy, SearxngVerdict, judge_searxng_demand, read_searxng_demand
 from serving.settings import load_serving_config, read_api_key
 from utils.browser_utils import CHROME_RELEASE_PATH, FALLBACK_CHROME_MAJOR, ChromeRelease
 from utils.jsonl_utils import append_jsonl
@@ -45,6 +46,10 @@ SNAPSHOT_HISTORY_DAYS = 90
 CHROME_RELEASE_STALE_DAYS = 14  # the listings refresh records it nightly, and Chrome ships a major version about every four weeks
 ROTATE_OVER_BYTES = 20 * 1024 * 1024
 ROTATE_GENERATIONS = 3
+SEARXNG_SCRIPT = PROJECT_DIR / "scripts" / "searxng.sh"
+SEARXNG_STOP_TIMEOUT_SECONDS = 150
+DOCKER_DESKTOP_BACKEND = "/Applications/Docker.app/Contents/MacOS/com.docker.backend"
+KEPT_RUNNING = SearxngVerdict(reason="kept running on this Mac (--keep-searxng)")
 
 
 class Check(BaseModel):
@@ -96,10 +101,11 @@ class State(BaseModel):
 class Policy(BaseModel):
     agent_failures: int = 2
     agent_cooldown_seconds: float = 30 * 60
-    searxng_failures: int = 2
-    searxng_cooldown_seconds: float = 30 * 60
+    searxng_cooldown_seconds: float = 10 * 60  # a start runs in the background and can take a minute or two, so the next check must not start another
     vm_start_cooldown_seconds: float = 30 * 60
     manage_vm: bool = True  # False on the laptop, where the VM is stopped on purpose
+    manage_searxng: bool = True  # False keeps SearXNG running whatever Brave is doing (the laptop, or a person testing it)
+    searxng: SearxngPolicy = Field(default_factory=SearxngPolicy)
     daily_restart_hour: int = 4  # local time
     daily_restart_window_hours: int = 2  # a night busy all through the window skips that day's restart rather than restart in the day
     daily_restart_quiet_seconds: float = 10 * 60  # nobody has talked to the assistant for this long
@@ -112,8 +118,16 @@ class LlamaWatch(BaseModel):
     daily_restart_due: bool = False
 
 
+class SearxngWatch(BaseModel):
+    """What this run found about SearXNG, for the policy: whether it answers, whether anything needs it, and whether Docker Desktop is running."""
+
+    check: Check
+    verdict: SearxngVerdict
+    docker_running: bool
+
+
 class Action(BaseModel):
-    kind: str  # kickstart | searxng_up | vm_start
+    kind: str  # kickstart | searxng_up | searxng_off | vm_start
     target: str
     reason: str
 
@@ -374,25 +388,36 @@ def decide_actions(checks: dict[str, Check], state: State, policy: Policy, now: 
     if maintenance:
         return []
     actions: list[Action] = []
-
-    def cooled(key: str, cooldown: float) -> bool:
-        return now - state.last_action_at.get(key, float("-inf")) >= cooldown
-
     failures = state.consecutive_failures
     for name in LAUNCHD_SERVICES:
-        if failures.get(name, 0) >= policy.agent_failures and cooled(f"kickstart:{name}", policy.agent_cooldown_seconds):
+        if failures.get(name, 0) >= policy.agent_failures and cooled(state, f"kickstart:{name}", policy.agent_cooldown_seconds, now):
             actions.append(Action(kind="kickstart", target=name, reason=f"{name} failed {failures[name]} checks in a row"))
-    if failures.get("searxng", 0) >= policy.searxng_failures and cooled("searxng_up:searxng", policy.searxng_cooldown_seconds):
-        actions.append(Action(kind="searxng_up", target="searxng", reason=f"searxng failed {failures['searxng']} checks in a row"))
     # A running VM is never restarted when Home Assistant stops answering: on the Studio that is usually the Wi-Fi bridge losing the path
     # from this Mac to the VM, which a reboot does not cure, and utmctl stop powers the VM off, which leaves the voice puck holding a dead connection.
     vm_check = checks.get("vm") if policy.manage_vm else None
-    if vm_check is not None and vm_check.ok is False and cooled("vm_start:vm", policy.vm_start_cooldown_seconds):
+    if vm_check is not None and vm_check.ok is False and cooled(state, "vm_start:vm", policy.vm_start_cooldown_seconds, now):
         actions.append(Action(kind="vm_start", target="vm", reason=f"vm is {vm_check.detail}"))
     restart = llama_restart(checks.get("llama"), llama_watch or LlamaWatch())
-    if restart is not None and cooled(LLAMA_RESTART_KEY, policy.agent_cooldown_seconds) and LLAMA_RESTART_KEY not in {action.key for action in actions}:
+    if restart is not None and cooled(state, LLAMA_RESTART_KEY, policy.agent_cooldown_seconds, now) and LLAMA_RESTART_KEY not in {action.key for action in actions}:
         actions.append(restart)
     return actions
+
+
+def cooled(state: State, action_key: str, cooldown_seconds: float, now: float) -> bool:
+    return now - state.last_action_at.get(action_key, float("-inf")) >= cooldown_seconds
+
+
+def searxng_actions(watch: SearxngWatch, state: State, policy: Policy, now: float, maintenance: bool) -> list[Action]:
+    """Start SearXNG at the first check that finds it needed and not answering: a Brave failure wakes this check so that SearXNG is up a minute or
+    so later. Stop it, and quit Docker Desktop with it, at the first check that finds nothing needs it."""
+    if maintenance:
+        return []
+    reason = watch.verdict.reason
+    if reason is not None and watch.check.ok is False and cooled(state, "searxng_up:searxng", policy.searxng_cooldown_seconds, now):
+        return [Action(kind="searxng_up", target="searxng", reason=f"needed ({reason}) and not answering")]
+    if reason is None and watch.docker_running and cooled(state, "searxng_off:searxng", policy.searxng_cooldown_seconds, now):
+        return [Action(kind="searxng_off", target="searxng", reason="nothing needs it: Brave has credit and has not failed in the last hour")]
+    return []
 
 
 def llama_restart(llama: Check | None, watch: LlamaWatch) -> Action | None:
@@ -424,13 +449,46 @@ def execute(action: Action, settings: Settings) -> str:
     if action.kind == "kickstart":
         result = subprocess.run(["launchctl", "kickstart", "-k", f"gui/{os.getuid()}/{paths.LAUNCHD_PREFIX}.{action.target}"], capture_output=True, text=True)
     elif action.kind == "searxng_up":
-        result = subprocess.run([str(PROJECT_DIR / "scripts" / "searxng.sh"), "up"], capture_output=True, text=True, timeout=120)
+        return f"{action.key} ({action.reason}): {start_searxng_in_background()}"
+    elif action.kind == "searxng_off":
+        result = subprocess.run([str(SEARXNG_SCRIPT), "off"], capture_output=True, text=True, timeout=SEARXNG_STOP_TIMEOUT_SECONDS)
     elif action.kind == "vm_start":
         result = subprocess.run(["utmctl", "start", settings.vm_name], capture_output=True, text=True, timeout=60)
     else:
         raise ValueError(f"unknown action {action.kind}")
     outcome = "ok" if result.returncode == 0 else f"exit {result.returncode}: {(result.stderr or result.stdout).strip()[:120]}"
     return f"{action.key} ({action.reason}): {outcome}"
+
+
+def start_searxng_in_background() -> str:
+    """Starting Docker Desktop from cold can take longer than one health run should, so the start runs on its own, in a new session: launchd ends
+    the processes left in a job's process group when the job exits, and this one must outlive the health check that started it."""
+    log = paths.service_log("searxng")
+    with log.open("a") as output:
+        subprocess.Popen([str(SEARXNG_SCRIPT), "up"], stdout=output, stderr=subprocess.STDOUT, stdin=subprocess.DEVNULL, start_new_session=True)
+    return f"starting in the background (log: {log.name})"
+
+
+# ---------------------------------------------------------------- SearXNG on demand
+
+
+def searxng_verdict(policy: Policy, now: datetime) -> SearxngVerdict:
+    if not policy.manage_searxng:
+        return KEPT_RUNNING
+    return judge_searxng_demand(read_searxng_demand(now), policy.searxng, now)
+
+
+def searxng_check_on_demand(check: Check, verdict: SearxngVerdict) -> Check:
+    """A SearXNG nothing needs is off on purpose, so its probe failing is neither healthy nor a failure. One that runs says why it is needed."""
+    if verdict.reason is None:
+        return Check(ok=None, detail=verdict.idle_detail, seconds=check.seconds) if check.ok is False else check
+    if verdict is KEPT_RUNNING:
+        return check
+    return check.model_copy(update={"detail": f"{check.detail}; running because {verdict.reason}"})
+
+
+def docker_desktop_running() -> bool:
+    return subprocess.run(["pgrep", "-f", DOCKER_DESKTOP_BACKEND], capture_output=True).returncode == 0
 
 
 # ---------------------------------------------------------------- housekeeping
@@ -522,12 +580,17 @@ async def run_once(settings: Settings, policy: Policy | None = None, remediate: 
     async with httpx.AsyncClient(timeout=settings.probe_timeout_seconds) as client:
         busy = await read_busy_llama_slots(client, settings)
     maintenance = paths.maintenance_flag().exists()
+    local_now = datetime.now().astimezone()
+    verdict = searxng_verdict(policy, local_now)
+    checks["searxng"] = searxng_check_on_demand(checks["searxng"], verdict)
     state = update_failure_counts(load_state(), checks)
     now = time.time()
-    local_now = datetime.now().astimezone()
     snapshot = Snapshot(checked_at=datetime.now(UTC).isoformat(timespec="seconds"), checks=checks, memory=read_memory(), llama_busy_slots=busy, maintenance=maintenance, full=full)
     watch = LlamaWatch(stuck_slots=stuck_llama_slots(state.llama_busy_slots, busy), daily_restart_due=daily_restart_due(state, policy, local_now, last_exchange_at()))
     actions = decide_actions(checks, state, policy, now, maintenance, watch) if remediate else []
+    if remediate:
+        searxng_watch = SearxngWatch(check=checks["searxng"], verdict=verdict, docker_running=docker_desktop_running())
+        actions += searxng_actions(searxng_watch, state, policy, now, maintenance)
     for action in actions:
         if dry_run:
             snapshot.actions.append(f"would run {action.key} ({action.reason})")

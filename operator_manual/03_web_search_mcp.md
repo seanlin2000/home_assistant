@@ -192,6 +192,29 @@ The only file we control is `docker/searxng/settings.yml`, mounted read-only int
 
 `SearxngClient` in `web_search_mcp/searxng_client.py` makes one GET per query with `format=json`, `language=en`, and `safesearch=0`, plus SearXNG's `time_range` parameter when the model gave one, and turns each item of the JSON answer into a `SearchResult` with title, URL, snippet, the engines that returned it, and a score. SearXNG scores a result higher when several engines return it. The client checks the query cache first and, with a cache directory set, stores every live result there, under the query and its time range. Live requests are at least 3 s apart, a gap held under a lock so concurrent callers queue. The gap exists because the four large engines rate-limit or CAPTCHA a single home address that queries in bursts, and the three smaller engines keep search alive when they do. A spoken question rarely makes two live searches, so the assistant does not feel the gap; a benchmark firing dozens of questions does.
 
+### When SearXNG runs
+
+Brave's paid API answers searches first, and SearXNG is asked only when Brave fails. Docker Desktop, which SearXNG runs in, holds about 1.5 GB on the Studio, while SearXNG itself uses about 150 MB. So SearXNG runs only while Brave might not answer.
+
+The health check decides every five minutes. SearXNG runs while any of these is true:
+
+| Reason | Read from |
+|---|---|
+| Brave has less than $0.20 of the month's $5 credit left | This month's line in `~/Library/Application Support/studio-assistant/brave-searches.txt` |
+| No Brave key is stored | The Keychain item `studio-assistant` / `brave-search-api`, asked for without reading the key |
+| Brave failed within the last hour | The newest line in `brave-failures.txt`, beside the usage file |
+| A benchmark is running | `searxng_lease` in the log folder, which holds the run's process ID |
+
+When none is true and Docker Desktop is running, the health check runs `scripts/searxng.sh off`. That stops the container and quits Docker Desktop. A new month restores the credit, so Docker stops again on the 1st.
+
+When Brave fails during a search, three things happen in turn:
+
+1. **One retry, only for failures that come back at once.** A refused connection, a Brave error (5xx), or a rate-limit refusal (429) is tried once more after a second. A timeout is not retried: it has already taken 10 s, and a second try would double the wait.
+2. **The failure is written down and the health check woken.** The search writes the time and the reason to `brave-failures.txt`, and runs `launchctl kickstart` on the health agent without waiting for it. The search goes on to SearXNG if it is running, or reports that it could not search if it is not.
+3. **The health check starts SearXNG.** It starts Docker Desktop, then the container, in the background, about a minute from cold. SearXNG stays up until an hour after the last failure, so an outage that comes and goes does not start and stop Docker each time.
+
+In the health snapshot, a SearXNG nobody needs shows as `skip`, with how much credit Brave has left. A running one says why it runs. To keep SearXNG running whatever Brave does, install the health agent with `HEALTH_CHECK_FLAGS=--keep-searxng scripts/services.sh install`.
+
 ### Reading the pages
 
 ```mermaid
@@ -544,7 +567,7 @@ Everything here runs on the Mac, from the repository folder. Start with SearXNG,
 scripts/searxng.sh status
 ```
 
-You see a `docker compose ps` table with `studio-searxng` in state `running` and the line `SearXNG JSON API: ok`. If the container is not running, `scripts/searxng.sh up` writes the secret into `docker/searxng/.env` the first time and starts it; give it a few seconds and run `status` again. Open http://127.0.0.1:8080 in a browser and you can use it like a search page, which is the quickest way to see what the model sees. `scripts/searxng.sh logs` tails the container's log; press Ctrl-C to stop tailing. `scripts/searxng.sh down` stops the container.
+You see a `docker compose ps` table with `studio-searxng` in state `running` and the line `SearXNG JSON API: ok`. If the container is not running, `scripts/searxng.sh up` writes the secret into `docker/searxng/.env` the first time and starts it; give it a few seconds and run `status` again. Open http://127.0.0.1:8080 in a browser and you can use it like a search page, which is the quickest way to see what the model sees. `scripts/searxng.sh logs` tails the container's log; press Ctrl-C to stop tailing. `scripts/searxng.sh down` stops the container, and `scripts/searxng.sh off` also quits Docker Desktop. On the Studio, SearXNG is off most of the time on purpose ([When SearXNG runs](#when-searxng-runs)), and the health check stops one started by hand within five minutes unless Brave needs it.
 
 Next confirm the tool server is alive:
 

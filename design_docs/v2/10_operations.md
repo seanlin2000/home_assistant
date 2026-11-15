@@ -138,7 +138,8 @@ The health check is still one launchd agent that runs every five minutes, checks
 | A service has failed 2 checks since it last answered: llama-server, the harness, the tool server, Whisper or Kokoro | Restarts that service with `launchctl kickstart -k` | 30 minutes before restarting the same service again |
 | A llama-server slot is stuck: on the same request, with no new token, at two checks in a row | Restarts llama-server with `launchctl kickstart -k` | The same 30 minutes as any llama-server restart |
 | It is between 4 and 6 a.m. local time, nobody has talked to the assistant for 10 minutes, and llama-server has not been restarted today | Restarts llama-server | Until the next day; any restart that day counts, and a night busy through the whole window goes without |
-| SearXNG has failed 2 checks | `scripts/searxng.sh up` | 30 minutes |
+| SearXNG is needed (Brave has under $0.20 of credit left, has no key, failed within the hour, or a benchmark runs) and does not answer | `scripts/searxng.sh up`, in the background (see DEVIATIONS) | 10 minutes |
+| Nothing needs SearXNG and Docker Desktop is running | `scripts/searxng.sh off`, which also quits Docker Desktop | 10 minutes |
 | The VM is stopped | Starts it | 30 minutes |
 | Home Assistant has failed checks while the VM runs | Nothing: the failures are recorded, and the VM is left running (see DEVIATIONS) | |
 | A deploy is running (the maintenance flag is set) | Nothing | |

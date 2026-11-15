@@ -31,6 +31,7 @@ from assistant_service.settings import load_harness_config
 from benchmark.mcp_process import McpServerProcess, fixture_selected
 from benchmark.ollama_utils import delete_model, ensure_model_present, unload, warm_up
 from benchmark.records import BenchmarkConfig, Candidate, MemoryFit, Question, QuestionResult, QuestionSet, append_jsonl, load_config, load_questions, read_jsonl
+from ops.searxng_demand import searxng_lease
 from serving.command import llama_server_program
 from serving.settings import load_serving_config, read_api_key
 
@@ -38,6 +39,9 @@ ExchangeRunner = Callable[[list[Message]], Awaitable[Transcript]]
 CONFIG_PATH = Path("benchmark/config.yaml")
 QUESTIONS_PATH = Path("benchmark/questions.yaml")
 console = Console()
+SEARXNG_SCRIPT = Path("scripts/searxng.sh")
+SEARXNG_START_TIMEOUT_SECONDS = 300  # Docker Desktop from cold, then the container
+SEARXNG_POLL_SECONDS = 5
 SAMPLING_FIELDS = {"think", "temperature", "top_p", "top_k", "min_p", "presence_penalty", "repeat_penalty", "max_output_tokens"}
 
 
@@ -64,20 +68,37 @@ async def main_async(args: argparse.Namespace) -> None:
     run_dir = Path(config.services.results_dir) / args.run
     candidates = [config.candidate(key) for key in args.candidate] if args.candidate else config.candidates
     questions = [question_set.by_id(qid) for qid in args.question] if args.question else question_set.questions
-    await ensure_searxng(config.services.searxng_url)
-    async with McpServerProcess(config.services, run_dir / "cache") as mcp_url:
-        write_run_metadata(run_dir, config, question_set)
-        for candidate in candidates:
-            await run_candidate(candidate, questions, config, mcp_url, run_dir, args)
+    with searxng_lease():
+        await ensure_searxng(config.services.searxng_url)
+        async with McpServerProcess(config.services, run_dir / "cache") as mcp_url:
+            write_run_metadata(run_dir, config, question_set)
+            for candidate in candidates:
+                await run_candidate(candidate, questions, config, mcp_url, run_dir, args)
 
 
 async def ensure_searxng(searxng_url: str) -> None:
+    """SearXNG runs only while something needs it (ops/searxng_demand.py). The run holds the lease, so the health check leaves SearXNG running, and
+    starts it here when it is off."""
+    if await searxng_answers(searxng_url):
+        return
+    console.print("SearXNG is off; starting it (Docker Desktop first, if it is not running)")
+    subprocess.run([str(SEARXNG_SCRIPT), "up"], check=True)
+    deadline = time.monotonic() + SEARXNG_START_TIMEOUT_SECONDS
+    while time.monotonic() < deadline:
+        if await searxng_answers(searxng_url):
+            return
+        await asyncio.sleep(SEARXNG_POLL_SECONDS)
+    raise SystemExit(f"SearXNG is still not answering at {searxng_url} after {SEARXNG_START_TIMEOUT_SECONDS} s. See scripts/searxng.sh status.")
+
+
+async def searxng_answers(searxng_url: str) -> bool:
     try:
         async with httpx.AsyncClient(timeout=10) as client:
             response = await client.get(f"{searxng_url}/search", params={"q": "ping", "format": "json"})
         response.raise_for_status()
-    except httpx.HTTPError as error:
-        raise SystemExit(f"SearXNG is not answering at {searxng_url} ({error}). Start it with scripts/searxng.sh up.") from error
+    except httpx.HTTPError:
+        return False
+    return True
 
 
 def write_run_metadata(run_dir: Path, config: BenchmarkConfig, question_set: QuestionSet) -> None:

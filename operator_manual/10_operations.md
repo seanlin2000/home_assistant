@@ -216,7 +216,8 @@ Each run checks these conditions in order, and when the maintenance flag is pres
 |---|---|---|
 | The maintenance flag is present | None: the snapshot is recorded and nothing is changed | Not applicable |
 | A launchd agent (Ollama, the tool server, Whisper, Kokoro) failed 2 checks in a row | `launchctl kickstart -k` that agent | 30 minutes, per agent |
-| SearXNG failed 2 checks in a row | `scripts/searxng.sh up` | 30 minutes |
+| SearXNG is needed and does not answer ([When SearXNG runs](03_web_search_mcp.md#when-searxng-runs)) | `scripts/searxng.sh up`, in the background | 10 minutes |
+| Nothing needs SearXNG and Docker Desktop is running | `scripts/searxng.sh off` | 10 minutes |
 | `utmctl status` says the VM is not started | `utmctl start` | 30 minutes |
 | The VM is started and Home Assistant fails checks | None: the failures are recorded and the VM keeps running | Not applicable |
 
@@ -229,7 +230,7 @@ Why the thresholds are staged:
 
 Every action goes into the snapshot as one line, such as `kickstart:mcp (mcp failed 2 checks in a row): ok`, so the report can show what the machine did to itself. `tests/test_health.py` pins every threshold and cooldown without touching launchd or UTM.
 
-On the laptop the agent is installed with `HEALTH_CHECK_FLAGS=--leave-vm scripts/services.sh install`, so it restarts failed services and a stuck llama-server but never starts the VM, because the laptop's VM is stopped on purpose most of the time. `--no-remediate` records and never acts. The mini uses the default and acts on everything.
+On the laptop the agent is installed with `HEALTH_CHECK_FLAGS="--leave-vm --keep-searxng" scripts/services.sh install`, so it restarts failed services and a stuck llama-server but never starts the VM, because the laptop's VM is stopped on purpose most of the time, and never stops SearXNG. `--no-remediate` records and never acts. The mini uses the default and acts on everything.
 
 ### Logs and the report {#the-report}
 

@@ -60,7 +60,12 @@ def health_state() -> Path:
     return log_dir() / "health_state.json"
 
 
-SERVICE_LOG_NAMES = ("llama", "mcp", "harness", "dashboard", "speech", "kokoro", "health")
+def searxng_lease() -> Path:
+    """Holds the process ID of a benchmark run that needs SearXNG, so the health check leaves it running until that process ends."""
+    return log_dir() / "searxng_lease"
+
+
+SERVICE_LOG_NAMES = ("llama", "mcp", "harness", "dashboard", "speech", "kokoro", "health", "searxng")
 # launchd labels are LAUNCHD_PREFIX.<service>, with their plists in LAUNCH_AGENTS_DIR (scripts/services.sh).
 LAUNCHD_PREFIX = "com.studio-assistant"
 LAUNCH_AGENTS_DIR = Path.home() / "Library" / "LaunchAgents"
