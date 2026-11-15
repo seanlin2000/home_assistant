@@ -32,7 +32,6 @@ from utils.jsonl_utils import append_jsonl
 from utils.snapshot_utils import SnapshotMissing, read_snapshot
 from web_search_mcp.searxng_client import describe_unresponsive_engines
 
-LAUNCHD_PREFIX = "com.studio-assistant"
 LAUNCHD_SERVICES = ("llama", "mcp", "harness", "speech", "kokoro")
 LLAMA_SERVER_PROCESS = "llama-server"
 LLAMA_RESTART_KEY = "kickstart:llama"
@@ -313,7 +312,7 @@ def no_browser_record() -> Check:
 
 
 def agent_loaded(name: str) -> bool:
-    result = subprocess.run(["launchctl", "print", f"gui/{os.getuid()}/{LAUNCHD_PREFIX}.{name}"], capture_output=True, text=True)
+    result = subprocess.run(["launchctl", "print", f"gui/{os.getuid()}/{paths.LAUNCHD_PREFIX}.{name}"], capture_output=True, text=True)
     return result.returncode == 0
 
 
@@ -423,7 +422,7 @@ def daily_restart_due(state: State, policy: Policy, local_now: datetime, last_ex
 def execute(action: Action, settings: Settings) -> str:
     """Run one action and return a one-line account of it for the snapshot."""
     if action.kind == "kickstart":
-        result = subprocess.run(["launchctl", "kickstart", "-k", f"gui/{os.getuid()}/{LAUNCHD_PREFIX}.{action.target}"], capture_output=True, text=True)
+        result = subprocess.run(["launchctl", "kickstart", "-k", f"gui/{os.getuid()}/{paths.LAUNCHD_PREFIX}.{action.target}"], capture_output=True, text=True)
     elif action.kind == "searxng_up":
         result = subprocess.run([str(PROJECT_DIR / "scripts" / "searxng.sh"), "up"], capture_output=True, text=True, timeout=120)
     elif action.kind == "vm_start":

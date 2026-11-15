@@ -268,8 +268,10 @@ status() {
     agent_loaded health && echo "health: checks every $HEALTH_INTERVAL_SECONDS s"
     agent_loaded listings && printf 'listings: refreshes daily at %d:%02d; last: %s\n' "$LISTINGS_REFRESH_HOUR" "$LISTINGS_REFRESH_MINUTE" "$(tail -n 1 "$LOG_DIR/listings.log" 2>/dev/null || echo "not run yet")"
     [[ -f "$LOG_DIR/maintenance" ]] && echo "MAINTENANCE FLAG SET: self-healing is off ($LOG_DIR/maintenance)"
+    # status reports and never fails: --last exits 1 when the snapshot lists a failing part, and install ends with status, right after the health
+    # agent's first run has recorded the other agents as still starting. That exit once failed a deploy whose services had all come up.
     if [[ -f "$LOG_DIR/health.json" ]]; then
-        "$PROJECT_DIR/.venv/bin/python" "$PROJECT_DIR/scripts/health_check.py" --last
+        "$PROJECT_DIR/.venv/bin/python" "$PROJECT_DIR/scripts/health_check.py" --last || true
     fi
 }
 

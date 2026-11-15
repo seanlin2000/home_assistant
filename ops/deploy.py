@@ -13,6 +13,7 @@ import argparse
 import fcntl
 import json
 import os
+import re
 import subprocess
 import sys
 import tomllib
@@ -30,6 +31,7 @@ PROJECT_DIR = Path(__file__).resolve().parent.parent
 MANIFEST = PROJECT_DIR / "custom_components" / "studio_assistant" / "manifest.json"
 LOCK = PROJECT_DIR / "uv.lock"
 PATH_WITH_BREW = "/opt/homebrew/bin:" + os.environ.get("PATH", "/usr/bin:/bin:/usr/sbin:/sbin")
+SERVICES_SCRIPT = PROJECT_DIR / "scripts" / "services.sh"
 
 
 class Rule(BaseModel):
@@ -200,6 +202,7 @@ def execute(action: str) -> None:
         for environment in ENVIRONMENTS:
             run([str(scripts / environment.setup_script)])
     elif action == "reinstall_agents":
+        retire_agents_the_checkout_does_not_list()
         run([str(scripts / "services.sh"), "install"])
     elif action.startswith("restart:"):
         run([str(scripts / "services.sh"), "restart", action.split(":", 1)[1]])
@@ -209,6 +212,39 @@ def execute(action: str) -> None:
         run([str(PROJECT_DIR / ".venv" / "bin" / "python"), str(scripts / "deploy_component.py")])
     else:
         raise ValueError(f"unknown action {action}")
+
+
+def retire_agents_the_checkout_does_not_list() -> None:
+    """An agent a newer commit added stays loaded when a deploy goes back to a commit that never heard of it: rolling back past the speech server
+    would leave it holding port 10300 against the Whisper agent the old install starts. So before installing, unload and delete every agent of
+    ours that the checked-out services.sh does not list."""
+    for name in sorted(installed_agent_names() - services_listed_in(SERVICES_SCRIPT.read_text())):
+        subprocess.run(["launchctl", "bootout", f"gui/{os.getuid()}/{paths.LAUNCHD_PREFIX}.{name}"], capture_output=True)
+        (paths.LAUNCH_AGENTS_DIR / f"{paths.LAUNCHD_PREFIX}.{name}.plist").unlink(missing_ok=True)
+        print(f"retired the {name} agent, which this commit's services.sh does not list", flush=True)
+
+
+def installed_agent_names() -> set[str]:
+    return {path.name.removeprefix(f"{paths.LAUNCHD_PREFIX}.").removesuffix(".plist") for path in paths.LAUNCH_AGENTS_DIR.glob(f"{paths.LAUNCHD_PREFIX}.*.plist")}
+
+
+def services_listed_in(services_script: str) -> set[str]:
+    listed = re.search(r"^SERVICES=\(([^)]*)\)", services_script, re.MULTILINE)
+    if listed is None:
+        raise SystemExit("scripts/services.sh has no SERVICES=(...) line; refusing to guess which agents to keep")
+    return set(listed.group(1).split())
+
+
+def carry_out(actions: list[str]) -> list[str]:
+    """Every action is tried even when one fails, so one failed step cannot leave the services after it stopped; the smoke test then decides
+    whether the commit stays. Returns what failed."""
+    failures = []
+    for action in actions:
+        try:
+            execute(action)
+        except subprocess.CalledProcessError as error:
+            failures.append(f"{action} exited {error.returncode}")
+    return failures
 
 
 # ---------------------------------------------------------------- commands
@@ -247,9 +283,7 @@ def switch_to(ref: str, run_tests: bool, dry_run: bool) -> dict:
         summary["tests"] = f"failed: {error}"
         summary["note"] = f"aborted before any restart; checkout returned to {old[:10]}; maintenance flag left set"
         return summary
-    for action in plan.actions:
-        if action != "sync_env":
-            execute(action)
+    summary["failed_steps"] = carry_out([action for action in plan.actions if action != "sync_env"])
     summary["applied"] = True
     return summary
 

@@ -36,6 +36,8 @@ def deploy_here(ref: str, smoke_flags: list[str], run_tests: bool) -> int:
     if not summary["applied"]:
         return report_nothing_applied(summary)
     print(f"deploy: tests {summary['tests'] or 'skipped'}; restarted: {', '.join(summary['plan']) or 'nothing'}")
+    if summary.get("failed_steps"):
+        print(f"deploy: these steps reported a failure: {'; '.join(summary['failed_steps'])}. The test question decides", file=sys.stderr)
     if answers_after(summary["plan"], smoke_flags):
         deploy.mark_good(summary["to"])
         deploy.clear_maintenance()
