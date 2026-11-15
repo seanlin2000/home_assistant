@@ -15,6 +15,7 @@ from wyoming.server import AsyncEventHandler
 from speech_server.audio import RECOGNIZER_SAMPLE_RATE, loudest_frame_dbfs, pcm_bytes
 from speech_server.handlers import RecognizerHandler, recognizer_info
 from speech_server.settings import SpeechSettings, load_speech_settings
+from speech_server.wiring import RESIDENCY_REFRESH_VARIABLE, wiring_summary
 from speech_server.worker import ModelThread, SpeechWorker
 
 SETTINGS = load_speech_settings()
@@ -116,3 +117,9 @@ def test_a_config_mistake_stops_the_server() -> None:
         SpeechSettings.model_validate(good | {"asr": good["asr"] | {"lanugage": "English"}})
     with pytest.raises(ValidationError, match="asr.language"):
         SpeechSettings.model_validate(good | {"asr": good["asr"] | {"language": "Klingon"}})
+
+
+def test_the_startup_log_says_whether_the_wired_model_will_stay_wired() -> None:
+    assert wiring_summary(3300, "1000") == "wired limit 3300 MiB, residency renewed every 1000 ms"
+    for unset in (None, "", "0", "soon"):
+        assert f"{RESIDENCY_REFRESH_VARIABLE} is not set" in wiring_summary(3300, unset)
