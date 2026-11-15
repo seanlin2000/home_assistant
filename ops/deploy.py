@@ -68,7 +68,7 @@ RULES: tuple[Rule, ...] = (
         actions=("restart:llama", "restart:harness"),
         why="llama-server's settings or its launcher changed; the harness reads the model's budget from them",
     ),
-    Rule(prefixes=("voice/",), actions=("restart:kokoro",), why="Kokoro server wrapper changed"),
+    Rule(prefixes=("voice/", "utils/pronunciation_utils.py"), actions=("restart:kokoro",), why="Kokoro server wrapper, or the pronunciation dictionary code it runs, changed"),
     Rule(prefixes=("scripts/services.sh",), actions=("reinstall_agents",), why="launchd definitions changed"),
     Rule(prefixes=("docker/searxng/",), actions=("restart_searxng",), why="SearXNG configuration changed"),
     Rule(prefixes=("config/tools.toml",), actions=("restart:harness",), why="the tools the harness may call changed; it reads them at start"),
