@@ -1,12 +1,11 @@
-# The speech server (speech_server/): Qwen3-ASR turns speech into text and Qwen3-TTS turns text into speech, both in one MLX process.
+# The speech server (speech_server/): Qwen3-ASR turns speech into text, in one MLX process. Kokoro still speaks the answers.
 # `scripts/speech_server.sh` builds its environment and starts it. Unknown keys stop the server rather than being ignored.
 
 [server]
-host = "0.0.0.0"                             # the Home Assistant VM reaches both ports over the bridge
+host = "0.0.0.0"                             # the Home Assistant VM reaches the port over the bridge
 asr_port = 10300                             # Whisper's port, so Home Assistant's Wyoming entry for speech to text stays as it is
-tts_port = 10210                             # Kokoro's port, likewise for text to speech
 mlx_cache_limit_mib = 256                    # freed GPU memory MLX may keep for reuse; anything above goes back to macOS
-mlx_wired_limit_mib = 0                      # memory MLX keeps wired, so macOS cannot compress or swap the idle models; 0 leaves it to macOS
+mlx_wired_limit_mib = 0                      # memory MLX keeps wired, so macOS cannot compress or swap the idle model; 0 leaves it to macOS
 
 [asr]
 source = "mlx-community/Qwen3-ASR-1.7B-8bit"
@@ -14,21 +13,3 @@ revision = "a8379a2e2f9e313c9292cdf1af4055ab56d50d55"
 language = "English"                         # empty detects the language; fixed to English until the harness answers in Chinese
 context = ""                                 # names and terms that bias what it hears, passed as Qwen3-ASR's system prompt
 speech_floor_dbfs = -45.0                    # a recording whose loudest 30 ms is quieter than this has no speech; Qwen3-ASR would invent "Okay."
-
-[tts]
-source = "mlx-community/Qwen3-TTS-12Hz-0.6B-CustomVoice-8bit"
-revision = "049ef77fe8816b536193c0c25f9a214d17921282"
-default_voice = "ryan"
-gain = 2.0                                   # +6 dB, as Kokoro's --volume 2: answers level with the speaker's wake sound
-streaming_interval_seconds = 0.32            # audio is sent in pieces this long while the rest of the sentence is generated
-text_embedding_bits = 8                      # the 151k-token text embedding ships in bfloat16 (594 MiB); 8 bits halves it, 0 leaves it
-
-[tts.speech_length]                          # caps each sentence's audio, so a model that will not stop cannot talk for minutes
-minimum_seconds = 2.0
-seconds_per_latin_character = 0.12           # English speech runs about 0.07 s per character
-seconds_per_cjk_character = 0.5              # Mandarin runs about 0.22 s per character
-
-[tts.voices]                                 # the CustomVoice speakers offered to Home Assistant, and the language each one reads
-ryan = "English"
-serena = "Chinese"
-uncle_fu = "Chinese"
