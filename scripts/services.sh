@@ -4,7 +4,7 @@
 #   scripts/services.sh install      write launchd agents for speech to text, kokoro, the harness and the exchange dashboard (LAN), llama-server and mcp (127.0.0.1), the health check, and the nightly listings refresh, and load them
 #   scripts/services.sh start|stop   load/unload the agents
 #   scripts/services.sh restart NAME restart one agent (llama|mcp|harness|dashboard|speech|kokoro|health|listings)
-#   scripts/services.sh status       show what is listening on each port and the last health snapshot
+#   scripts/services.sh status       show what is listening on each port and the last health snapshot; exits 1 if an agent or port is down
 #   scripts/services.sh dashboard    start the exchange dashboard if it is not running and open it in the browser
 #   scripts/services.sh logs NAME    tail a service log (speech|kokoro|mcp|harness|dashboard|llama|health|listings)
 #   scripts/services.sh uninstall    unload and remove the agents
@@ -203,7 +203,9 @@ start_agents() {
         fi
     done
     sleep 2
-    status
+    # What is still starting is shown, not judged: a service that loads a model cannot be listening 2 s after it starts. Whether the commit works
+    # is the deploy's smoke test to say; this command fails only when launchd would not load an agent.
+    status || true
     if ((${#failed[@]} > 0)); then
         printf 'failed to load: %s\n' "${failed[@]}" >&2
         return 1
@@ -252,9 +254,14 @@ restart_agent() {
 }
 
 status() {
-    local name
+    # The exit code is the live state: 1 when an agent is not loaded or a port is not listening, which includes llama-server still loading its
+    # model, since it is not serving yet. The last health snapshot is printed for reading but does not decide it: it can be minutes old.
+    local name problems=0
     for name in "${SERVICES[@]}"; do
-        agent_loaded "$name" || echo "$name: agent NOT loaded"
+        if ! agent_loaded "$name"; then
+            echo "$name: agent NOT loaded"
+            problems=$((problems + 1))
+        fi
     done
     local ports=("llama:8090" "mcp:8765" "harness:8770" "dashboard:8775" "speech:10300" "kokoro:10210")
     for entry in "${ports[@]}"; do
@@ -263,16 +270,17 @@ status() {
             echo "$name: listening on $port"
         else
             echo "$name: NOT listening on $port"
+            problems=$((problems + 1))
         fi
     done
     agent_loaded health && echo "health: checks every $HEALTH_INTERVAL_SECONDS s"
     agent_loaded listings && printf 'listings: refreshes daily at %d:%02d; last: %s\n' "$LISTINGS_REFRESH_HOUR" "$LISTINGS_REFRESH_MINUTE" "$(tail -n 1 "$LOG_DIR/listings.log" 2>/dev/null || echo "not run yet")"
     [[ -f "$LOG_DIR/maintenance" ]] && echo "MAINTENANCE FLAG SET: self-healing is off ($LOG_DIR/maintenance)"
-    # status reports and never fails: --last exits 1 when the snapshot lists a failing part, and install ends with status, right after the health
-    # agent's first run has recorded the other agents as still starting. That exit once failed a deploy whose services had all come up.
+    # --last exits 1 when the snapshot lists a failing part; that is past information, so it is shown and not counted.
     if [[ -f "$LOG_DIR/health.json" ]]; then
         "$PROJECT_DIR/.venv/bin/python" "$PROJECT_DIR/scripts/health_check.py" --last || true
     fi
+    ((problems == 0))
 }
 
 open_dashboard() {
