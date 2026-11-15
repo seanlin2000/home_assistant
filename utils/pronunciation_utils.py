@@ -26,6 +26,10 @@ LIVE_DIR = Path.home() / "Library" / "Application Support" / "studio-assistant" 
 HISTORY_VERSIONS_KEPT = 10
 # A say-as form written between slashes is phonemes, handed to the voice as they are; Kokoro reads them in its "[word](/phonemes/)" form.
 PHONEMES = re.compile(r"^/.+/$")
+# The Wyoming speaker name that asks a voice's server to read the text as sent, unrespelled: the dashboard's previews respell the text themselves,
+# so "before" is heard without the dictionary and "after" with an entry not saved yet.
+VERBATIM_SPEAKER = "verbatim"
+HISTORY_NAME = re.compile(r"^r(\d+)-(\d{8}T\d{6})\.json$")
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -117,7 +121,17 @@ class PronunciationStore:
 
     def history_paths(self) -> list[Path]:
         """Oldest first. Names start with the zero-padded revision, so they sort in the order they were saved."""
-        return sorted(self.history_dir.glob("r*.json"))
+        return sorted(path for path in self.history_dir.glob("r*.json") if HISTORY_NAME.match(path.name))
+
+    def read_version(self, revision: int) -> PronunciationDictionary:
+        path = next((path for path in self.history_paths() if int(HISTORY_NAME.match(path.name).group(1)) == revision), None)
+        if path is None:
+            raise SnapshotMissing(f"revision {revision} is not among the last {HISTORY_VERSIONS_KEPT} saved versions")
+        return read_snapshot(path, PronunciationDictionary)
+
+    def versioned(self) -> PronunciationDictionary | None:
+        """Git's copy, to show whether the live copy has changes not yet in git; None when git has no copy."""
+        return read_snapshot(self.versioned_path, PronunciationDictionary) if self.versioned_path.exists() else None
 
     def load(self) -> PronunciationDictionary:
         path = self.source_path()

@@ -209,9 +209,9 @@ function renderExchange(detail) {
 }
 
 // Earlier questions in this conversation. One that has its own exchange record opens its steps and timing in place when clicked.
-// Memory is about the Mac, not one exchange, so picking an exchange there opens it in Exchanges; Prompt cache shows the picked exchange's prompt.
+// Memory and Pronunciation are about the Mac, not one exchange, so picking an exchange there opens it in Exchanges; Prompt cache shows the picked exchange's prompt.
 function openFromHistory(day, index) {
-  if (state.view === "memory") showView("exchanges");
+  if (state.view === "memory" || state.view === "pronunciation") showView("exchanges");
   openExchange(day, index);
 }
 
@@ -720,6 +720,7 @@ function showView(view) {
   $("composer").hidden = view !== "exchanges";
   $("cache-view").hidden = view !== "cache";
   $("memory-view").hidden = view !== "memory";
+  $("pronunciation-view").hidden = view !== "pronunciation";
   closeDrawer();
   closeSidebar();
   if (view === "cache") {
@@ -727,6 +728,7 @@ function showView(view) {
     renderPromptLayout();
   }
   if (view === "memory") refreshMemory();
+  if (view === "pronunciation") refreshPronunciation();
 }
 
 function sectionHead(title, ...notes) {
@@ -1219,6 +1221,6 @@ for (const item of document.querySelectorAll(".nav-item[data-view]")) item.addEv
 document.addEventListener("keydown", stepThroughExchanges);
 
 renderGreeting();
-const openingView = location.hash.match(/^#\/(cache|memory)(\/|$)/);
+const openingView = location.hash.match(/^#\/(cache|memory|pronunciation)(\/|$)/);
 if (openingView) showView(openingView[1]);
 poll();
