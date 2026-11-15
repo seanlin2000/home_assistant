@@ -3,7 +3,7 @@ never a version older than the fallback; the page reader and the listings refres
 
 import json
 from collections.abc import Iterator
-from datetime import UTC, date, datetime, timedelta
+from datetime import date, datetime, time, timedelta
 from pathlib import Path
 from typing import Any
 
@@ -37,7 +37,10 @@ def release(version: str, fraction: float) -> dict[str, Any]:
 
 
 def recorded(major: int, days_ago: int = 0) -> ChromeRelease:
-    return ChromeRelease(refreshed_at=datetime.now(UTC) - timedelta(days=days_ago), major=major, version=f"{major}.0.1000.1")
+    """Noon local time, days_ago calendar days back. Subtracting whole days from now instead crosses midnight around a daylight saving change, so a
+    record made late in the evening landed a day short."""
+    noon_that_day = datetime.combine(date.today() - timedelta(days=days_ago), time(12)).astimezone()
+    return ChromeRelease(refreshed_at=noon_that_day, major=major, version=f"{major}.0.1000.1")
 
 
 def releases_server(status: int = 200, body: dict[str, Any] | None = None) -> httpx.MockTransport:
