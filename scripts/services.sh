@@ -27,6 +27,8 @@ HEALTH_INTERVAL_SECONDS="${HEALTH_INTERVAL_SECONDS:-300}"
 LISTINGS_REFRESH_HOUR="${LISTINGS_REFRESH_HOUR:-4}"
 LISTINGS_REFRESH_MINUTE="${LISTINGS_REFRESH_MINUTE:-30}"
 UNLOAD_TIMEOUT_SECONDS="${UNLOAD_TIMEOUT_SECONDS:-30}"
+# How often MLX renews the speech server's wired memory (install_agents explains why); scripts/speech_server.sh uses the same default.
+MLX_RESIDENCY_REFRESH_MS="${MLX_RESIDENCY_REFRESH_MS:-1000}"
 
 usage() {
     sed -n '2,14p' "$0"
@@ -174,9 +176,13 @@ install_agents() {
     ENV_KEYS=(DASHBOARD_ALLOWED_HOSTS)
     ENV_VALUES=("${DASHBOARD_ALLOWED_HOSTS:-$(host_names_with_port 8775)}")
     write_plist dashboard "$PROJECT_DIR/.venv/bin/exchange-dashboard"
-    ENV_KEYS=() ENV_VALUES=()
     # Qwen3-ASR on MLX, on the port and model in config/speech.toml. It loads and warms the model before it listens (a few seconds).
+    # macOS 26 and later unwire GPU memory about 2 s after a process's last GPU work, so the wired limit in config/speech.toml holds only if MLX
+    # renews it; MLX does that only with this variable set, and every 3 s is too slow (ml-explore/mlx#4609).
+    ENV_KEYS=(MLX_METAL_RESIDENCY_REFRESH_INTERVAL_MS)
+    ENV_VALUES=("$MLX_RESIDENCY_REFRESH_MS")
     write_plist speech "$PROJECT_DIR/.venv-speech/bin/speech-server"
+    ENV_KEYS=() ENV_VALUES=()
     # --volume 2 (+6 dB) brings answers level with the speaker's wake sound, which was about 8 dB louder. Kokoro lowers a sentence that would clip.
     write_plist kokoro "$PROJECT_DIR/.venv/bin/kokoro-server" --uri tcp://0.0.0.0:10210 --voice bm_fable --data-dir "$HOME/.cache/wyoming-kokoro" --streaming --volume 2 --device cpu
     # HEALTH_CHECK_FLAGS="--leave-vm" restarts services but never the VM (used on the laptop, where the VM is stopped on purpose most of the time);

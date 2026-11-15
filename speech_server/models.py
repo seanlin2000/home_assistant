@@ -2,6 +2,7 @@
 and keeps state per thread."""
 
 import logging
+import os
 import time
 from pathlib import Path
 
@@ -12,6 +13,7 @@ from mlx_audio.stt.utils import load as load_recognizer
 
 from speech_server.audio import RECOGNIZER_SAMPLE_RATE
 from speech_server.settings import SpeechSettings
+from speech_server.wiring import RESIDENCY_REFRESH_VARIABLE, wiring_summary
 
 BYTES_PER_MIB = 2**20
 BYTES_PER_GIB = 2**30
@@ -30,6 +32,7 @@ class QwenRecognizer:
         mx.set_cache_limit(settings.server.mlx_cache_limit_mib * BYTES_PER_MIB)
         if settings.server.mlx_wired_limit_mib:
             mx.set_wired_limit(settings.server.mlx_wired_limit_mib * BYTES_PER_MIB)
+            _LOGGER.info(wiring_summary(settings.server.mlx_wired_limit_mib, os.environ.get(RESIDENCY_REFRESH_VARIABLE)))
         self._recognizer = load_recognizer(settings.asr.source, revision=settings.asr.revision)
         _LOGGER.info("model loaded: %.2f GiB of MLX memory in use", mx.get_active_memory() / BYTES_PER_GIB)
 

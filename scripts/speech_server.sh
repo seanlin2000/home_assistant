@@ -10,4 +10,6 @@ set -euo pipefail
 PROJECT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 
 "$PROJECT_DIR/scripts/speech_env.sh"
+# MLX reads this only at startup, so it must be in the environment before the server starts; see install_agents in scripts/services.sh.
+export MLX_METAL_RESIDENCY_REFRESH_INTERVAL_MS="${MLX_METAL_RESIDENCY_REFRESH_INTERVAL_MS:-1000}"
 exec "$PROJECT_DIR/.venv-speech/bin/speech-server" "$@"
