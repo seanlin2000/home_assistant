@@ -5,7 +5,9 @@
 host = "0.0.0.0"                             # the Home Assistant VM reaches the port over the bridge
 asr_port = 10300                             # Whisper's port, so Home Assistant's Wyoming entry for speech to text stays as it is
 mlx_cache_limit_mib = 256                    # freed GPU memory MLX may keep for reuse; anything above goes back to macOS
-mlx_wired_limit_mib = 0                      # memory MLX keeps wired, so macOS cannot compress or swap the idle model; 0 leaves it to macOS
+# Wired memory is RAM macOS may not compress or swap. Unwired, an idle spell let macOS swap out 2.4 GB of the model, and the first transcription
+# after 10 minutes took 1.16 and 1.40 s against 0.3 s warm; wired at 3,300 MiB it took 0.43 and 0.41 s (laptop, 2026-11-15, two idle cycles each).
+mlx_wired_limit_mib = 3300                   # memory MLX keeps wired, so macOS cannot compress or swap the idle model; 0 leaves it to macOS
 
 [asr]
 source = "mlx-community/Qwen3-ASR-1.7B-8bit"
