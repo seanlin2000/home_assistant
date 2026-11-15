@@ -3,9 +3,11 @@ and keeps state per thread."""
 
 import logging
 import time
+from pathlib import Path
 
 import mlx.core as mx
 import numpy as np
+from huggingface_hub import snapshot_download
 from mlx_audio.stt.utils import load as load_recognizer
 
 from speech_server.audio import RECOGNIZER_SAMPLE_RATE
@@ -15,6 +17,11 @@ BYTES_PER_MIB = 2**20
 BYTES_PER_GIB = 2**30
 
 _LOGGER = logging.getLogger(__name__)
+
+
+def download_model(settings: SpeechSettings) -> Path:
+    """Into the Hugging Face cache, where load_recognizer finds it; a revision already there is not fetched again."""
+    return Path(snapshot_download(settings.asr.source, revision=settings.asr.revision))
 
 
 class QwenRecognizer:

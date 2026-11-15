@@ -2,8 +2,9 @@
 
 The laptop drives it over SSH:  python -m ops.deploy apply --ref SHA | rollback | mark-good SHA | clear-maintenance | status
 
-`apply` raises the maintenance flag (so the health check stands down), fetches and checks out the exact commit, syncs the environment if the
-lock changed, runs the tests, then derives the smallest set of restarts from what changed between the old and new commits. The rules table is
+`apply` raises the maintenance flag (so the health check stands down), fetches and checks out the exact commit, syncs the environments if the
+lock changed, runs the tests, then derives the smallest set of restarts from what changed between the old and new commits, adding a restart for
+each service whose environment's installed packages the sync actually changed. The rules table is
 data and `plan_actions` is pure, so the tests pin it. Nothing here talks to the laptop: the smoke test and the decision to mark the commit good
 or roll back happen on the laptop side (scripts/mini.sh), which is the only place that can see both ends.
 """
@@ -17,6 +18,7 @@ import sys
 import tomllib
 from collections.abc import Callable, Iterable
 from pathlib import Path
+from typing import NamedTuple
 
 from packaging.requirements import Requirement
 from packaging.version import Version
@@ -36,12 +38,26 @@ class Rule(BaseModel):
     why: str
 
 
+class Environment(NamedTuple):
+    folder: str
+    setup_script: str
+    restarts: tuple[str, ...]  # the services that run from it
+
+
+# A lock change can move packages in one environment and not the other (a speech-group bump leaves .venv alone), so each is restarted only when
+# its sync changed what is installed.
+ENVIRONMENTS = (
+    Environment(".venv", "dev_setup.sh", ("restart:mcp", "restart:harness", "restart:dashboard", "restart:kokoro")),
+    Environment(".venv-speech", "speech_env.sh", ("restart:speech",)),
+)
+
+
 # Order matters twice: rules are matched in this order, and ACTION_ORDER below decides execution order.
 RULES: tuple[Rule, ...] = (
     Rule(
         prefixes=("uv.lock", "pyproject.toml"),
-        actions=("sync_env", "restart:mcp", "restart:harness", "restart:dashboard", "restart:whisper", "restart:kokoro"),
-        why="dependencies changed: sync the venv and restart every long-running Python service",
+        actions=("sync_env",),
+        why="dependencies changed: sync both environments, then restart the services of each one whose installed packages changed",
     ),
     Rule(
         prefixes=(
@@ -69,6 +85,7 @@ RULES: tuple[Rule, ...] = (
         why="llama-server's settings or its launcher changed; the harness reads the model's budget from them",
     ),
     Rule(prefixes=("voice/", "utils/pronunciation_utils.py"), actions=("restart:kokoro",), why="Kokoro server wrapper, or the pronunciation dictionary code it runs, changed"),
+    Rule(prefixes=("speech_server/", "config/speech.toml", "scripts/speech_env.sh"), actions=("restart:speech",), why="the speech server's code or settings changed"),
     Rule(prefixes=("scripts/services.sh",), actions=("reinstall_agents",), why="launchd definitions changed"),
     Rule(prefixes=("docker/searxng/",), actions=("restart_searxng",), why="SearXNG configuration changed"),
     Rule(prefixes=("config/tools.toml",), actions=("restart:harness",), why="the tools the harness may call changed; it reads them at start"),
@@ -86,11 +103,11 @@ ACTION_ORDER = (
     "restart:harness",
     "restart:dashboard",
     "restart:kokoro",
-    "restart:whisper",
+    "restart:speech",
     "restart_searxng",
     "deploy_component",
 )
-RESTARTS_COVERED_BY_REINSTALL = {"restart:llama", "restart:mcp", "restart:harness", "restart:dashboard", "restart:kokoro", "restart:whisper"}
+RESTARTS_COVERED_BY_REINSTALL = {"restart:llama", "restart:mcp", "restart:harness", "restart:dashboard", "restart:kokoro", "restart:speech"}
 
 
 class Plan(BaseModel):
@@ -107,11 +124,32 @@ def plan_actions(changed_paths: Iterable[str]) -> Plan:
             if any(path == prefix or path.startswith(prefix) for prefix in rule.prefixes):
                 for action in rule.actions:
                     wanted.setdefault(action, f"{path}: {rule.why}")
+    return ordered_plan(wanted, changed)
+
+
+def plan_after_sync(plan: Plan, changed_environments: Iterable[Environment]) -> Plan:
+    """The plan with a restart for every service whose environment the sync changed; a reinstall still covers them all."""
+    wanted = dict(plan.reasons)
+    for environment in changed_environments:
+        for action in environment.restarts:
+            wanted.setdefault(action, f"{environment.folder}: the sync changed its installed packages")
+    return ordered_plan(wanted, plan.changed)
+
+
+def ordered_plan(wanted: dict[str, str], changed: list[str]) -> Plan:
     if "reinstall_agents" in wanted:
-        for action in RESTARTS_COVERED_BY_REINSTALL:
-            wanted.pop(action, None)
+        wanted = {action: why for action, why in wanted.items() if action not in RESTARTS_COVERED_BY_REINSTALL}
     ordered = [action for action in ACTION_ORDER if action in wanted]
     return Plan(actions=ordered, reasons={action: wanted[action] for action in ordered}, changed=changed)
+
+
+def environments_changed(before: dict[str, frozenset[str]], after: dict[str, frozenset[str]]) -> list[Environment]:
+    return [environment for environment in ENVIRONMENTS if before[environment.folder] != after[environment.folder]]
+
+
+def installed_packages() -> dict[str, frozenset[str]]:
+    """Per environment, its dist-info folder names, which carry each installed package's name and version; empty for one not made yet."""
+    return {environment.folder: frozenset(path.name for path in (PROJECT_DIR / environment.folder).glob("lib/python*/site-packages/*.dist-info")) for environment in ENVIRONMENTS}
 
 
 # ---------------------------------------------------------------- preflight
@@ -159,7 +197,8 @@ def tree_is_dirty() -> bool:
 def execute(action: str) -> None:
     scripts = PROJECT_DIR / "scripts"
     if action == "sync_env":
-        run([str(scripts / "dev_setup.sh")])
+        for environment in ENVIRONMENTS:
+            run([str(scripts / environment.setup_script)])
     elif action == "reinstall_agents":
         run([str(scripts / "services.sh"), "install"])
     elif action.startswith("restart:"):
@@ -193,7 +232,10 @@ def switch_to(ref: str, run_tests: bool, dry_run: bool) -> dict:
     git("checkout", "--detach", "--quiet", new)
     try:
         if "sync_env" in plan.actions:
+            packages_before = installed_packages()
             execute("sync_env")
+            plan = plan_after_sync(plan, environments_changed(packages_before, installed_packages()))
+            summary.update(plan=plan.actions, reasons=plan.reasons)
         check_manifest_matches_lock()
         if run_tests:
             run([str(PROJECT_DIR / ".venv" / "bin" / "python"), "-m", "pytest", "-q", "-x"], timeout=900)

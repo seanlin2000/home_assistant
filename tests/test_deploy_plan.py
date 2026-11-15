@@ -52,13 +52,37 @@ def test_component_only_change_redeploys_the_component() -> None:
     assert actions("custom_components/studio_assistant/conversation.py") == ["deploy_component"]
 
 
-def test_lock_change_syncs_first_and_restarts_every_python_service() -> None:
-    assert actions("uv.lock") == ["sync_env", "restart:mcp", "restart:harness", "restart:dashboard", "restart:kokoro", "restart:whisper"]
-    assert actions("pyproject.toml", "voice/kokoro_server.py")[0] == "sync_env"
+def test_a_lock_change_only_syncs_until_the_sync_shows_which_environments_changed() -> None:
+    assert actions("uv.lock") == ["sync_env"]
+    assert actions("pyproject.toml", "voice/kokoro_server.py") == ["sync_env", "restart:kokoro"]
+
+
+def test_after_the_sync_only_the_services_of_a_changed_environment_restart() -> None:
+    project, speech = deploy.ENVIRONMENTS
+    plan = deploy.plan_actions(["uv.lock"])
+
+    assert deploy.plan_after_sync(plan, []).actions == ["sync_env"]
+    assert deploy.plan_after_sync(plan, [speech]).actions == ["sync_env", "restart:speech"]
+    assert deploy.plan_after_sync(plan, [project]).actions == ["sync_env", "restart:mcp", "restart:harness", "restart:dashboard", "restart:kokoro"]
+    assert deploy.plan_after_sync(plan, [speech]).reasons["restart:speech"] == ".venv-speech: the sync changed its installed packages"
+    assert deploy.plan_after_sync(deploy.plan_actions(["uv.lock", "scripts/services.sh"]), [project, speech]).actions == ["sync_env", "reinstall_agents"]
+
+
+def test_an_environment_counts_as_changed_when_its_installed_packages_differ() -> None:
+    before = {".venv": frozenset({"httpx-0.28.1.dist-info"}), ".venv-speech": frozenset({"mlx_audio-0.6.5.dist-info"})}
+    after = {".venv": frozenset({"httpx-0.28.1.dist-info"}), ".venv-speech": frozenset({"mlx_audio-0.6.6.dist-info"})}
+
+    assert [environment.folder for environment in deploy.environments_changed(before, after)] == [".venv-speech"]
+    assert deploy.environments_changed(before, before) == []
+
+
+def test_a_speech_server_change_restarts_only_the_speech_server() -> None:
+    assert actions("speech_server/handlers.py") == ["restart:speech"]
+    assert actions("config/speech.toml") == ["restart:speech"]
 
 
 def test_services_script_change_reinstalls_agents_instead_of_individual_restarts() -> None:
-    assert actions("scripts/services.sh", "assistant_mcp/server.py", "voice/kokoro_server.py") == ["reinstall_agents"]
+    assert actions("scripts/services.sh", "assistant_mcp/server.py", "voice/kokoro_server.py", "speech_server/models.py") == ["reinstall_agents"]
     assert actions("scripts/services.sh", "uv.lock") == ["sync_env", "reinstall_agents"]
 
 

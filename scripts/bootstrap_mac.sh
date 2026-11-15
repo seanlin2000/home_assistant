@@ -269,7 +269,7 @@ step "nothing below needs you: the model download can take an hour, then the ser
 step "the model config/serving.toml serves (the first time this downloads tens of GB; a file already matching its hash is kept)"
 run "$TARGET_DIR/.venv/bin/serving" fetch
 
-step "launchd agents: llama, mcp, harness, dashboard, whisper, kokoro, health, listings"
+step "launchd agents: llama, mcp, harness, dashboard, speech, kokoro, health, listings"
 run "$TARGET_DIR/scripts/services.sh" install
 
 # ---------------------------------------------------------------- 7. Home Assistant
