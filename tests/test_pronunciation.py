@@ -18,7 +18,7 @@ from utils.pronunciation_utils import (
 ENTRIES = [
     Pronunciation(written="Xi Jinping", say_as="She Jin Ping"),
     Pronunciation(written="Xi", say_as="She"),
-    Pronunciation(written="Jokic", say_as="Yo-Kic"),
+    Pronunciation(written="Jokic", say_as="Yo-Kich"),
     Pronunciation(written="Nvidia", say_as="N-Vidia"),
 ]
 
@@ -35,7 +35,7 @@ def write_versioned(store: PronunciationStore, revision: int, entries: list[Pron
 def test_whole_words_are_respelled_whatever_their_case_or_accents() -> None:
     matcher = PronunciationMatcher(ENTRIES)
 
-    assert matcher.respelled("NVIDIA and nvidia beat Jokić's Nuggets.") == "N-Vidia and N-Vidia beat Yo-Kic's Nuggets."
+    assert matcher.respelled("NVIDIA and nvidia beat Jokić's Nuggets.") == "N-Vidia and N-Vidia beat Yo-Kich's Nuggets."
 
 
 def test_the_longest_phrase_wins_and_words_inside_other_words_are_left_alone() -> None:
@@ -97,21 +97,21 @@ def test_the_voice_hears_a_save_from_the_next_sentence_and_keeps_its_matcher_whe
     pronunciations = LivePronunciations(store)
     store.save(ENTRIES[2:3])
     pronunciations.refresh()
-    assert pronunciations.matcher.respelled("Jokic and Nvidia.") == "Yo-Kic and Nvidia."
+    assert pronunciations.matcher.respelled("Jokic and Nvidia.") == "Yo-Kich and Nvidia."
 
     store.save(ENTRIES[2:4])
     pronunciations.refresh()
-    assert pronunciations.matcher.respelled("Jokic and Nvidia.") == "Yo-Kic and N-Vidia."
+    assert pronunciations.matcher.respelled("Jokic and Nvidia.") == "Yo-Kich and N-Vidia."
 
     store.live_path.write_text("{not json")
     pronunciations.refresh()
-    assert pronunciations.matcher.respelled("Jokic and Nvidia.") == "Yo-Kic and N-Vidia."
+    assert pronunciations.matcher.respelled("Jokic and Nvidia.") == "Yo-Kich and N-Vidia."
 
 
 def test_the_checked_in_dictionary_reads_and_starts_with_the_three_known_words() -> None:
     dictionary = PronunciationDictionary.model_validate(json.loads((VERSIONED_DIR / "kokoro" / "bm_fable.json").read_text()))
 
-    assert {entry.written: entry.say_as for entry in dictionary.entries} == {"Jokic": "Yo-Kic", "Nvidia": "N-Vidia", "Xi Jinping": "She Jin Ping"}
+    assert {entry.written: entry.say_as for entry in dictionary.entries} == {"Jokic": "Yo-Kich", "Nvidia": "N-Vidia", "Xi Jinping": "She Jin Ping"}
 
 
 def test_a_deploy_restarts_kokoro_for_the_dictionary_code_but_never_touches_the_dictionary() -> None:
