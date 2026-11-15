@@ -26,8 +26,10 @@ from packaging.version import Version
 from pydantic import BaseModel
 
 from ops import paths
+from utils import launchd_utils
 
 PROJECT_DIR = Path(__file__).resolve().parent.parent
+HEALTH_AGENT = "health"
 MANIFEST = PROJECT_DIR / "custom_components" / "studio_assistant" / "manifest.json"
 LOCK = PROJECT_DIR / "uv.lock"
 PATH_WITH_BREW = "/opt/homebrew/bin:" + os.environ.get("PATH", "/usr/bin:/bin:/usr/sbin:/sbin")
@@ -305,8 +307,11 @@ def mark_good(ref: str) -> str:
     return sha
 
 
-def clear_maintenance() -> None:
+def hand_back_to_health_check() -> None:
+    """Lowers the maintenance flag and wakes the health check, so whatever the deploy left for it (SearXNG started or stopped to match what the
+    new commit needs, a service to restart) happens now rather than at its next five-minute run."""
     paths.maintenance_flag().unlink(missing_ok=True)
+    launchd_utils.wake_agent(HEALTH_AGENT)
 
 
 def status() -> dict:
@@ -346,7 +351,7 @@ def main(argv: list[str] | None = None) -> int:
     elif args.command == "mark-good":
         result = {"last_good_ref": mark_good(args.ref)}
     elif args.command == "clear-maintenance":
-        clear_maintenance()
+        hand_back_to_health_check()
         result = {"maintenance": False}
     else:
         result = status()

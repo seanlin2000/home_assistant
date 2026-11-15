@@ -1,9 +1,11 @@
-"""Shared for every test: none reads the Keychain, spends a Brave search, or counts one in the real usage file, whatever is on the machine running them."""
+"""Shared for every test: none reads the Keychain, spends a Brave search, counts one in the real usage file, records a Brave failure in the real
+failures file, or wakes a launchd agent, whatever is on the machine running them."""
 
 from pathlib import Path
 
 import pytest
 
+import utils.launchd_utils
 import web_search_mcp.brave_client
 import web_search_mcp.search_engines
 
@@ -20,3 +22,18 @@ def brave_usage_in_a_temporary_file(monkeypatch: pytest.MonkeyPatch, tmp_path: P
     usage_file = tmp_path / "brave-searches.txt"
     monkeypatch.setattr(web_search_mcp.brave_client, "USAGE_FILE", usage_file)
     return usage_file
+
+
+@pytest.fixture(autouse=True)
+def brave_failures_in_a_temporary_file(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> Path:
+    failures_file = tmp_path / "brave-failures.txt"
+    monkeypatch.setattr(web_search_mcp.brave_client, "FAILURES_FILE", failures_file)
+    return failures_file
+
+
+@pytest.fixture(autouse=True)
+def woken_agents(monkeypatch: pytest.MonkeyPatch) -> list[str]:
+    """The agents code asked launchd to run, in order; launchd itself is never asked."""
+    woken: list[str] = []
+    monkeypatch.setattr(utils.launchd_utils, "wake_agent", woken.append)
+    return woken

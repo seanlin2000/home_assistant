@@ -2,7 +2,7 @@
 a time range on to SearXNG."""
 
 import logging
-from datetime import date
+from datetime import UTC, date, datetime
 from pathlib import Path
 
 import httpx
@@ -10,7 +10,7 @@ import pytest
 
 import web_search_mcp.brave_client
 import web_search_mcp.search_engines
-from web_search_mcp.brave_client import BraveClient, count_live_search, searches_by_month
+from web_search_mcp.brave_client import BraveClient, BraveFailure, brave_failures, count_live_search, note_brave_failure, searches_by_month
 from web_search_mcp.query_cache import QueryCache, search_key
 from web_search_mcp.search_engines import FallbackSearch, configured_search
 from web_search_mcp.searxng_client import SearchResult, SearxngClient, warn_about_unresponsive_engines
@@ -151,3 +151,82 @@ def test_each_live_brave_search_adds_one_to_its_month_and_the_dollar_figure_foll
     count_live_search(usage_file, date(2026, 11, 1))
     assert usage_file.read_text().splitlines()[1:] == ["2026-10  3  $0.01", "2026-11  1  $0.01"]
     assert searches_by_month(usage_file) == {"2026-10": 3, "2026-11": 1}
+
+
+def brave_answering(monkeypatch: pytest.MonkeyPatch, *answers: httpx.Response | Exception) -> list[httpx.Request]:
+    """Brave answers each request with the next of `answers` in turn; an exception is raised as the transport's failure. The retry waits no time."""
+    seen: list[httpx.Request] = []
+    remaining = list(answers)
+
+    def answer(request: httpx.Request) -> httpx.Response:
+        seen.append(request)
+        reply = remaining.pop(0)
+        if isinstance(reply, Exception):
+            raise reply
+        return reply
+
+    real_async_client = httpx.AsyncClient
+    monkeypatch.setattr(httpx, "AsyncClient", lambda **kwargs: real_async_client(transport=httpx.MockTransport(answer), **kwargs))
+    monkeypatch.setattr(web_search_mcp.brave_client, "RETRY_DELAY_SECONDS", 0)
+    return seen
+
+
+async def brave_search() -> list[SearchResult]:
+    return await BraveClient(SearchSettings(), QueryCache(None), api_key="test-key").search("fed rate")
+
+
+async def test_a_brave_error_that_comes_back_at_once_is_retried_once_and_a_success_counts_one_search(
+    monkeypatch: pytest.MonkeyPatch, brave_failures_in_a_temporary_file: Path, woken_agents: list[str]
+) -> None:
+    seen = brave_answering(monkeypatch, httpx.Response(503), httpx.Response(200, json=brave_payload("https://a.example/")))
+    assert [result.url for result in await brave_search()] == ["https://a.example/"]
+    assert len(seen) == 2
+    assert searches_by_month(web_search_mcp.brave_client.USAGE_FILE) == {date.today().strftime("%Y-%m"): 1}
+    assert brave_failures(brave_failures_in_a_temporary_file) == [] and woken_agents == []
+
+
+async def test_a_brave_failure_after_the_retry_is_recorded_and_wakes_the_health_check(monkeypatch: pytest.MonkeyPatch, brave_failures_in_a_temporary_file: Path, woken_agents: list[str]) -> None:
+    rate_limited = httpx.Response(429, json={"type": "ErrorResponse", "error": {"code": "RATE_LIMITED", "status": 429}})
+    seen = brave_answering(monkeypatch, rate_limited, rate_limited)
+    with pytest.raises(httpx.HTTPStatusError):
+        await brave_search()
+    assert len(seen) == 2
+    assert [failure.reason for failure in brave_failures(brave_failures_in_a_temporary_file)] == ["HTTP 429 RATE_LIMITED"]
+    assert woken_agents == ["health"]
+    assert searches_by_month(web_search_mcp.brave_client.USAGE_FILE) == {}
+
+
+async def test_a_brave_timeout_is_not_retried_because_a_second_would_double_the_wait(monkeypatch: pytest.MonkeyPatch, brave_failures_in_a_temporary_file: Path, woken_agents: list[str]) -> None:
+    seen = brave_answering(monkeypatch, httpx.ReadTimeout("no answer"), httpx.Response(200, json=brave_payload("https://never.example/")))
+    with pytest.raises(httpx.ReadTimeout):
+        await brave_search()
+    assert len(seen) == 1
+    assert [failure.reason for failure in brave_failures(brave_failures_in_a_temporary_file)] == ["timed out"]
+    assert woken_agents == ["health"]
+
+
+async def test_a_refused_key_is_not_retried(monkeypatch: pytest.MonkeyPatch, brave_failures_in_a_temporary_file: Path) -> None:
+    seen = brave_answering(monkeypatch, httpx.Response(401, text="unauthorized"), httpx.Response(200, json=brave_payload("https://never.example/")))
+    with pytest.raises(httpx.HTTPStatusError):
+        await brave_search()
+    assert len(seen) == 1
+    assert [failure.reason for failure in brave_failures(brave_failures_in_a_temporary_file)] == ["HTTP 401"]
+
+
+async def test_a_refused_connection_is_retried(monkeypatch: pytest.MonkeyPatch, brave_failures_in_a_temporary_file: Path) -> None:
+    seen = brave_answering(monkeypatch, httpx.ConnectError("refused"), httpx.ConnectError("refused"))
+    with pytest.raises(httpx.ConnectError):
+        await brave_search()
+    assert len(seen) == 2
+    assert [failure.reason for failure in brave_failures(brave_failures_in_a_temporary_file)] == ["could not connect"]
+
+
+def test_the_failures_file_keeps_the_newest_fifty_and_skips_lines_it_cannot_read(tmp_path: Path) -> None:
+    failures_file = tmp_path / "brave-failures.txt"
+    for minute in range(55):
+        note_brave_failure(failures_file, f"HTTP 50{minute % 4}", datetime(2026, 11, 15, 12, minute, tzinfo=UTC))
+    failures = brave_failures(failures_file)
+    assert len(failures) == 50
+    assert failures[-1] == BraveFailure(at=datetime(2026, 11, 15, 12, 54, tzinfo=UTC), reason="HTTP 502")
+    failures_file.write_text(failures_file.read_text() + "garbled line\n")
+    assert len(brave_failures(failures_file)) == 50

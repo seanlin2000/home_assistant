@@ -2,14 +2,15 @@
 
 import json
 import subprocess
-from datetime import date, datetime, timedelta, timezone
+from datetime import UTC, date, datetime, timedelta, timezone
 from pathlib import Path
 
 import httpx
 import pytest
 
 from ops import health, paths
-from ops.health import Action, Check, LlamaSlot, LlamaWatch, Policy, State
+from ops.health import Action, Check, LlamaSlot, LlamaWatch, Policy, SearxngWatch, State
+from ops.searxng_demand import SearxngVerdict
 
 OK = Check(ok=True)
 DOWN = Check(ok=False, detail="refused")
@@ -73,9 +74,50 @@ def test_unloaded_agent_is_skipped_not_failed() -> None:
     assert health.decide_actions(checks, state, Policy(), NOW, maintenance=False) == []
 
 
-def test_searxng_comes_back_after_two_failures() -> None:
-    checks = healthy_checks() | {"searxng": DOWN}
-    assert keys(health.decide_actions(checks, after_failures(checks, 2), Policy(), NOW, maintenance=False)) == ["searxng_up:searxng"]
+NEEDED = SearxngVerdict(reason="Brave failed under a minute ago (timed out)")
+NOT_NEEDED = SearxngVerdict(reason=None, idle_detail="off on purpose: Brave has $4.80 of this month's credit left and has not failed in the last hour")
+
+
+def searxng_watch(check: Check, verdict: SearxngVerdict, docker_running: bool) -> SearxngWatch:
+    return SearxngWatch(check=check, verdict=verdict, docker_running=docker_running)
+
+
+def test_needed_searxng_that_does_not_answer_starts_at_the_first_check_and_not_again_while_it_starts() -> None:
+    watch = searxng_watch(DOWN, NEEDED, docker_running=False)
+    assert keys(health.searxng_actions(watch, State(), Policy(), NOW, maintenance=False)) == ["searxng_up:searxng"]
+    starting = State(last_action_at={"searxng_up:searxng": NOW - 5 * 60})
+    assert health.searxng_actions(watch, starting, Policy(), NOW, maintenance=False) == []
+    starting.last_action_at["searxng_up:searxng"] = NOW - 11 * 60
+    assert keys(health.searxng_actions(watch, starting, Policy(), NOW, maintenance=False)) == ["searxng_up:searxng"]
+
+
+def test_needed_searxng_that_answers_is_left_alone() -> None:
+    assert health.searxng_actions(searxng_watch(OK, NEEDED, docker_running=True), State(), Policy(), NOW, maintenance=False) == []
+
+
+def test_searxng_nothing_needs_is_turned_off_while_docker_runs_and_left_alone_once_docker_is_off() -> None:
+    assert keys(health.searxng_actions(searxng_watch(OK, NOT_NEEDED, docker_running=True), State(), Policy(), NOW, maintenance=False)) == ["searxng_off:searxng"]
+    container_stopped = searxng_watch(Check(ok=None), NOT_NEEDED, docker_running=True)
+    assert keys(health.searxng_actions(container_stopped, State(), Policy(), NOW, maintenance=False)) == ["searxng_off:searxng"]
+    assert health.searxng_actions(searxng_watch(Check(ok=None), NOT_NEEDED, docker_running=False), State(), Policy(), NOW, maintenance=False) == []
+
+
+def test_maintenance_flag_suspends_starting_and_stopping_searxng() -> None:
+    assert health.searxng_actions(searxng_watch(DOWN, NEEDED, docker_running=False), State(), Policy(), NOW, maintenance=True) == []
+    assert health.searxng_actions(searxng_watch(OK, NOT_NEEDED, docker_running=True), State(), Policy(), NOW, maintenance=True) == []
+
+
+def test_searxng_off_on_purpose_is_skipped_not_failed_so_no_failure_count_builds() -> None:
+    check = health.searxng_check_on_demand(Check(ok=False, detail="ConnectError: refused", seconds=0.01), NOT_NEEDED)
+    assert check == Check(ok=None, detail=NOT_NEEDED.idle_detail, seconds=0.01)
+    assert after_failures(healthy_checks() | {"searxng": check}, 3).consecutive_failures["searxng"] == 0
+
+
+def test_running_searxng_says_why_it_is_needed_unless_it_is_kept_running_by_flag() -> None:
+    assert health.searxng_check_on_demand(Check(ok=True, detail="HTTP 200"), NEEDED).detail == "HTTP 200; running because Brave failed under a minute ago (timed out)"
+    assert health.searxng_check_on_demand(Check(ok=False, detail="HTTP 502"), NEEDED).ok is False
+    assert health.searxng_check_on_demand(Check(ok=True, detail="HTTP 200"), health.KEPT_RUNNING).detail == "HTTP 200"
+    assert health.searxng_verdict(Policy(manage_searxng=False), datetime.now(UTC)) is health.KEPT_RUNNING
 
 
 def test_stopped_vm_is_started_at_once_and_ha_failures_do_not_restart_it() -> None:

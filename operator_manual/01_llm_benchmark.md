@@ -265,14 +265,15 @@ Both large mixture-of-experts previews called the calculator on all six arithmet
 
 ## Run it yourself
 
-Every command runs from the repository folder. A pass takes most of a 16 GB machine, so first make sure the Home Assistant VM and the speech services are down, then check that Ollama is listening and start SearXNG:
+Every command runs from the repository folder. A pass takes most of a 16 GB machine, so first make sure the Home Assistant VM and the speech services are down, then check that Ollama is listening:
 
 ```bash
 pgrep -fl benchmark-run || echo "no benchmark running"
 scripts/haos_vm.sh stop
 scripts/services.sh status        # ollama on 11434 should be listening; whisper and kokoro should not
-scripts/searxng.sh up
 ```
+
+You do not need to start SearXNG. The run starts it, Docker Desktop first, when it is off. It also holds a lease, so the health check leaves SearXNG running until the run ends.
 
 Pick a fresh folder name for your pass. `benchmark/results/` is committed, and one folder is one pass, so do not write into `version_5`. Run two questions through one of the small models:
 

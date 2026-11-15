@@ -40,7 +40,7 @@ def deploy_here(ref: str, smoke_flags: list[str], run_tests: bool) -> int:
         print(f"deploy: these steps reported a failure: {'; '.join(summary['failed_steps'])}. The test question decides", file=sys.stderr)
     if answers_after(summary["plan"], smoke_flags):
         deploy.mark_good(summary["to"])
-        deploy.clear_maintenance()
+        deploy.hand_back_to_health_check()
         print(f"deploy: done. {summary['to'][:10]} is live and recorded as the last good commit")
         return DEPLOYED
     print("deploy: the test question FAILED; going back to the last good commit", file=sys.stderr)
@@ -64,7 +64,7 @@ def remember_the_running_commit_as_good() -> None:
 
 def report_nothing_applied(summary: dict) -> int:
     # Nothing restarted and the old commit is checked out again, so the health check can go back to work.
-    deploy.clear_maintenance()
+    deploy.hand_back_to_health_check()
     if summary.get("note") == "already at this commit":
         print("deploy: already at this commit; nothing to do")
         return DEPLOYED
@@ -103,7 +103,7 @@ async def harness_reports_ready() -> bool:
 def roll_back(smoke_flags: list[str]) -> int:
     summary = deploy.with_lock(lambda: deploy.switch_to(paths.last_good_ref().read_text().strip(), run_tests=False, dry_run=False))
     if answers_after(summary["plan"], smoke_flags):
-        deploy.clear_maintenance()
+        deploy.hand_back_to_health_check()
         print(f"deploy: rolled back to {summary['to'][:10]}, which answers. The new commit was NOT kept", file=sys.stderr)
         return NOT_DEPLOYED
     print("deploy: the last good commit does not answer either. The health check stays off until you look: scripts/services.sh status", file=sys.stderr)

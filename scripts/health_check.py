@@ -6,6 +6,7 @@ launchd runs this every five minutes (scripts/services.sh installs the agent). R
     uv run python scripts/health_check.py --dry-run        # probe and say what it would do; writes nothing
     uv run python scripts/health_check.py --no-remediate   # probe and record, take no action
     uv run python scripts/health_check.py --leave-vm       # restart services, but never start the VM
+    uv run python scripts/health_check.py --keep-searxng   # keep SearXNG running even while Brave answers
     uv run python scripts/health_check.py --full           # also run a real SearXNG query (hits upstream engines)
     uv run python scripts/health_check.py --json           # the snapshot as JSON
 """
@@ -29,13 +30,18 @@ def main() -> int:
     parser.add_argument("--json", action="store_true", help="print the snapshot as JSON instead of a table")
     parser.add_argument("--no-remediate", action="store_true", help="record only; never restart anything")
     parser.add_argument("--leave-vm", action="store_true", help="restart services, but never start the Home Assistant VM")
+    parser.add_argument("--keep-searxng", action="store_true", help="keep SearXNG running even while Brave answers, rather than only when Brave may not")
     parser.add_argument("--dry-run", action="store_true", help="print what would happen; write nothing")
     parser.add_argument("--full", action="store_true", help="run the SearXNG query probe too")
     parser.add_argument("--last", action="store_true", help="print the last recorded snapshot in one line and exit")
     args = parser.parse_args()
     if args.last:
         return print_last()
-    snapshot = asyncio.run(health.run_once(health.settings_from_environment(), health.Policy(manage_vm=not args.leave_vm), remediate=not args.no_remediate, dry_run=args.dry_run, full=args.full))
+    snapshot = asyncio.run(
+        health.run_once(
+            health.settings_from_environment(), health.Policy(manage_vm=not args.leave_vm, manage_searxng=not args.keep_searxng), remediate=not args.no_remediate, dry_run=args.dry_run, full=args.full
+        )
+    )
     print(snapshot.model_dump_json(indent=1) if args.json else health.render(snapshot))
     return 1 if snapshot.failing else 0
 
