@@ -18,7 +18,7 @@ from wyoming.tts import Synthesize
 from wyoming_kokoro_torch import handler as kokoro_handler
 from wyoming_kokoro_torch.__main__ import main as upstream_main
 
-from utils.pronunciation_utils import LivePronunciations, PronunciationStore
+from utils.pronunciation_utils import VERBATIM_SPEAKER, LivePronunciations, PronunciationStore
 
 KOKORO = "kokoro"
 
@@ -61,7 +61,10 @@ def pronunciations_for(voice: str) -> LivePronunciations:
 
 
 async def handle_synthesize_respelled(handler: Any, synthesize: Synthesize, send_start: bool = True, send_stop: bool = True) -> bool:
-    """Upstream's _handle_synthesize, given one sentence at a time (its sentence splitter has already run), with the sentence respelled."""
+    """Upstream's _handle_synthesize, given one sentence at a time (its sentence splitter has already run), with the sentence respelled; a request
+    with the verbatim speaker (the dashboard's previews, which respell the text themselves) is read as sent."""
+    if synthesize.voice and synthesize.voice.speaker == VERBATIM_SPEAKER:
+        return await _ORIGINAL_HANDLE_SYNTHESIZE(handler, synthesize, send_start, send_stop)
     voice = synthesize.voice.name if synthesize.voice and synthesize.voice.name else handler.cli_args.voice
     pronunciations = pronunciations_for(voice)
     pronunciations.refresh()

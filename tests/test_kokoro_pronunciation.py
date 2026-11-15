@@ -7,13 +7,13 @@ import pytest
 
 pytest.importorskip("wyoming_kokoro_torch")
 
-from wyoming.tts import Synthesize  # noqa: E402
+from wyoming.tts import Synthesize, SynthesizeVoice  # noqa: E402
 
-from utils.pronunciation_utils import LivePronunciations, Pronunciation, PronunciationStore  # noqa: E402
+from utils.pronunciation_utils import VERBATIM_SPEAKER, LivePronunciations, Pronunciation, PronunciationStore  # noqa: E402
 from voice import kokoro_server  # noqa: E402
 
 
-async def test_kokoro_reads_each_sentence_respelled_from_its_voices_dictionary(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+async def test_kokoro_reads_each_sentence_respelled_except_a_dashboard_preview_asking_for_it_verbatim(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
     store = PronunciationStore("kokoro", "bm_fable", live_dir=tmp_path / "live", versioned_dir=tmp_path / "git")
     store.save([Pronunciation(written="Xi Jinping", say_as="She Jin Ping"), Pronunciation(written="Jokic", say_as="Yo-Kich")])
     voices_asked_for, read_by_kokoro = [], []
@@ -28,7 +28,9 @@ async def test_kokoro_reads_each_sentence_respelled_from_its_voices_dictionary(m
 
     monkeypatch.setattr(kokoro_server, "_ORIGINAL_HANDLE_SYNTHESIZE", upstream)
     monkeypatch.setattr(kokoro_server, "pronunciations_for", pronunciations_for)
-    await kokoro_server.handle_synthesize_respelled(SimpleNamespace(cli_args=SimpleNamespace(voice="bm_fable")), Synthesize(text="Xi Jinping met Jokic."))
+    handler = SimpleNamespace(cli_args=SimpleNamespace(voice="bm_fable"))
+    await kokoro_server.handle_synthesize_respelled(handler, Synthesize(text="Xi Jinping met Jokic."))
+    await kokoro_server.handle_synthesize_respelled(handler, Synthesize(text="Xi Jinping met Jokic.", voice=SynthesizeVoice(name="bm_fable", speaker=VERBATIM_SPEAKER)))
 
-    assert read_by_kokoro == ["She Jin Ping met Yo-Kich."]
+    assert read_by_kokoro == ["She Jin Ping met Yo-Kich.", "Xi Jinping met Jokic."]
     assert voices_asked_for == ["bm_fable"]
