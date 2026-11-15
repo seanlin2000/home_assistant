@@ -9,6 +9,7 @@ Changes flow one way, from the live copy to git. Nothing ever writes git's copy 
 back from an older copy; git's copy is read only when there is no live copy and no history at all (a new Mac), and that start is logged.
 """
 
+import json
 import logging
 import re
 import unicodedata
@@ -60,6 +61,13 @@ class PronunciationDictionary(BaseModel):
         if repeated:
             raise ValueError(f"each written form may appear once; repeated: {repeated}")
         return self
+
+
+def versioned_json(dictionary: PronunciationDictionary) -> str:
+    """Git's layout: one entry per line, so a pull request's diff shows each added, changed or removed word as one line."""
+    lines = [f"    {json.dumps(entry.model_dump(), ensure_ascii=False)}" for entry in dictionary.entries]
+    entries = "[\n" + ",\n".join(lines) + "\n  ]" if lines else "[]"
+    return f'{{\n  "model": {json.dumps(dictionary.model)},\n  "voice": {json.dumps(dictionary.voice)},\n  "revision": {dictionary.revision},\n  "entries": {entries}\n}}\n'
 
 
 def matching_key(written: str) -> str:

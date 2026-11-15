@@ -13,6 +13,7 @@ from utils.pronunciation_utils import (
     PronunciationDictionary,
     PronunciationMatcher,
     PronunciationStore,
+    versioned_json,
 )
 
 ENTRIES = [
@@ -108,10 +109,13 @@ def test_the_voice_hears_a_save_from_the_next_sentence_and_keeps_its_matcher_whe
     assert pronunciations.matcher.respelled("Jokic and Nvidia.") == "Yo-Kich and N-Vidia."
 
 
-def test_the_checked_in_dictionary_reads_and_starts_with_the_three_known_words() -> None:
-    dictionary = PronunciationDictionary.model_validate(json.loads((VERSIONED_DIR / "kokoro" / "bm_fable.json").read_text()))
-
-    assert {entry.written: entry.say_as for entry in dictionary.entries} == {"Jokic": "Yo-Kich", "Nvidia": "N-Vidia", "Xi Jinping": "She Jin Ping"}
+def test_every_checked_in_dictionary_reads_names_its_own_file_and_keeps_gits_one_word_per_line_layout() -> None:
+    paths = sorted(VERSIONED_DIR.glob("*/*.json"))
+    assert paths
+    for path in paths:
+        dictionary = PronunciationDictionary.model_validate(json.loads(path.read_text()))
+        assert (dictionary.model, dictionary.voice) == (path.parent.name, path.stem)
+        assert path.read_text() == versioned_json(dictionary)
 
 
 def test_a_deploy_restarts_kokoro_for_the_dictionary_code_but_never_touches_the_dictionary() -> None:

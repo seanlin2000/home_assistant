@@ -143,7 +143,7 @@ step ".env: addresses, passwords and the Home Assistant token"
 run cp "$PROJECT_DIR/.env" "$MOVE_DIR/env"
 run chmod 600 "$MOVE_DIR/env"
 
-step "API keys, the harness database and the Brave spend log ($APP_SUPPORT_DIR)"
+step "API keys, the harness database, the Brave spend log, and the live pronunciation dictionaries with their last 10 versions ($APP_SUPPORT_DIR)"
 if [[ -d "$APP_SUPPORT_DIR" ]]; then run ditto "$APP_SUPPORT_DIR" "$MOVE_DIR/app-support"; fi
 
 step "the dashboard's history"
