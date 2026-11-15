@@ -1,9 +1,9 @@
 {
   "model": "kokoro",
   "voice": "bm_fable",
-  "revision": 1,
+  "revision": 2,
   "entries": [
-    {"written": "Jokic", "say_as": "Yo-Kic"},
+    {"written": "Jokic", "say_as": "Yo-Kich"},
     {"written": "Nvidia", "say_as": "N-Vidia"},
     {"written": "Xi Jinping", "say_as": "She Jin Ping"}
   ]
