@@ -2,11 +2,13 @@
 
 import ast
 import json
+import os
+import subprocess
 from pathlib import Path
 
 import pytest
 
-from ops import deploy
+from ops import deploy, paths
 from ops.paths import VENDORED_CORE_FILES
 
 
@@ -145,3 +147,41 @@ def test_vendored_core_files_import_only_each_other() -> None:
         tree = ast.parse((deploy.PROJECT_DIR / relative_path).read_text())
         imported = {node.module for node in ast.walk(tree) if isinstance(node, ast.ImportFrom) and node.module}
         assert {module for module in imported if module.startswith("assistant_core")} <= vendored_modules, relative_path
+
+
+def test_one_failed_step_does_not_stop_the_steps_after_it(monkeypatch: pytest.MonkeyPatch) -> None:
+    executed = []
+
+    def execute(action: str) -> None:
+        executed.append(action)
+        if action == "reinstall_agents":
+            raise subprocess.CalledProcessError(1, ["scripts/services.sh", "install"])
+
+    monkeypatch.setattr(deploy, "execute", execute)
+
+    assert deploy.carry_out(["reinstall_agents", "restart_searxng", "deploy_component"]) == ["reinstall_agents exited 1"]
+    assert executed == ["reinstall_agents", "restart_searxng", "deploy_component"]
+
+
+def test_a_rollback_retires_the_agents_its_older_services_script_does_not_list(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    agents = tmp_path / "LaunchAgents"
+    agents.mkdir()
+    for name in ("llama", "whisper", "speech"):
+        (agents / f"com.studio-assistant.{name}.plist").write_text("<plist/>")
+    older_services_script = tmp_path / "services.sh"
+    older_services_script.write_text("#!/usr/bin/env bash\nSERVICES=(llama mcp whisper kokoro)\nRETIRED_SERVICES=(ollama)\n")
+    booted_out = []
+    monkeypatch.setattr(paths, "LAUNCH_AGENTS_DIR", agents)
+    monkeypatch.setattr(deploy, "SERVICES_SCRIPT", older_services_script)
+    monkeypatch.setattr(deploy.subprocess, "run", lambda command, **_: booted_out.append(command[-1]))
+
+    deploy.retire_agents_the_checkout_does_not_list()
+
+    assert booted_out == [f"gui/{os.getuid()}/com.studio-assistant.speech"]
+    assert sorted(path.name for path in agents.iterdir()) == ["com.studio-assistant.llama.plist", "com.studio-assistant.whisper.plist"]
+
+
+def test_a_services_script_without_its_list_is_refused_rather_than_guessed() -> None:
+    assert deploy.services_listed_in("SERVICES=(llama mcp)\n") == {"llama", "mcp"}
+    with pytest.raises(SystemExit, match="no SERVICES"):
+        deploy.services_listed_in("#!/usr/bin/env bash\n")

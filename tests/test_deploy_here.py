@@ -12,8 +12,8 @@ OLD = "a" * 40
 NEW = "b" * 40
 
 
-def summary(applied: bool, plan: list[str] | None = None, to: str = NEW, tests: str | None = "passed", note: str | None = None) -> dict:
-    result = {"from": OLD, "to": to, "changed": 3, "plan": plan or [], "reasons": {}, "tests": tests, "applied": applied}
+def summary(applied: bool, plan: list[str] | None = None, to: str = NEW, tests: str | None = "passed", note: str | None = None, failed_steps: list[str] | None = None) -> dict:
+    result = {"from": OLD, "to": to, "changed": 3, "plan": plan or [], "reasons": {}, "tests": tests, "applied": applied, "failed_steps": failed_steps or []}
     if note:
         result["note"] = note
     return result
@@ -134,3 +134,12 @@ def test_waiting_stops_as_soon_as_the_harness_is_ready() -> None:
 
 def test_waiting_gives_up_after_its_timeout() -> None:
     assert not deploy_here.wait_until_ready(lambda: False, timeout_seconds=0, poll_seconds=0)
+
+
+def test_a_failed_step_is_reported_and_the_test_question_still_decides(monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]) -> None:
+    FakeMac(monkeypatch, [summary(applied=True, plan=["reinstall_agents"], failed_steps=["reinstall_agents exited 1"])], answers=[0])
+
+    assert deploy_here.deploy_here("origin/main", [], run_tests=True) == deploy_here.DEPLOYED
+    assert "these steps reported a failure: reinstall_agents exited 1" in capsys.readouterr().err
+    assert recorded_good() == NEW
+    assert not paths.maintenance_flag().exists()

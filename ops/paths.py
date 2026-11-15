@@ -61,6 +61,9 @@ def health_state() -> Path:
 
 
 SERVICE_LOG_NAMES = ("llama", "mcp", "harness", "dashboard", "speech", "kokoro", "health")
+# launchd labels are LAUNCHD_PREFIX.<service>, with their plists in LAUNCH_AGENTS_DIR (scripts/services.sh).
+LAUNCHD_PREFIX = "com.studio-assistant"
+LAUNCH_AGENTS_DIR = Path.home() / "Library" / "LaunchAgents"
 
 
 def service_log(name: str) -> Path:
