@@ -59,4 +59,4 @@ Start with `00_system_overview.md`: `v1/` for the assistant as built, `v2/` for 
 | `11_memory.md` | Summaries of past conversations, and how the assistant draws on them (v2) |
 | `12_security.md` | Threat model, trust marks, the guards, and supply-chain rules (v2) |
 | `13_exchange_dashboard.md` | The web page that shows each exchange's question, tool calls, answer, and timings (v2) |
-| `13_personal_data_tools.md` | Gmail, calendar, X, Reddit, and bank statements (v2) |
+| `14_personal_data_tools.md` | Newsletters now; later Gmail, calendar, X, Reddit, and bank statements (v2) |
