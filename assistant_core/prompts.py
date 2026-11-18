@@ -1,5 +1,6 @@
 """The one system prompt every model sees. Identical wording across candidates is a benchmark fairness rule."""
 
+import re
 from datetime import date
 
 PERSONA_NAME = "Jarvis"
@@ -50,6 +51,12 @@ ANSWER_WORDS_PER_QUESTION_WORD = 3.2
 ANSWER_WORDS_PER_TOOL_CALL = 20
 MINIMUM_WORD_LIMIT = 20
 MAXIMUM_WORD_LIMIT = 120
+# Two requests override the count. Asking for detail ("explain that in detail") lifts the limit past the ceiling to about a minute of speech: given no
+# limit, Opus 5.5 answered such requests in the logged exchanges of November 2026 in 145 to 247 words. Asking to hear the last answer again keeps its
+# length, where the count gave "Can you repeat that?" the floor and cut a 64-word answer to 21.
+DETAILED_ANSWER_WORD_LIMIT = 150
+DETAIL_REQUEST = re.compile(r"\b(in (more |great |greater |full )?detail|in[- ]depth|detailed)\b", re.IGNORECASE)
+REPEAT_REQUEST = re.compile(r"\b(repeat (that|it|this|what|yourself|your (last )?(answer|reply))|re-?read (that|it|your)|(say|read) (that|it) again)\b", re.IGNORECASE)
 DATE_LINE = "Today is {today}. Use this date whenever a question depends on what is current; do not assume an earlier year in your searches or answers."
 QUESTION_LABEL = "The user said: "
 NOTE_OPENING_TAG = "<assistant_software_note>"
@@ -61,20 +68,28 @@ def system_prompt() -> str:
     return SYSTEM_PROMPT
 
 
-def word_limit_for(question: str, tool_calls_made: int = 0) -> int:
+def word_limit_for(question: str, tool_calls_made: int = 0, previous_answer: str = "") -> int:
+    if DETAIL_REQUEST.search(question):
+        return DETAILED_ANSWER_WORD_LIMIT
+    if REPEAT_REQUEST.search(question):
+        return max(MINIMUM_WORD_LIMIT, len(previous_answer.split()))
+    return counted_word_limit(question, tool_calls_made)
+
+
+def counted_word_limit(question: str, tool_calls_made: int) -> int:
     answer_words = ANSWER_WORDS_PER_QUESTION_WORD * len(question.split()) + ANSWER_WORDS_PER_TOOL_CALL * tool_calls_made
     return max(MINIMUM_WORD_LIMIT, min(MAXIMUM_WORD_LIMIT, round(answer_words)))
 
 
-def word_limit_after_tools_line(question: str, tool_calls_made: int) -> str:
-    return WORD_LIMIT_AFTER_TOOLS_LINE.format(words=word_limit_for(question, tool_calls_made))
+def word_limit_after_tools_line(word_limit: int) -> str:
+    return WORD_LIMIT_AFTER_TOOLS_LINE.format(words=word_limit)
 
 
-def per_question_block(today: date, question: str, directive: str | None = None, memory_context: str = "") -> str:
+def per_question_block(today: date, word_limit: int, directive: str | None = None, memory_context: str = "") -> str:
     """What changes with every question, placed just before it: the date, the word limit, the router's directive, and later the matching memory notes.
     Without the date the models assume the year their training ended; pass 4 of the benchmark had fourteen of forty-six queries pinned to 2024 or 2025.
     The word limit lives here rather than in the system prompt, so the system prompt and tools stay cached across questions."""
-    lines = [DATE_LINE.format(today=f"{today:%A, %B %-d, %Y}"), WORD_LIMIT_LINE.format(words=word_limit_for(question))]
+    lines = [DATE_LINE.format(today=f"{today:%A, %B %-d, %Y}"), WORD_LIMIT_LINE.format(words=word_limit)]
     if directive:
         lines.append(directive.rstrip())
     if memory_context:

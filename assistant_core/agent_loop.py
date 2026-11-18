@@ -39,7 +39,16 @@ from assistant_core.models import (
     ToolStarted,
     Transcript,
 )
-from assistant_core.prompts import MAXIMUM_WORD_LIMIT, SILENCE_MARKER, WORD_LIMIT_AFTER_TOOLS_LINE, per_question_block, question_with_block, system_prompt, word_limit_after_tools_line
+from assistant_core.prompts import (
+    DETAILED_ANSWER_WORD_LIMIT,
+    SILENCE_MARKER,
+    WORD_LIMIT_AFTER_TOOLS_LINE,
+    per_question_block,
+    question_with_block,
+    system_prompt,
+    word_limit_after_tools_line,
+    word_limit_for,
+)
 from assistant_core.router import decide_route, directive_for, route_to_offered_tools, tool_round_cap
 from assistant_core.tool_guards import GuardedToolBox, ToolRefused, load_tool_table, untrusted_block_opening
 from assistant_core.tools import ToolBox
@@ -52,7 +61,7 @@ CUT_TO_FIT_NOTE = "(The rest was cut to fit. Answer the user now from what is he
 # Search results measured 3.6 characters a token on average with Qwen's tokenizer, and as few as 2 on pages of tables and numbers;
 # counting three keeps most cuts inside the room, and each message adds its template markers.
 CHARS_PER_TOKEN_ESTIMATE = 3
-WORD_LIMIT_NOTE_TOKENS = len(WORD_LIMIT_AFTER_TOOLS_LINE.format(words=MAXIMUM_WORD_LIMIT)) // CHARS_PER_TOKEN_ESTIMATE + 2  # room kept for the note after the results
+WORD_LIMIT_NOTE_TOKENS = len(WORD_LIMIT_AFTER_TOOLS_LINE.format(words=DETAILED_ANSWER_WORD_LIMIT)) // CHARS_PER_TOKEN_ESTIMATE + 2  # room kept for the note after the results
 MESSAGE_MARKER_TOKENS = 10
 TOOL_UNREACHABLE_NOTICE = "The web search tool is unavailable right now. Tell the user you could not check the web, then answer from your own knowledge with that caveat."
 # A sentence end counts only once the space after it has arrived, so "$3." or "version 2." at the end of a streamed chunk does not close the answer.
@@ -169,7 +178,8 @@ async def run(conversation: list[Message], llm: LLMClient, tools: ToolBox, polic
         transcript.route.started_seconds = route_started
         directive = directive_for(transcript.route)
     question = latest_question(conversation)
-    transcript.per_question_block = per_question_block(today or date.today(), question, directive, memory.get_context(conversation))
+    answer_before = previous_answer(conversation)
+    transcript.per_question_block = per_question_block(today or date.today(), word_limit_for(question, previous_answer=answer_before), directive, memory.get_context(conversation))
     spoken_question = put_block_before_question(messages, transcript.per_question_block)
     max_tool_rounds = tool_round_cap(transcript.route, policy.max_tool_rounds)
     runner = ToolCallRunner(tools, policy, started)
@@ -197,7 +207,7 @@ async def run(conversation: list[Message], llm: LLMClient, tools: ToolBox, polic
             yield event
         if not next_request_fits(messages, transcript, policy):
             cut_last_results_to_fit(messages, transcript, policy)
-        add_word_limit_after_results(messages, question, len(transcript.tool_call_records))
+        add_word_limit_after_results(messages, word_limit_for(question, len(transcript.tool_call_records), answer_before))
     restore_spoken_question(messages, spoken_question)
     finish_transcript(transcript, reply, cap, messages, started)
     transcript.untrusted = tools.untrusted
@@ -268,6 +278,12 @@ def set_aside_unusable_reply(reply: ModelReply, transcript: Transcript, round_in
 
 def latest_question(conversation: list[Message]) -> str:
     return next((message.content for message in reversed(conversation) if message.role == Role.USER), "")
+
+
+def previous_answer(conversation: list[Message]) -> str:
+    """The reply spoken before the latest question, which a request to repeat it sets the word limit by."""
+    question_index = max((index for index, message in enumerate(conversation) if message.role == Role.USER), default=0)
+    return next((message.content for message in reversed(conversation[:question_index]) if message.role == Role.ASSISTANT and message.content), "")
 
 
 def put_block_before_question(messages: list[Message], block: str) -> tuple[int, Message] | None:
@@ -491,11 +507,11 @@ def room_left_for_results(messages: list[Message], transcript: Transcript, polic
     return max(policy.context_tokens - used_tokens, 0)
 
 
-def add_word_limit_after_results(messages: list[Message], question: str, tool_calls_made: int) -> None:
+def add_word_limit_after_results(messages: list[Message], word_limit: int) -> None:
     """Each tool call raises the word limit, so it is restated after the last result, the last thing the model reads before answering, where it
     leaves the cached prompt before it untouched. The note before the question could count only the question."""
     last_result = messages[-1]
-    messages[-1] = last_result.model_copy(update={"content": f"{last_result.content}\n\n{word_limit_after_tools_line(question, tool_calls_made)}"})
+    messages[-1] = last_result.model_copy(update={"content": f"{last_result.content}\n\n{word_limit_after_tools_line(word_limit)}"})
 
 
 def fair_shares(lengths: list[int], room: int) -> list[int]:

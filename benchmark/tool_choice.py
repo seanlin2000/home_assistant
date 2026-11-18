@@ -15,7 +15,7 @@ from pydantic import BaseModel
 
 from assistant_core.llm_client import LLMClient
 from assistant_core.models import AgentPolicy, Completion, MalformedToolCall, Message, Role, ToolCallRequest
-from assistant_core.prompts import per_question_block, question_with_block, system_prompt
+from assistant_core.prompts import per_question_block, question_with_block, system_prompt, word_limit_for
 from assistant_core.tool_guards import GuardedToolBox, load_tool_table
 from assistant_core.tools import McpToolBox
 from benchmark.mcp_process import McpServerProcess
@@ -90,7 +90,7 @@ async def check_candidate(candidate: Candidate, policy: AgentPolicy, checks: lis
 async def first_move(llm: LLMClient, toolbox: McpToolBox, policy: AgentPolicy, check: ToolChoiceCheck, candidate_key: str, attempt: int) -> FirstMove:
     """The model's first turn for the question as the harness would send it, with the tools the harness would offer for it."""
     offered = await GuardedToolBox(toolbox, load_tool_table(), [Message(role=Role.USER, content=check.question)]).list_tools()
-    question = question_with_block(check.question, per_question_block(date.today(), check.question))
+    question = question_with_block(check.question, per_question_block(date.today(), word_limit_for(check.question)))
     messages = [Message(role=Role.SYSTEM, content=system_prompt()), Message(role=Role.USER, content=question)]
     calls, malformed, completion = [], False, None
     async for event in llm.chat(messages, offered, policy):
