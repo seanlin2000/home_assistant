@@ -1,10 +1,11 @@
 """Shared for every test: none reads the Keychain, spends a Brave search, counts one in the real usage file, records a Brave failure in the real
-failures file, or wakes a launchd agent, whatever is on the machine running them."""
+failures file, touches the real newsletters folder, or wakes a launchd agent, whatever is on the machine running them."""
 
 from pathlib import Path
 
 import pytest
 
+import utils.keychain_utils
 import utils.launchd_utils
 import web_search_mcp.brave_client
 import web_search_mcp.search_engines
@@ -37,3 +38,17 @@ def woken_agents(monkeypatch: pytest.MonkeyPatch) -> list[str]:
     woken: list[str] = []
     monkeypatch.setattr(utils.launchd_utils, "wake_agent", woken.append)
     return woken
+
+
+@pytest.fixture(autouse=True)
+def no_keychain(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Every Keychain read finds nothing, so no test sees a real secret or the Gmail address."""
+    monkeypatch.setattr(utils.keychain_utils, "find_generic_password", lambda arguments: None)
+
+
+@pytest.fixture(autouse=True)
+def newsletters_in_a_temporary_folder(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> Path:
+    """The environment variable also reaches a tool server or health check a test starts."""
+    folder = tmp_path / "newsletters"
+    monkeypatch.setenv("NEWSLETTERS_DIR", str(folder))
+    return folder

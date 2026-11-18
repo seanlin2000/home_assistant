@@ -58,6 +58,8 @@ A deploy restarts only the parts whose files changed. A restart of llama-server 
 | `mcp` | The tool server, as in v1, on `127.0.0.1` from M2 | Always | `mcp.log` |
 | `whisper`, `kokoro` | As in v1 | Always | As in v1 |
 | `health` | `scripts/health_check.py` | Every 300 seconds (`StartInterval`) | `health.log` |
+| `listings` | `.venv/bin/listings-refresh`: the show, movie and restaurant snapshots the tool server reads | Daily at 4:30 (`StartCalendarInterval`) | `listings.log` |
+| `newsletters` | `.venv/bin/newsletters-pull`: copies the Gmail newsletters label to dated markdown files (doc 14 §3.2) | Every 3,600 seconds (`StartInterval`) | `newsletters.log` |
 | `ollama` | Removed: `services.sh install` unloads it and deletes its plist | Never | |
 
 **Start order.** launchd starts agents in no particular order, so each one tolerates the others being missing:
@@ -123,6 +125,7 @@ The health check is still one launchd agent that runs every five minutes, checks
 | The tool server | `GET /healthz`, as in v1 | It lists the tools the harness depends on |
 | Whisper, Kokoro, Home Assistant, the VM | As in v1 | As in v1 |
 | SearXNG | `GET /`, as in v1; with `--full`, one real search of the web engines | The status is below 500; with `--full`, at least one web engine answers. The detail names the engines that answered and those that did not, with SearXNG's reason, and says "no fallback" when only one answered |
+| The newsletters pull | `status.json` in the newsletters folder (doc 14 §3.2) | Report only, never restarted: the last good pull is under three hours old. Skipped before the Gmail app password is stored, or while the agent is not loaded |
 | Ollama | As in v1 | Until M2, then removed |
 
 **2. Record RAM use and slow requests.** Each snapshot records the Mac's free memory and swap, as in v1. Two figures change:

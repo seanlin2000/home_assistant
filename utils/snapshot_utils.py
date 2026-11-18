@@ -40,9 +40,14 @@ class SnapshotMissing(RuntimeError):
 
 
 def write_snapshot(path: Path, snapshot: BaseModel) -> None:
+    write_file_atomically(path, snapshot.model_dump_json().encode("utf-8"))
+
+
+def write_file_atomically(path: Path, content: bytes) -> None:
+    """Written beside its final name, then renamed over it; the newsletters store writes its issues the same way."""
     path.parent.mkdir(parents=True, exist_ok=True)
     partial_path = path.with_name(f".{path.name}.partial")
-    partial_path.write_text(snapshot.model_dump_json(), encoding="utf-8")
+    partial_path.write_bytes(content)
     os.replace(partial_path, path)
 
 

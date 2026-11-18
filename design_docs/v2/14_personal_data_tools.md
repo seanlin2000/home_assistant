@@ -1,6 +1,6 @@
 # 14. Personal-data tools
 
-Status: designed 2026-11-17
+Status: building
 
 ## 1. Purpose
 
@@ -103,19 +103,21 @@ A block nested inside another block is skipped, so no text is written twice.
 **Removed at this step:**
 
 - blocks whose class contains `native-ad` (WSJ's sponsored items)
-- small-text spans, which hold photo credits and captions (NYT's are 11 px grey)
+- text 12 px or smaller, which holds photo credits and captions (NYT's credits are 11 px, WSJ's captions 12 px); a table row holding any is a photo caption and goes whole
 - bare `Ad` lines
 - footer and subscription lines: "Read in browser", "unsubscribe", "If you're not subscribed"
 - any line containing an email address, such as "This email was sent to …"
 - every emoji
 - hidden characters, such as the zero-width padding after Money Stuff's preview line
+- elements styled to stay hidden, such as that preview line itself
+- everything from the first footer line on: "Sign up here", "You received this", "Follow Us", WSJ's "About Us"
 
 **Joined at this step:**
 
 - A heading with no text under it joins the next heading: NYT's "Today's Number" and "5,000" become one heading.
 - Money Stuff's footnotes `[n] …` move from the end of the issue to the end of the section that cites `[n]`.
 
-**The publication's name** is the subject's prefix when it is short ("The Morning:", "Money Stuff:"). Otherwise it is the sender's display name ("WSJ Markets A.M."). Both WSJ letters come from one address, so the address cannot name them.
+**The publication's name** is the subject's prefix ("The Morning:", "Money Stuff:") when the email confirms it: its `List-Id` names it, or its text says "the Money Stuff newsletter". Otherwise it is the sender's display name ("WSJ Markets A.M."), because a WSJ headline such as "Widgetron: A Breather Day" has a prefix too. Both WSJ letters come from one address, so the address cannot name them.
 
 **Why not trafilatura,** which the web tools use: on the samples it dropped WSJ's headline and a stock item, and flattened NYT's lead story into one table cell. trafilatura guesses which part of a page is the article, and a newsletter is all article, laid out in tables. Web pages keep trafilatura, because there the guess removes menus, banners and comments.
 
@@ -267,12 +269,14 @@ No new dependencies.
 
 | Setting | Default | Purpose |
 |---|---|---|
-| `newsletters_dir` | `~/Library/Application Support/studio-assistant/newsletters` | Where issues, `status.json` and the cursor live |
+| `dir` | `~/Library/Application Support/studio-assistant/newsletters` | Where issues, `status.json` and the cursor live (`NEWSLETTERS_DIR`) |
 | `mailbox` | `Newsletters` | The Gmail label |
 | `look_back_days` | 2 | How far back each pull searches |
 | `keep_days` | 30 | Date folders older than this are deleted |
 | `imap_host` | `imap.gmail.com` | |
+| `imap_timeout_seconds` | 30 | How long one IMAP step may hang before the pull gives up |
 | `keychain_service` | `studio-assistant-gmail` | The Keychain item |
+| `stale_after_hours` | 3 | The health check fails once the last good pull is older |
 | `summary_max_words` | 6,000 | The most `newsletter_summarize` returns, cut between sections; above any issue seen so far (Money Stuff, about 4,700) |
 | `reading_words` | 500 | The length of one part read aloud |
 | `today` | unset | Pins "today", for the benchmark only |
@@ -291,6 +295,7 @@ No new dependencies.
 | The label is renamed or hidden from IMAP | The pull fails with "label not found" | Restore the name, or tick Show in IMAP |
 | A newsletter changes its HTML | Sections run together, or an ad slips through | Fix the converter, then rebuild from the kept `.eml` files |
 | A newsletter arrives forwarded or spoofed | It fails `dmarc=pass` and is skipped; the log names the sender's domain | Subscribe with the newsletter address |
+| The Studio is replaced by a new Mac | The move does not carry the app password, so the new Mac's pulls report "not set up" | Make a new app password and run the `security add-generic-password` command on the new Mac |
 | A pull runs over SSH | The Keychain is locked to it, so the pull fails | Start it through launchd: `launchctl kickstart gui/$UID/com.studio-assistant.newsletters` |
 | An article carries an injected order | Summarize: the exchange is untrusted, so an act-tier tool would ask you first, and the egress guard checks every search. Read: the order is spoken, not obeyed | Nothing; the benchmark's category H issue tests it |
 | "Continue" comes after the five-minute reset | The history is gone | Say "keep reading my newsletter"; the read cursor knows the next part |

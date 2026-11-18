@@ -10,7 +10,7 @@ from pathlib import Path
 import pytest
 
 SERVICES_SCRIPT = Path(__file__).resolve().parent.parent / "scripts" / "services.sh"
-SERVICES = ("llama", "mcp", "harness", "dashboard", "speech", "kokoro", "health", "listings")
+SERVICES = ("llama", "mcp", "harness", "dashboard", "speech", "kokoro", "health", "listings", "newsletters")
 FAKE_LAUNCHCTL = """#!/bin/bash
 # print TARGET | kickstart -k TARGET | bootstrap DOMAIN PLIST; the agent's name is the last dot-separated part of the label.
 label="${@: -1}"

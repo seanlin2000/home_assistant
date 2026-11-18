@@ -24,6 +24,9 @@ from assistant_core.converse_protocol import HEALTH_PATH, HarnessHealth
 from assistant_core.models import REQUIRED_TOOL_NAMES
 from assistant_service.exchange_log import ExchangeLog, TraceLog
 from assistant_service.settings import load_harness_config
+from newsletters_mcp.mailbox import NotSetUp
+from newsletters_mcp.settings import NewslettersSettings, newsletters_settings_from_environment
+from newsletters_mcp.store import PullStatus, read_status
 from ops import paths
 from ops.pipeline_runs import PipelineRunLog
 from ops.searxng_demand import SearxngPolicy, SearxngVerdict, judge_searxng_demand, read_searxng_demand
@@ -176,6 +179,7 @@ async def run_checks(settings: Settings, full: bool = False) -> dict[str, Check]
             timed("home_assistant", check_home_assistant(client, settings)),
             timed("vm", asyncio.to_thread(check_vm, settings.vm_name)),
             timed("browser", asyncio.to_thread(check_browser_agent, CHROME_RELEASE_PATH, date.today())),
+            timed("newsletters", asyncio.to_thread(check_newsletters_pull, newsletters_settings_from_environment(), datetime.now().astimezone())),
         )
     checks = dict(results)
     for name in LAUNCHD_SERVICES:
@@ -323,6 +327,30 @@ def no_browser_record() -> Check:
     if agent_loaded("listings"):
         return Check(ok=False, detail=f"no Chrome release recorded although the listings agent is loaded; sending the fallback Chrome {FALLBACK_CHROME_MAJOR}")
     return Check(ok=None, detail=f"listings agent not loaded, so no Chrome release recorded; sending the fallback Chrome {FALLBACK_CHROME_MAJOR}")
+
+
+def check_newsletters_pull(settings: NewslettersSettings, now: datetime) -> Check:
+    """Whether the hourly pull copied the Gmail label lately (design doc v2/14 section 3.2). Before the app password is stored, or while the agent is
+    not loaded, the check is skipped rather than failed."""
+    status = read_status(settings.dir)
+    if status is None:
+        return no_newsletters_record()
+    if status.last_success is None and status.failure_kind == NotSetUp.kind:
+        return Check(ok=None, detail="not set up: no Gmail app password in the Keychain (design doc v2/14 section 3.1)")
+    return newsletters_freshness(status, now, timedelta(hours=settings.stale_after_hours))
+
+
+def newsletters_freshness(status: PullStatus, now: datetime, stale_after: timedelta) -> Check:
+    if status.last_success is not None and now - status.last_success <= stale_after:
+        return Check(ok=True, detail=f"last pulled at {status.last_success.astimezone():%H:%M}")
+    last_pull = f"last pulled {status.last_success.astimezone():%Y-%m-%d %H:%M}" if status.last_success else "never pulled"
+    return Check(ok=False, detail=f"{last_pull}; last failure: {status.failure_kind}: {status.failure_reason}"[:200])
+
+
+def no_newsletters_record() -> Check:
+    if agent_loaded("newsletters"):
+        return Check(ok=False, detail="no pull recorded although the newsletters agent is loaded")
+    return Check(ok=None, detail="newsletters agent not loaded")
 
 
 def agent_loaded(name: str) -> bool:

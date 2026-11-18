@@ -1,6 +1,11 @@
-"""Word-budget helpers shared by the page reader, the Wikipedia tool, and the sports tools, and the spoken dates of the listings tools."""
+"""Word-budget helpers shared by the page reader, the Wikipedia tool, and the sports tools, the spoken dates of the listings tools, and the hidden
+characters stripped from tool output and from newsletters."""
 
+import re
 from datetime import date
+
+# Zero-width characters, bidirectional controls, and Unicode tag characters: invisible on screen, read by the model.
+HIDDEN_CHARACTERS = re.compile("[​-‏‪-‮⁠-⁤⁦-⁩﻿\U000e0000-\U000e007f]")
 
 
 def clip_to_words(text: str, max_words: int) -> str:
