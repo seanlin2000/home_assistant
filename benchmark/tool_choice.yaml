@@ -122,3 +122,9 @@ checks:
   - id: newsletters-section-gist
     question: Give me the gist of the Binance section in Money Stuff.
     expected: [newsletter_summarize, newsletters_list]
+  - id: newsletters-read-section
+    question: Read me the procurement section of Money Stuff.
+    expected: [newsletter_read]
+  - id: newsletters-read-continue
+    question: Keep reading my newsletter.
+    expected: [newsletter_read]

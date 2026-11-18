@@ -11,6 +11,7 @@ from newsletters_mcp.settings import NewslettersSettings
 
 NEWSLETTERS_LIST_TOOL_NAME = "newsletters_list"
 NEWSLETTER_SUMMARIZE_TOOL_NAME = "newsletter_summarize"
+NEWSLETTER_READ_TOOL_NAME = "newsletter_read"
 MAX_DATE_CHARS = 10
 MAX_NAME_CHARS = 80
 MAX_TOPIC_CHARS = 40
@@ -37,3 +38,12 @@ def register_newsletters_tools(server: MCPServer, settings: NewslettersSettings)
     ) -> str:
         """The text of one of the user's newsletters, or one section of it, to summarize in your own words. Keep what a source reports apart from the author's own opinion, say when the author is being ironic or posing a hypothetical, and give numbers as written. Lines starting with ">" are quotations."""
         return answers.text(newsletter, date, section)
+
+    @server.tool(name=NEWSLETTER_READ_TOOL_NAME)
+    async def newsletter_read(
+        newsletter: Annotated[str, Field(max_length=MAX_NAME_CHARS, description="as the user named it; empty to continue the last reading")] = "",
+        date: Annotated[str, Field(max_length=MAX_DATE_CHARS, description=DATE_DESCRIPTION)] = "today",
+        section: Annotated[str, Field(max_length=MAX_NAME_CHARS, description='one section\'s name; empty for the start; "next" to continue the last reading')] = "",
+    ) -> str:
+        """Read one of the user's newsletters aloud, word for word, about three minutes at a time; the text goes straight to the speaker. Only when the user asks to hear it read ("read me Money Stuff", "read the Procurement section"). For a summary or what it says, call newsletter_summarize. For "continue" or "keep reading", call with section "next"."""
+        return answers.reading(newsletter, date, section)

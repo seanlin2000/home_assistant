@@ -162,7 +162,7 @@ SHOWS_TOOL_NAMES = frozenset({"broadway_shows", "broadway_show_details"})
 MOVIES_TOOL_NAMES = frozenset({"movies_showing", "movie_details"})
 REDDIT_TOOL_NAMES = frozenset({"reddit_search"})
 RESTAURANTS_TOOL_NAMES = frozenset({"restaurant_recommendations", "restaurant_details"})
-NEWSLETTERS_TOOL_NAMES = frozenset({"newsletters_list", "newsletter_summarize"})
+NEWSLETTERS_TOOL_NAMES = frozenset({"newsletters_list", "newsletter_summarize", "newsletter_read"})
 # How reddit_search's answer starts when Arctic Shift never answered, so the agent loop knows to say the could-not-reach line.
 REDDIT_UNAVAILABLE_PREFIX = "Reddit error: Reddit did not answer"
 # The router's JSON: a route, up to two more, and a one-sentence plan. Forty tokens held the route alone and cut the plan off mid-string.

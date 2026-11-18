@@ -86,7 +86,7 @@ This question asks where to eat. Call restaurant_recommendations with location s
 Example call: restaurant_recommendations(location="San Francisco", cuisine="Japanese", max_price=3)
 """
 NEWSLETTERS_DIRECTIVE = """Routing for this question: NEWSLETTERS.
-This question is about the user's own email newsletters. Call newsletters_list for what arrived, with newsletter or topic when the user named one; call newsletter_summarize with the newsletter, and the section when one was named, for what it says. Do not search the web, and do not answer from memory. Answer from what the tools return.
+This question is about the user's own email newsletters. Call newsletters_list for what arrived, with newsletter or topic when the user named one; call newsletter_summarize with the newsletter, and the section when one was named, for what it says. Call newsletter_read only when the user asks to hear it read aloud, with section "next" for continue. Do not search the web, and do not answer from memory. Answer from what the tools return.
 Example call: newsletter_summarize(newsletter="Money Stuff", section="Procurement")
 """
 DIRECTIVES = {

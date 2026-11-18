@@ -150,7 +150,7 @@ A block nested inside another block is skipped, so no text is written twice.
 |---|---|---|
 | `newsletters_list` | `date` ("today"), `newsletter` (""), `topic` ("") | Each issue's time, publication, headline, length and section names |
 | `newsletter_summarize` | `newsletter`, `date` ("today"), `section` ("") | The cleaned text of one issue, or one section of it, for the model to summarize |
-| `newsletter_read` | `newsletter`, `date` ("today"), `section` ("") | One part of about 500 words, spoken as it is (§3.6) |
+| `newsletter_read` | `newsletter` (""), `date` ("today"), `section` ("") | One part of about 500 words, spoken as it is (§3.6); a blank `newsletter` or `section="next"` continues the last reading |
 
 **`newsletters_list`:**
 
@@ -174,14 +174,14 @@ A block nested inside another block is skipped, so no text is written twice.
 
 `newsletter_read` returns text for the speaker, not for the model. Rewriting Levine through a model would lose his voice, his irony and his exact numbers, so the harness speaks the tool's text as it is.
 
-**The rule:** `config/tools.toml` gains `speaks_result`, set only for `newsletter_read`. After a tool round, the harness checks for exactly one call in that round, to a speaks-result tool, that was not refused, did not fail and was not a repeat. If so:
+**The rule:** `config/tools.toml` gains `speaks_result`, set only for `newsletter_read`. After a tool round, the harness checks for exactly one call in that round, to a speaks-result tool, that was not refused, did not fail, was not a repeat, and returned text opening with a reading's first line (`utils/spoken_reading_utils.py`). If so:
 
 1. It removes the untrusted wrapper from the result.
 2. It streams the text to the speaker paragraph by paragraph, outside the 200-word cap on spoken answers. A capped reading would count as a failure.
 3. It records the text as the exchange's answer, so the exchange log does not mark it failed.
 4. It ends the exchange with no second model call.
 
-Anything else takes the normal path: a refused or failed read goes back to the model, which says what went wrong.
+Anything else takes the normal path: a refused or failed read, or a failure sentence such as "No newsletter matching …", goes back to the model, which says what went wrong.
 
 **No filler sentence** is spoken before a reading. The file reads instantly, and the reading's first line says what is coming.
 
@@ -191,10 +191,10 @@ Anything else takes the normal path: a refused or failed read goes back to the m
 
 Home Assistant, our component and the harness all start a conversation over after five quiet minutes. They time the gap from when the answer was sent. A reading streams to the speaker in moments and then plays for minutes, so after a long reading "continue" would arrive with no history.
 
-So `newsletter_read` returns about 500 words, roughly three minutes of speech, cut at a paragraph break:
+So `newsletter_read` returns about 500 words, roughly three minutes of speech, cut at a paragraph break. A part runs on into the next section when there is room, so a two-line teaser is never a part of its own, and each section that starts inside a part is announced by its name.
 
-- **First line:** "Reading Money Stuff: Oh Jensen."
-- **Last line:** "Next is part two of Oh Jensen. Say continue to hear it." At the end of a section, it names the next section instead. At the end of the issue: "That's the end of Money Stuff."
+- **First line:** "Reading Money Stuff: Oh Jensen.", or "Reading Money Stuff: more of Oh Jensen." for a part that starts inside a section.
+- **Last line:** "Next is more of Oh Jensen. Say continue to hear it.", or the next section's name. At the end of the issue: "That's the end of Money Stuff."
 
 **"Continue"** works for two reasons:
 

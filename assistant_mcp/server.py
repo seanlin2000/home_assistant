@@ -66,7 +66,7 @@ def build_server(
             " weather_forecast for the weather, and game_scores, box_score, team_roster, roster_stats, player_stats, player_matchup, player_rankings, and team_rankings for NBA and NFL scores, rosters, and statistics,"
             " broadway_shows for what is playing on Broadway and Off-Broadway, movies_showing and movie_details for what movies are showing in Manhattan theaters and what one is about,"
             " reddit_search when the user asks what people on Reddit or a subreddit say, restaurant_recommendations and restaurant_details for Michelin Guide restaurants,"
-            " and newsletters_list and newsletter_summarize for the user's newsletters."
+            " and newsletters_list, newsletter_summarize and newsletter_read for the user's newsletters."
         ),
     )
     register_web_search_tools(server, settings, search, extractor)

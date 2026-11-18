@@ -31,3 +31,6 @@ site/
 
 # Rendered diagrams, keyed by content hash
 .cache/
+
+# newsletter_read keeps its place here when a benchmark run reads aloud
+benchmark/fixtures/newsletters/read_cursor.json
