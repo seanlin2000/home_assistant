@@ -165,7 +165,7 @@ def sections_mentioning(issue: Issue, topic: str) -> list[Section]:
     """Every section, or with a topic, those whose title or text names it as a whole word or phrase."""
     if not topic.strip():
         return issue.sections
-    pattern = re.compile(rf"\b{re.escape(topic.strip())}\b", re.IGNORECASE)
+    pattern = re.compile(rf"(?<!\w){re.escape(topic.strip())}(?!\w)", re.IGNORECASE)  # not \b, which never matches after "401(k)"
     return [section for section in issue.sections if pattern.search(section.title) or any(pattern.search(paragraph) for paragraph in section.paragraphs)]
 
 

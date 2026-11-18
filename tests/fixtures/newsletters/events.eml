@@ -1,0 +1,30 @@
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@events.example.com header.s=k1 header.b=Ee33Ff44;
+       spf=pass (google.com: domain of bounce@mail.events.example.com designates 192.0.2.40 as permitted sender) smtp.mailfrom=bounce@mail.events.example.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=events.example.com
+From: the weekly widget <newsletter@events.example.com>
+To: reader@example.com
+Subject: TUES-WEDS, 11/17-18: WIDGET FAIR, GEAR SWAP, AND MORE
+Date: Tue, 17 Nov 2026 03:46:02 +0000
+Message-ID: <events-0001@mail.events.example.com>
+List-ID: 1a2b3c mc list <1a2b3c.list-id.example.net>
+MIME-Version: 1.0
+Content-Type: text/html; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+
+<html><body>
+<table><tr><td>
+<h1>TUES-WEDS, 11/17-18: WIDGET FAIR, GEAR SWAP, AND MORE</h1>
+<p style="font-size: 15px;"><strong>widget lights</strong>:&#160;</p>
+<p style="font-size: 15px;">&#9658; tues 6pm: the annual widget lighting: starts at 125th street. free admission. <a href="https://events.example.com/1">&gt;&gt;</a></p>
+<p style="font-size: 15px;"><strong><u style="font-size: 19px;">tuesday</u></strong></p>
+<p style="font-size: 15px;">tues 7pm: <strong>gear swap</strong>: bring a widget, take a widget. riverside hall, free admission. <a href="https://events.example.com/2">&gt;&gt;</a></p>
+<p style="font-size: 15px;">sponsored: tues 8pm: widget comedy night: save 50% with promo code 'widget' <a href="https://events.example.com/3">&gt;&gt;</a></p>
+<blockquote><p>The fair is back.</p><p>Bring the whole family.</p></blockquote>
+<p style="font-size: 15px;"><strong><u style="font-size: 19px;">wednesday</u></strong></p>
+<p style="font-size: 15px;">weds 7pm: widget fair: over 100 makers. pier 9, $12. <a href="https://events.example.com/4">&gt;&gt;</a></p>
+<p style="font-size: 15px;"><strong><u style="font-size: 19px;">support us</u></strong></p>
+<p style="font-size: 15px;">if you enjoy this newsletter, please consider supporting us here</p>
+<p style="font-size: 15px;">subscribe to the weekly widget daily email</p>
+</td></tr></table>
+</body></html>

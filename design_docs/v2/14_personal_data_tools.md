@@ -93,31 +93,33 @@ Each publisher writes real HTML, `h1` to `h4`, `p`, `li` and `blockquote`, insid
 | HTML | Markdown |
 |---|---|
 | `h1` to `h4` | a section heading |
+| a short `p` that is bold throughout | a section heading too: The Skint marks its days ("tuesday") this way, with no heading tags |
 | `p`, `li` | a paragraph |
 | `blockquote` | `>` lines, so a quotation stays apart from the author's own words |
 | `tr` of a data table | one line of cells |
 | a link | its text only; the address is dropped |
 
-A block nested inside another block is skipped, so no text is written twice.
+A block nested inside another block is skipped, so no text is written twice. A space goes wherever a block starts or ends, so two paragraphs inside one quotation never run together ("$100.Me:").
 
 **Removed at this step:**
 
 - blocks whose class contains `native-ad` (WSJ's sponsored items)
 - text 12 px or smaller, which holds photo credits and captions (NYT's credits are 11 px, WSJ's captions 12 px); a table row holding any is a photo caption and goes whole
-- bare `Ad` lines
-- footer and subscription lines: "Read in browser", "unsubscribe", "If you're not subscribed"
+- bare `Ad` lines, and lines starting "sponsored:" (The Skint's paid listings)
+- footer and subscription lines: "Read in browser", "unsubscribe", "If you're not subscribed", "subscribe to …"
+- link arrows, such as The Skint's leading ► and trailing >>
 - any line containing an email address, such as "This email was sent to …"
 - every emoji
 - hidden characters, such as the zero-width padding after Money Stuff's preview line
 - elements styled to stay hidden, such as that preview line itself
-- everything from the first footer line on: "Sign up here", "You received this", "Follow Us", WSJ's "About Us"
+- everything from the first footer line on: "Sign up here", "You received this", "Follow Us", WSJ's "About Us", The Skint's "support us" and "forward to a friend"
 
 **Joined at this step:**
 
 - A heading with no text under it joins the next heading: NYT's "Today's Number" and "5,000" become one heading.
 - Money Stuff's footnotes `[n] …` move from the end of the issue to the end of the section that cites `[n]`.
 
-**The publication's name** is the subject's prefix ("The Morning:", "Money Stuff:") when the email confirms it: its `List-Id` names it, or its text says "the Money Stuff newsletter". Otherwise it is the sender's display name ("WSJ Markets A.M."), because a WSJ headline such as "Widgetron: A Breather Day" has a prefix too. Both WSJ letters come from one address, so the address cannot name them.
+**The publication's name** is the subject's prefix ("The Morning:", "Money Stuff:") when the email confirms it: its `List-Id` names it, or its text says "the Money Stuff newsletter". Otherwise it is the sender's display name ("WSJ Markets A.M."), because a WSJ headline such as "Widgetron: A Breather Day" has a prefix too. Both WSJ letters come from one address, so the address cannot name them. A display name written all in lowercase ("the skint") is capitalized as a name.
 
 **Why not trafilatura,** which the web tools use: on the samples it dropped WSJ's headline and a stock item, and flattened NYT's lead story into one table cell. trafilatura guesses which part of a page is the article, and a newsletter is all article, laid out in tables. Web pages keep trafilatura, because there the guess removes menus, banners and comments.
 

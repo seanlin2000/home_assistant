@@ -200,6 +200,28 @@ def test_a_heading_with_nothing_under_it_joins_the_next() -> None:
     assert "TODAY’S NUMBER: 5,000" in section_texts(converted("the_morning"))
 
 
+def test_a_short_paragraph_that_is_bold_throughout_is_a_heading() -> None:
+    issue = converted("events")
+    assert [section.title for section in issue.sections] == ["TUES-WEDS, 11/17-18: WIDGET FAIR, GEAR SWAP, AND MORE: widget lights", "tuesday", "wednesday"]
+    assert issue.sections[1].paragraphs[0] == "tues 7pm: gear swap: bring a widget, take a widget. riverside hall, free admission."
+
+
+def test_sponsored_lines_link_arrows_and_a_support_us_footer_are_left_out() -> None:
+    text = "\n".join(paragraph for section in converted("events").sections for paragraph in section.paragraphs)
+    assert "sponsored" not in text and "promo code" not in text
+    assert ">>" not in text and "►" not in text
+    assert "support" not in text and "subscribe" not in text
+    assert "tues 6pm: the annual widget lighting: starts at 125th street. free admission." in text
+
+
+def test_a_lowercase_sender_name_is_written_as_a_name() -> None:
+    assert converted("events").publication == "The Weekly Widget"
+
+
+def test_paragraphs_inside_one_quotation_keep_a_space_between_them() -> None:
+    assert "> The fair is back. Bring the whole family." in converted("events").sections[1].paragraphs
+
+
 def test_footnotes_move_to_the_section_that_cites_them() -> None:
     sections = section_texts(converted("money_stuff"))
     assert sections["Hypothetical widgets"][-1] == "[1] Not formally, but informally, sure."
