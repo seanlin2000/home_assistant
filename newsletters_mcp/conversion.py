@@ -34,10 +34,17 @@ ADVERTISEMENT_CLASS = "native-ad"  # WSJ's sponsored items: "nl-native-ad", "nat
 EMOJI = re.compile("[\U0001f000-\U0001faff⌀-⏿☀-➿⬀-⯿︎️⃣]")
 EMAIL_ADDRESS = re.compile(r"[\w.+-]+@[\w-]+(?:\.[\w-]+)+")
 DROPPED_LINE = re.compile(
-    r"^(ad|advertisement|sponsored by)$|view in browser|read in browser|unsubscribe|sign up (for|here)|subscribe here|if you[’']re not subscribed",
+    r"^(ad|advertisement|sponsored by)$|^sponsored:|^subscribe to |view in browser|read in browser|unsubscribe|sign up (for|here)|subscribe here|if you[’']re not subscribed",
     re.IGNORECASE,
 )
-FOOTER_START = re.compile(r"^(sign up here|you received this|you are receiving|you are currently subscribed|follow us|if you received this|about us$)", re.IGNORECASE)
+FOOTER_START = re.compile(
+    r"^(sign up here|you received this|you are receiving|you are currently subscribed|follow us|if you received this|about us$|support us$|forward to a friend)",
+    re.IGNORECASE,
+)
+LINK_ARROWS = re.compile(r"^[►▶▸]\s*|\s*(>>|»)$")  # "► tues 6pm: … >>", where the arrow is the link to the event
+BOLD_TAGS = frozenset({"strong", "b"})
+MAX_LABEL_WORDS = 6
+SENTENCE_ENDINGS = (".", "!", "?")
 FOOTNOTE = re.compile(r"^\[(\d+)\]\s")
 SUBJECT_PREFIX = re.compile(r"^(\S+(?: \S+){0,2}):\s+(.+)$")  # "The Morning: Taking credit"
 OPENING_SECTION = "Opening"
@@ -98,7 +105,12 @@ def publication_and_headline(message: EmailMessage, html: str) -> tuple[str, str
     match = SUBJECT_PREFIX.match(subject)
     if match and prefix_is_confirmed(match.group(1), str(message["List-Id"] or ""), html):
         return match.group(1), match.group(2)
-    return clean_text(display_name), subject
+    return publication_name(clean_text(display_name)), subject
+
+
+def publication_name(display_name: str) -> str:
+    """ "the skint" is said the same either way, but written as a name it reads as one."""
+    return display_name.title() if display_name.islower() else display_name
 
 
 def prefix_is_confirmed(prefix: str, list_id: str, html: str) -> bool:
@@ -116,12 +128,21 @@ def blocks_of(element: HtmlElement) -> Iterator[Block]:
     if is_left_out(element):
         return
     if element.tag in TEXT_BLOCKS:
-        yield Block(element.tag, visible_text(element))
+        yield bold_label_as_heading(Block(element.tag, visible_text(element)), element)
     elif element.tag == "tr" and is_row_of_text(element):
         yield from row_block(element)
     else:
         for child in element:
             yield from blocks_of(child)
+
+
+def bold_label_as_heading(block: Block, element: HtmlElement) -> Block:
+    """A short paragraph that is bold from end to end, such as The Skint's "tuesday" or "holiday lights:", is a heading written without one."""
+    label = block.text.rstrip(": ")
+    if block.tag != "p" or not label or len(label.split()) > MAX_LABEL_WORDS or label.endswith(SENTENCE_ENDINGS):
+        return block
+    bold_text = clean_text(" ".join(visible_text(child) for child in element.iter() if child.tag in BOLD_TAGS and child.getparent().tag not in BOLD_TAGS))
+    return Block("h4", label) if bold_text.rstrip(": ") == label else block
 
 
 def is_left_out(element: HtmlElement) -> bool:
@@ -152,7 +173,9 @@ def visible_text(element: HtmlElement) -> str:
 
 
 def spaced(text: str) -> str:
-    return f" {text}" if text.is_tail and text.getparent().tag in WORD_BREAKING_TAGS else text
+    """A space where a block starts or ends: the text after a closed paragraph, and the first text inside one."""
+    starts_or_ends_block = text.is_tail or text.is_text
+    return f" {text}" if starts_or_ends_block and text.getparent().tag in WORD_BREAKING_TAGS else text
 
 
 def contains_small_text(element: HtmlElement) -> bool:
@@ -180,7 +203,7 @@ def font_size(element: HtmlElement) -> float | None:
 
 
 def clean_text(text: str) -> str:
-    return " ".join(EMOJI.sub("", HIDDEN_CHARACTERS.sub("", text)).split())
+    return LINK_ARROWS.sub("", " ".join(EMOJI.sub("", HIDDEN_CHARACTERS.sub("", text)).split()))
 
 
 def kept_blocks(blocks: Iterable[Block]) -> Iterator[Block]:

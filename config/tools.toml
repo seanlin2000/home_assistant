@@ -126,3 +126,8 @@ marks_untrusted = true                      # headlines and section names writte
 [tools.newsletter_summarize]
 tier = "read_private"
 marks_untrusted = true                      # the issue's text, cleaned by rule but written by the publisher; no quarantined reader (v2/DEVIATIONS.md)
+
+[tools.newsletter_read]
+tier = "read_private"
+marks_untrusted = true
+speaks_result = true                        # spoken as it is, with no model after it (design doc v2/14 section 3.6)

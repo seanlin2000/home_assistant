@@ -50,8 +50,9 @@ from assistant_core.prompts import (
     word_limit_for,
 )
 from assistant_core.router import decide_route, directive_for, route_to_offered_tools, tool_round_cap
-from assistant_core.tool_guards import GuardedToolBox, ToolRefused, load_tool_table, untrusted_block_opening
+from assistant_core.tool_guards import GuardedToolBox, ToolRefused, load_tool_table, speaks_its_result, untrusted_block_opening
 from assistant_core.tools import ToolBox
+from utils.spoken_reading_utils import is_reading, shortened_reading
 
 EMPTY_COMPLETION_RETRIES = 1
 MALFORMED_RETRIES = 1
@@ -163,7 +164,7 @@ class SpokenAnswerCap:
 async def run(conversation: list[Message], llm: LLMClient, tools: ToolBox, policy: AgentPolicy, memory: ConversationMemory | None = None, today: date | None = None) -> AsyncIterator[AgentEvent]:
     """One exchange. today is pinned only by the benchmark, whose sports questions were recorded on a fixed day."""
     started = time.perf_counter()
-    conversation = within_history_window(without_replayed_fillers(conversation, policy), policy)
+    conversation = within_history_window(without_replayed_readings(without_replayed_fillers(conversation, policy)), policy)
     memory = memory or NoMemory()
     tools = GuardedToolBox(tools, load_tool_table(), conversation)
     messages = [Message(role=Role.SYSTEM, content=system_prompt()), *conversation]
@@ -183,6 +184,7 @@ async def run(conversation: list[Message], llm: LLMClient, tools: ToolBox, polic
     spoken_question = put_block_before_question(messages, transcript.per_question_block)
     max_tool_rounds = tool_round_cap(transcript.route, policy.max_tool_rounds)
     runner = ToolCallRunner(tools, policy, started)
+    reading = None
     for round_index in range(max_tool_rounds + 1):
         reply = ModelReply()
         async for event in stream_model_reply(llm, messages, tool_specs, policy, reply, cap, transcript, started):
@@ -205,11 +207,18 @@ async def run(conversation: list[Message], llm: LLMClient, tools: ToolBox, polic
             break
         async for event in execute_tool_calls(runner, reply.tool_calls, round_index, messages, transcript, policy):
             yield event
+        reading = reading_to_speak(reply.tool_calls, transcript.tool_call_records)
+        if reading:
+            for event in spoken_reading(reading, messages, transcript, started):
+                yield event
+            break
         if not next_request_fits(messages, transcript, policy):
             cut_last_results_to_fit(messages, transcript, policy)
         add_word_limit_after_results(messages, word_limit_for(question, len(transcript.tool_call_records), answer_before))
     restore_spoken_question(messages, spoken_question)
     finish_transcript(transcript, reply, cap, messages, started)
+    if reading:
+        record_reading(transcript, reading)
     transcript.untrusted = tools.untrusted
     memory.remember(transcript.conversation)
     yield Done(transcript=transcript)
@@ -233,6 +242,16 @@ def without_leading_filler(message: Message, fillers: list[str]) -> Message:
 
 def leading_filler(text: str, fillers: list[str]) -> str | None:
     return next((filler for filler in fillers if text.startswith(filler)), None)
+
+
+def without_replayed_readings(conversation: list[Message]) -> list[Message]:
+    """A replayed reading, about 500 words, as its opening and closing lines: what was read and what comes next, all "continue" needs."""
+    return [shortened_reading_turn(message) if message.role == Role.ASSISTANT else message for message in conversation]
+
+
+def shortened_reading_turn(message: Message) -> Message:
+    shortened = shortened_reading(message.content)
+    return message.model_copy(update={"content": shortened}) if shortened else message
 
 
 def within_history_window(conversation: list[Message], policy: AgentPolicy) -> list[Message]:
@@ -324,7 +343,7 @@ async def stream_model_reply(
                 mark_first_spoken(transcript, started)
                 yield AnswerDelta(text=spoken)
         elif isinstance(event, ToolCallRequest):
-            if transcript.time_to_first_spoken_seconds is None:  # one filler per exchange, however many tool rounds follow
+            if transcript.time_to_first_spoken_seconds is None and not speaks_its_result(event.call.name):  # one filler per exchange; a reading's first line says what comes
                 mark_first_spoken(transcript, started)
                 transcript.filler_text = filler_for(event.call.name, policy)
                 yield FillerSpoken(text=transcript.filler_text)
@@ -402,6 +421,29 @@ async def execute_tool_calls(runner: "ToolCallRunner", calls: list[ToolCall], ro
         if reddit_was_unreachable(tool_call_record):
             for notice in notices_not_yet_spoken(transcript, policy.reddit_unavailable_phrases):
                 yield notice
+
+
+def reading_to_speak(calls: list[ToolCall], records: list[ToolCallRecord]) -> str | None:
+    """The text to speak as it is: the round's only call went to a tool that speaks its result, ran, was not a repeat (whose note would be spoken),
+    and returned a reading rather than a failure sentence, which goes back to the model to explain."""
+    if len(calls) != 1 or not speaks_its_result(calls[0].name):
+        return None
+    record = records[-1]
+    if record.refused or record.error or record.repeated:
+        return None
+    text = without_untrusted_wrapper(record.result)
+    return text if is_reading(text) else None
+
+
+def without_untrusted_wrapper(result: str) -> str:
+    return UNTRUSTED_OPENING.sub("", result, count=1).removesuffix(UNTRUSTED_CLOSING)
+
+
+def spoken_reading(reading: str, messages: list[Message], transcript: Transcript, started: float) -> list[AnswerDelta]:
+    """The reading a paragraph at a time, outside the spoken-answer cap, and kept as the assistant's turn in place of a model answer."""
+    mark_first_spoken(transcript, started)
+    messages.append(Message(role=Role.ASSISTANT, content=reading))
+    return [AnswerDelta(text=f"{paragraph}\n") for paragraph in reading.split("\n")]
 
 
 async def finished_within(task: asyncio.Future, seconds: float) -> bool:
@@ -551,6 +593,12 @@ def finish_transcript(transcript: Transcript, reply: ModelReply, cap: SpokenAnsw
     transcript.truncated = cap.truncated
     transcript.conversation = [message for message in messages if message.role != Role.SYSTEM]
     transcript.total_seconds = time.perf_counter() - started
+
+
+def record_reading(transcript: Transcript, reading: str) -> None:
+    """The exchange ended on a tool round, so the answer is the reading; left empty, the exchange would be logged as failed."""
+    transcript.final_answer = reading
+    transcript.spoken_text = reading
 
 
 def total_output_tokens(stats: list[GenerationStats]) -> int:

@@ -16,7 +16,8 @@ from assistant_core.tool_guards import Tier, load_tool_table
 from assistant_core.tools import McpToolBox
 from benchmark.mcp_process import NEWSLETTERS_DIR, NEWSLETTERS_RECORDED_ON
 from benchmark.records import Category, load_questions
-from newsletters_mcp.issue import Issue
+from newsletters_mcp.answers import sections_mentioning
+from newsletters_mcp.issue import Issue, Section
 from newsletters_mcp.register import NEWSLETTER_SUMMARIZE_TOOL_NAME, NEWSLETTERS_LIST_TOOL_NAME, register_newsletters_tools
 from newsletters_mcp.settings import NewslettersSettings
 from newsletters_mcp.store import PullStatus, issue_markdown, issue_path, read_issues, write_status
@@ -88,6 +89,21 @@ async def test_a_topic_keeps_only_the_issues_and_sections_that_mention_it(settin
 async def test_a_newsletter_and_a_topic_search_one_issue(settings: NewslettersSettings) -> None:
     lines = issue_lines(await listing(settings, newsletter="Money Stuff", topic="fee"))
     assert len(lines) == 1 and "Sections: Procurement." in lines[0]
+
+
+def test_a_topic_ending_in_punctuation_is_found_as_a_whole_word() -> None:
+    issue = Issue(
+        publication="WSJ Markets A.M.",
+        subject="s",
+        headline="h",
+        received=datetime(2026, 11, 17, 6, 21).astimezone(),
+        message_id="<a@example.com>",
+        sections=[
+            Section(title="Your 401(k)", paragraphs=["Index funds hold Nvidia."]),
+            Section(title="Other", paragraphs=["A 401(k)s plan is not this one.", "Neither is k401(k)."]),
+        ],
+    )
+    assert [section.title for section in sections_mentioning(issue, "401(k)")] == ["Your 401(k)"]
 
 
 async def test_a_topic_nothing_mentions_says_so(settings: NewslettersSettings) -> None:

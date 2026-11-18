@@ -64,6 +64,7 @@ class ToolRule(StrictModel):
     tier: Tier
     marks_untrusted: bool
     offer: Offer = Offer.ALWAYS
+    speaks_result: bool = False  # a successful call's text goes straight to the speaker and ends the exchange
 
 
 class Limits(StrictModel):
@@ -82,6 +83,11 @@ class ToolRefused(Exception):
 @cache
 def load_tool_table(path: Path = TOOLS_CONFIG_PATH) -> ToolTable:
     return ToolTable.model_validate(tomllib.loads(path.read_text()))
+
+
+def speaks_its_result(tool_name: str) -> bool:
+    rule = load_tool_table().tools.get(tool_name)
+    return rule is not None and rule.speaks_result
 
 
 class GuardedToolBox:
