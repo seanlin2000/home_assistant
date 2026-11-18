@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 # Install, start, stop, and inspect the native macOS services that Home Assistant talks to over the LAN.
 #
-#   scripts/services.sh install      write launchd agents for speech to text, kokoro, the harness and the exchange dashboard (LAN), llama-server and mcp (127.0.0.1), the health check, and the nightly listings refresh, and load them
+#   scripts/services.sh install      write launchd agents for speech to text, kokoro, the harness and the exchange dashboard (LAN), llama-server and mcp (127.0.0.1), the health check, the nightly listings refresh, and the hourly newsletters pull, and load them
 #   scripts/services.sh start|stop   load/unload the agents
-#   scripts/services.sh restart NAME restart one agent (llama|mcp|harness|dashboard|speech|kokoro|health|listings)
+#   scripts/services.sh restart NAME restart one agent (llama|mcp|harness|dashboard|speech|kokoro|health|listings|newsletters)
 #   scripts/services.sh status       show what is listening on each port and the last health snapshot; exits 1 if an agent or port is down
 #   scripts/services.sh dashboard    start the exchange dashboard if it is not running and open it in the browser
-#   scripts/services.sh logs NAME    tail a service log (speech|kokoro|mcp|harness|dashboard|llama|health|listings)
+#   scripts/services.sh logs NAME    tail a service log (speech|kokoro|mcp|harness|dashboard|llama|health|listings|newsletters)
 #   scripts/services.sh uninstall    unload and remove the agents
 #
 # Ports: speech to text 10300 (the speech server, config/speech.toml), Kokoro 10210 and the harness 8770 (with an API key) bind 0.0.0.0 so the VM can reach them, and the
@@ -18,7 +18,7 @@ PROJECT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 AGENTS_DIR="$HOME/Library/LaunchAgents"
 LOG_DIR="$HOME/Library/Logs/studio-assistant"
 PREFIX="com.studio-assistant"
-SERVICES=(llama mcp harness dashboard speech kokoro health listings)
+SERVICES=(llama mcp harness dashboard speech kokoro health listings newsletters)
 # Agents an older install wrote and install now removes: llama-server replaced Ollama (design_docs/v2/10 section 3.1), and the speech server's
 # Qwen3-ASR replaced Whisper.
 RETIRED_SERVICES=(ollama whisper)
@@ -26,6 +26,7 @@ APP_SUPPORT_DIR="$HOME/Library/Application Support/studio-assistant"
 HEALTH_INTERVAL_SECONDS="${HEALTH_INTERVAL_SECONDS:-300}"
 LISTINGS_REFRESH_HOUR="${LISTINGS_REFRESH_HOUR:-4}"
 LISTINGS_REFRESH_MINUTE="${LISTINGS_REFRESH_MINUTE:-30}"
+NEWSLETTERS_INTERVAL_SECONDS="${NEWSLETTERS_INTERVAL_SECONDS:-3600}"
 UNLOAD_TIMEOUT_SECONDS="${UNLOAD_TIMEOUT_SECONDS:-30}"
 # How often MLX renews the speech server's wired memory (install_agents explains why); scripts/speech_server.sh uses the same default.
 MLX_RESIDENCY_REFRESH_MS="${MLX_RESIDENCY_REFRESH_MS:-1000}"
@@ -193,6 +194,9 @@ install_agents() {
     # The show listings the tool server reads all day (ops/listings_refresh.py). RunAtLoad also refreshes them on every install, so a new Mac has
     # listings before its first night.
     PLIST_START_HOUR="$LISTINGS_REFRESH_HOUR" PLIST_START_MINUTE="$LISTINGS_REFRESH_MINUTE" write_plist listings "$PROJECT_DIR/.venv/bin/listings-refresh"
+    # Copies the Gmail newsletters label to dated markdown files the tool server reads (newsletters_mcp/pull.py, design doc v2/14). It runs in the
+    # login session, where the Keychain holding its app password is unlocked.
+    PLIST_START_INTERVAL="$NEWSLETTERS_INTERVAL_SECONDS" write_plist newsletters "$PROJECT_DIR/.venv/bin/newsletters-pull"
     start_agents
 }
 
@@ -281,6 +285,7 @@ status() {
     done
     agent_loaded health && echo "health: checks every $HEALTH_INTERVAL_SECONDS s"
     agent_loaded listings && printf 'listings: refreshes daily at %d:%02d; last: %s\n' "$LISTINGS_REFRESH_HOUR" "$LISTINGS_REFRESH_MINUTE" "$(tail -n 1 "$LOG_DIR/listings.log" 2>/dev/null || echo "not run yet")"
+    agent_loaded newsletters && printf 'newsletters: pulls every %d s; last: %s\n' "$NEWSLETTERS_INTERVAL_SECONDS" "$(tail -n 1 "$LOG_DIR/newsletters.log" 2>/dev/null || echo "not run yet")"
     [[ -f "$LOG_DIR/maintenance" ]] && echo "MAINTENANCE FLAG SET: self-healing is off ($LOG_DIR/maintenance)"
     # --last exits 1 when the snapshot lists a failing part; that is past information, so it is shown and not counted.
     if [[ -f "$LOG_DIR/health.json" ]]; then

@@ -1,9 +1,8 @@
 """Searches Brave's own index through its paid API, the engine asked before SearXNG's DuckDuckGo.
 
-The key lives in the macOS Keychain (service "studio-assistant", account "brave-search-api") and is read with the `security` tool, which stored it and so
-reads it back without the access dialog that would stall an unattended run. The only spending limit is the monthly usage limit set in Brave's dashboard:
-past it Brave refuses, and the search falls back to SearXNG. Each month's live searches are counted in a text file beside the
-other service files, so the spend can be read without the dashboard.
+The key lives in the macOS Keychain (service "studio-assistant", account "brave-search-api"), read through utils/keychain_utils.py. The only
+spending limit is the monthly usage limit set in Brave's dashboard: past it Brave refuses, and the search falls back to SearXNG. Each month's live
+searches are counted in a text file beside the other service files, so the spend can be read without the dashboard.
 
 SearXNG runs only while Brave might not answer (ops/searxng_demand.py). So a search Brave fails is written to a second file, and the health check is
 woken at once to start SearXNG, rather than at its next five-minute run.
@@ -11,8 +10,6 @@ woken at once to start SearXNG, rather than at its next five-minute run.
 
 import asyncio
 import re
-import shutil
-import subprocess
 from datetime import UTC, date, datetime
 from pathlib import Path
 from typing import NamedTuple
@@ -20,6 +17,7 @@ from typing import NamedTuple
 import httpx
 
 from utils import launchd_utils
+from utils.keychain_utils import keychain_item_stored, keychain_secret
 from web_search_mcp.query_cache import QueryCache
 from web_search_mcp.searxng_client import SearchResult, time_range_filter
 from web_search_mcp.settings import SearchSettings
@@ -44,18 +42,11 @@ USAGE_LINE = re.compile(r"^(\d{4}-\d{2})\s+(\d+)")
 
 
 def brave_api_key() -> str | None:
-    """None when no key is stored, the Keychain is locked, or this is not a Mac."""
-    if shutil.which("security") is None:
-        return None
-    found = subprocess.run(["security", "find-generic-password", "-s", KEYCHAIN_SERVICE, "-a", KEYCHAIN_ACCOUNT, "-w"], capture_output=True, text=True)
-    return (found.stdout.strip() or None) if found.returncode == 0 else None
+    return keychain_secret(KEYCHAIN_SERVICE, KEYCHAIN_ACCOUNT)
 
 
 def brave_key_stored() -> bool:
-    """Whether the Keychain holds the key, asked without reading it: unlike reading the key, this works from an SSH session too."""
-    if shutil.which("security") is None:
-        return False
-    return subprocess.run(["security", "find-generic-password", "-s", KEYCHAIN_SERVICE, "-a", KEYCHAIN_ACCOUNT], capture_output=True).returncode == 0
+    return keychain_item_stored(KEYCHAIN_SERVICE, KEYCHAIN_ACCOUNT)
 
 
 class BraveClient:

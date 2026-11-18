@@ -23,13 +23,12 @@ from pydantic import BaseModel, ConfigDict
 from assistant_core.egress_guard import leaked_terms
 from assistant_core.models import Message, Role, ToolCall, ToolSpec
 from assistant_core.tools import ToolBox
+from utils.text_utils import HIDDEN_CHARACTERS
 
 TOOLS_CONFIG_PATH = Path(__file__).resolve().parent.parent / "config" / "tools.toml"
 FETCH_PAGE = "fetch_page"
 URL = re.compile(r"https?://[^\s<>\"')\]]+")
 WEB_ADDRESS = re.compile(r"https?://|\b[a-z0-9-]+\.[a-z]{2,}\b", re.IGNORECASE)  # a full address, or a site as said aloud: "nytimes.com"
-# Zero-width characters, bidirectional controls, and Unicode tag characters: invisible on screen, read by the model.
-HIDDEN_CHARACTERS = re.compile("[​-‏‪-‮⁠-⁤⁦-⁩﻿\U000e0000-\U000e007f]")
 UNTRUSTED_TAG = re.compile(r"</?\s*untrusted", re.IGNORECASE)
 
 UNLISTED_REFUSAL = "Refused: {name} is not a tool this assistant may use."

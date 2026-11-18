@@ -65,7 +65,7 @@ def searxng_lease() -> Path:
     return log_dir() / "searxng_lease"
 
 
-SERVICE_LOG_NAMES = ("llama", "mcp", "harness", "dashboard", "speech", "kokoro", "health", "searxng")
+SERVICE_LOG_NAMES = ("llama", "mcp", "harness", "dashboard", "speech", "kokoro", "health", "searxng", "newsletters")
 # launchd labels are LAUNCHD_PREFIX.<service>, with their plists in LAUNCH_AGENTS_DIR (scripts/services.sh).
 LAUNCHD_PREFIX = "com.studio-assistant"
 LAUNCH_AGENTS_DIR = Path.home() / "Library" / "LaunchAgents"
