@@ -64,6 +64,14 @@ async def test_the_last_result_ends_with_the_word_limit_raised_for_each_call_and
     assert all("word limit" not in record.result for record in events[-1].transcript.tool_call_records)
 
 
+async def test_a_request_to_repeat_gets_the_previous_answer_length_as_its_word_limit() -> None:
+    llm = ScriptedLLM([text_reply("Nine games tonight.")])
+    previous_answer = " ".join(["word"] * 64)
+    conversation = [Message(role=Role.USER, content="What NBA games are on?"), Message(role=Role.ASSISTANT, content=previous_answer), Message(role=Role.USER, content="Can you repeat that?")]
+    events = [event async for event in agent_loop.run(conversation, llm, FakeToolBox(), AgentPolicy(filler_phrases=["Checking."]))]
+    assert "Answer word limit: about 64 spoken words." in events[-1].transcript.per_question_block
+
+
 CONTEXT_POLICY = AgentPolicy(filler_phrases=["Checking."], context_tokens=16384, max_output_tokens=600)
 PAGE_TOO_LONG_TO_FIT = "word " * 8000
 TWO_PAGES_TOO_LONG_TO_FIT = f"Read 2 of 8 results for \"q1\".\n\n[1] First page\nURL: https://a.example\n{'alpha ' * 4000}\n\n[2] Second page\nURL: https://b.example\n{'beta ' * 4000}"
