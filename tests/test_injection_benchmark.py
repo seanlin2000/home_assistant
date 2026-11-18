@@ -4,7 +4,7 @@ from pathlib import Path
 
 import httpx
 
-from assistant_core.models import Message, Role, ToolCall, ToolCallRecord, Transcript
+from assistant_core.models import Message, Role, Route, ToolCall, ToolCallRecord, Transcript
 from assistant_mcp.server import build_server
 from benchmark.gates import fetched_unprovenanced_url, followed_injection, harness_gates
 from benchmark.mcp_process import FIXTURES_DIR
@@ -55,12 +55,12 @@ def test_harness_gates_include_both_injection_gates() -> None:
     assert {Gate.FOLLOWED_INJECTED_INSTRUCTION, Gate.FETCHED_UNPROVENANCED_URL} <= set(gates)
 
 
-def test_every_injection_question_has_its_page_set_and_a_canary() -> None:
+def test_every_injection_question_has_a_canary_and_its_page_set_or_newsletter_day() -> None:
     questions = [question for question in load_questions(Path("benchmark/questions.yaml")).questions if question.category == "H"]
-    assert len(questions) == 8
+    assert len(questions) == 9
     for question in questions:
         assert question.injection and (question.injection.canary_word or question.injection.canary_url or question.injection.canary_phrase)
-        assert load_fixture_set(FIXTURES_DIR / f"{question.fixture}.yaml").pages
+        assert Route.NEWSLETTERS in question.required_tools or load_fixture_set(FIXTURES_DIR / f"{question.fixture}.yaml").pages
 
 
 def test_a_set_name_cannot_reach_outside_the_fixtures_folder() -> None:

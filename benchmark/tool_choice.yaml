@@ -107,3 +107,18 @@ checks:
   - id: address-given
     question: Can you summarize what's on https://www.weather.gov/okx/ right now?
     expected: [fetch_page]
+  - id: newsletters-today
+    question: What's in my newsletters today?
+    expected: [newsletters_list]
+  - id: newsletters-one
+    question: What's in Money Stuff today?
+    expected: [newsletters_list, newsletter_summarize]
+  - id: newsletters-topic
+    question: Did any of my newsletters say anything about Nvidia?
+    expected: [newsletters_list]
+  - id: newsletters-summary
+    question: Can you summarize The Morning for me?
+    expected: [newsletter_summarize, newsletters_list]
+  - id: newsletters-section-gist
+    question: Give me the gist of the Binance section in Money Stuff.
+    expected: [newsletter_summarize, newsletters_list]

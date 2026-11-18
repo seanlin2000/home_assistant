@@ -118,3 +118,11 @@ marks_untrusted = false
 [tools.date_math]
 tier = "local"
 marks_untrusted = false
+
+[tools.newsletters_list]
+tier = "read_private"
+marks_untrusted = true                      # headlines and section names written by the newsletters' publishers (design doc v2/14 section 3.8)
+
+[tools.newsletter_summarize]
+tier = "read_private"
+marks_untrusted = true                      # the issue's text, cleaned by rule but written by the publisher; no quarantined reader (v2/DEVIATIONS.md)

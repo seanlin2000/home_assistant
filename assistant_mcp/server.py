@@ -15,6 +15,8 @@ from broadway_mcp.settings import BroadwaySettings, broadway_settings_from_envir
 from calculator_mcp.register import register_calculator_tools
 from movies_mcp.register import register_movies_tools
 from movies_mcp.settings import MoviesSettings, movies_settings_from_environment
+from newsletters_mcp.register import register_newsletters_tools
+from newsletters_mcp.settings import NewslettersSettings, newsletters_settings_from_environment
 from reddit_mcp.register import register_reddit_tools
 from reddit_mcp.settings import RedditSettings, reddit_settings_from_environment
 from restaurants_mcp.register import register_restaurants_tools
@@ -46,6 +48,7 @@ def build_server(
     movies: MoviesSettings | None = None,
     reddit: RedditSettings | None = None,
     restaurants: RestaurantsSettings | None = None,
+    newsletters: NewslettersSettings | None = None,
     tool_server: ToolServerSettings | None = None,
 ) -> MCPServer:
     cache = QueryCache(settings.cache_dir)
@@ -58,11 +61,12 @@ def build_server(
     server = MCPServer(
         "assistant-tools",
         instructions=(
-            "Web search through Brave's API, falling back to a local SearXNG instance, Wikipedia articles, exact calculator tools, the forecast for home, NBA and NFL statistics from ESPN, what is playing on Broadway, what movies are showing in Manhattan, what people on Reddit say, and restaurants from the Michelin Guide. Prefer"
+            "Web search through Brave's API, falling back to a local SearXNG instance, Wikipedia articles, exact calculator tools, the forecast for home, NBA and NFL statistics from ESPN, what is playing on Broadway, what movies are showing in Manhattan, what people on Reddit say, restaurants from the Michelin Guide, and the user's own email newsletters. Prefer"
             " search_and_read for questions about the world and wikipedia_lookup for settled facts, lists, and records; use the calculator tools for any arithmetic,"
             " weather_forecast for the weather, and game_scores, box_score, team_roster, roster_stats, player_stats, player_matchup, player_rankings, and team_rankings for NBA and NFL scores, rosters, and statistics,"
             " broadway_shows for what is playing on Broadway and Off-Broadway, movies_showing and movie_details for what movies are showing in Manhattan theaters and what one is about,"
-            " reddit_search when the user asks what people on Reddit or a subreddit say, and restaurant_recommendations and restaurant_details for Michelin Guide restaurants."
+            " reddit_search when the user asks what people on Reddit or a subreddit say, restaurant_recommendations and restaurant_details for Michelin Guide restaurants,"
+            " and newsletters_list and newsletter_summarize for the user's newsletters."
         ),
     )
     register_web_search_tools(server, settings, search, extractor)
@@ -74,6 +78,7 @@ def build_server(
     register_movies_tools(server, movies or MoviesSettings())
     register_reddit_tools(server, reddit or RedditSettings(), search)  # reddit_search searches through the same client as web search
     register_restaurants_tools(server, restaurants or RestaurantsSettings())
+    register_newsletters_tools(server, newsletters or newsletters_settings_from_environment())  # the environment lets the benchmark and tests point it elsewhere
     register_operations_routes(server, allowed_host_list(tool_server or ToolServerSettings()))
     if fixture_pages:
         server.custom_route(FIXTURE_ROUTE, ["POST"])(fixture_route(fixture_pages))
@@ -113,6 +118,7 @@ def main() -> None:
         movies=movies_settings_from_environment(),
         reddit=reddit_settings_from_environment(),
         restaurants=restaurants_settings_from_environment(),
+        newsletters=newsletters_settings_from_environment(),
         tool_server=tool_server,
     ).run(transport="streamable-http", host=tool_server.host, port=tool_server.port, transport_security=transport_security_for(tool_server))
 

@@ -14,9 +14,10 @@ import time
 from assistant_core.llm_client import LLMClient
 from assistant_core.models import TOOL_NAMES_BY_ROUTE, AgentPolicy, Message, Role, Route, RouteDecision, ToolSpec
 
-TOOL_ROUTES = [Route.SEARCH, Route.CALCULATE, Route.WEATHER, Route.SPORTS, Route.SHOWS, Route.MOVIES, Route.RESTAURANTS, Route.REDDIT]
-# Families the tool server offers only sometimes: the forecast needs home's coordinates, and an older tool server has no sports, show, movie, restaurant, or Reddit tools.
-OPTIONAL_ROUTES = (Route.WEATHER, Route.SPORTS, Route.SHOWS, Route.MOVIES, Route.RESTAURANTS, Route.REDDIT)
+TOOL_ROUTES = [Route.SEARCH, Route.CALCULATE, Route.WEATHER, Route.SPORTS, Route.SHOWS, Route.MOVIES, Route.RESTAURANTS, Route.REDDIT, Route.NEWSLETTERS]
+# Families the tool server offers only sometimes: the forecast needs home's coordinates, and an older tool server has no sports, show, movie, restaurant,
+# Reddit, or newsletter tools.
+OPTIONAL_ROUTES = (Route.WEATHER, Route.SPORTS, Route.SHOWS, Route.MOVIES, Route.RESTAURANTS, Route.REDDIT, Route.NEWSLETTERS)
 MAX_EXTRA_ROUTES = 2
 ROUTE_SCHEMA = {
     "type": "object",
@@ -28,7 +29,7 @@ ROUTE_SCHEMA = {
     "required": ["route"],
 }
 
-ROUTER_SYSTEM_PROMPT = """You sort spoken questions for a home voice assistant. Reply with JSON only: {"route": "search" | "calculate" | "weather" | "sports" | "shows" | "movies" | "restaurants" | "reddit" | "answer", "also": [...], "plan": "..."}.
+ROUTER_SYSTEM_PROMPT = """You sort spoken questions for a home voice assistant. Reply with JSON only: {"route": "search" | "calculate" | "weather" | "sports" | "shows" | "movies" | "restaurants" | "reddit" | "newsletters" | "answer", "also": [...], "plan": "..."}.
 search: the correct answer depends on facts that change over time or that the assistant cannot know without checking: current prices, rates, news, schedules, product availability, recent releases, market conditions, what to buy today, whether an offer is competitive right now, or a claim about a recent event. Also anything the user explicitly asks to be searched or looked up.
 calculate: the correct answer requires arithmetic on numbers in the question: percentages, totals over time, compounding, unit or temperature conversions, energy costs, loan payments, tips, splits, or date differences.
 weather: the coming or current weather or forecast, at home or in any named place: whether it will rain, how warm or cold it will get, whether to take an umbrella or a coat, the weekend forecast.
@@ -37,8 +38,9 @@ shows: what is playing on Broadway or Off-Broadway in New York, now or soon: whi
 movies: what movies are showing in movie theaters in Manhattan this week: what is playing, the widest or newest releases, movies of a genre, whether and where one movie is showing, what one theater shows. A movie's plot, cast, or reviews is search.
 restaurants: where to eat in a city or neighbourhood, or near a place: restaurant recommendations by cuisine, price, or Michelin award, and what one restaurant is like. They come from the Michelin Guide. A restaurant's opening hours, menu, or reservations, and the best place for one dish, are search.
 reddit: only when the user names Reddit or a subreddit and asks what is said there. A request for recommendations or opinions that does not name Reddit is search or answer.
+newsletters: what the user's own email newsletters say: what arrived today, what one newsletter or one of its sections says, or whether they mention a topic.
 answer: everything else: explanations of how things work, reasoning, advice from what the user said, comparisons of ideas, opinions, clarifying questions, and settled history even when it sounds topical.
-Examples: "What hardware gives the most memory for a thousand dollars today?" -> search. "Is a four percent rent increase competitive in my neighborhood?" -> search. "Since the central bank cut rates last month, should I refinance?" -> search. "What year did the Berlin Wall fall?" -> answer. "Why can a sparse model run on a smaller GPU?" -> answer. "What is fifteen percent of eighty dollars?" -> calculate. "Do I need an umbrella tomorrow?" -> weather. "What's the weather in Lisbon this weekend?" -> weather. "Who won the 49ers game last night?" -> sports. "How many threes did Steph Curry make each season?" -> sports. "What's Tom Brady's record against Peyton Manning?" -> sports. "What musicals are on Broadway right now?" -> shows. "What is Hadestown about?" -> shows. "What movies are playing this weekend?" -> movies. "Is Clayface showing anywhere near me?" -> movies. "Any good Thai places in Brooklyn?" -> restaurants. "Where should we go for a special occasion in San Francisco?" -> restaurants. "What's Le Bernardin like?" -> restaurants. "What does Reddit say about Via Carota?" -> reddit. "Best soup dumplings in Flushing?" -> search. "Who won the World Cup in 2022?" -> search.
+Examples: "What hardware gives the most memory for a thousand dollars today?" -> search. "Is a four percent rent increase competitive in my neighborhood?" -> search. "Since the central bank cut rates last month, should I refinance?" -> search. "What year did the Berlin Wall fall?" -> answer. "Why can a sparse model run on a smaller GPU?" -> answer. "What is fifteen percent of eighty dollars?" -> calculate. "Do I need an umbrella tomorrow?" -> weather. "What's the weather in Lisbon this weekend?" -> weather. "Who won the 49ers game last night?" -> sports. "How many threes did Steph Curry make each season?" -> sports. "What's Tom Brady's record against Peyton Manning?" -> sports. "What musicals are on Broadway right now?" -> shows. "What is Hadestown about?" -> shows. "What movies are playing this weekend?" -> movies. "Is Clayface showing anywhere near me?" -> movies. "Any good Thai places in Brooklyn?" -> restaurants. "Where should we go for a special occasion in San Francisco?" -> restaurants. "What's Le Bernardin like?" -> restaurants. "What does Reddit say about Via Carota?" -> reddit. "What's in my newsletters today?" -> newsletters. "Summarize Money Stuff." -> newsletters. "Best soup dumplings in Flushing?" -> search. "Who won the World Cup in 2022?" -> search.
 also: only when the question needs a second or third kind of tool after the first, in the order to use them; otherwise leave it out. plan: when also is given, one short sentence on how to use the tools together; otherwise leave it out.
 Examples: "Look up today's gold price and tell me what three ounces cost." -> {"route": "search", "also": ["calculate"], "plan": "Find today's gold price per ounce, then multiply it by three."} "Will it rain in Seattle tomorrow, and what time is the last ferry to Bainbridge?" -> {"route": "weather", "also": ["search"], "plan": "Get Seattle's forecast for tomorrow, then search the ferry schedule."} "Will Oslo be colder than here on Saturday?" -> {"route": "weather", "also": ["calculate"], "plan": "Get Saturday's forecast for Oslo and for home, then subtract the temperatures."} "What's tomorrow's high in Chicago in Celsius?" -> {"route": "weather", "also": ["calculate"], "plan": "Get Chicago's forecast for tomorrow, then convert the high to Celsius."}
 A comparison between places or a figure in other units needs the calculator as well as the forecast."""
@@ -83,6 +85,10 @@ RESTAURANTS_DIRECTIVE = """Routing for this question: RESTAURANTS.
 This question asks where to eat. Call restaurant_recommendations with location set to the place the user named, starting with "near" for the closest restaurants to a place, and cuisine, max_price, or award only when the user asked for them; call restaurant_details with the name when the user asks about one restaurant. Do not search the web unless the tool says to, and do not answer from memory. Answer from the restaurants the tool returns.
 Example call: restaurant_recommendations(location="San Francisco", cuisine="Japanese", max_price=3)
 """
+NEWSLETTERS_DIRECTIVE = """Routing for this question: NEWSLETTERS.
+This question is about the user's own email newsletters. Call newsletters_list for what arrived, with newsletter or topic when the user named one; call newsletter_summarize with the newsletter, and the section when one was named, for what it says. Do not search the web, and do not answer from memory. Answer from what the tools return.
+Example call: newsletter_summarize(newsletter="Money Stuff", section="Procurement")
+"""
 DIRECTIVES = {
     Route.SEARCH: SEARCH_DIRECTIVE,
     Route.CALCULATE: CALCULATE_DIRECTIVE,
@@ -92,6 +98,7 @@ DIRECTIVES = {
     Route.MOVIES: MOVIES_DIRECTIVE,
     Route.RESTAURANTS: RESTAURANTS_DIRECTIVE,
     Route.REDDIT: REDDIT_DIRECTIVE,
+    Route.NEWSLETTERS: NEWSLETTERS_DIRECTIVE,
 }
 # A question that needs several tools gets one directive: the routes in order, the plan, then each route's instruction and example call without its heading.
 SEVERAL_TOOLS_INSTRUCTION = "This question needs more than one tool. Call each of them, in this order, and answer from what they return; do no arithmetic yourself."
