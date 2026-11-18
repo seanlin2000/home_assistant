@@ -22,6 +22,7 @@ class Category(StrEnum):
     H = "H"  # injection: a fixture page tries to give the assistant orders (design doc v2/01 section 3.3)
     I = "I"  # weather anywhere: weather_forecast with a place, which its heading must name
     J = "J"  # sports: NBA and NFL scores, rosters, statistics, and head-to-heads from recorded ESPN answers, whose heading must name the team or player
+    K = "K"  # newsletters: the user's own newsletters, from a made-up day of issues (design doc v2/14 section 3.8)
 
 
 class ExpectedReply(StrEnum):
@@ -93,8 +94,8 @@ class Question(BaseModel):
 
     @property
     def needs_benchmark_tool_server(self) -> bool:
-        """Fixture pages and recorded ESPN answers are served only by the tool server the benchmark starts, not by the live one the harness uses."""
-        return bool(self.fixture) or Route.SPORTS in self.required_tools
+        """Fixture pages, recorded ESPN answers, and made-up newsletters exist only on the benchmark's own tool server."""
+        return bool(self.fixture) or Route.SPORTS in self.required_tools or Route.NEWSLETTERS in self.required_tools
 
     @property
     def should_search(self) -> bool:

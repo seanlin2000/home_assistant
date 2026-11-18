@@ -18,6 +18,7 @@ class NewslettersSettings(BaseModel):
     imap_host: str = "imap.gmail.com"
     imap_timeout_seconds: float = 30.0  # without one, a single hung run would block every later hourly run
     keychain_service: str = "studio-assistant-gmail"  # its account is the Gmail address, its secret the app password
+    summary_max_words: int = 6_000  # whole sections up to this many; above any issue seen so far (Money Stuff, about 3,800 to 4,700)
     stale_after_hours: float = 3.0  # the health check fails once the last good pull is older than this
     today: date | None = None  # set only by the benchmark, which pins its day of made-up issues
 

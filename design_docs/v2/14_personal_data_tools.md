@@ -148,7 +148,7 @@ A block nested inside another block is skipped, so no text is written twice.
 
 | Tool | Arguments | Returns |
 |---|---|---|
-| `newsletters_list` | `date` ("today"), `newsletter` (""), `topic` ("") | Each issue's time, publication, subject and section names |
+| `newsletters_list` | `date` ("today"), `newsletter` (""), `topic` ("") | Each issue's time, publication, headline, length and section names |
 | `newsletter_summarize` | `newsletter`, `date` ("today"), `section` ("") | The cleaned text of one issue, or one section of it, for the model to summarize |
 | `newsletter_read` | `newsletter`, `date` ("today"), `section` ("") | One part of about 500 words, spoken as it is (§3.6) |
 
