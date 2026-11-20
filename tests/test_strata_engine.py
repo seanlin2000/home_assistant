@@ -201,3 +201,16 @@ def test_show_prints_the_engine_and_strata_s_run_config_without_the_key(strata_i
     printed = capsys.readouterr().out
     assert printed.startswith("engine: strata\n")
     assert '"api_key": "<redacted>"' in printed and "secret-key" not in printed
+
+
+def test_serving_engine_names_the_active_engine_without_reading_strata_s_install(no_engine_override: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]) -> None:
+    monkeypatch.setattr(serving_cli.sys, "argv", ["serving", "engine"])
+    monkeypatch.setattr(serving_cli, "strata_run_config", lambda config: pytest.fail("the deploy asks before Strata is installed"))
+    serving_cli.main()
+    no_engine_override.write_text("llama-server\n")
+    serving_cli.main()
+    assert capsys.readouterr().out == "strata\nllama-server\n"
+
+
+def test_the_checked_in_strata_folder_sits_beside_the_other_checkouts() -> None:
+    assert load_serving_config().served_model.strata.install_path == Path("~/Code/strata").expanduser()

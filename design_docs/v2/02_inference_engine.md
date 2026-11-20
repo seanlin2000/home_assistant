@@ -267,7 +267,7 @@ Here is Strata's table as checked in:
 
 ```toml
 [models."qwen3.8-flash-next".strata]
-install_dir = "~/strata"
+install_dir = "~/Code/strata"
 commit = "64524fb9fc82222ddce554c0643b64f056ec8366"  # the launch refuses any other checkout
 release = "v0.2.16"
 setup_config = "engine/strata-iq3_xxs.json"
@@ -289,7 +289,7 @@ STRATA_NO_ACQUIRE = "1"
 **What `serving launch` does under Strata:**
 1. Checks the model file's hash and the API key, as for llama-server.
 2. Checks the install (`serving/strata.py`). It refuses to start, naming the fix, when:
-   - `~/strata` is not at the pinned commit;
+   - `~/Code/strata` is not at the pinned commit;
    - its source is not that commit with exactly our patches applied, checked by applying them to a throwaway index of the commit and comparing it with the working tree;
    - the engine binary is older than the patched sources, or lacks the strings the patches add.
 3. Writes Strata's run config, readable only by you, to `~/Library/Application Support/studio-assistant/strata.json`. It is the config Strata's setup wrote, with these values on top:
@@ -305,9 +305,18 @@ STRATA_NO_ACQUIRE = "1"
 
 `uv run serving show` prints the run config with the key redacted. `uv run serving check` runs steps 1 and 2 and exits 1 on a problem. The deploy runs it before restarting the engine (doc 10).
 
-**Pinning and updating.** Strata runs only the commit `serving.toml` names, and changes only when someone decides it should:
-- `scripts/strata.sh install` clones that commit (detached, never a branch or tag), runs Strata's setup, applies the patches, builds the engine with Strata's own CMake, and checks. On an install already at the pin it only checks.
-- **To update:** a pull request changes `commit` and `release`, and refreshes the patches if they no longer apply. Then, at the Studio's keyboard, `scripts/strata.sh update` checks out the new commit, reapplies the patches, rebuilds, and checks, and a deploy restarts the engine on it.
+**Pinning and updating.** Strata runs only the commit `serving.toml` names, and changes only when a pull request changes it. Nobody runs anything by hand:
+- **`scripts/strata.sh ensure` brings Strata to the checkout's pin.** It does as little as it can:
+
+  | `install_dir` holds | `ensure` |
+  |---|---|
+  | nothing | clones the pinned commit (detached, never a branch or tag), runs Strata's setup, deletes setup's 40 GB experts copy, fetches the DFlash2 drafter, applies the patches, builds with Strata's own CMake, and checks |
+  | another commit | discards the old patched files (refusing if anything else changed), checks out the new commit, reapplies the patches, rebuilds, and checks |
+  | the pinned commit, patched and built | only checks, in about 2 s |
+  | the pinned commit, with the build missing or stale | applies the patches if they are not on yet, rebuilds, and checks |
+- **Every engine start runs it first.** `scripts/services.sh` runs it before it stops the running engine, so an install or update happens while the old engine still answers, and one that fails leaves the old engine running. A deploy, `start`, `install`, `engine` and the health check's restarts all start the engine this way (doc 10 §3.12). A deploy also runs it, from the commit it deploys, before any restart, and aborts if it fails.
+- **To update:** a pull request changes `commit` and `release`, refreshing the patches if they no longer apply. `scripts/deploy.sh` does the rest. Moving `install_dir` works the same way: the deploy installs Strata in the new folder, and the old one can be deleted afterwards.
+- `strata.sh install`, `update` and `check` remain for running one step by hand.
 - **Nothing else updates it.** Our engine is built from source, so Strata's signed package feed never applies to it. Its server never calls its updater. The two env switches turn off its daily feed check and any download from the serving path.
 
 **The two patches.** In resident mode Strata keeps host copies of weights that only its CPU and CUDA code read. The patches give them back after loading:
@@ -360,7 +369,7 @@ STRATA_NO_ACQUIRE = "1"
 | The model or llama.cpp is upgraded and tool calls break | Malformed calls rise in the benchmark | Pin back the previous version; upgrades go through the benchmark first |
 | Not enough memory for the window | llama-server fails to load or the Mac swaps | Lower `context_tokens`; doc 08 has the budget |
 | llama-server is down | The harness answers "I can't reach the model right now" and the health check reports it | `scripts/services.sh restart llama` (doc 10) |
-| Strata's install is not the pinned commit with our patches built | `serving check` fails, the deploy stops before any restart, and the launch refuses | `scripts/strata.sh install`, or `update` after a pin change |
+| Strata's install is not the pinned commit with our patches built | `serving check` fails, the deploy stops before any restart, and the launch refuses | The deploy aborts, with the old commit and engine still running; `scripts/strata.sh ensure` shows the failing step |
 | Strata misbehaves in production | Answers slow, fail, or the memory tab shows swap growing | `scripts/services.sh engine llama-server`, then investigate |
 
 ## 7. Concepts for newcomers

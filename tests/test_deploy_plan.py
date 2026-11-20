@@ -141,31 +141,72 @@ def test_serving_settings_launcher_or_strata_patches_restart_the_engine() -> Non
     assert deploy.plan_actions(["scripts/strata_patches/release_projections.patch"]).actions == ["restart:llama", "restart:harness"]
 
 
-def test_an_engine_the_launch_would_refuse_aborts_the_deploy_before_any_restart(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
-    monkeypatch.setenv("STUDIO_LOG_DIR", str(tmp_path))
-    checkouts, ran, carried_out = [], [], []
-    answers = {("rev-parse", "HEAD"): "old", ("rev-parse", "--verify", "new^{commit}"): "new", ("diff", "--name-only", "old", "new"): "config/serving.toml"}
+class EngineDeploy:
+    """A deploy of a serving.toml change with git, the steps and the restarts faked: records checkouts, the commands run, and the restarts."""
 
-    def git(*args: str) -> str:
+    def __init__(self, monkeypatch: pytest.MonkeyPatch, tmp_path: Path, engine: str, failing: str = "") -> None:
+        monkeypatch.setenv("STUDIO_LOG_DIR", str(tmp_path))
+        self.checkouts: list[str] = []
+        self.ran: list[str] = []
+        self.restarted: list[str] = []
+        self.failing = failing
+        monkeypatch.setattr(deploy, "tree_is_dirty", lambda: False)
+        monkeypatch.setattr(deploy, "git", self.git)
+        monkeypatch.setattr(deploy, "run", self.run)
+        monkeypatch.setattr(deploy, "check_manifest_matches_lock", lambda: None)
+        monkeypatch.setattr(deploy, "carry_out", self.restarted.extend)
+        monkeypatch.setattr(deploy, "active_engine_here", lambda: engine)
+
+    def git(self, *args: str) -> str:
         if args[0] == "checkout":
-            checkouts.append(args[-1])
+            self.checkouts.append(args[-1])
+        answers = {("rev-parse", "HEAD"): "old", ("rev-parse", "--verify", "new^{commit}"): "new", ("diff", "--name-only", "old", "new"): "config/serving.toml"}
         return answers.get(args, "")
 
-    def run(command: list[str], timeout: int = 0) -> None:
-        ran.append(command[-1])
-        if command[-1] == "check":
+    def run(self, command: list[str], timeout: int = 0) -> None:
+        step = "tests" if "pytest" in command else f"{Path(command[0]).name} {command[-1]}@{self.checkouts[-1]}"
+        self.ran.append(step)
+        if step == self.failing:
             raise subprocess.CalledProcessError(1, command)
 
-    monkeypatch.setattr(deploy, "tree_is_dirty", lambda: False)
-    monkeypatch.setattr(deploy, "git", git)
-    monkeypatch.setattr(deploy, "run", run)
-    monkeypatch.setattr(deploy, "check_manifest_matches_lock", lambda: None)
-    monkeypatch.setattr(deploy, "carry_out", carried_out.extend)
+
+def test_an_engine_the_launch_would_refuse_aborts_the_deploy_before_any_restart(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    deploying = EngineDeploy(monkeypatch, tmp_path, engine="llama-server", failing="serving check@new")
 
     summary = deploy.switch_to("new", run_tests=True, dry_run=False)
 
     assert summary["note"].startswith("aborted before any restart; checkout returned to old")
-    assert (checkouts, ran, carried_out) == (["new", "old"], ["check"], [])  # the tests never ran, and nothing restarted
+    assert (deploying.checkouts, deploying.ran, deploying.restarted) == (["new", "old"], ["tests", "serving check@new"], [])
+    assert "strata" not in summary  # under llama-server the deploy never touches Strata
+
+
+def test_under_strata_the_deployed_commits_strata_sh_brings_strata_to_its_pin_before_the_check(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    deploying = EngineDeploy(monkeypatch, tmp_path, engine="strata")
+
+    summary = deploy.switch_to("new", run_tests=False, dry_run=False)
+
+    assert deploying.ran == ["strata.sh ensure@new", "serving check@new"]
+    assert summary["applied"] and deploying.restarted == ["restart:llama", "restart:harness"]
+
+
+def test_a_strata_install_that_fails_aborts_and_the_old_commits_strata_sh_puts_strata_back(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    deploying = EngineDeploy(monkeypatch, tmp_path, engine="strata", failing="strata.sh ensure@new")
+    monkeypatch.setattr(deploy, "STRATA_SCRIPT", tmp_path / "strata.sh")
+    (tmp_path / "strata.sh").write_text("")
+
+    summary = deploy.switch_to("new", run_tests=False, dry_run=False)
+
+    assert deploying.ran == ["strata.sh ensure@new", "strata.sh ensure@old"]
+    assert (summary["strata"], deploying.restarted) == ("matches the old pin", [])
+
+
+def test_an_old_commit_from_before_strata_has_nothing_to_put_back(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    EngineDeploy(monkeypatch, tmp_path, engine="strata", failing="serving check@new")
+    monkeypatch.setattr(deploy, "STRATA_SCRIPT", tmp_path / "no-strata.sh")
+
+    summary = deploy.switch_to("new", run_tests=False, dry_run=False)
+
+    assert summary["strata"] == "the old commit has no scripts/strata.sh; nothing to put back"
 
 
 def test_vendored_core_files_import_only_each_other() -> None:

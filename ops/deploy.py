@@ -114,6 +114,12 @@ ACTION_ORDER = (
 )
 # Actions that start the engine again; before them `serving check` must pass, or launchd would keep restarting a launch that refuses.
 ENGINE_STARTS = {"restart:llama", "reinstall_agents"}
+SERVING_CLI = PROJECT_DIR / ".venv" / "bin" / "serving"
+STRATA_SCRIPT = PROJECT_DIR / "scripts" / "strata.sh"
+SERVING_CHECK_TIMEOUT_SECONDS = 300  # hashes the model (about 47 GB), then checks Strata's install
+# Under Strata the deploy runs the deployed commit's own strata.sh ensure, so Strata follows that commit's pin and folder: only a check when it already
+# matches, an install when the folder is empty, an update when it is at another commit. A first install runs Strata's setup and builds its engine.
+STRATA_ENSURE_TIMEOUT_SECONDS = 3600
 RESTARTS_COVERED_BY_REINSTALL = {"restart:llama", "restart:mcp", "restart:harness", "restart:dashboard", "restart:kokoro", "restart:speech"}
 
 
@@ -271,6 +277,7 @@ def switch_to(ref: str, run_tests: bool, dry_run: bool) -> dict:
         return summary
     paths.maintenance_flag().touch()
     git("checkout", "--detach", "--quiet", new)
+    ensured_strata = False
     try:
         if "sync_env" in plan.actions:
             packages_before = installed_packages()
@@ -278,21 +285,43 @@ def switch_to(ref: str, run_tests: bool, dry_run: bool) -> dict:
             plan = plan_after_sync(plan, environments_changed(packages_before, installed_packages()))
             summary.update(plan=plan.actions, reasons=plan.reasons)
         check_manifest_matches_lock()
-        if ENGINE_STARTS & set(plan.actions):
-            run([str(PROJECT_DIR / ".venv" / "bin" / "serving"), "check"], timeout=300)  # hashes the model (about 47 GB), then checks Strata's install
         if run_tests:
             run([str(PROJECT_DIR / ".venv" / "bin" / "python"), "-m", "pytest", "-q", "-x"], timeout=900)
             summary["tests"] = "passed"
+        if ENGINE_STARTS & set(plan.actions):
+            ensured_strata = active_engine_here() == "strata"
+            if ensured_strata:
+                run([str(STRATA_SCRIPT), "ensure"], timeout=STRATA_ENSURE_TIMEOUT_SECONDS)
+            run([str(SERVING_CLI), "check"], timeout=SERVING_CHECK_TIMEOUT_SECONDS)
     except (subprocess.CalledProcessError, SystemExit) as error:
         git("checkout", "--detach", "--quiet", old)
         if "sync_env" in plan.actions:
             execute("sync_env")  # put the environment back with the old lock
+        if ensured_strata:
+            summary["strata"] = put_strata_back()
         summary["tests"] = f"failed: {error}"
         summary["note"] = f"aborted before any restart; checkout returned to {old[:10]}; maintenance flag left set"
         return summary
     summary["failed_steps"] = carry_out([action for action in plan.actions if action != "sync_env"])
     summary["applied"] = True
     return summary
+
+
+def active_engine_here() -> str:
+    """Asked of the checked-out commit's own CLI, since this process still runs the deploy code it started with."""
+    return subprocess.run([str(SERVING_CLI), "engine"], cwd=PROJECT_DIR, capture_output=True, text=True, check=True, timeout=60).stdout.strip()
+
+
+def put_strata_back() -> str:
+    """After an abort, the old commit's strata.sh returns Strata to the old pin and folder, so a restart under the old checkout can launch it again. It
+    changes nothing when the deploy did not move Strata."""
+    if not STRATA_SCRIPT.exists():
+        return "the old commit has no scripts/strata.sh; nothing to put back"
+    try:
+        run([str(STRATA_SCRIPT), "ensure"], timeout=STRATA_ENSURE_TIMEOUT_SECONDS)
+    except (subprocess.CalledProcessError, subprocess.TimeoutExpired) as error:
+        return f"not returned to the old pin ({error}); run scripts/strata.sh ensure"
+    return "matches the old pin"
 
 
 def with_lock(fn: Callable[[], dict]) -> dict:
