@@ -1,0 +1,117 @@
+diff -ru a/engine/metal/src/engine/window.cpp b/engine/metal/src/engine/window.cpp
+--- a/engine/metal/src/engine/window.cpp
++++ b/engine/metal/src/engine/window.cpp
+@@ -60,8 +60,37 @@
+ #include <vector>
+ 
+ namespace strata::gpu { uint64_t purge_device_allocations(size_t min_bytes); }   // metal/src/gpu/runtime.cpp
++namespace strata::gpu {   // trial patch, metal/src/gpu/runtime.cpp
++void log_device_allocations(size_t min_bytes);
++uint64_t poison_device_allocations(size_t min_bytes);
++}
+ 
+ namespace {
++// Trial patch, off unless STRATA_METAL_RELEASE_HOST_WEIGHTS is set: in resident mode, at the first request, the host
++// code's device weight copies (allocations of STRATA_METAL_RELEASE_MIN_MIB, default 32, or more) are overwritten with
++// 0xFF ("poison", to prove nothing reads them) or given back ("release"), as streaming mode's stream_arena gives them back.
++void release_host_weights_once(bool streaming) {
++    static bool done = false;
++    if (done || streaming) return;
++    done = true;
++    const char* mode_text = std::getenv("STRATA_METAL_RELEASE_HOST_WEIGHTS");
++    if (!mode_text || !*mode_text) return;
++    const std::string mode(mode_text);
++    const char* min_mib_text = std::getenv("STRATA_METAL_RELEASE_MIN_MIB");
++    const size_t min_bytes = (size_t) (min_mib_text ? std::atoll(min_mib_text) : 32) << 20;
++    strata::gpu::log_device_allocations(min_bytes);
++    uint64_t bytes = 0;
++    if (mode == "poison") bytes = strata::gpu::poison_device_allocations(min_bytes);
++    else if (mode == "release") bytes = strata::gpu::purge_device_allocations(min_bytes);
++    else {
++        std::fprintf(stderr, "strata metal resident: STRATA_METAL_RELEASE_HOST_WEIGHTS=%s is not poison or release; nothing done\n", mode_text);
++        return;
++    }
++    std::fprintf(stderr, "strata metal resident: %s: %.2f GB of the host code's device weight copies\n", mode_text, bytes / 1e9);
++}
++}  // namespace
++
++namespace {
+ std::string engine_msl_dir() { return strata_metal::resource("STRATA_METAL_ENGINE_KERNELS", "engine-msl", STRATA_METAL_ENGINE_KERNELS_DEFAULT); }
+ }  // namespace
+ 
+@@ -1451,6 +1480,7 @@
+ }
+ 
+ bool Window::run(int Tn, const int32_t* tokens, int64_t pos0, bool head, int32_t* out, std::string& err) {
++    release_host_weights_once(stream_);
+     mtp_src_ = nullptr;
+     if (Tn < 1 || Tn > MAXT || (head && Tn > max_t_)) { err = "metal window: window size out of range"; return false; }
+     if (pos0 + Tn + 1 >= max_cells_) { err = "metal window: the window runs past the context"; return false; }
+@@ -1606,6 +1636,7 @@
+ }
+ 
+ bool Window::run_rows(const int* rows, int S, const int32_t* tokens, const int64_t* pos, int32_t* out, std::string& err) {
++    release_host_weights_once(stream_);
+     if (S < 1 || S > MAXT || S > max_t_) { err = "metal window: batch window size out of range"; return false; }
+     if (mrope_on() && mropeBig_.bytes == 0) { err = "metal window: batch rows without the slots' M-RoPE tables"; return false; }
+     if (active_ != 0) activate(0);
+@@ -2999,6 +3030,7 @@
+ }
+ 
+ bool Window::prompt_gemm_init(std::string& err) {
++    release_host_weights_once(stream_);
+     if (pg_) return true;
+     if (stream_ && !st_->ready()) return stream_arena(err);   // it makes the prompt buffers after the arena
+     const char* ec = std::getenv("STRATA_METAL_PROMPT_CHUNK");
+diff -ru a/engine/metal/src/gpu/runtime.cpp b/engine/metal/src/gpu/runtime.cpp
+--- a/engine/metal/src/gpu/runtime.cpp
++++ b/engine/metal/src/gpu/runtime.cpp
+@@ -21,6 +21,7 @@
+ 
+ #include <sys/sysctl.h>
+ 
++#include <algorithm>
+ #include <atomic>
+ #include <chrono>
+ #include <cstdio>
+@@ -337,6 +338,40 @@
+         n += a.bytes;
+     }
+     r.rs->commit();
++    return n;
++}
++
++// Trial patch (STRATA_METAL_RELEASE_HOST_WEIGHTS): what purge_device_allocations(min_bytes) would give back, logged
++// largest first, so each allocation can be matched to a region in vmmap.
++void log_device_allocations(size_t min_bytes) {
++    Runtime& r = rt();
++    std::lock_guard<std::mutex> lk(r.mu);
++    std::vector<size_t> sizes;
++    uint64_t total = 0;
++    for (auto& [gpu, a] : r.by_gpu) {
++        if (a.host || a.purged || a.bytes < min_bytes) continue;
++        sizes.push_back(a.bytes);
++        total += a.bytes;
++    }
++    std::sort(sizes.rbegin(), sizes.rend());
++    std::fprintf(stderr, "strata metal resident: %zu device allocations of %zu MiB or more, %.1f MiB in all; largest:",
++                 sizes.size(), min_bytes >> 20, total / 1048576.0);
++    for (size_t i = 0; i < sizes.size() && i < 16; ++i) std::fprintf(stderr, " %.1f", sizes[i] / 1048576.0);
++    std::fprintf(stderr, " MiB\n");
++}
++
++// Trial patch: the same allocations as purge_device_allocations, overwritten with 0xFF (NaN in f16 and bf16) and kept,
++// so a later read by a GPU kernel or the CPU shows up as wrong output instead of going unnoticed.  Returns the bytes.
++uint64_t poison_device_allocations(size_t min_bytes) {
++    Runtime& r = rt();
++    device_synchronize();
++    std::lock_guard<std::mutex> lk(r.mu);
++    uint64_t n = 0;
++    for (auto& [gpu, a] : r.by_gpu) {
++        if (a.host || a.purged || a.bytes < min_bytes) continue;
++        std::memset(a.cpu, 0xFF, a.bytes);
++        n += a.bytes;
++    }
+     return n;
+ }
+ 

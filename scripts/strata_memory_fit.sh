@@ -8,65 +8,11 @@
 # Run it on the Studio, from this worktree.
 
 set -u
-TRIAL="$(cd "$(dirname "$0")/.." && pwd)"
-# uv and Homebrew's tools, which a non-login shell over SSH does not have on its PATH
-export PATH="${HOME}/.local/bin:/opt/homebrew/bin:${PATH}"
-LIVE=~/Code/home_assistant_live
-FLAG=~/Library/Logs/studio-assistant/maintenance
-AGENT="gui/$(id -u)/com.studio-assistant"
-API_KEY_FILE="${HOME}/Library/Application Support/studio-assistant/llama-server.key"
-STRATA_LOG="${HOME}/strata/strata-trial.log"
 RUN=strata_phase4
+# shellcheck disable=SC1091  # the shared helpers beside this script
+source "$(dirname "$0")/strata_trial_common.sh"
 OUT="${TRIAL}/benchmark/results/${RUN}"
-PAGE_BYTES=16384
 SETTLE_SECONDS=120
-HARNESS_WARM_UP_SECONDS=45
-
-snapshot() {
-    echo "== $1 ($(date +%T))"
-    sysctl -n vm.swapusage
-    memory_pressure | tail -1
-    vm_stat | grep -E "Pages (free|active|inactive|wired down|occupied by compressor)|Swapins|Swapouts"
-    echo "-- by memory in RAM (CMPRS: compressed, including any part written to swap)"
-    top -l 1 -o mem -n 12 -stats pid,command,mem,cmprs | tail -13
-}
-
-swap_used_mb() { sysctl -n vm.swapusage | sed -E 's/.*used = ([0-9.]+)M.*/\1/'; }
-free_percent() { memory_pressure | tail -1 | grep -oE '[0-9]+%' | tr -d '%'; }
-swapouts() { vm_stat | awk '/Swapouts/ {gsub(/\./, "", $2); print $2}'; }
-strata_footprint() { footprint -p "$(pgrep -x strata)" 2>/dev/null | sed -nE 's/.*Footprint: ([0-9.]+ [KMG]B).*/\1/p' | head -1; }
-# vmmap's summary columns: virtual, resident, dirty, swapped (compressed or in swap), ...
-gpu_buffers() { vmmap --summary "$(pgrep -x strata)" 2>/dev/null | awk '/^IOAccelerator \(graphics\)/ {print $4 " resident, " $6 " swapped"; exit}'; }
-
-smoke() { (cd "$LIVE" && uv run python -m ops.smoke --full 2>&1 | tail -3); }
-
-stop_llama() {
-    launchctl bootout "$AGENT.llama" 2>/dev/null
-    while pgrep -x llama-server >/dev/null; do sleep 1; done
-}
-
-start_llama() {
-    (cd "$LIVE" && scripts/services.sh start 2>&1 | tail -1)
-    until curl -sf -o /dev/null http://127.0.0.1:8090/health; do sleep 5; done
-}
-
-restore_production() {
-    pgrep -x strata >/dev/null && "${TRIAL}/scripts/strata_trial.sh" stop
-    pgrep -x llama-server >/dev/null || start_llama
-    launchctl kickstart -k "$AGENT.harness"
-    wait_for_harness
-    (cd "$LIVE" && uv run python -m ops.deploy clear-maintenance >/dev/null)
-}
-
-wait_for_harness() {
-    # A smoke test sent while the harness restarts answers "I can't reach the assistant"; its warm-up reads both slots' prompts first.
-    until nc -z 127.0.0.1 8770 2>/dev/null; do sleep 2; done
-    sleep "$HARNESS_WARM_UP_SECONDS"
-}
-
-probe() {
-    (cd "$TRIAL" && uv run engine-probe --base-url http://127.0.0.1:8090 --api-key-file "$API_KEY_FILE" --process-name strata --label "strata-$1" --run "$RUN" 2>&1 | tail -4)
-}
 
 measure_variant() {
     local spec="$1" variant="${1%@*}" context=""
@@ -75,11 +21,12 @@ measure_variant() {
     snapshot "llama-server baseline before ${spec}"
     local swap_before swapouts_before
     swap_before="$(swap_used_mb)"
-    swapouts_before="$(swapouts)"
+    swapouts_before="$(vm_counter Swapouts)"
     stop_llama
     local started
     if ! started="$(STRATA_PORT=8090 STRATA_CONTEXT="${context:-34816}" "${TRIAL}/scripts/strata_trial.sh" start "$variant" 2>&1)"; then
         echo "$started"
+        stop_strata
         start_llama
         return 1
     fi
@@ -95,14 +42,14 @@ measure_variant() {
     snapshot "Strata ${spec} after three smoke rounds"
     local swap_after_smokes free_after_smokes
     swap_after_smokes="$(swap_used_mb)"
-    free_after_smokes="$(free_percent)"
+    free_after_smokes="$(memory_pressure_free_percent)"
     probe "$spec"
     snapshot "Strata ${spec} after the engine probe"
     echo "-- Strata's memory by region (pauses the idle engine for a moment)"
     vmmap --summary "$(pgrep -x strata)" 2>&1 | head -60
     local row
-    row="${spec}\t${swap_before}\t${swap_after_smokes}\t$(swap_used_mb)\t$((($(swapouts) - swapouts_before) * PAGE_BYTES / 1048576))\t${free_after_smokes}\t$(strata_footprint)\t$(gpu_buffers)"
-    "${TRIAL}/scripts/strata_trial.sh" stop
+    row="${spec}\t${swap_before}\t${swap_after_smokes}\t$(swap_used_mb)\t$(counter_mb_since Swapouts "$swapouts_before")\t${free_after_smokes}\t$(strata_footprint)\t$(gpu_buffers)"
+    stop_strata
     start_llama
     launchctl kickstart -k "$AGENT.harness"
     printf "%b\n" "$row" >>"$OUT/fit.tsv"
