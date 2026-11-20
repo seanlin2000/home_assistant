@@ -4,7 +4,8 @@
 # Usage: scripts/strata_trial.sh preflight|install|start <plain|dflash2|dflash2-f16|lowmem>|stop
 #
 # Every variant keeps the model resident (STRATA_METAL_STREAM=0): Strata's own sizing rule would stream it from the SSD on 64 GB, though llama-server
-# holds the same file in memory. --parallel 2 gives the conversation and the router a slot each, as llama-server's two slots do.
+# holds the same file in memory. plain runs two request slots, one each for the conversation and the router as llama-server's two slots do. The DFlash2
+# variants run one: on Metal, Strata starts no drafter beside two slots (strata_control/drafting.py, blocked_by), so the router shares the slot.
 
 set -eu
 
@@ -89,7 +90,11 @@ if variant == "lowmem":
     environment["STRATA_METAL_PROMPT_CHUNK"] = "1024"
 if variant not in ("plain", "dflash2", "dflash2-f16", "lowmem"):
     sys.exit(f"unknown variant {variant}: plain, dflash2, dflash2-f16 or lowmem")
-config.update(env=environment, parallel=2, port=int(port), reasoning_budget_tokens=int(budget), api_key=Path(key_file).read_text().strip(),
+# Setup writes --suffix-draft 0 only for a Mac it streams on; a resident config leaves Strata's own look-ahead in the text on.
+arguments = config["args"]
+if "--suffix-draft" in arguments:
+    del arguments[arguments.index("--suffix-draft"):arguments.index("--suffix-draft") + 2]
+config.update(env=environment, parallel=1 if variant.startswith("dflash2") else 2, port=int(port), reasoning_budget_tokens=int(budget), api_key=Path(key_file).read_text().strip(),
               drafting="dflash2" if variant.startswith("dflash2") else "off", open_browser=False)
 Path(target).write_text(json.dumps(config, indent=2))
 Path(target).chmod(0o600)
@@ -133,7 +138,7 @@ setup_config() {
 
 strata_python() {
     local found
-    found="$(find "${STRATA_DIR}" -maxdepth 3 -path '*/.venv/bin/python' | head -1)"
+    found="$(find "${STRATA_DIR}" -maxdepth 4 -path '*/.venv/bin/python' | head -1)"
     [[ -n "${found}" ]] || fail "no Python environment under ${STRATA_DIR}; run: scripts/strata_trial.sh install"
     echo "${found}"
 }
