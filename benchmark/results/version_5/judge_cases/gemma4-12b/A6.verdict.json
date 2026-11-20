@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It holds the earlier 24 GB recommendation and addresses the $400 directly, but stays generic about 'smaller, less capable models' instead of naming the concrete step the sketch asks for, from roughly 13B-class to 30B-class models or higher quantization and longer context.",
+  "judgment_reason": "It carried the prior turn forward without asking which machines were meant, but gave a flat answer with none of the conditions the sketch expects, such as a tight budget or target models that already fit in 16 GB.",
+  "spoken_fit_reason": "Two plain sentences that lead with the recommendation, no markdown."
+}

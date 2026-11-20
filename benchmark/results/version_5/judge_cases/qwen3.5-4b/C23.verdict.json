@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "$11.61 and $76.11 match the reference sketch exactly, and both parts of the question are answered.",
+  "judgment_reason": "It used the calculator for both figures rather than doing the arithmetic in its head, and did not search on a question that needs no search.",
+  "spoken_fit_reason": "One sentence carrying both numbers, no lists or markup."
+}

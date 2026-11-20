@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 2,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It corrects the premise with the sourced October 28 hold at 3.75 to 4 percent after a September hike, then gives sound refinance logic (current rate, closing costs, break-even) and asks for the user's rate, but it cites retail mortgage rates of 6 to 7 percent that no excerpt gives.",
+  "judgment_reason": "It checked the premise before answering and asked for the missing loan details, but it asserted an unverified current mortgage rate instead of searching for one or leaving it out.",
+  "spoken_fit_reason": "Leads with the correction in plain prose but runs long past the word cap and includes a two-item bullet list."
+}

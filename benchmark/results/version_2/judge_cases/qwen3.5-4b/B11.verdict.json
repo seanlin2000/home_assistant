@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The current target range of 3.50% to 3.75% and the 3.63% effective rate match excerpt [1], but the year-over-year part anchors on 'around 4.10% in December 2024' when the same table puts December 2024 at 4.48% and 4.10% at December 2022, and it skips the September 2025 starting point of 4.22% that the last-year question actually needed.",
+  "judgment_reason": "Searching was the right call and the headline numbers are traceable, but it dated the effective rate 'as of mid-September 2026' when the sources give September 2 and June 2026, claiming more currency than the excerpts support.",
+  "spoken_fit_reason": "Three plain sentences that open with the target range, with no lists, URLs, or citation markers."
+}

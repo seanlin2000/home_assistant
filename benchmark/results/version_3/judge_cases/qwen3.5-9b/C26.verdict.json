@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 0,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The final message is \"Wait, that doesn't look right. Let me recalculate this properly using the correct formula\" and never delivers either figure, so neither the 38.5 percent nor the $2,964 from the sketch is given.",
+  "judgment_reason": "It deserves some credit for spotting that the percent tool's 210,900 result was nonsense, but it then abandoned the calculation instead of reissuing the call or dividing 2,850 by 7,400 itself.",
+  "spoken_fit_reason": "Short plain prose, but a listener hears only a self-correction and no answer at all."
+}

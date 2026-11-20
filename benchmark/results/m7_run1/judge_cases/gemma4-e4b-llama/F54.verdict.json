@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The nine degree difference matches the calculator's 65 minus 56, but the answer leaves out both afternoon temperatures (Lisbon 65 to 68, home 56 to 61), which the reference requires.",
+  "judgment_reason": "It used two forecast calls and the calculator with no web search, but it compared only the lows without saying so and did not notice that the Lisbon forecast was for Thursday October 22 while home was Wednesday October 21.",
+  "spoken_fit_reason": "One short plain sentence that leads with the answer."
+}

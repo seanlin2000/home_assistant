@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It names the ten shows in the tool's order of TodayTix views with accurate theatres and closing dates, but it calls Cursed Child 'the two-part Potter sequel' when Broadway now runs it as one part, and it says review scores were 'mixed in' when the order is purely by views.",
+  "judgment_reason": "It used the broadway_shows tool instead of a web search, said what the ranking is based on, and claimed no awards or ticket sales the result did not support.",
+  "spoken_fit_reason": "Ten shows in plain spoken sentences with only a few words on each, which is as brief as a ten-item request allows."
+}

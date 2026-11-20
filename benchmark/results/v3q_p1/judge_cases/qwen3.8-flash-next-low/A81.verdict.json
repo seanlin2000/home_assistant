@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 5,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It covers everything in the reference sketch: the query string carrying conversation details, API key, IP, timing and user agent; fetched sites seeing the IP; the conversation and weights staying local; and query hygiene, SearXNG, VPN, caching and reading retention terms, with the Brave 90-day and Tavily details matching the fetched policies.",
+  "judgment_reason": "A conceptual privacy question needed no search, yet the assistant made seven tool calls across searches and page fetches.",
+  "spoken_fit_reason": "The five long paragraphs were cut by the word cap after the first section, so the listener never heard how to minimize exposure."
+}

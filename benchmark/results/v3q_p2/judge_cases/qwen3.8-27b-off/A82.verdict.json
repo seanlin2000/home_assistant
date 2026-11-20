@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The API and MCP definitions and the layered local-LLM, MCP-server, client-loop architecture are sound, but it defines a tool as \"any program that does a specific job\" rather than a model-callable function with a schema, and the message breaks off at \"Running\" before any safeguards such as tool-round caps, timeouts, or prompt-injection handling.",
+  "judgment_reason": "Answering a conceptual architecture question from knowledge without searching was right.",
+  "spoken_fit_reason": "It opens with filler, runs to many paragraphs, and the word cap cut it mid-definition so the listener never heard the architecture."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It correctly avoids guessing a country and signals that the place is missing, but it says so in a vague fourteen-word statement (\"what you are referring to\") rather than asking \"Can you repeat that?\" or \"The capital of where?\".",
+  "judgment_reason": "It made the right call to seek clarification instead of guessing, but it does not actually pose a question or name the gap.",
+  "spoken_fit_reason": "One plain sentence, but much longer than the fixed clarify reply, and since it is a statement the user may not realize it is asking them something."
+}

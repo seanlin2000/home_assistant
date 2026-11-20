@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The scoring averages (Dončić 40.1, Gilgeous-Alexander 29.9, Curry 31.3, Wembanyama 29.1, Jokić 22.9, Giannis 27.3) match the WTOP table through November 7. But it claims Gilgeous-Alexander plays 'the most minutes among the leaders' when the only minutes figure, from StatsNext, puts Maxey first, it calls this Wembanyama's 'first real all-star season' with no support, and it gives no team-impact or advanced metrics.",
+  "judgment_reason": "Searching was right and it flagged that it is early in the season, but it never said the results lacked the advanced metrics the user asked for, and it ranked by points alone while asserting stats the results do not contain.",
+  "spoken_fit_reason": "A compact spoken ranking of about a hundred words that leads with the list, with no formatting."
+}

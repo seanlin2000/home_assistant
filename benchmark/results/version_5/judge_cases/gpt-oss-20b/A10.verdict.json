@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 2,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It gets the central point that a model too big for VRAM either cannot load or crawls while paging, so capacity gates what is possible, but omits the sketch's secondary benefits of more memory, less aggressive quantization and longer context, and its 'few hundred megabytes of weights' example is an odd scale for a local LLM.",
+  "judgment_reason": "Right call to answer from general knowledge without searching, but it overran the 120-word cap the question set instead of trimming to fit.",
+  "spoken_fit_reason": "Plain prose with no lists or markup, but at roughly 123 words it is longer than the under-45-seconds target the user asked for."
+}

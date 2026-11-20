@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The architecture matches the sketch (local model, agent loop with call caps and timeouts, MCP server with search and fetch-to-clean-text tools, model-side summarizing, prompt-injection and caching safeguards), but it defines a tool as any generic program rather than as a function the model may call through a name, description and schema.",
+  "judgment_reason": "Answering from stable software knowledge without searching was correct, and it flags untrusted fetched content and loop limits unprompted.",
+  "spoken_fit_reason": "About eight hundred words across ten paragraphs with markdown italics such as *how* and *when* were cut by the word cap before the architecture was even reached."
+}

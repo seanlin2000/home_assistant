@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "Correctly says the Fed held at 3.75 to 4 percent on October 28 after a September hike and that 30-year rates sit around 7.1 to 7.4 percent per the excerpts, then gives refinance logic tied to the user's rate and closing costs, though it never names break-even time and its 7.4 percent threshold is a loose rule of thumb.",
+  "judgment_reason": "Searched to check the premise, corrected it plainly in the first sentence, and asked for the user's current rate instead of assuming it.",
+  "spoken_fit_reason": "Leads with the correction in plain prose, but at about nine sentences it ran past the word cap and lost the closing question about the user's rate."
+}

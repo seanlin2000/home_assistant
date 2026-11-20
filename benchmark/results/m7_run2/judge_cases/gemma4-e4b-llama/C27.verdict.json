@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The final reply gives 0.48 kWh a day, 14.40 kWh over 30 days and about 4.32, matching the reference sketch, though it says 'four point three two' without saying dollars.",
+  "judgment_reason": "It correctly skipped searching and used the given price and 30 days with no unneeded assumptions.",
+  "spoken_fit_reason": "Plain prose, but the monthly cost the user asked for comes last after the kilowatt-hour figures, and 'point four zero' sounds stilted."
+}

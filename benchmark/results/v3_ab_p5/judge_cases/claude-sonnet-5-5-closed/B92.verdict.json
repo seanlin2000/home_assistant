@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 0,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The results gave November 2026 APYs and minimums for Marcus (3.50%), American Express, Capital One and Ally (3.20%, all $0 minimum), but the answer quotes no bank's rate, gives only the generic deposit-times-APY method, and wrongly says monthly compounding adds a little more on top of the APY.",
+  "judgment_reason": "It searched appropriately, then claimed it 'could not check today's rates' and pushed the work back onto the user despite having per-bank rates and minimums in hand.",
+  "spoken_fit_reason": "Plain prose without formatting, but it opens with a refusal rather than the comparison and ends by asking the user to supply the rates."
+}

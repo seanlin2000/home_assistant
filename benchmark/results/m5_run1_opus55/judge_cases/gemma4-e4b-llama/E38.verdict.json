@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It correctly reads the tool's night range of 53 to 59°F, but it gives the range instead of plainly saying the low is about 53 degrees, which is what the question asked.",
+  "judgment_reason": "It caught a forecast question that had no weather word and called weather_forecast instead of searching, and it added nothing that is not in the tool result.",
+  "spoken_fit_reason": "One plain sentence with numbers written as words, suited to speech."
+}

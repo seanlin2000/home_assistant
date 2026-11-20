@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The API and MCP definitions and the search, fetch-and-truncate design are sound, but it defines a tool as any program (\"a scraper, a CLI, a library function\") rather than a function the model calls through a name and argument schema, never describes the agent loop that runs the calls, and gives no safeguards such as a tool-round cap, timeouts, or treating fetched text as untrusted.",
+  "judgment_reason": "A conceptual architecture question needed no search, and the design suggestions are reasonable without inventing user preferences.",
+  "spoken_fit_reason": "Plain prose without formatting, but long enough that the word cap cut it off before the final sentence."
+}

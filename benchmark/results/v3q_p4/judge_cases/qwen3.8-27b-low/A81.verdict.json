@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 0,
+  "answer_quality_reason": "Correctly lists the query, IP, timestamp, user agent and API key as transmitted, conversation and inference as local, and gives query minimization, a proxy, and a self-hosted backend as mitigations, but it omits that fetched websites also see the IP and calls DuckDuckGo's API a privacy option, which is dubious.",
+  "judgment_reason": "Answered from knowledge without searching and singled out queries carrying personal details as the main leak, which is the right emphasis.",
+  "spoken_fit_reason": "Uses markdown bold section headings such as '**What stays on your machine.**' and runs to five long paragraphs, which would sound wrong read aloud."
+}

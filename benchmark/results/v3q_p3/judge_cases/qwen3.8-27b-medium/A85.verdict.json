@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The foods are cheap and powder-free and the day stays under 2,500 kcal, but the dinner math is wrong and garbled ('150 grams of protein per pound' and 'two pounds ... 170 grams total for the week's dinners'), four eggs plus milk is well over the stated 250 kcal, and the meals sum to about 167 g while the answer claims about 180 g and its figures do not match its own calculator inputs.",
+  "judgment_reason": "No search was needed and it kept protein powder out, but it leaned on vague portions like 'a large chicken breast' and 'a single tub' without stating sizes, so the totals rest on unstated assumptions.",
+  "spoken_fit_reason": "Meal-by-meal prose is listenable, but about four hundred words ran past the word cap, cutting off the dinner sides and the totals."
+}

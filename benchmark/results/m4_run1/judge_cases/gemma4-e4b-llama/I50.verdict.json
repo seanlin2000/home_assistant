@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It names Portland, Maine and correctly says no umbrella from the 'mostly clear, dry' afternoon, but omits the 60 to 63 degree temperature the sketch asks for.",
+  "judgment_reason": "It passed the spoken region to weather_forecast, resolving the right Portland, and did not search.",
+  "spoken_fit_reason": "One plain sentence that leads with the answer."
+}

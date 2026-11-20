@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It gets normal senescence, watering and light and asks the right diagnostic questions, but omits nitrogen deficiency, the mobile-nutrient explanation that most directly fits yellowing that starts in the old lower leaves while the top flushes new growth, and never asks about fertilizer or pot-bound roots.",
+  "judgment_reason": "It offered the likely causes as possibilities and closed by asking for species, watering, light and soil moisture rather than committing to one diagnosis, which is exactly what the question called for.",
+  "spoken_fit_reason": "A single ~120-word paragraph that leads with the answer, in plain prose with no lists, markdown or citations."
+}

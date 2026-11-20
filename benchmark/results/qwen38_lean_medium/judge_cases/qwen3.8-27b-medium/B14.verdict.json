@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It synthesizes a causal chain from the sources (HBM sold out, shared wafer capacity, scarce GDDR7, bundled GPU-plus-memory kits, MSI's 20 percent shortfall, silicon reallocation, tariffs ruled out), but it turns Bernstein's single-quarter 'nearly 20%' memory price rise into DRAM 'climbing roughly 20% per quarter'.",
+  "judgment_reason": "It searched for a recent market question, focused on causes rather than prices as asked, and hedged reported claims and price snapshots appropriately.",
+  "spoken_fit_reason": "Six long paragraphs with markdown emphasis ran far past the word cap, so the listener heard only the root cause and none of the secondary factors or the outlook."
+}

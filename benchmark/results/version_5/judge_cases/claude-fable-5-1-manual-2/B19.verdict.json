@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It answers both halves, using the retrieved 17-to-18 gigabyte 4-bit file size and the 'slows to a crawl' offload note to say the fit is compromised, then explains that fit predicts nothing about time to first word, thinking-on-by-default at xhigh effort, and sharing the card with speech recognition, but it never points out that the ModelFit speeds it leans on are explicitly labelled estimates rather than measured benchmarks.",
+  "judgment_reason": "It gave a clear 'no, fitting is not enough', hedged its own token-rate figure with 'maybe', and recommended a 9B or 14B as the responsive alternative.",
+  "spoken_fit_reason": "Two-part spoken answer that states the verdict on each half up front, in plain prose with numbers written out."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Gives three distinct, concrete mechanisms from the sketch (concentrated ownership with renters gaining nothing, profits rising through layoffs and price hikes faster than wages, and a few global tech giants carrying the index) plus the forward-looking market point.",
+  "judgment_reason": "Answered a stable economics question without searching and kept the 'recent inflation' and AI-spending references general rather than citing unverified figures.",
+  "spoken_fit_reason": "Leads with the one-sentence answer and walks through first, second, third in plain prose with no formatting, a length the three-example request demands."
+}

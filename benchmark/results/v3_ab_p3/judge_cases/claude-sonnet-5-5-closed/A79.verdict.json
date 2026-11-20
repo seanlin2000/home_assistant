@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Covers matrix multiplication on thousands of cores, high-bandwidth memory and the memory-bound token generation, CUDA, ASICs such as the TPU trading flexibility for efficiency, Groq and Cerebras keeping weights in on-chip SRAM, and the stable-workload, latency, cost-per-token and memory-fit conditions plus software support as the obstacle.",
+  "judgment_reason": "Answered a stable technical explainer from knowledge without searching and named the trade-off of flexibility versus efficiency rather than declaring a winner.",
+  "spoken_fit_reason": "Plain prose that leads with the reason GPUs work, with length justified by the three-part question and no formatting."
+}

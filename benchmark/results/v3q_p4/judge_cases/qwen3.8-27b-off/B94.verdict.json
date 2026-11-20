@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The Lucerne-Rigi-Interlaken-Jungfraujoch-Zermatt plan is geographically sensible and its figures trace to the sources (Rigi included with the pass, Jungfraujoch CHF 271.20/224.40, Spiez-Visp route), but the reply breaks off on day five before the promised comparison of Swiss Travel Pass, Half Fare Card and point-to-point tickets, which was half the question.",
+  "judgment_reason": "It chose low-effort viewpoints well and noted seasonal Jungfraujoch prices, but it never asked the travel dates or flagged the source's 2-14 November 2026 Gornergrat closure despite the trip being planned in November.",
+  "spoken_fit_reason": "Bold markdown day headings, a quoted preamble run into the answer, and a multi-paragraph itinerary would sound wrong read aloud, and the word cap cut it on day two."
+}

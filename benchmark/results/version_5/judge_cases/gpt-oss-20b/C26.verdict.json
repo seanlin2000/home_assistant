@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Both figures match the reference sketch, 38.5 percent of take-home pay and 2,964 after the 4 percent increase, each traced to a tool result.",
+  "judgment_reason": "Its first percent call used the wrong operation kind and returned 210,900, and it caught that immediately and reran with is_what_percent rather than speaking the nonsense number.",
+  "spoken_fit_reason": "Two sentences with the percentage and the dollar amount spelled out in words, no lists or markup."
+}

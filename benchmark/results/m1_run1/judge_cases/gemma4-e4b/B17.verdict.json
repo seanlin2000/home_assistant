@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The conclusion that custom wake words are possible through custom firmware or advanced configuration fits the excerpts (Open Voice PE, the micro_wake_word ESPHome guide), but the source explanation is vague ('GitHub repositories and community guides'), names no specific source, and ignores the official experimental streaming wake word firmware.",
+  "judgment_reason": "It searched as instructed and hedged appropriately, but it did not really do what was asked: pick a specific trusted source and justify the choice.",
+  "spoken_fit_reason": "Four long sentences with markdown emphasis (*any*, *enable*), and the answer is buried after a preamble."
+}

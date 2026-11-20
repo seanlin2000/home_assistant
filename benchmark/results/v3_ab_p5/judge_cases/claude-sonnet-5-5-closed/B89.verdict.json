@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 0,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The excerpts gave Cerebras's May 2026 IPO, SambaNova's $1 billion round at $11 billion, Etched's $800 million and $1 billion in contracts, MatX's $500 million Series B and Positron's $5 billion valuation, but the answer gives no figures and says Cerebras has 'plans to go public' and SambaNova 'struggled financially', both contradicted by the sources.",
+  "judgment_reason": "It searched appropriately, then wrongly claimed it 'could not check the latest numbers' and fell back on stale background instead of using the retrieved figures, failing the question's central ask.",
+  "spoken_fit_reason": "Plain prose without formatting, but it opens with a disclaimer rather than the overall picture and runs long walking through six companies without the requested figures."
+}

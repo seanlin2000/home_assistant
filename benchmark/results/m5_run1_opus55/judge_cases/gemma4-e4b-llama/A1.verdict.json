@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 2,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It correctly says storage depends on total parameters but then claims only the activated experts' parameters need to be loaded into GPU memory, which is exactly the misleading claim the reference rules out, and it never mentions quantization or CPU offloading.",
+  "judgment_reason": "Answering from knowledge without searching was right, but it did not flag that fitting 16 GB depends on quantization or offloading.",
+  "spoken_fit_reason": "Plain prose with no formatting, but two paragraphs of four long sentences is longer than a spoken answer needs."
+}

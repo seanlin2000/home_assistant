@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It distinguishes API, MCP, and tool correctly and lays out a sound architecture (MCP server with web_search and fetch_page, length caps, timeouts, an agent loop, summarizing by the model itself), but it never mentions treating fetched text as untrusted (prompt injection) or caching.",
+  "judgment_reason": "No search was needed for a conceptual architecture question, and its caveat that small local models struggle with tool-argument formats is a useful, honest judgment.",
+  "spoken_fit_reason": "It runs to about ten long paragraphs, a wall of text read aloud, and the word cap cut it before the architecture part even began."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The 27B verdict of roughly 2 tok/s with spill to system RAM traces correctly to excerpts [3] and [4], but it conflates families by calling the 38 tok/s figure a Qwen3.8 variant when excerpt [2] measures Qwen3 8B Base and excerpt [1]'s 9B is Qwen3.5.",
+  "judgment_reason": "The question asked whether the found answer is actually enough to predict a good voice-assistant experience, and it answers essentially yes, never noting that every source labels its tok/s as an engine estimate rather than a measurement, nor raising time-to-first-token or the surrounding speech pipeline.",
+  "spoken_fit_reason": "Three plain-prose sentences leading with the verdict, no lists, URLs, or citation markers."
+}

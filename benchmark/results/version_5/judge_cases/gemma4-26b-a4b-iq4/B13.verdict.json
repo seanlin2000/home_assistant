@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It ties the recommendation to the retrieved 7 September forecast of sun near thirty degrees and every route detail (Pilatus boat plus cogwheel plus gondola, Rigi by boat to Vitznau, Titlis forty-five minutes by train) traces to the excerpts, but it offers three options rather than a pick and gives no actual timetable despite the user asking about current schedules.",
+  "judgment_reason": "Searching was right for tomorrow's weather and it matched the mountain day to the clear forecast instead of guessing conditions.",
+  "spoken_fit_reason": "Four paragraphs covering three separate excursions is far more than a listener can hold, and it reads out quoted nicknames like 'Golden Round Trip' and 'Queen of the Mountains'."
+}

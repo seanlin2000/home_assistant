@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It says no rain in Tokyo tomorrow, clear and dry from 58 to 76 degrees, matching every period of the tool result.",
+  "judgment_reason": "It called weather_forecast for Tokyo and did not search the web.",
+  "spoken_fit_reason": "Two short plain sentences that lead with the answer."
+}

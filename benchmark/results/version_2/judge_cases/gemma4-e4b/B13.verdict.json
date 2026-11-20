@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 1,
+  "answer_quality_reason": "Mount Pilatus, Mount Rigi, Lake Lucerne and the Swiss Travel Pass all trace to the excerpts, but it skips the concrete routing that excerpt [3] supplied (boat to Vitznau then the Rigi Bahn cogwheel to Rigi Kulm) and gives the listener nothing actionable for planning tomorrow.",
+  "judgment_reason": "It was honest that it had no weather or timetable data rather than inventing either, but it neither ran a second search for the forecast nor explained that the departure time it asked for would not help it get weather it admits it cannot see.",
+  "spoken_fit_reason": "It opens with a disclaimer about what it cannot do and only names the destinations in the second paragraph, so the answer is buried across three paragraphs."
+}

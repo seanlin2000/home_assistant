@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The Mac Mini M5 24 GB at about $600 and RTX 3060 desktop at about $800 trace to the promptquorum excerpt, but it never addresses that the 8B-class models those machines run fall short of ChatGPT-like quality, and its web-search point is muddled.",
+  "judgment_reason": "The user asked to be told explicitly if the requirements cannot be met, yet it hedged with 'a tight challenge but might be achievable' without confronting the quality requirement, though it did stay within the budget.",
+  "spoken_fit_reason": "A single long paragraph that was cut by the word cap, listenable plain prose but far too long."
+}

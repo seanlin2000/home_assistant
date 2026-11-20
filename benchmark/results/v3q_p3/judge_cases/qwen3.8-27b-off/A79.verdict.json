@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 3,
+  "spoken_fit": 0,
+  "answer_quality_reason": "Parallelism, tensor cores and memory-bound inference are explained well, but it never mentions CUDA's software advantage, muddles the categories (a redundant TPU line, Intel Gaudi and Arc NPUs as inference processors), and breaks off mid-sentence before it answers when a specialized chip wins.",
+  "judgment_reason": "Correctly answered a stable technical question from knowledge without searching.",
+  "spoken_fit_reason": "An odd meta preamble followed by a long multi-section wall of text that was cut by the word cap after the memory-bandwidth paragraph."
+}

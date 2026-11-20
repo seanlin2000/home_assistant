@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It contradicts the very excerpt it retrieved, claiming the 32B \"requires at least 48 GB\" when excerpt [3] lists Qwen3-32B at 19.2 GB VRAM at Q4 and the 14B at 8.4 GB, and it invents both a nonexistent \"Qwen3-7B\" (excerpt [2] lists 0.6B, 1.7B, 4B, 8B, 14B, 32B, 30B-A3B, 235B) and absurd footprints of 15-17 GB for a 7B at Q4 and 9-10 GB for a 4B.",
+  "judgment_reason": "It searched as instructed and did structure the answer around quality-versus-quantization tradeoffs, but it ignored the concrete per-model VRAM table it had just retrieved and never mentions the 30B-A3B MoE that is the most relevant option at this memory size.",
+  "spoken_fit_reason": "Two multi-sentence paragraphs long enough to be cut off by the word cap mid-argument, though the prose itself has no lists or markup."
+}

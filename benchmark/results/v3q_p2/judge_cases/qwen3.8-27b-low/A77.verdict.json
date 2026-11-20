@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It covers the main points, explaining scattering of short wavelengths, the longer path at sunset, and why the sky isn't violet with a plain analogy, but calling blue 'fast' and red 'slow' is inaccurate and it leaves out dust and haze.",
+  "judgment_reason": "Answering from knowledge without a search was right, and the explanation is pitched at a non-scientist as the user asked.",
+  "spoken_fit_reason": "It is plain prose with everyday comparisons but runs to five paragraphs, and the word cap cut it before the sunset explanation, which was half of what the user asked."
+}

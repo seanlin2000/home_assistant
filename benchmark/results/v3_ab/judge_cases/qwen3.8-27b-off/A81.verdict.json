@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It correctly separates the local conversation from the transmitted query and IP address and suggests SearXNG, a VPN and narrow queries, but it dismisses the API key as carrying no personal data when it ties every query to the account and billing identity, and it leaves out timing metadata and the websites the assistant fetches.",
+  "judgment_reason": "Answering a stable architecture question from knowledge without searching was right, and the medical-document example shows how personal context can leak into a query.",
+  "spoken_fit_reason": "It uses bold markdown headings, a bullet list and a numbered list, and it runs so long that the word cap cut it before the advice on reducing exposure."
+}

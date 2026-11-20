@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It gives about 38.5% of take-home pay and a new rent of $2,964, matching the reference and the percent tool results, and correctly adds that this is $114 more.",
+  "judgment_reason": "It used the percent tool for both parts and did not search; the short note about the 30% guideline is relevant context, not an invented preference.",
+  "spoken_fit_reason": "Three plain sentences that lead with the answer, with no lists or markdown."
+}

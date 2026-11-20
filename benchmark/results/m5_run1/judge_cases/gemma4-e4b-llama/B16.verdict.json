@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 1,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It gives no market comparison and none of the requested explanation of the risks of advertised rents, only a request for the current rent and an offer to look up trends.",
+  "judgment_reason": "Asking for the current rent is a reasonable clarification, but it offered to search instead of searching, so the market comparison at the heart of the question never happened.",
+  "spoken_fit_reason": "Two short plain sentences, easy to speak."
+}

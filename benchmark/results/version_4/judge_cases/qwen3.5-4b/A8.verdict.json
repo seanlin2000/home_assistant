@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It recommends the router design on cost, latency, and the instant behavior of deterministic tools, and names routing failure as the trade-off, but never covers the sketch's other half: that the single large model is simpler and more flexible, and when that design would be fine.",
+  "judgment_reason": "Choosing not to search was right and it committed to a recommendation, but it opened with an unnecessary disclaimer about lacking benchmarks and priced a personal assistant in \"compute credits\" as if the large model were necessarily hosted.",
+  "spoken_fit_reason": "Plain prose with no markup, but roughly 250 words across four paragraphs with a colon-led \"Here is why that architecture usually wins:\" lead-in, long enough that the word cap cut the closing recommendation before the listener heard it."
+}

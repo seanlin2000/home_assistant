@@ -1,0 +1,20 @@
+services:
+  searxng:
+    # Pinned by digest (design_docs/v2/12 section 3.10): `latest` was pulled once and never again, so the scrapers went stale while the
+    # engines changed their pages. To upgrade, run the new tag beside this one and compare which engines answer before moving the pin.
+    image: searxng/searxng:2026.10.2-19ffbcd30@sha256:c642712fcedcdaa78fac44f71eada86aff510745826ba1bd1a368211fea2ce7f
+    container_name: studio-searxng
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8080:8080"
+    volumes:
+      - ./settings.yml:/etc/searxng/settings.yml:ro
+    environment:
+      - SEARXNG_BASE_URL=http://localhost:8080/
+      - SEARXNG_SECRET=${SEARXNG_SECRET}
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - SETGID
+      - SETUID

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 0,
+  "answer_quality_reason": "All five developments come from the search results and fall in the 30-day window (Kimi K3.1 Pro Oct 23 with weights Nov 2 or 4, Mistral Large 4 weights Oct 29, Muse Spark Open Oct 15, DeepSeek V4.1-Flash-1017 Oct 17, Qwen4-Max-Preview Nov 11 with no weights), it reports the conflicting dates honestly, and it compares the requested labs.",
+  "judgment_reason": "It searched as needed, warned that the figures come from aggregator sites, and said plainly that Qwen has no open-weight release this month instead of inventing one.",
+  "spoken_fit_reason": "Eight dense paragraphs of parameters, prices and benchmark scores hit the word cap, so the listener heard only the Kimi item."
+}

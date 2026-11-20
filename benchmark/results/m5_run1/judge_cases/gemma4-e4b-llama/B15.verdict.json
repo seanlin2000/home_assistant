@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The RTX 4060 Ti 16GB at 499 dollars is traceable to the BetterFPS excerpt and correctly contrasted with the 5060 Ti 16GB now above 500, but it never clearly calls it the pick, ignores the used market the user allowed, and does not note that the 499 figure is a Q1 2026 price.",
+  "judgment_reason": "It stays inside the 500 dollar budget and flags the over-budget 5060 Ti, but it hedges ('is mentioned as') instead of committing to a recommendation and does not caution that the price may be stale.",
+  "spoken_fit_reason": "Two short plain sentences with the price written out for speech."
+}

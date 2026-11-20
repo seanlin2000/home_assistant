@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Correctly makes the bridge the local hub with app invites, voice assistants, physical switches, and optional Home Assistant, and says local control, switches, and bridge automations survive an outage while cloud voice and remote access stop, but misses that Apple Home with a home hub or a local voice setup keeps voice working offline.",
+  "judgment_reason": "Answered stable product architecture from knowledge without searching and gave the resilience trade-off the user needed.",
+  "spoken_fit_reason": "Leads with the recommended setup and covers the outage question in plain prose with no lists, at a length the two-part question warrants."
+}

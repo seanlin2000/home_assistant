@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "Says it could not verify funding or valuations although the excerpts gave Etched's $21B round and $40-50B talks, Positron's $875M at $5B, SambaNova's $1B at $11B, Fractile's $720M at about $7B and Cerebras's May 2026 IPO, and its training-era descriptions are stale, such as Cerebras having only 'pursued' a listing and SambaNova on a 'tougher path'.",
+  "judgment_reason": "Searching was right and it avoided inventing figures, but it discarded well-sourced results as unverifiable and fell back on outdated knowledge for a question about the current state.",
+  "spoken_fit_reason": "Plain prose without formatting, but long and opens with a disclaimer instead of the overall picture."
+}

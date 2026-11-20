@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Every figure matches the reference: one three-thousandth halved to one six-thousandth, about $166,667 at the $1 billion sale, an 8.33x multiple, and about $146,667 profit, with the arithmetic checked on the calculator.",
+  "judgment_reason": "It explicitly states that dilution halves the percentage and that liquidation preferences are ignored, which are exactly the assumptions the reference asks for.",
+  "spoken_fit_reason": "These are short plain sentences that lead with the stake and the value, with no lists or markup."
+}

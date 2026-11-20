@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 4,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "Covers everything the sketch asks for (parallel cores, memory-bound decoding, CUDA, TPU as an ASIC, Groq SRAM and Cerebras wafer-scale, and when each side wins), with small slips such as tensor cores working 'at high precision' and vendor benchmarks being 'flatter'.",
+  "judgment_reason": "It ran a 2026 search_and_read for a conceptual architecture question that needed no search, though it did add a sensible caveat about vendor benchmarks.",
+  "spoken_fit_reason": "About seven long paragraphs of speech that the word cap cut off partway through the first explanation, so the listener never heard the comparison or the circumstances."
+}

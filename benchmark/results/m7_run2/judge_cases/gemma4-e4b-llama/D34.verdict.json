@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 5,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The final reply, 'The capital of Australia is Canberra.', is correct and complete.",
+  "judgment_reason": "It answered the terse question rather than asking for clarification, but it made a wikipedia_lookup for a stable fact it should have known, which is a needless search.",
+  "spoken_fit_reason": "A single plain sentence that leads with the answer."
+}

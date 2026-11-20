@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Explains present value and discounting, why far-off cash flows of growth stocks lose the most (long duration), and the extra channels of more attractive bonds and higher borrowing costs, matching the sketch.",
+  "judgment_reason": "Answered a stable finance concept from knowledge without searching, correctly hedging that stock value is the present value of cash flows 'in theory'.",
+  "spoken_fit_reason": "Plain explanatory prose with a closing one-line summary and no lists or markup, at a length the explanation request warrants."
+}

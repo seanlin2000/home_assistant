@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It covers matrix math, memory bandwidth with HBM, tensor cores and CUDA, defines ASICs with the TPU example, names Groq's on-chip SRAM, Cerebras and Etched, and gives when specialized chips win (stable workloads, cost per token, latency) and lose (changing models, training, flexibility).",
+  "judgment_reason": "Answering a conceptual hardware question from knowledge without searching was right, and it balanced the case for specialized chips with when GPUs still win.",
+  "spoken_fit_reason": "Plain prose with no formatting, but at roughly nine paragraphs the word cap cut it after the first, so the listener never heard the comparison or the circumstances asked for."
+}

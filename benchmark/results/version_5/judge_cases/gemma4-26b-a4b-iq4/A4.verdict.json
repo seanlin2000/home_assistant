@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It leads with natural senescence and nutrient reallocation and adds overwatering, nitrogen deficiency and salt buildup, but omits the sketch's shading of lower leaves and pot-bound roots, and its follow-up list leaves out light and how fast the leaves are dropping.",
+  "judgment_reason": "It offered candidate causes as possibilities and asked for species, watering routine and other symptoms rather than asserting a single diagnosis.",
+  "spoken_fit_reason": "Four sentences of plain prose that lead with the likeliest cause and end with a natural spoken question."
+}

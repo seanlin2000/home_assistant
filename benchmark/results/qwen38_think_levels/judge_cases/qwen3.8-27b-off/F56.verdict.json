@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The dry Seattle forecast matches the tool result, but it gives 10:50 p.m. as the last Seattle sailing and 11:30 p.m. from Bainbridge, while the WSDOT and printable excerpts list later weekday sailings at 12:15 and 1:35 a.m. from Seattle and 12:55 a.m. from Bainbridge.",
+  "judgment_reason": "It correctly checked the forecast tool and searched for the schedule, but it stated the last sailing with confidence and missed the after-midnight departures listed in the same excerpt.",
+  "spoken_fit_reason": "Plain prose that leads with the weather, but two paragraphs of about six sentences with a Veterans Day aside are too long for a spoken reply."
+}

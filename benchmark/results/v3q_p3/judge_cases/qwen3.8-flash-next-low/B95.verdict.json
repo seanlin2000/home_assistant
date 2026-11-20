@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The final message stops mid-sentence at 'and a 6' after one grounded fact (a 32GB DDR5 kit at about $450, matching the $454 excerpt), so it never names the components, a hardware list within $1,000, the limitations, or a build order.",
+  "judgment_reason": "Searching for current hardware prices was right and it was heading toward the honest point that the memory shortage squeezes the budget, but it spent ten tool calls, hit the tool limit, and delivered none of the requested design.",
+  "spoken_fit_reason": "The listener heard a tool-call preamble, a framing line and a single sentence cut off mid-number, with no usable answer."
+}

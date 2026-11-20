@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Builds the day from the sketch's cheap quick foods (Greek yogurt, eggs, chicken, rice, cottage cheese, lean turkey, beans) with plausible per-meal figures that the calculator sums to 175 g protein and 1,755 kcal, safely under 2,500 with room noted for oil and extras.",
+  "judgment_reason": "Respected every constraint, using batch cooking for minimal prep and at most one optional whey shake, and labelled the figures as approximate label values.",
+  "spoken_fit_reason": "Leads with the totals, then walks meal by meal in plain prose without lists, a length a full-day meal plan requires."
+}

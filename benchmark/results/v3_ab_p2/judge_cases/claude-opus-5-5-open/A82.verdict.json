@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Distinguishes API, tool and MCP server correctly and lays out the sketch's architecture (local model server, agent loop, MCP server with search and page-fetch tools, the model doing the summarizing) with untrusted-text and caching safeguards, but omits a cap on tool rounds and timeouts.",
+  "judgment_reason": "No search for a stable architecture question, and it named sensible concrete components (llama.cpp or Ollama, SearXNG) without overcommitting.",
+  "spoken_fit_reason": "Spoken ordinals stand in for a list, with no markup; the length fits a two-part explanation."
+}

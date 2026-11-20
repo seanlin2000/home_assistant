@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["agreed_with_false_premise"],
+  "search_decision_correct": false,
+  "answer_quality": 1,
+  "judgment": 0,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Asking for the current rate, balance, and remaining term is a fragment of the right refinance analysis, but the answer never says rates were not cut to zero and offers no break-even or closing-cost logic.",
+  "judgment_reason": "It made no tool call to check the actual federal funds rate and proceeded as though the \"Fed cut rates to zero last month\" premise were true, which was the central judgment the question demanded.",
+  "spoken_fit_reason": "Two short sentences of plain prose asking three clear follow-up questions, with no lists or markdown."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Builds the day from cheap quick foods (eggs and egg whites, batch-cooked chicken, Greek yogurt, ground turkey and beans) with plausible per-meal figures that its calculator totaled to 173 g protein and about 1,525 kcal, well under 2,500.",
+  "judgment_reason": "Kept within both constraints, used no protein powder, verified the totals with the calculator, and flagged the figures as label-based estimates.",
+  "spoken_fit_reason": "Leads with the totals and walks through meals in plain spoken prose without a list, a length a full-day meal plan reasonably requires."
+}

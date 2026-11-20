@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 2,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It ties the forecast (morning fog, afternoon rain of 0.09 in) to concrete options using retrieved facts: the Pilatus cogwheel runs to November 29 but its boat leg ended October 18, the winter boat timetable has a 10:12 Flüelen departure, and Interlaken is 1 hour 50 minutes away; the reply ends mid-sentence, though.",
+  "judgment_reason": "It checked the weather and searched for schedules, but claimed 'everything is operating tomorrow' on Rigi even though the fetched Rigi page flagged November maintenance and closures.",
+  "spoken_fit_reason": "It uses markdown bold headings for each option and runs long enough to hit the word cap, which would sound wrong read aloud."
+}

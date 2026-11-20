@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It declines to quote any figures and gives dated descriptions, such as Cerebras 'working toward a public listing' and Fractile doing in-memory computing, though the excerpts gave Cerebras's May 2026 IPO, Etched's $21B Series D, SambaNova's $11B Series F, Positron's $5B Series B, MatX's $500M Series B and Fractile's $720M Series C at about $7B.",
+  "judgment_reason": "Searching was right and it labeled its content as training-time background, but it wrongly claimed it could not verify figures that the three searches plainly returned.",
+  "spoken_fit_reason": "Plain prose with an overall picture up front, but nine sentences of stale company sketches run long for a spoken reply that withholds the asked-for comparison."
+}

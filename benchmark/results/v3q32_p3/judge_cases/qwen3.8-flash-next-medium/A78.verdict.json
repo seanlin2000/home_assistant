@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Gives three distinct, concrete mechanisms from the sketch: mega-cap concentration in cap-weighted indexes, concentrated stock ownership, and profits raised by layoffs and automation.",
+  "judgment_reason": "Answered a stable conceptual economics question from knowledge without searching, as expected.",
+  "spoken_fit_reason": "One compact paragraph that leads with the answer and walks through first, second, third in plain prose."
+}

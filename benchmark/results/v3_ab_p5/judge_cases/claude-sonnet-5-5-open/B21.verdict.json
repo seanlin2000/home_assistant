@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Corrects the premise with sourced facts (raised to 3.75 to 4 percent in September and held on October 28), explains that mortgages follow long-term yields with the cautioned 7.3 percent reading, and gives the refinance logic of rate, balance, closing costs and time in the home.",
+  "judgment_reason": "Searched to check the claim instead of accepting it, said plainly the Fed had not cut to zero, and asked for the user's current rate and time horizon rather than guessing.",
+  "spoken_fit_reason": "Opens with 'That premise is not right' and stays in short plain sentences with no formatting, ending on one clear question."
+}

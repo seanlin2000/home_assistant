@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 0,
+  "answer_quality_reason": "Separates the two problems and gives ordered tests covering 2.4 GHz interference, the laptop's own Bluetooth, 5 GHz Wi-Fi, distance, firmware, brightness, ambient light, seating distance and breaks, but misses the DLP rainbow effect, input lag, and focus or keystone, and wrongly speaks of a projector backlight.",
+  "judgment_reason": "Answered from general troubleshooting knowledge without searching and offered to look up the specific projector model instead of guessing it.",
+  "spoken_fit_reason": "Two dense paragraphs of roughly 700 words, cut by the word cap before the eye-strain half, which is a wall of text when read aloud."
+}

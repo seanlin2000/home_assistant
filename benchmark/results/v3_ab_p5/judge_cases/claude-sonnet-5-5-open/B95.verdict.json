@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Names every component in the sketch (wake word, Whisper, Piper, Home Assistant, a tool-calling local model, SearXNG search), clear limitations and the right build order, but gives no concrete hardware or prices to show the build fits 1,000 dollars, only 'a used or refurbished mini computer or Mac'.",
+  "judgment_reason": "Skipped the search that current hardware prices called for, though it avoided inventing prices and labeled the hardware suggestion an estimate.",
+  "spoken_fit_reason": "Leads with the overall architecture in plain prose with no lists or markup, at a length the four-part question demands."
+}

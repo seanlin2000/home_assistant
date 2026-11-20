@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "All five rates and minimums trace to the excerpts (Marcus 3.50%, Capital One and Ally 3.20%, CIT 3.75% with a $5,000 tier, SoFi up to 4.40% promotional), and the interest figures ($1,750, $1,600, $1,875, $2,200) are correct, but the SoFi blended estimate of \"$1,700 to $1,900\" sits a bit low, since six months at 4.40% then 3.30% comes to about $1,925.",
+  "judgment_reason": "It searched for current rates, said they are variable and assumed held for a year, flagged CIT's balance cliff, and planned on standard rates rather than the SoFi and CIT promotions.",
+  "spoken_fit_reason": "It is plain prose with one bank per paragraph, but four run-together narration lines come first and the reply is long enough that the word cap cut it off at the second bank."
+}

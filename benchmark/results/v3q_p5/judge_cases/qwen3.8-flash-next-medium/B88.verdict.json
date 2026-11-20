@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The four developments it gives (Kimi K3.1 Pro weights around November 2 to 5, Mistral Large 4 weights on October 29, Muse Spark Open on October 15, DeepSeek V4.1-Flash-1017 on October 17) are accurate and traceable to the excerpts, but the message cuts off mid-sentence before a fifth item and never covers Qwen, even though the results showed Qwen4-Max-Preview on November 11 with no open weights.",
+  "judgment_reason": "Searching was right and it flagged self-reported benchmarks and tracker-sourced dates, but it used six tool calls, over the limit, and ran out of room before covering a lab the user named.",
+  "spoken_fit_reason": "It is a long, number-dense multi-paragraph rundown that the word cap cut during the first item."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It names Denver, answers no snow, and correctly notes the afternoon light rain showers and dry conditions otherwise from the Saturday forecast.",
+  "judgment_reason": "It called weather_forecast for Denver on Saturday rather than searching and stuck to the tool result.",
+  "spoken_fit_reason": "One plain sentence that leads with the snow answer."
+}

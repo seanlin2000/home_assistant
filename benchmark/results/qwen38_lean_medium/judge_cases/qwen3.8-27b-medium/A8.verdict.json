@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It recommends the router design with sound reasons (latency, cost, determinism for door locks and alarms) and addresses routing errors through its multi-command example, but it never says when the single-model design would be fine.",
+  "judgment_reason": "It commits to a reasoned recommendation and pushes back on the naive classifier version of the router rather than just picking one option.",
+  "spoken_fit_reason": "Five long paragraphs, roughly four times what a spoken answer needs, were cut by the word cap right after the listener heard the case for the router."
+}

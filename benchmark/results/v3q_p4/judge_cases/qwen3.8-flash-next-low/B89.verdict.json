@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The final assistant message is empty: after ten tool calls and two calculator calls refused at the limit, it produced no comparison of the six companies.",
+  "judgment_reason": "It kept calling tools until it hit the limit and never turned the plentiful funding and valuation results into an answer, which fails the central point.",
+  "spoken_fit_reason": "Nothing was spoken, so the listener got no answer."
+}

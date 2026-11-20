@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It gives the 76ers leading 104 to 98 in the fourth quarter with the game still on and the top scorers, but it says 'a little over a minute left' when the tool shows 1:52.",
+  "judgment_reason": "It used game_scores rather than searching and correctly treated the game as live.",
+  "spoken_fit_reason": "It is three short plain sentences that lead with the live score."
+}

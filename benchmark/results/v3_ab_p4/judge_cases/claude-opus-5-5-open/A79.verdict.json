@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Covers parallel cores for matrix math, fast memory and CUDA, the TPU as the ASIC example, inference chips attacking memory bandwidth with on-chip memory or hard-wired transformers, and when a specialized chip wins (stable model at scale, cost or power per token) or loses (changing models, training, thin software).",
+  "judgment_reason": "Answered stable technical background without searching and framed the specialized-chip advantage as conditional rather than absolute, as the question asked.",
+  "spoken_fit_reason": "Leads with why GPUs work, then flows through the comparison in plain prose with no lists or markup; length matches a three-part question."
+}

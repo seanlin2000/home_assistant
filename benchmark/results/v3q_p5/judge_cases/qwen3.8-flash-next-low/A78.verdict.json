@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 4,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It gives three distinct mechanisms the sketch accepts (ownership concentrated in the top tenth at 88 percent, a top-ten-heavy index at 40.6 percent, and asset prices rising while 57 percent report eroded living standards), all traceable to excerpts, though the \"few thousand dollars each\" line for the bottom half misuses the 6,300 holdings figure as if it were a gain.",
+  "judgment_reason": "A conceptual economics question needed no search, yet it made four searches and six calculator calls and hit the tool-call limit just to decorate the examples.",
+  "spoken_fit_reason": "The spoken text includes three tool-use preambles run together and a four-paragraph wall of figures that the word cap cut off mid-number at \"up roughly 11.\""
+}

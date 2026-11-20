@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It correctly makes the bridge the hub, gives everyone the Hue app, links Alexa, Google or HomeKit for voice, and says app control and scenes keep working offline while cloud voice assistants stop, with HomeKit hubs partly local, but it omits physical Hue switches, a local voice option such as Home Assistant, and the loss of remote control from outside the home.",
+  "judgment_reason": "It answered from stable product knowledge without searching and gave a clear fallback recommendation for outages.",
+  "spoken_fit_reason": "It is plain prose, but the whole reply is wrapped in stray quotation marks, runs four paragraphs, and the word cap cut it before the summary."
+}

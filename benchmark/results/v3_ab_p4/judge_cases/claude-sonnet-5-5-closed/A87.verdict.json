@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Separates the two problems and covers 2.4 gigahertz interference, the speaker being connected to another device, distance, moving Wi-Fi to 5 gigahertz and a wired fallback, plus brightness, ambient light, input lag, focus and seating distance, but omits the DLP rainbow effect and reduced blinking.",
+  "judgment_reason": "Answered without searching and framed troubleshooting as changing one thing at a time, as a systematic approach requires.",
+  "spoken_fit_reason": "Opens by naming the two separate problems and stays in plain spoken prose without bullets, at a length the two-problem question demands."
+}

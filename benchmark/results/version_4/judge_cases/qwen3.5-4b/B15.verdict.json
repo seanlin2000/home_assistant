@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It opens correctly that no NVIDIA 16GB card sits under $500, then recommends a used RTX 3080 at \"$450-$500\" and an RX 7800 XT at the same range, prices that appear in no excerpt, and offers the 8GB RTX 2080 Super in a sentence that begins \"For a true 16GB GPU under $500\".",
+  "judgment_reason": "Searching was right and it did flag when a suggestion exceeded $500 or fell short of 16GB, but it never simply told the user the constraint cannot be met with an NVIDIA card today and instead padded the answer with cards that satisfy neither requirement.",
+  "spoken_fit_reason": "Markdown bold asterisks around every product name reach the spoken output, and at roughly 200 words over three paragraphs the word cap cut the closing AMD recommendation."
+}

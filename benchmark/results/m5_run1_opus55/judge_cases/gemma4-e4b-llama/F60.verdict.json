@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The calculator's 858.77 total correctly applies four units and 8 percent tax to the $198.79 price from the pricehistory.app excerpt, but the final message itself does not restate the unit price it used, which appeared only in the preceding interim message.",
+  "judgment_reason": "It searched as instructed and used the calculator, but presented a single Amazon tracker price as the current price without noting that this is one retailer's figure and prices vary.",
+  "spoken_fit_reason": "One short plain sentence that leads with the total."
+}

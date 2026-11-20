@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 4,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "Separates the two problems and gives an ordered test plan (Wi-Fi-off or 5 GHz test first, then distance, drivers, and checking the JBL's multipoint pairing; refresh rate, game mode, brightness, seating distance and blinking for the eyes), but it buries the laptop-also-paired cause near the end and omits focus or keystone softness and the DLP rainbow effect.",
+  "judgment_reason": "Stable troubleshooting knowledge needed no search, yet it ran two searches and spoke a 'let me check' preamble, though it did sensibly ask how the laptop connects to narrow the audio problem.",
+  "spoken_fit_reason": "Bold markdown headings and two long bullet lists make up most of the reply, which would read badly through text-to-speech and was cut by the word cap."
+}

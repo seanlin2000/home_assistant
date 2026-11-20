@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It opens with a clear \"No\" and notes the full static weights sit in VRAM, but it never explains that all experts must be resident because different tokens route to different experts, and it then reinstates the wrong framing by saying 4 billion active parameters \"would generally need at least an 8 GB GPU.\"",
+  "judgment_reason": "It refused the false premise outright rather than accepting it, and answered from stable general knowledge without an unnecessary search.",
+  "spoken_fit_reason": "Three plain-prose sentences that lead with the verdict, no lists or markdown."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Opens with the profits-versus-wages framing and gives three distinct concrete mechanisms from the sketch: concentrated ownership by the richest tenth, prices outpacing pay during the 2021 to 2023 inflation, and a few global tech giants driving the indexes, plus low rates inflating asset prices.",
+  "judgment_reason": "Answered a stable economics question from knowledge without searching and kept the ownership claim general rather than inventing precise figures.",
+  "spoken_fit_reason": "Leads with the one-sentence answer, then first, second, third in plain prose with no list formatting; length fits a request for three examples."
+}

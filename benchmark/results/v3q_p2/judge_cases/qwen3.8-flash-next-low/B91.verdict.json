@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The five picks and most of the 2026-27 figures trace to the results, but it says HoopsHype has Wembanyama 'a full eight points clear' when the table shows 35.05 against 30.48, cites a DARKO view of Giannis the excerpt never shows, and swaps Curry's and Giannis's MVP-ladder spots (they are seventh and eighth).",
+  "judgment_reason": "It searched current-season data, flagged that about a dozen games is a tiny sample, explained how it weighed the conflicting models, and noted Doncic's and Curry's injury questions.",
+  "spoken_fit_reason": "Seven long paragraphs full of statistics hit the word cap, so the listener heard only the first of the five players."
+}

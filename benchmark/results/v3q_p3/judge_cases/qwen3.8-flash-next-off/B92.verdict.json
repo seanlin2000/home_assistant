@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The heard part gives Ally at 3.20 percent, about $1,600, and Marcus at 3.50 percent, about $1,750, both with no minimum and both matching the excerpts, but the word cap cut Capital One, CIT's $5,000 tier and SoFi, so only two of the five banks reached the listener.",
+  "judgment_reason": "It searched as needed, stated up front that the rates are variable, and computed interest from APY, but it used eleven tool calls, hitting the limit, including a needless semiannual-compounding check.",
+  "spoken_fit_reason": "Three narrated tool-use preambles and a five-bank walkthrough ran long enough to be cut off by the word cap after the second bank."
+}

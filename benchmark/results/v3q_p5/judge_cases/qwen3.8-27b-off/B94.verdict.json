@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The Lucerne, Interlaken, Zermatt route with a lake cruise, Pilatus or Rigi, Jungfraujoch at about CHF 224 in winter, the Spiez and Visp transfer and the Gornergrat is sensible and sourced, but the pass section breaks off before comparing the Swiss Travel Pass (CHF 254 or 309) with the CHF 150 Half Fare Card, which is the economy question the user asked.",
+  "judgment_reason": "Searching for current pass and excursion prices was right, but it never mentions the Gornergrat line's 2 to 14 November closure or the seasonal differences in the sources, even though the trip is being planned in November.",
+  "spoken_fit_reason": "Bold markdown day headings, a pass section header and tool-use narration make a long itinerary that the word cap cut off on day two."
+}

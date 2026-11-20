@@ -1,0 +1,43 @@
+import os
+
+from pydantic import BaseModel
+
+
+class SearchSettings(BaseModel):
+    searxng_url: str = "http://127.0.0.1:8080"
+    engines: str = "brave,searxng"  # comma-separated, in order: each is asked only when those before it fail; brave needs its key in the Keychain
+    pages_to_read: int = 6
+    words_per_page: int = 350  # the passages of a page that best match the query; six pages of them come to about the total budget
+    fetch_page_words: int = 1200  # fetch_page returns the top of one page the model chose, so it gets more room than one of six pages
+    total_word_budget: int = 2000
+    fetch_timeout_seconds: float = 6.0
+    max_page_bytes: int = 2_000_000  # stop reading a page past this; a hostile page cannot flood the model
+    max_redirects: int = 5
+    results_to_return: int = 8
+    min_seconds_between_searches: float = 3.0  # gap between live SearXNG requests; the upstream engines rate-limit bursts (cached queries never wait)
+    cache_dir: str | None = None
+    fixtures_dir: str | None = None  # set only by the benchmark: enables POST /benchmark/fixture and its known pages (design doc v2/03 section 3.3)
+    user_agent: str = ""  # empty sends what current Chrome sends (utils/browser_utils.py); set it only to try another agent
+    blocked_domains: tuple[str, ...] = (
+        "facebook.com",
+        "instagram.com",
+        "x.com",
+        "twitter.com",
+        "tiktok.com",
+        "pinterest.com",
+        "linkedin.com",
+        "wsj.com",
+        "ft.com",
+        "bloomberg.com",
+        "nytimes.com",
+    )
+
+
+def engine_names(settings: SearchSettings) -> list[str]:
+    return [name.strip().lower() for name in settings.engines.split(",") if name.strip()]
+
+
+def settings_from_environment() -> SearchSettings:
+    """Environment variables prefixed WEB_SEARCH_ override the defaults, e.g. WEB_SEARCH_CACHE_DIR for a benchmark run."""
+    overrides = {key.removeprefix("WEB_SEARCH_").lower(): value for key, value in os.environ.items() if key.startswith("WEB_SEARCH_")}
+    return SearchSettings(**overrides)

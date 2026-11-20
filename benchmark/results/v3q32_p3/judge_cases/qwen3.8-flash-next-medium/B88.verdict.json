@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "Every release and date traces to the excerpts and falls in the window (Mistral Large 4 weights October 29, Muse Spark Open October 15, DeepSeek V4.1-Flash-1017 October 17, Qwen3.6 27B October 21, Tencent Hy4 November 4), but it lists each lab rather than really comparing them.",
+  "judgment_reason": "Searched as needed, ran a follow-up to confirm the Mistral weight date, separated the October 6 preview from the release, and flagged that the trackers disagree and benchmarks are vendor-reported.",
+  "spoken_fit_reason": "Plain prose that leads with the answer, but it is dense with parameter counts and long enough that the word cap cut the fifth development and the caveat."
+}

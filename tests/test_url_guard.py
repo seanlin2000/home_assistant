@@ -1,0 +1,182 @@
+"""The fetch path must refuse private addresses at every hop and stop reading oversized pages."""
+
+from collections.abc import Callable
+
+import httpx
+import pytest
+
+from web_search_mcp.page_extractor import PageExtractor
+from web_search_mcp.page_failures import PageFailure, PageUnreadable
+from web_search_mcp.query_cache import QueryCache
+from web_search_mcp.settings import SearchSettings
+from web_search_mcp.url_guard import UnsafeUrl, ensure_public_url, host_header, is_public_address, pin_url_to_address
+
+HTML = {"content-type": "text/html; charset=utf-8"}
+
+
+def fake_resolver(table: dict[str, list[str]]):
+    async def resolve(host: str) -> list[str]:
+        return table[host]
+
+    return resolve
+
+
+@pytest.mark.parametrize(
+    "address, public",
+    [
+        ("93.184.216.34", True),
+        ("2606:2800:220:1:248:1893:25c8:1946", True),
+        ("127.0.0.1", False),
+        ("10.0.0.5", False),
+        ("192.168.1.1", False),
+        ("172.16.3.4", False),
+        ("169.254.169.254", False),
+        ("::1", False),
+        ("::ffff:192.168.1.5", False),
+        ("fe80::1", False),
+        ("0.0.0.0", False),
+        ("224.0.0.1", False),
+    ],
+)
+def test_public_address_classification(address: str, public: bool) -> None:
+    assert is_public_address(address) is public
+
+
+@pytest.mark.asyncio
+async def test_ensure_public_url_rejects_schemes_names_and_private_resolutions() -> None:
+    resolver = fake_resolver({"example.com": ["93.184.216.34"], "evil.example": ["93.184.216.34", "192.168.1.152"], "printer": ["10.0.0.9"]})
+    await ensure_public_url("https://example.com/page", resolver)
+    for bad in (
+        "file:///etc/passwd",
+        "ftp://example.com/x",
+        "http://localhost:8123/",
+        "http://homeassistant.local/",
+        "http://192.168.1.152:11434/api/tags",
+        "http://[::1]/",
+        "http://evil.example/",
+        "http://printer/",
+        "http://metadata.google.internal/",
+        "https://user:secret@example.com/page",
+        "https://user@example.com/page",
+    ):
+        with pytest.raises(UnsafeUrl):
+            await ensure_public_url(bad, resolver)
+
+
+def extractor_with(handler: Callable[[httpx.Request], httpx.Response], resolver_table: dict[str, list[str]], **settings: int) -> PageExtractor:
+    return PageExtractor(SearchSettings(**settings), QueryCache(None), resolver=fake_resolver(resolver_table), transport=httpx.MockTransport(handler))
+
+
+@pytest.mark.asyncio
+async def test_redirect_to_a_private_address_is_refused_even_after_a_public_first_hop() -> None:
+    def handler(request: httpx.Request) -> httpx.Response:
+        if request.headers["host"] == "public.example":
+            return httpx.Response(302, headers={"location": "http://192.168.1.1/admin"})
+        return httpx.Response(200, headers=HTML, text="<html><body><p>router admin</p></body></html>")
+
+    extractor = extractor_with(handler, {"public.example": ["93.184.216.34"]})
+    with pytest.raises(UnsafeUrl):
+        await extractor.read_page("http://public.example/start")
+
+
+@pytest.mark.asyncio
+async def test_public_redirects_are_followed_and_text_extracted() -> None:
+    def handler(request: httpx.Request) -> httpx.Response:
+        if request.url.path == "/old":
+            return httpx.Response(301, headers={"location": "/new"})
+        return httpx.Response(200, headers=HTML, text="<html><body><article><p>" + "The federal funds rate held steady this month. " * 20 + "</p></article></body></html>")
+
+    extractor = extractor_with(handler, {"news.example": ["93.184.216.34"]})
+    text = await extractor.read_page("http://news.example/old")
+    assert "federal funds rate" in text
+
+
+def test_pinning_swaps_the_host_and_keeps_everything_else() -> None:
+    assert pin_url_to_address("http://news.example/a/b?q=1", "93.184.216.34") == "http://93.184.216.34/a/b?q=1"
+    assert pin_url_to_address("https://news.example:8443/x", "93.184.216.34") == "https://93.184.216.34:8443/x"
+    assert pin_url_to_address("https://v6.example/", "2606:2800:220:1:248:1893:25c8:1946") == "https://[2606:2800:220:1:248:1893:25c8:1946]/"
+    assert host_header("https://news.example:8443/x") == "news.example:8443"
+    assert host_header("http://news.example/") == "news.example"
+
+
+@pytest.mark.asyncio
+async def test_connection_goes_to_the_checked_address_with_the_name_in_host_and_tls() -> None:
+    seen: list[httpx.Request] = []
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        seen.append(request)
+        return httpx.Response(200, headers=HTML, text="<html><body><article><p>" + "Pinned page text. " * 30 + "</p></article></body></html>")
+
+    extractor = extractor_with(handler, {"news.example": ["93.184.216.34", "93.184.216.35"]})
+    assert "Pinned page text" in await extractor.read_page("https://news.example:8443/story")
+    request = seen[0]
+    assert request.url.host == "93.184.216.34" and request.url.port == 8443
+    assert request.headers["host"] == "news.example:8443"
+    assert request.extensions["sni_hostname"] == "news.example"
+
+
+class FakeNetworkStream:
+    def __init__(self, peer: tuple[str, int]) -> None:
+        self._peer = peer
+
+    def get_extra_info(self, info: str) -> object:
+        return self._peer if info == "server_addr" else None
+
+
+class RebindingTransport(httpx.AsyncBaseTransport):
+    """Pretends the operating system resolved the name to a private address after the guard approved a public one."""
+
+    def __init__(self, peer: tuple[str, int]) -> None:
+        self._peer = peer
+        self.body_reads = 0
+
+    async def handle_async_request(self, request: httpx.Request) -> httpx.Response:
+        transport = self
+
+        class Body(httpx.AsyncByteStream):
+            async def __aiter__(self):
+                transport.body_reads += 1
+                yield b"<html><body><p>router admin</p></body></html>"
+
+        return httpx.Response(200, headers=HTML, stream=Body(), extensions={"network_stream": FakeNetworkStream(self._peer)})
+
+
+@pytest.mark.asyncio
+async def test_a_connection_that_lands_on_a_private_peer_is_refused_before_the_body_is_read() -> None:
+    transport = RebindingTransport(("192.168.1.1", 80))
+    extractor = PageExtractor(SearchSettings(), QueryCache(None), resolver=fake_resolver({"r.evil.example": ["93.184.216.34"]}), transport=transport)
+    with pytest.raises(UnsafeUrl):
+        await extractor.read_page("http://r.evil.example/")
+    assert transport.body_reads == 0
+    public = RebindingTransport(("93.184.216.34", 80))
+    assert "router admin" in await PageExtractor(SearchSettings(), QueryCache(None), resolver=fake_resolver({"ok.example": ["93.184.216.34"]}), transport=public).read_page("http://ok.example/")
+
+
+@pytest.mark.asyncio
+async def test_oversized_pages_are_dropped_by_declared_length_and_by_stream() -> None:
+    big = b"<html><body><p>" + b"x" * 5000 + b"</p></body></html>"
+
+    def declared(request: httpx.Request) -> httpx.Response:
+        return httpx.Response(200, headers={**HTML, "content-length": "999999"}, content=b"<html></html>")
+
+    def streamed(request: httpx.Request) -> httpx.Response:
+        return httpx.Response(200, headers=HTML, content=big)
+
+    for handler, host in ((declared, "a.example"), (streamed, "b.example")):
+        with pytest.raises(PageUnreadable) as unreadable:
+            await extractor_with(handler, {host: ["93.184.216.34"]}, max_page_bytes=1000).read_page(f"http://{host}/")
+        assert unreadable.value.failure is PageFailure.TOO_LARGE
+    assert await extractor_with(streamed, {"c.example": ["93.184.216.34"]}, max_page_bytes=100000).read_page("http://c.example/") != ""
+
+
+@pytest.mark.asyncio
+async def test_search_batches_skip_unsafe_urls_instead_of_failing() -> None:
+    from web_search_mcp.searxng_client import SearchResult
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        return httpx.Response(200, headers=HTML, text="<html><body><article><p>" + "Useful public text. " * 30 + "</p></article></body></html>")
+
+    extractor = extractor_with(handler, {"good.example": ["93.184.216.34"], "nas.example": ["192.168.1.20"]})
+    results = [SearchResult(title="nas", url="http://nas.example/", snippet="", engines=["x"], score=1.0), SearchResult(title="good", url="http://good.example/", snippet="", engines=["x"], score=1.0)]
+    excerpts = await extractor.read_pages(results, "useful")
+    assert [excerpt.title for excerpt in excerpts] == ["good"]

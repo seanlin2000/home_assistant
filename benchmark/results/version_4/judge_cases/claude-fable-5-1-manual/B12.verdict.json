@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The 3090 recommendation, the 750 to 950 dollar used range, the 350 watt draw, the 3060 12GB fallback and the eight-gigabyte AI PC warning are all traceable to the excerpts, but the claim that 16GB cards have drifted well above list is unsupported since the sources price the 5060 Ti at 429 to 479 against a 429 launch price.",
+  "judgment_reason": "Honored the thousand dollar total by stating up front that the 3090 only fits if the processor, motherboard and memory are used or reused, and told the listener to recheck listings because prices swing weekly.",
+  "spoken_fit_reason": "Model names are spelled out phonetically for text to speech and there are no lists or URLs, though six sentences is on the long side."
+}

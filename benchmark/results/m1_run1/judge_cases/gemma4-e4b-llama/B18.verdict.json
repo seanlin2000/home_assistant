@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The Qwen3.8 27B at UD-Q3_K_XL (13.44 GB) pick traces to the codersera excerpt, but it garbles the 73,728 context figure, misnames the source's Qwen3.6 35B A3B as 'Qwen three point five', and gives almost none of the quality, quantization, memory, and speed tradeoffs the user explicitly asked for.",
+  "judgment_reason": "It searched as instructed and labeled the MoE route an ambitious experiment, but it did not mention that the Q3 quant costs quality or that the long context depends on a quantized KV cache.",
+  "spoken_fit_reason": "Three sentences of plain prose, but the quant label 'UD-Q3_K_XL' and the garbled 'seventy three thousand seventy eight eight tokens' would sound wrong aloud."
+}

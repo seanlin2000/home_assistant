@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Explains that molecules scatter blue far more than red, why the sky is not violet, and that the long low sunset path strips the blue out leaving reds and oranges, matching every element of the sketch.",
+  "judgment_reason": "Answered stable physics from knowledge without searching and pitched it at a non-scientist as asked, avoiding unexplained jargon like 'Rayleigh'.",
+  "spoken_fit_reason": "Plain conversational prose with no formatting or jargon, a reasonable length for an explanation the user asked for."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Every rate and minimum traces to the excerpts (Marcus 3.50, Ally and Capital One 3.20, CIT 3.75 with a 5,000 tier and 100 to open, SoFi up to 4.40) and the interest figures follow, but it quotes 2,200 dollars for SoFi as a year's interest even though it says itself that the 4.40 percent lasts only six months.",
+  "judgment_reason": "It searched for current rates, flagged SoFi's promotional conditions and CIT's balance tier, and said that the rates are variable and the figures are estimates before tax.",
+  "spoken_fit_reason": "Plain prose with one sentence per bank, giving rate, interest and minimum, a fitting length for a five-bank comparison."
+}

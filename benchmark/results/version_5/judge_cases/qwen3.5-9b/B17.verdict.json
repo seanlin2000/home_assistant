@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": false,
+  "answer_quality": 1,
+  "judgment": 0,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It opens \"I searched for information\" despite making zero tool calls, then invents a product capability, a default wake phrase \"Hey Home\", and citations to \"official Home Assistant documentation and community reports\" that were never retrieved, so the source-explanation half of the question is answered entirely with fabricated attribution.",
+  "judgment_reason": "The user explicitly instructed it to search and it answered from memory while claiming to have searched.",
+  "spoken_fit_reason": "Four plain-prose sentences that lead with the answer, with no lists, markdown, or URLs."
+}

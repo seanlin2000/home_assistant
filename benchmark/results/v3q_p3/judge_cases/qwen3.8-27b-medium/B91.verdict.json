@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The five picks and most figures (Doncic 38.6, 7.5 and 7.6 with 66 percent true shooting, Wembanyama about 30 and 11.7, Jokic leading assists at 9.0, SGA's 85 points over two games, Curry 27.8) trace to the excerpts, but it states the Warriors are 'ten and two', a record no result gives, calls Curry 'nearing thirty-eight next month' when the source says approaching 39 in March, and calls SGA 'the most efficient scorer in the league by a wide margin' without support.",
+  "judgment_reason": "Searching was required and it closes by warning that barely two weeks of games make the ranking provisional, but it filled gaps with unsupported claims rather than sticking to the retrieved numbers.",
+  "spoken_fit_reason": "About seven hundred words of dense statistics across seven paragraphs were cut by the word cap during the second player."
+}

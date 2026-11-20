@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 1,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The listener heard only the invite-each-person-to-one-Home setup; the voice-assistant options, physical switches and the entire internet-outage answer were cut off by the word cap.",
+  "judgment_reason": "It made eight search calls, including a Reddit search, for a stable architecture question, hitting the tool-call limit instead of answering from knowledge.",
+  "spoken_fit_reason": "Five narrated tool-use preambles were spoken back to back before a long answer that the word cap truncated."
+}

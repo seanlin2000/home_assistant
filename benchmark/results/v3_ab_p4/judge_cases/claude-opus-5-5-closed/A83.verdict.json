@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The stake percentages (one three-thousandth, halved to about 0.017 percent) are right, but the spoken value of about $333,333, multiple of 16.7x and profit of $313,333 are double the correct figures and contradict the calculator's own results of 166,666.67, 8.33 and 146,666.67.",
+  "judgment_reason": "It stated the pro-rata and liquidation-preference assumptions well, but discarded its own calculator results in favor of undiluted figures on the central number.",
+  "spoken_fit_reason": "Leads with the headline value and walks through the steps in plain prose with numbers spelled out and no formatting, at a length the three-figure request warrants."
+}

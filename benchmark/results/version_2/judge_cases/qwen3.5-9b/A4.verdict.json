@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It names normal senescence and nutrient cycling into new growth plus light and nutrient causes and asks for species, water, light, and rate, but it cites underwatering while omitting the sketch's overwatering, root, and pot-bound possibilities.",
+  "judgment_reason": "It withheld a verdict and explicitly asked for the missing species, watering, light, and rate information instead of asserting one cause.",
+  "spoken_fit_reason": "Three conversational sentences with no lists, headings, or markup."
+}

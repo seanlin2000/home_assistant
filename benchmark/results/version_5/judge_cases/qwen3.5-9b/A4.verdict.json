@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Hits normal senescence, nitrogen deficiency and overwatering or root stress and asks for species, watering routine, soil moisture and whether yellowing is patterned or uniform, omitting only lower-leaf shading, pot-bound roots and light or fertilizer history.",
+  "judgment_reason": "Refused to commit to one cause, framed senescence as conditional on the plant looking vigorous, and asked for the genuinely missing information instead of inventing it.",
+  "spoken_fit_reason": "Three flowing sentences of prose with no lists or markdown, though the final question-list sentence runs long."
+}

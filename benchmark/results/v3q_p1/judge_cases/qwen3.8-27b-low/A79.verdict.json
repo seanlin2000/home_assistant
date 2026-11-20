@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It covers parallel cores, HBM, CUDA, the TPU as an ASIC, Groq as an inference processor, and fixed-workload, latency and edge cases where specialized chips win, but it says a forward pass's arithmetic intensity sits in the GPU's sweet spot instead of noting token generation is memory-bandwidth bound.",
+  "judgment_reason": "Explaining stable hardware architecture without searching was right, and it gives the balancing case where GPUs win when workloads change.",
+  "spoken_fit_reason": "Eleven paragraphs of dense technical prose is a wall of text for a voice reply, and the word cap cut it off before the ASIC comparison."
+}

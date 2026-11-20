@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It gives no hardware, prices, or VRAM figures, only a request to know which components to prioritize.",
+  "judgment_reason": "It did not search a question about what can be bought today, and asked what to prioritize when the user had already said the goal was the most usable VRAM within $1,000.",
+  "spoken_fit_reason": "One short plain sentence, but it has no answer to lead with."
+}

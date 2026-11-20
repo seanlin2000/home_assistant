@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Every number is wrong against the sketch: $45,375 instead of $44,100 for year one, and $39,025 for two years, which is impossibly less than a single year at $87,817.80 expected.",
+  "judgment_reason": "It compared a one-year total against a two-year total as if they were like-for-like, declaring $6,350 of savings without noting the differing lengths or the unknown second-year renewal.",
+  "spoken_fit_reason": "Leads with the numbers in three sentences of plain prose with no lists or markup."
+}

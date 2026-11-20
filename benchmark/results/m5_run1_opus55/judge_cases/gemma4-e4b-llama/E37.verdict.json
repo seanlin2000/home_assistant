@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Saturday's partly cloudy, dry, 52 to 67°F and Sunday's cloudy with rain at times match the tool, but it leaves out Sunday's 54 to 68°F range that the reference asks for each day.",
+  "judgment_reason": "It called weather_forecast for the weekend instead of searching, and every claim traces to the tool result.",
+  "spoken_fit_reason": "Two plain sentences that summarise the weekend, with numbers written as words and no formatting."
+}

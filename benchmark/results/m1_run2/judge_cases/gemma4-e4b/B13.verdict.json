@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The Lauterbrunnen, Stanserhorn, and Gotthard Panorama Express options and the 2h21 and $24 figures trace to the excerpts, but it gives no schedules for tomorrow, and its claim of clear, mild weather \"in Lucerne\" comes from the home forecast tool, not from any Lucerne forecast.",
+  "judgment_reason": "Searching was right, but it presented the home weather_forecast result as Lucerne's weather without noting that the user is away from home.",
+  "spoken_fit_reason": "Plain prose with no markup, but two paragraphs and five sentences run long for a spoken reply."
+}

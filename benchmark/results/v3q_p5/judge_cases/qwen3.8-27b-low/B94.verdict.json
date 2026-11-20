@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The final ASSISTANT message is empty, so no itinerary or pass comparison was given despite retrieved Swiss Travel Pass, Half Fare Card, Jungfraujoch and Gornergrat prices.",
+  "judgment_reason": "Searching for current pass and excursion prices was right, but it never turned the results into an answer, so the central request went unmet.",
+  "spoken_fit_reason": "Nothing was spoken."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It answers essentially no, claiming custom wake words need \"an external device like the M5Stack ATOM Echo\", while the Voice-PE-specific source in the results shows custom microWakeWord models running directly on the Voice PE's own ESP32-S3 by overriding the micro_wake_word block in its ESPHome config, with no extra hardware.",
+  "judgment_reason": "The question explicitly asked which source it trusted and why, and it named none, instead deferring to \"the official documentation\" page about ATOM Echo setups over the two results written specifically about the Voice PE.",
+  "spoken_fit_reason": "Four sentences of plain prose with a clear verdict up front and no lists, YAML, URLs, or markdown despite the code-heavy sources."
+}

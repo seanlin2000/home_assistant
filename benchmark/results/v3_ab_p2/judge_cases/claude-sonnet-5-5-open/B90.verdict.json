@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Lists all ten running shows from the broadway_shows result in its views order with a few accurate words each, plus closing dates, the Show-Score range with Chicago at 86, and the 59-dollar floor, all supported by the tool output.",
+  "judgment_reason": "Used the Broadway tool instead of a web search and openly said it ranked by views because it had no awards or sales data.",
+  "spoken_fit_reason": "Leads with the ranking basis and keeps each of the ten shows to a short spoken clause with no list formatting."
+}

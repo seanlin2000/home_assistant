@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It explains the causal chain the user asked for, HBM and GDDR sharing wafer capacity with data-center memory at higher margins, and every figure is traceable: the IDC seventy-percent estimate, GDDR7 going from sixty-five to eighty dollars to over two hundred, memory as most of the bill of materials, and RTX 50-series listings up as much as thirty-nine percent since June.",
+  "judgment_reason": "It led with the mechanism rather than the price list the user said they did not want, and hedged the softer numbers with 'one estimate' and 'reportedly'.",
+  "spoken_fit_reason": "Plain prose with the one-line thesis first and all figures spelled out, though it is dense with numbers for a spoken answer."
+}

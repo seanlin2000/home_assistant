@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Covers parallel cores and fast memory, CUDA, the TPU as an ASIC, Groq and Cerebras on-chip memory designs, memory-bandwidth-bound inference, and when a specialized chip wins or loses, matching the sketch throughout.",
+  "judgment_reason": "Answered a stable architecture question from knowledge without searching and gave balanced conditions for both winning and losing.",
+  "spoken_fit_reason": "Leads with why GPUs work and stays in plain prose without lists; the length matches a three-part question."
+}

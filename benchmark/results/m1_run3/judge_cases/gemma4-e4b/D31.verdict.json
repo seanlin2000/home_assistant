@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The expected reply was the silence marker alone, but it offered sympathy and help ('I'm sorry to hear that...').",
+  "judgment_reason": "It treated one person talking to another as a request and responded, failing the central point of staying silent.",
+  "spoken_fit_reason": "Two spoken sentences interrupt a conversation between people in the room where silence was the ideal reply."
+}

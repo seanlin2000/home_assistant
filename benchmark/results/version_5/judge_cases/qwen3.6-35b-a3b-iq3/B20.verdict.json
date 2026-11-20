@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The core reasoning is right and sourced, 40 to 45 GB for a 70B at Q4, a used 3090 at 24 GB near a thousand dollars, and an itemised build totalling about $1,560, but the under-budget fallbacks quote a used RTX 3060 at around $250 and a used M1 Mac mini at around $500, neither of which appears in any excerpt, and it never addresses the speech-to-text, text-to-speech or web-search parts of the voice-assistant stack.",
+  "judgment_reason": "Did exactly what the user asked by opening with an explicit 'you cannot', quantifying the shortfall, refusing to quietly raise the budget, and flagging that the cloud-hybrid fallback would break the entirely-local requirement.",
+  "spoken_fit_reason": "Four paragraphs of dense part-by-part pricing that blew through the word cap, so the listener was cut off in the middle of the build list."
+}

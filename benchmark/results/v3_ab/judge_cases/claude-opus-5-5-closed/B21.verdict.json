@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It rejects the zero-rate premise and gives sound refinance logic (rate drop, closing costs, break-even, term reset) and asks for the user's rate, but only hedges that it 'couldn't confirm' the cut when the excerpts plainly showed the Fed holding at 3.75 to 4 percent after a September hike and 30-year rates near 7 percent, so it never says plainly what rates are.",
+  "judgment_reason": "It searched, pushed back on the false premise and asked for the genuinely missing figures, but framed a sourced fact as unverified and told the user to double-check rather than correcting them outright.",
+  "spoken_fit_reason": "Leads with the premise correction in plain prose with no markup, at a moderate length ending in one focused question."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It says no explicitly, which the question demanded, but the supporting arithmetic contradicts itself (a $400 used 3090 plus its own $600 of parts is about $1,000, not the '$1,200-$1,500' it claims) and it contradicts excerpt [1], which states the best overall path under $1,000 is a used RTX 3090 build, and excerpt [3], which prices a complete 16 GB build at $1,010; the '(e.g., Ryzen 7 5800X for $200)' price appears in no excerpt.",
+  "judgment_reason": "It refused the budget head-on rather than quietly inflating it, but it never surfaced the conflict between excerpt [2]'s ~$400 used 3090 and excerpt [4]'s $850-$1,200, which is the single number that decides whether the answer is yes or no.",
+  "spoken_fit_reason": "It opens with a clean verdict but then becomes three paragraphs of parenthetical prices with tildes and en-dashes like '~$400–$850 used' that a speech engine handles badly, and the word cap cut it off before the closing recommendation."
+}

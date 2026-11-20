@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "Only CIT's 3.75 percent and its $1,875 are sourced, and it wrongly calls CIT 'Citibank's online savings brand', gives no rate for any other bank, ignores the Happen Bank 4.20 percent it retrieved, and contradicts itself on whether major banks pay 4 to 4.25 percent or $400 to $500 less.",
+  "judgment_reason": "It was candid that it confirmed only one rate, but then asserted that major banks' accounts 'have generally been clustering' at 4 to 4.25 percent with no source, instead of saying it could not find them.",
+  "spoken_fit_reason": "Plain prose that opens with an honest caveat, but five paragraphs ran past the word cap before the estimate and minimums were spoken."
+}

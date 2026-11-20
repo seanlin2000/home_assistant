@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The 3.63 percent effective rate, the 3.50 to 3.75 target range and the 2026 holds are all traceable to the H.15 release and the Wealthvieu table, but it places the third cut in December when that table dates the three cuts September, October and November.",
+  "judgment_reason": "Correctly treated a rate as a fresh fact needing search, preferred the Federal Reserve daily release over the aggregator sites, and volunteered that officials are discussing a hike at the mid-September meeting so the trend may reverse.",
+  "spoken_fit_reason": "Four sentences of prose with figures spoken as words and no URLs or citation markers, though rendering the release name as H point fifteen is slightly clumsy aloud."
+}

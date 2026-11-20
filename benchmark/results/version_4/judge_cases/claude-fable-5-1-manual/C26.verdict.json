@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Both required figures match the sketch, about 38.5 percent and 2,964 dollars, and the added observation that the share moves to just over forty percent is arithmetically right at 40.05.",
+  "judgment_reason": "Used the percent tool for both parts and drew the one inference the listener actually cares about without inventing any budgeting advice.",
+  "spoken_fit_reason": "Two sentences of plain prose with the percentages and dollar figure spoken as words."
+}

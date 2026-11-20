@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It gives no day-trip options, schedules, or weather and only asks the user to clarify what date 'tomorrow' is.",
+  "judgment_reason": "It asks for information that is not actually missing (tomorrow is unambiguous) instead of searching for schedules and weather as the question required.",
+  "spoken_fit_reason": "Two short plain sentences, fine to read aloud."
+}

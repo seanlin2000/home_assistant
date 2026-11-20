@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The 19,090.78 figure matches the sketch's end-of-month annuity value, but it omits the useful split the sketch asks for, that 18,000 of that is your own deposits and only about 1,091 is interest.",
+  "judgment_reason": "It built the correct ordinary-annuity expression in the calculator instead of doing the compounding mentally, and did not search.",
+  "spoken_fit_reason": "A single sentence with the amount spoken out in words."
+}

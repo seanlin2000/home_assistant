@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It synthesizes the sources into a real tradeoff analysis (Qwen3 8B and 14B fit cleanly, Qwen3.8-27B needs IQ3_XXS with 8 to 16k context, 19 GB MoE coders need slow expert offload, KV cache as a hidden budget), but a few claims, such as Qwen3.5 introducing the 27B and which abilities degrade first at 3-bit, are not in the excerpts.",
+  "judgment_reason": "It searched as instructed, ruled out the cluster-scale models clearly, gave a ranked bottom line, and flagged that the VRAM figures come from guides rather than its own measurements.",
+  "spoken_fit_reason": "A roughly 700-word answer in seven paragraphs with markdown emphasis was cut mid-sentence in the landscape overview, before the listener heard any recommendation."
+}

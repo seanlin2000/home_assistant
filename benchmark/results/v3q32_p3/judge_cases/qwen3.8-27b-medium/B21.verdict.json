@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It corrects the premise with the sourced facts (a September hike to 3.75-4.00 percent and an October hold), gives the 7.33 percent 30-year refinance rate from the excerpt, and frames the decision as comparing that rate to the user's.",
+  "judgment_reason": "It searched to check the premise, said plainly that rates were not cut to zero, and asked for the user's current rate instead of guessing.",
+  "spoken_fit_reason": "Four short spoken sentences that lead with the correction and end on a single focused question, within the word limit."
+}

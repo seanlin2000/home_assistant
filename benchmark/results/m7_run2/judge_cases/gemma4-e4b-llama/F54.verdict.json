@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It gives the calculator's nine-degree difference but never states either afternoon temperature (Lisbon 65 to 68°F, home 56 to 61°F), which the reference sketch requires.",
+  "judgment_reason": "It called both forecasts and the calculator correctly, but it quietly compared only the low ends (65 minus 56) without saying so, and the highs differ by seven.",
+  "spoken_fit_reason": "One short plain sentence that leads with the answer."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The memory figures (140 GB at 16-bit, about 35 GB at 4-bit, about 17.5 GB at 2-bit, cache on top) and the trade-offs (small loss at 4-bit, marked loss at 2-bit, bandwidth speedup, GPTQ and AWQ, scale-factor overhead) are right, but the \"eight bits per parameter per byte level\" sentence is garbled and the reply trails off mid-sentence.",
+  "judgment_reason": "It answered stable technical material from knowledge without searching and flagged that the figures cover weights only.",
+  "spoken_fit_reason": "It runs to five dense paragraphs, and the word cap cut it off before the trade-offs section."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It correctly answers that Voice PE uses on-device microWakeWord with three stock options per the Nabu Casa article, and that custom words need a trained model and a reflashed ESPHome config, as the forum and MorningstarOwl repo show.",
+  "judgment_reason": "It trusted the vendor page for stock behavior and corroborating community sources for customization, and explicitly discounted source 8's 'built-in recorder' claim as contradicting the rest.",
+  "spoken_fit_reason": "It leads with 'yes, but only in a limited sense', but it is long enough to hit the word cap and includes inline code backticks around micro_wake_word and '(source 3)' style markers."
+}

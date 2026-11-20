@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "States $4,031 per ounce (the Fortune and goldpricetracker figure) and about $14,109 for three and a half ounces from the calculator's 14,108.50, with a useful note on dealer premiums.",
+  "judgment_reason": "Searched as instructed and did the multiplication with the calculator rather than in its head, and stated the time of the quote.",
+  "spoken_fit_reason": "Three plain sentences leading with the price, numbers written out for speech."
+}

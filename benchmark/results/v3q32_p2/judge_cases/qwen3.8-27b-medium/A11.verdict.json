@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It answers '1989' with the November detail, matching the reference.",
+  "judgment_reason": "It answered settled history directly with no search, as the reference expects.",
+  "spoken_fit_reason": "One short sentence that opens with the answer."
+}

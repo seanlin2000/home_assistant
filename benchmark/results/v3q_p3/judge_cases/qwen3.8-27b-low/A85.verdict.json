@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The foods are sensible and cheap, but several per-item figures are far off: a cup of black beans plus half a pound of chicken breast is given as only 34 grams of protein and 380 calories, while three eggs with turkey bacon is credited 42 grams and half a cup of cottage cheese 20 grams, so the 175-gram, 1,550-calorie total does not reflect the plan as written.",
+  "judgment_reason": "Respected the no-powder-every-meal and quick-prep requirements and kept well under the calorie cap, but presented unreliable totals with confidence and left the rice and chips out of the calorie count without saying so.",
+  "spoken_fit_reason": "Uses markdown bold headings for each meal and runs long enough that the word cap cut it after lunch."
+}

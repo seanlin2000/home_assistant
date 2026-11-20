@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Correctly lists query text, IP address, timing and the API key tying queries to billing identity, what stays local, websites seeing the IP, and mitigations including generic queries, retention policies, VPN and SearXNG, but omits searching only when needed or caching and request metadata like the user agent.",
+  "judgment_reason": "Answered a conceptual privacy question from knowledge without searching and gave practical, honest mitigations.",
+  "spoken_fit_reason": "Leads with the answer and walks through local, transmitted and mitigation in plain prose without lists, at a length the three-part question demands."
+}

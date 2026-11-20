@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Every sketch figure is there and backed by the calculator calls: 0.0333 percent halved to 0.0167 percent, $166,667 at exit, $146,667 profit, and roughly 8.3x.",
+  "judgment_reason": "It stated its assumptions (even dilution, holding to the exit, and the sale price being cash available to equity holders) without a needless search.",
+  "spoken_fit_reason": "Two short spoken paragraphs that lead with the stake and give the numbers plainly, with no formatting."
+}

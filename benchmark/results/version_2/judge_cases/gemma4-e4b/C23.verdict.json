@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The final assistant message is empty, so neither the 11.61 tip nor the 76.11 total was ever given.",
+  "judgment_reason": "It made zero calculator calls on an explicit arithmetic question and returned nothing.",
+  "spoken_fit_reason": "There is no text to speak."
+}

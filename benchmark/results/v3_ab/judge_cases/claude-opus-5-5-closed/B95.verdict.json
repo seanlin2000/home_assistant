@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Names every component the sketch asks for (Home Assistant, Whisper, a 7 to 14B model via llama.cpp or Ollama, Piper, Wyoming, an MCP tool layer, wake-word satellites), gives honest limitations and a sensible build order, but never prices any hardware to show it fits the $1,000 budget.",
+  "judgment_reason": "It skipped the search a current-price budget question needed, though it avoided inventing prices and kept its hardware suggestions plausibly within budget.",
+  "spoken_fit_reason": "Leads with the plan in plain prose without lists or markup, at a length the four-part design question warrants."
+}

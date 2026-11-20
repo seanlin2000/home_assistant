@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Gives 19,090 for end-of-month deposits and a little over 19,150 for start-of-month, both matching the sketch, and splits out the 18,000 of principal from roughly eleven hundred in interest.",
+  "judgment_reason": "Volunteered the end-versus-start-of-month timing distinction the question left open and flagged that the four percent rate is assumed to hold for the full three years.",
+  "spoken_fit_reason": "Three short sentences with every figure spoken as words and the headline number first."
+}

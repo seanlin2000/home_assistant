@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The stake, the 166,667 dollar value, the 8.33x multiple and the 146,667 dollar profit all match the sketch, but the percentage is garbled as \"a thirty-hundredth of one percent\" before it is corrected to one three-thousandth.",
+  "judgment_reason": "It correctly used the calculator rather than search, but it never says it ignores liquidation preferences and other share classes, which the sketch expects as a stated assumption.",
+  "spoken_fit_reason": "Short plain-prose paragraphs that give the value, multiple and profit directly, with no formatting."
+}

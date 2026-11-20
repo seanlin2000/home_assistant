@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Gets one three-thousandth halved to about 0.0167 percent, 166,667 dollars at exit, an 8.33x multiple and 146,667 dollars profit, all matching the reference.",
+  "judgment_reason": "Used the calculator rather than searching and stated the assumptions that shares keep the same class with no liquidation preferences.",
+  "spoken_fit_reason": "Short plain prose that walks the stake into the value and gives the multiple and profit plainly, with a brief caveat."
+}

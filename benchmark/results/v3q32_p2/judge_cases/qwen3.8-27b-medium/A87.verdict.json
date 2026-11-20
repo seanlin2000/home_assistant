@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The audio half covers the laptop competing for the speaker, 2.4 GHz interference, moving to 5 GHz, firmware and a wired fallback. The eye-strain half skips field of view, seating distance, input lag and the DLP rainbow effect, its advice to turn off flicker reduction is dubious, and the word cap cut the spoken output before any eye-strain content was heard.",
+  "judgment_reason": "Not searching was right and it separated the two problems and gave an order of tests, but it called the audio cause 'almost certainly' bandwidth or interference without saying that was a guess.",
+  "spoken_fit_reason": "A long, multi-paragraph answer that ran past the word cap and stopped mid-sentence at 'a direct 3.', so the listener never heard the second problem."
+}

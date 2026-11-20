@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 3,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The plan uses plausible cheap, quick foods with no protein powder, but its stated meal figures (28 + 28 + 40 + 45 + 22 g and 400 + about 180 + 520 + 600 + 300 kcal) add to about 163 g and 2,000 kcal, not the \"roughly 170 grams and 2,240 calories\" it claims, because its calculator inputs did not match the meals it described.",
+  "judgment_reason": "A meal-planning question needed no search, yet it spent four searches on egg, chicken, and turkey prices and hit eight tool calls.",
+  "spoken_fit_reason": "The listener heard three run-together narration lines about tool calls, then a long multi-paragraph plan that the word cap cut off after the snack."
+}

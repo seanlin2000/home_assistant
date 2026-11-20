@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It states about $4.32 a month, matching the energy_cost result and the reference for a 30-day month.",
+  "judgment_reason": "It used the energy_cost tool with the user's stated price and needed no extra assumptions.",
+  "spoken_fit_reason": "One short sentence that leads with the cost."
+}

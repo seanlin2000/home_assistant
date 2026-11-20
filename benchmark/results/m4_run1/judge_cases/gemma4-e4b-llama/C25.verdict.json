@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Twenty-two point two Celsius and three point one one miles both match the convert tool results and the reference sketch.",
+  "judgment_reason": "It used the convert tool for both conversions and did not search.",
+  "spoken_fit_reason": "One plain sentence answering both parts."
+}

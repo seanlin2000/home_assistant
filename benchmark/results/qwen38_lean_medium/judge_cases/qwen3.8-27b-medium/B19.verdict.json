@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It correctly reports 18.3 GB for Q4 against 16 GB and about 7 tokens per second offloaded, and gives a strong critique (latency rather than fit, 3-bit quality loss, the STT and TTS chain, estimates rather than measurements), but its claim that a 3-bit build fully in VRAM 'would not be dramatically faster' conflicts with the retrieved 15.4 t/s for a 27B IQ4_XS fully on this card.",
+  "judgment_reason": "It searched as instructed, treated the calculator figures as estimates, explained why fitting in VRAM does not predict voice experience, and proposed a concrete end-of-utterance timing test.",
+  "spoken_fit_reason": "It leads with a direct answer, but six long paragraphs ran far past the word cap, so the listener heard only the hardware verdict and the 'no' lead-in without any of the reasons."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The broadway_shows result listed ten running shows ranked by recent views with audience scores (The Rocky Horror Show, Paranormal Activity, & Juliet and so on), but the answer ignores it, gives only eight shows from memory, and six of them (The Lion King, Hamilton, Aladdin, Hadestown, Six, Moulin Rouge) do not appear in the result; only Wicked and Chicago overlap.",
+  "judgment_reason": "Calling the listings tool was right and it did flag its list as memory rather than today's data, but it falsely said it could not check the ranking while holding a ranked result, and it named shows the result does not show as running.",
+  "spoken_fit_reason": "Plain prose with short descriptions, but it opens with a disclaimer instead of the ranking and stops short of the ten requested."
+}

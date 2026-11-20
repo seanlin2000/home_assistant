@@ -1,0 +1,112 @@
+[
+  {
+    "question_id": "A76",
+    "case": "benchmark/results/v3q_p1/judge_cases/qwen3.8-flash-next-off/A76.md",
+    "verdict": "benchmark/results/v3q_p1/judge_cases/qwen3.8-flash-next-off/A76.verdict.json"
+  },
+  {
+    "question_id": "A77",
+    "case": "benchmark/results/v3q_p1/judge_cases/qwen3.8-flash-next-off/A77.md",
+    "verdict": "benchmark/results/v3q_p1/judge_cases/qwen3.8-flash-next-off/A77.verdict.json"
+  },
+  {
+    "question_id": "A78",
+    "case": "benchmark/results/v3q_p1/judge_cases/qwen3.8-flash-next-off/A78.md",
+    "verdict": "benchmark/results/v3q_p1/judge_cases/qwen3.8-flash-next-off/A78.verdict.json"
+  },
+  {
+    "question_id": "A79",
+    "case": "benchmark/results/v3q_p1/judge_cases/qwen3.8-flash-next-off/A79.md",
+    "verdict": "benchmark/results/v3q_p1/judge_cases/qwen3.8-flash-next-off/A79.verdict.json"
+  },
+  {
+    "question_id": "A80",
+    "case": "benchmark/results/v3q_p1/judge_cases/qwen3.8-flash-next-off/A80.md",
+    "verdict": "benchmark/results/v3q_p1/judge_cases/qwen3.8-flash-next-off/A80.verdict.json"
+  },
+  {
+    "question_id": "A81",
+    "case": "benchmark/results/v3q_p1/judge_cases/qwen3.8-flash-next-off/A81.md",
+    "verdict": "benchmark/results/v3q_p1/judge_cases/qwen3.8-flash-next-off/A81.verdict.json"
+  },
+  {
+    "question_id": "A82",
+    "case": "benchmark/results/v3q_p1/judge_cases/qwen3.8-flash-next-off/A82.md",
+    "verdict": "benchmark/results/v3q_p1/judge_cases/qwen3.8-flash-next-off/A82.verdict.json"
+  },
+  {
+    "question_id": "A83",
+    "case": "benchmark/results/v3q_p1/judge_cases/qwen3.8-flash-next-off/A83.md",
+    "verdict": "benchmark/results/v3q_p1/judge_cases/qwen3.8-flash-next-off/A83.verdict.json"
+  },
+  {
+    "question_id": "A84",
+    "case": "benchmark/results/v3q_p1/judge_cases/qwen3.8-flash-next-off/A84.md",
+    "verdict": "benchmark/results/v3q_p1/judge_cases/qwen3.8-flash-next-off/A84.verdict.json"
+  },
+  {
+    "question_id": "A85",
+    "case": "benchmark/results/v3q_p1/judge_cases/qwen3.8-flash-next-off/A85.md",
+    "verdict": "benchmark/results/v3q_p1/judge_cases/qwen3.8-flash-next-off/A85.verdict.json"
+  },
+  {
+    "question_id": "A86",
+    "case": "benchmark/results/v3q_p1/judge_cases/qwen3.8-flash-next-off/A86.md",
+    "verdict": "benchmark/results/v3q_p1/judge_cases/qwen3.8-flash-next-off/A86.verdict.json"
+  },
+  {
+    "question_id": "A87",
+    "case": "benchmark/results/v3q_p1/judge_cases/qwen3.8-flash-next-off/A87.md",
+    "verdict": "benchmark/results/v3q_p1/judge_cases/qwen3.8-flash-next-off/A87.verdict.json"
+  },
+  {
+    "question_id": "A11",
+    "case": "benchmark/results/v3q_p1/judge_cases/qwen3.8-flash-next-off/A11.md",
+    "verdict": "benchmark/results/v3q_p1/judge_cases/qwen3.8-flash-next-off/A11.verdict.json"
+  },
+  {
+    "question_id": "B88",
+    "case": "benchmark/results/v3q_p1/judge_cases/qwen3.8-flash-next-off/B88.md",
+    "verdict": "benchmark/results/v3q_p1/judge_cases/qwen3.8-flash-next-off/B88.verdict.json"
+  },
+  {
+    "question_id": "B89",
+    "case": "benchmark/results/v3q_p1/judge_cases/qwen3.8-flash-next-off/B89.md",
+    "verdict": "benchmark/results/v3q_p1/judge_cases/qwen3.8-flash-next-off/B89.verdict.json"
+  },
+  {
+    "question_id": "B90",
+    "case": "benchmark/results/v3q_p1/judge_cases/qwen3.8-flash-next-off/B90.md",
+    "verdict": "benchmark/results/v3q_p1/judge_cases/qwen3.8-flash-next-off/B90.verdict.json"
+  },
+  {
+    "question_id": "B91",
+    "case": "benchmark/results/v3q_p1/judge_cases/qwen3.8-flash-next-off/B91.md",
+    "verdict": "benchmark/results/v3q_p1/judge_cases/qwen3.8-flash-next-off/B91.verdict.json"
+  },
+  {
+    "question_id": "B92",
+    "case": "benchmark/results/v3q_p1/judge_cases/qwen3.8-flash-next-off/B92.md",
+    "verdict": "benchmark/results/v3q_p1/judge_cases/qwen3.8-flash-next-off/B92.verdict.json"
+  },
+  {
+    "question_id": "B93",
+    "case": "benchmark/results/v3q_p1/judge_cases/qwen3.8-flash-next-off/B93.md",
+    "verdict": "benchmark/results/v3q_p1/judge_cases/qwen3.8-flash-next-off/B93.verdict.json"
+  },
+  {
+    "question_id": "B94",
+    "case": "benchmark/results/v3q_p1/judge_cases/qwen3.8-flash-next-off/B94.md",
+    "verdict": "benchmark/results/v3q_p1/judge_cases/qwen3.8-flash-next-off/B94.verdict.json"
+  },
+  {
+    "question_id": "B95",
+    "case": "benchmark/results/v3q_p1/judge_cases/qwen3.8-flash-next-off/B95.md",
+    "verdict": "benchmark/results/v3q_p1/judge_cases/qwen3.8-flash-next-off/B95.verdict.json"
+  },
+  {
+    "question_id": "B21",
+    "case": "benchmark/results/v3q_p1/judge_cases/qwen3.8-flash-next-off/B21.md",
+    "verdict": "benchmark/results/v3q_p1/judge_cases/qwen3.8-flash-next-off/B21.verdict.json"
+  }
+]

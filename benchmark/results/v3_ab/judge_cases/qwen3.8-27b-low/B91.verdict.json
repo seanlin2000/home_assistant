@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The five picks and nearly all figures (Wembanyama's 34.76 HoopsHype rating, Giannis's 27.7 and 12.6, Jokic's 23.1, 10.8 and 9.1 and his 29.6, 12.2 and 11.0 last season) match the retrieved 2026-27 tables, but it says SGA is 'already in his fifth consecutive season averaging above thirty' while quoting 29.5, against the source's four straight seasons.",
+  "judgment_reason": "It searched for current-season data, built the ranking from this season's tables rather than last season's, and noted up front that only about ten games had been played.",
+  "spoken_fit_reason": "A wall of text of roughly six hundred fifty words ran past the word cap, so the listener heard only the first pick in full and a sentence of the second."
+}

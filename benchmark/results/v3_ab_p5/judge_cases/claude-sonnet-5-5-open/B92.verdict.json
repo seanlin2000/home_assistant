@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Rates and minimums trace to the excerpts (Marcus 3.4, SoFi up to 3.8 with direct deposit, Ally and Capital One about 3, CIT 3.75 above 5,000 dollars) and every interest figure is correct, but it uses the mid-September Capital One rate although WalletHub's November list gave 3.20 percent.",
+  "judgment_reason": "Said up front that the figures were approximate mid-September rates that vary, flagged the SoFi direct-deposit and CIT balance conditions, and told the user to check current rates.",
+  "spoken_fit_reason": "Plain prose with one sentence per bank and dollar figures read naturally, at a length a five-bank comparison needs."
+}

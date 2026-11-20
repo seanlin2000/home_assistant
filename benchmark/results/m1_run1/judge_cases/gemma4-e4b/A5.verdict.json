@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It covers the microphone array, far-field processing, and noise suppression, but says nothing about echo cancellation or speaker separation, wake-word hardware, latency, local compute, or privacy, all of which matter to the 'natural conversation' priority the user stated.",
+  "judgment_reason": "It names no products or brands, so it respects the explicit constraint, and it correctly answers without searching.",
+  "spoken_fit_reason": "Three plain sentences of prose with no lists or formatting."
+}

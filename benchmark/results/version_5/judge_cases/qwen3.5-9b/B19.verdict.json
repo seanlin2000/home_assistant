@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["presented_estimate_as_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It correctly reads from [1] and [2] that Qwen3.8 27B at Q4_K_M needs about 16.5 GB against 14.4 GB usable and therefore offloads, but the critical-reading half is generic: it never notes that both sources label their tok/s and TTFT figures \"engine estimates, not measurements\", and never says that decode speed alone cannot predict a voice-assistant experience, which also turns on end-to-end latency and the speech-to-text and text-to-speech stages.",
+  "judgment_reason": "It searched as instructed but opened with \"The sources confirm\" and asserted the 8B \"will respond quickly enough\", accepting simulated numbers as verified on the very question that asked it to be skeptical of them.",
+  "spoken_fit_reason": "Two paragraphs of roughly 170 words where a couple of sentences would do, though the prose itself is clean with no lists or URLs."
+}

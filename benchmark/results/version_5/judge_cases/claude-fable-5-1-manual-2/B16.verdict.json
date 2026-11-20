@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It brackets the 4 percent between the MNS 2.94 percent Queens one-bedroom year-over-year figure and the 7.3 percent citywide asking-rent rise, and contrasts the $4,024 RentReboot median against the $4,471 MNS figure to show source dependence, but never mentions the retrieved 0 percent freeze on rent-regulated renewals starting October 1, which would matter if the unit is regulated.",
+  "judgment_reason": "It explained the asking-versus-signed-rent gap, concessions, and listing survivorship as the reason not to treat advertised rents as a benchmark, and closed by asking for the starting rent it needs.",
+  "spoken_fit_reason": "Verdict first and no lists or markup, though the risks sentence strings four items together in one long spoken breath."
+}

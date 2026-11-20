@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It gives the 30 and 25 record over 55 games and the per-game lines (25.3 points for Curry against 30.7 for LeBron, with rebounds and assists), all exactly as the player_matchup result states.",
+  "judgment_reason": "It used the player_matchup tool without searching and described the record as Curry's team against LeBron's teams.",
+  "spoken_fit_reason": "Two plain sentences that lead with the record, though the per-game numbers make them a little dense."
+}

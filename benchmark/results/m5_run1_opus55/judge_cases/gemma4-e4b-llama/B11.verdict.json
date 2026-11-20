@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The 3.88 percent effective rate for October 6, 2026 comes from the H.15 table, but the 'zero percent' change covers only five days in that table; the wealthvieu excerpt, which describes three cuts in late 2025 and holds through 2026, goes unused, and the target range is never given.",
+  "judgment_reason": "Searching was right, but running a calculator over a five-day window and offering that as the change over the past year misreads the question.",
+  "spoken_fit_reason": "It leads with the rate in plain prose, but the second sentence spends its length describing the assistant's own calculation."
+}

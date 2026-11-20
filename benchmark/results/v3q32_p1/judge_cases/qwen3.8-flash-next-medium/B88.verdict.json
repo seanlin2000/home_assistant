@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 1,
+  "answer_quality_reason": "Most releases and dates trace to the excerpts (DeepSeek V4.1-Flash-1017 on October 17 at 552B/8B/16B, Mistral Large 4 weights on October 29, Muse Spark Open on October 15, Kimi K3.1 Pro and Tencent Hy4 on November 4), but it calls Muse Ember proprietary and puts Qwen4-Max under Apache 2.0 weights, neither of which any excerpt says, and it lists releases more than it compares the labs.",
+  "judgment_reason": "Searching was right, and it hedged Kimi as 'reportedly' and flagged vendor benchmarks, but it asserted licensing status that its sources do not support.",
+  "spoken_fit_reason": "Plain prose with no markdown, but dense with parameter counts and long enough that the word cap cut it off mid-sentence at 'Apache 2.'"
+}

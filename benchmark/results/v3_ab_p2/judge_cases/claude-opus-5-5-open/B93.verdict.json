@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Names all five restaurants from the Michelin result (R40, Hupo, Casa Enrique, Meju, Vert Frais) with the cuisine, dollar-sign price level and distinction the result gives, plus a detail from each description, and adds nothing the result does not support.",
+  "judgment_reason": "Used the restaurant tool, said it does not know the user's exact location, and explained that Michelin gives price levels rather than per-person costs and that the awards are the only ratings it has.",
+  "spoken_fit_reason": "Plain spoken prose with one short clause per restaurant and no list markup, at a length the five-restaurant comparison needs."
+}

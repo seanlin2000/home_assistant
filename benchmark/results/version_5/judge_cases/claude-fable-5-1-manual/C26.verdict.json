@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Both required numbers are right, about 38.5 percent of take-home pay and 2,964 after the increase, and the added note that the share climbs to just over forty percent checks out.",
+  "judgment_reason": "It used the percent tool for both parts and added the one genuinely useful implication rather than inventing budgeting advice the user did not ask for.",
+  "spoken_fit_reason": "Two short sentences of plain prose with the figures spoken out and no lists or markdown."
+}

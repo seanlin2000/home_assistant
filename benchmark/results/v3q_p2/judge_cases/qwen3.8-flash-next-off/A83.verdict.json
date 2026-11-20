@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The calculator-backed figures (0.0333 percent, 0.0167 percent, about $166,667, 8.3x, about $146,667 profit) match the reference, but the alternative reading it offers ('new shares equal to 50 percent of the total post-round count' giving 0.0222 percent) is mislabeled, since that description would also halve the stake.",
+  "judgment_reason": "It used the calculator without searching and stated the key assumptions: that dilution halves ownership, that liquidation preferences are ignored, and that taxes are excluded.",
+  "spoken_fit_reason": "The prose is plain, but it opens with step-by-step math rather than the answer and ran past the word cap, so the liquidation-preference caveat was cut."
+}

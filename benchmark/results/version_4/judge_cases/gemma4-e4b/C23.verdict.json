@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Eleven dollars sixty-one and seventy-six dollars eleven match the reference sketch exactly and both come from calculator calls rather than mental arithmetic.",
+  "judgment_reason": "It used the calculator for both steps, did not search, and answered both parts of the question.",
+  "spoken_fit_reason": "Two sentences with the amounts spoken as dollars and cents, no lists or markdown."
+}

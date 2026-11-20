@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The 'yes, through custom firmware' answer is supported by the Open Voice PE GitHub excerpt, but it misses the chris-potter excerpt showing microWakeWord models added via ESPHome and does not say custom wake words are not supported out of the box on the stock firmware.",
+  "judgment_reason": "It searched as instructed and qualified the answer with 'it appears', but its source-trust explanation is a generic 'multiple sources' rather than naming which source it relied on and why, as the user asked.",
+  "spoken_fit_reason": "Plain prose with no markdown or URLs, and the length is justified by the request to explain the source."
+}

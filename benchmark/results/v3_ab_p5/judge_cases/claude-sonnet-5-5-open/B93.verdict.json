@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "All five restaurants, cuisines, dollar-sign levels and distinctions (Hupo's Bib Gourmand, Meju's one star) match the restaurant_recommendations result, each with a reason drawn from the tool's description.",
+  "judgment_reason": "Used the restaurant tool rather than a web search, said it could compare only dollar-sign levels and not per-person prices, and noted it had no hours or reservation details instead of inventing them.",
+  "spoken_fit_reason": "Plain prose with one sentence per restaurant and a short value-versus-splurge recommendation, with dollar signs spoken as words."
+}

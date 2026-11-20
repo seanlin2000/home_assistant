@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The causal story is right and well synthesized from the excerpts, memory rather than silicon, AI buyers outbidding consumers, the 30 to 40 percent production cut and AMD's roughly ten percent rise, but the August notice of a fifteen percent AI server increase and the 39 percent June-to-August jump in the 16GB 5060 Ti appear nowhere in the retrieved results.",
+  "judgment_reason": "Searching was the right call, yet it stated two unsourced statistics as verified and asserted that mid-range cards moved most while top cards moved only a few percent, which the one retrieved 5090 data point does not support.",
+  "spoken_fit_reason": "Leads with the one-line thesis that it is a memory shortage not a chip shortage, plain prose throughout with acronyms spelled out for speech and no lists or URLs."
+}

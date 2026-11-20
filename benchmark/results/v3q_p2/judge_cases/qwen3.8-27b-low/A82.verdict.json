@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It distinguishes API, tool and MCP correctly and lays out an agent loop with a search tool, a fetch tool that cleans and truncates pages, and summarizing done by the model itself, but it gives none of the safeguards beyond trimming: no cap on tool rounds, no timeouts, and no warning that fetched text is untrusted and can carry prompt injections.",
+  "judgment_reason": "Answering this stable architecture question from knowledge without searching was right, and the practical advice for a local model, such as keeping the tool set small, is well judged.",
+  "spoken_fit_reason": "It is plain prose but runs to about ten paragraphs, and the word cap cut it off after the tool definition, so the listener never heard MCP or the architecture."
+}

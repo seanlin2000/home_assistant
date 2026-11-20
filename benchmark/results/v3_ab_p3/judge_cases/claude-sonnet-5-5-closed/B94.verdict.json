@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The itinerary is geographically sensible and low-effort (Lake Lucerne cruise, Rigi cogwheel, Lucerne-Interlaken Express, Lauterbrunnen and Wengen or Murren, Gornergrat), but the ticket comparison gives no prices although the excerpts listed 2026 Swiss Travel Pass fares such as CHF 254 for 3 days and 309 for 4 days and point-to-point fares like Lucerne to Interlaken at CHF 38.",
+  "judgment_reason": "Searching for current pass prices was right and it avoided strenuous hikes, but it said it 'could not verify current ticket prices' when the results held them, leaving the economy question unanswered with numbers.",
+  "spoken_fit_reason": "Plain day-by-day prose with no lists or markdown, leading with the plan, at a length a five-day itinerary requires."
+}

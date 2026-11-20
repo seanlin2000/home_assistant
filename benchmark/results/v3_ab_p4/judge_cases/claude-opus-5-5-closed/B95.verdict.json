@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It names every component (satellites with wake word, Whisper, Piper, Home Assistant, an 8-12B 4-bit model via llama.cpp or Ollama, a search tool server), the key limitations and a sensible build order within budget, but its hardware prices ('six to eight hundred dollars', 'fifty to sixty dollars apiece') come from no retrieved source.",
+  "judgment_reason": "It skipped the search a current-price budget question needed, though it hedged the figures with 'roughly' and 'about' and kept the build under $1,000.",
+  "spoken_fit_reason": "Leads with the overall architecture in plain prose with 'llama dot cpp' written for speech and no lists, at a length the four-part request warrants."
+}

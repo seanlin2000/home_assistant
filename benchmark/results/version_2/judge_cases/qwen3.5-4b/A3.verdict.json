@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It says clearly that 4 GB is not enough, but attributes the gap to 'architecture overhead and precision requirements' and 'all layers and gating mechanisms' rather than the sketch's core reason that every expert must stay resident because different tokens route to different experts.",
+  "judgment_reason": "It refused the false premise instead of accepting it, but invented a specific unsupported 'at least 8 GB to 16 GB' requirement for a model whose total size the user never gave.",
+  "spoken_fit_reason": "One short paragraph of plain prose that leads with 'That statement is incorrect' and carries no lists, markup, or URLs."
+}

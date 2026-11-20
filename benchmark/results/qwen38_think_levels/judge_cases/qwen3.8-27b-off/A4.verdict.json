@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It covers natural leaf turnover, overwatering, nitrogen deficiency, and light stress and lists the right questions (species, watering, light, pattern, speed), but omits pot-bound roots and lower leaves being shaded out.",
+  "judgment_reason": "It did not assert a single cause and explicitly asked for the plant's name and watering routine before giving a specific diagnosis.",
+  "spoken_fit_reason": "Plain prose that leads with the most likely explanation, but four paragraphs hit the word cap so the listener never heard the list of information it wanted."
+}

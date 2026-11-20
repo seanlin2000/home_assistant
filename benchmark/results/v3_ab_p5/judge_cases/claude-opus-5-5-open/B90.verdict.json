@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Lists all ten shows in the tool's views order with prices, closing dates and Wicked's 94 audience score matching the broadway_shows result, plus a few stable words of description on each.",
+  "judgment_reason": "Used the Broadway tool instead of a web search, named recent TodayTix views as its ranking basis, and said plainly that it had no sales or awards data.",
+  "spoken_fit_reason": "Spoken 'One, Two, Three' ordinals with a few words per show keep a ten-item answer listenable, though the closing 'Pick a performance on TodayTix' is unneeded."
+}

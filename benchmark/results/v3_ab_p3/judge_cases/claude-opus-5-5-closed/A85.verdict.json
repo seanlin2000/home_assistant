@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Four cheap, quick meals (eggs and egg whites, chicken and rice, Greek yogurt and string cheese, turkey chili) with plausible per-meal figures that the calculator totals to 177 g protein and 1,780 kcal, under the 2,500 cap with no protein powder required.",
+  "judgment_reason": "Labeled the figures as estimates from typical label values, met every constraint, and suggested batch cooking for minimal preparation.",
+  "spoken_fit_reason": "Leads with the totals and describes each meal in a spoken sentence without bullets or markdown, a length a full-day meal plan requires."
+}

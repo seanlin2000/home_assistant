@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The heard part explains discounting and that a Fed hike raises the discount rate, but it was cut at the bond-duration analogy, so the listener never heard why growth stocks are long-duration or the worked 61-to-39-cent example.",
+  "judgment_reason": "It said the mechanism was 'well-established' and then searched anyway, an unneeded search on a conceptual finance question.",
+  "spoken_fit_reason": "Two narrated tool-use preambles ran into a long lecture that the word cap cut mid-explanation."
+}

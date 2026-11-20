@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Explains present value with a rate-based discount, that compounding hits distant cash flows hardest, that growth stocks are long-duration assets, and adds costlier borrowing for unprofitable firms and bonds as a more attractive alternative.",
+  "judgment_reason": "Answered stable finance theory without searching and noted it is a tendency rather than a law.",
+  "spoken_fit_reason": "Leads with the valuation principle and builds the chain in plain spoken sentences without lists, sized to the explanation requested."
+}

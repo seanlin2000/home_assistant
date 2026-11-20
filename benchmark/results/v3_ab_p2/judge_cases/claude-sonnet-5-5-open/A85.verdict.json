@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The plan uses the cheap quick foods the sketch expects and stays under 2,500 calories, but its per-item figures are well off: three eggs, a cup of egg whites, and a cup of Greek yogurt are called roughly 45 grams when they give about 65, and eight ounces of cooked chicken is called about 50 grams when it gives about 70, so the stated 170-gram total does not reflect the foods listed.",
+  "judgment_reason": "Labels the numbers as estimates, uses protein powder at most once as an optional top-up, and honors the cost and prep constraints.",
+  "spoken_fit_reason": "Leads with the protein and calorie targets and walks through the meals in plain prose without list formatting, at a length a meal plan needs."
+}

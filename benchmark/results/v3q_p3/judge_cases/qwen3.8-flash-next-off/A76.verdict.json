@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 1,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The listener heard only the intro, the December 26, 1991 end date and part of the first 'event' (Gorbachev's reforms), and even the full text was cut at 'The causes were' before the cause-versus-trigger distinction, with reforms framed as an event rather than a cause.",
+  "judgment_reason": "It made four wikipedia_lookup calls for stable history it should have answered from knowledge, and it never delivered the cause-versus-trigger distinction the question centered on.",
+  "spoken_fit_reason": "A multi-paragraph lecture that ran past the word cap and was cut mid-explanation, far beyond what works aloud."
+}

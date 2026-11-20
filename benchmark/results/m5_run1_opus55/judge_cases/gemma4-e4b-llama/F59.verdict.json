@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It converts the forecast's 53 to 59 F night range with the convert tool to 11.7 to 15 C, which is correct, but gives the low as eleven point seven rather than rounding to the degree and frames it as a range instead of naming the low.",
+  "judgment_reason": "It used the home weather_forecast and the convert tool rather than searching or converting in its head.",
+  "spoken_fit_reason": "One short plain sentence with the Celsius figures and no formatting."
+}

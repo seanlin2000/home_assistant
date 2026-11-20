@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 0,
+  "answer_quality_reason": "Correctly makes the bridge the local hub, explains Home access sharing and multi-admin voice, and says bridge automations and the local app survive an outage, but claims simple Alexa control generally keeps working offline and omits physical Hue switches for people without phones.",
+  "judgment_reason": "Searched twice on a stable architecture question, the second a detour into the Google Assistant phone shutdown, though it hedged the outage behavior by platform.",
+  "spoken_fit_reason": "A long answer with a bulleted list, cut by the word cap before the internet-outage part the user asked about."
+}

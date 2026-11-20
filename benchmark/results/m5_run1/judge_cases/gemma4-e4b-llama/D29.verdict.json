@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The expected reply was the silence marker alone, but it called weather_forecast for 'tri-state area' and spoke an apology.",
+  "judgment_reason": "It treated a television host's line as a request, and its spoken reply ends with a question ('Could you please tell me the specific city and state') that invites the TV to answer back.",
+  "spoken_fit_reason": "Anything spoken is wrong here, and this is a two-sentence reply ending in a question."
+}

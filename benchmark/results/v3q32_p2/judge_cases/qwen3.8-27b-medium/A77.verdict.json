@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It gets the core right: white light holds all colors, blue scatters more, and the longer sunset path scatters the blue away. It mentions violet but never says why the sky isn't violet, and it offers no everyday comparison.",
+  "judgment_reason": "This is stable physics, so answering without a search was right, and it kept to the plain-language level the user asked for.",
+  "spoken_fit_reason": "Two short paragraphs of jargon-free prose that open with the answer."
+}

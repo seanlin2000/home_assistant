@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The memory figures of about 35 GB at 4-bit and 17.5 GB at 2-bit are correct and the quality trade-off is right, but it wrongly implies quantization usually needs retraining and does not note that real 4-bit files run larger because of scales.",
+  "judgment_reason": "Answered stable technical material without searching and flagged that the figures exclude activations and runtime overhead.",
+  "spoken_fit_reason": "Plain prose that gives the definition, the two figures and the trade-offs in order, at a length the three-part question warrants."
+}

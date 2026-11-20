@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "All three figures match the sketch: 2,398 a month, roughly 863,000 paid in total and about 463,000 of it interest.",
+  "judgment_reason": "Used the loan tool rather than estimating and added the optional clarification that the payment covers principal and interest only, before taxes and insurance.",
+  "spoken_fit_reason": "Two sentences that lead with the payment, with the large numbers spoken as words and rounded to what a listener can hold."
+}

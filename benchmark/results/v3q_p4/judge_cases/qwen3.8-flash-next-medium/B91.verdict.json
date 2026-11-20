@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 3,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The first four picks use this season's sourced figures (Wembanyama 30.3 points and 4.4 blocks, Dončić 38.6 points at 66.2 percent true shooting, Gilgeous-Alexander 29.7, Jokić 23.5, 10.8 and 9.0), but the reply breaks off mid-sentence on Jokić and never names a fifth player, and it calls 4.4 blocks 'nearly four a night'.",
+  "judgment_reason": "Searching was required for current-season stats, it opened by stating that twelve games is a small sample, and it explained its criteria and why it put Wembanyama above Dončić against the MVP ladder.",
+  "spoken_fit_reason": "The listener heard four chained 'let me check' preambles before the answer started, the reply is far too long for speech, and it ends in a cut-off fragment."
+}

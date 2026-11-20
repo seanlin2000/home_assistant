@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Gives a low around eleven degrees Celsius from the convert tool's 11.11 for the forecast's 52°F, plus the cloudy, dry conditions from the tool.",
+  "judgment_reason": "Fetched the home forecast and converted with the convert tool instead of searching or converting in its head.",
+  "spoken_fit_reason": "Two short plain sentences that lead with the Celsius answer."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It builds on the first answer, weighs the $400 against moving from 13-14B to 27-32B models at four bits, and gives a conditional recommendation (16 GB if budget is tight or models are under about 14B), matching the sketch.",
+  "judgment_reason": "It kept the established context without asking the user to repeat it and made the recommendation conditional on budget and target model size.",
+  "spoken_fit_reason": "It leads with 'No, I'd still lean toward the 24 gigabyte card', but four paragraphs hit the word cap so the closing summary was cut."
+}

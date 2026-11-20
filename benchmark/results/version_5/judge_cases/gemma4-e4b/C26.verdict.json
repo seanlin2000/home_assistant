@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "38.51 percent and 2,964 dollars both match the reference sketch, each backed by its own tool call.",
+  "judgment_reason": "It ran both parts through the calculator tools rather than estimating, and correctly did not search.",
+  "spoken_fit_reason": "Two short sentences answering both halves in order, plain prose with no lists or markup."
+}

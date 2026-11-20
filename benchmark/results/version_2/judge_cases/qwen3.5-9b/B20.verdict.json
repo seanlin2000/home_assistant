@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The $799 Mac Mini M4, the $600 to $800 used RTX 3060 build, and the 24GB single-GPU sweet spot all trace to the retrieved build guide, but it costs the answer nothing to note that the all-in budget also has to cover a microphone and the speech pipeline, which it never mentions.",
+  "judgment_reason": "It opened with a flat \"you cannot meet your requirements within a $1,000 budget\", exactly the explicit no the user asked for, and offered a scoped compromise rather than quietly raising the number.",
+  "spoken_fit_reason": "Five sentences of plain prose that lead with the verdict, with no lists, URLs, or markup."
+}

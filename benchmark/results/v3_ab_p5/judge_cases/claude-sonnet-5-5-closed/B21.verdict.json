@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Gives sound refinance logic (break-even from closing costs over monthly savings, the one-point rule of thumb, restarting the term) and asks for the user's rate, but only says it 'could not confirm' the cut when the retrieved FOMC statement showed the Fed held at 3.75 to 4 percent after a September hike, and it omits the roughly 7 percent current mortgage rates it found.",
+  "judgment_reason": "It searched and declined to accept the premise, but hedged instead of plainly correcting it with the evidence in hand.",
+  "spoken_fit_reason": "Leads with the premise check and stays in plain conversational prose at a reasonable length, ending with a clear request for the numbers."
+}

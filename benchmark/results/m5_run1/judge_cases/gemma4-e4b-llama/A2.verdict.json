@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 0,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The totals of 44,100 and 87,817.80 match the tool results, but calling the one-year lease cheaper by comparing one year against two is wrong, and the stated 'savings' of 43,077.80 is not even the difference of its own figures (43,717.80).",
+  "judgment_reason": "It never notes that the options cover different lengths or that the one-year path's second year is unknown, so it gets the central comparison wrong instead of comparing year one (840 saved) or stating an assumption.",
+  "spoken_fit_reason": "Three plain sentences with figures written out for speech, and it leads with the totals."
+}

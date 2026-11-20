@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The sunny 27-degree forecast for 7 September, the one-hour Pilatus trip with the world's steepest cogwheel railway, the Golden Round Trip by boat via Alpnachstad and the hour-and-a-half Rigi option all come straight from the excerpts, though it glosses the 3.8 mm of rain listed for that day and gives no actual departure times despite having the full cogwheel timetable.",
+  "judgment_reason": "Searched weather, options and operating season separately, and its claim that both mountains are running is backed by the closure table showing the cogwheel open until 29 November and the boat until 18 October.",
+  "spoken_fit_reason": "Four sentences of plain prose with numbers written out, leading with the weather verdict and no lists, tables or URLs from the source pages."
+}

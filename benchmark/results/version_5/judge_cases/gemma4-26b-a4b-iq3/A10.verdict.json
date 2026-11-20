@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Makes the sketch's central point - too large to fit means it will not run or crawls on system RAM, while speed only affects a model that already fits - but leaves out that more memory allows lighter quantization and longer context.",
+  "judgment_reason": "No search needed and none made, and it answers the comparative question directly without hedging.",
+  "spoken_fit_reason": "Roughly a hundred words of plain conversational prose inside the 120-word cap, closing with a gas-tank analogy that reads well aloud."
+}

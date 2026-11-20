@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 1,
+  "answer_quality_reason": "Its figures (3.50 to 3.75 percent target, 3.63 percent in August, 3.88 percent effective in October) all trace to results [8] and [10], but it skips the 'how has it changed' half even though [10] says the Fed cut three times in late 2025 and held steady through 2026.",
+  "judgment_reason": "Searching was right, but it reported a 3.88 percent effective rate that sits above the stated 3.50 to 3.75 percent target range without noting the conflict or that the range may have changed at the September 16 meeting.",
+  "spoken_fit_reason": "It opens with a generic sentence about who sets the rate and then relays two sources one after the other, which buries the answer."
+}

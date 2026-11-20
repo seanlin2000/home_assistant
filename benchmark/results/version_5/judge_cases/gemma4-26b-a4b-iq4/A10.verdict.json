@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It gets the central point that a model too large for video memory either crawls or will not run at all no matter how fast the GPU is, but never mentions that more memory also allows less aggressive quantization and longer context.",
+  "judgment_reason": "It stayed inside the 120-word cap, answered from stable knowledge without searching, and made no unstated assumptions.",
+  "spoken_fit_reason": "Leads with the answer in plain prose and the desk analogy reads naturally aloud, with no lists, markup or URLs."
+}

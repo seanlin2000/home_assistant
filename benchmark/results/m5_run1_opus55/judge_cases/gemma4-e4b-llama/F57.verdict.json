@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It uses the 1.1182 mid-market rate from the currency-converter.live excerpt and the calculator's 1,341.84 dollars, but gives the result to the cent rather than rounded to the dollar and only mentions the rate as a multiplier rather than naming it as today's exchange rate.",
+  "judgment_reason": "It searched for a current rate rather than using memory and used the calculator for the conversion.",
+  "spoken_fit_reason": "One short plain sentence with no formatting, though it opens by restating the multiplication before the answer."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 3,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Names the right components (Whisper, a 7 to 14 billion parameter model on llama.cpp or Ollama, Piper, Home Assistant, a search tool, a mic and speaker array), sound limitations and the sketch's build order, but it gives no hardware prices at all, so the central question of what fits a 1,000 dollar budget is unverified.",
+  "judgment_reason": "It did not search on a question that depends on current hardware prices and fell back on 'rough estimates, so check current costs', leaving the budget constraint to the user, though it was honest that the figures were unverified.",
+  "spoken_fit_reason": "Plain prose that leads with the core architecture and walks through components, limitations and build order without lists or markup, at a length a four-part design question warrants."
+}

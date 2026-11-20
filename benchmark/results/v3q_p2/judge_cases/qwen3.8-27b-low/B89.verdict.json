@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "Every funding and valuation figure traces to the excerpts (Cerebras's $185 IPO and $39.82 billion pricing, Etched's $21 billion round and $40-50 billion offers, SambaNova at $11 billion, Fractile's $720 million at $7 billion, Positron's $875 million at $5 billion, MatX's undisclosed valuation), and it separates shipping hardware from plans, but the summary lists only Etched and SambaNova as having hardware with customers even though it had just described Positron's fifty-plus Atlas racks at Oracle, and it misnames Fractile as 'Fractron'.",
+  "judgment_reason": "Searching was right, it hedges the conflicting Cerebras valuation figures, and it calls Etched's offers and orders and Fractile's Anthropic deal commitments rather than revenue.",
+  "spoken_fit_reason": "It opens with the overall picture, but the spoken search preamble runs straight into a roughly thousand-word answer that ends by offering more help, and the word cap cut it off after Cerebras."
+}

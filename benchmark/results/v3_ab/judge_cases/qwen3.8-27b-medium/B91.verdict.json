@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The five players and most stat lines match the excerpts (Wembanyama 30.3/11.7/4.4 with a 38.5 PER, Doncic 38.6 and the PRA lead, Jokic's 9.1 assists), but it says the Heat are 8-2 when no source gives that, turns 360 minutes into 'about thirty hours', calls OKC's 124-116 win over Cleveland double digits, and praises SGA's 'cleanest shooting' despite 45 percent from the field.",
+  "judgment_reason": "It searched for current-season figures and noted the month-old sample is small, but it filled gaps with unsupported team records and margins.",
+  "spoken_fit_reason": "Plain prose with no formatting, but seven paragraphs ran far past the word cap, so the listener heard only the first player and a half."
+}

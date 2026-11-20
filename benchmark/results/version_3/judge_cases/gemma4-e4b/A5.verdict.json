@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It covers pickup pattern, elevated central placement, and noise cancellation with far-field processing, but omits most of the sketch: beamforming arrays, acoustic echo cancellation against the assistant's own speaker, a local wake-word path, latency and where the speech compute runs, and privacy of always-on audio.",
+  "judgment_reason": "It honored the explicit no-product-names constraint throughout and answered from general knowledge rather than searching, which was correct for a design-considerations question.",
+  "spoken_fit_reason": "A single compact paragraph of plain prose that opens with the three areas that matter, with no lists or markup."
+}

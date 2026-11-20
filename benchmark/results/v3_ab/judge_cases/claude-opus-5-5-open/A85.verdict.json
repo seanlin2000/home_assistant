@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The plan uses cheap quick foods from the sketch (Greek yogurt, canned tuna, cottage cheese, rotisserie or batch chicken, microwave rice, frozen broccoli) with plausible per-item values such as 53 g and 280 kcal for six ounces of chicken, and the calculator totals of 173 g protein and 1,745 kcal add up and stay under the limit.",
+  "judgment_reason": "Met every constraint (about 170 g, under 2,500 kcal, minimal prep, no protein powder), framed the figures as typical label values, and used the calculator for the totals instead of guessing.",
+  "spoken_fit_reason": "Leads with the totals and walks meal by meal in spoken sentences without markdown; long, but a full-day plan needs that."
+}

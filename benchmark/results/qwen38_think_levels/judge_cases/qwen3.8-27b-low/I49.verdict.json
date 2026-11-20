@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It names Chicago and correctly gives a low of about 41, partly cloudy skies, dry weather, and wind up to 23 mph, though 'around forty-one, maybe forty-four' blurs the low with the top of the range.",
+  "judgment_reason": "It used the weather_forecast tool rather than searching and usefully pointed out that the wind would make it feel colder.",
+  "spoken_fit_reason": "It answers the question in the first sentence and is two plain sentences long."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Names natural senescence, nitrogen deficiency and overwatering from the sketch and asks about species, watering and fertiliser timing and leaf texture, omitting only lower-leaf shading and pot-bound roots.",
+  "judgment_reason": "Declined to assert a single cause, flagged that it needs more information, and asked concrete diagnostic questions instead of inventing details about the plant.",
+  "spoken_fit_reason": "Two short prose paragraphs that lead with the three likely causes and end with three spoken questions, no lists or markup."
+}

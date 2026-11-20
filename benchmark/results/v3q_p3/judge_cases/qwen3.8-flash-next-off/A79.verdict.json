@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 1,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The listener heard only that neural networks are matrix multiplication and the GPU-parallelism point; the word cap cut it before ASICs, specialized inference processors, or when a specialized chip beats an NVIDIA GPU, and even the full text stops mid prefill/decode discussion.",
+  "judgment_reason": "It ran five web searches plus calculator checks for a conceptual question it should have answered from knowledge, hitting the tool-call limit and spending its length on 2026 product news rather than the asked distinctions.",
+  "spoken_fit_reason": "Spoken filler like 'Let me check one more angle', markdown bold headings, and a wall of text cut off by the word cap."
+}

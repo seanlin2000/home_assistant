@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The final message says the stake is one third of a percent, worth about sixteen point seven million dollars, an 833x multiple, when the sketch requires about 0.0333 percent, about 166,667 dollars and 8.33x; only the halving of the stake is right.",
+  "judgment_reason": "It ignored its own calculator result of 0.03 percent, repeated the same call until the tool limit, and never stated the assumption that liquidation preferences are ignored.",
+  "spoken_fit_reason": "The listener heard two contradictory answers run together (one percent and five million, then one third of a percent and sixteen point seven million) followed by a repeated fragment."
+}

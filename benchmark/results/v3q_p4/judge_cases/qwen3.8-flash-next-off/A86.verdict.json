@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 3,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It gives a sound architecture (Bridge as hub, invited members with permission levels, one voice ecosystem, physical Hue switches) and correctly says the lights, local app, and Bridge automations survive an outage, but it cuts off at 'Voice commands are the weak link, and', so it never says which voice assistants stop working.",
+  "judgment_reason": "It made four searches and fetches on a stable architecture question that general knowledge covers.",
+  "spoken_fit_reason": "It uses bold markdown headings, speaks the filler search announcements, and is a long wall of text that the cap cut short."
+}

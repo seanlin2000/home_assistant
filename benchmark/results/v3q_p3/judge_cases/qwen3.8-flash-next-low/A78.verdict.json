@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 5,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It gives three distinct mechanisms from the sketch (concentrated stock ownership and a few mega-cap tech firms, prices outrunning wages, and buybacks plus a low-hire market lifting earnings per share), with figures like the top 1 percent holding 32 percent of wealth and $1.1 trillion in buybacks traceable to the excerpts.",
+  "judgment_reason": "It made four searches on a conceptual economics question that needed none, though it used the results honestly and noted the counter-view that the divergence is not a collapse signal.",
+  "spoken_fit_reason": "Five dense, number-heavy paragraphs were cut by the word cap, so the listener heard only the framing and half of the first example."
+}

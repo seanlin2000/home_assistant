@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Names natural senescence, mobile nitrogen moving to new growth, and overwatering or root problems, but its follow-up questions cover only watering and leaf appearance, skipping species, light, shading and fertilizer history from the sketch.",
+  "judgment_reason": "Explicitly declines to settle on one cause and asks the user for the missing watering and leaf-pattern details instead of inventing them.",
+  "spoken_fit_reason": "Three sentences of plain prose leading with the likely causes, then one clear question."
+}

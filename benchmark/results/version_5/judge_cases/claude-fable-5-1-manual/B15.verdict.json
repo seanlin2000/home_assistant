@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It concludes no 16GB Nvidia card exists under 500 dollars when its own retrieved source opens with a used RTX 4060 Ti 16GB at 377 to 470 dollars in late August and TechSpot's tracked price of 377, and it instead quotes 560, the top of the Jawa asking range, as the going rate.",
+  "judgment_reason": "Searching and offering the 450 dollar RX 9060 XT alternative were sound, but the central call, whether the budget could be met, was answered wrongly against the evidence it had retrieved.",
+  "spoken_fit_reason": "Four sentences of plain prose that lead with the verdict, model names spelled out for the speech engine, no lists or URLs."
+}

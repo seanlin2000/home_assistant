@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 3,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Names wake word, Whisper, llama.cpp, Piper, a tool layer with web search and Home Assistant, states the capability, speed and privacy limits, and gives a sensible build order starting with Home Assistant voice, but gives no prices to show the Mac mini or mini PC fits 1,000 dollars and omits microphones and speakers.",
+  "judgment_reason": "It answered without searching on a question whose budget fit depends on current hardware prices, so the 1,000 dollar constraint is asserted rather than checked, though it avoided inventing any price.",
+  "spoken_fit_reason": "Leads with the core hardware recommendation and covers architecture, limits and build order in plain prose without lists, a length the four-part question warrants."
+}

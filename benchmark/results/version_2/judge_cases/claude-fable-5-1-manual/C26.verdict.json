@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Gives about thirty eight and a half percent and 2,964 dollars, both matching the sketch, and correctly adds that the new rent is just over forty percent of the same 7,400 take-home.",
+  "judgment_reason": "Both figures came from percent calls and the rounding is signalled with about rather than stated as exact.",
+  "spoken_fit_reason": "Two short sentences of plain prose with the amounts spelled out."
+}

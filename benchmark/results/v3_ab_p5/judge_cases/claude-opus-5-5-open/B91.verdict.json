@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "All five picks carry this season's figures from the excerpts (Doncic's 38.5 points, Wembanyama's 29.1 and 12.0 with the 52-24-8 night, SGA's 29.9 and 8-2 Thunder, Curry's 45.7 percent from three with the new injury, Maxey's 28) with a team-impact reason for each.",
+  "judgment_reason": "Searched for current-season data, framed the list as three weeks into the season, and admitted it found no advanced metrics instead of inventing any.",
+  "spoken_fit_reason": "Spoken ordinals with one compact sentence per player and numbers written out, at a length the five-player request requires."
+}

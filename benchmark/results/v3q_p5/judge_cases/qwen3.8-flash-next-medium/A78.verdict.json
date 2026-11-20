@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 4,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It gives three distinct concrete mechanisms traceable to the excerpts (top 1 percent holding about 88 times the bottom half's stock, about 58 percent of S&P members in a bear market while a few mega caps carry the index, and rising essential costs with flat home prices), though the third bundles several loosely related figures and uses aggregate spending rather than prices against wages.",
+  "judgment_reason": "It ran two web searches and pulled in this month's market and sentiment data for a conceptual economics question that needed no search, which made the answer longer and more time-bound than necessary.",
+  "spoken_fit_reason": "Five dense paragraphs packed with dollar figures and percentages ran past the word cap, so the listener heard only the intro and part of the first example."
+}

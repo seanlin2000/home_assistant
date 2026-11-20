@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It gives about $4.32 a month, matching the sketch, from an energy_cost call using the user's own 120 watts, 4 hours a day and 30 cents per kilowatt hour.",
+  "judgment_reason": "It used the calculator rather than doing the math itself, invented no electricity rate since one was given, and stated the 30-day month it assumed.",
+  "spoken_fit_reason": "One sentence that names the assumption and the figure in spoken words, with no lists or markup."
+}

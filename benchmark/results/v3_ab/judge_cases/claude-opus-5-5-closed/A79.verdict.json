@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Covers parallel cores, high-bandwidth memory and CUDA, defines an ASIC with the TPU example, names on-chip-memory designs (Groq, Cerebras) and hard-wired transformer chips, and lists when a specialized chip wins (stable architecture, memory-bound token generation, latency or energy per token) and when it loses, matching the sketch.",
+  "judgment_reason": "Answered a stable architecture question without searching and framed the win conditions as conditional rather than claiming any chip simply beats NVIDIA.",
+  "spoken_fit_reason": "Plain prose leading with why GPUs excel, no lists or markup, at a length the three-part question calls for."
+}

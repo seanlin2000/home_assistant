@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It correctly explains that air scatters blue more and that the long sunset path strips the blue out, with dust and smoke deepening the reds, but it omits why the sky is not violet, which the sketch includes.",
+  "judgment_reason": "No search was needed for stable physics, and it kept the language plain with a filter comparison as the user asked.",
+  "spoken_fit_reason": "Leads with the answer in plain prose, but at five paragraphs it ran past the word cap and lost the analogy and closing detail."
+}

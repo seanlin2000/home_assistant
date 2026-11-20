@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The three meals as spoken total about 130 g of protein (35 + 45 + 50), not near 170, the breakfast of two eggs, a cup of Greek yogurt and a cup of cottage cheese is understated at 35 g and 300 calories, and the calculator sums of 198 g and 1,835 calories do not match the plan it describes.",
+  "judgment_reason": "It glosses over the protein shortfall by claiming the plan lands near 170 g and leaving vague snacks to 'close any gap' rather than showing the target is met.",
+  "spoken_fit_reason": "Listenable plain sentences, but long and structured as a Breakfast:, Lunch:, Dinner: list with many figures to follow by ear."
+}

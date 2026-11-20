@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The PiBank, Laurel Road and Capital One rates and the 50,000-dollar interest figures follow from the excerpts, but it computes a full year at Axos's and SoFi's six-month promotional rates (2,500 and 2,200 dollars), and its claim that \"none of these carry a minimum opening balance\" appears in no source.",
+  "judgment_reason": "It invented the minimum-balance answer and the under-one-percent rates at Chase, Bank of America and Wells Fargo instead of saying the sources did not give them, and it ignored that two of the rates last only six months.",
+  "spoken_fit_reason": "The bank-by-bank \"PiBank: ... SoFi: ...\" run reads like a list, and the reply ran long enough to be cut by the word cap, dropping its closing caveat."
+}

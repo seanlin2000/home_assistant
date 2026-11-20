@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Both figures match the sketch exactly, twenty-two point two degrees Celsius and three point one one miles, taken from the two convert calls.",
+  "judgment_reason": "It used the conversion tools for both parts in one round rather than guessing, and made no needless search.",
+  "spoken_fit_reason": "Two short sentences with every number written out for speech and no lists or markup."
+}

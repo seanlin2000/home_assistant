@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 4,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It correctly lists what the provider sees (query text, API key, IP, timestamp, parameters), what stays local, and good mitigations (sanitized queries, dedicated key, VPN, zero-retention settings, SearXNG), but it omits that websites the assistant fetches also see the IP, and it omits searching only when needed or caching results.",
+  "judgment_reason": "A conceptual privacy question needed no search, yet it ran two search_and_read calls on provider retention policies.",
+  "spoken_fit_reason": "It is a very long multi-paragraph essay with markdown asterisks around 'writes' and a spoken 'Let me check' preamble, and the word cap cut it after the third paragraph."
+}

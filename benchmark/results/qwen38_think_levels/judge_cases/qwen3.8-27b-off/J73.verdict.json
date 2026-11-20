@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": false,
+  "answer_quality": 1,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It reports a December 2024 game instead of the April 2, 2026 meeting, and it claims Stephen Curry led Golden State with 11 points although no retrieved result showed the Warriors' top scorer.",
+  "judgment_reason": "It took a cut-short player_matchup list as the full game history, then hit the tool-call limit with web searches, and it stated an unconfirmed Warriors top scorer instead of saying it could not find one.",
+  "spoken_fit_reason": "Three plain sentences that lead with the winner and score."
+}

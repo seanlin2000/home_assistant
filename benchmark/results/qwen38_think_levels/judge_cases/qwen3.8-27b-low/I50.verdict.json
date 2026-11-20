@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It is right that there will be light rain and that an umbrella is worth taking, but it says 'around a quarter of an inch of precipitation' where the tool result says 0.04 in.",
+  "judgment_reason": "It called weather_forecast with the right place and part of day and gave a clear umbrella recommendation.",
+  "spoken_fit_reason": "It is three short plain sentences that answer the umbrella question right away."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The searches returned dated recent releases (Kimi K3.1 Pro weights on November 2, Muse Spark Open on October 15, LongCat-2.5 on November 4, Mistral Large 4 open weights, no gpt-oss successor as of November 2026), yet the answer names none of them and gives only generic background on how the labs tend to behave.",
+  "judgment_reason": "Searching was right and it avoided inventing releases, but it falsely told the user it 'could not check the news' when the results sat in front of it, and it asked for ranking preferences instead of using the sources.",
+  "spoken_fit_reason": "Plain prose without formatting, but it opens with a refusal rather than an answer and runs long on generic content."
+}

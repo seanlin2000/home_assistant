@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 3,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The audio half is thorough and ordered (2.4 GHz congestion, moving to 5 GHz, USB 3.0 noise, distance, wired fallback, one change at a time) but never names the likeliest cause, the JBL also pairing with the laptop, and the eye-strain half covers only angular size and focus or keystone before breaking off at 'The third is', missing brightness against room light, the DLP rainbow effect, input lag and breaks.",
+  "judgment_reason": "It ran four searches on a general troubleshooting question that needed none, though it sensibly separated the two problems and isolated variables one at a time.",
+  "spoken_fit_reason": "Four very long paragraphs were cut by the word cap mid-word ('USB 3.'), so the listener heard only part of the audio diagnosis and nothing about eye strain."
+}

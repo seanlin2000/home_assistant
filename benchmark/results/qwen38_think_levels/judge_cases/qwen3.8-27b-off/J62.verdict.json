@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It says the 49ers beat the Commanders 23 to 17 at home and reads McCaffrey's and Daniels's figures exactly as game_scores gave them.",
+  "judgment_reason": "It worked out last night's date and called game_scores rather than searching.",
+  "spoken_fit_reason": "It leads with \"The 49ers won\" in three short plain sentences."
+}

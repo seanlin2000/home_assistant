@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Correctly names the economy, arms race, Afghanistan and nationalism as causes and the August 1991 coup and Belovezha agreement as triggers with right dates, but counts Gorbachev's reforms as one of the three events although the sketch treats them as a cause, and folds Ukraine's referendum into 'republics declaring independence'.",
+  "judgment_reason": "Answered stable history from knowledge without searching and explicitly separated deep causes from immediate triggers as asked.",
+  "spoken_fit_reason": "Plain prose that leads with a one-sentence answer; its length is justified by a three-part question."
+}

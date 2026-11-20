@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Covers what the sketch requires: query text that can leak personal context, IP address, API key tying queries to the billing account, timing patterns, fetched sites seeing the IP, what stays local, and mitigations including generic queries, retention policy, VPN, searching only when needed, and self-hosted SearXNG with its caveat.",
+  "judgment_reason": "Answered a stable architecture question without searching and added the honest caveat that SearXNG's upstream engines still see the server's address.",
+  "spoken_fit_reason": "Leads with a one-sentence answer and moves through local, transmitted and mitigations in plain prose without lists or formatting, a length the three-part question asks for."
+}

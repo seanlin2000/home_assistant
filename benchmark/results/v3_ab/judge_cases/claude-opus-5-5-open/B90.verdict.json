@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Lists exactly the ten running shows from the broadway_shows result in its recent-views order, with theaters, closing dates (Fantasticks February 7, School Girls November 15), Wicked's audience score of 94 and the $59 to $89 price range all matching the tool output, plus stable one-line premises.",
+  "judgment_reason": "Used the Broadway tool instead of a web search, explained the ranking basis, and said plainly that it had no ticket-sales or awards data rather than inventing any.",
+  "spoken_fit_reason": "States the ranking basis first, then gives each show one short spoken clause with numbers spelled out and no list formatting, which keeps a ten-item answer listenable."
+}

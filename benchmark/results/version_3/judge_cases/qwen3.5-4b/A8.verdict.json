@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It picks the router design for the right reasons of latency, cost, and predictability on simple commands, but it never names the router's costs of misrouting and extra moving parts, never says when a single large model is fine, and overclaims that deterministic tools 'execute instantly without errors'.",
+  "judgment_reason": "Right call not to search, but for an explicit comparison question it presented the router as 'almost universally superior' without conceding a single case for the simpler design.",
+  "spoken_fit_reason": "Two plain-prose paragraphs opening with the recommendation, no lists, markdown, or citation markers."
+}

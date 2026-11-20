@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": false,
+  "answer_quality": 3,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The architecture (Home Assistant, Whisper, Piper, an 8B model on llama.cpp, SearXNG as a tool), the limitations and the build order match the sketch, but it never shows the hardware fits $1,000 and gives the Voice Preview's 'about one hundred dollars' price with no search behind it.",
+  "judgment_reason": "It skipped the search a current-price budget question needed, so it could neither verify prices nor show the build stays under budget, and it stated a device price as fact.",
+  "spoken_fit_reason": "It leads with the one-box recommendation and states the build order in plain spoken sentences, at a length the four-part question warrants."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It declines to advise and only offers to look up rates, never saying that the Fed did not cut rates to zero and giving none of the refinance logic (current mortgage rates, closing costs, break-even).",
+  "judgment_reason": "The central point was to check and correct the false premise, and it neither searched nor challenged the claim that rates were cut to zero.",
+  "spoken_fit_reason": "Two short plain sentences, fine to read aloud."
+}

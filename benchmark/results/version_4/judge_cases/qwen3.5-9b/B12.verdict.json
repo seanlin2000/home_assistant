@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["violated_explicit_constraint"],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The used 3090 at $699-$999 and the 24GB tier are traceable to the Compute Market excerpt, but it quotes the RTX 5060 Ti at '$430 to $480' when the PromptQuorum excerpt retrieved in the same call says that card now trades at $570-$600, roughly 40% above its $429 MSRP, and it never reconciles the two.",
+  "judgment_reason": "Searching was the right call, but the user asked for a whole computer on about $1,000 total and the answer silently reallocates the entire budget to a single GPU, then picks the cheaper of two conflicting price ranges without flagging the conflict.",
+  "spoken_fit_reason": "Three sentences that open with the recommendation, plain prose, no URLs or citation markers."
+}

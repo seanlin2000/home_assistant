@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 5,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It distinguishes API, tool (description plus schema plus runtime) and MCP server (tools, resources, prompts over JSON-RPC), then lays out a local model, an agent loop with a call budget, search and capped fetch tools, caching and treating fetched text as untrusted.",
+  "judgment_reason": "A conceptual architecture question needed no search, yet it searched for the MCP spec version and worked the July 2026 release details into the answer.",
+  "spoken_fit_reason": "Ten paragraphs of architecture prose ran far past the word cap, which cut it off after the tool definition."
+}

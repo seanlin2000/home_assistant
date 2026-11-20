@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 4,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "All five restaurants (Meju, Hupo, Casa Enrique, R40, Vert Frais) are within 0.4 miles in the Michelin result, with correct distinction, cuisine and price level, but describing R40 as 'a tasting-menu experience built around live-fire cooking' isn't supported by the result's description.",
+  "judgment_reason": "The broader restaurant_recommendations call was sensible, but it also ran a needless web search for a question the restaurant tool covers, and the answer used nothing from it.",
+  "spoken_fit_reason": "Five brief spoken entries that lead with the answer, write the price level as words, and stay within the word limit, which suits a five-item request."
+}

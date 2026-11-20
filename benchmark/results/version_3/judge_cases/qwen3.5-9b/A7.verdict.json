@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The setup is right (300 W for one hour, 50 W for twenty-three) but the arithmetic is off by more than six times: it reports 9.54 kWh per day and about $42.94 per month instead of roughly 1.45 kWh per day and about $6.50.",
+  "judgment_reason": "It explicitly flagged the 15 cents per kWh rate as its own assumption and invited the listener to rescale, but never noted that the machine is unlikely to sit at a full 300 W for the entire hour.",
+  "spoken_fit_reason": "Plain prose with the numbers written out in words, which reads cleanly aloud, and no lists or markdown."
+}

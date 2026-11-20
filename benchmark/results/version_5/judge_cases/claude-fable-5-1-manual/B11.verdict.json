@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The 3.63 percent effective rate and 3.50 to 3.75 target range come straight from the H.15 release it cites, but the year-over-year move is loose, since the excerpt puts September 2025 at 4.22 percent, a fall of about six tenths rather than the three quarters of a point claimed, and the excerpt dates the third cut to a month it names as December.",
+  "judgment_reason": "It searched a genuinely current rate, preferred the Federal Reserve daily release over the aggregator and prediction-market pages, and flagged that officials are discussing a hike so the next move may be up.",
+  "spoken_fit_reason": "Four sentences of plain prose with numbers rendered for speech and no URLs, lists, or citation markers."
+}

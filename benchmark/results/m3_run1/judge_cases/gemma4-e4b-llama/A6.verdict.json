@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The final answer gives a generic 'it depends' about 'very large or high-resolution models' and suggests 16 GB will likely suffice, without weighing $400 against the jump to 30B-class models, higher quantization or longer context, and without the reference's lean toward 24 GB for someone whose primary goal is local LLMs.",
+  "judgment_reason": "Turn one asked for more information instead of giving the recommendation the user's stated goal already supported, and turn two still rests on 'it depends on the models you plan to run' rather than committing to a conditional recommendation.",
+  "spoken_fit_reason": "Three plain sentences with no formatting, short enough to read aloud."
+}

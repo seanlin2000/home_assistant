@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The APYs for Chase, Bank of America, Wells Fargo, Citi and U.S. Bank trace to the Arca and Banksparency results and the interest figures follow correctly (about $5, $20, $25, and $1,000 at 2.00 percent), but it states \"no minimum balance requirement\" for four banks though no source says so, and the message breaks off before its summary.",
+  "judgment_reason": "It usefully pointed out that big branch banks do not really offer high-yield savings and flagged the U.S. Bank tier cap, but it invented the minimum-balance answers the question asked for instead of saying it could not find them.",
+  "spoken_fit_reason": "Long per-bank paragraphs packed with percentages and fees that the word cap cut after Chase, so the listener heard one bank of five."
+}

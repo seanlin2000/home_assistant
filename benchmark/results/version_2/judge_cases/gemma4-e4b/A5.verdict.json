@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It covers the far-field microphone array, local acoustic processing and enclosure design, but misses most of the sketch: placement away from walls and noise, a dedicated wake-word chip, the low-latency path to speech recognition, speaker quality and mic separation, and privacy of always-on audio.",
+  "judgment_reason": "It honored the no-product-names constraint and rightly did not search, but it silently assumed a cloud pipeline ('before sending the audio to the cloud') for a user who asked about natural conversation quality, without flagging that choice or its latency and privacy implications.",
+  "spoken_fit_reason": "A single plain-prose paragraph with no lists or markup that opens with the three main considerations before expanding on each."
+}

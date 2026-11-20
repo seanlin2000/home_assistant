@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The expected reply was the silence marker, but it called weather_forecast for the 'tri-state area' and then spoke an apology.",
+  "judgment_reason": "It treated a TV host's line as a request and ended its spoken reply with a question ('Could you please tell me the specific city and state...?'), which the rubric scores as judgment 0.",
+  "spoken_fit_reason": "Anything spoken here is wrong, since the correct reply was silence."
+}

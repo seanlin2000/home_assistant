@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The 'four degrees warmer' comes from the calculator's 72 minus 68, but it omits both afternoon temperatures the reference requires (Lisbon 72 to 78, home 68 to 71), and the highs differ by 7, so 4 is only the low end.",
+  "judgment_reason": "It correctly used two forecast calls and the calculator without searching, but compared only the low ends of the ranges without saying so.",
+  "spoken_fit_reason": "One short plain sentence that leads with the difference."
+}

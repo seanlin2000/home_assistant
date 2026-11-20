@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The final value of about $166,667, profit of about $146,667 and multiple of about 8.3 match the sketch, but it says the stake is 'a little over a third of one percent' when 20,000 over 60 million is about a thirtieth of one percent, a spoken figure off by ten times.",
+  "judgment_reason": "It used the calculator rather than searching and stated that dilution halves the stake, but it never noted that liquidation preferences and other share classes are being ignored.",
+  "spoken_fit_reason": "Short plain prose, but it opens with 'Here's how it works out' and the stake arithmetic, so the answer the user asked for comes only in the second paragraph."
+}

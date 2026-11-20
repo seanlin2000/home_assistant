@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It lists the economic, military and Afghanistan causes but calls the fall of the Berlin Wall the immediate trigger, says 'Malte summit', omits the Ukrainian referendum and Belovezha Accords, and squeezes the 1991 coup into one closing line, so the cause/trigger split the reference requires is muddled.",
+  "judgment_reason": "Answering from knowledge without searching was right, but the answer never clearly sorts the coup and the accords as triggers, which is what the question asked it to do.",
+  "spoken_fit_reason": "Plain prose with no formatting, at a length an explanation of three events reasonably needs, though the 'Second' with no 'first' is awkward to follow by ear."
+}

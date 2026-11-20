@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The Chase 0.01%, Citi 0.05% with $4.50 fee waived at $500, U.S. Bank 2% tier limits, and Wells Fargo 3.50% promo with the $25,000 minimum and about $1,750 interest all trace to the excerpts, but the claim that Bank of America's rate requires linked checking, direct deposit and card purchases appears in no source, and the online-bank range of up to four and a half percent overstates the named banks.",
+  "judgment_reason": "Sensibly reframed big branch banks as not high-yield and pointed to online banks, but ignored the tool's instruction to caveat the failed Bank of America search and never said these rates are variable.",
+  "spoken_fit_reason": "Plain prose without lists, but five long paragraphs ran past the word cap before the Wells Fargo figure, the only meaningful interest amount."
+}

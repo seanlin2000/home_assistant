@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Covers the economy, arms race and Afghanistan, nationalism, the 1989 revolutions, the August 1991 coup, Ukraine's vote, the December 1991 accords and Gorbachev's Christmas Day resignation with correct dates, but lists Gorbachev's reforms as one of the three events instead of as a cause, which slightly blurs the cause and trigger split.",
+  "judgment_reason": "Correctly answered stable history from knowledge without searching and made the requested cause versus trigger distinction explicit.",
+  "spoken_fit_reason": "Plain prose with years spelled out for speech, opening with a one-line answer; it is long, but the three-part question asks for that length."
+}

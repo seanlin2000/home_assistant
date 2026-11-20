@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It correctly says Tokyo will be cloudy and dry tomorrow, but gives the daytime range as 69 to 75 when the tool's afternoon low was 68, a small imprecision.",
+  "judgment_reason": "It used the weather tool for Tokyo rather than searching the web.",
+  "spoken_fit_reason": "A single plain sentence, but the actual answer to whether it will rain comes last after conditions and temperatures."
+}

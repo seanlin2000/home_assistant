@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It correctly says the bridge, the Hue app on the LAN and physical switches survive an outage while Alexa and Google voice stop, but it leaves out Apple Home, wrongly calls Home Assistant 'the only way' to keep voice working offline, and says the cloud assistants reach the bridge over the local network.",
+  "judgment_reason": "It answered from stable product knowledge without searching and fairly weighed the setup effort of a local voice pipeline.",
+  "spoken_fit_reason": "It is plain prose that reaches the outage answer, but it ran past the word cap, so the listener never heard the offline-voice option or the summary."
+}

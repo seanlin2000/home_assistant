@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The yes-via-custom-firmware answer is supported by the open-voice-pe, chris-potter, and microWakeWord excerpts, but it does not say this needs taking control in ESPHome rather than stock firmware, and the source explanation names no specific source.",
+  "judgment_reason": "It searched as instructed and qualified the answer as relying on community firmware, but its reason for trust is generic rather than weighing the official docs against community pages.",
+  "spoken_fit_reason": "Three plain sentences that lead with yes."
+}

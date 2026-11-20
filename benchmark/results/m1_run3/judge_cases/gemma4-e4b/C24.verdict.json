@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It reports about $40,351, which comes from compounding 500 at 4 percent per month for 36 periods; the reference is about $19,091 to $19,154.",
+  "judgment_reason": "It fed a 4 percent annual rate into the tool as a per-period rate and spoke a total more than double the $18,000 deposited without noticing it was implausible.",
+  "spoken_fit_reason": "Two plain sentences that lead with the figure."
+}

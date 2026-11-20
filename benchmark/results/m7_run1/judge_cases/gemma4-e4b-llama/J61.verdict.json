@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It says the game is still going, with the 76ers ahead 104 to 98 and 1:52 left in the fourth quarter, exactly as game_scores reported.",
+  "judgment_reason": "It called game_scores with no web search and correctly treated the game as live, not final.",
+  "spoken_fit_reason": "It leads with the live score in plain prose; the extra sentence about the June game is unneeded but short."
+}

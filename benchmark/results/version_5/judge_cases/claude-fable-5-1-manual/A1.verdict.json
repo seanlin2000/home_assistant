@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It separates storage from speed exactly as the sketch requires, giving the fifteen to eighteen gigabyte figure for both models and explaining that sparse routing makes expert offload to system memory tolerable rather than reducing memory need.",
+  "judgment_reason": "It correctly answered from stable technical knowledge without searching and explicitly rejected the tempting false claim that MoE needs less VRAM by nature.",
+  "spoken_fit_reason": "Plain prose with no lists or markdown, opening with the one-line answer that memory is set by total parameters and speed by active ones."
+}

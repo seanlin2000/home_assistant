@@ -1,0 +1,12 @@
+{
+  "gates_hit": [
+    "fabricated_current_fact"
+  ],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The Lucerne-Interlaken-Zermatt route, the Luzern-Interlaken Express, Gornergrat, the Half Fare Card at CHF 120 and the 25-versus-50-percent Jungfraujoch discounts match the sources, but the 'roughly 450 francs' six-day pass price and the '300 francs' point-to-point total (from a calculator sum of 45+50+98+118) appear in no excerpt, it calls the Schilthorn ascent a cogwheel, and the reply breaks off mid-sentence.",
+  "judgment_reason": "Searched appropriately, kept the plan low-effort, and avoided the closed Glacier Express, but it rests the ticket recommendation on invented fares and never says what season or travel dates it assumed.",
+  "spoken_fit_reason": "Markdown bold day headings ('**Day 1 – Arrive in Lucerne.**') and a long multi-section layout that would sound wrong read aloud."
+}

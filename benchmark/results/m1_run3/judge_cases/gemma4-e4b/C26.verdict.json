@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "38.51 percent and $2,964 match the reference.",
+  "judgment_reason": "It used the percent and calculate tools for the two steps and did not search.",
+  "spoken_fit_reason": "One plain sentence that answers both parts in order."
+}

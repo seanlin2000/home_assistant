@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It asks for season, budget and domestic versus international and correctly notes 'warm' is too vague on its own, but it misses trip length, departure city, passport and visa, travel companions and interests, and its only assumption-to-avoid is luxury accommodation rather than the more likely traps of assuming warm means a beach or assuming a home currency.",
+  "judgment_reason": "It named no destination and asked for the missing inputs instead of inventing preferences, which is exactly what this question was testing.",
+  "spoken_fit_reason": "One ~110-word paragraph of plain prose with no lists or markup that opens directly on what it needs to know."
+}

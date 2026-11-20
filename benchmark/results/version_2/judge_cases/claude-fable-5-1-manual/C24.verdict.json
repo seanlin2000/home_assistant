@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Matches the sketch on every point: about 19,090 for end-of-month deposits, just over 19,150 for start-of-month, and the breakout that 18,000 is contributions so interest is roughly eleven hundred.",
+  "judgment_reason": "Named the deposit-timing distinction rather than silently picking one, and flagged that the answer assumes the four percent rate holds for all three years.",
+  "spoken_fit_reason": "Three sentences of plain prose with every figure spelled out for speech."
+}

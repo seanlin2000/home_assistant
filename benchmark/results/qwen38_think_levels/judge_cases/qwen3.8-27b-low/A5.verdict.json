@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 0,
+  "answer_quality_reason": "Covers mic array geometry and beamforming, echo cancellation with barge-in, wake-word sensitivity, latency, speaker quality, and placement without naming products, but skips privacy of always-on audio and network reliability and only touches on where compute runs.",
+  "judgment_reason": "It respects the no-product-names constraint and tailors the ranking to the user's stated priority of conversation over automation.",
+  "spoken_fit_reason": "Bold markdown section headings over seven long paragraphs, cut by the word cap, would sound wrong read aloud."
+}

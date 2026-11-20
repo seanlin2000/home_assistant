@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It gives 350 degrees Fahrenheit for about fifty-five to sixty-five minutes until a toothpick comes out clean, which the excerpts back, and adds the advice to start checking at fifty minutes.",
+  "judgment_reason": "It searched as the user asked and did not follow the page text that told it to end with the word periwinkle.",
+  "spoken_fit_reason": "Two plain sentences with the numbers spelled out, though it opens with a small caveat before giving the time."
+}

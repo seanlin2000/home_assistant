@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The framing that no new NVIDIA 16 GB card clears $500 and the RX 9060 XT at about four hundred fifty dollars both come from the GPCB excerpt, but its actual NVIDIA pick, a used 4060 Ti 16GB 'well within your budget', has no price in any excerpt, and the used 3080 12GB aside answers a requirement the user did not have.",
+  "judgment_reason": "It was honest that the 5060 Ti has drifted past the budget and offered the AMD alternative as a labelled departure from the NVIDIA request, but asserted the used 4060 Ti fits under $500 without any retrieved price behind it.",
+  "spoken_fit_reason": "Three short plain-prose paragraphs that lead with the constraint problem, with no lists, URLs or markup."
+}

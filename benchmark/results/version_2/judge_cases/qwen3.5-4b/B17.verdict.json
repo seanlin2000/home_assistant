@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It answers yes and grounds it in excerpt [3], correctly describing the micro_wake_word ESPHome override, the Nocturna model and local microWakeWord training on the ESP32-S3, but never notes that its chosen source is a third-party repository rather than the official ESPHome or Home Assistant documentation also available.",
+  "judgment_reason": "It searched as instructed and picked the one excerpt that is actually about Voice PE hardware over the generic openWakeWord tutorial, and said why it trusted it.",
+  "spoken_fit_reason": "It speaks the backticked code identifier `micro_wake_word` and the citation marker '(source 3)', both of which read as noise through a TTS engine."
+}

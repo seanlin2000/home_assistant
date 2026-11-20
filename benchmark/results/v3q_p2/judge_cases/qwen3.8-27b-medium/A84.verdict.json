@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It explains present-value discounting, that the Fed moves the yields under the discount rate, that distant cash flows shrink more (four versus five percent example), that growth stocks are long-duration assets, plus multiple compression, cost of capital, rotation into bonds, and 2022 as the example, which covers the sketch.",
+  "judgment_reason": "No search was needed, and it adds an honest caveat that rate rises driven by strong growth can coincide with rising tech stocks.",
+  "spoken_fit_reason": "Plain prose without formatting, but four dense paragraphs that the word cap cut before the reinforcing channels."
+}

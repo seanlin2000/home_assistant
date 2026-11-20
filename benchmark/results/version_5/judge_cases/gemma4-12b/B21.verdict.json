@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It corrects the false premise with the retrieved 3.50 to 3.75 percent range and gives the right refinance logic of comparing the user's rate to market offers net of closing costs, but the aside that a variable-rate borrower 'might see some relief from the current levels' is loose given rates have been flat all year, and it never mentions break-even time.",
+  "judgment_reason": "It searched before answering, refused the premise outright rather than reasoning from a zero-rate world, and declined to give a refinance verdict without knowing the user's own mortgage rate.",
+  "spoken_fit_reason": "Three plain sentences that lead with the correction, numbers spelled out for speech, no URLs or markdown."
+}

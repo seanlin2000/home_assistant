@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The main ratio of about 1.6 from 14 million over 8,804,190 is right and the measure is named, but the 8.8 million NYC figure is credited to 'the Wikipedia figures' when the retrieved NYC text has no population total, and the extra 'about four times' figure sets Greater Tokyo against NYC city proper.",
+  "judgment_reason": "Used Wikipedia and the calculator as asked, but presented a metro-versus-city ratio as one of two equally valid answers, the kind of mixed comparison the reference flags.",
+  "spoken_fit_reason": "Leads with the answer but runs to two paragraphs with an em-dash aside and a second comparison the listener did not ask for."
+}

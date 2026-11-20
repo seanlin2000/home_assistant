@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Corrects the premise with the sourced October 28 hold at 3.75 to 4 percent after a September hike, then gives the refinance logic (current rate versus today's offers and closing costs) and asks for the figures needed.",
+  "judgment_reason": "Searched to verify the premise instead of accepting it, pushed back plainly, and asked for the genuinely missing balance, rate and term rather than guessing.",
+  "spoken_fit_reason": "Leads with the correction in a few plain sentences and ends with a clear request for details."
+}

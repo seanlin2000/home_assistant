@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It gives about $19,091 (19,090.78 from the annuity formula), notes that $18,000 is deposits and that interest is a bit over $1,000, which covers the whole reference sketch.",
+  "judgment_reason": "It used the calculator and stated its assumptions: end-of-month deposits and a fixed 4 percent rate.",
+  "spoken_fit_reason": "Three sentences that lead with the figure; the doubled 'about ... to be exact' phrasing is a little clumsy but works fine aloud."
+}

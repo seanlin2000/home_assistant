@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Keeps the bridge as the local Zigbee hub, shares access via app invites, links Alexa, Google or Apple Home, adds dimmer switches and Home Assistant for local voice, and correctly says the bridge, app on Wi-Fi, switches and automations survive an outage while Alexa, Google and remote control fail and Apple Home with a hub usually keeps working, matching the sketch.",
+  "judgment_reason": "Answered a stable architecture question from knowledge without searching and hedged the Apple Home claim appropriately with 'usually'.",
+  "spoken_fit_reason": "Leads with the recommended architecture in plain prose without lists, at a length the two-part question warrants."
+}

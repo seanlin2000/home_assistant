@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 3,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The eye-strain half covers brightness, motion processing, input lag, focus, keystone and seating distance well, but the audio half treats the laptop as the Bluetooth source (Device Manager power settings, LDAC on the laptop) and never names the likely cause of the speaker also being paired with the laptop and competing with the projector, and the message stops mid-sentence at \"looking twenty feet away for\".",
+  "judgment_reason": "It announced a check and searched for a troubleshooting question answerable from general knowledge, and it built the audio steps on an unstated assumption about how the laptop is connected instead of noting the ambiguity.",
+  "spoken_fit_reason": "It is a long wall of text with a spoken search preamble, and the word cap cut it partway through the first problem."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Recommends the router and gives the right reasons about latency, determinism for simple commands and reserving the big model, but names none of the router design's costs such as routing errors and extra moving parts, and never says when the single-model design would be fine.",
+  "judgment_reason": "Correctly answered without searching, but presented the recommendation as one-sided by omitting the tradeoff the comparison invited.",
+  "spoken_fit_reason": "Four sentences of plain prose opening with the recommendation, no lists or markup."
+}

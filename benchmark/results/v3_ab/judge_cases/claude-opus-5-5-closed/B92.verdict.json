@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 0,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The excerpts gave per-bank APYs (Ally, Amex and Capital One 360 at 3.20 percent, Marcus at 3.50 percent, all with $0 minimums), but the answer offers a generic 3.5 to 4 percent range with no per-bank interest, wrongly adds 'slightly more with monthly compounding' to an APY, and only the no-minimum point matches the sources.",
+  "judgment_reason": "Saying it 'couldn't confirm today's rates' after retrieving dated per-bank rates, and answering from memory instead, fails the central point of a current-rate comparison.",
+  "spoken_fit_reason": "Plain spoken prose with numbers written out and no markup, a reasonable length for a five-bank comparison."
+}

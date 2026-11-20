@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Explains value as discounted future cash, the discount rate built on bond yields plus a risk premium, distant growth profits shrinking more when rates rise (long duration), plus bonds as an alternative and higher borrowing costs, covering every required element of the sketch.",
+  "judgment_reason": "Answered stable finance theory without searching and added the useful caveat that markets price expected rate moves in advance.",
+  "spoken_fit_reason": "Opens with the core idea and builds in plain prose with no formatting, at a length the explanation request warrants."
+}

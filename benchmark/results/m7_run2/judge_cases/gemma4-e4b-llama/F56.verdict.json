@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The no-rain answer matches the forecast's 'dry' in every period, but 11:30 pm is the last weekday sailing leaving Bainbridge; the Seattle-to-Bainbridge sources give the last boat as 2:10 am, and the answer also calls tomorrow Tuesday when the forecast says Wednesday.",
+  "judgment_reason": "It called both the forecast and the search, as the question needed, but it took a time from the wrong direction's timetable without checking it against the 2:10 am stated in two sources.",
+  "spoken_fit_reason": "Two plain sentences that lead with the answers, though the second repeats 11:30 pm twice."
+}

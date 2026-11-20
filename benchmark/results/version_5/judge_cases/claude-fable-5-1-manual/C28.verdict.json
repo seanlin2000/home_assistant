@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The 2,398 monthly payment, roughly 863,000 total paid and about 463,000 of interest all match the reference sketch.",
+  "judgment_reason": "It used the loan tool rather than estimating and volunteered that the figure is principal and interest only, before taxes and insurance.",
+  "spoken_fit_reason": "Two sentences of plain prose with the large numbers spelled out in a way a speech engine reads naturally, no lists or markdown."
+}

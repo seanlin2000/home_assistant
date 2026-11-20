@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Names every sketch component (wake word, Whisper, local model through llama.cpp or Ollama, Piper, Home Assistant, a search-and-read tool layer, a mic and speaker satellite) on an $899 16 GB M6 Mac mini from the excerpts, uses the sourced figure of about 10.7 GB usable memory to explain the model-size limit, and gives the sketch's build order of smart-home voice control first, then the model, then search.",
+  "judgment_reason": "Kept the build within the 1,000 dollar budget and explicitly labeled the $1,099 24 GB option as just over budget, while stating plainly what the budget limits (model size, tool-call reliability, latency, search queries leaving the house).",
+  "spoken_fit_reason": "Leads with the hardware pick and stays in plain spoken prose with no lists or markup; long, but the question asks for architecture, components, limits and priorities."
+}

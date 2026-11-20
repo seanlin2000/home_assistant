@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The shows, views, scores, and prices it gives match the broadway_shows results, but the message breaks off at number eight so only eight shows are named, it silently drops The Fantasticks (fifth by views), and it wrongly dates the data 'as of late October 2026'.",
+  "judgment_reason": "It correctly used the Broadway tool instead of web search and explained its ranking, but it made 14 calls fetching descriptions and hit the tool-call limit.",
+  "spoken_fit_reason": "It is plain spoken prose with ordinal entries, but each show carries prices and review counts, so it is far too long and the cap cut it off after the first show."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "States the searched rate of about 1.11 dollars per euro, but gives 1,200 euros as a range of 1,330 to 1,335 dollars instead of a single calculated figure rounded to the dollar.",
+  "judgment_reason": "Searched for the rate rather than using memory, but did the conversion in its head instead of calling the calculator the question was testing.",
+  "spoken_fit_reason": "Leads with the rate and the conversion in three plain sentences with no lists or markup."
+}

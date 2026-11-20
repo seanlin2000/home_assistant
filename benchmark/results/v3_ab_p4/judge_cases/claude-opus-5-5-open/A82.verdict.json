@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The architecture matches the sketch (local server, orchestrator loop, MCP server with search via API or SearXNG, fetch with main-text extraction, model writing the summary, timeouts and untrusted web text), but it defines a tool only as a generic capability without the model-facing name and schema and omits a cap on tool rounds.",
+  "judgment_reason": "Answered stable software-architecture background without searching and included the prompt-injection safeguard the design calls for.",
+  "spoken_fit_reason": "Plain prose that leads with the three definitions and walks through the design without lists or markup; length fits a two-part design question."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It correctly makes the bridge the hub with shared app users and linked voice assistants, and says local control and HomeKit survive an outage while Alexa and Google stop, but it omits physical Hue switches and overstates HomePod Siri handling Hue commands on-device.",
+  "judgment_reason": "Stable smart-home architecture answered without searching, which was the right call.",
+  "spoken_fit_reason": "Leads with the recommended setup and covers outages in two plain-prose paragraphs without lists."
+}

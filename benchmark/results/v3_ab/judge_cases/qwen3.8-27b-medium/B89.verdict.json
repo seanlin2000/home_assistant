@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 2,
+  "spoken_fit": 0,
+  "answer_quality_reason": "All four searches came back empty, so every funding and valuation figure is unsourced memory, and some of it is wrong: it calls MatX an edge-device company and says it cannot confirm Fractile exists, leaving only the general training-to-inference framing as useful.",
+  "judgment_reason": "It searched and said up front that its figures were pre-mid-2025 and approximate, but it still went on to give a long unverified six-company comparison instead of keeping it short.",
+  "spoken_fit_reason": "A wall of about ten paragraphs, with the pre-search preamble glued onto it, cut by the word cap after the first company."
+}

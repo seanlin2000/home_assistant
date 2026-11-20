@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 3,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "Causes and triggers are correctly separated and the coup is described well, but it dates the Belavezha Accords to December 12, 1991 (that was the Russian ratification; the accords were signed December 8), and the reference counts wrong dates as an error.",
+  "judgment_reason": "It called wikipedia_lookup twice on a stable history question that was expected to need no search, though it did draw the cause-versus-trigger distinction the question asked for.",
+  "spoken_fit_reason": "A plain-prose answer of roughly six hundred words ran past the word cap, so the listener heard only the causes and 'First, the fall of the Berlin Wall in November 1989' before it was cut off."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 5,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "'The Berlin Wall fell in 1989' is correct and complete for the question.",
+  "judgment_reason": "It called wikipedia_lookup to answer a long-settled historical fact that needed no search.",
+  "spoken_fit_reason": "One short sentence that gives the answer directly."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Explains concentrated stock ownership versus wages and rent, then gives three distinct mechanisms from the sketch: cost cutting and layoffs raising margins, a few tech giants earning abroad lifting the index, and cheap money inflating asset prices while renters fall behind.",
+  "judgment_reason": "Answered a conceptual economics question from knowledge without searching, keeping the ownership-share claim general rather than citing an unverified figure.",
+  "spoken_fit_reason": "Leads with the core answer and uses spoken 'first, second, third' prose rather than a list, at a length the three-example request warrants."
+}

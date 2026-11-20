@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It acknowledged the cancel ('Sure, no problem') but added 'I'm here if you need anything' instead of the expected 'Okay.' alone.",
+  "judgment_reason": "It correctly dropped the request without asking what the user wanted, but offered further help, which the rubric counts against judgment.",
+  "spoken_fit_reason": "Two sentences where a one-word 'Okay.' was the ideal length."
+}

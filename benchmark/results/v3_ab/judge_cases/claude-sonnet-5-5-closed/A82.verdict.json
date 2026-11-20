@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Defines API, tool and MCP server correctly and lays out a local model, agent loop, search and fetch tools, model-side summarizing, untrusted web text and a tool-call cap, but the 'three tools ... and optionally nothing for summarizing' phrasing is muddled and timeouts and caching are missing.",
+  "judgment_reason": "Answered a stable design question from knowledge without searching and included the key prompt-injection safeguard.",
+  "spoken_fit_reason": "Leads with the three definitions in plain prose and keeps the architecture to a few sentences without lists."
+}

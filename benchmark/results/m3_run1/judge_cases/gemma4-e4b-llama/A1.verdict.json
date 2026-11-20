@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The answer claims the MoE's 'memory footprint during runtime' is lower and that the few active parameters are what allow it 'to fit within the limited memory of a sixteen gigabyte GPU', which is exactly the misleading claim the reference rules out; only the line that total parameters set the model file size is correct.",
+  "judgment_reason": "Not searching was right, but it fell into the misleading simplification the question warned about and never mentioned quantization or CPU offload as the real reasons it can fit.",
+  "spoken_fit_reason": "Three dense paragraphs were cut by the word cap, and the full text ended with an unneeded follow-up question, so it is a wall of text when read aloud."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The 30-25, 13-14 and 17-11 records and the per-game averages match the tool, but it says this means \"a slight edge for LeBron's team overall\" when Curry's team leads, and it calls the April 2025 game \"early last April\".",
+  "judgment_reason": "It rightly used player_matchup instead of searching, but it added an unsupported narrative about title-era series that the cut-short tool result does not show.",
+  "spoken_fit_reason": "Four long paragraphs ran past the word cap and were cut off, a wall of text for a spoken reply."
+}

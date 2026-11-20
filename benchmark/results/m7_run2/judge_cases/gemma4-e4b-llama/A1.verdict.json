@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It correctly says all thirty billion parameters must be stored either way, but it also claims MoE 'significantly reduces the ... memory footprint' and that dense models need 'substantially more memory', and it never explains that fitting 16 GB depends on quantization or offloading experts to CPU RAM.",
+  "judgment_reason": "Not searching was right for a stable technical explanation, but the answer glosses over the memory-versus-compute distinction the question hinged on by suggesting MoE needs less active memory.",
+  "spoken_fit_reason": "A multi-paragraph wall of text with an italicized *inference* and a dangling 'To elaborate on the memory requirement:' that got cut by the word cap."
+}

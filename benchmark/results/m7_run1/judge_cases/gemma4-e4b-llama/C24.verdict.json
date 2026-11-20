@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It states $1,623.23, which came from a growth_schedule call over 3 periods at 4 percent on a single $500, and is far from the roughly $19,091 the reference expects for 36 monthly deposits.",
+  "judgment_reason": "It set the tool up as three periods at 4 percent on one $500 instead of 36 monthly deposits at 4/12 percent, and it didn't notice the result is less than the $18,000 deposited.",
+  "spoken_fit_reason": "A single plain sentence that leads with the figure."
+}

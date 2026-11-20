@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Picks the router and gives sound reasons (deterministic tools avoid hallucinated timers, no large model per trivial request), but the question asked for a comparison and it never states the router's costs - routing errors and more moving parts - nor when the single-LLM design is fine.",
+  "judgment_reason": "Right to answer without searching and to commit to a recommendation, but it presents the router as strictly better with no acknowledged downside.",
+  "spoken_fit_reason": "Three sentences of plain prose that open with the recommendation."
+}

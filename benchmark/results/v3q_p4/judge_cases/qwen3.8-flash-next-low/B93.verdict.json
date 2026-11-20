@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": false,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The tool returned only Vert Frais in Long Island City and Meju nearby, and instead of saying so the answer pads the list from web results. It gives locations no source has (Casa Enrique 'on 48th Avenue near Vernon Boulevard', Yumpling 'on Steinway Way'), puts Meju 'under a quarter mile' away when the tool says 0.4 miles, calls Vert Frais's $$ 'the lowest price band', and credits Eater's dan dan noodle advice to The Infatuation.",
+  "judgment_reason": "It went beyond the restaurant tool into web searches and page fetches until it hit the tool-call limit, though it did label its own price guesses as estimates and offered to rank by walking time.",
+  "spoken_fit_reason": "Each restaurant gets a dense paragraph, and the word cap cut the reply after the first of the five."
+}

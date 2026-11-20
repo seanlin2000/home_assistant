@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "Present value of future cash flows, the far-future discounting asymmetry, long-duration growth stocks as long bonds, higher borrowing costs and safer yields drawing capital away all match the sketch, but it misdates the rate-driven tech drawdown to 'the late 2020s' instead of 2022 and muddles the risk-premium point.",
+  "judgment_reason": "Answering stable finance theory without searching was right, and it adds a fair caveat that strong earners can rise despite higher rates.",
+  "spoken_fit_reason": "Plain prose with a good intuition, but about five paragraphs ran past the word cap so the listener missed the reinforcing effects and caveat."
+}

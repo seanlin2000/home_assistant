@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Names the five closest Long Island City restaurants from the tool result with the right cuisine, price tier and distinction (Meju one star, Hupo Bib Gourmand), but it calls R40 'a tasting-menu affair', which the result does not say, and the four-minute-walk figure is a loose reading of the 0.3 to 0.4 mile distances.",
+  "judgment_reason": "Re-queried the tool when the first call returned only one restaurant, and clarified that the dollar-sign tiers are price bands, not per-person totals.",
+  "spoken_fit_reason": "Plain prose with one or two clauses per restaurant, leading with the standout, at a length that suits five items."
+}

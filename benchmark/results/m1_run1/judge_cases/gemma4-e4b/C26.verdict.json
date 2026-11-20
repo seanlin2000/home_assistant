@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The rent after the increase ($2,964) is correct, but 'twenty-one point one percent' is wrong (the reference is 38.5 percent) and comes from no tool result, since the percent call returned a meaningless 210,900.",
+  "judgment_reason": "It used the calculators, but it did not notice the percent tool had been called the wrong way round and spoke an unsupported figure instead of recomputing.",
+  "spoken_fit_reason": "Two short plain sentences that answer both parts in order."
+}

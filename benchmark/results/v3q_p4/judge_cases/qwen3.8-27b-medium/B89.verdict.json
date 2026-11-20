@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The Cerebras, Etched, SambaNova, and MatX figures trace to the excerpts, but the message breaks off mid-sentence on Positron and never covers Fractile even though its $720M round at about $7B was retrieved, and it has small slips such as calling Microsoft's October 12 Maia statement \"last week\".",
+  "judgment_reason": "Searching was right, and it separates shipped products from 2027 roadmaps and flags MatX as thinly documented, but it never leads with an overall picture and spent eight tool calls without producing a complete answer.",
+  "spoken_fit_reason": "This is a wall of text with markdown bold company headers that stops mid-sentence, and the word cap cut it off inside the first company."
+}

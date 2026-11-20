@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Matches the sketch: Bridge as local Zigbee hub, inviting users in the Hue app, Apple Home with a home hub, Alexa or Google via the cloud, Home Assistant for local voice, and a correct outage split where the Bridge, switches, schedules, local app and Apple Home keep working while Alexa, Google and remote control stop.",
+  "judgment_reason": "Answered stable product-architecture knowledge without searching and pointed out the cloud dependency of Alexa and Google voice.",
+  "spoken_fit_reason": "Leads with the recommended architecture in plain prose with no lists or formatting, at a length the two-part question warrants."
+}

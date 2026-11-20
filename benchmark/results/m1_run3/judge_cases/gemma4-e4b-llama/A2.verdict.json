@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It compounded the increase monthly (growth_schedule with 12 and 24 periods), giving 58,495.44 and 124,107.43 instead of 44,100 and 87,817.80, and then called the one-year lease cheaper by 65,611.59, comparing one year against two.",
+  "judgment_reason": "It misread an annual increase as a monthly one and presented a single savings figure across options of different lengths without noting the unknown second-year renewal.",
+  "spoken_fit_reason": "The final message is two plain sentences, but the listener heard a long preamble of working-out narration and the date before it, cut by the word cap."
+}

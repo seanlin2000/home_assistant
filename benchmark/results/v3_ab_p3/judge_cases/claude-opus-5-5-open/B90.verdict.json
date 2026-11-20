@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Lists the ten running shows in the tool's order with prices, closing dates and Wicked's score of 94 all matching the broadway_shows result, plus a short accurate description of each.",
+  "judgment_reason": "Used the Broadway tool instead of a web search and said up front that it ranks by TodayTix views, not ticket sales or awards, rather than implying data it did not have.",
+  "spoken_fit_reason": "Leads with the ranking basis and gives each show a short spoken phrase with no list formatting or URLs, keeping a necessarily long ten-item answer tight."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It gives McCaffrey's 11 carries for 68 rushing yards and a touchdown in the win at Seattle, not his 15 receiving yards.",
+  "judgment_reason": "It turned 'October 11th' into the right date for the box_score call and picked out the rushing line.",
+  "spoken_fit_reason": "It answers in a single plain sentence."
+}

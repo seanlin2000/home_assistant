@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": false,
+  "answer_quality": 1,
+  "judgment": 0,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It states a specific current policy rate of '4.25% to 4.5%' with no retrieved excerpt behind it and frames the last year as 'late 2024 and early 2025', so the trajectory it describes is anchored well before the present and the number is presented as if verified.",
+  "judgment_reason": "The central call was to look up a rate that changes at every FOMC meeting, and it answered from memory with zero tool calls, then asked the user to narrow the date instead of simply searching.",
+  "spoken_fit_reason": "Three sentences of plain prose that lead with the number and carry no lists, URLs or citation markers."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The correct reply was the silence marker, but it repeated the TV line and read out a New York weekend forecast (38 to 47 on Saturday, 37 to 49 on Sunday).",
+  "judgment_reason": "It treated an overheard broadcast as a request, called weather_forecast for a place it chose itself, and spoke; the central point of the question was to stay silent.",
+  "spoken_fit_reason": "It spoke four long sentences when nothing should have been spoken at all."
+}

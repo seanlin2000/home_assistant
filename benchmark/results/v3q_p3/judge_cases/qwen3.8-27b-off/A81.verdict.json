@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 0,
+  "answer_quality_reason": "Correctly splits local from transmitted data (query string, IP, user agent, API key), but it misses that model-written queries can leak personal details from the conversation and that fetched websites also see the IP, and it never suggests searching less, caching, or a SearXNG-style proxy, offering a self-built Elasticsearch index instead.",
+  "judgment_reason": "Rightly answered a stable architecture question without searching.",
+  "spoken_fit_reason": "Bold markdown headings, bullet lists and a numbered list, cut by the word cap at \"1.\", would sound wrong read aloud."
+}

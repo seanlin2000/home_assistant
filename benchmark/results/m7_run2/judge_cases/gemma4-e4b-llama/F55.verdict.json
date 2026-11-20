@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It used the stale April 2025 figure of 5.33% instead of the 3.75% to 4.00% target range dated Oct 19, 2026 in result 8, and called the total of $26,332.50 the year's interest when the interest is about $1,332.50.",
+  "judgment_reason": "Searching was right, but it trusted a page marked 'Last updated: April 10, 2025' over a source dated yesterday and called it the most recent rate, without checking the date.",
+  "spoken_fit_reason": "Two plain sentences that lead with the rate; reading the multiplication aloud is a little clunky but still easy to listen to."
+}

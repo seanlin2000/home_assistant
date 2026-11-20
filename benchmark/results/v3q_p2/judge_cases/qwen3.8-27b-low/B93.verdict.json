@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": false,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "Vert Frais (the only restaurant_recommendations result) and Meju, Soothr and Nai Brother match their sources, but Gulp is presented as a waterfront seafood-tower spot when no excerpt gives its cuisine or location, Soothr is guessed at 'two to three hundred dollars per person', and no ratings are given except Vert Frais's Michelin listing.",
+  "judgment_reason": "Besides the restaurant tool it ran a web search the question did not need, and instead of saying the Michelin snapshot had only one Long Island City restaurant it padded the list to five, inventing details for one entry.",
+  "spoken_fit_reason": "Each restaurant name is wrapped in markdown bold such as '**Meju**', the answer runs to six long paragraphs, and the word cap cut it after the second restaurant."
+}

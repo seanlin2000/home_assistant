@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It correctly reports that the 27B runs only with offloading and lower speed, but omits the excerpts' concrete figures (about 2 tokens per second, 16.5 GB weights versus 14.4 GB usable), and the second half just says the results 'do not provide a definitive answer' instead of explaining why fitting is not enough for voice use.",
+  "judgment_reason": "The user asked it to judge whether 'can run' predicts a good voice experience, and it deferred to the search results instead of reasoning about latency, time to first token, and memory left for speech models.",
+  "spoken_fit_reason": "Three plain sentences with the model name written out for speech and no formatting."
+}

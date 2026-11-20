@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The route (Lucerne, Brünig Pass to Interlaken, Jungfrau region, Zermatt via Visp with the Gornergrat) is geographically sensible and low-effort, and the sourced prices (Half Fare Card CHF 150, four-day pass CHF 309, four-day Flex CHF 349) are right, but it gives no point-to-point fares from the excerpts (such as Interlaken to Zermatt at CHF 72) and no travel times, so the ticket comparison is thinner than the sketch asks.",
+  "judgment_reason": "Searched for current pass prices, picked the 2026 Half Fare price over the stale CHF 120 figure, attributed the recommendation to sources, avoided the conflicting Jungfraujoch discount figures, and told the user to total their actual fares before buying.",
+  "spoken_fit_reason": "Walks the five days as short spoken sentences, then the ticket advice, with francs spelled out and no lists or URLs; long, but a five-day plan plus ticket advice warrants it."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The scattering, violet and long-sunset-path explanations match the reference, but the aside claiming the dusk glow is 'the collective scattered light of all the sunsets happening around the world' and the muddled Belt of Venus description are wrong.",
+  "judgment_reason": "It answered stable physics from knowledge without searching and pitched it in plain language as asked.",
+  "spoken_fit_reason": "It is plain prose with everyday comparisons, but it was so long that the word cap cut it off before the sunset explanation, so the listener never heard half the question answered."
+}

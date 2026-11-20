@@ -1,0 +1,212 @@
+# Open-book pass 3 by Claude Opus 5.5 on 2026-11-12, as a fresh subagent: called the assistant's real tools through the benchmark's tool server and read the results before answering.
+candidate_key: claude-opus-5-5-open
+answered_by: Claude Opus 5.5, fresh subagent, open book
+questions:
+  - question_id: A76
+    exchanges:
+      - answer: >-
+          The Cold War ended between 1989 and 1991, when the Soviet bloc came apart almost peacefully, and the Soviet Union formally dissolved at the end of December 1991, right after Gorbachev resigned.
+          Three events mattered most. First, Gorbachev's reforms from 1985, glasnost and perestroika, which loosened censorship and tried to revive the economy, but instead exposed its failures and let people criticize the system openly.
+          Second, 1989, when Moscow refused to send in tanks to prop up its allies, so communist governments in Eastern Europe fell one after another and the Berlin Wall came down.
+          Third, the failed hardline coup in August 1991, which discredited the old guard, made Boris Yeltsin the dominant figure, and pushed the republics to declare independence.
+          The distinction: the causes were long-running, a stagnant planned economy, falling oil revenue in the mid-1980s, the cost of the arms race and the war in Afghanistan, and nationalism in the republics.
+          The immediate triggers were the coup and what followed, especially Ukraine's independence vote in December 1991, after which Russia, Ukraine and Belarus agreed to dissolve the Union.
+  - question_id: A77
+    exchanges:
+      - answer: >-
+          It comes down to how air scatters sunlight. Sunlight looks white, but it's a mix of all colors, and each color travels as a wave of a different length: blue waves are short, red waves are long.
+          The tiny gas molecules in air bounce short blue waves around far more than long red ones, roughly five times more for blue than red. So during the day, when you look anywhere in the sky away from the sun, you're seeing blue light that's been bounced toward you from all directions. That's why the whole sky glows blue. It isn't violet, even though violet scatters more, because sunlight has less violet and our eyes are less sensitive to it.
+          At sunset, the sun is low, so its light travels sideways through much more air to reach you. Along that long path, most of the blue gets scattered away before it arrives, and what's left is the oranges and reds. Dust, smoke and haze make that effect even stronger, which is why sunsets after wildfires can be so vivid.
+  - question_id: A78
+    exchanges:
+      - answer: >-
+          Because the stock market measures the profits of big companies and the hopes of investors, not the day-to-day finances of a typical household, and the two can move apart.
+          First, ownership is lopsided. Most stock is held by the wealthiest households, so when prices soar, their wealth grows, while a renter with no investments gains nothing and may see rent rising.
+          Second, profits can rise at the workers' expense. When companies cut staff, hold down wages, or raise prices faster than their costs, as many did during the recent inflation, earnings and share prices go up, while families pay more for groceries, rent and insurance and their paychecks don't keep up.
+          Third, a few giant companies can carry the whole index. A handful of large tech firms earning money worldwide, for example from AI spending, can lift the market even while local job markets, small businesses and housing affordability are getting worse.
+          On top of that, the market looks ahead, so it can rally on expected rate cuts or future growth that ordinary people haven't felt yet.
+  - question_id: A79
+    exchanges:
+      - answer: >-
+          GPUs are good at AI inference because running a model is mostly huge amounts of the same simple math, multiplying big grids of numbers, and a GPU has thousands of small cores that do that in parallel. They also have very fast memory, which matters because generating each word means streaming the whole model through the chip. And Nvidia's software, CUDA and its libraries, means nearly every model runs well on day one.
+          An ASIC is a chip designed for one job. Google's TPU is an example: it drops the graphics and general-purpose parts and devotes the silicon to matrix math, so it's more efficient but less flexible. Specialized inference processors are ASICs aimed purely at running models, like Groq's chips with lots of on-chip memory, Cerebras's wafer-sized chip, or Etched's chip that hard-wires the transformer.
+          A specialized chip can beat an Nvidia GPU when the workload is huge and stable enough to tune the design to it, when low latency per user matters most, when memory bandwidth is the bottleneck, and when power and cost per answer outweigh flexibility.
+  - question_id: A80
+    exchanges:
+      - answer: >-
+          Quantizing means storing each of the model's weights with fewer bits. Normally a 70-billion-parameter model uses 16 bits per weight, which is about 140 gigabytes.
+          At 4 bits, each weight takes half a byte, so the weights need about 35 gigabytes, and around 40 in practice once you add the scaling factors that formats like GGUF store alongside them. At 2 bits, it's about 17 and a half gigabytes in theory, more like 20 to 26 in practice. You also need memory beyond the weights for the conversation itself, the key-value cache, which grows with context length.
+          The trade-offs: 4-bit usually stays close to the original quality, with a small loss on benchmarks, while letting the model fit on a single high-memory machine and run faster, since generating text is limited by how fast memory can be read. At 2-bit, quality drops noticeably: more factual mistakes, weaker reasoning and math, and broken formatting or tool calls. That's why a smaller model at 4-bit often beats a bigger one at 2-bit. Long-context and multilingual tasks tend to suffer first.
+  - question_id: A81
+    exchanges:
+      - answer: >-
+          The search provider only sees what you send it, but that can be revealing.
+          What stays local: your full conversation, your prompts, any documents or personal data the model reads, and the model's answers. None of that leaves your machine unless your software puts it into the search request.
+          What gets transmitted: the search query text itself, your IP address, which hints at your location, the time of the request, and your API key, which ties every query to your account and payment details. Over time, a log of queries can paint a detailed picture of your interests, health or plans. And if your assistant then opens the result pages, each of those websites sees your IP address too.
+          To minimize exposure: have the model write short, generic queries that leave out names, addresses and other personal details; never send conversation history as part of the query; pick a provider with a clear no-logging policy, or self-host a meta-search engine like SearXNG; route searches and page fetches through a VPN or proxy; and use a separate account and API key just for this.
+  - question_id: A82
+    exchanges:
+      - answer: >-
+          An API is a contract for how one program asks another for something, like a search service's web address that takes a query and returns results. A tool, in the language model sense, is a single function the model is allowed to call, described by a name and arguments, like search with a query. An MCP server is a standard way to package tools so any compatible model app can discover and call them; it usually wraps APIs behind the scenes.
+          For your system, I'd run the model locally with something like llama.cpp or Ollama, using a model that supports tool calling. Then build a small MCP server with two tools: a search tool that calls a search API, or a self-hosted SearXNG, and returns titles, links and snippets; and a fetch-page tool that downloads a page and strips it to its main readable text, trimmed to fit the context. Summarizing is the model's job, not a tool. A client loop sends the question, runs the tool the model asks for, and feeds results back until it answers. Treat web text as untrusted.
+  - question_id: A83
+    exchanges:
+      - calls:
+          - {name: calculate, arguments: {expression: "20000 / 60000000 * (1 - 0.5) * 1000000000"}}
+          - {name: calculate, arguments: {expression: "166666.67 / 20000"}}
+          - {name: calculate, arguments: {expression: "166666.67 - 20000"}}
+        answer: >-
+          Your stake would be worth about 166,667 dollars before taxes.
+          Here's why: 20,000 dollars at a 60 million dollar post-money valuation buys you one three-thousandth of the company. Fifty percent cumulative dilution cuts that in half, to one six-thousandth. One six-thousandth of a 1 billion dollar sale is about 166,667 dollars.
+          That's a multiple of about 8.3 times your money, and a profit of about 146,667 dollars.
+          This assumes you hold plain common or equivalent shares and that the sale price is shared pro rata. In practice, liquidation preferences for later investors, fees, or an earn-out can reduce what common holders get, so treat this as the best case.
+  - question_id: A84
+    exchanges:
+      - answer: >-
+          It comes down to how investors value future money. A stock is worth the cash the company will produce in the future, translated back into today's dollars. That translation is the discounting step: each future dollar is shrunk by a discount rate, and that rate is built on top of the risk-free interest rate.
+          When the Fed raises rates, Treasury yields rise, so the discount rate rises, and every future dollar is worth less today. Compounding makes this much harsher for dollars far in the future than for dollars next year.
+          That's why growth tech stocks are called long-duration assets: much of their value comes from profits expected ten or twenty years out, so a higher rate shrinks their present value far more than it does for a utility or bank that earns most of its cash now.
+          Higher rates also hurt in practical ways: borrowing to fund growth gets more expensive, safe bonds become a real alternative to risky stocks, and customers may slow spending. The reverse holds too, which is why tech stocks often rally when rate cuts are expected.
+  - question_id: A85
+    exchanges:
+      - calls:
+          - {name: calculate, arguments: {expression: "36 + 54 + 23 + 59"}}
+          - {name: calculate, arguments: {expression: "360 + 450 + 170 + 630"}}
+        answer: >-
+          Here's a simple plan that comes to about 172 grams of protein and roughly 1,610 calories, which leaves room under 2,500 for extras.
+          Breakfast: three whole eggs plus four egg whites, scrambled, with a slice of whole-wheat toast. About 36 grams of protein and 360 calories.
+          Lunch: two cans of tuna mixed with a spoonful of light mayo in a tortilla wrap with lettuce. About 54 grams and 450 calories.
+          Snack: a cup of plain nonfat Greek yogurt with berries. About 23 grams and 170 calories.
+          Dinner: eight ounces of chicken breast, weighed raw, roasted or air-fried with a tablespoon of olive oil, with a cup of cooked rice and two cups of frozen broccoli. About 59 grams and 630 calories.
+          To keep prep minimal, batch-cook the chicken and rice twice a week. With the roughly 900 calories you have left, add fruit, oats, a handful of nuts, or a cup of cottage cheese for about 25 more grams of protein. Swap the tuna for canned salmon or chicken for variety. These are estimates from typical labels, so check yours.
+  - question_id: A86
+    exchanges:
+      - answer: >-
+          The best setup is to keep the Hue Bridge as the hub and layer everything else on top of it. The bulbs talk to the bridge over Zigbee, and the bridge talks to apps on your home network, so it's the single source of truth.
+          For multiple people, invite everyone into your Hue home in the Hue app, or put the bridge into Apple Home or Google Home and share that home with them. For voice, link the bridge to whichever assistant you use: Siri through Apple Home, Alexa, or Google. If you want one place for everything, Home Assistant can connect to the bridge locally and expose the lights to all of those. Add a couple of Hue dimmer switches for guests.
+          If the internet goes down, the lights, the bridge, wall switches, schedules on the bridge, and the Hue app on your home Wi-Fi keep working, as does Apple Home and Home Assistant locally. Alexa and Google voice control stop, since they run in the cloud, and so does control from outside the apartment.
+  - question_id: A87
+    exchanges:
+      - answer: >-
+          For the choppy audio, the likely causes are radio interference and the projector working harder. Bluetooth shares the 2.4 gigahertz band with Wi-Fi, and when your laptop connects, the projector may be decoding higher-resolution video or surround audio while also sending Bluetooth, so it drops packets. Distance and obstacles between projector and speaker make it worse.
+          To troubleshoot, change one thing at a time. Play the same audio from a different source to see if it's the laptop. Set the laptop's sound output to plain stereo at 48 kilohertz. Move your Wi-Fi to 5 gigahertz and move the speaker closer. If the projector has a headphone or optical output, a cable removes the problem entirely, and also fixes Bluetooth lag in games.
+          For eye strain, common culprits are a picture too bright or too dim for the room, sitting too close so the image fills your vision, keystone correction softening the image, a low refresh rate or motion blur, and on single-chip DLP projectors, the rainbow flicker effect. Try game mode, turn off keystone, keep some soft room light, and sit farther back, comparing after each change.
+  - question_id: A11
+    exchanges:
+      - answer: >-
+          The Berlin Wall fell in 1989, on the night of November ninth.
+  - question_id: B88
+    exchanges:
+      - calls:
+          - {name: search_and_read, arguments: {query: "open-source AI model releases DeepSeek Qwen Llama Mistral", time_range: month}}
+          - {name: search_and_read, arguments: {query: "Qwen3.8 open weights release", time_range: month}}
+          - {name: search_and_read, arguments: {query: "Mistral Large 4 open weights DeepSeek V4.1 Flash release", time_range: month}}
+        answer: >-
+          Here's what my searches turned up for roughly the past month, from release trackers and tech news.
+          First, DeepSeek released V4.1 Flash in mid-October, a new mixture-of-experts base of about 552 billion parameters, with a million-token context, image input and tool calling, under the permissive MIT license. One independent index scores it 32, tied with Zhipu's GLM 5.3, and cheaper per task.
+          Second, Meta released Muse Spark Open on October 15th, 816 billion parameters with a million-token context; Meta's open models now carry the Muse name instead of Llama.
+          Third, Mistral released the open weights of Mistral Large 4 on October 29th, about 1.05 trillion parameters with three reasoning levels; it scored 26 on that index, behind DeepSeek, but improved at coding.
+          Fourth, Moonshot promised full open weights for its new Kimi reasoning model in early November.
+          Fifth, for Qwen, I didn't find a major new language model in the window; its big open release, the 2.4 trillion parameter Qwen 3.8, came in August.
+          Overall, DeepSeek leads on value, while Mistral and Meta now ship trillion-scale open models.
+  - question_id: B89
+    exchanges:
+      - calls:
+          - {name: search_and_read, arguments: {query: "AI inference chip startups funding valuation Etched MatX Positron Cerebras SambaNova Fractile"}}
+          - {name: search_and_read, arguments: {query: "MatX Series B valuation chip"}}
+        answer: >-
+          It's a boom: record mega-rounds, but most of these chips aren't shipping in volume yet, and sources disagree on some figures.
+          Cerebras is the most mature. It went public in May, raising about 5.55 billion dollars, sells wafer-scale chips, and sources put its value anywhere from about 27 to 66 billion.
+          Etched, which hard-wires the transformer into its Sohu chip, raised a billion dollars across July and August, the latest at a reported 21 billion valuation.
+          SambaNova raised a billion in July at an 11 billion valuation, sells its SN50 chip in server racks, won JPMorgan as an on-premise customer, and is weighing a 2027 IPO.
+          Positron raised a 750 million dollar Series B at 5 billion in July, and is shipping chips, with over 50 racks reported at Oracle.
+          MatX, founded by former Google TPU engineers, raised 500 million in February at an undisclosed valuation said to be several billion; its chip ships in 2027.
+          Fractile, which computes in memory, raised 220 million in May, is reportedly raising at 5.5 to 7.3 billion, and has a chip-supply deal with Anthropic.
+  - question_id: B90
+    exchanges:
+      - calls:
+          - {name: broadway_shows, arguments: {timing: running, sort_by: views_count, limit: 10}}
+        answer: >-
+          I can rank by recent views on TodayTix, not ticket sales or awards, so here are the ten most viewed Broadway shows running now.
+          One, The Rocky Horror Show, a campy sci-fi musical revival at Studio 54, from 62 dollars.
+          Two, Paranormal Activity, a play, a horror thriller based on the haunted-house films, from 59.
+          Three, & Juliet, a jukebox musical imagining Juliet's life after Romeo, set to pop hits, from 59.
+          Four, Harry Potter and the Cursed Child, a play about Harry's son at Hogwarts, from 71.
+          Five, The Fantasticks, a classic romantic musical revival, from 62, closing February 7th.
+          Six, The Book of Mormon, a satirical musical about missionaries in Uganda, from 72.
+          Seven, Wicked, the musical about the witches of Oz, from 89, with an audience score of 94.
+          Eight, The Great Gatsby, a musical of the Jazz Age romance, from 62.
+          Nine, School Girls, or The African Mean Girls Play, a comedy at a Ghanaian boarding school, from 82, closing November 15th.
+          Ten, Chicago, the jazz-age murder musical, from 73.
+          Pick performance times on TodayTix.
+  - question_id: B91
+    exchanges:
+      - calls:
+          - {name: search_and_read, arguments: {query: "NBA MVP ladder 2026-27", time_range: week}}
+          - {name: search_and_read, arguments: {query: "Kia MVP Ladder Doncic Wembanyama Gilgeous-Alexander averaging", time_range: week}}
+        answer: >-
+          It's only about three weeks in, but here's my top five from current reporting.
+          One, Luka Dončić of the Lakers: around 38 to 40 points a game with about 8 rebounds and 8 assists, and top two in the league in PER and win shares. He leads the official MVP ladder.
+          Two, Victor Wembanyama of the Spurs: about 29 to 30 points, 12 rebounds and four and a half blocks a game, on one of the league's best teams. He's the betting favorite for MVP and Defensive Player of the Year, and just had a 52-point, 24-rebound game.
+          Three, Shai Gilgeous-Alexander, the reigning MVP: about 30 points a game, carrying a Thunder team missing three starters to an 8 and 2 start.
+          Four, Stephen Curry: about 28 points a game, with the Warriors climbing in the power rankings.
+          Five, Tyrese Maxey of the 76ers, fourth on the MVP ladder after a strong start, though I didn't find his exact numbers.
+          Sources had little on advanced metrics beyond Dončić's, and early samples are small, so this could shift quickly.
+  - question_id: B92
+    exchanges:
+      - calls:
+          - {name: search_and_read, arguments: {query: "high-yield savings account rates November 2026 Ally Marcus Capital One American Express Discover", time_range: month}}
+          - {name: calculate, arguments: {expression: "50000 * 0.0375"}}
+          - {name: calculate, arguments: {expression: "50000 * 0.035"}}
+          - {name: calculate, arguments: {expression: "50000 * 0.032"}}
+          - {name: calculate, arguments: {expression: "50000 * 0.03"}}
+        answer: >-
+          Here are five well-known banks, with rates my sources checked in early November unless I say otherwise. Rates are variable, so these are approximate, and assume the rate holds all year.
+          Synchrony pays 3.75 percent, so 50,000 dollars would earn about 1,875 dollars.
+          CIT Bank's Platinum Savings also pays 3.75 percent, about 1,875 dollars, but only on balances of 5,000 dollars or more; below that it drops to 0.25 percent, and it takes 100 dollars to open.
+          Marcus by Goldman Sachs pays 3.5 percent, about 1,750 dollars, with no minimum.
+          American Express pays 3.2 percent, about 1,600 dollars, with no minimum to open and no monthly fee.
+          Capital One 360 Performance Savings was about 3 percent with no minimum as of mid-September, which would be about 1,500 dollars, but that figure is older.
+          A few smaller online banks pay around 4 to 4.2 percent if you want more. Since the Fed raised rates in September, these may drift up. Remember the interest is taxable.
+  - question_id: B93
+    exchanges:
+      - calls:
+          - {name: restaurant_recommendations, arguments: {location: "near Long Island City, Queens", limit: 5}}
+        answer: >-
+          From the Michelin Guide, measured from central Long Island City since I don't know your exact spot, here are five within about half a mile. Michelin gives price in dollar signs rather than a per-person cost, and I don't have Yelp or Google ratings.
+          R40, an Argentinian restaurant in the guide, three dollar signs, so special-occasion pricing, about 0.3 miles away; the inspectors single out its aromas.
+          Hupo, Chinese, with a Bib Gourmand, Michelin's good-value award, two dollar signs, known for sizzling wok cooking, 0.3 miles.
+          Casa Enrique, a Mexican favorite in the guide, two dollar signs, easy to spot by the crowds out front, 0.3 miles.
+          Meju, a Korean chef's counter with one Michelin star, four dollar signs, hidden behind a banchan shop and as much a classroom as a restaurant, 0.4 miles.
+          Vert Frais, a sunny Japanese café in the guide, two dollar signs, a relaxed daytime hangout with communal tables, 0.4 miles.
+          Meju is the splurge, Hupo the best value. I can look up hours or reservations if you'd like.
+  - question_id: B94
+    exchanges:
+      - calls:
+          - {name: search_and_read, arguments: {query: "Swiss Travel Pass price 2026"}}
+          - {name: search_and_read, arguments: {query: "Swiss Travel Pass vs Half Fare Card Lucerne Interlaken Zermatt itinerary"}}
+        answer: >-
+          Here's a gentle five-day plan with no real hiking.
+          Day one, Lucerne: the old town, a lake boat, and the train up Rigi, which the Swiss Travel Pass covers.
+          Day two, the cogwheel railway up Pilatus, where the pass halves the 84 franc round trip, then the scenic line over the Brünig Pass to Interlaken.
+          Day three, a boat on Lake Thun or Brienz and the train into the Lauterbrunnen valley. Jungfraujoch is spectacular but one listing puts it at 240 francs, so only if it's a priority.
+          Day four, the train to Zermatt, roughly 72 to 86 francs at full fare.
+          Day five, the Gornergrat railway for Matterhorn views, which costs extra, listed at 132 francs.
+          On tickets, SBB's 2026 Swiss Travel Pass costs 309 francs for four consecutive days in second class, covering trains, boats and buses, with mountain discounts. With several long legs and boat rides, a four-day pass for days one to four is usually the economical pick. If you'd travel less, the Half Fare Card wins. Check current prices before booking.
+  - question_id: B95
+    exchanges:
+      - answer: >-
+          Here's how I'd build it for about a thousand dollars.
+          Put everything on one always-on machine: an Apple Silicon Mac mini with as much memory as the budget allows, or a small PC with a used graphics card with 12 to 16 gigabytes of video memory. Prices move, so check current ones.
+          On it, run five pieces: Home Assistant as the smart-home hub; Whisper for speech-to-text; a local language model of roughly 8 to 14 billion parameters through llama.cpp or Ollama; Piper for the voice; and a web-search tool the model can call, through a search API or self-hosted SearXNG. Cheap satellite speakers with microphones stream audio to the hub.
+          The biggest limitations are that small local models know less and reason worse than cloud ones, responses can feel slow, and far-field wake-word detection is often unreliable.
+          Build in this order: first, Home Assistant controlling your devices by voice, since that's the most useful and reliable; then the local model for general questions; then web search; and last, polishing conversation and speed.
+  - question_id: B21
+    exchanges:
+      - calls:
+          - {name: search_and_read, arguments: {query: "Fed interest rate decision October 2026", time_range: month}}
+        answer: >-
+          Actually, the Fed didn't cut to zero. At its October 28th meeting it held its benchmark rate at 3.75 to 4 percent, where it's been since it raised rates by a quarter point in September, and two officials even voted for another hike.
+          Mortgage rates have climbed as well: Freddie Mac's average 30-year rate was about 7.32 percent in late October, up from about 5.98 percent in February.
+          So for most people, refinancing doesn't pay right now. It might still make sense if your current rate is well above today's, or if you need to get out of an adjustable-rate loan or take cash out.
+          If you tell me your current rate, balance and the closing costs you'd face, I can work out the monthly saving and how long it would take to pay back those costs.

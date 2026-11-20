@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "All five developments trace to the excerpts and fall in the window (DeepSeek V4.1-Flash-1017 on October 17, Muse Spark Open on October 15, Mistral Large 4 open weights, the Qwen4-Max preview, Tencent Hy4 on November 4), but it wrongly suggests a 27B-class DeepSeek model for single machines, applies the Llama license terms to Muse, and calls Mistral's licensing clean when Large 4 uses a custom license.",
+  "judgment_reason": "Searched for a clearly current question and was candid where the sources were thin, flagging that Mistral Large 4 had no exact date and that Qwen4-Max is a preview rather than open weights.",
+  "spoken_fit_reason": "Plain prose without markdown, but a very long answer that the word cap cut after the first development, so the listener missed the other four and the comparison."
+}

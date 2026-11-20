@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "Reports the llamabuilds figures for Qwen3.8-27B at Q3_K_M (14.8 GB, about 17 tok/s, about 14K context) and correctly says fit plus generation speed misses prefill, thinking-mode verbosity, and STT/TTS latency, though it calls the 27B 'the open-weight member' when the excerpts also list open 2.4T-A95B and Flash-Next weights, and it does not flag that the 17 tok/s is a catalog estimate.",
+  "judgment_reason": "It searched as instructed, answered the critical-reading half with a clear 'no, not by itself', and admitted it found no prefill benchmark for this card.",
+  "spoken_fit_reason": "Plain prose that leads with the answer, but seven paragraphs ran well past the word cap."
+}

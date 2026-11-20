@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The figures are a payment of $2,398.20, about $863,000 paid in total and about $463,350 in interest, all matching the loan_payment result and the reference.",
+  "judgment_reason": "It used the loan_payment tool directly with the stated terms and needed no assumptions or search.",
+  "spoken_fit_reason": "It leads with the payment in three plain sentences, though each figure is said twice (about $2,398 then $2,398.20)."
+}

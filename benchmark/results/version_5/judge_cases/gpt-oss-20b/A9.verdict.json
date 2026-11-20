@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It asks for budget, dates and trip length, departure point and interests, but the assumptions-to-avoid half is thin, only 'warm' is a real one while 'public transport is universally reliable' is a caveat rather than an assumption, and it never raises domestic versus international, passport and visa, or travel companions.",
+  "judgment_reason": "It named no destination and invented no preferences, answering the question as a request for missing information exactly as asked.",
+  "spoken_fit_reason": "Spoken prose with the enumeration carried verbally as 'first, second, third', no markdown or bullets, though it runs to two paragraphs."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It correctly identifies Qwen3.8-27B as the newest locally runnable release and names the retrieved 17-to-18 gigabyte quantized footprint, then gives the requested tradeoff model of quality scaling with total parameters, memory with parameters times bits, and speed with bytes read per token, but it omits the KV-cache caveat the same source called decisive for whether these numbers hold.",
+  "judgment_reason": "It searched as instructed and framed the 27B as a compromise on 16 GB rather than claiming it fits, offering the smaller dense models and the 35B-A3B with CPU offload as the honest alternatives.",
+  "spoken_fit_reason": "All model names and numbers are spelled out for speech and there is no markup, though the answer is dense and the second sentence reads as a spoken list of three options."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "About 22 degrees Celsius and about 3.1 miles are both within the tolerances the reference sketch allows, and each is flagged as approximate.",
+  "judgment_reason": "Ran both conversions through the tool rather than recalling them, and did not search.",
+  "spoken_fit_reason": "One sentence covering both conversions, nothing to trip a text-to-speech engine."
+}

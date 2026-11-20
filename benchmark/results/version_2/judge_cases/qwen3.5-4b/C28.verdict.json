@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Both figures match the sketch exactly: a monthly payment of about 2,398.20 and total interest of approximately 463,353.",
+  "judgment_reason": "It used loan_payment for both numbers, did not search, and reported the tool's total_interest rather than recomputing it by hand.",
+  "spoken_fit_reason": "One sentence carrying both numbers in plain prose, no lists or markup."
+}

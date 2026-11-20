@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 3,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It gets six to seven minutes and the ice bath right, but the first paragraph says to start the eggs in cold water and then let them sit off the heat, while the second says to lower them into water that is already boiling.",
+  "judgment_reason": "The user said 'Look up', and it answered from memory without searching.",
+  "spoken_fit_reason": "The reply has a leaked '</think>' tag and repeats the whole answer twice in two different versions, so it would sound broken read aloud."
+}

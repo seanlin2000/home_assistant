@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It reports approximately $18,667 where the ordinary-annuity result is about $19,091; its figure implies only $667 of interest on $18,000 of deposits, so the compounding is badly understated and the number does not match the sketch.",
+  "judgment_reason": "It correctly named the end-of-month deposit timing as an assumption, but it said it would use a financial formula while making zero calculator calls and never separated the $18,000 of contributions from the interest earned.",
+  "spoken_fit_reason": "Three plain-prose sentences with the figure arriving early, no lists or markup, though the opening sentence narrates method rather than answering."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Matches the sketch point for point: parallel cores, fast memory and CUDA, memory-bandwidth-bound token generation, ASICs as single-job chips, TPU, Groq on-chip memory, Cerebras wafer-scale and transformer-hardwired chips, and when specialized chips win or lose.",
+  "judgment_reason": "Correctly answered stable architecture knowledge without searching and gave balanced conditions on both sides rather than overclaiming.",
+  "spoken_fit_reason": "Plain prose that leads with why GPUs work, with no lists or markup, and length proportionate to a three-part question."
+}

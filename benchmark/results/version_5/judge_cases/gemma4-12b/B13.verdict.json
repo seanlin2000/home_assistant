@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The Pilatus Golden Round Trip and the Rigi boat-plus-cogwheel route are accurately drawn from the excerpts, but the question asked about current schedules and weather and the answer supplies neither, instead inventing a forecast of 'generally clear with some light clouds' that appears in no retrieved source.",
+  "judgment_reason": "It searched only for day-trip ideas and never for the weather or timetables the question hinged on, then filled the gap with a fabricated forecast rather than saying it did not have one, though it did suggest checking the summit webcams.",
+  "spoken_fit_reason": "Four paragraphs where two or three sentences would do, burying the weather caveat at the end."
+}

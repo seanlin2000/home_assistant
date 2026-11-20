@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It gives the Kitco spot bid of $4,123.60 from excerpt three and the calculator's $14,432.60 for three and a half ounces, both correct, but it reads the total to the cent instead of rounding it.",
+  "judgment_reason": "It searched as asked, used the calculator for the multiplication, and named the source and timestamp of the quote it used.",
+  "spoken_fit_reason": "Two plain sentences with the figures spelled out, though the long timestamp makes the first one wordy."
+}

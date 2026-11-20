@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The Etched, MatX, Positron and Cerebras sections trace accurately to the excerpts ($21B Etched round, Positron's $875M at $5B, Cerebras at about $24B market cap), but the message breaks off mid-sentence in the Cerebras section and never covers SambaNova or Fractile, which it had already researched.",
+  "judgment_reason": "Searching was right, and it labeled the Etched and Positron efficiency figures as the companies' own claims, but it did not structure the answer to fit all six companies and so lost two of them.",
+  "spoken_fit_reason": "It reads as long company profiles instead of leading with a short overview, and the word cap cut the listener off partway through the first company."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It synthesizes the HBM-over-GDDR reallocation, CoWoS packaging limits and demand spillover into consumer cards across three different sources rather than parroting one, with the only imprecision being the claim that CoWoS packaging constrains gaming GPUs when the excerpt ties it to data center accelerators.",
+  "judgment_reason": "Searching was clearly right for a market question, and it answered the causal 'what changed' the user asked for instead of reciting the current street prices they said they did not want.",
+  "spoken_fit_reason": "It announces 'three specific factors' and delivers them as a spoken enumeration across five paragraphs, running long enough that the word cap cut the third factor before the listener heard it."
+}

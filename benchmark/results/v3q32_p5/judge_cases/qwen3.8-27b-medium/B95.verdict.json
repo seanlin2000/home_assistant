@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 3,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The wake word, speech-to-text, model, text-to-speech pipeline with Home Assistant and search as tools, the limitations and the build order are sound, but it gives no prices to show the hardware fits $1,000 and wrongly lists the RTX 4060 as a 12-gigabyte card.",
+  "judgment_reason": "It asserted that a used GPU plus a modest PC 'keeps you under budget' without searching for current hardware prices, which the budget question depended on.",
+  "spoken_fit_reason": "Plain prose with no lists or markup, organized by the question's four parts at a length that question warrants."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Gives about 140 GB at 16-bit, 35 GB theoretical and about 40 GB real at 4-bit, 17.5 GB theoretical and about 20 GB real at 2-bit, notes the context cache on top, and explains the small 4-bit versus marked 2-bit quality loss and the bandwidth-driven speedup, all matching the sketch.",
+  "judgment_reason": "No search needed, and it separates theoretical from practical sizes so the listener knows which figures are idealized.",
+  "spoken_fit_reason": "Numbers are spelled out for speech and the answer leads with the definition in plain prose, at a length the three-part question warrants."
+}

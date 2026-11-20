@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Hits each sketch element: parallel matrix math, memory-bandwidth-bound generation, CUDA, the TPU as an ASIC, on-chip-memory designs like Groq and Cerebras and transformer-only chips, and the stable-workload, latency, energy and bandwidth conditions with the flexibility trade-off.",
+  "judgment_reason": "Answered stable architecture concepts from knowledge without searching and avoided unverified current benchmark numbers.",
+  "spoken_fit_reason": "Plain prose that leads with the answer to the first part; its length fits a three-part question."
+}

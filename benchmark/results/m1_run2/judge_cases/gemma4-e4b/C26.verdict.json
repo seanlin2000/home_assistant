@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It gives about 38.51 percent of income to rent and a new rent of $2,964, both matching the reference and the tool results.",
+  "judgment_reason": "It used the percent and calculate tools for both parts and did not search.",
+  "spoken_fit_reason": "Two plain sentences with numbers written out; restating the inputs first is a small preamble but the answer still comes early."
+}

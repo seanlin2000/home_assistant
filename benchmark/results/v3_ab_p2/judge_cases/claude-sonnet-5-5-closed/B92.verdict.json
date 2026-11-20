@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The results gave Marcus at 3.50 percent, Ally, American Express and Capital One at 3.20 percent with a zero-dollar minimum, and Synchrony at 3.75 percent, yet the answer gives no bank's rate or interest, offering only the correct per-point rule (500 dollars per percentage point on 50,000) as a sliver of help.",
+  "judgment_reason": "Searching was right and it noted that rates are variable, but it falsely said 'I could not check today's rates' when the results held them and sent the user to check each bank's page themselves.",
+  "spoken_fit_reason": "Plain prose with numbers spelled out, but it opens with a refusal and runs long on how-to instead of the comparison asked for."
+}

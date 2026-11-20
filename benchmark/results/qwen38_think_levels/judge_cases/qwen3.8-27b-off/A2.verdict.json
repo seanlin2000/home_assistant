@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The one-year total of $44,100 is right, but the two-year lease is computed with year one at the old $3,500 rent ($85,260) instead of $3,605 and $3,713.15 per month ($87,817.80), so the $2,940 savings figure is wrong.",
+  "judgment_reason": "It did state the renewal assumption for the one-year path, but the assumption is internally inconsistent: it says 'another five percent' yet doubles $44,100 flat.",
+  "spoken_fit_reason": "Two short paragraphs of plain prose that lead with the totals, an acceptable length for a question asking for several figures."
+}

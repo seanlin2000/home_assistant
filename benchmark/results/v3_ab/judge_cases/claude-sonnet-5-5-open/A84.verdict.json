@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Explains present value of future cash flows, the discount rate rising with risk-free yields, distant cash flows shrinking most for long-duration tech stocks with a long-bond analogy, plus Treasuries as an alternative and higher borrowing costs, matching the sketch.",
+  "judgment_reason": "Stable finance concept answered from knowledge without searching, and it honestly calls the effect a tendency that strong earnings can offset.",
+  "spoken_fit_reason": "Leads with the valuation principle in plain prose with an everyday bond analogy, no lists or markup, and length fits an explain-the-relationship question."
+}

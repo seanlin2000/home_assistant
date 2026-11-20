@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It corrects the premise with the October 28 FOMC hold at 3.75 to 4 percent, gives current 30-year averages of about 7 to 7.25 percent and refinance offers near 7.4 percent from the excerpts, and explains the rate-drop, closing-cost, and break-even logic.",
+  "judgment_reason": "It checked the premise before answering, said plainly that the Fed did not cut to zero, and asked for the user's current rate, balance, and term instead of guessing.",
+  "spoken_fit_reason": "It leads with the correction in plain prose, but at five paragraphs, opening with two run-together preambles, it ran past the word cap and was cut mid-recommendation."
+}

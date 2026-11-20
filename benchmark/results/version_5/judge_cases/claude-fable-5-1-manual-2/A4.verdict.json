@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It names normal senescence as most likely, then nitrogen mobility, overwatering or poor drainage, and shading, and asks for species, rate of loss, watering and drainage, feeding or repotting history, and the pattern of yellowing, matching the sketch.",
+  "judgment_reason": "It refused to settle on one cause and closed by asking the two questions that would actually decide it.",
+  "spoken_fit_reason": "Flowing prose that leads with the most likely explanation and ends on a single spoken question, with no lists or markup."
+}

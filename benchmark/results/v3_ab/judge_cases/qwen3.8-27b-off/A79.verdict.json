@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 3,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It covers parallel cores, tensor cores, low precision, CUDA libraries and TPU, Groq and Cerebras, but it credits GPUs with 'fast on-chip memory' instead of high-bandwidth memory, never says generation is bandwidth-bound, and the message breaks off after one scenario in the 'when could a specialized chip win' section the question asked for.",
+  "judgment_reason": "Answering from stable technical knowledge without searching was right, and it invents no current benchmark figures.",
+  "spoken_fit_reason": "It opens with a sentence about not needing to search, then runs into a dense wall of long paragraphs that the word cap cut before the GPU/ASIC comparison was even heard."
+}

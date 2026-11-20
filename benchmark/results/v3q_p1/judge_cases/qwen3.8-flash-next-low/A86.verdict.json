@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 4,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It covers the reference points: the bridge as local hub, Home-access invites, physical switches, one voice platform, and on outage the app, scenes and switches keep working, HomeKit with a hub works locally, and Alexa and Google stop. But it garbles \"battery-powered bulbs in fixtures that stay permanently switched on\" and never mentions a local voice controller like Home Assistant.",
+  "judgment_reason": "A stable architecture question needed no search, yet the assistant announced it would \"check a couple of current details\" and made four searches.",
+  "spoken_fit_reason": "Seven long paragraphs were cut by the word cap at the start of the voice section, so the listener never heard what happens when the internet goes down."
+}

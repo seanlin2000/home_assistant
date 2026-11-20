@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It names no day trip at all, not even the well-known rail and lake routes from Lucerne, and returns only a request for the current date.",
+  "judgment_reason": "The question explicitly asked about current schedules and weather and the assistant made zero tool calls, stalling on a date it could have obtained or worked around.",
+  "spoken_fit_reason": "One short, natural sentence, but there is no answer to lead with."
+}

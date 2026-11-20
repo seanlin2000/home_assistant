@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "Explains in plain words that short 'wiggly' blue light scatters more and that the long low path at sunset strips the blue away, with dust and haze strengthening it, but it never says why the sky is not violet.",
+  "judgment_reason": "It answered stable physics from knowledge without searching and kept the language right for a non-scientist.",
+  "spoken_fit_reason": "Plain prose with no formatting, but four paragraphs ran past the word cap, so the listener never heard the sunset explanation."
+}

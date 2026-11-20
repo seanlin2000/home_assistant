@@ -1,0 +1,42 @@
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@news.bloomberg.example.com header.s=mail header.b=Qq11Rr22;
+       spf=pass (google.com: domain of bounce@news.bloomberg.example.com designates 192.0.2.30 as permitted sender) smtp.mailfrom=bounce@news.bloomberg.example.com;
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=news.bloomberg.example.com
+From: Matt Levine at Bloomberg Opinion <noreply@news.bloomberg.example.com>
+To: reader@example.com
+Subject: Money Stuff: Hypothetical Widgets
+Date: Mon, 16 Nov 2026 19:38:35 +0000
+Message-ID: <money-stuff-0001@news.bloomberg.example.com>
+MIME-Version: 1.0
+Content-Type: multipart/alternative; boundary="boundary-42"
+
+--boundary-42
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+
+The plain-text copy, which the converter passes over for the HTML.
+
+--boundary-42
+Content-Type: text/html; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+
+<html><body>
+<div style="display:none;mso-hide:all">Widgets, hypotheticals, footnotes.&#8204; &#8204; &#8204; &#8204; &#8204;</div>
+<table><tr><td style="font-size:12px"><a href="https://bloomberg.example.com/view">Read in browser</a></td></tr></table>
+<table><tr><td style="font-size:16px">
+<h3>Hypothetical widgets</h3>
+<p>Some hypotheticals. What if a widget company&#8217;s board met in secret?&#8203; Nobody could do anything about anything.<sup><a href="#footnote-1">[1]</a></sup> So nobody would. &#128578;</p>
+<ul><li>The board would meet.</li><li>The board would decide.</li></ul>
+<blockquote>Widget Corp. said it was &#8220;considering all options,&#8221; according to people familiar with the matter.</blockquote>
+<p>I don&#8217;t know what that means either.</p>
+<h3>Procurement</h3>
+<p>Anyway, a pretend official steered pretend companies toward a pretend bank.<sup><a href="#footnote-2">[2]</a></sup></p>
+<h3>Things happen</h3>
+<p>Widgets Are the New Gadgets. A Pretend Bank Hires a Pretend Banker.</p>
+<p id="footnote-1">[1] Not formally, but informally, sure.</p>
+<p id="footnote-2">[2] Disclosure, I used to work at a pretend bank.</p>
+<p>Follow Us</p>
+<p>You received this message because you are subscribed to Bloomberg&#8217;s Money Stuff newsletter.</p>
+</td></tr></table></body></html>
+
+--boundary-42--

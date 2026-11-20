@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 1,
+  "answer_quality_reason": "Its Michelin distinctions and cuisines match the restaurant_recommendations result, and the Meju details are sourced ($235 tasting menu, eight seats, star since 2023), but it adds details no result gives (Casa Enrique's 'bar program built on mezcal and tequila', Hupo 'also on 49th Avenue, essentially next door'), calls 0.3 miles a three-minute walk, and breaks off on R40, so the fifth restaurant and the comparison are never delivered.",
+  "judgment_reason": "It fired a general web search alongside the restaurant tool before needing one, though it later searched only when restaurant_details came back empty, and it labeled its per-person prices as estimates.",
+  "spoken_fit_reason": "It is plain prose without markdown, but each restaurant gets a long paragraph and two narration lines are spoken, so the word cap cut it after the first restaurant."
+}

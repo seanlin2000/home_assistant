@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It correctly lists the query, IP, timing and API key as transmitted and gives good mitigations (generic queries, SearXNG, VPN), but it never says fetched websites also see your IP, and it claims fetching pages locally means 'only the search itself leaves your machine', which misleads.",
+  "judgment_reason": "Answering a stable architecture question without searching was right, and it flags the real risk that model-written queries can carry personal details.",
+  "spoken_fit_reason": "It is plain prose that leads with the answer, but the five-item 'first, second, third, fourth, finally' run of mitigations makes it long to hear."
+}

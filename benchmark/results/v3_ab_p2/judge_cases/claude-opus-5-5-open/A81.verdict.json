@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Names the query text, IP, API key tied to the account and timing as transmitted, the conversation and reasoning as local, points out that personal details can leak into queries and that fetched sites see the IP, and gives the sketch's mitigations (generic queries, retention policy, VPN, SearXNG, searching only when needed).",
+  "judgment_reason": "Answered from knowledge without searching and added the useful caveat that SearXNG's upstream engines still see the query text.",
+  "spoken_fit_reason": "Plain prose with no lists or URLs that answers the provider question first; the length fits the three-part request."
+}

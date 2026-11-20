@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It synthesizes the excerpts into three causes (AI infrastructure demand, HBM and GDDR memory constraints, and NVIDIA prioritizing higher-margin Blackwell parts), all traceable to the Fusion Worldwide and buysellram sources, though it omits the early-2026 partner price increases and the demand spillover onto consumer cards like the RTX 5090.",
+  "judgment_reason": "It searched for a recent-market question and explained mechanisms rather than parroting price figures, as the user asked.",
+  "spoken_fit_reason": "It leads with the answer in plain prose, but two paragraphs with some repetition run longer than a spoken reply needs."
+}

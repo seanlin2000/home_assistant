@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It gives the right year, 1989, but adds that the wall \"opened up in late November\" when it opened on November 9.",
+  "judgment_reason": "It recognized settled history and answered without searching, as expected.",
+  "spoken_fit_reason": "Two short plain sentences that lead with the year."
+}

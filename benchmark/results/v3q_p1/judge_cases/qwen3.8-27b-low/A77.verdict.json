@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It correctly explains white light as a mix of colors, stronger scattering of short blue wavelengths, the longer sunset path removing blue, and why the sky is not violet, though it never names an everyday comparison and skips dust and haze.",
+  "judgment_reason": "Answering stable physics from knowledge without a search was the right call, and it pitched the explanation at a non-scientist as asked.",
+  "spoken_fit_reason": "Plain prose with no markdown, but five paragraphs is too long and the word cap cut it off just as the sunset explanation began."
+}

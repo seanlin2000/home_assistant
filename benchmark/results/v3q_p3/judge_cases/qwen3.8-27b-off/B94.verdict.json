@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The route order and the Rigi, Pilatus, Glacier Paradise and Gornergrat prices trace to the sources, but the message breaks off on day 5 without ever comparing the Swiss Travel Pass with the Half Fare Card or point-to-point tickets, which was the economics the user asked for.",
+  "judgment_reason": "It assumes the user holds a pass without justifying it, and it recommends the Golden Round Trip without noting the sources' May-to-October season or the autumn cableway closure, though the trip dates were unknown.",
+  "spoken_fit_reason": "Bold markdown heading, day-by-day sections and bullet points, plus a stray quoted preamble, cut by the word cap during day 2."
+}

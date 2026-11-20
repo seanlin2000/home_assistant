@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 4,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It gives three distinct, concrete mechanisms (top 10 percent holding 88.1 percent of equities, index gains concentrated in labor-cutting tech giants, and median weekly pay up 1.5 percent against CPI up 3.5 percent), all traceable to the excerpts, though it misstates the 3.7 percent year-over-year CPI figure as 'September alone'.",
+  "judgment_reason": "A conceptual economics question needed no search, yet it ran six searches and two calculations and hit the tool-call limit.",
+  "spoken_fit_reason": "It is a long, number-dense essay that the word cap cut off mid-sentence in the first example."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The MCP description and the search/fetch server design are sound, but a tool is reduced to 'the same idea viewed from the code side' with no model-requests, harness-runs framing, it says the model itself talks MCP instead of describing an agent loop, and it gives no safeguards such as round caps or treating fetched text as untrusted.",
+  "judgment_reason": "Stable software concepts answered from knowledge without searching, which was right.",
+  "spoken_fit_reason": "Plain prose with no markup, but at about nine sentences in two dense paragraphs it runs long for listening."
+}

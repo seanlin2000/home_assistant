@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It corrects the premise with the sourced 3.75 to 4 percent range, the September hike and the October 28 hold, cites Freddie Mac's 7.11 percent and refinance offers around 7.4 percent, and gives the rate-gap and closing-cost break-even logic.",
+  "judgment_reason": "It searched to check the claim, pushed back plainly with 'the Fed didn't cut to zero', and asked for the user's rate, balance and closing costs instead of guessing them.",
+  "spoken_fit_reason": "It opens with the correction and stays in short plain sentences with numbers written for speech."
+}

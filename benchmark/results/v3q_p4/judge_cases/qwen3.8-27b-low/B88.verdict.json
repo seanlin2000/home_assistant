@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 0,
+  "answer_quality_reason": "Every release and date traces to the excerpts (Muse Spark Open October 15, DeepSeek V4.1-Flash-1017 October 17, Mistral Large 4 weights October 29, Qwen4-Max-Preview API-only on November 11) and it compares the four labs well, but the 'fifth development' is a general theme rather than a distinct development.",
+  "judgment_reason": "Searched for a current question, correctly flagged that Qwen4 has no open weights yet, and noted that benchmark leadership claims are self-reported.",
+  "spoken_fit_reason": "Roughly ten long paragraphs with a closing offer, a wall of text that the word cap cut after the second development."
+}

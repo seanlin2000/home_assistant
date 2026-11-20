@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It reports 19,478.78, which comes from a growth_schedule call that grew the monthly deposit itself by 4 percent each year, so it is wrong against the reference of about 19,091 (end-of-month) or 19,154 (start-of-month), and it never notes that 18,000 is the deposits themselves.",
+  "judgment_reason": "It picked a tool model that does not represent monthly compounding of fixed deposits and spoke the result to the cent without a sanity check.",
+  "spoken_fit_reason": "One short sentence that leads with the figure."
+}

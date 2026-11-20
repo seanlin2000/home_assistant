@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": false,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It misreads the '$$' and '$' price tiers as 'around two dollars' and 'a dollar spot' per person, gives no rating for four of the five places, and labels KimGaNae Korean from its name alone. The names and descriptions themselves (Vert Frais, Soothr, Hibino, Los Tacos City Habanero) do trace to the tool result and excerpts.",
+  "judgment_reason": "When the restaurant tool returned only one Michelin-listed place, it padded the list with a web search instead of saying so, and it presented the rest as highly rated and walkable without support.",
+  "spoken_fit_reason": "It opens with a one-line summary and gives each place a short sentence in plain prose, a reasonable length for five restaurants."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It covers every point in the sketch in plain language: white light, stronger scattering of short wavelengths, why the sky isn't violet, the longer sunset path, and dust and haze. One imprecision is calling 400 nanometers blue, and the closing sentence about why sunsets fade is muddled.",
+  "judgment_reason": "It answered from knowledge without searching and used the calculator only to check the scattering ratio, which suits a stable physics question.",
+  "spoken_fit_reason": "The reply is five long paragraphs and hit the word cap, so the listener heard only the daytime half and never heard the sunset explanation the question asked for."
+}

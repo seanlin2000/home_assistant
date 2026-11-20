@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It leads with normal senescence recycling nutrients into new growth and adds pot-bound roots and over- or under-watering, but omits the sketch's nitrogen mobility and lower-leaf shading, and asks nothing about light, fertilizer, or whether the yellowing is uniform or patterned.",
+  "judgment_reason": "It framed senescence as the likely cause without asserting it as settled and closed by asking for species, watering routine, soil feel, and pot size before deciding.",
+  "spoken_fit_reason": "Plain prose with no markup, but at roughly 165 words across two paragraphs ending in three stacked questions it is longer than a listener can hold."
+}

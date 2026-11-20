@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "All figures match the sketch and the calculator results: one three-thousandth initial stake halved to about 0.017 percent, about 166,700 dollars at exit, an 8.3x multiple and about 146,700 dollars profit.",
+  "judgment_reason": "Used the calculator without searching and stated the key assumptions the sketch asks for, same share class and even split, while flagging liquidation preferences as a real-world reduction.",
+  "spoken_fit_reason": "Leads with the three requested numbers in the first sentence and follows with a short plain-prose walkthrough and caveat, with numbers spelled out for speech."
+}

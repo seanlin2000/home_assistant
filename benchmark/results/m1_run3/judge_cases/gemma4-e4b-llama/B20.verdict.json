@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["violated_explicit_constraint"],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 0,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It suggests a 900 to 1,100 dollar GPU build, an RTX 3060 12GB 'to start', or a Mac Mini M4 Pro, implying these reach ChatGPT-like quality, when the retrieved excerpts describe 13B-class models on such hardware and list the Mac at 1,299 to 1,999 dollars.",
+  "judgment_reason": "The user explicitly asked to be told if the requirements cannot be met within $1,000, yet it never says so and instead calls a $1,299-plus Mac 'slightly above the budget' and offers a build whose range tops $1,000 without flagging it.",
+  "spoken_fit_reason": "Plain prose without formatting, but three paragraphs of hedged options that never lead with a clear verdict."
+}

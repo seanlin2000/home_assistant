@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It picks the router design for the right reasons (cost, latency, predictable handling of simple requests like weather and reminders) but barely characterizes the single-LLM alternative and never mentions the router's costs, routing errors and more moving parts, or when one big model would be fine.",
+  "judgment_reason": "Answering without a search was right and the recommendation is committed rather than hedged, but it presents the router design as strictly better with no downside acknowledged.",
+  "spoken_fit_reason": "Three sentences that open with the recommendation, plain prose, and a natural closing offer to go further."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "About $4.32 a month, from 0.48 kWh a day and 14.4 kWh over a thirty-day month, all matching the reference sketch.",
+  "judgment_reason": "Used the given 30-cent rate rather than assuming one, called the energy tool instead of computing mentally, and named the thirty-day month it used.",
+  "spoken_fit_reason": "Two sentences with the figures written out as words, leading with the monthly cost."
+}

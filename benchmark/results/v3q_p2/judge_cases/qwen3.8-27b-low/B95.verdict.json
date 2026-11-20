@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The pipeline and components are sound (openWakeWord, faster-whisper, a 7B-13B model through llama.cpp, Piper, Home Assistant, a search tool), but the message breaks off mid-word at 'a used RTX 306' before any hardware list, the biggest limitations, or a build order, which are three of the four things the user asked for.",
+  "judgment_reason": "It did not search for current hardware prices on a $1,000-budget question, offers Llama 3.1 8B and Qwen 2.5 as the models to use 'by late 2026' without checking, though it does rightly flag the tension between privacy and web search.",
+  "spoken_fit_reason": "It uses markdown bold headings like '**Wake word.**' for every section, runs long, and stops mid-word, and the word cap cut it at speech-to-text."
+}

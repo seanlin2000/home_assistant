@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It says plainly that the Fed did not cut to zero but held at 3.75 to 4 percent on October 28 by a 10-2 vote, cites 30-year rates of 6.96 to 7.23 percent, and gives the refinance logic (your existing rate, closing costs, break-even), all traceable to the excerpts.",
+  "judgment_reason": "It checked the premise with two searches before advising, corrected it up front, and asked for the user's rate, balance, term and closing costs instead of guessing.",
+  "spoken_fit_reason": "It is plain prose that leads with the correction, but it runs four paragraphs, and the word cap cut it before the refinance advice and the question back to the user."
+}

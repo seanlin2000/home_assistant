@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The broadway_shows result listed ten running shows with views and audience scores (Rocky Horror, Paranormal Activity, & Juliet and so on), but the answer gives no ranking or descriptions and instead names shows absent from the result such as The Lion King, Hamilton and Hadestown, overlapping only on Wicked, Chicago and The Book of Mormon.",
+  "judgment_reason": "Calling the listings tool rather than searching was right, but the answer falsely says 'I could not read the listing results' and falls back on dated general knowledge, discarding a usable result.",
+  "spoken_fit_reason": "Plain prose without formatting, but it leads with a disclaimer instead of a ranking and pads with a TodayTix referral and a preference question."
+}

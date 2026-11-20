@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "Gives three distinct mechanisms matching the sketch: concentrated ownership with the top ten percent holding most stocks, prices outpacing wages, and profits from cost cutting, overseas earnings and a few giant tech firms without broad wage gains.",
+  "judgment_reason": "Answered a conceptual economics question from knowledge without searching and avoided invented current figures.",
+  "spoken_fit_reason": "Plain prose that leads with the answer, but the unrequested 'There are other factors too' passage on interest rates makes it longer than the three asked-for examples need."
+}

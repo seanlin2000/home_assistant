@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It never gives the $11.61 tip or the $76.11 total, and only describes what it would calculate after its malformed calculator calls were refused.",
+  "judgment_reason": "It asks the user for 'the exact expression' even though the question gave everything needed, which pushes its own tool failure onto the user.",
+  "spoken_fit_reason": "Read aloud, it is a confusing explanation of tool requirements with no answer in it, and it mentions a string expression the listener has no use for."
+}

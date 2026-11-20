@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Corrects the premise with the October 28 hold at 3.75 to 4 percent after a September hike and Freddie Mac's 7.32 percent rate, all from the excerpts, then gives the compare-your-rate and closing-cost break-even logic the sketch requires.",
+  "judgment_reason": "Searched to check the claimed cut, said plainly the premise is wrong, and asked for the user's current rate and time horizon, the genuinely missing information.",
+  "spoken_fit_reason": "Leads with 'The premise is not right' and stays in plain spoken prose with numbers in words, ending with one short follow-up question."
+}

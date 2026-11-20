@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The foods are cheap and quick, but the stated meal totals (35, 35, 20, 45 and an optional 15 g) add up to about 150 g of protein, not 170, the snack is labeled 20 g though the cottage cheese gives 14, and the stated 2,350 to 2,450 calories does not match the per-meal figures.",
+  "judgment_reason": "It respected the calorie cap and avoided protein powder, but it asserted the plan hits 170 g without adding up its own meals.",
+  "spoken_fit_reason": "Bold markdown meal headings over long paragraphs, cut by the word cap at lunch."
+}

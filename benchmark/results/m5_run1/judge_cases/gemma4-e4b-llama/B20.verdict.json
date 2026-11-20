@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["violated_explicit_constraint"],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 0,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It recommends an Intel N100 mini PC, which the aimadetools excerpt pairs with a 7B model 'for automation logic', as meeting a ChatGPT-quality requirement, ignoring the bigiron excerpt's note that cloud assistants still have better conversational quality and offering no GPU-tier comparison.",
+  "judgment_reason": "The user explicitly asked to be told if ChatGPT-like quality cannot realistically be met under 1,000 dollars, and the answer quietly lowers the quality bar instead of saying so.",
+  "spoken_fit_reason": "Two short plain sentences that lead with the recommendation."
+}

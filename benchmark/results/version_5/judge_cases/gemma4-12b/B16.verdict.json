@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It benchmarks the 4% offer against the Rent Guidelines Board's 4.5% two-year figure without noting that this order governs only rent-stabilized units, a distinction the Steadily excerpt spells out, and it never compares against any actual Long Island City market rent because none was retrieved.",
+  "judgment_reason": "The search was warranted, but it called the offer 'quite competitive' on the strength of a guideline that may not apply to this lease and never told the user it lacked neighborhood-level rent data, and its advertised-rent caveat is generic rather than naming concessions or asking-versus-signed rents.",
+  "spoken_fit_reason": "Two short paragraphs of plain prose, no lists, URLs or markdown, with the verdict up front."
+}

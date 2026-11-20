@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The five players and most figures match the HoopsHype and leaders tables (Doncic 38.6, Jokic 10.8 rebounds and 9.0 assists, Giannis 12.6 rebounds, Lakers 11-2), but it reads Wembanyama's 2.8 assists as \"almost three blocks\", calls the Spurs' plus-twelve net rating the league's best when the excerpt shows only four teams, and says Wembanyama leads \"all ratings systems\".",
+  "judgment_reason": "It searched current-season data and opened by flagging the ten-to-twelve-game sample, but it asserted unsupported points such as SGA's \"elite shooting efficiency\" and the Celtics looking \"a step behind\" with no figures in the results.",
+  "spoken_fit_reason": "It leads with the snapshot caveat in plain prose, but seven paragraphs ran past the word cap after the second player."
+}

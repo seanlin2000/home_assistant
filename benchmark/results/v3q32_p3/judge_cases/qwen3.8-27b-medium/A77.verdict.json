@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It correctly explains that air scatters short blue light in every direction and that the long sunset path scatters the blue away leaving red and orange, but it leaves out why the sky is not violet.",
+  "judgment_reason": "Stable physics answered from knowledge without searching, pitched at a non-scientist as asked.",
+  "spoken_fit_reason": "Leads with the answer in short plain sentences with no jargon or formatting, a fitting length for a two-part explanation."
+}

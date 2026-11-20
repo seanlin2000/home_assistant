@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It names only three headings (far-field mic array, local processing power, enclosure acoustics) without any detail, missing beamforming and echo cancellation, placement, wake-word handling, latency, speaker separation and privacy from the sketch.",
+  "judgment_reason": "It respected the no-product-names constraint and correctly answered without searching.",
+  "spoken_fit_reason": "A single plain sentence that leads with the answer."
+}

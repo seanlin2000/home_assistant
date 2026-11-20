@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It grounds the $3,600 to $4,000 range and the 5% year-over-year figure in the retrieved pages and gives a real answer on the 4% offer, but never flags that the sources disagree sharply, with Renthub putting a one-bedroom at $3,218 against ApartmentAdvisor's $4,375, or that the Fair Market Rent table is 2024 data.",
+  "judgment_reason": "It searched, hedged the comparison on building and ZIP variation, and handled the skepticism half well by naming asking-price bias, concessions, and the newer-unit skew in listings.",
+  "spoken_fit_reason": "Two paragraphs of four very long run-on sentences that open with market data rather than a verdict on the 4% offer, listenable but longer than a spoken answer should be."
+}

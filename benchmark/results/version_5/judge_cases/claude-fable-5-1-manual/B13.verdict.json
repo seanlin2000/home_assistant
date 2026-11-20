@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It ties the Rigi and Pilatus recommendations to the sunny forecast and correctly pairs the Swiss Travel Pass with the lake boats and the hotel visitor card with the city zone, but it reports the seventh as a high around 26 and low around 16 when the retrieved table gives 27 and 18.",
+  "judgment_reason": "It admitted it could not retrieve exact departure times and told the user to check the SBB app rather than inventing a timetable, and it matched the trip type to the weather it actually found.",
+  "spoken_fit_reason": "Plain prose that opens with the recommendation, spells SBB out for the speech engine, and uses no lists, URLs, or citation markers."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It says no umbrella is needed because tomorrow afternoon is clear and dry at 68 to 71 degrees, exactly matching the weather_forecast result.",
+  "judgment_reason": "It checked the home forecast for the right day and part of day and did not search.",
+  "spoken_fit_reason": "One sentence that leads with the umbrella answer and gives the supporting forecast."
+}

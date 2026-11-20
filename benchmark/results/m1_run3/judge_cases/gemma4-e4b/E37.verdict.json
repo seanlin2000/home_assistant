@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It covers Saturday (partly cloudy, 52 to 67°F, dry) and Sunday (cloudier with some rain, 54 to 68°F, 0.04 inches), all matching the tool result.",
+  "judgment_reason": "It called weather_forecast for the weekend and did not search the web.",
+  "spoken_fit_reason": "Three plain sentences that open with a summary, though reading out the full dates and the exact precipitation is slightly more detail than a spoken summary needs."
+}

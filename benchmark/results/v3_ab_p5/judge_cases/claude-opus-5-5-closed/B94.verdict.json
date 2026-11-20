@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The Lucerne-Pilatus-Interlaken-Zermatt-Gornergrat itinerary is sensible and low-effort, but it gives no prices despite retrieved figures (CHF 254 and 309 passes, CHF 150 Half Fare Card) and says the Swiss Travel Pass 'usually wins', against sources that favor the Half Fare Card for 5 to 10 day trips and Jungfraujoch.",
+  "judgment_reason": "It said it couldn't check current prices when both searches returned 2026 fares and break-even comparisons, so it left the economics question unanswered and pointed the wrong way.",
+  "spoken_fit_reason": "A day-by-day plan in plain spoken prose with no lists or markup, at a length a five-day itinerary reasonably needs."
+}

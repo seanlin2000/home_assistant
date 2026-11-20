@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It names 2.4 GHz interference and a wired-cable test and separates the two problems in order, but misses the laptop competing for the speaker's connection, the DLP rainbow effect, focus and input lag, and advises sitting closer when sitting too close is a likely cause of strain.",
+  "judgment_reason": "Stable troubleshooting answered without searching, and it isolates one variable at a time as the question asked.",
+  "spoken_fit_reason": "Plain prose in three short paragraphs that leads with the likely audio cause and has no lists or markup."
+}

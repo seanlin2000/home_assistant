@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It explains present value with a risk-free anchor, works the example (a dollar ten years out falls from about 74 to 46 cents going from 3 to 8 percent, while next year's dollar barely moves), ties it to long-duration bonds, and adds borrowing costs, the Treasury alternative, multiple compression and the 2022 example.",
+  "judgment_reason": "It answered from knowledge with calculator checks and no search, and flagged that the relationship is a tendency, not a law, plus its simplification about the equity risk premium.",
+  "spoken_fit_reason": "Seven long paragraphs were cut by the word cap mid-example, so the listener never heard the long-duration explanation that answers the question."
+}

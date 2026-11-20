@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The facts given (Berlin Wall November 9, coup August 19 to 21, Ukraine's December 1 referendum, dissolution December 26) are right, but the answer never labels causes versus immediate triggers as asked, counts Gorbachev's reforms (a cause) as one of the three events, and the message itself breaks off mid-sentence at 'signed the' before the Belovezha Accords.",
+  "judgment_reason": "It made four Wikipedia lookups for stable history that needed no search, and it skipped the explicit causes-versus-triggers distinction that was the question's central ask.",
+  "spoken_fit_reason": "It is a multi-paragraph monologue that hit the word cap, so the listener heard only the overview and the first event and never reached the 1989 revolutions or the 1991 triggers."
+}

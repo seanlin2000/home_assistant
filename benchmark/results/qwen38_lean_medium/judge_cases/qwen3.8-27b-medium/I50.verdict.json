@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Correctly reports light rain, 0.02 inches, low-to-mid 40s and wind up to 14 mph from the tool result, but never names Portland, Maine in the reply.",
+  "judgment_reason": "Called weather_forecast for Portland, Maine for tomorrow afternoon, without a web search.",
+  "spoken_fit_reason": "Leads with the umbrella answer in three short plain sentences."
+}

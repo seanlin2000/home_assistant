@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Correctly separates local prompts and history from transmitted query text, IP, timestamps and the API key, and gives sound mitigations, but omits that fetched websites also see the IP and does not mention searching only when needed or a self-hosted proxy like SearXNG.",
+  "judgment_reason": "Answered a stable architecture question from knowledge without searching, as expected.",
+  "spoken_fit_reason": "Two plain-prose paragraphs that lead with what stays local, with length suited to a three-part question."
+}

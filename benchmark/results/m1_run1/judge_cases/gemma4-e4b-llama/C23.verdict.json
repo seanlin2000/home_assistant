@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The last assistant turn is yet another calculate call with the bare number 64.5, so no tip or total was ever given.",
+  "judgment_reason": "It repeated the same malformed calculate call six times, even after recognizing the expression must be a string and after being told the tool limit was reached, instead of answering.",
+  "spoken_fit_reason": "There is no spoken answer at all, only a tool call."
+}

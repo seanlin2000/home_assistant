@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The second paragraph claims the GPU 'only needs to load' the active experts and so needs 'much less active memory', the exact misconception the sketch rules out; the later sentence that all weights must stay in memory contradicts it and was cut from what the listener heard.",
+  "judgment_reason": "Not searching was right, but it framed MoE as needing less memory by nature and never mentioned quantization or CPU offload as the real reason it can fit in 16 GB.",
+  "spoken_fit_reason": "Three dense paragraphs that ran past the word cap and were cut off mid-explanation are a wall of text for a spoken reply."
+}

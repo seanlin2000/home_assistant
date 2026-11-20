@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The 53 to 59°F range with clear skies matches the tool result, but it reports a range rather than plainly answering 'how cold' with a low of about 53, and it checked only the overnight period, not the evening.",
+  "judgment_reason": "It recognized a home weather question without a weather word and used the forecast tool instead of searching.",
+  "spoken_fit_reason": "One plain sentence with the numbers and unit written out for speech."
+}

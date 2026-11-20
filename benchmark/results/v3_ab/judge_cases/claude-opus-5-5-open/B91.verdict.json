@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "All figures trace to this season's excerpts (Doncic's 39.3 points and the Lakers' seventh straight win, Wembanyama's DARKO plus 6.9, Jokic's league-leading 9.1 assists and DARKO plus 7.0, Giannis's 27.7 and 12.6 with Miami) and it blends box stats, team results and an impact metric, but the fifth pick, Giannis, gets only two stats and no team-impact or advanced-metric reason.",
+  "judgment_reason": "Searched for current-season data, opened by noting the roughly ten-game sample, and flagged that stat sites differ and that DARKO leans on past seasons.",
+  "spoken_fit_reason": "Leads with the small-sample caveat, then one short spoken passage per player with numbers spelled out and no lists; long, but five ranked players with reasons were requested."
+}

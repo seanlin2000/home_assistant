@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The final assistant message is empty even though the searches had returned funding and valuation figures for all six companies, so nothing was answered.",
+  "judgment_reason": "Searching was right, but it kept searching until it hit the tool-call limit and then gave no answer at all.",
+  "spoken_fit_reason": "Nothing was spoken."
+}

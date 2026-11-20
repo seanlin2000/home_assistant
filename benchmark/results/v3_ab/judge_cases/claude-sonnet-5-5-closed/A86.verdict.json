@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Correctly centers the bridge on the home network, shares control through Hue invites or a shared Apple, Google, Alexa or Home Assistant home, and says local apps and switches survive an outage while cloud voice and remote control stop, but does not mention that the bridge's own automations keep running or suggest adding physical switches for people without a phone.",
+  "judgment_reason": "Answered a stable architecture question from knowledge without searching and pointed to a local voice setup for offline reliability.",
+  "spoken_fit_reason": "Leads with the recommended setup and handles the outage case in plain prose without lists, at a length the two-part question warrants."
+}

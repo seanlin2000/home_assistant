@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The yes, with microWakeWord or openWakeWord models on the ESP32-S3, is supported by excerpts [3], [5] and [8], though saying it \"requires specific community-developed firmware\" overstates it, since excerpt [5] shows you can add a micro_wake_word model by taking control of the device in ESPHome.",
+  "judgment_reason": "It searched as instructed, hedged appropriately, and explained choosing sources that gave concrete Voice PE setup details over the forum snippets it did not read.",
+  "spoken_fit_reason": "Three plain-prose sentences that lead with the yes and contain no URLs or markdown."
+}

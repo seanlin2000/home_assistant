@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It garbles the excerpt's \"3-3/4 to 4 percent\" into \"three percent to three-quarters of one percent\" and presents a rate set October 29, 2025 as current a year later, despite result [8] noting further cuts in late 2025, so the current rate and the year's changes are wrong or missing.",
+  "judgment_reason": "Searching was right, but it queried for October 2025 instead of the latest data and never flagged that its source was nearly a year old or that it could not find the current rate.",
+  "spoken_fit_reason": "Two plain-prose sentences that lead with the rate, with no URLs or citation markers."
+}

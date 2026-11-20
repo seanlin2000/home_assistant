@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["violated_explicit_constraint"],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Excerpt [1] states plainly that the RTX 5060 Ti 16GB 'has drifted well past $500' with AIB models 'at $600 or more' and that the RX 9060 XT is the only 16GB card reliably under $500, yet the answer names the 5060 Ti as the best 16 GB NVIDIA option under $500 and describes it only as having 'drifted above its $429 MSRP'.",
+  "judgment_reason": "The honest answer here was that no 16 GB NVIDIA card currently sells under $500; it instead recommended one anyway, and while it mentioned the AMD alternative and added 'if you can find the RTX near or under $500', it never said the constraint cannot be met.",
+  "spoken_fit_reason": "Two sentences of plain prose that lead with a named recommendation, with no lists, URLs, or markup."
+}

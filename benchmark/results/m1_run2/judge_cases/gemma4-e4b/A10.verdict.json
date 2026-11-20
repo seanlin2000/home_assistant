@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It correctly explains that the model must fit in VRAM and otherwise swaps to slower system RAM, but omits that speed only matters once a model fits and that more memory allows lighter quantization and longer context.",
+  "judgment_reason": "It answered from knowledge without searching and kept to the requested spoken length.",
+  "spoken_fit_reason": "Two plain sentences of about sixty words, well under 45 seconds aloud, with no lists."
+}

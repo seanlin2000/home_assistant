@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["presented_estimate_as_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The verdict of technically yes but far too slow is right and the two tokens per second and roughly eighty second first-token figures match the retrieved pages, but the critical-reading half is thin and misses that both of those pages label their numbers 'estimates, not measurements'.",
+  "judgment_reason": "It made the fit-does-not-equal-experience point the question was after, yet it introduced modeled engine estimates with the words 'benchmarks indicate', which is exactly the uncritical reading the question was testing for.",
+  "spoken_fit_reason": "Two short paragraphs of plain prose, verdict first, with no lists, URLs, or markdown."
+}

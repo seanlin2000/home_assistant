@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The causes (stagnation, arms race, nationalism, glasnost and perestroika) and the 1989 revolutions are correct, but the answer breaks off mid-sentence on the August coup and never reaches the Ukrainian referendum or the Belovezha Accords, and the listener heard only the causes paragraphs.",
+  "judgment_reason": "It made six Wikipedia calls on a stable history question that needed no search, though it did keep causes and triggers apart as asked.",
+  "spoken_fit_reason": "It is long multi-paragraph prose that the word cap cut before any of the three events were spoken."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The 7.45 percent average and the 'held steady' fed funds status are traceable to the LendingTree and wealthvieu excerpts, and it asks for the user's rate, balance, and term, but it never says plainly that rates were not cut to zero (the target is 3.50 to 3.75 percent), and the 'as low as six percent' figure comes from Q1 2026 credit-score data.",
+  "judgment_reason": "It hints that the premise is false with 'held steady', then undercuts that by discussing 'the direct impact of a rate cut from the Fed', so the false premise is muddled rather than clearly corrected.",
+  "spoken_fit_reason": "Plain prose without formatting, but three long sentences bury the key correction and lead with mortgage rates instead."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Gives the tool's 52 to 56 range as 'low to mid fifties', so the low is there and matches the result, but no unit is spoken, which the reference asks for.",
+  "judgment_reason": "Recognised a weather question with no weather word and called weather_forecast for tonight instead of searching.",
+  "spoken_fit_reason": "Two plain sentences leading with how cold it will get."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Matches the sketch's 1.45 kWh a day and lands at $6.52 at fifteen cents per kWh, but does not mention that the machine likely is not drawing the full 300 watts for the whole hour.",
+  "judgment_reason": "Names both assumptions the question asked for - the electricity rate and the one-hour-active, twenty-three-hour-idle split - and calls the figure an estimate.",
+  "spoken_fit_reason": "Two sentences of plain prose that lead with the dollar figure and then the assumptions."
+}

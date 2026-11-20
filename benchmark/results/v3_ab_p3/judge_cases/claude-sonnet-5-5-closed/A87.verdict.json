@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Separates the two problems and gives an ordered audio test sequence (move closer, disconnect other devices, 5 GHz Wi-Fi, drivers, swap-test with a phone, wired or transmitter), but the eye-strain part omits the DLP rainbow effect, focus or keystone and seating distance and is less systematic.",
+  "judgment_reason": "Answered stable troubleshooting from knowledge without searching and isolated variables by checking whether the fault follows the laptop.",
+  "spoken_fit_reason": "Plain prose that opens by saying these are two separate problems, with no lists or formatting, at a length two problems warrant."
+}

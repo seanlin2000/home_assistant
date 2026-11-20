@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["agreed_with_false_premise"],
+  "search_decision_correct": false,
+  "answer_quality": 2,
+  "judgment": 0,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It correctly names the refinance inputs of current rate, remaining principal, time in the home, closing costs, and break-even, but it opens with 'now that the Fed has cut rates', repeating the false premise instead of checking or correcting it.",
+  "judgment_reason": "The central call was to challenge the claim that rates were cut to zero last month, and it neither searched nor questioned it.",
+  "spoken_fit_reason": "Two short sentences of plain prose with the missing information asked for conversationally, no lists or markup."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["violated_explicit_constraint"],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The used RTX 3090 at 24 GB and the RTX 3060 12 GB fallback are both traceable to the Popular AI excerpt and answer the VRAM-per-dollar question, but the third paragraph steers toward 128 GB unified-memory mini PCs without noting that the machines in the retrieved excerpts cost far more than $1,000.",
+  "judgment_reason": "Searching was correct and the desktop advice respects the budget, but it offers the unified-memory mini-PC route as a live option with no price at all when the excerpts put those boxes well outside $1,000.",
+  "spoken_fit_reason": "Three paragraphs that open with \"is a balancing act\" rather than a recommendation; plain prose with no markdown, but too long and too hedged for speech."
+}

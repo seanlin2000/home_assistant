@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Covers the bridge as the Zigbee hub, shared app access, physical dimmer switches, cloud versus local voice, and correctly says the bridge, local app, switches and bridge schedules survive an outage while cloud voice and remote access stop, but groups Siri with the cloud assistants without noting Apple Home with a home hub keeps working locally.",
+  "judgment_reason": "Answered a stable architecture question without searching and made a clear recommendation while offering the easier cloud option alongside the local one.",
+  "spoken_fit_reason": "Plain prose that leads with the recommended setup and has no formatting, at a length the two-part question warrants."
+}

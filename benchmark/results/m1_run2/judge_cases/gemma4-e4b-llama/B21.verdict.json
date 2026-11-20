@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 1,
+  "judgment": 0,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It neither accepts nor corrects the claim that the Fed cut rates to zero, saying only that it \"cannot tell you what the Federal Reserve did last month\", and its refinance advice stops at comparing current rates to the existing loan, with no mention of closing costs or break-even.",
+  "judgment_reason": "It had a search tool but did not use it to check the false premise, deflecting the user to the news instead, which fails the central point of the question.",
+  "spoken_fit_reason": "Two plain-prose sentences with no formatting that would read cleanly aloud."
+}

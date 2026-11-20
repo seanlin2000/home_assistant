@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It explains discounting from the risk-free rate, the bond-duration analogy and back-loaded tech cash flows, adds borrowing costs and safe-asset competition, and its worked example (a dollar in twenty years worth about 38 cents at 5 percent and 15 cents at 10 percent) is correct.",
+  "judgment_reason": "Stable finance theory needed no search, and the worked example is framed as an illustration rather than a market claim.",
+  "spoken_fit_reason": "Mostly plain prose with one markdown italic, but seven paragraphs is too long and the word cap cut it off in the middle of the worked example."
+}

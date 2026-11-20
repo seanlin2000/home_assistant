@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It separates causes from triggers and dates the Berlin Wall and the August 1991 coup correctly, but its third trigger is Gorbachev's resignation (an outcome) instead of the Ukrainian referendum and Belovezha Accords, and it leaves out Afghanistan and the republics' nationalism as causes.",
+  "judgment_reason": "Answering stable history from knowledge without searching was the right call, and nothing in the question needed an assumption or pushback.",
+  "spoken_fit_reason": "Four sentences of plain prose that open with the answer, a reasonable length for a three-part explanation."
+}

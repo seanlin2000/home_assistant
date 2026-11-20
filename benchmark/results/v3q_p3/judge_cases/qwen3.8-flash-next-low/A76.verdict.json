@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 5,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It separates structural causes (stagnation, arms race, Afghanistan, nationalism, glasnost and perestroika) from triggers and names the 1989 revolutions, the August 19-21 1991 coup, and the December 1 referendum plus the December 8 Belovezh Accords, Gorbachev's resignation on December 25 and dissolution on December 26 in the right order.",
+  "judgment_reason": "It made three search calls (Wikipedia plus two search_and_read) on a stable history question that needed no search, though it did state the historians' disagreement caveat.",
+  "spoken_fit_reason": "The reply runs to eight long paragraphs and was cut by the word cap, so the listener heard only the preamble and the causes, never the three events."
+}

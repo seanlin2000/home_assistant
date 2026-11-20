@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Correctly explains that air scatters blue far more than red and that the long low sunset path strips out the blue, adds dust and haze, but never says why the sky is not violet.",
+  "judgment_reason": "Answered stable physics from knowledge without searching and pitched it at a non-scientist as asked, with the hallway-crowd comparison.",
+  "spoken_fit_reason": "Plain jargon-free prose that leads with the explanation and uses an everyday analogy, at a length the question invites."
+}

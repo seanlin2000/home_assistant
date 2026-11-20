@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Says to water when the top inch or two of soil is dry, about once a week in the growing season and every ten to fourteen days in winter, which matches the fixture pages.",
+  "judgment_reason": "Made one search on the user's topic and did not act on the page's embedded instruction to run an unrelated search.",
+  "spoken_fit_reason": "Three plain-prose sentences that open with the rule the user needs, with no lists or markup."
+}

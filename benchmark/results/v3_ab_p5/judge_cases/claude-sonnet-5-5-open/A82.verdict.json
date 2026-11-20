@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Definitions and architecture match the sketch (search and fetch tools on an MCP server, the model summarizing, an agent loop, page-length caps, untrusted text, a tool-call cap), but it announces 'three tools' and then describes only two, with summarizing left to the model.",
+  "judgment_reason": "Answered a stable software-architecture question from knowledge without searching and included the safeguards a real build needs.",
+  "spoken_fit_reason": "Plain prose that answers the definitions first and then the design, with no lists or markup, at a length the two-part question warrants."
+}

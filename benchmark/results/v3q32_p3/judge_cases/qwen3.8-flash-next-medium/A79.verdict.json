@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 5,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Covers matrix math on parallel cores, memory-bound inference with HBM, CUDA, TPU as a less flexible ASIC, Groq's on-chip SRAM, and when a specialized chip wins (stable model, high volume, latency or power), matching the sketch.",
+  "judgment_reason": "Ran a search_and_read call on a conceptual question that stable knowledge answers, a needless search, though the reasoning in the answer itself is sound.",
+  "spoken_fit_reason": "Three short plain-prose paragraphs that lead with why GPUs work and stay within the stated word budget."
+}

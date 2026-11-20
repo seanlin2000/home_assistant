@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The final ASSISTANT message is empty: after retrieving funding and valuation figures for all six companies, the assistant hit the tool-call limit and never answered.",
+  "judgment_reason": "Searching was right for a current-funding question, but it spent its last calls on Groq and Cerebras stock follow-ups and never delivered the comparison.",
+  "spoken_fit_reason": "Nothing was spoken, so the user heard no answer."
+}

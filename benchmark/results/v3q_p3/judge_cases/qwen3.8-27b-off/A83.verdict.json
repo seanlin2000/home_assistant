@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 0,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It says twenty thousand out of sixty million is one percent, when it is about 0.033 percent, so the five million dollar value, 250x multiple and 4.98 million profit are all wrong; the sketch gives about 166,667 dollars, 8.33x and 146,667.",
+  "judgment_reason": "It did state a pro-rata dilution assumption, but it did the arithmetic in its head without checking, never mentioned liquidation preferences, and its caveat is muddled.",
+  "spoken_fit_reason": "Leads with the figures in short plain sentences with no formatting."
+}

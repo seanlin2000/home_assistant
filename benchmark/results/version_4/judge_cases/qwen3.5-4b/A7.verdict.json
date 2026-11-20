@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The headline $6.52 and 43.50 kWh match the sketch, but it repeats the tool's mislabeled \"79% of that energy comes from your active inference use\" when the arguments were passed swapped and 79% is actually the idle share, so the one derived statistic it volunteers is backwards.",
+  "judgment_reason": "It named the $0.15 per kWh rate and the 23-hour idle split as assumptions and invited the user to adjust, but never flagged the sketch's caveat that the machine is unlikely to draw the full 300 watts for the entire hour.",
+  "spoken_fit_reason": "The final message is four sentences of plain prose leading with \"the estimated monthly cost is about $6.52\", with the markdown bullets of the earlier draft gone."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "Every figure matches the reference sketch (0.0333 percent stake, 0.0167 percent after dilution, $166,667 value, $146,667 profit, 8.33x), and each was computed with calculator calls.",
+  "judgment_reason": "It used the calculator without searching, and it stated the key assumptions: dilution halves the percentage, and liquidation preferences are ignored.",
+  "spoken_fit_reason": "The figures come in plain prose, but the worth arrives only in the third sentence, '$166,700 — call it $166,667' is redundant, and the caveat paragraph ran past the cap."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It plainly corrected the premise with the sourced October 28 hold at 3.75 to 4 percent and gave sourced 30-year mortgage rates near 7 to 7.2 percent, but the word cap cut the refinance logic (compare to your rate, closing costs, break-even), so the listener never heard how to decide; calling Hammack a governor is also a small slip.",
+  "judgment_reason": "It doubted the premise up front, checked the current federal funds rate with a single search, corrected the user, and in the written text asked for the user's current rate, balance and remaining term.",
+  "spoken_fit_reason": "It leads with the correction in plain prose, but the spoken tool-use preamble, a parenthetical source list and the length that ran past the word cap make it too long."
+}

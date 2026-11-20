@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The 56 degrees Fahrenheit comes from the tool, but the only slot returned is today's overnight (midnight to 6 am Thursday), which precedes tonight, and the answer presents it as tonight's low without noting the mismatch.",
+  "judgment_reason": "It correctly recognized a home weather question and called the forecast tool without searching, but did not notice that the returned period was not this evening and night.",
+  "spoken_fit_reason": "One short sentence that leads with the temperature and its unit."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It states the ECB reference rate of 1.1214 from the EuroCambi excerpt and gives about $1,346 for 1,200 euros, from the calculator's 1,345.68.",
+  "judgment_reason": "It searched for today's rate, used the calculator, said which source rate it used, and noted that a bank will offer a worse retail rate.",
+  "spoken_fit_reason": "Three plain sentences that lead with the rate and the converted total."
+}

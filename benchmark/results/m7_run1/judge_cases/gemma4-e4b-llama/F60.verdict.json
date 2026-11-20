@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It uses the $195.11 current price from the pricehistory excerpt and the calculator's $842.88 total with tax, both traceable, but it does not say this is one Amazon listing price.",
+  "judgment_reason": "It searched and used the calculator correctly, but it presented a single marked-up retailer price as the price without noting that sellers vary.",
+  "spoken_fit_reason": "One plain sentence that gives the unit price and the total, with the amounts spelled out."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It gives about 4.30 a month against the sketch's 4.32, with the 0.48 kWh a day and roughly 14.4 kWh a month shown correctly along the way.",
+  "judgment_reason": "The price was given so no rate assumption was needed, and it still flagged standby draw as an unmodelled extra without letting that block the number asked for.",
+  "spoken_fit_reason": "Leads with the cost then shows the arithmetic in three short spoken sentences with no lists or units read as symbols."
+}

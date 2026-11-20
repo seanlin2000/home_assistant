@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Matches the sketch: bridge as local Zigbee hub, shared app control, voice through Alexa, Google or HomeKit, physical dimmers for people without phones, Home Assistant for local voice, and the correct outage split where bridge, switches, automations and local app keep working while cloud voice and remote control stop.",
+  "judgment_reason": "Answered a stable architecture question from knowledge without searching and gave a practical local-first recommendation.",
+  "spoken_fit_reason": "Plain prose that leads with the recommended setup and answers both parts at a length the two-part question warrants."
+}

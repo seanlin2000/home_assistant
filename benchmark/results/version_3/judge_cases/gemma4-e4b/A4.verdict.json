@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It gets the mobile-nutrient and senescence mechanism right but reduces everything else to 'a specific environmental stress', omitting overwatering or root problems, shading of lower leaves, and pot-bound roots, and it asks only about species and soil rather than watering, light, fertilizer, or rate of leaf loss.",
+  "judgment_reason": "It correctly declined to name a single cause, said it needed more information before deciding, and answered from general knowledge without a needless search.",
+  "spoken_fit_reason": "Two short plain-prose paragraphs ending in a direct question, with no lists or markup."
+}

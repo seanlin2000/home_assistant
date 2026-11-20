@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Covers the sketch's full differential (senescence as most likely, mobile-nitrogen deficiency, shading, overwatering or root problems, outgrown pot) and the diagnostic questions about species, rate, watering and drainage, light, fertilizer, and yellowing pattern.",
+  "judgment_reason": "Named the most likely cause without asserting it as settled and asked for the genuinely missing information rather than inventing a species or watering habit.",
+  "spoken_fit_reason": "Plain conversational prose that leads with the likely answer and ends with a natural invitation, no lists or markup despite enumerating several items."
+}

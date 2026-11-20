@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It covers beamforming, noise rejection, latency, and placement but contradicts itself by first recommending a directional mic or compact array and later saying the design should 'prioritize omnidirectional sensitivity', and it omits the wake-word path, echo cancellation of its own speaker, where the speech compute runs, and always-on audio privacy.",
+  "judgment_reason": "It respected the no-product-names constraint and correctly did not search, but it presented two opposing microphone directives as if both were the recommendation instead of naming the tradeoff.",
+  "spoken_fit_reason": "Four dense paragraphs of preamble that ran past the word cap, so the listener heard it stop mid-thought after the third paragraph."
+}

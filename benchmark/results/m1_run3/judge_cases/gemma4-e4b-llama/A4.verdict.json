@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It names the main causes from the sketch (natural life cycle, nitrogen deficiency, watering, light) but asks only for the plant species, omitting the watering, light, fertilizer and pattern details the question asked it to list.",
+  "judgment_reason": "It did not assert a single cause and asked for missing information rather than guessing, and correctly answered without searching.",
+  "spoken_fit_reason": "Two plain sentences that lead with the explanations and end with one short question."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It gives one three-thousandth (0.0333 percent), halved to 0.0167 percent, worth about $166,667, an 8.3x multiple and $146,667 profit, all matching the reference and backed by the calculator results.",
+  "judgment_reason": "It used the calculator instead of searching and explicitly stated both key assumptions: that dilution halves the stake overall and that there are no liquidation preferences.",
+  "spoken_fit_reason": "Plain prose that reaches the value, multiple and profit in the first few sentences, with a short closing paragraph on assumptions that the question warrants."
+}

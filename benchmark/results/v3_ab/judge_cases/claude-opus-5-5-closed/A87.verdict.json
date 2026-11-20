@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Separates the two problems, attributes choppy audio to 2.4 GHz interference and the laptop grabbing a previously paired speaker with one-change-at-a-time steps ending in a wired fallback, and lists brightness versus room light, image size, focus and keystone, motion blur and DLP rainbow for eye strain with matching fixes, covering the sketch.",
+  "judgment_reason": "No search was needed for general troubleshooting, and it framed causes as likely candidates to test rather than asserting a single diagnosis.",
+  "spoken_fit_reason": "Leads with 'two separate problems' and keeps both diagnoses in plain prose without lists, at a length the two-problem question demands."
+}

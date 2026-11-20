@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 2,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The listener heard only narrated research steps and 'several of the things you'd want are shut' before the word cap cut it, so no itinerary and no pass-versus-ticket comparison was delivered, though the written text correctly drew the November closures from the sources.",
+  "judgment_reason": "Searching was right and it sensibly checked seasonal closures such as the Gornergrat and Glacier Express shutdowns, but it spent ten calls, hitting the limit before it could check Half Fare Card prices, and wrote an answer far too long to speak.",
+  "spoken_fit_reason": "Five narrated tool-use preambles and a markdown bold heading take up almost everything the listener heard before the word cap."
+}

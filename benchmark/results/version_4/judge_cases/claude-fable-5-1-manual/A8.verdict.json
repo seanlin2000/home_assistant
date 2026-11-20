@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Covers both sides of the sketch, latency and determinism for common commands versus misclassification risk and two code paths, and states when the single-model design is acceptable.",
+  "judgment_reason": "Commits to a recommendation with a stated reason, most home requests are simple and latency-sensitive, and does not hide behind an even-handed comparison.",
+  "spoken_fit_reason": "Six sentences of plain prose that open with the recommendation and close by restating it, no lists or markup."
+}

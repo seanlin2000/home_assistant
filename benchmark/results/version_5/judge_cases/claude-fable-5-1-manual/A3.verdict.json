@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It gives the required flat no and the sketch's reasoning, that tokens route to different experts so all must be resident and memory follows total parameters plus working memory, while four billion active at four bits is about two gigabytes of traffic per token.",
+  "judgment_reason": "It rejected the false premise outright in the first sentence and noted the only narrow case, swapping experts from system memory, where a four gigabyte card could limp along.",
+  "spoken_fit_reason": "Five sentences of plain prose that lead with the verdict, no lists, markdown, or citations."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The wake-word, VAD, faster-whisper, Ollama, Piper and Home Assistant pipeline matches the sources and the latency and model-depth limits are sound, but it prices a Mac Mini M4 at 'six hundred to seven hundred dollars' with no source giving any hardware price, and the message breaks off mid-sentence before the build-order priority the user asked for.",
+  "judgment_reason": "It never searched for hardware prices yet presented a specific price as current, and it gave no prioritized build order, so the budget and prioritization judgments were left unsupported.",
+  "spoken_fit_reason": "Bold markdown section headings over a long multi-paragraph essay make a formatted wall of text, cut by the word cap after the first hardware sentence."
+}

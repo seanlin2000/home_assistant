@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It asserts that an MoE's \"immediate memory footprint\" is lower and that \"runtime memory usage is dictated by how many parameters are actively being loaded\", which is the exact misconception the reference sketch rules out, and it never mentions quantization or expert offloading as the real reasons a 30B MoE can fit.",
+  "judgment_reason": "Correctly answered from general knowledge without searching, but stated the sparse-activation memory claim with full confidence and no caveat about needing all weights resident.",
+  "spoken_fit_reason": "Three sentences of plain prose that lead with the active-versus-total distinction, with no lists, markdown, or URLs."
+}

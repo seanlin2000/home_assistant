@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "States the correct figures, about 35 GB at 4-bit, 17.5 GB at 2-bit, and 140 GB at 16-bit (checked with the calculator), and covers the quality loss, GPTQ/AWQ, and the bandwidth speedup, but does not say that the context cache comes on top or that real files run somewhat larger.",
+  "judgment_reason": "Used the calculator for the memory arithmetic, answered from knowledge without a needless search, and marked the figures as approximate.",
+  "spoken_fit_reason": "Plain prose with no markdown that answers each of the three parts in turn, at a length the multi-part question justifies."
+}

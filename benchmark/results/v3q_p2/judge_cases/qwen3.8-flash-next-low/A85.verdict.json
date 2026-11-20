@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "Breakfast, lunch and the snack use sensible cheap foods with roughly right figures, but the message stops mid-dinner at 'five ounces of lean ground beef', and the meals it does list (43+46+29+43 g and about 1,845 kcal) do not reach the claimed 170 g and 2,030 kcal, so the totals cannot be checked.",
+  "judgment_reason": "It searched grocery prices it never needed and made 18 tool calls, hitting the tool-call limit before it could total the plan.",
+  "spoken_fit_reason": "It reads the plan out as long paragraph by paragraph meal descriptions, and the word cap cut the listener off after lunch."
+}

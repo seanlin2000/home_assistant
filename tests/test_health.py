@@ -1,0 +1,346 @@
+"""The health policy is a pure function; these tests pin the thresholds and cooldowns from design doc 10 §3.5 and the housekeeping from §3.6."""
+
+import json
+import subprocess
+from datetime import UTC, date, datetime, timedelta, timezone
+from pathlib import Path
+
+import httpx
+import pytest
+
+from ops import health, paths
+from ops.health import Action, Check, LlamaSlot, LlamaWatch, Policy, SearxngWatch, State
+from ops.searxng_demand import SearxngVerdict
+
+OK = Check(ok=True)
+DOWN = Check(ok=False, detail="refused")
+VM_UP = Check(ok=True, detail="started")
+VM_DOWN = Check(ok=False, detail="stopped")
+NOW = 1_000_000.0
+PACIFIC = timezone(timedelta(hours=-7))
+UTMCTL_FROM_SSH_STDERR = (
+    "Error from event: The operation couldn’t be completed. (OSStatus error -1743.)\n"
+    "NOTE: utmctl does not work from SSH sessions or before logging in.\n"
+    "Error from event: The operation couldn’t be completed. (OSStatus error -1743.)\n"
+    "Error: Virtual machine not found.\n"
+)
+
+
+def healthy_checks() -> dict[str, Check]:
+    return {name: OK for name in ("llama", "mcp", "speech", "kokoro", "searxng", "home_assistant")} | {"vm": VM_UP}
+
+
+def after_failures(checks: dict[str, Check], runs: int, state: State | None = None) -> State:
+    state = state or State()
+    for _ in range(runs):
+        state = health.update_failure_counts(state, checks)
+    return state
+
+
+def keys(actions: list[Action]) -> list[str]:
+    return [action.key for action in actions]
+
+
+def test_healthy_machine_needs_nothing() -> None:
+    state = after_failures(healthy_checks(), 3)
+    assert health.decide_actions(healthy_checks(), state, Policy(), NOW, maintenance=False) == []
+
+
+def test_agent_is_kicked_only_after_two_consecutive_failures() -> None:
+    checks = healthy_checks() | {"mcp": DOWN}
+    assert health.decide_actions(checks, after_failures(checks, 1), Policy(), NOW, maintenance=False) == []
+    assert keys(health.decide_actions(checks, after_failures(checks, 2), Policy(), NOW, maintenance=False)) == ["kickstart:mcp"]
+
+
+def test_a_recovery_resets_the_count() -> None:
+    checks = healthy_checks() | {"mcp": DOWN}
+    state = after_failures(healthy_checks(), 1, after_failures(checks, 1))
+    assert state.consecutive_failures["mcp"] == 0
+
+
+def test_kickstart_respects_the_cooldown() -> None:
+    checks = healthy_checks() | {"speech": DOWN}
+    state = after_failures(checks, 5)
+    state.last_action_at["kickstart:speech"] = NOW - 10 * 60
+    assert health.decide_actions(checks, state, Policy(), NOW, maintenance=False) == []
+    state.last_action_at["kickstart:speech"] = NOW - 31 * 60
+    assert keys(health.decide_actions(checks, state, Policy(), NOW, maintenance=False)) == ["kickstart:speech"]
+
+
+def test_unloaded_agent_is_skipped_not_failed() -> None:
+    checks = healthy_checks() | {"kokoro": Check(ok=None, detail="not loaded")}
+    state = after_failures(checks, 4)
+    assert state.consecutive_failures["kokoro"] == 0
+    assert health.decide_actions(checks, state, Policy(), NOW, maintenance=False) == []
+
+
+NEEDED = SearxngVerdict(reason="Brave failed under a minute ago (timed out)")
+NOT_NEEDED = SearxngVerdict(reason=None, idle_detail="off on purpose: Brave has $4.80 of this month's credit left and has not failed in the last hour")
+
+
+def searxng_watch(check: Check, verdict: SearxngVerdict, docker_running: bool) -> SearxngWatch:
+    return SearxngWatch(check=check, verdict=verdict, docker_running=docker_running)
+
+
+def test_needed_searxng_that_does_not_answer_starts_at_the_first_check_and_not_again_while_it_starts() -> None:
+    watch = searxng_watch(DOWN, NEEDED, docker_running=False)
+    assert keys(health.searxng_actions(watch, State(), Policy(), NOW, maintenance=False)) == ["searxng_up:searxng"]
+    starting = State(last_action_at={"searxng_up:searxng": NOW - 5 * 60})
+    assert health.searxng_actions(watch, starting, Policy(), NOW, maintenance=False) == []
+    starting.last_action_at["searxng_up:searxng"] = NOW - 11 * 60
+    assert keys(health.searxng_actions(watch, starting, Policy(), NOW, maintenance=False)) == ["searxng_up:searxng"]
+
+
+def test_needed_searxng_that_answers_is_left_alone() -> None:
+    assert health.searxng_actions(searxng_watch(OK, NEEDED, docker_running=True), State(), Policy(), NOW, maintenance=False) == []
+
+
+def test_searxng_nothing_needs_is_turned_off_while_docker_runs_and_left_alone_once_docker_is_off() -> None:
+    assert keys(health.searxng_actions(searxng_watch(OK, NOT_NEEDED, docker_running=True), State(), Policy(), NOW, maintenance=False)) == ["searxng_off:searxng"]
+    container_stopped = searxng_watch(Check(ok=None), NOT_NEEDED, docker_running=True)
+    assert keys(health.searxng_actions(container_stopped, State(), Policy(), NOW, maintenance=False)) == ["searxng_off:searxng"]
+    assert health.searxng_actions(searxng_watch(Check(ok=None), NOT_NEEDED, docker_running=False), State(), Policy(), NOW, maintenance=False) == []
+
+
+def test_maintenance_flag_suspends_starting_and_stopping_searxng() -> None:
+    assert health.searxng_actions(searxng_watch(DOWN, NEEDED, docker_running=False), State(), Policy(), NOW, maintenance=True) == []
+    assert health.searxng_actions(searxng_watch(OK, NOT_NEEDED, docker_running=True), State(), Policy(), NOW, maintenance=True) == []
+
+
+def test_searxng_off_on_purpose_is_skipped_not_failed_so_no_failure_count_builds() -> None:
+    check = health.searxng_check_on_demand(Check(ok=False, detail="ConnectError: refused", seconds=0.01), NOT_NEEDED)
+    assert check == Check(ok=None, detail=NOT_NEEDED.idle_detail, seconds=0.01)
+    assert after_failures(healthy_checks() | {"searxng": check}, 3).consecutive_failures["searxng"] == 0
+
+
+def test_running_searxng_says_why_it_is_needed_unless_it_is_kept_running_by_flag() -> None:
+    assert health.searxng_check_on_demand(Check(ok=True, detail="HTTP 200"), NEEDED).detail == "HTTP 200; running because Brave failed under a minute ago (timed out)"
+    assert health.searxng_check_on_demand(Check(ok=False, detail="HTTP 502"), NEEDED).ok is False
+    assert health.searxng_check_on_demand(Check(ok=True, detail="HTTP 200"), health.KEPT_RUNNING).detail == "HTTP 200"
+    assert health.searxng_verdict(Policy(manage_searxng=False), datetime.now(UTC)) is health.KEPT_RUNNING
+
+
+def test_stopped_vm_is_started_at_once_and_ha_failures_do_not_restart_it() -> None:
+    checks = healthy_checks() | {"vm": VM_DOWN, "home_assistant": DOWN}
+    assert keys(health.decide_actions(checks, after_failures(checks, 1), Policy(), NOW, maintenance=False)) == ["vm_start:vm"]
+    assert keys(health.decide_actions(checks, after_failures(checks, 9), Policy(), NOW, maintenance=False)) == ["vm_start:vm"]
+
+
+def test_ha_down_while_vm_runs_never_restarts_the_vm() -> None:
+    checks = healthy_checks() | {"home_assistant": DOWN}
+    assert health.decide_actions(checks, after_failures(checks, 5), Policy(), NOW, maintenance=False) == []
+    assert health.decide_actions(checks, after_failures(checks, 100), Policy(), NOW, maintenance=False) == []
+
+
+def test_maintenance_flag_suspends_every_action() -> None:
+    checks = {name: DOWN for name in healthy_checks()} | {"vm": VM_DOWN}
+    assert health.decide_actions(checks, after_failures(checks, 10), Policy(), NOW, maintenance=True) == []
+
+
+def test_parsers_read_macos_output() -> None:
+    assert health.parse_memory_pressure("The system has 2048 pages free\nSystem-wide memory free percentage: 14%\n") == 14
+    assert health.parse_swapusage("total = 13312.00M  used = 11628.25M  free = 1683.75M  (encrypted)") == 11628.25
+    assert health.parse_swapusage("total = 2.00G  used = 1.50G  free = 0.50G") == 1536.0
+    assert health.parse_vm_status(0, "stopped\n", "") == Check(ok=False, detail="stopped")
+    assert health.parse_vm_status(0, "started\n", "").ok is True
+    assert health.parse_vm_status(1, "", "no such vm").ok is None
+
+
+def test_rotate_log_copy_truncates_and_keeps_three_generations(tmp_path: Path) -> None:
+    log = tmp_path / "ollama.log"
+    log.write_text("small")
+    assert health.rotate_log(log, over_bytes=100) is False
+    for generation in ("first", "second", "third", "fourth"):
+        log.write_text(generation * 50)
+        assert health.rotate_log(log, over_bytes=100) is True
+    assert log.read_text() == ""
+    assert (tmp_path / "ollama.log.1").read_text().startswith("fourth")
+    assert (tmp_path / "ollama.log.2").read_text().startswith("third")
+    assert (tmp_path / "ollama.log.3").read_text().startswith("second")
+    assert not (tmp_path / "ollama.log.4").exists()
+
+
+def test_prune_history_drops_old_snapshots(tmp_path: Path) -> None:
+    path = tmp_path / "health.jsonl"
+    lines = [json.dumps({"checked_at": day}) for day in ("2026-05-01T00:00:00+00:00", "2026-06-01T00:00:00+00:00", "2026-09-07T00:00:00+00:00")]
+    path.write_text("\n".join(lines) + "\n")
+    assert health.prune_history(path, retention_days=90, today=date(2026, 9, 7)) == 2
+    assert path.read_text().count("\n") == 1
+
+
+def test_housekeeping_touches_every_file_under_the_log_dir(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("STUDIO_LOG_DIR", str(tmp_path))
+    paths.exchanges_dir().mkdir()
+    (paths.exchanges_dir() / "2025-01-01.jsonl").write_text("{}\n")
+    (paths.exchanges_dir() / "2026-09-01.jsonl").write_text("{}\n")
+    paths.traces_dir().mkdir()
+    (paths.traces_dir() / "2026-08-20.jsonl").write_text("{}\n")
+    (paths.traces_dir() / "2026-09-01.jsonl").write_text("{}\n")
+    paths.service_log("mcp").write_bytes(b"x" * (health.ROTATE_OVER_BYTES + 1))
+    notes = health.housekeeping(today=date(2026, 9, 7))
+    assert notes == ["rotated mcp.log", "deleted exchanges/2025-01-01.jsonl", "deleted traces/2026-08-20.jsonl"]
+    assert (paths.exchanges_dir() / "2026-09-01.jsonl").exists()
+    assert (paths.traces_dir() / "2026-09-01.jsonl").exists()
+
+
+async def test_harness_check_sends_its_key_and_names_what_the_harness_cannot_reach(tmp_path: Path) -> None:
+    key_path = tmp_path / "harness.key"
+    key_path.write_text("secret\n")
+    seen = {}
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        seen["authorization"] = request.headers["authorization"]
+        return httpx.Response(200, json={"status": "degraded", "llama_server": False, "tool_server": True})
+
+    async with httpx.AsyncClient(transport=httpx.MockTransport(handler)) as client:
+        check = await health.check_harness(client, health.Settings(harness_key_path=key_path))
+    assert seen["authorization"] == "Bearer secret"
+    assert (check.ok, check.detail) == (True, "cannot reach llama-server")
+
+
+def test_full_searxng_check_passes_on_one_engine_but_says_there_is_no_fallback() -> None:
+    one_engine = {"results": [{"engines": ["duckduckgo"]}, {"engines": ["duckduckgo"]}], "unresponsive_engines": [["brave", "too many requests"]]}
+    no_engine = {"results": [], "unresponsive_engines": [["brave", "too many requests"], ["duckduckgo", "CAPTCHA"]]}
+    two_engines = {"results": [{"engines": ["brave", "duckduckgo"]}, {"engines": ["brave"]}], "unresponsive_engines": []}
+    assert health.engines_answering_check(one_engine) == Check(ok=True, detail="2 results from duckduckgo (no fallback); not answering: brave (too many requests)")
+    assert health.engines_answering_check(no_engine) == Check(ok=False, detail="0 results from no engine; not answering: brave (too many requests), duckduckgo (CAPTCHA)")
+    assert health.engines_answering_check(two_engines) == Check(ok=True, detail="2 results from brave, duckduckgo")
+
+
+def test_a_slot_on_the_same_request_with_no_new_token_since_the_last_check_is_stuck() -> None:
+    previous = [LlamaSlot(slot=0, task=41, decoded=0), LlamaSlot(slot=1, task=7, decoded=12)]
+    current = [LlamaSlot(slot=0, task=41, decoded=0), LlamaSlot(slot=1, task=7, decoded=30)]
+    assert health.stuck_llama_slots(previous, current) == [LlamaSlot(slot=0, task=41, decoded=0)]
+    assert health.stuck_llama_slots(previous, [LlamaSlot(slot=0, task=42, decoded=0)]) == []
+    assert health.stuck_llama_slots([], current) == []
+
+
+def test_a_stuck_slot_restarts_llama_server_once_per_cooldown_even_though_its_health_check_passes() -> None:
+    checks = healthy_checks() | {"llama": OK}
+    stuck = LlamaWatch(stuck_slots=[LlamaSlot(slot=0, task=41, decoded=0)])
+    state = after_failures(checks, 3)
+    assert keys(health.decide_actions(checks, state, Policy(), NOW, maintenance=False, llama_watch=stuck)) == ["kickstart:llama"]
+    state.last_action_at["kickstart:llama"] = NOW - 10 * 60
+    assert health.decide_actions(checks, state, Policy(), NOW, maintenance=False, llama_watch=stuck) == []
+    assert health.decide_actions(checks, State(), Policy(), NOW, maintenance=True, llama_watch=stuck) == []
+
+
+def test_a_failing_llama_server_is_restarted_once_not_twice() -> None:
+    checks = healthy_checks() | {"llama": DOWN}
+    watch = LlamaWatch(stuck_slots=[LlamaSlot(slot=0, task=41, decoded=0)], daily_restart_due=True)
+    assert keys(health.decide_actions(checks, after_failures(checks, 2), Policy(), NOW, maintenance=False, llama_watch=watch)) == ["kickstart:llama"]
+
+
+def test_the_daily_refresh_runs_once_between_four_and_six_am_when_the_assistant_is_quiet() -> None:
+    policy = Policy()
+    four_am = datetime(2026, 10, 21, 4, 5, tzinfo=PACIFIC)
+    quiet_since = four_am.timestamp() - 11 * 60
+    assert health.daily_restart_due(State(), policy, four_am.replace(hour=3), quiet_since) is False
+    assert health.daily_restart_due(State(), policy, four_am.replace(hour=5, minute=55), quiet_since) is True
+    assert health.daily_restart_due(State(), policy, four_am.replace(hour=6), quiet_since) is False
+    assert health.daily_restart_due(State(), policy, four_am.replace(hour=20), quiet_since) is False
+    assert health.daily_restart_due(State(), policy, four_am, four_am.timestamp() - 2 * 60) is False
+    assert health.daily_restart_due(State(), policy, four_am, quiet_since) is True
+    assert health.daily_restart_due(State(), policy, four_am, None) is True
+    assert health.daily_restart_due(State(last_daily_restart_day="2026-10-21"), policy, four_am, quiet_since) is False
+
+
+def test_the_daily_refresh_restarts_only_a_llama_server_that_is_up() -> None:
+    watch = LlamaWatch(daily_restart_due=True)
+    for llama, expected in ((OK, ["kickstart:llama"]), (Check(ok=None, detail="loading the model"), [])):
+        checks = healthy_checks() | {"llama": llama}
+        assert keys(health.decide_actions(checks, after_failures(checks, 1), Policy(), NOW, maintenance=False, llama_watch=watch)) == expected
+
+
+async def test_busy_slots_are_read_with_the_key_and_a_server_that_does_not_answer_has_none(tmp_path: Path) -> None:
+    key_path = tmp_path / "llama.key"
+    key_path.write_text("secret\n")
+    seen = {}
+    reply = [
+        {"id": 0, "id_task": 41, "is_processing": True, "next_token": [{"has_next_token": True, "n_decoded": 0}]},
+        {"id": 1, "id_task": -1, "is_processing": False, "next_token": [{"n_decoded": 0}]},
+    ]
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        seen["authorization"] = request.headers["authorization"]
+        return httpx.Response(200, json=reply)
+
+    settings = health.Settings(llama_key_path=key_path)
+    async with httpx.AsyncClient(transport=httpx.MockTransport(handler)) as client:
+        assert await health.read_busy_llama_slots(client, settings) == [LlamaSlot(slot=0, task=41, decoded=0)]
+    assert seen["authorization"] == "Bearer secret"
+    async with httpx.AsyncClient(transport=httpx.MockTransport(lambda request: httpx.Response(401))) as client:
+        assert await health.read_busy_llama_slots(client, settings) == []
+
+
+def test_the_last_exchange_is_the_newest_day_file(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("STUDIO_LOG_DIR", str(tmp_path))
+    assert health.last_exchange_at() is None
+    paths.exchanges_dir().mkdir()
+    (paths.exchanges_dir() / "2026-10-20.jsonl").write_text("{}\n")
+    newest = paths.exchanges_dir() / "2026-10-21.jsonl"
+    newest.write_text("{}\n")
+    assert health.last_exchange_at() == newest.stat().st_mtime
+
+
+def test_a_health_check_told_to_leave_the_vm_still_restarts_services_but_never_the_vm() -> None:
+    checks = healthy_checks() | {"vm": VM_DOWN, "home_assistant": DOWN, "mcp": DOWN}
+    leave_vm = Policy(manage_vm=False)
+    assert keys(health.decide_actions(checks, after_failures(checks, 9), leave_vm, NOW, maintenance=False)) == ["kickstart:mcp"]
+    running = healthy_checks() | {"home_assistant": DOWN}
+    assert health.decide_actions(running, after_failures(running, 9), leave_vm, NOW, maintenance=False) == []
+
+
+@pytest.mark.parametrize(
+    "stderr",
+    [
+        UTMCTL_FROM_SSH_STDERR,
+        "Error from event: The operation couldn’t be completed. (OSStatus error -1743.)\n",
+        "NOTE: utmctl does not work from SSH sessions or before logging in.\n",
+    ],
+)
+def test_a_vm_check_from_an_ssh_session_is_skipped_and_says_the_scheduled_agent_can_check_it(stderr: str, monkeypatch: pytest.MonkeyPatch) -> None:
+    calls: list[list[str]] = []
+
+    def fake_which(name: str) -> str:
+        return f"/opt/homebrew/bin/{name}"
+
+    def fake_run(command: list[str], **kwargs: object) -> subprocess.CompletedProcess[str]:
+        calls.append(command)
+        return subprocess.CompletedProcess(command, 1, "", stderr)
+
+    monkeypatch.setattr(health.shutil, "which", fake_which)
+    monkeypatch.setattr(health.subprocess, "run", fake_run)
+    check = health.check_vm("Home Assistant")
+    assert calls == [["utmctl", "status", "Home Assistant"]]
+    assert check.ok is None
+    assert "SSH session or before login" in check.detail and "scheduled health agent" in check.detail
+    assert "not found" not in check.detail
+
+
+def test_other_utmctl_failures_keep_reporting_what_utmctl_said() -> None:
+    assert health.parse_vm_status(1, "", "Error: Virtual machine not found.\n") == Check(ok=None, detail="utmctl failed: Error: Virtual machine not found.")
+
+
+def test_a_vm_that_cannot_be_reached_from_this_session_is_neither_started_nor_restarted() -> None:
+    unreachable = health.parse_vm_status(1, "", UTMCTL_FROM_SSH_STDERR)
+    checks = healthy_checks() | {"vm": unreachable, "home_assistant": DOWN}
+    state = after_failures(checks, 9)
+    assert state.consecutive_failures["vm"] == 0
+    assert health.decide_actions(checks, state, Policy(), NOW, maintenance=False) == []
+
+
+async def test_the_engine_check_counts_strata_still_loading_as_neither_healthy_nor_failing() -> None:
+    replies = {"llama-server loading": (503, {}), "Strata loading": (200, {"status": "ok", "loaded": False}), "loaded": (200, {"status": "ok", "loaded": True})}
+    results = {}
+    for name, (status, reply) in replies.items():
+        async with httpx.AsyncClient(transport=httpx.MockTransport(lambda request, status=status, reply=reply: httpx.Response(status, json=reply))) as client:
+            results[name] = (await health.check_llama_server(client, health.Settings(llama_key_path=Path("/nonexistent")))).ok
+    assert results == {"llama-server loading": None, "Strata loading": None, "loaded": True}
+
+
+def test_strata_s_busy_slot_is_never_judged_stuck_since_it_names_no_task() -> None:
+    strata_reply = [{"id": 0, "n_ctx": 34816, "is_processing": True, "n_prompt_tokens": 7900}]
+    llama_reply = [{"id": 0, "id_task": 41, "is_processing": True, "next_token": [{"n_decoded": 12}]}]
+    assert health.busy_slots(strata_reply) == []
+    assert health.busy_slots(llama_reply) == [health.LlamaSlot(slot=0, task=41, decoded=12)]

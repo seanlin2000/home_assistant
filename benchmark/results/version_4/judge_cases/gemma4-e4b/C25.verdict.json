@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Both conversions match the reference sketch: 22.2 degrees Celsius and 3.11 miles, each taken from a convert tool call.",
+  "judgment_reason": "It made both conversions with the tool rather than from memory and did not search.",
+  "spoken_fit_reason": "A single sentence covering both answers in spelled-out numbers, though \"twenty-two point two zero\" carries a needless trailing zero."
+}

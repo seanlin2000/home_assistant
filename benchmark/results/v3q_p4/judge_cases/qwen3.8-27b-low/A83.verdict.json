@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "All figures match the sketch: about 0.033 percent initial stake, 0.0167 percent after dilution, about $166,667 at exit, an 8.3x multiple and about $146,667 profit.",
+  "judgment_reason": "Used the calculator and stated that dilution halves the ownership percentage, but did not mention that liquidation preferences and other share classes are being ignored.",
+  "spoken_fit_reason": "Leads with the numbers in a few short plain sentences that suit speech."
+}

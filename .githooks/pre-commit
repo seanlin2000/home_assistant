@@ -1,0 +1,28 @@
+#!/bin/bash
+# Refuses a commit unless formatting, deslop, and the test suite pass.
+# scripts/dev_setup.sh installs it with `git config core.hooksPath .githooks`.
+# Each step's output is shown only when it fails, so a passing commit prints three lines.
+
+set -eu
+
+cd "$(git rev-parse --show-toplevel)"
+LOG=$(mktemp)
+trap 'rm -f "$LOG"' EXIT
+
+run_step() {
+    local title=$1 hint=$2
+    shift 2
+    printf '== pre-commit: %s ... ' "$title"
+    if "$@" >"$LOG" 2>&1; then
+        printf 'ok\n'
+    else
+        printf 'FAILED\n\n'
+        cat "$LOG"
+        printf '\npre-commit: %s failed. %s\n' "$title" "$hint" >&2
+        exit 1
+    fi
+}
+
+run_step "formatting check" "Run scripts/lint.sh, then git add the reformatted files and commit again." scripts/lint.sh -c
+run_step "deslop" "Fix the findings above, or add '# deslop: allow-comments' to a function whose comment earns its length, and commit again." uv run deslop
+run_step "tests" "Fix the failing tests and commit again." uv run pytest -q

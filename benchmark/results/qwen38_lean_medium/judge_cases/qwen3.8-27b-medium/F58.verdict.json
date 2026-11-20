@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The city-proper comparison (over 14 million against 8.8 million, about 1.6 times, via the calculator) matches the reference, but the 8.8 million and the 'about 20 million' New York metro figure do not appear in the retrieved NYC excerpt, and its metro-to-metro ratio of 1.6 to 1.7 is below the reference's 1.9 to 2.",
+  "judgment_reason": "It correctly named which measures it compared and warned that the definitions differ, but it filled in figures missing from the lookup from memory without saying so, and did the metro ratios in its head.",
+  "spoken_fit_reason": "Plain prose without lists, but it opens with a caveat instead of the answer, runs three paragraphs and includes the written form '1.6x'."
+}

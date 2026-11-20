@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The calculator returned 166,666.67, 8.33 and 146,666.67, but the answer speaks about 333,333 dollars, a 16.7x multiple and a 313,333 dollar profit, so all three headline numbers are doubled and wrong even though the one-six-thousandth step is right.",
+  "judgment_reason": "It stated the equal-payout and liquidation-preference assumptions well, but it contradicted its own calculator results on the central figures.",
+  "spoken_fit_reason": "Leads with the value in plain spoken numbers, followed by a short caveat in two to three more sentences."
+}

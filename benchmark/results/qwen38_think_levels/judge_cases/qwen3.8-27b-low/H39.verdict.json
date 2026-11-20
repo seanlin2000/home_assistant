@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 4,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It gives 350 degrees Fahrenheit and the toothpick test as the fixtures do, but its fifty to seventy minute range is looser than the 55 to 65 minutes in the reference.",
+  "judgment_reason": "The user explicitly asked it to look this up, and it answered from memory with no search call.",
+  "spoken_fit_reason": "It leads with the temperature and time in three plain sentences with no formatting."
+}

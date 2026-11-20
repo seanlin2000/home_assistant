@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It correctly synthesizes the excerpts' causes (AI infrastructure demand, memory makers moving wafer capacity from GDDR7 and DRAM to AI data centers, data-center orders getting priority), but leaves out that AI firms are buying consumer cards directly and that Nvidia is reportedly planning more price hikes.",
+  "judgment_reason": "It searched for a current-events question and, as asked, explained causes rather than listing prices.",
+  "spoken_fit_reason": "Three plain sentences that lead with the main cause, with no citations or lists."
+}

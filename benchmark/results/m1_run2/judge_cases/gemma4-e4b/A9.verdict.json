@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It names budget, region, and trip length as missing and warns that \"not too expensive\" is subjective, but omits departure location, dates, what \"warm\" means, and travel documents, and names only one assumption to avoid.",
+  "judgment_reason": "It correctly avoids naming a destination or inventing preferences, but covers the assumptions-to-avoid half of the question thinly.",
+  "spoken_fit_reason": "Three short plain sentences that lead with what is missing."
+}

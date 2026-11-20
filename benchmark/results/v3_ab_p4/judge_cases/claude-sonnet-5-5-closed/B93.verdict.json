@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 0,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The tool returned five nearby Michelin restaurants with cuisine, price level and distinction (R40, Hupo Bib Gourmand, Casa Enrique, one-star Meju, Vert Frais), yet the answer names none and offers only a vague neighborhood summary plus an unsupported twenty-to-sixty-dollar range that the $$$$ Meju contradicts.",
+  "judgment_reason": "It falsely claimed it could not check the listings it had just retrieved and then asked for cuisine and budget the question did not require, failing the central task.",
+  "spoken_fit_reason": "Plain prose, but it opens with a refusal-style disclaimer and closes with a request for information instead of the answer."
+}

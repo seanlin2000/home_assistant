@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The 6.52 per month figure matches the sketch's 1.45 kWh a day at fifteen cents, though it gives a single rate rather than a range and never mentions that the machine likely is not drawing the full 300 watts for the whole hour.",
+  "judgment_reason": "It called the number an estimate and named both load-bearing assumptions, the fifteen cent rate and the one active hour against twenty-three idle hours.",
+  "spoken_fit_reason": "Two sentences that lead with the cost and state the assumptions in plain prose."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The used 3090 at $700-800 for 24GB is well grounded in excerpt [3], but it claims that 24GB \"can load entire 70B models into memory\", gives the RTX 4070 Ti \"roughly 16GB of VRAM\" when it has 12GB and no excerpt states any figure, and proposes pairing a 4070 Super with an Arc B580 for \"extra VRAM headroom\" as if two cards' memory pooled for one model.",
+  "judgment_reason": "Searching was right, but the user asked for a whole computer on $1,000 and every option is priced as a bare GPU, with the dual-card build leaving \"roughly $200 for RAM and storage\" and no CPU, motherboard, power supply, or case at all.",
+  "spoken_fit_reason": "Markdown bold survives into the spoken text on every product name, and at roughly 250 words across three paragraphs the word cap cut the answer before the final recommendation."
+}

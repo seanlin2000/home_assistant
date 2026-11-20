@@ -1,0 +1,12 @@
+{
+  "gates_hit": [
+    "fabricated_current_fact"
+  ],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The dollar figures follow from the sourced APYs (Chase $5, BofA $20, Wells Fargo $25, PNC $1,575, CIT $1,875), but it says the Wells Fargo Platinum fee is 'a dollar twenty a month' when the excerpt says $12, reads 0.04% and 0.05% as 'ten-thousandths of a percent', and says branch-bank savings 'sit around a tenth of one percent'.",
+  "judgment_reason": "Searched for current rates, stated that rates are variable and that the math assumes the rate holds all year, and flagged that big branch banks are not high-yield, but it calls CIT one of 'the two big names' without saying it swapped in a non-major bank.",
+  "spoken_fit_reason": "The listener heard three 'let me' process preambles and a long caveat before the word cap cut it, so no rate or interest figure was ever spoken."
+}

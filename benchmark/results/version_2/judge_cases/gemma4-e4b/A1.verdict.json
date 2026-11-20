@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It correctly says storage must cover all parameters and that total size is the limiting factor, but it first asserts that 'the memory required to run it at any given moment is determined by the number of parameters that are actually being used', and it never mentions quantization or offloading experts to CPU RAM, which is the reference sketch's actual explanation for why the MoE sometimes fits.",
+  "judgment_reason": "Correctly answered from general knowledge without searching, but it let a misleading 'active parameters need less memory' framing stand rather than flagging that sparse activation saves compute, not storage.",
+  "spoken_fit_reason": "Two paragraphs that lead with the answer, but the markdown emphasis around *run* and *store* would be read literally or lost by a TTS engine."
+}

@@ -1,0 +1,397 @@
+"""Bring a fresh Home Assistant OS instance to the state the design describes, without touching the UI.
+
+Steps (each is skipped when already done, so the script can be re-run):
+  1. onboarding: create the owner account, finish the onboarding wizard, mint a long-lived token (saved to .env as HA_TOKEN)
+  2. add-ons: Samba (for deploys), Piper (the alternative text to speech), Music Assistant, ESPHome (for the puck), openWakeWord (optional server-side wake word)
+  3. integrations: Wyoming entries for Whisper and Kokoro on this Mac (replacing ones that point at another Mac), confirm the discovered Piper add-on,
+     and point studio_assistant at the harness
+  4. pipeline: an Assist pipeline "Jarvis" using Whisper, studio_assistant, and Kokoro's Fable voice, set as preferred (--tts piper for Piper)
+  5. weather: copy the home location, time zone, and units into .env for the weather_forecast tool, and hide every weather entity from Assist so
+     Home Assistant's built-in weather intent finds nothing to answer with and every weather question reaches studio_assistant
+
+    uv run python scripts/ha_setup.py --host 192.168.1.60          # first run
+    uv run python scripts/ha_setup.py --host 192.168.1.60 --only pipeline
+    uv run python scripts/ha_setup.py --host 192.168.1.60 --only pipeline --tts-voice bm_george   # another Kokoro voice
+    uv run python scripts/ha_setup.py --host 192.168.1.60 --only weather   # then scripts/services.sh install, so the tool server sees the coordinates
+
+Credentials: HA_ADMIN_USER / HA_ADMIN_PASSWORD / HA_SAMBA_PASSWORD are read from .env and generated if missing. Everything lives on the LAN.
+"""
+
+import argparse
+import asyncio
+import json
+import os
+import secrets
+import subprocess
+import sys
+import time
+from pathlib import Path
+from typing import Any, NamedTuple
+
+from dotenv import dotenv_values, load_dotenv
+
+from assistant_service.settings import load_harness_config
+from ops.ha_client import HomeAssistant, entity_id, wait_for_api
+from serving.settings import read_api_key
+
+PROJECT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(PROJECT))  # scripts/ is not a package; make `ops` importable when run as a file
+ENV_PATH = PROJECT / ".env"
+# The address the Wyoming entries were made with. A Mac with another address (a move, a new reservation) gets new entries rather than a dead one.
+WYOMING_HOST_KEY = "HA_WYOMING_HOST"
+STEPS = ("onboarding", "addons", "integrations", "pipeline", "weather")
+ADDONS = {
+    "core_samba": {"options": None},  # options are filled in at runtime with the generated password
+    "core_piper": {
+        "options": {"voice": "en_US-lessac-medium", "speaker": 0, "length_scale": 1, "noise_scale": 0.667, "noise_w": 0.333, "max_piper_procs": 1, "update_voices": True, "streaming": True}
+    },
+    "d5369777_music_assistant": {"options": {"log_level": "info"}},
+    "5c53de3b_esphome": {"options": None},
+    "core_openwakeword": {"options": {"threshold": 0.5, "trigger_level": 1}},
+}
+WYOMING_SERVICES = {"whisper": ("Whisper on the Mac", 10300), "kokoro": ("Kokoro on the Mac", 10210)}
+PIPELINE_NAME = "Jarvis"
+# The language and voice each text-to-speech engine is given when none is named. Both engines advertise region codes (en_US, en_GB); a bare "en" is
+# rejected at run time with tts-not-supported. Kokoro's Fable is a British voice, so it needs en_GB. Piper's voice is set on its add-on (ADDONS).
+TTS_DEFAULTS = {"kokoro": ("en_GB", "bm_fable"), "piper": ("en_US", None)}
+
+
+def env_value(name: str, generate: bool = False) -> str:
+    values = dotenv_values(ENV_PATH)
+    if values.get(name):
+        return str(values[name])
+    if not generate:
+        raise SystemExit(f"{name} missing from .env")
+    value = secrets.token_urlsafe(18)
+    save_env(name, value)
+    return value
+
+
+def save_env(name: str, value: str) -> None:
+    lines = ENV_PATH.read_text().splitlines() if ENV_PATH.exists() else []
+    lines = [line for line in lines if not line.startswith(f"{name}=")]
+    lines.append(f"{name}={value}")
+    ENV_PATH.write_text("\n".join(lines) + "\n")
+    ENV_PATH.chmod(0o600)
+
+
+# ---------------------------------------------------------------- step 1: onboarding
+
+
+async def onboarding(ha: HomeAssistant, args: argparse.Namespace) -> None:
+    existing = dotenv_values(ENV_PATH).get("HA_TOKEN")
+    if existing:
+        ha.token = existing
+        print("onboarding: already done (HA_TOKEN present)")
+        return
+    steps = await ha.get("/api/onboarding")
+    pending = {step["step"] for step in steps if not step["done"]}
+    client_id = f"{ha.base}/"
+    username = env_value("HA_ADMIN_USER", generate=False) if dotenv_values(ENV_PATH).get("HA_ADMIN_USER") else "sean"
+    save_env("HA_ADMIN_USER", username)
+    password = env_value("HA_ADMIN_PASSWORD", generate=True)
+    if "user" in pending:
+        result = await ha.post("/api/onboarding/users", {"client_id": client_id, "name": "Sean", "username": username, "password": password, "language": "en"})
+        access = await exchange_code(ha, client_id, result["auth_code"])
+    else:
+        access = await password_login(ha, client_id, username, password)
+    ha.token = access
+    if "core_config" in pending:
+        await ha.post("/api/onboarding/core_config", {})
+    if "analytics" in pending:
+        await ha.post("/api/onboarding/analytics", {})
+    if "integration" in pending:
+        await ha.post("/api/onboarding/integration", {"client_id": client_id, "redirect_uri": f"{client_id}?auth_callback=1"})
+    await ha.ws(
+        {
+            "type": "config/core/update",
+            "location_name": "Studio",
+            "time_zone": args.time_zone,
+            "unit_system": "us_customary",
+            "currency": "USD",
+            "country": "US",
+            "language": "en",
+            "latitude": args.latitude,
+            "longitude": args.longitude,
+        }
+    )
+    token = await ha.ws({"type": "auth/long_lived_access_token", "client_name": "studio_assistant tooling", "lifespan": 3650})
+    save_env("HA_TOKEN", token)
+    save_env("HA_HOST", ha.host)
+    ha.token = token
+    print(f"onboarding: owner '{username}' created, long-lived token saved to .env")
+
+
+async def exchange_code(ha: HomeAssistant, client_id: str, code: str) -> str:
+    response = await ha.http.post("/auth/token", data={"grant_type": "authorization_code", "code": code, "client_id": client_id})
+    response.raise_for_status()
+    return response.json()["access_token"]
+
+
+async def password_login(ha: HomeAssistant, client_id: str, username: str, password: str) -> str:
+    flow = (await ha.http.post("/auth/login_flow", json={"client_id": client_id, "handler": ["homeassistant", None], "redirect_uri": client_id})).json()
+    result = (await ha.http.post(f"/auth/login_flow/{flow['flow_id']}", json={"client_id": client_id, "username": username, "password": password})).json()
+    return await exchange_code(ha, client_id, result["result"])
+
+
+# ---------------------------------------------------------------- step 2: add-ons
+
+
+async def addons(ha: HomeAssistant, args: argparse.Namespace) -> None:
+    await ha.supervisor("post", "/store/reload")
+    samba_password = env_value("HA_SAMBA_PASSWORD", generate=True)
+    save_env("HA_SAMBA_USER", "homeassistant")
+    ADDONS["core_samba"]["options"] = {
+        "workgroup": "WORKGROUP",
+        "username": "homeassistant",
+        "password": samba_password,
+        "allow_hosts": ["10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16", "169.254.0.0/16", "fe80::/10"],
+        "compatibility_mode": False,
+        "veto_files": ["._*", ".DS_Store", "Thumbs.db", "icon?", ".Trashes"],
+        "local_master": True,
+        "enabled_shares": ["addons", "backup", "config", "media", "share", "ssl"],
+    }
+    for slug, spec in ADDONS.items():
+        await install_addon(ha, slug, spec["options"])
+
+
+async def install_addon(ha: HomeAssistant, slug: str, options: dict[str, Any] | None) -> None:
+    info = await ha.supervisor("get", f"/addons/{slug}/info")
+    if info["version"] is None:
+        print(f"addons: installing {slug} ...")
+        try:
+            await ha.supervisor("post", f"/store/addons/{slug}/install")
+        except RuntimeError as error:
+            # The websocket proxy gives up before a long image pull finishes and reports an empty unknown_error while the Supervisor carries on.
+            print(f"addons: install call for {slug} returned {error}; waiting for the Supervisor to finish")
+        info = await wait_for_addon(ha, slug)
+    else:
+        print(f"addons: {slug} already installed ({info['version']})")
+    if options is not None:
+        # Merge over the add-on's own defaults: add-ons add required options over time (Samba gained network_discovery) and a partial payload is rejected.
+        current = (await ha.supervisor("get", f"/addons/{slug}/info")).get("options") or {}
+        await ha.supervisor("post", f"/addons/{slug}/options", {"options": {**current, **options}})
+    if info["state"] != "started":
+        try:
+            await ha.supervisor("post", f"/addons/{slug}/start")
+        except RuntimeError as error:
+            print(f"addons: start call for {slug} returned {error}; waiting for it to come up")
+        await wait_for_addon(ha, slug, state="started")
+    await ha.supervisor("post", f"/addons/{slug}/options", {"boot": "auto", "watchdog": True})
+
+
+async def wait_for_addon(ha: HomeAssistant, slug: str, timeout_seconds: int = 900, state: str | None = None) -> dict[str, Any]:
+    """Poll until the add-on is installed (version set) and, if asked, in the given state."""
+    deadline = time.time() + timeout_seconds
+    while time.time() < deadline:
+        info = await ha.supervisor("get", f"/addons/{slug}/info")
+        if info["version"] is not None and (state is None or info["state"] == state):
+            return info
+        await asyncio.sleep(10)
+    raise SystemExit(f"add-on {slug} did not reach {state or 'installed'} within {timeout_seconds}s")
+
+
+# ---------------------------------------------------------------- step 3: integrations
+
+
+async def integrations(ha: HomeAssistant, args: argparse.Namespace) -> None:
+    if not args.mac_ip:
+        raise SystemExit("could not read this Mac's LAN address; pass --mac-ip")
+    entries = await ha.get("/api/config/config_entries/entry")
+    saved = dotenv_values(ENV_PATH)
+    for key, (title, port) in WYOMING_SERVICES.items():
+        env_key = f"HA_WYOMING_{key.upper()}_ENTRY"
+        if wyoming_entry_is_current(entries, saved, env_key, args.mac_ip):
+            print(f"integrations: wyoming {key} present")
+            continue
+        for stale_id in stale_wyoming_entry_ids(entries, saved.get(env_key)):
+            await ha.delete(f"/api/config/config_entries/entry/{stale_id}")
+            print(f"integrations: removed the old wyoming {key} entry {stale_id}")
+        created = await run_flow(ha, "wyoming", {"host": args.mac_ip, "port": port}, title)
+        save_env(env_key, created["result"]["entry_id"])
+    save_env(WYOMING_HOST_KEY, args.mac_ip)
+    await confirm_discovered_flows(ha)
+    await point_studio_assistant_at_harness(ha, entries, harness_settings(args.mac_ip))
+
+
+def wyoming_entry_is_current(entries: list[dict[str, Any]], saved: dict[str, str | None], env_key: str, mac_ip: str) -> bool:
+    """The Wyoming flow titles the entry after the remote service name and the entry listing hides host and port, so the rerun check is the entry id
+    recorded when it was made, together with the address it was made for."""
+    recorded_id = saved.get(env_key)
+    return any(entry["entry_id"] == recorded_id for entry in entries) and saved.get(WYOMING_HOST_KEY) == mac_ip
+
+
+def stale_wyoming_entry_ids(entries: list[dict[str, Any]], recorded_id: str | None) -> list[str]:
+    """The recorded entry and every other Wyoming entry with its title. An earlier run can leave a second one behind, and the pipeline step's entity
+    lookup could pick that entry's entity, which still points at the old address."""
+    recorded = next((entry for entry in entries if entry["entry_id"] == recorded_id), None)
+    if recorded is None:
+        return []
+    return [entry["entry_id"] for entry in entries if entry["domain"] == "wyoming" and entry["title"] == recorded["title"]]
+
+
+def this_mac_address() -> str:
+    """This Mac's LAN address, from the same lookup scripts/services.sh uses for the harness's allowed hosts; empty when it cannot be read."""
+    lookup = subprocess.run([str(PROJECT / "scripts" / "network_identity.sh"), "address"], capture_output=True, text=True, check=False)
+    return lookup.stdout.strip()
+
+
+def harness_settings(mac_ip: str) -> dict[str, str]:
+    """The harness's address on the Mac and the key it requires, read from the key file services.sh created there."""
+    service = load_harness_config().service
+    return {"harness_url": f"http://{mac_ip}:{service.port}", "harness_api_key": read_api_key(service.api_key_path)}
+
+
+async def point_studio_assistant_at_harness(ha: HomeAssistant, entries: list[dict[str, Any]], settings: dict[str, str]) -> None:
+    """A new entry is created with the harness settings. An entry from v1 keeps its data and gets them as options instead, which the component
+    reads over its data, so redeploying the v1 component still finds the Ollama settings it needs."""
+    existing = [entry for entry in entries if entry["domain"] == "studio_assistant"]
+    if not existing:
+        await run_flow(ha, "studio_assistant", settings, "Studio Assistant")
+        return
+    flow = await ha.post("/api/config/config_entries/options/flow", {"handler": existing[0]["entry_id"]})
+    result = await ha.post(f"/api/config/config_entries/options/flow/{flow['flow_id']}", settings)
+    print(f"integrations: studio_assistant pointed at {settings['harness_url']} -> {result.get('type')}")
+
+
+async def run_flow(ha: HomeAssistant, handler: str, user_input: dict[str, Any], label: str) -> dict[str, Any]:
+    flow = await ha.post("/api/config/config_entries/flow", {"handler": handler})
+    result = await ha.post(f"/api/config/config_entries/flow/{flow['flow_id']}", user_input)
+    if result.get("type") != "create_entry":
+        raise RuntimeError(f"{handler} flow did not create an entry: {json.dumps(result)[:400]}")
+    print(f"integrations: added {label}")
+    return result
+
+
+async def confirm_discovered_flows(ha: HomeAssistant) -> None:
+    """Add-ons such as Piper and Music Assistant announce themselves; their flows only need a confirmation click."""
+    # Flows in progress are only listed over the websocket; REST answers 405 to GET on the flow collection.
+    for flow in await ha.ws({"type": "config_entries/flow/progress"}):
+        if flow.get("context", {}).get("source") != "hassio":
+            continue
+        result = await ha.post(f"/api/config/config_entries/flow/{flow['flow_id']}", {})
+        print(f"integrations: confirmed discovered {flow['handler']} -> {result.get('type')}")
+
+
+# ---------------------------------------------------------------- step 4: pipeline
+
+
+async def pipeline(ha: HomeAssistant, args: argparse.Namespace) -> None:
+    pipelines = await ha.ws({"type": "assist_pipeline/pipeline/list"})
+    existing = next((item for item in pipelines["pipelines"] if item["name"] == PIPELINE_NAME), None)
+    registry = await ha.ws({"type": "config/entity_registry/list"})
+    stt = entity_id(registry, "stt", "wyoming", "whisper")
+    tts = entity_id(registry, "tts", "wyoming", args.tts)
+    agent = entity_id(registry, "conversation", "studio_assistant", "")
+    payload = pipeline_payload(stt, agent, TextToSpeech(tts, args.tts_language, args.tts_voice))
+    if existing:
+        await ha.ws({"type": "assist_pipeline/pipeline/update", "pipeline_id": existing["id"], **payload})
+        pipeline_id = existing["id"]
+    else:
+        created = await ha.ws({"type": "assist_pipeline/pipeline/create", **payload})
+        pipeline_id = created["id"]
+    await ha.ws({"type": "assist_pipeline/pipeline/set_preferred", "pipeline_id": pipeline_id})
+    print(f"pipeline: '{PIPELINE_NAME}' uses {stt} -> {agent} -> {tts} ({args.tts_language}, voice {args.tts_voice or 'the engine default'}) (preferred)")
+
+
+class TextToSpeech(NamedTuple):
+    entity: str
+    language: str
+    voice: str | None
+
+
+def pipeline_payload(stt: str, agent: str, tts: TextToSpeech) -> dict[str, Any]:
+    return {
+        "name": PIPELINE_NAME,
+        "language": "en",
+        "conversation_engine": agent,
+        "conversation_language": "en",
+        "stt_engine": stt,
+        "stt_language": "en",
+        "tts_engine": tts.entity,
+        "tts_language": tts.language,
+        "tts_voice": tts.voice,
+        "wake_word_entity": None,
+        "wake_word_id": None,
+        "prefer_local_intents": True,
+    }
+
+
+# ---------------------------------------------------------------- step 5: weather
+
+
+async def weather(ha: HomeAssistant, args: argparse.Namespace) -> None:
+    await save_home_location(ha)
+    await hide_weather_entities_from_assist(ha)
+
+
+async def save_home_location(ha: HomeAssistant) -> None:
+    """The weather_forecast tool reads WEATHER_* from .env (through the tool server's launchd agent); copying them from Home Assistant means the
+    coordinates are typed once, in Home Assistant, and never in this repository."""
+    config = await ha.get("/api/config")
+    units = "imperial" if config["unit_system"]["temperature"] == "°F" else "metric"
+    for name, value in (("WEATHER_LATITUDE", config["latitude"]), ("WEATHER_LONGITUDE", config["longitude"]), ("WEATHER_TIMEZONE", config["time_zone"]), ("WEATHER_UNITS", units)):
+        save_env(name, str(value))
+    print(f"weather: home location, time zone {config['time_zone']}, and {units} units saved to .env; run scripts/services.sh install to pass them to the tool server")
+
+
+async def hide_weather_entities_from_assist(ha: HomeAssistant) -> None:
+    """Home Assistant's built-in weather intent answers "what's the weather" from an exposed weather entity, and only with its current state. With no
+    weather entity exposed the intent fails to match a target, the pipeline hands the text to studio_assistant, and weather_forecast answers every
+    weather question, streamed like any other answer. The Met.no entity itself stays for dashboards. Rerun after adding another weather integration."""
+    weather_ids = sorted(state["entity_id"] for state in await ha.get("/api/states") if state["entity_id"].startswith("weather."))
+    if not weather_ids:
+        print("weather: no weather entities to hide from Assist")
+        return
+    await ha.ws({"type": "homeassistant/expose_entity", "assistants": ["conversation"], "entity_ids": weather_ids, "should_expose": False})
+    print(f"weather: {', '.join(weather_ids)} hidden from Assist, so weather questions reach studio_assistant")
+
+
+# ---------------------------------------------------------------- main
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="Configure Home Assistant for the studio assistant.")
+    parser.add_argument("--host", default=os.environ.get("HA_HOST"), help="Home Assistant address (VM IP or homeassistant.local)")
+    parser.add_argument(
+        "--mac-ip",
+        default=os.environ.get("MAC_LAN_IP") or this_mac_address(),
+        help="LAN address of the Mac where Whisper, Kokoro, and the harness listen (default: this Mac's, from scripts/network_identity.sh)",
+    )
+    parser.add_argument("--tts", default="kokoro", choices=sorted(TTS_DEFAULTS), help="which text-to-speech entity the pipeline uses")
+    parser.add_argument("--tts-voice", help="the voice the pipeline asks for (default: bm_fable for Kokoro, the add-on's voice for Piper)")
+    parser.add_argument("--tts-language", help="the text-to-speech language, a region code such as en_US (default: en_GB for Kokoro, en_US for Piper)")
+    parser.add_argument("--only", action="append", choices=STEPS, help="run only these steps")
+    parser.add_argument("--latitude", type=float, default=40.7484)
+    parser.add_argument("--longitude", type=float, default=-73.9857)
+    parser.add_argument("--time-zone", default="America/New_York")
+    args = parser.parse_args()
+    default_language, default_voice = TTS_DEFAULTS[args.tts]
+    args.tts_language = args.tts_language or default_language
+    args.tts_voice = args.tts_voice or default_voice
+    return args
+
+
+async def main_async() -> None:
+    load_dotenv(ENV_PATH)
+    args = parse_args()
+    if not args.host:
+        raise SystemExit("pass --host or set HA_HOST in .env")
+    saved = dotenv_values(ENV_PATH)
+    ha = HomeAssistant(args.host, saved.get("HA_TOKEN"), saved.get("HA_BASE"))
+    await wait_for_api(ha)
+    save_env("HA_BASE", ha.base)
+    print(f"Home Assistant API at {ha.base}")
+    for name, step in (("onboarding", onboarding), ("addons", addons), ("integrations", integrations), ("pipeline", pipeline), ("weather", weather)):
+        if args.only and name not in args.only:
+            continue
+        await step(ha, args)
+    await ha.close()
+
+
+def main() -> None:
+    asyncio.run(main_async())
+
+
+if __name__ == "__main__":
+    sys.exit(main())

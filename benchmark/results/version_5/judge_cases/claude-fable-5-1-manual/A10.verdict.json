@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It covers the sketch fully in four sentences, that a model which does not fit fails or spills to slower memory, that a faster card with less memory can be strictly worse, and that more memory buys higher precision and longer context.",
+  "judgment_reason": "It answered from stable knowledge without searching and ended with the practical ordering, buy memory for the models you want first, then speed.",
+  "spoken_fit_reason": "About a hundred words, well inside the 120-word limit, leading with the answer in plain prose with no lists or markdown."
+}

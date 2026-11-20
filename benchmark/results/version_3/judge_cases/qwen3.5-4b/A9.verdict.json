@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It names the departure point, budget, dates, and the meaning of 'warm' as missing and warns against assuming a temperature or a fixed budget, but omits trip length, whether the trip is domestic or international with passport and visa constraints, and who is travelling.",
+  "judgment_reason": "It never named a destination, invented no preferences, and correctly answered from reasoning without searching.",
+  "spoken_fit_reason": "One compact paragraph of plain prose with the missing information and the assumptions to avoid woven into sentences rather than bulleted."
+}

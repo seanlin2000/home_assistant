@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It ignores the restaurant_recommendations result, which returned only Vert Frais (Japanese, $$, in the guide with no star), and instead lists five places from web guides with no ratings and estimated prices, slipping on details such as 'mole de Pachuca' for the source's mole de Piaxtla and Psari placed 'near the waterfront'.",
+  "judgment_reason": "It made ten tool calls, mostly web searches, called the restaurant tool only after searching, and then never said that the tool found just one nearby restaurant, though it did label its prices as rough estimates and asked where in LIC the user is.",
+  "spoken_fit_reason": "Plain prose with no formatting, but seven paragraphs ran past the word cap, so the listener heard only one and a half restaurants."
+}

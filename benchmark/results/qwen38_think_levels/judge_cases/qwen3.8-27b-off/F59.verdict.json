@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It converts the forecast's 52 to 56°F to about eleven to thirteen Celsius using the convert tool, but it gives a range instead of stating plainly that the low is about 11 degrees.",
+  "judgment_reason": "It checked the home forecast and converted with the tool instead of searching or doing the math in its head.",
+  "spoken_fit_reason": "Two plain sentences that lead with the temperature, with no lists or markup."
+}

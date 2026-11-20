@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It produces no estimate at all, so none of the sketch's numbers appear (no 1.45 kWh per day, no roughly 43.5 kWh per month, no dollar range); it only announces that it will estimate and then stops to ask for the rate.",
+  "judgment_reason": "The user explicitly said to state assumptions rather than pretend to know, and an assumed 0.15 to 0.30 per kWh band was exactly the right move, so stalling on a question the user had already licensed it to assume away is the central judgment failure here.",
+  "spoken_fit_reason": "Two short plain sentences with no markup that a TTS engine would read cleanly."
+}

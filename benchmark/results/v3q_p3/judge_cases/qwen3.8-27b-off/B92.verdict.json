@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The last assistant message is a calculate tool call issued after the tool-call limit, so the user got no rates, interest figures or minimums at all.",
+  "judgment_reason": "Searching was right and it gathered rates for Chase, Bank of America, Wells Fargo, Citi and PNC, but it kept calling tools past the limit and never answered, failing the central point.",
+  "spoken_fit_reason": "Nothing speakable was produced."
+}

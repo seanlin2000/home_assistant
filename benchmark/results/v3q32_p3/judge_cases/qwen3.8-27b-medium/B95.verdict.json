@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It names sensible software pieces (openWakeWord, Whisper, Piper, Home Assistant, a tool layer) and the model-size limitation, but gives no hardware prices to show the build fits $1,000, suggests a Raspberry Pi 5 can run Llama 3 8B, omits microphones and speakers, and puts the LLM first in the build order where the sketch puts smart-home control and speech first.",
+  "judgment_reason": "It skipped the search needed to price hardware against the stated $1,000 budget and never checked the proposal against it.",
+  "spoken_fit_reason": "One plain-prose paragraph of about 120 words that leads with the stack and has no lists or markup."
+}

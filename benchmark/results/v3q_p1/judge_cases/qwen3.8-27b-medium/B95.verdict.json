@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 2,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It names the full pipeline (openWakeWord, faster-whisper, Ollama with Qwen 14B, tools for Home Assistant and search, Piper or Kokoro, a mic array), prices the RTX 4060 Ti 16GB at the sourced $425-450, states model, latency and search-privacy limits, and gives a sensible build order, but the $750-800 box total and the $100-150 Pi are not from any source and its closing tip to 'go to 32 gigs' repeats what it already specified.",
+  "judgment_reason": "Searching for current GPU prices was right and it was candid that web search breaks the fully-private promise, but it filled the rest of the budget with unsourced part prices during a memory-price shortage its own sources mention.",
+  "spoken_fit_reason": "Plain prose that opens with the verdict, but six dense paragraphs ran far past the word cap, so the listener heard only the hardware paragraph."
+}

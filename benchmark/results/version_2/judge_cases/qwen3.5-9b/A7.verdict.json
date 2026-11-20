@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It produced no estimate at all, stopping at \"once you provide the electricity rate\", so none of the sketch's 1.45 kWh per day, 43.5 kWh per month, or dollar range appears.",
+  "judgment_reason": "The question explicitly asked it to state assumptions rather than pretend to know, and the electricity rate was exactly the assumption it should have named and used instead of refusing to answer.",
+  "spoken_fit_reason": "Three short sentences of plain prose with no markup, though the listener is left with nothing to act on."
+}

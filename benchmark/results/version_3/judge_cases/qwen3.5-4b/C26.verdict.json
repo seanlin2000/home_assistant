@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "38.5 percent and $2,964 both match the reference sketch exactly.",
+  "judgment_reason": "It issued both calculator calls in one turn rather than estimating, and correctly did not search.",
+  "spoken_fit_reason": "One sentence with both figures spoken out in words, no lists or markup."
+}

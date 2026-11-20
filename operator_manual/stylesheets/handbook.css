@@ -1,0 +1,79 @@
+/* Diagrams are rendered to SVG at build time with a fixed light palette, then shown on a light card so they read the same in both colour schemes.
+   The hook gives each SVG width: 100% and a min-width of 70% of its natural size, so a wide drawing scrolls sideways instead of shrinking its text. */
+.md-typeset figure.manual-diagram {
+  width: auto;
+  max-width: 100%;
+  margin: 1.2em 0;
+  padding: 0.8em;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  overflow-x: auto;
+  text-align: left;
+}
+.md-typeset figure.manual-diagram svg {
+  display: block;
+  height: auto;
+}
+
+/* Give the content column more room, since the diagrams are the widest thing on any page. */
+.md-grid {
+  max-width: 78rem;
+}
+
+/* The header always reads "Home Assistant Handbook". Material swaps in the page title once the reader scrolls, which every
+   table-of-contents click does; keeping the first topic visible and hiding the second pins the site name. */
+.md-header__title--active .md-header__topic:first-child {
+  opacity: 1;
+  pointer-events: auto;
+  transform: none;
+  z-index: 0;
+}
+.md-header__topic + .md-header__topic {
+  display: none;
+}
+
+/* A display formula wider than a phone screen scrolls sideways inside its own line instead of widening the page. */
+.md-typeset .katex-display {
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+/* Key definitions are a Term | Meaning table. It is set at body size rather than Material's smaller table text, with the terms bold in a
+   column wide enough that a two-word term never breaks. Material moves every table into a scroll wrapper once the page loads, hence both selectors. */
+.md-typeset :is(h2, h3)[id^="key-definitions"] + table,
+.md-typeset :is(h2, h3)[id^="key-definitions"] + .md-typeset__scrollwrap table {
+  font-size: 0.75rem;
+  line-height: 1.55;
+}
+.md-typeset :is(h2, h3)[id^="key-definitions"] + table td,
+.md-typeset :is(h2, h3)[id^="key-definitions"] + .md-typeset__scrollwrap td {
+  padding: 0.7em 1.1em;
+}
+.md-typeset :is(h2, h3)[id^="key-definitions"] + table td:first-child,
+.md-typeset :is(h2, h3)[id^="key-definitions"] + .md-typeset__scrollwrap td:first-child {
+  min-width: 10rem;
+  font-weight: 700;
+}
+
+/* The previous/next bar and the "Made with" strip are sized to the header (2.4rem) rather than Material's roughly twice-as-tall default,
+   so the end of a page does not end in a large dark block. */
+.md-footer__link {
+  margin-top: 0.3rem;
+  margin-bottom: 0.3rem;
+}
+.md-footer__title {
+  font-size: 0.75rem;
+  margin-bottom: 0.2rem;
+}
+.md-footer__direction {
+  font-size: 0.55rem;
+}
+.md-footer__button {
+  margin: 0.1rem;
+  padding: 0.3rem;
+}
+.md-copyright {
+  font-size: 0.6rem;
+  padding: 0.2rem 0;
+}

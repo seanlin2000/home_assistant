@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 2,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It asserts the exact misconception the sketch rules out, that MoE 'drastically reduces memory usage' because only a subset of experts is loaded, and its dense figure of 'around 7.5-8GB' for a 4-bit 30B model both understates the real 15-18 GB and contradicts its own claim that this exceeds 16 GB.",
+  "judgment_reason": "Answering from knowledge without a search was the right call, but it stated a confident and wrong VRAM figure with no hedge on a question where it had the concept backwards.",
+  "spoken_fit_reason": "Plain prose with no lists or markdown, but it runs to two dense paragraphs with a parenthetical 'e.g., 4-bit quantized weights' that would read awkwardly aloud."
+}

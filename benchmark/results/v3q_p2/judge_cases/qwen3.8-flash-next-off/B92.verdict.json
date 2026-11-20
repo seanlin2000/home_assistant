@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 0,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The final assistant turn contains only four calculate calls (50000*0.0320 and so on) and no text, so the user got no rates, interest figures or minimums, even though the results held usable figures such as Ally 3.20 percent, Marcus 3.50 percent and CIT 3.75 percent above $5,000.",
+  "judgment_reason": "Searching for current rates was right, but after 'Tool call limit reached. Answer the user now' it kept calling tools instead of answering with the figures it already had.",
+  "spoken_fit_reason": "Nothing was spoken, so the user heard no answer."
+}

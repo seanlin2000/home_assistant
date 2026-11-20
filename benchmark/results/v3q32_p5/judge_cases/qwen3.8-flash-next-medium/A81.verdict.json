@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It covers what stays local, the transmitted query, API key, IP address and timestamps, the way model-written queries can leak context, and fixes like SearXNG, a VPN and generic queries, but it leaves out that fetched websites also see your IP and that searching only when needed or caching cuts exposure.",
+  "judgment_reason": "Answering a stable privacy-architecture question from knowledge without searching was correct.",
+  "spoken_fit_reason": "Plain prose with no markdown, but at roughly 140 words over three paragraphs it is long for speech."
+}

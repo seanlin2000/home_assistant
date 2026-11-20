@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "$11.61 tip and $76.11 total match the reference sketch exactly.",
+  "judgment_reason": "It did not search an arithmetic question, and when the percent tool returned the nonsense \"from 64.50 to 18 is a 72.09 percent decrease\" it discarded that result rather than reciting it.",
+  "spoken_fit_reason": "A single sentence carrying both numbers, with no markup or preamble."
+}

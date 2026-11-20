@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 0,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The tool returned exactly one Long Island City restaurant, Vert Frais (Japanese, $$, in the guide with no star), yet the answer never mentions it and instead offers Casa Enrique, Adda and Mu Ramen with guessed prices, none of which the result contains; its only merit is declining to pad to five.",
+  "judgment_reason": "Claiming it 'couldn't pull the Michelin list' when the tool answered, and substituting memory, fails the central point; it should have reported the single result and said fewer than five were found.",
+  "spoken_fit_reason": "Plain prose with no lists or markup at a moderate length, closing with one short clarifying question about the neighborhood."
+}

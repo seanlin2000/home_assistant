@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The Etched, MatX and Positron figures (for example $21 billion, the $500 million Series B, and $875 million at $5 billion) all trace to the sources, but the message breaks off mid-word at Positron's \"Asim\" and never covers Cerebras, SambaNova, or Fractile, though all three were retrieved.",
+  "judgment_reason": "Searching was right, and it correctly separated Etched's reported $40 to 50 billion offers from closed rounds and called MatX pre-silicon, but it spent its length on exhaustive per-company detail instead of leading with the overall picture so all six could fit.",
+  "spoken_fit_reason": "Dense paragraphs of round-by-round figures that the word cap cut after Etched alone, so the listener heard one company of six."
+}

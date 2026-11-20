@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "All five restaurants, cuisines, price levels and distinctions (Hupo's Bib Gourmand, Meju's one star, the others in the guide) match the tool result exactly, with a draw for each taken from its blurb and a value-versus-occasion recommendation.",
+  "judgment_reason": "Used the restaurant tool rather than a web search and said plainly it could give only Michelin price levels and awards, not per-person dollar prices or customer ratings, instead of inventing them.",
+  "spoken_fit_reason": "Plain prose with a few words per restaurant and a closing pick, no list formatting, a length the five-restaurant comparison warrants."
+}

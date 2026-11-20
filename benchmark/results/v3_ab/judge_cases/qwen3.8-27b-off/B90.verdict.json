@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 2,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It ranks the shows by TodayTix views as it says, and every description, score, price and the Book of Mormon Tony claim trace to the tool results, but the message breaks off partway through School Girls, so Chicago, the tenth show, is never mentioned.",
+  "judgment_reason": "Using the Broadway tool instead of web search and stating the ranking basis were right, but it then made eleven detail calls for blurbs the task did not need, which tripped the tool-call limit.",
+  "spoken_fit_reason": "It is plain prose with a clear ranking, but every show carries a full description, score, review count and price, so the word cap cut it during the third show."
+}

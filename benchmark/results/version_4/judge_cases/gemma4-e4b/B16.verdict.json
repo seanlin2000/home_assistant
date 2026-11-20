@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The Queens 4.35% and the Long Island City 2.18% one-bedroom and 3.59% two-bedroom figures are quoted accurately from the MNS excerpt, but the risk half reduces to the report's under-$10,000 filter and mid-month sampling and misses the central point that advertised rents track new-listing and turnover prices rather than what a sitting tenant is offered at renewal.",
+  "judgment_reason": "It searched, grounded every number in a retrieved source, warned about the comparison as asked, and asked for the unit type instead of guessing which LIC figure applies.",
+  "spoken_fit_reason": "Plain prose with all percentages spoken as words and a closing question, though at three paragraphs it runs to the long end of what the two-part question required."
+}

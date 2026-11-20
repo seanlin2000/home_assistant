@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 1,
+  "answer_quality_reason": "Several figures match the sources (BofA 0.04 percent and $20, U.S. Bank's 2 percent tier, Citi Premium Boost 4.35 percent and about $2,175, the CIT and SoFi rates), but it twice calls the 0.01 percent rate \"a tenth of one percent\", says CIT's half-year boost would earn \"roughly four thousand dollars\" on $50,000 (closer to $2,000), and gives a $5,000 Premier Checking requirement and a 0.05 percent Citi base rate that no source states.",
+  "judgment_reason": "Pointing out that the big banks do not really offer high-yield savings, and adding CIT and SoFi for contrast, was a good call, but it never says the rates are variable and can change.",
+  "spoken_fit_reason": "Plain prose, but it opens with a long preamble before any number and runs to eight paragraphs that the word cap cut partway through Wells Fargo."
+}

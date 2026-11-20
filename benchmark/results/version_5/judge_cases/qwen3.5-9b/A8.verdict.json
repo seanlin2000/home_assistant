@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It recommends the router and gets cost, latency and the routing-setup trade-off, but omits the sketch's determinism-for-timers-and-music point and the single-large-LLM side entirely, and pads with an irrelevant carbon-footprint and \"battery life of the planet\" claim.",
+  "judgment_reason": "It committed to a clear recommendation without searching, but never said when the single-model design would be the right call.",
+  "spoken_fit_reason": "Three plain-prose sentences leading with the recommendation, no lists, markdown, or URLs."
+}

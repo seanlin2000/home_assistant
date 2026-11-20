@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 4,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It covers parallel matrix work and tensor cores, memory-bound decode at about 3.35 TB/s HBM, CUDA as the moat, TPU-style ASICs, Groq's SRAM and Cerebras's wafer-scale designs, and when specialized chips win or lose, but the final message itself stops mid-sentence at \"about 30 percent cheaper than an\".",
+  "judgment_reason": "It announced a check and ran three searches for a conceptual architecture question that needed none, pulling in vendor benchmark claims it then had to hedge.",
+  "spoken_fit_reason": "This is a many-paragraph lecture with jargon such as SIMT, cuBLAS and XLA, it opens with a spoken preamble about searching, and the word cap cut it after the first paragraph."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The itinerary is geographically sensible and low-effort (Lucerne lake and Pilatus or Rigi, Luzern-Interlaken Express, Lake Brienz or Thun, Jungfrau region, Zermatt and Gornergrat) and the pass advice matches the sources' point that the Half Fare Card wins on Jungfraujoch, but it gives no prices although the results listed CHF 254 and 309 for 3- and 4-day passes, Jungfraujoch and Gornergrat fares, and it skips point-to-point tickets.",
+  "judgment_reason": "Good planning calls and a timely note on late-autumn closures, but it said it could not check current ticket prices when both searches returned them, so the cost comparison stays qualitative.",
+  "spoken_fit_reason": "Leads straight into a day-by-day plan in plain spoken prose with no lists or markup, at a length a five-day plan with pass advice requires."
+}

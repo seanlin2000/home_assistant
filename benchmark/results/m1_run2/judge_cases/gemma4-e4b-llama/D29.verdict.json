@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The expected reply was the silence marker alone, but it spoke a full weekend forecast for Saturday and Sunday in response to a television host's teaser.",
+  "judgment_reason": "It treated overheard broadcast speech as a request and called weather_forecast, which the reference names as the wrong behavior.",
+  "spoken_fit_reason": "Against a silence standard, two long spoken sentences of temperatures and precipitation are the opposite of the expected brevity."
+}

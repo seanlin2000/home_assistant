@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["violated_explicit_constraint"],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It does land on the RTX A4000 at 16GB for $400-500, which is the one card in excerpt [1] that fits, but it leads by naming the RTX 3080 Ti as a 16 GB option and then contradicts itself two sentences later by stating that card has 12 GB, at a listed $450-550 that can exceed the budget.",
+  "judgment_reason": "Searching was right and the used-hardware risk caveat was a good addition, but it put forward a card that meets neither the 16 GB requirement nor reliably the $500 ceiling without flagging either problem.",
+  "spoken_fit_reason": "Five sentences that wander through the 3060 and 3080 Ti before reaching the actual recommendation, and the self-contradiction about the 3080 Ti's VRAM would be confusing heard aloud."
+}

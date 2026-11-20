@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 5,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It gives the Cavaliers' 93 to 89 win, LeBron James with 27 and Draymond Green with 32, all of which match the reference and the retrieved excerpts.",
+  "judgment_reason": "When game_scores returned an error asking for a team name, it went to a web search instead of retrying with the Warriors or Cavaliers, which made an unneeded search.",
+  "spoken_fit_reason": "Two plain sentences that lead with the winner and score."
+}

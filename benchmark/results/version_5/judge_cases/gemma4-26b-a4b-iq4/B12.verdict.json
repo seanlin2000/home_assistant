@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The used RTX 3090 pick, its 24 GB and the $700-900 used price all come straight from the CanItRun and HomeLabPicks excerpts, and it correctly avoids the used 4090 that the other source priced at $900-1,100; the new-parts fallback names the 4060 Ti 16GB where the retrieved guide actually pointed at the 5060 Ti 16GB at $429.",
+  "judgment_reason": "It searched a price question that needs current data, kept the whole build inside the thousand-dollar budget by flagging how little is left for the rest of the machine, and asked whether the user wants to build or buy prebuilt instead of guessing.",
+  "spoken_fit_reason": "Four paragraphs plus a closing question is well past what a listener needs, and it reads the phrase 'sweet spot' in quotes."
+}

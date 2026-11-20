@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It separates the two problems, names the laptop pairing conflict and 2.4 GHz interference with a sensible isolate-the-laptop test, and covers motion blur, image size and brightness for eye strain, though it leaves out focus or keystone, the DLP rainbow effect, breaks, and a wired audio fallback.",
+  "judgment_reason": "It troubleshot from general knowledge without a needless search and laid out an order of tests for each problem.",
+  "spoken_fit_reason": "Plain prose split by problem, but two dense paragraphs run long for a spoken reply."
+}

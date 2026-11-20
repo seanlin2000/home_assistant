@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It names only the meaning of warm and the budget as missing and avoids assuming definitions, omitting departure location, dates, trip length, passport, companions, and interests from the sketch.",
+  "judgment_reason": "It does not invent a destination or preferences, but treats the hypothetical as a live request and asks the user about climate instead of analyzing what is missing.",
+  "spoken_fit_reason": "Two plain sentences, short enough for speech."
+}

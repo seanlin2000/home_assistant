@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "All ten shows, scores, prices and closing dates come straight from the broadway_shows result, ranked by TodayTix views as it explains, with a short description of each, though it calls Cursed Child 'the long-running two-part play', which the result does not support.",
+  "judgment_reason": "It used the Broadway listings tool rather than web search, fetched details for the less familiar shows, and warned that the ranking reflects one ticket site's demand rather than official sales or awards.",
+  "spoken_fit_reason": "It is plain spoken prose, but adding a price and ticket note to every show made it long enough that the word cap cut it after the third show."
+}

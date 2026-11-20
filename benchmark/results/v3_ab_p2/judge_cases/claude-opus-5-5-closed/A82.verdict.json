@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Definitions of API, tool and MCP server are accurate and the architecture (local llama.cpp host, MCP server with Brave or SearXNG search and a fetch tool trimming text, model-written summary treating page text as untrusted) matches the sketch, but it only implies the agent loop and omits safeguards like a cap on tool rounds, timeouts and caching.",
+  "judgment_reason": "Answered a stable architecture question from knowledge without searching and included the prompt-injection safeguard of treating fetched text as untrusted.",
+  "spoken_fit_reason": "Plain prose that leads with the three definitions and then the design, with no lists or markup, at a length the two-part question warrants."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It correctly reports the 3.75 to 4 percent range held 10-2 on October 28 and gives sound refinance logic (current mortgage quotes versus your rate, closing-cost break-even, time in the home), but it garbles the timeline by saying the October 27-28 meeting raised the rate and then held it, when the sources put the quarter-point hike in September.",
+  "judgment_reason": "It pushed back on the false zero-rate premise, verified it with a search instead of assuming, and asked for the user's current rate, balance and time horizon rather than inventing them.",
+  "spoken_fit_reason": "It leads with the correction, but the listener heard the premise rebuttal twice around a 'Let me check' narration, the text carries markdown asterisks, and the answer ran into the word cap."
+}

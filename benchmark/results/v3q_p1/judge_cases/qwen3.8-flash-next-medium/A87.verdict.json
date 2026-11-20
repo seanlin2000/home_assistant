@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The eye-strain half is thorough (distance, brightness, soft scaling, DLP rainbow, game mode, breaks) and the audio half covers 2.4 GHz interference, 5 GHz Wi-Fi, distance and a wired or optical link, but it never names the likeliest cause, the JBL also being paired to the laptop and competing for the connection, and pads the steps with irrelevant Android codec selectors.",
+  "judgment_reason": "It answered from knowledge without searching, separated the two problems, and ordered the tests cheapest first as the question asked.",
+  "spoken_fit_reason": "Bold section headings, two numbered lists and a bulleted list make this a formatted document that the word cap cut off, not something to speak aloud."
+}

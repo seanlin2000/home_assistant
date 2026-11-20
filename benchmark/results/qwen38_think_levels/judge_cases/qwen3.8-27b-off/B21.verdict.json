@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 4,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It correctly rejects the zero-rate premise, notes mortgage rates track the ten-year Treasury more than the Fed, and asks for the current rate and balance, but it omits the closing-cost and break-even logic the sketch expects.",
+  "judgment_reason": "It pushed back on the false premise, but asserted the current rate situation ('still well above zero') from memory instead of searching to check it, which was the central check this question demanded.",
+  "spoken_fit_reason": "Two short plain-prose paragraphs that lead with the correction and end with one focused question."
+}

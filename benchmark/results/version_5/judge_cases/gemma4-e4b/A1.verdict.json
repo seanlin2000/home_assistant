@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It correctly separates active parameters from total stored weights and says all thirty billion must be loaded, but never explains the sketch's key point that the MoE fits 16 GB only via small enough quantization or expert offload to CPU RAM, and it muddies the point by saying active parameters reduce 'the memory required for the active forward pass'.",
+  "judgment_reason": "Correctly answered a conceptual question from general knowledge without searching and made no unstated assumptions.",
+  "spoken_fit_reason": "Plain prose with no lists, markdown or URLs, leading with the explanation, and the extra length is warranted by an explicitly requested explanation."
+}

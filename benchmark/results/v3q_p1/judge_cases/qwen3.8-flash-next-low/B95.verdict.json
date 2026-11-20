@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 0,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The final message is one framing paragraph that breaks off at \"**The pipeline\", so it names no components, no hardware within the $1,000 budget, no limitations and no build order, beyond the remark that $1,000 buys less than it used to.",
+  "judgment_reason": "Searching for current hardware prices was right, but the assistant spent all ten tool calls searching and delivered no architecture, which fails the central point.",
+  "spoken_fit_reason": "The fragment contains markdown (*don't* and **The pipeline) and stops mid-heading, which would sound broken aloud."
+}

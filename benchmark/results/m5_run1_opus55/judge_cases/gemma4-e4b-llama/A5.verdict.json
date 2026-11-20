@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It correctly names the far-field microphone array, processing power, and enclosure acoustics, but leaves out beamforming and echo cancellation, keeping the speaker apart from the mic, placement, local wake-word detection, latency, and privacy.",
+  "judgment_reason": "It named no products or brands and answered from knowledge without searching, as the constraint and the question called for.",
+  "spoken_fit_reason": "Plain prose, but the whole first sentence restates the question, which pushes the actual answer back."
+}

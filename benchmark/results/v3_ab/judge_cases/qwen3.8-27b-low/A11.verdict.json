@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It gives 1989 and November ninth, matching the reference exactly.",
+  "judgment_reason": "It answered settled history from knowledge with no search, as the question intends.",
+  "spoken_fit_reason": "It is one plain sentence that leads with the year, with numbers spelled out for speech."
+}

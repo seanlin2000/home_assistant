@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It matches the sketch on shared app access, voice options, physical dimmers and what survives an outage (bridge, scenes, local app, Home Assistant) versus what stops (Alexa, Google, remote access), but it offers Google Home with a local hub as a top option and never says Siri through Apple Home keeps working locally.",
+  "judgment_reason": "Answering stable smart-home architecture without searching was right, and it ends with a clear resilience recommendation tied to the outage concern.",
+  "spoken_fit_reason": "It leads with the recommended setup and covers the outage case in plain prose at a length the two-part question warrants."
+}

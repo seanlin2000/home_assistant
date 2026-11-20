@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The final assistant message is empty, so neither the 11.61 tip nor the 76.11 total from the reference sketch was given.",
+  "judgment_reason": "A trivial two-step percentage the calculator tools were there for produced zero tool calls and no output.",
+  "spoken_fit_reason": "There is no text to speak."
+}

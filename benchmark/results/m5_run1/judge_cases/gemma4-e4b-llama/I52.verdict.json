@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "No snow, with light afternoon showers and dry otherwise, matches the Denver tool result, but it gives no temperatures, which (up to 85°F) would make the no-snow answer concrete.",
+  "judgment_reason": "It used the forecast tool for Denver on the named day and did not search the web.",
+  "spoken_fit_reason": "One plain sentence that leads with the answer."
+}

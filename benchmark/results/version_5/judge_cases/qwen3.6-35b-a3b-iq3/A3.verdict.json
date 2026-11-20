@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Rejects the premise and correctly says the entire weights must be resident, but its worked number treats the 4 billion active parameters as the whole model at 8 GB in 16-bit, which repeats the very active-versus-total confusion it is meant to dispel and never says memory is set by the far larger total.",
+  "judgment_reason": "Answered without searching and opened with a flat 'that is not correct', which is the pushback the question demanded.",
+  "spoken_fit_reason": "A single four-sentence paragraph of plain prose leading with the verdict, no lists or markup."
+}

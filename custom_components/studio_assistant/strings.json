@@ -1,0 +1,31 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Studio Assistant",
+        "description": "Point the agent at the harness running on the Mac. The key is in ~/Library/Application Support/studio-assistant/harness.key there.",
+        "data": {
+          "harness_url": "Harness URL",
+          "harness_api_key": "Harness API key"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Could not reach the harness at that URL.",
+      "invalid_auth": "The harness refused that API key."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Studio Assistant",
+        "data": {
+          "harness_url": "Harness URL",
+          "harness_api_key": "Harness API key",
+          "continue_conversation": "Listen for a follow-up after an answer, without the wake word",
+          "max_follow_ups": "Follow-ups in a row before the wake word is needed again"
+        }
+      }
+    }
+  }
+}

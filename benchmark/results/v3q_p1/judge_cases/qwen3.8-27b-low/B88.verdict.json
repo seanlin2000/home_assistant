@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 0,
+  "answer_quality_reason": "All five releases, Mistral Large 4 weights on October 29, DeepSeek V4.1-Flash-1017 on October 17, Qwen3.6 27B on October 21, Muse Spark Open on October 15 and Tencent Hy4 on November 4, are dated from the excerpts and fall within the window, and the licensing comparison is well synthesized, but the claim that four of the five landed 'in a single week' does not match its own October 15 to 29 dates.",
+  "judgment_reason": "Searching was required, it ran targeted follow-up searches for Meta and Mistral, and it flagged that the benchmarks are vendor-reported and that Qwen4 is only teased.",
+  "spoken_fit_reason": "About a dozen dense paragraphs of model names and benchmark figures is a wall of text for speech, and the word cap cut it off at the second item."
+}

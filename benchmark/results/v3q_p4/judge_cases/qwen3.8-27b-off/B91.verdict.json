@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The final message is the model's own deliberation about which season the HoopsHype and DARKO tables cover, and it trails off at 'Kawhi Leonard TOR - +5.' without ever giving a ranked five or a reason for any pick; only the copied current-season figures are usable.",
+  "judgment_reason": "Searching was right and it worked out that the 10-13 games-played table is the 2026-27 season, but it never committed to an answer or noted the small early-season sample.",
+  "spoken_fit_reason": "The listener heard internal reasoning ('The user wants me to...', 'Wait, actually') and bulleted stat dumps, which would sound wrong aloud."
+}

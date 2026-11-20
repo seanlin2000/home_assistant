@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 2,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The listener heard only the first of five developments, the Kimi K3.1 Pro weights on November 4 after an October 23 API launch, which is sourced, but the word cap cut it before Mistral, Meta, Qwen and DeepSeek, so no comparison was delivered.",
+  "judgment_reason": "Searching was right and the dates it used come from the excerpts, but it spent ten tool calls, hitting the limit, and built a far longer answer than a voice reply can carry.",
+  "spoken_fit_reason": "Five narrated tool-use preambles were spoken back to back before a long enumerated answer that the word cap cut after item one."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The mobile-nutrient explanation is right, but the question asked for the most likely explanations plural and the answer omits normal senescence of old leaves, shading, overwatering, and pot-bound roots, and asks only about species and soil rather than watering, light, or fertilizer history.",
+  "judgment_reason": "It correctly asks for missing information instead of inventing details, but asserts a single cause as \"the most likely explanation\" where the question invited competing hypotheses.",
+  "spoken_fit_reason": "Three conversational sentences that lead with the diagnosis and close with the question, no formatting artifacts."
+}

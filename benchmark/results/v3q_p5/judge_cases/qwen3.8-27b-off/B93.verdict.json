@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": false,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The Nai Brother, Red Sorghum and Hello! Bangladesh descriptions trace to the Eater page, but the per-person prices of 'twenty-to-forty dollars' for Nai Brother and 'forty to sixty dollars' for Red Sorghum and Sami's being 'rated in the high fours' appear in no result, and Hello! Bangladesh on 36th Avenue in 11106 is not within a short walk of Jackson Avenue and Vernon Boulevard as claimed.",
+  "judgment_reason": "It skipped the restaurant tool and ran nine web searches and fetches, then filled the gaps with invented prices instead of saying the data was missing, though it did state its assumption about the user's location.",
+  "spoken_fit_reason": "The listener heard three sentences of tool narration and then long paragraphs per restaurant, cut by the word cap partway through the first one."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It gives three distinct concrete mechanisms (mega-cap tech concentration in cap-weighted indices, buybacks lifting share prices without raising pay, and concentrated stock ownership), though it never frames the market as pricing expected corporate profits and the half-of-households figure is loose.",
+  "judgment_reason": "Stable economics answered from knowledge without a needless search, with concrete mechanisms rather than restatements.",
+  "spoken_fit_reason": "Leads with the three mechanisms in plain First, Second, Third prose with no list formatting."
+}

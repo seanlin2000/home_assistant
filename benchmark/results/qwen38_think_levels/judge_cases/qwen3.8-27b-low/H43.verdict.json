@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 3,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It calls 400 degrees Fahrenheit the sweet spot and 425 an option for extra crispiness, where the reference says about 425, and it gives no roasting times by vegetable.",
+  "judgment_reason": "The user said 'Look up', and it answered from memory with no search call.",
+  "spoken_fit_reason": "It leads with the temperature in three plain, short sentences."
+}

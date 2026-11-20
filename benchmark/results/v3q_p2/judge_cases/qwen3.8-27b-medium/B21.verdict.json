@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It says plainly that the Fed did not cut to zero, gives the sourced 3.75-4 percent range from the October 28 hold and the September hike, quotes 30-year rates around 7 to 7.25 percent and refinance near 7.38 percent from the excerpts, and gives the refinance logic (rate gap, closing costs, how long you stay).",
+  "judgment_reason": "It searched to check the premise, corrected it up front, and asked for the user's current rate instead of guessing.",
+  "spoken_fit_reason": "It leads with the correction, but it uses markdown emphasis on *hike* and a parenthetical, and three long paragraphs ran past the word cap before the refinance advice."
+}

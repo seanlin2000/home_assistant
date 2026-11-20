@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It rightly makes the bridge the local hub and says app control works without internet, but it claims Google Home and Alexa connect to the bridge 'locally' so voice commands keep working offline, when those cloud assistants stop, and it invents a four-digit code on the bridge for pairing (the Hue app pairs by pressing the link button).",
+  "judgment_reason": "Not searching was right, but it states the offline behaviour of Alexa and Google confidently and wrongly instead of separating cloud assistants from local ones such as Apple Home with a hub.",
+  "spoken_fit_reason": "It is plain prose that leads with the setup, but two long paragraphs ran past the word cap, so the third-party caveat and the summary were cut."
+}

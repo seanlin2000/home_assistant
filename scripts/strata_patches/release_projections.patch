@@ -1,0 +1,194 @@
+diff --color -ru a/engine/include/strata/core/native_dense.hpp b/engine/include/strata/core/native_dense.hpp
+--- a/engine/include/strata/core/native_dense.hpp	2026-11-20 16:07:23
++++ b/engine/include/strata/core/native_dense.hpp	2026-11-20 16:08:12
+@@ -68,6 +68,8 @@
+     /// What the device lost to `load`: each matrix rounded up to the granule `cudaMalloc` backs it with.
+     uint64_t allocated_bytes() const { return allocated_; }
+     size_t tensor_count() const { return weights_.size() - packed_keys_.size(); }
++    /// Trial patch: the device allocations `load` made for the matrices (the Metal build hands them to its runtime).
++    const std::vector<void*>& device_weights() const { return weights_; }
+ 
+ private:
+     std::vector<void*> weights_;
+diff --color -ru a/engine/metal/src/engine/window.cpp b/engine/metal/src/engine/window.cpp
+--- a/engine/metal/src/engine/window.cpp	2026-11-20 16:07:22
++++ b/engine/metal/src/engine/window.cpp	2026-11-20 16:08:11
+@@ -61,14 +61,24 @@
+ 
+ namespace strata::gpu { uint64_t purge_device_allocations(size_t min_bytes); }   // metal/src/gpu/runtime.cpp
+ namespace strata::gpu {   // trial patch, metal/src/gpu/runtime.cpp
+-void log_device_allocations(size_t min_bytes);
+-uint64_t poison_device_allocations(size_t min_bytes);
++void log_device_allocations(size_t min_bytes, bool marked);
++uint64_t poison_device_allocations(size_t min_bytes, bool marked);
++uint64_t purge_selected_allocations(size_t min_bytes, bool marked);
+ }
+ 
+ namespace {
++// Trial patch: poison or release one set of the host code's device copies (those of min_bytes or more, or with `marked`
++// the native projection matrices generate.cpp recorded); returns the bytes handled.
++uint64_t handle_host_copies(const std::string& mode, size_t min_bytes, bool marked) {
++    strata::gpu::log_device_allocations(min_bytes, marked);
++    if (mode == "poison") return strata::gpu::poison_device_allocations(min_bytes, marked);
++    return strata::gpu::purge_selected_allocations(min_bytes, marked);
++}
++
+ // Trial patch, off unless STRATA_METAL_RELEASE_HOST_WEIGHTS is set: in resident mode, at the first request, the host
+ // code's device weight copies (allocations of STRATA_METAL_RELEASE_MIN_MIB, default 32, or more) are overwritten with
+ // 0xFF ("poison", to prove nothing reads them) or given back ("release"), as streaming mode's stream_arena gives them back.
++// STRATA_METAL_RELEASE_PROJECTIONS=1 does the same to the native projection matrices, which are all under 32 MiB.
+ void release_host_weights_once(bool streaming) {
+     static bool done = false;
+     if (done || streaming) return;
+@@ -76,17 +86,18 @@
+     const char* mode_text = std::getenv("STRATA_METAL_RELEASE_HOST_WEIGHTS");
+     if (!mode_text || !*mode_text) return;
+     const std::string mode(mode_text);
+-    const char* min_mib_text = std::getenv("STRATA_METAL_RELEASE_MIN_MIB");
+-    const size_t min_bytes = (size_t) (min_mib_text ? std::atoll(min_mib_text) : 32) << 20;
+-    strata::gpu::log_device_allocations(min_bytes);
+-    uint64_t bytes = 0;
+-    if (mode == "poison") bytes = strata::gpu::poison_device_allocations(min_bytes);
+-    else if (mode == "release") bytes = strata::gpu::purge_device_allocations(min_bytes);
+-    else {
++    if (mode != "poison" && mode != "release") {
+         std::fprintf(stderr, "strata metal resident: STRATA_METAL_RELEASE_HOST_WEIGHTS=%s is not poison or release; nothing done\n", mode_text);
+         return;
+     }
++    const char* min_mib_text = std::getenv("STRATA_METAL_RELEASE_MIN_MIB");
++    const size_t min_bytes = (size_t) (min_mib_text ? std::atoll(min_mib_text) : 32) << 20;
++    const uint64_t bytes = handle_host_copies(mode, min_bytes, false);
+     std::fprintf(stderr, "strata metal resident: %s: %.2f GB of the host code's device weight copies\n", mode_text, bytes / 1e9);
++    const char* projections = std::getenv("STRATA_METAL_RELEASE_PROJECTIONS");
++    if (!projections || std::string(projections) != "1") return;
++    const uint64_t projection_bytes = handle_host_copies(mode, 0, true);
++    std::fprintf(stderr, "strata metal resident: %s projections: %.2f GB of the host code's native projection matrices\n", mode_text, projection_bytes / 1e9);
+ }
+ }  // namespace
+ 
+diff --color -ru a/engine/metal/src/gpu/runtime.cpp b/engine/metal/src/gpu/runtime.cpp
+--- a/engine/metal/src/gpu/runtime.cpp	2026-11-20 16:07:22
++++ b/engine/metal/src/gpu/runtime.cpp	2026-11-20 16:07:52
+@@ -45,6 +45,7 @@
+     size_t bytes = 0;
+     bool host = false;   // from host_alloc (the host code holds the CPU address)
+     bool purged = false; // purge_device_allocations: its memory given back (any later copy is an error)
++    bool marked = false; // trial patch, mark_unread_allocations: a native projection matrix the Metal window never reads
+ };
+ 
+ struct Op {
+@@ -325,13 +326,43 @@
+ // the CUDA-shaped kernels (the pack's dense pool, the native head, ...) are never read on Metal.  On a small Mac their
+ // memory is worth more as expert arena: every device (not host) allocation of min_bytes or more is made purgeable-empty
+ // and dropped from the residency set.  Returns the bytes given back.
+-uint64_t purge_device_allocations(size_t min_bytes) {
++uint64_t purge_selected_allocations(size_t min_bytes, bool marked);   // trial patch, below
++uint64_t purge_device_allocations(size_t min_bytes) { return purge_selected_allocations(min_bytes, false); }
++
++// Trial patch: the device (not host) allocations not yet given back that a release touches - those of min_bytes or more,
++// or with `marked` only the ones mark_unread_allocations recorded (whatever their size).
++static bool selected(const Alloc& a, size_t min_bytes, bool marked) {
++    if (a.host || a.purged) return false;
++    return marked ? a.marked : a.bytes >= min_bytes;
++}
++
++// Trial patch: the native projection matrices the host code uploads (NativeDense::load) are under 32 MiB each, so the
++// size threshold cannot reach them without also reaching small buffers that are read (the logit bias, the penalty
++// history); generate.cpp hands their exact pointers over instead.  Only an allocation's own start counts.
++void mark_unread_allocations(void* const* pointers, size_t count) {
+     Runtime& r = rt();
++    std::lock_guard<std::mutex> lk(r.mu);
++    size_t marked = 0;
++    uint64_t bytes = 0;
++    for (size_t i = 0; i < count; ++i) {
++        auto it = r.by_gpu.find((uint64_t) (uintptr_t) pointers[i]);
++        if (it == r.by_gpu.end() || it->second.host) continue;
++        it->second.marked = true;
++        ++marked;
++        bytes += it->second.bytes;
++    }
++    std::fprintf(stderr, "strata metal resident: marked %zu of %zu native projection matrices, %.1f MiB\n", marked, count, bytes / 1048576.0);
++}
++
++// The stock purge, with the trial's selection.  Purged, not freed: a freed address could be handed to a later
++// allocation, and a stale pointer would then resolve to it.
++uint64_t purge_selected_allocations(size_t min_bytes, bool marked) {
++    Runtime& r = rt();
+     device_synchronize();
+     std::lock_guard<std::mutex> lk(r.mu);
+     uint64_t n = 0;
+     for (auto& [gpu, a] : r.by_gpu) {
+-        if (a.host || a.purged || a.bytes < min_bytes) continue;
++        if (!selected(a, min_bytes, marked)) continue;
+         r.rs->removeAllocation(a.buf);
+         a.buf->setPurgeableState(MTL::PurgeableStateEmpty);
+         a.purged = true;
+@@ -341,34 +372,37 @@
+     return n;
+ }
+ 
+-// Trial patch (STRATA_METAL_RELEASE_HOST_WEIGHTS): what purge_device_allocations(min_bytes) would give back, logged
+-// largest first, so each allocation can be matched to a region in vmmap.
+-void log_device_allocations(size_t min_bytes) {
++// Trial patch (STRATA_METAL_RELEASE_HOST_WEIGHTS): what purge_selected_allocations would give back, logged largest
++// first, so each allocation can be matched to a region in vmmap.
++void log_device_allocations(size_t min_bytes, bool marked) {
+     Runtime& r = rt();
+     std::lock_guard<std::mutex> lk(r.mu);
+     std::vector<size_t> sizes;
+     uint64_t total = 0;
+     for (auto& [gpu, a] : r.by_gpu) {
+-        if (a.host || a.purged || a.bytes < min_bytes) continue;
++        if (!selected(a, min_bytes, marked)) continue;
+         sizes.push_back(a.bytes);
+         total += a.bytes;
+     }
+     std::sort(sizes.rbegin(), sizes.rend());
+-    std::fprintf(stderr, "strata metal resident: %zu device allocations of %zu MiB or more, %.1f MiB in all; largest:",
+-                 sizes.size(), min_bytes >> 20, total / 1048576.0);
++    if (marked)
++        std::fprintf(stderr, "strata metal resident: %zu marked native projection allocations, %.1f MiB in all; largest:", sizes.size(), total / 1048576.0);
++    else
++        std::fprintf(stderr, "strata metal resident: %zu device allocations of %zu MiB or more, %.1f MiB in all; largest:",
++                     sizes.size(), min_bytes >> 20, total / 1048576.0);
+     for (size_t i = 0; i < sizes.size() && i < 16; ++i) std::fprintf(stderr, " %.1f", sizes[i] / 1048576.0);
+     std::fprintf(stderr, " MiB\n");
+ }
+ 
+ // Trial patch: the same allocations as purge_device_allocations, overwritten with 0xFF (NaN in f16 and bf16) and kept,
+ // so a later read by a GPU kernel or the CPU shows up as wrong output instead of going unnoticed.  Returns the bytes.
+-uint64_t poison_device_allocations(size_t min_bytes) {
++uint64_t poison_device_allocations(size_t min_bytes, bool marked) {
+     Runtime& r = rt();
+     device_synchronize();
+     std::lock_guard<std::mutex> lk(r.mu);
+     uint64_t n = 0;
+     for (auto& [gpu, a] : r.by_gpu) {
+-        if (a.host || a.purged || a.bytes < min_bytes) continue;
++        if (!selected(a, min_bytes, marked)) continue;
+         std::memset(a.cpu, 0xFF, a.bytes);
+         n += a.bytes;
+     }
+diff --color -ru a/engine/src/program/generate.cpp b/engine/src/program/generate.cpp
+--- a/engine/src/program/generate.cpp	2026-11-20 16:07:22
++++ b/engine/src/program/generate.cpp	2026-11-20 16:08:12
+@@ -186,6 +186,9 @@
+ 
+ #include <cuda_runtime.h>
+ #if defined(STRATA_GPU_METAL)
++namespace strata::gpu { void mark_unread_allocations(void* const* pointers, size_t count); }   // trial patch, metal/src/gpu/runtime.cpp
++#endif
++#if defined(STRATA_GPU_METAL)
+ namespace strata::metal_engine {
+ void set_model_shard(const char* shard1);   // metal/src/engine/window.cpp
+ void set_batch_slots(int n);   // metal/src/engine/window.cpp: how many --batch slots the window keeps state for
+@@ -5754,6 +5757,9 @@
+         }
+         std::fprintf(stderr, "strata generate: %zu native projection matrices, %.2f MiB of weights, in %.1f s\n",
+                      native_dense.tensor_count(), (double) native_dense.weight_bytes() / (1024.0 * 1024.0), load_s());
++#if defined(STRATA_GPU_METAL)   // trial patch: the Metal window reads these from the GGUF itself; STRATA_METAL_RELEASE_PROJECTIONS=1 gives them back
++        strata::gpu::mark_unread_allocations(native_dense.device_weights().data(), native_dense.device_weights().size());
++#endif
+     }
+     // ---- THE LAYER SPLIT'S SPILL WALK, STEP 1: THE TRIM.  CUDA0 holds the whole dense set now; every later card is about to load a copy of it (3.5 GiB for IQ3_S), which on a
+     // card that is short (two 8 GB cards: 6 of 6 starts failed in 0.2.10) is what leaves its expert cache and its prompt path no room.  A card that cannot afford the copy

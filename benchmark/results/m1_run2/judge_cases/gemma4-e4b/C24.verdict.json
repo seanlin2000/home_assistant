@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 0,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It called growth_schedule as three annual periods growing the $500 deposit 4% a year and reported 19,478.78, which does not match the reference's roughly 19,091 or 19,154 for monthly compounding.",
+  "judgment_reason": "It used a calculator tool rather than guessing, but the tool setup did not model monthly deposits with monthly compounding, and it stated no assumption about deposit timing or how much of the total is interest.",
+  "spoken_fit_reason": "One short sentence that leads with the figure in spoken form."
+}

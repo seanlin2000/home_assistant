@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "All stats are this season's and trace to the results (Wembanyama's 29.0/12.4/4.5, his 52-point game and the Spurs' ten straight wins, Doncic's 38.5/8.1/8.0, SGA 30.1, Maxey 28.0, Tatum 27.0/7.9/6.0), but the reasons for picks three to five are only scoring lines, with little on team impact.",
+  "judgment_reason": "Searched for current-season data, said honestly that it found no advanced metrics, and noted that a few weeks of games is a small sample.",
+  "spoken_fit_reason": "Leads with the basis for the ranking, then gives five players in spoken ordinal prose with no markup, at a length the five-player question needs."
+}

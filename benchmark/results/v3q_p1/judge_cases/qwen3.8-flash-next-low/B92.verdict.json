@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 0,
+  "answer_quality_reason": "Rates, minimums and interest for CIT (3.75%, $1,875, $5,000 tier, $100 to open), Marcus ($1,750), SoFi ($1,650 standard with direct deposit), Ally and Capital One ($1,600 each) all match the excerpts and the calculator, but it calls CIT's 0.60-point six-month boost \"a couple hundred dollars more\" when it is about $150, and its closing FDIC advice is muddled.",
+  "judgment_reason": "It searched for current rates, flagged SoFi's 4.40% as a six-month promo that needs direct deposit, explained CIT's balance tier, and noted that all of the rates are variable.",
+  "spoken_fit_reason": "Seven paragraphs plus two spoken preamble lines were cut by the word cap after the first bank, so the listener heard only CIT's figures."
+}

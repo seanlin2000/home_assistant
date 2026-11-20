@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The explanation of asking versus effective rents, listing lag, and stale listings is sound, but the comparison rests on an unsourced claim of 'sustained softening from 2023 on, with high vacancy' in New York and LIC, which is doubtful from general knowledge of the tight post-2022 New York rental market, and the bottom line that 4 percent is 'probably not competitive' is built on it.",
+  "judgment_reason": "It admitted both searches came back empty, then called the market direction one it would 'put money on' and gave a verdict anyway instead of keeping the comparison conditional or asking for the rent.",
+  "spoken_fit_reason": "Five long, dense paragraphs of several hundred words, cut by the word cap, are a wall of text for a spoken reply."
+}

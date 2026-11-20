@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": false,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It ignores Vert Frais, the only Long Island City restaurant in the restaurant_recommendations result, and gives per-person prices no source states (Casa Enrique $30 to $50, Takumen $25 to $45, Red Sorghum $50 to $80, Yumpling 'under about twenty dollars'), plus Michelin claims for Casa Enrique and Meju that the Michelin snapshot does not support, though the restaurants are real LIC places from the retrieved guides.",
+  "judgment_reason": "Instead of reporting that the Michelin tool had only one nearby listing, it made eight web-search and fetch calls and padded the list with prices it invented, though it did admit it did not know the user's exact block.",
+  "spoken_fit_reason": "Seven long paragraphs were cut by the word cap after the first restaurant, so the listener heard a preamble and only Casa Enrique."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It lists the sketch's missing items, origin, dates and length, a budget number, what warm means, passport and visa, companions and interests, and the assumptions to avoid, home city and currency, warm meaning beach, wanting a big city, and picking a season.",
+  "judgment_reason": "It explicitly refuses to name a destination as if the answer were known and ends by saying it would ask the questions first.",
+  "spoken_fit_reason": "Plain prose in four sentences with no lists or markdown despite enumerating several items."
+}

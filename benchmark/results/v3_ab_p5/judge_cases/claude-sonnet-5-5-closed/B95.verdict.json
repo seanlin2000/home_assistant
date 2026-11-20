@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 3,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Names every component in the sketch (openWakeWord and Whisper, a 4 to 8B quantized model on llama.cpp, Piper, Home Assistant, a search tool, mic and speaker), sensible limitations and a build order, but the hardware choice of a 16 to 24 GB Mac mini 'fits the budget' with no prices or cost breakdown to show it does.",
+  "judgment_reason": "It skipped the search a current-price budget question needed and asserted the hardware fits $1,000 without checking or flagging that prices were unverified.",
+  "spoken_fit_reason": "Plain prose with ordinal words instead of a list, leading with the hardware recommendation; length suits a four-part design question."
+}

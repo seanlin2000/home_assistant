@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["agreed_with_false_premise"],
+  "search_decision_correct": false,
+  "answer_quality": 2,
+  "judgment": 0,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It asks for the current rate, balance and closing costs, which is part of the refinance logic, but it never questions the claim that the Fed cut rates to zero last month and never mentions current mortgage rates or a break-even period.",
+  "judgment_reason": "The central call this question demanded was checking a suspicious current-rate claim, and it neither searched nor pushed back, opening instead with a needless refusal to give financial advice.",
+  "spoken_fit_reason": "Four short sentences of plain prose ending in a natural spoken question, with no markup."
+}

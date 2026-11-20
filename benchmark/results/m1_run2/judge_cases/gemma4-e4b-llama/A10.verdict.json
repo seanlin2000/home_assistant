@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It correctly explains that a model must fit in VRAM or swap to slower system RAM regardless of core speed, but omits that more memory also allows less aggressive quantization and longer context.",
+  "judgment_reason": "It answered from general knowledge without searching and stayed well within the 120-word, 45-second constraint.",
+  "spoken_fit_reason": "Two plain-prose sentences of about 75 words that lead with the main reason and would sound natural aloud."
+}

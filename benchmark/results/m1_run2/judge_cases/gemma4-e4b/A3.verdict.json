@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 0,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It says it cannot give a yes or no and only lists factors like overall model size, never stating that all experts must be resident so memory is set by total parameters.",
+  "judgment_reason": "The question demanded a clear \"no\" to a false premise, and the answer declined to push back, calling it undecidable.",
+  "spoken_fit_reason": "Two plain sentences with no formatting that would read aloud cleanly."
+}

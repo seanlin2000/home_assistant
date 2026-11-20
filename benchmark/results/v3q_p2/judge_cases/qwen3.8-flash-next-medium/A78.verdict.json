@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 3,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It gives three distinct mechanisms the reference accepts (concentrated stock ownership, prices outpacing wages, profits from pricing power and AI), but it credits the warning that AI gains skip ordinary workers to 'Goldman's own analyst' when the excerpt attributes it to Zandi, and it cites sentiment rising among low-wealth households as evidence for its first point when that cuts the other way.",
+  "judgment_reason": "It made four web searches plus calculator calls, exceeding the tool-call limit, on a conceptual economics question that needed no search.",
+  "spoken_fit_reason": "It is a long wall of statistics that the word cap cut off after the first mechanism, so the listener heard only one of the three examples."
+}

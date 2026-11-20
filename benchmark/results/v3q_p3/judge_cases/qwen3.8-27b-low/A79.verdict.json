@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 0,
+  "answer_quality_reason": "Covers matrix-multiply parallelism, HBM bandwidth limits, the CUDA ecosystem, TPU as an ASIC, Cerebras, and when fixed high-volume workloads favor specialized chips, but omits on-chip SRAM designs like Groq and latency per token as a win case, and loosely says convolutions dominate transformer inference.",
+  "judgment_reason": "Answered stable technical background without searching and gave a balanced account of when specialized chips win and when GPUs' flexibility wins.",
+  "spoken_fit_reason": "Uses standalone heading lines such as 'Why GPUs are so effective at AI inference' and runs to a wall of text that the word cap cut off before the comparison was even reached."
+}

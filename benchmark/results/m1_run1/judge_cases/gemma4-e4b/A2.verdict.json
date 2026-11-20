@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It computed '3500 * 12' with no 5% increase and '3500 * 1.03 * 24' with no compounding, so both totals (42,000 and 86,520) are wrong, and the 44,520 'savings' compares one year against two.",
+  "judgment_reason": "It calls the one-year lease cheaper by subtracting a one-year total from a two-year total, never noting that the lengths differ or stating an assumption about the second year.",
+  "spoken_fit_reason": "Short plain prose with the numbers written out as words, fine to read aloud."
+}

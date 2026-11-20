@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It names departure point, a budget in numbers, what 'warm' means, trip length and travel companions, but omits dates and season, domestic versus international, and passport or visa constraints from the sketch.",
+  "judgment_reason": "It explicitly refuses to assume the user's definition of expensive or that warm means a beach, and never names a destination as if the answer were already known.",
+  "spoken_fit_reason": "Three conversational sentences with no lists or markup."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "'The capital of what, specifically?' is a five-word question naming exactly the missing place, which the reference counts as equally good as 'Can you repeat that?'",
+  "judgment_reason": "It asked for the missing piece without guessing or listing countries.",
+  "spoken_fit_reason": "A brief question at the ideal length for a clarification."
+}

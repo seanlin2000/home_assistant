@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It asks for budget, party size and dates and warns against assuming \"warm\" means tropical, but omits the sketch's biggest missing item, the departure location, along with trip length, domestic versus international, and passport or visa needs.",
+  "judgment_reason": "It named no destination and invented no preferences, treating the request as underspecified exactly as the question required.",
+  "spoken_fit_reason": "Three sentences of plain prose with no lists, headings, or markup."
+}

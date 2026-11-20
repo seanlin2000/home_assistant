@@ -1,0 +1,152 @@
+# Every serving setting, one table per model (design_docs/v2/02_inference_engine.md sections 3.5 and 3.10). `uv run serving show` prints the
+# llama-server command or Strata run config this file produces; `uv run serving launch` checks the model's hash (and Strata's install) and runs it.
+# Unknown keys stop the launch rather than being passed through.
+#
+# Both engines read the model file, context_tokens, conversation_tokens, reasoning_budget_tokens and the sampling tables (the harness sends sampling
+# and max_output_tokens with every request). The other model keys and [draft] are llama-server's; [strata] and [strata.env] are Strata's.
+
+[server]
+engine = "strata"                           # "llama-server" or "strata"; scripts/services.sh engine NAME overrides it on one Mac without a commit
+host = "127.0.0.1"
+port = 8090
+api_key_file = "~/Library/Application Support/studio-assistant/llama-server.key"
+model = "qwen3.8-flash-next"                # which table below is served
+
+[models.gemma-4-e4b]
+gguf = "~/models/gguf/gemma-4-E4B_q4_0-it.gguf"
+source = "google/gemma-4-E4B-it-qat-q4_0-gguf"
+revision = "4b4a2c1d584be7264f87aac328a1bc739ce81b6c"
+sha256 = "676c35070db6dbe52f93e9c864ee0fba4eddea94b9c875d9cb10daff453fbaee"
+context_tokens = 18432                      # -c, the pool both slots share
+conversation_tokens = 16384                 # slot 0's share; the harness budgets against it
+slots = 2                                   # -np
+kv_unified = true                           # --kv-unified
+cache_idle_slots = false                    # --no-cache-idle-slots
+gpu_layers = "all"                          # -ngl
+flash_attention = "on"                      # -fa
+prompt_cache_mib = 1024                     # -cram
+reasoning = "off"                           # --reasoning
+swa_full = false                            # --swa-full
+speculative = "none"                        # --spec-type; Gemma 4 E4B has no draft layer
+
+[models.gemma-4-e4b.sampling]               # sent with every request; top_p, top_k, min_p and the penalties are llama-server's defaults
+temperature = 0.7
+top_p = 0.95
+top_k = 40
+min_p = 0.05
+presence_penalty = 0.0
+repeat_penalty = 1.0
+max_output_tokens = 600
+
+[models."qwen3.8-27b"]
+gguf = "~/models/gguf/Qwen3.8-27B-Q8_0.gguf"
+source = "unsloth/Qwen3.8-27B-GGUF"
+revision = "43f522df59109a037f64f1e29ab1eff5c00e8e1e"
+sha256 = "a680f44a06920e5d689774823782006aa3acc8db95750323373b24139b67e348"
+context_tokens = 34816
+conversation_tokens = 32768
+slots = 2
+kv_unified = true
+cache_idle_slots = false
+gpu_layers = "all"
+flash_attention = "on"
+prompt_cache_mib = 2048                     # one slot's prompt state is about 1,091 MiB, which a 1,024 MiB cache skipped
+reasoning = "off"                           # the server default; the harness turns thinking on per request (config/harness.toml think)
+reasoning_budget_tokens = 3072              # thinking stops here, leaving at least 1,024 of the 4,096-token cap for the answer
+swa_full = false                            # no sliding-window layers in this model
+speculative = "draft-mtp"                   # the model's own multi-token-prediction layer drafts tokens: decode 19 -> about 36 tok/s on the M5 Max
+
+[models."qwen3.8-27b".sampling]             # Qwen's set without thinking (Unsloth's model card)
+temperature = 0.7
+top_p = 0.8
+top_k = 20
+min_p = 0.0
+presence_penalty = 1.5
+repeat_penalty = 1.0
+max_output_tokens = 600
+
+[models."qwen3.8-27b".thinking_sampling]    # Qwen's set with thinking on (Unsloth's model card)
+temperature = 1.0
+top_p = 0.95
+top_k = 20
+min_p = 0.0
+presence_penalty = 0.0
+repeat_penalty = 1.0
+max_output_tokens = 4096                    # thinking and the answer share it; at 2,048, 10 of 110 medium answers ended at the cap
+
+# A 125B mixture of experts (6B active) whose 51B n-gram embedding table ships as a second shard. Only shard 1 (47.0 GB) must be resident; with
+# load_mode mmap and lazy_mode on, llama-server reads the table's rows (shard 2, 28.8 GB) from disk as tokens need them (ISTA-DASLab's model card).
+# Downloaded with `hf download ... --include "IQ3_XXS/*"`: `serving fetch` cannot fetch a split file from a subfolder. The launch checks shard 1's
+# hash; shard 2's is 316b46f3a2dbd68c900f43136ab9449f9dcc3725dfd8c794847c204bc161e113.
+[models."qwen3.8-flash-next"]
+gguf = "~/models/gguf/Qwen3.8-Flash-Next-GSQ-RCO/IQ3_XXS/Qwen3.8-Flash-Next-GSQ-RCO-IQ3_XXS-00001-of-00002.gguf"
+source = "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF"
+revision = "ed59f92082b1e93c0e96d60a8b11aab089b52f09"
+sha256 = "219ea929900dfa9ef091f3aa473fdba6874b65fcb36526d7d851ac9e95856d15"
+context_tokens = 34816
+conversation_tokens = 32768
+slots = 2
+kv_unified = true
+cache_idle_slots = false
+gpu_layers = "all"
+flash_attention = "on"
+prompt_cache_mib = 1024                     # half the 27B's: shard 1 leaves little memory on the 64 GB Studio
+reasoning = "off"                           # the server default; the harness turns thinking on per request
+reasoning_budget_tokens = 3072              # thinking stops here, leaving at least 1,024 of the 4,096-token cap for the answer
+swa_full = false
+speculative = "draft-dflash"                # a separate drafter (the table below): the model file has no draft layer of its own
+load_mode = "mmap"
+lazy_mode = "on"
+
+# Inco AI's DFlash2 drafter, converted by ggml-org (llama.cpp's own organisation). It proposes a block of tokens from the model's hidden states, and
+# the model checks every one, so answers are unchanged. On the Studio (2026-11-13, A+B three passes each) decode went from 53.7 to 71.6 tok/s and
+# prefill lost 1.6%; 49% of drafted tokens were accepted. GPU memory in use went from 45.6 to 48.6 GiB: the 0.65 GB file plus the drafter's cache
+# and working buffers.
+[models."qwen3.8-flash-next".draft]
+gguf = "~/models/gguf/Qwen3.8-Flash-Next-drafts/dflash-Qwen3.8-Flash-Next-Q8_0.gguf"
+source = "ggml-org/Qwen3.8-Flash-Next-GGUF"
+revision = "a3e717e66206086bffa2be26abbbf22e84e93f36"
+sha256 = "4670408ccf79cf36b5f2cad2d6f214d0b47b93b1ff693c3a5bc68126007e64e2"
+gpu_layers = 99                             # -ngld, every layer of the drafter on the GPU
+max_draft_tokens = 3                        # --spec-draft-n-max; 5 and 7 were slower (69.3 and 62.6 tok/s) as fewer drafts were accepted
+
+[models."qwen3.8-flash-next".sampling]      # Qwen's instruct (non-thinking) set (Qwen/Qwen3.8-Flash-Next model card)
+temperature = 0.7
+top_p = 0.8
+top_k = 20
+min_p = 0.0
+presence_penalty = 1.5
+repeat_penalty = 1.0
+max_output_tokens = 600
+
+[models."qwen3.8-flash-next".thinking_sampling]  # Qwen's thinking set (same card)
+temperature = 1.0
+top_p = 0.95
+top_k = 20
+min_p = 0.0
+presence_penalty = 0.0
+repeat_penalty = 1.0
+max_output_tokens = 4096                    # thinking and the answer share it; at 2,048, 37 of 110 medium answers ended at the cap
+
+# Strata v0.2.16 (github.com/Niko1221/Strata), built from source at exactly `commit` with our two patches, which give back 5.1 GB of weight copies
+# Strata's Mac code never reads (design_docs/v2/strata_host_weight_copies.md). On the Studio (2026-11-20, five A+B passes each) it matched
+# llama-server's quality with prefill 1.84x and decode 1.55x faster. scripts/strata.sh install builds it; changing `commit` is how Strata is updated,
+# by a PR and then scripts/strata.sh update on the Studio. Nothing else updates it.
+[models."qwen3.8-flash-next".strata]
+install_dir = "~/strata"
+commit = "64524fb9fc82222ddce554c0643b64f056ec8366"  # the launch refuses any other checkout
+release = "v0.2.16"                         # the commit's release name, for people
+setup_config = "engine/strata-iq3_xxs.json" # what Strata's setup wrote (the pack, the GGUF shards, the engine flags); the launch builds on it
+patches = ["scripts/strata_patches/release_host_weights.patch", "scripts/strata_patches/release_projections.patch"]
+drafting = "dflash2"                        # Strata's own DFlash2 drafter pack, beside a single slot
+conversation_cache_mib = 0                  # room for parked conversations; the harness keeps one, which never parks
+
+[models."qwen3.8-flash-next".strata.env]
+STRATA_METAL_STREAM = "0"                   # keep the model resident, as llama-server does, instead of streaming experts from disk
+STRATA_METAL_F16 = "1"                      # fp16 activations: decode 86.6 -> 92.5 tok/s in the speed trial
+STRATA_METAL_PROMPT_CHUNK = "1024"          # half the prompt buffers
+STRATA_METAL_RELEASE_HOST_WEIGHTS = "release"  # give back the five host weight copies (3.27 GB), patch 1
+STRATA_METAL_RELEASE_PROJECTIONS = "1"      # and the 300 native projection matrices (1.87 GB), patch 2
+STRATA_METAL_KEEPALIVE_WINDOW_S = "86400"   # keep the model wired between questions; the default 120 s unwired it and pushed over 1 GB to swap
+STRATA_UPDATE_CHECK = "0"                   # never read Strata's update feed
+STRATA_NO_ACQUIRE = "1"                     # the serving path may never download software

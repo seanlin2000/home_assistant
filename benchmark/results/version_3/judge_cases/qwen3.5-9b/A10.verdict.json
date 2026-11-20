@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It makes the central point that the model must fit entirely in VRAM or spill to slower system memory, but omits the sketch's added benefits of more memory, namely less aggressive quantization and longer context.",
+  "judgment_reason": "It answered from stable knowledge without searching and stayed inside the 120-word limit the question implied by asking for under 45 seconds of speech.",
+  "spoken_fit_reason": "Roughly 110 words of plain conversational prose ending in a car-engine analogy, with no lists, markdown, or citations."
+}

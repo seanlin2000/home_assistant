@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It keeps the 24 GB recommendation conditional on whether the extra capacity enables a needed larger model, but never makes the $400 concrete with the step from roughly 13B-class to 30B-class models or higher quantization.",
+  "judgment_reason": "It builds on the earlier 16 GB versus 24 GB context without asking the user to repeat it and gives a conditional recommendation.",
+  "spoken_fit_reason": "Three plain sentences that lead with 'my recommendation would still lean toward the twenty four gigabyte option'."
+}

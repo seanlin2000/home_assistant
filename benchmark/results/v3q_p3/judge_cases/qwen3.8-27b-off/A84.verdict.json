@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 0,
+  "answer_quality_reason": "Explains DCF discounting, why distant cash flows lose more, growth tech as long-duration assets, and bonds as the competing alternative, but it omits higher borrowing costs for unprofitable firms and multiple compression.",
+  "judgment_reason": "Answered stable finance from knowledge without searching and added a sound caveat that cash-rich mature tech is less rate-sensitive.",
+  "spoken_fit_reason": "Four long paragraphs overran the word cap, which cut it at \"This is exactly why tech stocks are so sensitive\", before the part that answers the tech question."
+}

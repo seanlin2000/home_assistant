@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Twenty-two Celsius and three point one miles are both within the sketch's accepted values, and the 'about' hedging matches the rounding.",
+  "judgment_reason": "Used the convert tool for both legs and rounded to a level a listener can use rather than reading back 22.22.",
+  "spoken_fit_reason": "A single short sentence answering both parts in order."
+}

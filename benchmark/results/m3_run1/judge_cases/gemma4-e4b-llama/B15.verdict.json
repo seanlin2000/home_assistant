@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The RTX 4060 Ti 16GB at $499 is supported by the BetterFPS excerpt, but the answer ignores the InsiderLLM used price of $380 to $420 even though used was acceptable, and offers the RTX 5060 Ti 16GB 'near its MSRP' without saying whether it is under $500 when pcgamecheck calls its price 'painful'.",
+  "judgment_reason": "Searching was right and the main pick respects the $500 limit, but it does not commit to a best option or check that the alternative fits the budget.",
+  "spoken_fit_reason": "Two plain sentences with no formatting, short enough to hear easily."
+}

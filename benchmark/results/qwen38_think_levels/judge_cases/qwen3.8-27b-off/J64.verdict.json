@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The final reply is the silence marker *, so it names none of the Warriors players.",
+  "judgment_reason": "It treated a clear roster request as speech not meant for it and never called team_roster, though not making a web search was right.",
+  "spoken_fit_reason": "Nothing was spoken in reply to a real request, so the listener heard no answer."
+}

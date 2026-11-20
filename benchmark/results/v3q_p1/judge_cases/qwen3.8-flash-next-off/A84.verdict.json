@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 4,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It explains present value, a discount rate built on the risk-free rate, duration borrowed from bond math, and growth firms' value sitting 10 to 15 years out, plus competition from bonds, but it breaks off mid-sentence at 'Two is the funding' before the borrowing-cost and multiple-compression points.",
+  "judgment_reason": "It said itself that this was 'mostly a matter of financial mechanics rather than current events', then searched anyway, including for the current fed funds rate, which the question did not need.",
+  "spoken_fit_reason": "Filler preambles run together, and the multi-paragraph lecture hit the word cap, so the listener heard only the present-value paragraph and never the duration explanation that answers the question."
+}

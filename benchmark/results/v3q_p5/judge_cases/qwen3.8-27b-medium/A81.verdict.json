@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 4,
+  "judgment": 2,
+  "spoken_fit": 0,
+  "answer_quality_reason": "Correctly separates what stays local from the query, API key, IP and user agent that go out, and recommends SearXNG, a VPN, scrubbing queries and checking retention, but omits timing and frequency, searching only when needed and caching, and attributes a blog's point to 'Ollama's docs'.",
+  "judgment_reason": "Ran two searches on a conceptual privacy question that needed none, though it used them sensibly and kept the advice honest about SearXNG's trade-offs.",
+  "spoken_fit_reason": "A six-paragraph essay with bracketed placeholders, cut by the word cap before any of the minimization advice reached the listener."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Hits every sketch element: parallel cores for matrix math, high-bandwidth memory and the memory-bound token generation point, CUDA, the TPU as an ASIC example, on-chip memory, wafer-scale and transformer-hardwired designs, and when specialized chips win or lose.",
+  "judgment_reason": "Stable technical explanation given from knowledge without a needless search, with the conditions for a specialized chip winning stated as trade-offs rather than absolutes.",
+  "spoken_fit_reason": "Leads with the direct answer in plain prose with no acronym lists or markup; long, but the three-part question asks for it."
+}

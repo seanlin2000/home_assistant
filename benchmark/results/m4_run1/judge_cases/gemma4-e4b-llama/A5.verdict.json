@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The single sentence only names microphone array, local processing power, and enclosure acoustics, with no beamforming, echo cancellation, placement, wake-word chip, speaker separation, or latency detail from the sketch.",
+  "judgment_reason": "It respected the no-product-names constraint and did not search, but gave so little that it did not engage with the user's stated priority on far-field hearing in a studio.",
+  "spoken_fit_reason": "One plain sentence that leads with the answer."
+}

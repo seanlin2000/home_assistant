@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The final reply was the silence marker '*', so no hardware design considerations were given at all.",
+  "judgment_reason": "It treated a clear, direct request for advice as speech not meant for it, failing the central point of the question.",
+  "spoken_fit_reason": "Nothing was spoken in response to a real request, so the listener got no answer."
+}

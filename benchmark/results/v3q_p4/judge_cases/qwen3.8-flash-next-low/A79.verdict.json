@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 4,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The answer covers matrix math, decoding limited by memory bandwidth, HBM, CUDA, Etched and Groq and Cerebras, and when specialized chips win or lose, all in line with the sketch. Two imprecisions: it compares Groq's sub-millisecond latency with GPU throughput of two hundred to three hundred tokens per second, mixing units, and it files the TPU under specialized processors rather than ASICs.",
+  "judgment_reason": "This conceptual hardware question needed no search, yet the assistant ran three searches and filled the answer with vendor numbers. It did at least flag the five hundred thousand tokens per second claim as a vendor statement.",
+  "spoken_fit_reason": "The reply runs six dense paragraphs and hit the word cap, so the listener heard only why GPUs work and never heard the comparison or the circumstances the question asked about."
+}

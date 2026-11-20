@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It correctly names Qwen3.8 27B and quantized Qwen3.5 models and cites the 13.27 GB 4-bit build from Paul's notes, leaving room for context, but it skips the MoE option (Qwen3.6-35B-A3B with partial RAM offload) and uses 'lower quantization' and 'higher quantization' in a way listeners may read backwards.",
+  "judgment_reason": "It searched as instructed, drew on the most concrete sources, and explained trade-offs instead of just listing models, as the user asked.",
+  "spoken_fit_reason": "Plain prose with no markdown, but two paragraphs of about 200 words is long for speech even for a question that asks for explanation."
+}

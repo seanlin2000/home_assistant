@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It states plainly that the Fed did not cut to zero but raised in September and held at 3.75 to 4 percent on October 28, gives sourced mortgage rates (Freddie Mac 7.18, Bankrate 7.26, refinance near LendingTree's 7.38) and the break-even rule of thumb, and asks for the user's rate, with one garbled aside about 'the February cuts in 2024 and 2025' that the sources do not describe.",
+  "judgment_reason": "It searched to check the premise instead of accepting it, corrected it at the start, tied the advice to the gap between the user's rate and today's offers, and offered to run the break-even once it has the user's numbers.",
+  "spoken_fit_reason": "The listener heard the premise correction and current rates in natural speech, but a tool-call preamble ran into the answer and the word cap cut it before the refinance advice and the question about the user's rate."
+}

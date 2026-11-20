@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It concedes storage needs all 30B but then contradicts itself by concluding the MoE 'can fit within memory limits by activating only part of its parameters at a time', and never mentions quantization or expert offload, which is the actual reason a 30B MoE sometimes fits 16 GB.",
+  "judgment_reason": "Answering from general knowledge without searching was right, but it asserts the false mechanism confidently rather than flagging that the full weights still have to live somewhere.",
+  "spoken_fit_reason": "Plain prose with no markdown, but a single dense ~170-word block that restates the setup before landing the distinction."
+}

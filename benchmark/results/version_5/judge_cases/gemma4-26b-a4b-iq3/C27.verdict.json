@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "About $4.32 a month on 14.4 kilowatt hours over thirty days matches the reference sketch, and it names the 30-day basis it used.",
+  "judgment_reason": "The rate was given so no assumption was needed, and it used the energy tool rather than doing the arithmetic itself.",
+  "spoken_fit_reason": "Two short sentences with the figures spoken out."
+}

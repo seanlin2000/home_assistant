@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "All five players' figures match this season's excerpts (Doncic 38.6 points and 66 true shooting, Wembanyama's 38.5 PER and 4.4 blocks, Jokic's league-leading 9 assists), but team impact is barely addressed beyond Gilgeous-Alexander \"carrying Oklahoma City\".",
+  "judgment_reason": "Searching for current-season stats was right, but it never notes that ten to twelve games is a small early-season sample, which the sketch expects.",
+  "spoken_fit_reason": "A short lead-in and then five spoken \"One, Two\" entries of one or two sentences each, with no markdown."
+}

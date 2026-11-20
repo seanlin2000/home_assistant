@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "Gives three distinct concrete mechanisms from the sketch (concentrated ownership by the richest tenth, a few mega-cap tech firms driving the index, living costs outrunning wages) and frames the market as expected profits versus paychecks and bills.",
+  "judgment_reason": "Answered a stable economics question from knowledge without searching and avoided restating 'the market is not the economy' three times.",
+  "spoken_fit_reason": "Plain prose that leads with the answer, but it runs past the three asked examples into extra ones and a summary, making it longer than needed aloud."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Explains present-value discounting, why distant growth-stock cash flows lose more value, the long-bond analogy, and the extra effects of attractive Treasuries and higher borrowing costs, covering every required element of the sketch.",
+  "judgment_reason": "Answered stable finance theory from knowledge without an unnecessary search.",
+  "spoken_fit_reason": "Leads with the valuation principle and builds the explanation in plain spoken prose with no lists or formatting, at a length the question warrants."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 0,
+  "answer_quality_reason": "Gives three distinct concrete mechanisms from the sketch: a few giant tech firms plus skewed stock ownership, profits from cost cutting and layoffs, and prices rising faster than wages while firms keep pricing power.",
+  "judgment_reason": "Correctly answered a stable economics question from knowledge without searching or inventing current figures.",
+  "spoken_fit_reason": "Five long paragraphs overran the word cap, so the listener heard only the first of the three examples."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It names Paris, Texas, gets the clear and dry week, highs in the mid to high eighties, and the Wednesday trace of precipitation right, but says lows in the mid to high sixties when the tool shows lows from 63 up to 72 late in the week.",
+  "judgment_reason": "It used weather_forecast with the stated region so the right Paris was used, and did not search.",
+  "spoken_fit_reason": "Two plain sentences that summarize the week rather than reading out every day, with no formatting."
+}

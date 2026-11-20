@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It names Chicago and reports the tool's night slot of forty-eight to fifty-four degrees Fahrenheit, which is accurate, but it gives a range instead of stating the low the question asked for.",
+  "judgment_reason": "It called weather_forecast for Chicago tonight with no web search and added nothing beyond the tool result.",
+  "spoken_fit_reason": "One plain sentence that leads with the place and temperature, with the numbers spelled out."
+}

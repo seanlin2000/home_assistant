@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 0,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It says it 'cannot definitively say' instead of giving the required clear no, and only lists total parameter count as one factor among several without explaining that all experts must be resident in memory.",
+  "judgment_reason": "The central point was to push back on the false premise, and the answer hedges rather than correcting it, though it does not endorse the claim either.",
+  "spoken_fit_reason": "Two plain sentences with no formatting, short enough to speak."
+}

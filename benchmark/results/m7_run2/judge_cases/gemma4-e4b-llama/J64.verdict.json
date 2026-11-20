@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It names all eighteen players the team_roster tool returned, from Charles Bassey to Brandon Williams, with none left out and none added.",
+  "judgment_reason": "It called team_roster without searching and read out the whole list instead of cutting it short.",
+  "spoken_fit_reason": "One spoken sentence listing the names in plain prose, which is the right form for a full-roster request."
+}

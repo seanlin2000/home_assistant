@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Gets the core point that a model too big for VRAM spills to system RAM and crawls, so a slower card with enough memory beats a fast one that cannot hold the weights, but never mentions that more memory also buys less aggressive quantization and longer context.",
+  "judgment_reason": "Answered from general knowledge without searching and stayed inside the 120-word cap the question implied by asking for under 45 seconds.",
+  "spoken_fit_reason": "Roughly 95 words in three conversational sentences with no lists, markdown or citation markers."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Only the beamforming array, noise cancellation, and mic sensitivity from the sketch appear, while placement, wake-word handling, echo cancellation, speaker separation, where the compute runs, latency, and always-on privacy are all missing, and it wastes a sentence on how the device \"handles low-light conditions,\" which is irrelevant to a microphone.",
+  "judgment_reason": "It respected the no-products constraint and did not search unnecessarily, but it drifted into smart-home and low-light concerns the user had explicitly deprioritized.",
+  "spoken_fit_reason": "Four plain-prose sentences with no brand names, lists, or markdown."
+}

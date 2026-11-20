@@ -1,0 +1,467 @@
+# Review sheet
+
+Read the answer, decide on gates and scores, then record them in review_sheet.yaml.
+
+## Contents
+
+- [qwen3.8-27b-medium](#review-qwen3-8-27b-medium): [A81](#review-qwen3-8-27b-medium-a81), [A82](#review-qwen3-8-27b-medium-a82), [A86](#review-qwen3-8-27b-medium-a86), [A87](#review-qwen3-8-27b-medium-a87)
+- [qwen3.8-27b-low](#review-qwen3-8-27b-low): [A76](#review-qwen3-8-27b-low-a76), [A79](#review-qwen3-8-27b-low-a79), [A87](#review-qwen3-8-27b-low-a87), [B92](#review-qwen3-8-27b-low-b92)
+- [qwen3.8-flash-next-medium](#review-qwen3-8-flash-next-medium): [A76](#review-qwen3-8-flash-next-medium-a76), [A78](#review-qwen3-8-flash-next-medium-a78), [A82](#review-qwen3-8-flash-next-medium-a82), [B94](#review-qwen3-8-flash-next-medium-b94)
+- [qwen3.8-flash-next-low](#review-qwen3-8-flash-next-low): [A79](#review-qwen3-8-flash-next-low-a79), [A81](#review-qwen3-8-flash-next-low-a81), [B88](#review-qwen3-8-flash-next-low-b88), [B95](#review-qwen3-8-flash-next-low-b95)
+- [qwen3.8-flash-next-off](#review-qwen3-8-flash-next-off): [A82](#review-qwen3-8-flash-next-off-a82), [A87](#review-qwen3-8-flash-next-off-a87), [B88](#review-qwen3-8-flash-next-off-b88), [B89](#review-qwen3-8-flash-next-off-b89)
+
+<a id="review-qwen3-8-27b-medium"></a>
+
+## qwen3.8-27b-medium (4 to review)
+
+<a id="review-qwen3-8-27b-medium-a81"></a>
+
+### qwen3.8-27b-medium / A81 (random sample)
+
+**Question:** If I run a language model locally on my computer but use an external web-search API, what information can the search provider see? Explain what stays local, what gets transmitted, and how I can minimize data exposure.
+
+**Searched:** False
+
+**Spoken answer:**
+
+> The short version is this: the model itself never leaves your machine, but whatever it decides to put into a search query does. So the real question is not whether your data goes out, but what ends up in that query string.
+
+Let me walk through the three buckets.
+
+What stays local. The model weights stay on your hardware. Your full conversation history stays local. Any files or documents you fed the model stay local. The model's reasoning, its drafts, and its final answer all get generated locally. And critically, anything you typed that the model does *not* extract into a search query never leaves. If you paste a private email into the chat and the model just talks to you about it without searching, the provider never sees a word of it.
+
+What gets transmitted. By default, a web-search tool sends the query string it was asked to run, plus the normal plumbing of an API call: your API key in the authentication header, a user-agent, a timestamp, and your IP address.
+
+**Judge:** gates=none, quality 4/5, judgment 3/3, spoken 0/2
+
+- The answer correctly lists the query, IP address, API key, user agent, and timestamp as transmitted, and it recommends redacting queries, VPN or proxy routing, a self-hosted aggregator, and checking retention policy, but it omits that fetched websites also see the IP and that local audio and transcription stay home.
+- Not searching was right, and the answer honestly says retention policies vary by provider and need checking instead of claiming a specific one.
+- This is a wall of text of over 600 words with markdown asterisks around "not", and the word cap cut it off before the minimization advice.
+
+<a id="review-qwen3-8-27b-medium-a82"></a>
+
+### qwen3.8-27b-medium / A82 (random sample)
+
+**Question:** Explain the difference between an API, an MCP server, and a software tool. If I wanted to give a local LLM the ability to search the web, retrieve webpages, and summarize them, how would you architect the system?
+
+**Searched:** True
+
+**Spoken answer:**
+
+> Let me untangle the three terms first, because they sit at different levels.
+
+An API is just a contract: a defined way for one piece of software to talk to another. It could be an HTTP endpoint, a function in a library, or a command-line interface. APIs are aimed at programmers and other programs, and the consumer is assumed to already know how to use them from documentation.
+
+A software tool is the concrete thing doing the work: a CLI program, a script, a library function. A tool is standalone, and it serves whoever is running it.
+
+An MCP server is a specific kind of application built to the Model Context Protocol — a standard, now pretty much the industry default, for exposing capabilities to LLMs. An MCP server advertises a set of tools, each with a name, a plain-language description, and a JSON schema for its arguments, and clients discover them at runtime over JSON-RPC. So the relationship is: an MCP server is an app that wraps software tools, and those tools usually call ordinary APIs underneath.
+
+**Judge:** gates=['searched_on_no_search_question'], quality 3/5, judgment 1/3, spoken 0/2
+
+- The MCP explanation and three-layer architecture (local model, MCP server with search and page-fetch tools, agent loop, model doing its own summarizing, page truncation) match the reference, but "tool" is defined as standalone software instead of a model-callable function, the answer leaves out tool-round caps, timeouts, and prompt-injection handling, and it stops mid-sentence at "so a model that re-checks".
+- It ran a needless search on MCP spec adoption for a stable conceptual question, although the facts it took from that search (the stateless core) do appear in the excerpts.
+- This is a wall of text of over 500 words with em dashes, the word cap cut it off before the architecture, and the full message breaks off mid-sentence.
+
+<a id="review-qwen3-8-27b-medium-a86"></a>
+
+### qwen3.8-27b-medium / A86 (random sample)
+
+**Question:** I have Philips Hue lights connected to a Hue Bridge. I want multiple people in my apartment to control the lights, including through voice commands. What is the best architecture for this, and what happens if the internet goes down?
+
+**Searched:** True
+
+**Spoken answer:**
+
+> Here's the setup I'd recommend, and it's actually pretty simple once you think of it in layers.
+
+The foundation is one Hue Bridge, connected to your router by Ethernet, with all the lights paired to it. Then one person creates the main Hue account, and in the Hue app under Settings, Home access, you invite each other person in the apartment. Everyone accepts the invite with their own Hue account, so nobody is sharing a password, and each of you can control the same rooms and scenes from your own phone, with whatever permissions the owner gives them. That handles the multi-person app side cleanly.
+
+For voice, you pick one assistant ecosystem and connect the same Hue home to it once. With Alexa, you enable the Philips Hue skill, sign into the Hue account, and link the bridge; then anyone else in the apartment can join the same Alexa household on their own devices and use the lights. Google Home and Apple Home work the same idea. The practical tip here is to name your rooms and scenes clearly and consistently — "living room," "movie scene," that kind of thing — so voice commands work predictably for everyone instead of each person learning a different vocabulary.
+
+**Judge:** gates=['searched_on_no_search_question'], quality 4/5, judgment 1/3, spoken 1/2
+
+- The answer correctly covers inviting users through Settings > Home access, linking one voice ecosystem, the bridge's local Zigbee control and switches surviving an outage, and Home Assistant for offline voice, but it wrongly lumps Apple Home in with cloud-dependent assistants, when it works locally with a home hub.
+- It ran two needless searches for a stable architecture question that general knowledge covers.
+- The plain prose is listenable but long, and the word cap cut it off before the internet-outage part, which the user explicitly asked about.
+
+<a id="review-qwen3-8-27b-medium-a87"></a>
+
+### qwen3.8-27b-medium / A87 (random sample)
+
+**Question:** My projector is connected to a JBL Bluetooth speaker. Sometimes the audio becomes choppy when I connect my laptop, and playing video games on the projector causes more eye strain than playing on my monitor. What could cause these problems, and how would you systematically troubleshoot them?
+
+**Searched:** False
+
+**Spoken answer:**
+
+> Both of these have a few likely culprits, and the good news is that the same kind of methodical approach fixes both. Let me start with the audio.
+
+For the choppy Bluetooth audio, the most likely causes are interference and source switching. Bluetooth operates on the 2.4 gigahertz band, which is the same band as most home Wi-Fi. When you connect your laptop, its Wi-Fi and Bluetooth radios wake up and compete for that same airtime, and that alone can make a weak Bluetooth link stutter. A second possibility is that the speaker is trying to handle two sources. Some JBL models let you pair multiple devices but only play audio from one at a time, so when your laptop connects, the speaker may be bouncing between the projector and the laptop, which sounds exactly like choppy audio. A third, less common cause is that plugging the laptop into the projector over HDMI triggers the projector to renegotiate its audio output, which can briefly reset the link to the speaker.
+
+**Judge:** gates=none, quality 3/5, judgment 3/3, spoken 0/2
+
+- The audio section is strong (2.4 GHz interference, multipoint pairing, unpairing the laptop, 5 GHz Wi-Fi, firmware, wired fallback), but the eye-strain section omits field of view and seating distance, the DLP rainbow effect, and breaks, and the message breaks off mid-sentence at "compare".
+- Not searching was right, and the answer separates the two problems and orders its tests one variable at a time, as the reference asks.
+- This is a wall of text of roughly 800 words that ends mid-sentence, and the word cap cut the listener off before any of the troubleshooting steps.
+
+[Back to top](#review-sheet)
+
+<a id="review-qwen3-8-27b-low"></a>
+
+## qwen3.8-27b-low (4 to review)
+
+<a id="review-qwen3-8-27b-low-a76"></a>
+
+### qwen3.8-27b-low / A76 (random sample)
+
+**Question:** How did the Cold War end? Explain the three most important events that led to the dissolution of the Soviet Union, and distinguish between the causes and the immediate triggers.
+
+**Searched:** False
+
+**Spoken answer:**
+
+> The Cold War ended in 1991 with the formal dissolution of the Soviet Union, but it really unraveled over several years through a combination of structural causes and a final trigger that made collapse impossible to stop. I'd pick three events as the most important, and they fall neatly into the cause-versus-trigger distinction you asked about.
+
+The first, and the deepest cause, is Gorbachev's program of Perestroika and Glasnost, which began in 1985. Perestroika tried to reform the economy without abandoning the one-party state, and it largely failed, leaving shortages worse than before. Glasnost, the policy of open political speech, was even more consequential: it let people openly criticize the system, debate history, and, crucially, voice the grievances of the non-Russian nationalities that had been suppressed for decades. So the reforms didn't just expose the system's weaknesses; they removed the very controls that had held the union together, without providing a workable alternative.
+
+**Judge:** gates=none, quality 3/5, judgment 2/3, spoken 0/2
+
+- Dates and order are right (Berlin Wall November 1989, August 1991 coup, Belavezha Accords, resignation on December 25), but the answer omits economic stagnation and the arms race or Afghanistan as causes and never mentions Ukraine's December 1991 referendum.
+- Rightly answered from knowledge without searching and drew the cause-versus-trigger line, though it frames the reforms as the single root cause and leaves the Belavezha Accords as an afterthought rather than a trigger in their own right.
+- A four-paragraph essay that the word cap cut after the first cause, so the listener never heard the trigger at all.
+
+<a id="review-qwen3-8-27b-low-a79"></a>
+
+### qwen3.8-27b-low / A79 (random sample)
+
+**Question:** Why are GPUs so effective at AI inference? Explain the differences between GPUs, ASICs, and specialized inference processors. Under what circumstances could a specialized chip outperform an NVIDIA GPU?
+
+**Searched:** False
+
+**Spoken answer:**
+
+> GPUs win at AI inference mostly because the job they were built to do—thousands of simple cores doing the same kind of operation in parallel—lines up almost perfectly with what a neural network does during a forward pass. A forward pass is dominated by a few big matrix multiplications and a lot of element-wise operations, and a GPU hands you both a huge raw throughput of floating-point operations and, just as importantly, a very wide connection to memory, usually high-bandwidth memory. That memory path is the real story. Inference has two phases that stress a chip differently. The first, where you process the whole prompt at once, is compute-bound, so all those cores shine. The second, where you generate one token after another, is memory-bound: for every single new token you still have to stream in a large chunk of the model's weights, so the chip's speed is set less by how fast it can multiply and more by how fast it can move numbers from memory into the arithmetic units.
+
+**Judge:** gates=none, quality 4/5, judgment 3/3, spoken 0/2
+
+- Explains parallel matrix math and memory-bound token generation, the TPU as an ASIC, on-chip SRAM and wafer-scale designs, and when specialized chips win or lose, but it only gestures at 'ecosystem' rather than naming CUDA and skips transformer-hardwired chips.
+- Answered a stable technical question from knowledge without searching and gave balanced caveats about model churn and software support.
+- Four dense paragraphs of several hundred words, a wall of text that the word cap cut after the first paragraph, so the listener heard none of the GPU, ASIC and inference-chip comparison.
+
+<a id="review-qwen3-8-27b-low-a87"></a>
+
+### qwen3.8-27b-low / A87 (random sample)
+
+**Question:** My projector is connected to a JBL Bluetooth speaker. Sometimes the audio becomes choppy when I connect my laptop, and playing video games on the projector causes more eye strain than playing on my monitor. What could cause these problems, and how would you systematically troubleshoot them?
+
+**Searched:** False
+
+**Spoken answer:**
+
+> These are two separate problems, and both have fairly predictable causes. Let me walk through each.
+
+**The choppy audio**
+
+The most likely culprit is Bluetooth bandwidth contention. If your JBL speaker supports multipoint and is connected to both the projector and your laptop at the same time, it's trying to carry two audio streams over a single Bluetooth channel. Video game audio in particular is a continuous, low-latency demand, and that's exactly the kind of stream that starts to stutter when the connection is shared. A few other things compound this: Bluetooth operates on 2.4 gigahertz, the same band as most Wi-Fi, so if you're gaming over a wireless connection or have a router within a few meters of the speaker, packet loss goes up. Distance and obstacles also matter, because the speaker's signal to one source might be fine on its own but degrades when it's juggling two.
+
+Here's how I'd narrow it down systematically. First, test the speaker with only the projector connected and no laptop in the picture.
+
+**Judge:** gates=none, quality 4/5, judgment 3/3, spoken 0/2
+
+- Separates the two problems and gives ordered tests covering multipoint contention, 2.4 GHz interference, distance and a wired fallback, plus refresh rate, contrast and room light, the DLP rainbow effect and focus, but it stops mid-sentence ('and you') and leaves out breaks and blinking less.
+- Answered from knowledge without searching and isolated causes one variable at a time, as a systematic troubleshooting answer should.
+- Uses markdown bold headings ('**The choppy audio**') and runs to long dense paragraphs that the word cap cut early.
+
+<a id="review-qwen3-8-27b-low-b92"></a>
+
+### qwen3.8-27b-low / B92 (random sample)
+
+**Question:** Compare the current high-yield savings account interest rates offered by five major US banks. If I deposit $50,000 for one year, approximately how much interest would I earn at each bank? Identify any minimum balance requirements.
+
+**Searched:** True
+
+**Spoken answer:**
+
+> I have the general rate landscape, but I need the actual rates from the big name banks specifically. Let me get those.Let me pin down the specific current rates at the big branch banks, which is where the "major US banks" really live.Let me confirm the remaining two big banks, Citi and PNC.Before the numbers, one honest caveat: if by "major US banks" you mean the big branch names, most of them don't actually pay a real high-yield rate on savings. Their standard savings accounts sit around a tenth of one percent, which is a fraction of what dedicated high-yield accounts pay. So I've mixed in the two big names that genuinely do offer high-yield savings, so the comparison is useful rather than just a list of near-zeros. Rates below are as of around the ninth through twelfth of November, they're variable, and I'm assuming the rate holds for the full year so the math is just your balance times the APY.
+
+**Judge:** gates=['fabricated_current_fact', 'missing_required_tool', 'too_many_tool_calls'], quality 2/5, judgment 2/3, spoken 0/2
+
+- The dollar figures follow from the sourced APYs (Chase $5, BofA $20, Wells Fargo $25, PNC $1,575, CIT $1,875), but it says the Wells Fargo Platinum fee is 'a dollar twenty a month' when the excerpt says $12, reads 0.04% and 0.05% as 'ten-thousandths of a percent', and says branch-bank savings 'sit around a tenth of one percent'.
+- Searched for current rates, stated that rates are variable and that the math assumes the rate holds all year, and flagged that big branch banks are not high-yield, but it calls CIT one of 'the two big names' without saying it swapped in a non-major bank.
+- The listener heard three 'let me' process preambles and a long caveat before the word cap cut it, so no rate or interest figure was ever spoken.
+
+[Back to top](#review-sheet)
+
+<a id="review-qwen3-8-flash-next-medium"></a>
+
+## qwen3.8-flash-next-medium (4 to review)
+
+<a id="review-qwen3-8-flash-next-medium-a76"></a>
+
+### qwen3.8-flash-next-medium / A76 (random sample)
+
+**Question:** How did the Cold War end? Explain the three most important events that led to the dissolution of the Soviet Union, and distinguish between the causes and the immediate triggers.
+
+**Searched:** False
+
+**Spoken answer:**
+
+> The short version is that the Cold War ended not through a decisive victory but through the Soviet system quietly losing the will and the capacity to sustain itself — and then, in the last months of 1991, falling apart almost by accident.
+
+On the three events I'd single out.
+
+First, Gorbachev's reform turn beginning in 1985. When he took power he tried to save the system, not destroy it: perestroika to restructure a stagnant economy, glasnost to let criticism and information flow so the reforms could actually work. That is the deepest cause. Glasnost did exactly what openness always does — it unsealed grievances the state had spent decades suppressing, in the Baltic republics, in Ukraine, in Georgia, and inside Russia itself. Once people could speak publicly about the past and the present, the legitimacy the Party depended on started draining away.
+
+Second, the fall of the Berlin Wall on November 9, 1989. By then Gorbachev had abandoned the Brezhnev Doctrine, signaling that Moscow would no longer prop up satellite regimes by force, and Poland and Hungary had already opened the door.
+
+**Judge:** gates=none, quality 4/5, judgment 3/3, spoken 1/2
+
+- Correct dates for the Wall (November 9, 1989), the August 1991 coup, the Belavezha Accords (December 8) and Gorbachev's resignation (December 25) with a clear causes-versus-triggers section, but it omits Ukraine's December 1 referendum and calls November 9, 1989 a Wednesday.
+- Answering a stable history question from knowledge without searching was the right call, and it explicitly separates structural causes from contingent triggers as asked.
+- Plain prose with no formatting, but at several hundred words it was cut by the word cap before the listener heard the coup or the causes-versus-triggers distinction.
+
+<a id="review-qwen3-8-flash-next-medium-a78"></a>
+
+### qwen3.8-flash-next-medium / A78 (random sample)
+
+**Question:** Why can a country have a strong stock market while its average citizens feel like the economy is getting worse? Give three concrete examples of how this happens.
+
+**Searched:** True
+
+**Spoken answer:**
+
+> I'll ground a few of these in current numbers before answering.The short answer is that a stock index and a household budget measure different things. An index prices the future profits of a few hundred large companies, mostly ones that compete globally. A household budget is wages minus the price of rent, gas and groceries, and those two lines barely move together. Here's three concrete ways they come apart, using this year's data.
+
+First, the people who own the stocks are a small slice of the population, and the concentration has been getting worse. According to the Federal Reserve's Distributional Financial Accounts, as of the second quarter of this year the wealthiest one percent of households held 50.9 percent of all corporate equities and mutual fund shares, the top ten percent held about 88 percent, and the bottom half of the country held 0.6 percent. Gallup finds that around 58 percent of American adults have some money in the market, but participation is broad while the dollars are extremely narrow.
+
+**Judge:** gates=['searched_on_no_search_question'], quality 5/5, judgment 1/3, spoken 1/2
+
+- Gives three distinct, concrete mechanisms (stock ownership concentrated with the top tenth holding about 88 percent, inflation protecting margins while real wages fall, and indexes of global exporters like the DAX diverging from a 0.1 percent-growth economy), each traceable to the retrieved excerpts.
+- A conceptual economics question needed no search, yet the assistant ran four searches to ground it in current numbers, which is a needless search even though the figures it used were sourced.
+- Plain prose without formatting, but it is a long, statistic-dense answer that the word cap cut off after the first example, and it opens with the spoken preamble about grounding in current numbers.
+
+<a id="review-qwen3-8-flash-next-medium-a82"></a>
+
+### qwen3.8-flash-next-medium / A82 (random sample)
+
+**Question:** Explain the difference between an API, an MCP server, and a software tool. If I wanted to give a local LLM the ability to search the web, retrieve webpages, and summarize them, how would you architect the system?
+
+**Searched:** False
+
+**Spoken answer:**
+
+> Let me take these three in order, because they're layers of the same stack rather than alternatives to each other.
+
+An API is a contract between two pieces of software. It defines how you ask for something and what shape the answer comes back in — an endpoint, some parameters, a JSON response. A weather service exposing "GET /forecast?city=Portland" is an API. It's passive: it doesn't know or care that anyone is calling it, and a human programmer has to write the code that calls it.
+
+A tool is an API plus the packaging that makes it callable by an agent. A tool has a name, a written description, and a typed parameter schema — and crucially that description is written in natural language, because the thing deciding whether to call it is a language model. In other words, an API becomes a tool when you attach instructions the model can read and reason about, plus a runtime that actually executes the call and feeds the result back into the model's context.
+
+**Judge:** gates=none, quality 4/5, judgment 3/3, spoken 1/2
+
+- Clear API, tool and MCP definitions and a sound architecture (local model server, MCP server with search and fetch-with-readability tools, agent loop with a tool-call cap and fetched text treated as untrusted), though it never mentions timeouts or caching and muddles its three-tool count by folding summarize into retrieve_and_summarize.
+- Answered a stable architecture question without searching and stated its sizing assumption of a laptop-class machine with limited context.
+- Plain prose with no markdown, but at well over a thousand words the word cap cut it after the tool definition, so the listener heard none of the architecture.
+
+<a id="review-qwen3-8-flash-next-medium-b94"></a>
+
+### qwen3.8-flash-next-medium / B94 (random sample)
+
+**Question:** Plan a five-day trip to Switzerland covering Lucerne, Interlaken, and Zermatt. Prioritize scenic train rides, lakes, and mountain viewpoints. Minimize strenuous hiking and explain which train passes or tickets would be most economical.
+
+**Searched:** True
+
+**Spoken answer:**
+
+> I'll look up current pass prices and the fares on the key mountain railways before laying out the plan.Good — I have the 2026 pass prices. Now let me check what the mountain railways actually cost and how the pass discounts them.Now let me check the point-to-point fares and the Saver Day Pass alternative, since that's usually the deciding number.Now the remaining pieces: the Interlaken–Zermatt leg, regional pass options, and what's actually open in the next weeks.
+
+**Judge:** gates=['no_final_answer', 'too_many_tool_calls'], quality 0/5, judgment 0/3, spoken 0/2
+
+- The final assistant message is empty, even though the results already held the pass prices (CHF 309 for a 4-day pass, CHF 150 for the Half Fare Card), mountain discounts and seasonal closures it needed for a plan.
+- Searching was right, but it kept searching through eight calls to the tool-call limit, and the only text the listener heard was its 'let me check' preambles.
+- No answer was produced; the listener heard only the status preambles.
+
+[Back to top](#review-sheet)
+
+<a id="review-qwen3-8-flash-next-low"></a>
+
+## qwen3.8-flash-next-low (4 to review)
+
+<a id="review-qwen3-8-flash-next-low-a79"></a>
+
+### qwen3.8-flash-next-low / A79 (random sample)
+
+**Question:** Why are GPUs so effective at AI inference? Explain the differences between GPUs, ASICs, and specialized inference processors. Under what circumstances could a specialized chip outperform an NVIDIA GPU?
+
+**Searched:** True
+
+**Spoken answer:**
+
+> GPUs are effective at inference for one structural reason: nearly every layer in a modern neural network reduces to the same few operations — multiply a big matrix by a vector, then a chain of pointwise math like activations, softmax, and layernorm. That is dense linear algebra with no branches and no dependencies between elements, which is exactly what a GPU's thousands of small cores and matrix units are built for. Modern NVIDIA chips add tensor cores that do the multiply-accumulate in mixed precision, so FP8 and now FP4 formats do more work per watt and per byte of memory traffic.
+
+The deeper point is that autoregressive decoding — generating a transformer one token at a time — is limited less by how fast you can multiply than by how fast you can read the weights. Reading tens of gigabytes of model weights to produce a handful of new tokens is a low arithmetic-intensity workload, so the bottleneck is memory bandwidth, not FLOPS. That is why GPUs carry high-bandwidth memory stacked on the package, and why each generation has chased bandwidth harder than raw compute.
+
+**Judge:** gates=['searched_on_no_search_question'], quality 4/5, judgment 1/3, spoken 0/2
+
+- The answer covers matrix math, decoding limited by memory bandwidth, HBM, CUDA, Etched and Groq and Cerebras, and when specialized chips win or lose, all in line with the sketch. Two imprecisions: it compares Groq's sub-millisecond latency with GPU throughput of two hundred to three hundred tokens per second, mixing units, and it files the TPU under specialized processors rather than ASICs.
+- This conceptual hardware question needed no search, yet the assistant ran three searches and filled the answer with vendor numbers. It did at least flag the five hundred thousand tokens per second claim as a vendor statement.
+- The reply runs six dense paragraphs and hit the word cap, so the listener heard only why GPUs work and never heard the comparison or the circumstances the question asked about.
+
+<a id="review-qwen3-8-flash-next-low-a81"></a>
+
+### qwen3.8-flash-next-low / A81 (random sample)
+
+**Question:** If I run a language model locally on my computer but use an external web-search API, what information can the search provider see? Explain what stays local, what gets transmitted, and how I can minimize data exposure.
+
+**Searched:** True
+
+**Spoken answer:**
+
+> I'll ground a couple of the specifics before answering, since provider retention policies change.The short version: your model weights and your conversation stay on your machine, but everything the model decides to look up is effectively a message you typed into a search company.
+
+Here's the boundary in detail.
+
+What stays local. The model itself, its weights, your chat history, your system prompt, any files the agent reads on your disk, and the intermediate reasoning tokens. None of that is transmitted unless the software explicitly puts it into a tool call. That last clause is the important one, because the tool call is where the leakage happens.
+
+What actually goes out over the network. The API call itself carries the query string, which the model usually synthesizes from your prompt rather than you typing it. So if you paste in a draft contract and the model decides to search for "termination clause enforceability in Delaware commercial leases 2024," that phrasing — possibly including names, deal terms, or an unusual detail that identifies you — arrives at the provider as plain text.
+
+**Judge:** gates=['searched_on_no_search_question'], quality 4/5, judgment 1/3, spoken 0/2
+
+- It covers what the sketch requires: the query text, API key and account, IP address, timestamp and user agent go out; the weights, history and reasoning stay local; and exposure can be cut by scrubbing queries, caching, using SearXNG or a proxy, and reading retention terms. It adds an unsupported claim that many agent frameworks send surrounding context to the provider.
+- It made four web searches about provider retention policies for a conceptual privacy question that needed none.
+- The reply runs to more than a dozen paragraphs, starts with a filler lead-in run into the answer, and was cut by the word cap before any of the advice on reducing exposure.
+
+<a id="review-qwen3-8-flash-next-low-b88"></a>
+
+### qwen3.8-flash-next-low / B88 (random sample)
+
+**Question:** What are the five most important developments in open-source AI models over the past 30 days? Compare the latest releases from OpenAI's competitors, including DeepSeek, Qwen, Meta, and Mistral.
+
+**Searched:** True
+
+**Spoken answer:**
+
+> I'll search for the recent developments and each lab's latest releases.Let me check Meta and Mistral's latest releases, plus any other major open-source developments this month.Let me verify what actually shipped from DeepSeek and Qwen in November, and check the Tencent release.Here's what I found, with the caveat that several of these figures come from release trackers and secondary reporting rather than the labs' own model cards, and a couple of sources disagree on exact parameter counts.
+
+The five developments I'd rank highest. First, Moonshot published the full weights of Kimi K3.1 Pro on November 2 to 4, closing a promise made at its October API launch. It's a 2.8 trillion parameter Mixture-of-Experts with roughly 104 billion active, a million-token context, and it's currently rated the strongest open-weights model on Artificial Analysis's Intelligence Index, around 46 against roughly 65 for the best closed model. The catch is licensing: Moonshot's own terms, not MIT.
+
+**Judge:** gates=['too_many_tool_calls'], quality 4/5, judgment 2/3, spoken 0/2
+
+- Every release and date is traceable to the excerpts and falls within about 30 days: Kimi K3.1 Pro weights November 2 to 4, Mistral Large 4 weights October 29, Muse Spark Open October 15 and Muse Ember November 9, DeepSeek V4.1-Flash-1017 October 17 with no November release, and the Qwen4-Max hosted preview of November 11. It slightly misstates the Mac Studio requirement for Spark Open, and the message breaks off mid-sentence.
+- Searching was right, and it says plainly that DeepSeek shipped nothing in November and that Qwen4 has no open weights, with caveats on vendor claims, but it went over the tool-call limit.
+- Three filler lead-ins run together before a multi-paragraph wall of figures, which the word cap cut off after the first of the five developments.
+
+<a id="review-qwen3-8-flash-next-low-b95"></a>
+
+### qwen3.8-flash-next-low / B95 (random sample)
+
+**Question:** Imagine I want to build a private, locally hosted voice assistant that can answer general questions, search the web, control smart-home devices, and have natural conversations. I have a $1,000 hardware budget. Propose an architecture, explain the components, identify the biggest limitations, and prioritize what I should build first.
+
+**Searched:** True
+
+**Spoken answer:**
+
+> 
+
+**Judge:** gates=['no_final_answer', 'too_many_tool_calls'], quality 0/5, judgment 0/3, spoken 0/2
+
+- The last assistant turn is just two calculator calls with no text, so it gives no architecture, component list, limitations or build order.
+- It spent twelve tool calls gathering GPU prices and stack details and never turned them into an answer, which fails the central point.
+- Nothing was spoken, so the listener got no answer.
+
+[Back to top](#review-sheet)
+
+<a id="review-qwen3-8-flash-next-off"></a>
+
+## qwen3.8-flash-next-off (4 to review)
+
+<a id="review-qwen3-8-flash-next-off-a82"></a>
+
+### qwen3.8-flash-next-off / A82 (random sample)
+
+**Question:** Explain the difference between an API, an MCP server, and a software tool. If I wanted to give a local LLM the ability to search the web, retrieve webpages, and summarize them, how would you architect the system?
+
+**Searched:** True
+
+**Spoken answer:**
+
+> I'll ground this in the current state of MCP so the architecture advice is up to date.Here's the distinction, then the build.
+
+**An API is a contract for software to call software.** It defines endpoints, request shapes, and response shapes so programs can talk to each other. A weather API, Stripe, a search provider's REST endpoint. Nothing about it is specific to language models. It's invoked by code that already knows what it wants and how to ask for it.
+
+**A tool is an operation packaged so a model can decide to invoke it.** Concretely: a name, a natural-language description, and a JSON schema for its arguments. The model doesn't execute anything itself. It emits a structured call — "call web_search with query X" — and your program runs it and feeds the result back into context. A tool is often a thin wrapper around an API, but not always: a tool can be pure local computation, like a calculator or a file read, with no network involved.
+
+**Judge:** gates=['searched_on_no_search_question', 'too_many_tool_calls'], quality 2/5, judgment 1/3, spoken 0/2
+
+- It distinguishes API, tool, and MCP server correctly (a tool is a name, a description, and an argument schema the model chooses to call), but the architecture stops after 'First, the model plus an inference server', so the agent loop, the search and fetch tools, summarization, and most safeguards are missing.
+- It ran nine searches and fetches on a conceptual design question that needed none, until it hit the tool-call limit, and then spent its length on MCP spec revision details the user did not ask for.
+- It uses bold markdown headings, speaks the filler 'I'll ground this in the current state of MCP', and is far too long, so the cap cut it off.
+
+<a id="review-qwen3-8-flash-next-off-a87"></a>
+
+### qwen3.8-flash-next-off / A87 (random sample)
+
+**Question:** My projector is connected to a JBL Bluetooth speaker. Sometimes the audio becomes choppy when I connect my laptop, and playing video games on the projector causes more eye strain than playing on my monitor. What could cause these problems, and how would you systematically troubleshoot them?
+
+**Searched:** True
+
+**Spoken answer:**
+
+> I'll look up some current guidance on both issues so my troubleshooting advice is grounded.Let me check one more thing: whether projectors commonly cause eye strain from motion and refresh rate rather than flicker.Here's how I'd think about both problems, since they're probably independent of each other even though they show up in the same setup.
+
+**The choppy audio**
+
+Bluetooth audio lives in the 2.4 GHz band, which is exactly where a lot of Wi-Fi and other wireless gear also operates. So the usual suspects are radio interference, the laptop's Bluetooth driver, Windows power management putting the adapter to sleep, the speaker being registered as two devices (stereo versus hands-free headset mode), and simple range or obstruction issues. Guidance from Microsoft's own support pages and several driver-focused sites all converge on the same short list of causes.
+
+The fact that it happens specifically when you connect your laptop is a useful clue: it points at the laptop, not the projector or the speaker. A clean way to isolate it:
+
+1.
+
+**Judge:** gates=['searched_on_no_search_question'], quality 2/5, judgment 1/3, spoken 0/2
+
+- The audio section gives a sensible ordered test plan (Wi-Fi off, 5 GHz, distance, drivers, a phone-only test), but it misses the speaker being paired to both laptop and projector, and the eye-strain section stops after the 60 Hz motion point, with no brightness, seating distance, focus, or rainbow effect.
+- It searched three times on a troubleshooting question that needed no search, and its audio steps assume an unstated Windows laptop with the speaker paired directly to it.
+- It uses bold markdown headings and a numbered list, and it is long enough that the cap cut it off at '1.'
+
+<a id="review-qwen3-8-flash-next-off-b88"></a>
+
+### qwen3.8-flash-next-off / B88 (random sample)
+
+**Question:** What are the five most important developments in open-source AI models over the past 30 days? Compare the latest releases from OpenAI's competitors, including DeepSeek, Qwen, Meta, and Mistral.
+
+**Searched:** True
+
+**Spoken answer:**
+
+> I'll look up the recent releases before comparing them.Let me check the November releases specifically, since my first search skewed toward October.Here's what I found for the last 30 days, roughly mid-October through today, November 12. One caveat up front: a lot of the numbers below come from the labs' own benchmark tables, so treat them as claims until independent evals confirm them.
+
+The five developments I'd rank as most important:
+
+One, Mistral Large 4, nicknamed "Le Chonk," shipped its weights on Hugging Face on October 29 after a public preview that opened October 6. It's a roughly 1.05 trillion parameter mixture-of-experts with about 52 billion active per token, a 1 million token context and a 1.6 billion parameter vision encoder. Mistral aimed it squarely at security teams, claiming the top open-model score on agentic coding and around 51 percent on Artificial Analysis's Cyber Index, plus using about 47 percent fewer tokens per task than GLM-5.
+
+**Judge:** gates=['too_many_tool_calls'], quality 2/5, judgment 2/3, spoken 0/2
+
+- The three items it reaches (Mistral Large 4 weights on October 29, Muse Spark Open on October 15, DeepSeek V4.1-Flash-1017 on October 17) are dated and described as the sources state, but the answer breaks off mid-third item, so Qwen (whose Qwen4-Max preview has no open weights) and two of the five developments are never covered.
+- It was right to search and it flagged self-reported benchmarks as claims, but it spent its budget until it hit the tool-call limit, then wrote a reply too long to finish the comparison it was asked for.
+- It is a dense wall of parameter counts and license details, prefixed by spoken search-announcement filler, and the cap cut it off partway through the first item.
+
+<a id="review-qwen3-8-flash-next-off-b89"></a>
+
+### qwen3.8-flash-next-off / B89 (random sample)
+
+**Question:** What is the current state of the AI inference chip startup industry? Compare Etched, MatX, Positron, Cerebras, SambaNova, and Fractile in terms of funding, valuation, technology, and commercial progress.
+
+**Searched:** True
+
+**Spoken answer:**
+
+> I'll research the current state of these AI inference chip startups.Good start. Let me dig into Positron, Cerebras, SambaNova, and Fractile.Now let me check SambaNova and Fractile, plus Cerebras' current stock and latest earnings.Let me get Cerebras' current stock price and latest results, plus any newer news on MatX and Positron rounds closing.Here's where the field stands as of mid-November 2026, based on reporting I just pulled. The short version: inference has become its own funding category, capital is flowing at a pace that outruns actual shipments, and only two of these six have hardware running in paying customers' data centers today.
+
+**The sector backdrop.** Investors put roughly ten point seven billion dollars into semiconductor startups through early June 2026 alone, according to Crunchbase, on track to exceed 2025. Cerebras provided the sector's first big public listing, and Nvidia paid twenty billion dollars to license Groq's technology at the end of 2025 — a signal that incumbents now buy challengers rather than just out-engineering them.
+
+**Judge:** gates=['too_many_tool_calls'], quality 2/5, judgment 2/3, spoken 0/2
+
+- The Etched section matches the sources ($500M at $5B, $300M at $10.3B, $700M at $21B, over $1B in contracts), but the answer cuts off at SambaNova, so MatX, Positron, Cerebras, and Fractile are never compared, and it wrongly says only two of the six have hardware with paying customers, though the sources show Positron at Cloudflare and Cerebras deployed as well.
+- Searching was right, and it labelled the $40-50B Etched offers as unconfirmed, but it ran into the tool-call limit chasing stock prices and spent its length on one company instead of fitting all six into a short answer.
+- It uses bold markdown labels, speaks four search-announcement filler lines, and is a dense wall of figures that the cap cut off during the backdrop.
+
+[Back to top](#review-sheet)

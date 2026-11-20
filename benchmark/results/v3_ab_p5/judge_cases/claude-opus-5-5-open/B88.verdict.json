@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "All five developments are traceable to the excerpts and fall in the window (Mistral Large 4 weights on October 29, Muse Spark Open on October 15, DeepSeek V4.1-Flash-1017, Kimi K3.1 Pro on November 4, Qwen4-Max preview on November 11), but the comparison is thin for DeepSeek, giving no specs or license beside the Mistral and Meta details.",
+  "judgment_reason": "Searched for a current-news question, flagged that some dates rest on single reports, used 'reportedly' for Kimi, and said plainly that Qwen4 has no weights or license yet rather than inventing a release.",
+  "spoken_fit_reason": "Plain prose with spoken ordinals and written-out dates and sizes, at a length a five-item comparison requires."
+}

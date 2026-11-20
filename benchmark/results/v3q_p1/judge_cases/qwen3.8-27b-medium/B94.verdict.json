@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The reply breaks off mid-word on Day 3 ('one of the nic'), so it covers only a Lucerne lake cruise and Rigi and never reaches Interlaken, Zermatt or the Swiss Travel Pass versus Half Fare Card comparison it had retrieved prices for.",
+  "judgment_reason": "Searching for current pass prices was right, but it never used them to answer which tickets are most economical, which was a central part of the request.",
+  "spoken_fit_reason": "It uses markdown bold day headings such as '**Day 1 – Lucerne.**' and ends mid-word, which would sound wrong read aloud."
+}

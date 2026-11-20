@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 4,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It covers what the sketch requires: the query text, API key and account, IP address, timestamp and user agent go out; the weights, history and reasoning stay local; and exposure can be cut by scrubbing queries, caching, using SearXNG or a proxy, and reading retention terms. It adds an unsupported claim that many agent frameworks send surrounding context to the provider.",
+  "judgment_reason": "It made four web searches about provider retention policies for a conceptual privacy question that needed none.",
+  "spoken_fit_reason": "The reply runs to more than a dozen paragraphs, starts with a filler lead-in run into the answer, and was cut by the word cap before any of the advice on reducing exposure."
+}

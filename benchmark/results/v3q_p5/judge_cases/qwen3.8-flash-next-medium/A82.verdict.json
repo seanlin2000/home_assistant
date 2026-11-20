@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 5,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It clearly separates API, tool (name, description, schema, harness runs it) and MCP server (open protocol exposing tools, resources and prompts), and lays out the model server, agent loop, search and fetch tools with text extraction and size caps, model-side summarization, and safeguards including tool-call caps, timeouts and treating fetched pages as untrusted.",
+  "judgment_reason": "It ran two web searches, about the MCP spec version and local model picks, for a conceptual architecture question that needed none.",
+  "spoken_fit_reason": "It is a long multi-layer essay with markdown bold headings that ran far past the word cap, so the listener heard only the first two definitions."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": false,
+  "answer_quality": 1,
+  "judgment": 0,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The restaurant tool returned only Vert Frais (Japanese, $$, in the Michelin Guide), which the answer never mentions; instead it lists five restaurants from web pages and gives per-person prices no source states, such as $75 to $125 at American Brass and $30 to $60 at Go Nonna.",
+  "judgment_reason": "The central call was to report that the Michelin snapshot had only one Long Island City restaurant, but it searched needlessly and padded the list to five with prices of its own.",
+  "spoken_fit_reason": "The prose is plain and has a useful summary line, but it runs well past three sentences per restaurant, and the word cap cut it off at the second one."
+}

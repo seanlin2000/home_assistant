@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The final message is \"Today is Friday, October 9, 2026. How can I assist you further?\", which answers a different question and gives none of the lease totals (44,100 or 87,817.80) or the 840 year-one savings.",
+  "judgment_reason": "After a single 3500 * 12 calculator call it abandoned the rent comparison entirely and asked how it could help, failing the central point.",
+  "spoken_fit_reason": "It leads with an irrelevant date and ends in a question inviting a reply, so it would sound wrong aloud for this request."
+}

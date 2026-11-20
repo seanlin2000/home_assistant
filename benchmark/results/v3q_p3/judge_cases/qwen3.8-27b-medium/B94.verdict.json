@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The route order, the Glacier Express closure, the CHF 439 eight-day pass, the CHF 150 Half Fare Card and Gornergrat at about 51 with the pass versus 102 come from the sources, but the Kleine Scheidegg fares of 27 and 55 francs and a 'free' Pilatus cogwheel appear in no excerpt, the GoldenPass Express is wrongly offered as a Lucerne to Interlaken option, and the total of 'roughly 750 francs' does not match its own 439 plus 27 plus 51.",
+  "judgment_reason": "It recommends an eight-day pass for a five-day trip by misapplying the source's one-week advice when the six-day pass is CHF 399, never prices point-to-point tickets, and quietly assumes a November trip date the user never gave.",
+  "spoken_fit_reason": "About nine hundred words in nine dense paragraphs were cut by the word cap on day two, so the ticket comparison was never heard."
+}

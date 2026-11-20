@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 0,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It divides the 36,954,512 Greater Tokyo metro figure by a New York City-proper figure of 8,419,300 that appears nowhere in the retrieved excerpt, giving 4.39, far from the reference ratios of about 1.6 (wards versus city) or 1.9 to 2 (metro versus metro), and it states neither population.",
+  "judgment_reason": "It mixes a metropolitan figure with a city-proper figure without saying so, which is the central judgment fault the question tests, and it does not admit the NYC total was not in the Wikipedia text.",
+  "spoken_fit_reason": "One short plain sentence."
+}

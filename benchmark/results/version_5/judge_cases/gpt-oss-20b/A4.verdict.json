@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It names natural senescence with nutrient reallocation, nitrogen deficiency, and watering problems and asks for light, watering routine, fertilizer history and soil moisture, but omits species, rate of leaf loss and pot-bound roots, and its light point is garbled ('too much light at the top, the lower leaves may bleach out') rather than the shading-out the sketch describes.",
+  "judgment_reason": "It offered a ranked set of possibilities and explicitly asked for the missing details instead of asserting a single cause.",
+  "spoken_fit_reason": "Plain prose but two long paragraphs that ran past the word cap, and the harness notes the spoken output was cut mid-answer."
+}

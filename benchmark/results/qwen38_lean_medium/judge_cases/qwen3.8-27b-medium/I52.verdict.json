@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Says no snow in Denver on Saturday, with cloudy and dry conditions from about 36 up to the mid-50s and light winds, all matching the tool result.",
+  "judgment_reason": "Called weather_forecast for Denver on Saturday rather than searching.",
+  "spoken_fit_reason": "Leads with 'No snow in Denver on Saturday' in three short plain sentences."
+}

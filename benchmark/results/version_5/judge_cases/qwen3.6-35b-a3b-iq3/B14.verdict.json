@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "Explains the actual mechanism the user asked for rather than quoting prices: HBM allocation by Samsung, SK Hynix and Micron squeezing GDDR7 supply, memory at over 80 percent of the bill of materials, GDDR7 going from about $80 to over $200 as contracts expired, and the kit bundling that forces the increase onto every board partner, all traceable to the excerpts.",
+  "judgment_reason": "One search, and it correctly leads with the finding that this is a memory shortage rather than a GPU-chip shortage, which is the point of the question.",
+  "spoken_fit_reason": "Two dense paragraphs that overran the word cap, so the listener never heard the closing sentences about the RTX 5090 hikes and AMD's 10 percent increase."
+}

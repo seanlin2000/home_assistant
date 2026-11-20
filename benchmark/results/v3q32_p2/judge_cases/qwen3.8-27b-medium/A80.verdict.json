@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The memory figures are correct (about 35 GB at 4-bit and 17.5 GB at 2-bit, plus overhead) and the quality trade-off is right, small at 4-bit and sharp at 2-bit. It omits the 140 GB 16-bit baseline, the context cache, and why lower precision speeds up generation.",
+  "judgment_reason": "This is stable technical arithmetic, so answering without a search was right, and it flagged that overhead comes on top of the raw weight figures.",
+  "spoken_fit_reason": "Two short paragraphs of plain prose that lead with the definition and the numbers, a fair length for a three-part question."
+}

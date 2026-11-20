@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "Funding and valuation figures for all six (Etched $21B with $40-50B offers, Cerebras $185 IPO and $26-44B cap, SambaNova $11B, Positron $5B, Fractile $720M at about $7B, MatX $500M undisclosed) trace to the excerpts, but it describes SambaNova as 'RISC-based accelerators with SRAM-first designs', which no source says, and still calls Positron's October tape-out upcoming.",
+  "judgment_reason": "It searched as needed and kept announced plans apart from shipping products, noting Etched's offers are not closed, Fractile ships next year, Anthropic talks are not a deal, and MatX has no disclosed valuation.",
+  "spoken_fit_reason": "It leads with the overall picture in plain prose, but eight long paragraphs are far too long for speech and the word cap cut it after Etched."
+}

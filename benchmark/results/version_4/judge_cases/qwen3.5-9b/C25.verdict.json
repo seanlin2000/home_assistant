@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Both conversions match the sketch: 22.2 Celsius for 72 Fahrenheit and about 3.1 miles for 5 kilometers.",
+  "judgment_reason": "It correctly treated a unit conversion as arithmetic rather than something to look up, and answered both halves without padding.",
+  "spoken_fit_reason": "One sentence with the numbers spelled out as words, which is exactly how a text-to-speech engine should receive them."
+}

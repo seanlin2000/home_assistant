@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It lists the tool's ten running shows in the order of its view counts and with its audience scores, but it adds claims the result does not support: & Juliet as a Tony nominee for Best Musical, a made-up playwright 'Moguleke Molefi' for School Girls, Cursed Child as 'two-part', and The Fantasticks as a 'two-person' musical.",
+  "judgment_reason": "It correctly used the Broadway tool instead of web search and explained its ranking basis and the lack of box-office data, but it made ten detail calls that went over the tool-call limit and speculated about why Wicked's views slipped.",
+  "spoken_fit_reason": "Each show gets three or four sentences, so the reply was cut by the word cap after the listener had heard only two and a half of the ten shows."
+}

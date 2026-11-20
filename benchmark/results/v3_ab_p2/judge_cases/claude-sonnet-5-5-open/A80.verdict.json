@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Gives the correct figures of about 140, 35, and 17.5 gigabytes, notes real files run larger and the context cache comes on top, and covers small 4-bit versus marked 2-bit quality loss plus faster bandwidth-limited generation.",
+  "judgment_reason": "Answered from stable knowledge without searching and flagged that the figures are for weights alone, which is the assumption that matters.",
+  "spoken_fit_reason": "Numbers are spelled out for speech and the answer runs as plain prose with no formatting, at a length the three-part question warrants."
+}

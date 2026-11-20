@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The figures match the sketch: 0.0333 percent halved to 0.0167 percent, about $166,700, about 8.3 times, and about $146,700 profit. The opening describes the stake as 'one thirty-three thousandths of a percent', which garbles the fraction even though the decimal that follows is right.",
+  "judgment_reason": "It used the calculator, needed no search, and stated both key assumptions: proportional dilution that halves the stake, and no liquidation preference.",
+  "spoken_fit_reason": "It is plain prose without formatting, but it opens with the stake rather than the value asked for and closes with a long caveat paragraph, so it is longer than it needs to be."
+}

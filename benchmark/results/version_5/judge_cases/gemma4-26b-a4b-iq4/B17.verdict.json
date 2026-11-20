@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It answers yes and grounds it in the retrieved microWakeWord models repo that runs on the Voice PE's ESP32-S3, then explains it trusted that source because it targets the Voice PE hardware specifically rather than generic openWakeWord setups.",
+  "judgment_reason": "Search was explicitly requested and performed, and it picked the one excerpt actually about Voice PE instead of the ATOM Echo tutorials.",
+  "spoken_fit_reason": "Two short paragraphs that lead with the yes and name the source in prose, with no URLs or citation markers."
+}

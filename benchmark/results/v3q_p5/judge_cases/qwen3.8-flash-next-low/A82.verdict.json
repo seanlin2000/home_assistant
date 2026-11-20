@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 3,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The API, tool and MCP definitions, the agent loop with a turn limit, and the small search tool plus capped fetch tool all match the sketch, but the answer breaks off at \"Tavily is around a thousand free queries a\" before the summarization step and before any safeguard such as treating fetched text as untrusted.",
+  "judgment_reason": "It searched the MCP spec and MCP search servers for a stable design question that needed no search, which also pulled version trivia like the 2026-07-28 revision into the answer.",
+  "spoken_fit_reason": "A long multi-layer lecture that the word cap cut after the tool definition, so the listener heard neither the MCP explanation nor any of the architecture."
+}

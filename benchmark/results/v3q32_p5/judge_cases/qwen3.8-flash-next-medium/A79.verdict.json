@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It explains GPU parallelism, memory bandwidth, tensor cores and CUDA, and gives sound conditions for a specialized chip to win, but it never separates specialized inference processors from ASICs (no on-chip SRAM, wafer-scale or transformer-specific designs) and leaves out the per-token latency case.",
+  "judgment_reason": "Answering a stable architecture question from knowledge without searching was the right call.",
+  "spoken_fit_reason": "Plain prose with no lists that leads with why GPUs win, at a length that suits a three-part question."
+}

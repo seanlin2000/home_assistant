@@ -1,0 +1,374 @@
+"""The exchange dashboard: sources are split and scored against the answer, steps land on one time axis, pipeline runs find their exchange, and the
+API serves a day's exchanges only to names of this Mac (design doc v2/13)."""
+
+import json
+from collections.abc import AsyncIterator
+from datetime import UTC, datetime, timedelta
+from pathlib import Path
+from typing import Any
+
+import httpx
+import pytest
+
+from assistant_core.converse_protocol import ConverseRequest
+from assistant_core.exchange_record import ExchangeRecord, exchange_record_from_transcript
+from assistant_core.models import AgentEvent, AnswerDelta, Done, FillerSpoken, GenerationStats, Message, RetriedReply, Role, RouteDecision, ToolCall, ToolCallRecord, Transcript
+from assistant_service.exchange_log import ExchangeArchive, ExchangeLog, TraceLog
+from dashboard.app import Converse, build_app
+from dashboard.evidence import distinctive_terms, tool_evidence
+from dashboard.exchange_views import ExchangeStore, last_question_index, turns_from_transcript
+from dashboard.generation_speed import response_speed, today_speed
+from dashboard.pipeline_collector import PipelineRunCollector
+from dashboard.pipeline_match import matching_run
+from dashboard.timeline import Lane, build_timeline
+from ops.pipeline_runs import PipelineRun, PipelineRunLog, pull, summarize
+from utils.jsonl_utils import append_jsonl
+
+QUESTION = "Who won the World Series in 1995?"
+ANSWER = "The Atlanta Braves won it, beating the Cleveland Indians."
+SEARCH_RESULT = """<untrusted source="search_and_read">
+Read 1 of 2 results for "1995 World Series".
+
+[1] 1995 World Series - Wikipedia
+URL: https://en.wikipedia.org/wiki/1995_World_Series
+The Atlanta Braves defeated the Cleveland Indians four games to two.
+
+[2] 1995 MLB season (not read)
+The season was shortened by the strike.
+
+If these sources do not answer the question, say plainly that you could not find it.
+</untrusted>"""
+ALLOWED_HOSTS = ["mac.lan:8775"]
+NEW_YORK_EVENING = datetime.fromisoformat("2026-11-02T21:00:00-05:00")
+
+
+def search_transcript() -> Transcript:
+    call = ToolCall(id="call_1", name="search_and_read", arguments={"query": "1995 World Series"})
+    return Transcript(
+        model="small",
+        system_prompt="You are a voice assistant.",
+        conversation=[
+            Message(role=Role.USER, content="Hello"),
+            Message(role=Role.ASSISTANT, content="Hi."),
+            Message(role=Role.USER, content=QUESTION),
+            Message(role=Role.ASSISTANT, thinking="A past result; search.", tool_calls=[call]),
+            Message(role=Role.TOOL, content=SEARCH_RESULT, tool_call_id="call_1", tool_name="search_and_read"),
+            Message(role=Role.ASSISTANT, content=ANSWER),
+        ],
+        tool_call_records=[ToolCallRecord(round_index=0, call=call, result=SEARCH_RESULT, seconds=2.0, started_seconds=1.5)],
+        model_calls=[
+            GenerationStats(model="small", prompt_tokens=900, output_tokens=20, total_seconds=1.0, prompt_eval_seconds=0.4, generation_seconds=0.5, started_seconds=0.5),
+            GenerationStats(model="small", prompt_tokens=1400, cached_prompt_tokens=900, output_tokens=15, total_seconds=1.5, started_seconds=3.5),
+        ],
+        route=RouteDecision(route="search", source="rule", seconds=0.1, started_seconds=0.0),
+        filler_text="Let me look that up.",
+        final_answer=ANSWER,
+        total_seconds=5.0,
+        time_to_first_spoken_seconds=1.4,
+    )
+
+
+def pipeline_events(intent_started: datetime, intent_input: str = QUESTION, conversation_id: str = "conv-1") -> list[dict[str, Any]]:
+
+    def stamp(offset: float) -> str:
+        return (intent_started + timedelta(seconds=offset)).isoformat()
+
+    return [
+        {"type": "run-start", "timestamp": stamp(-3), "data": {}},
+        {"type": "stt-vad-end", "timestamp": stamp(-1), "data": {}},
+        {"type": "stt-end", "timestamp": stamp(-0.2), "data": {"stt_output": {"text": intent_input}}},
+        {"type": "intent-start", "timestamp": stamp(0), "data": {"intent_input": intent_input, "conversation_id": conversation_id}},
+        {"type": "intent-end", "timestamp": stamp(5), "data": {}},
+        {"type": "tts-start", "timestamp": stamp(1.5), "data": {}},
+        {"type": "tts-end", "timestamp": stamp(6), "data": {}},
+        {"type": "run-end", "timestamp": stamp(6.1), "data": {}},
+    ]
+
+
+def pipeline_run(intent_started: datetime, intent_input: str = QUESTION, conversation_id: str = "conv-1", run_id: str = "run-1") -> PipelineRun:
+    return summarize("Jarvis", run_id, pipeline_events(intent_started, intent_input, conversation_id))
+
+
+def test_search_results_split_into_sources_starred_by_the_answer_words_they_hold() -> None:
+    evidence = tool_evidence(SEARCH_RESULT, ANSWER, QUESTION)
+    assert evidence.header == 'Read 1 of 2 results for "1995 World Series".'
+    assert evidence.footer.startswith("If these sources do not answer")
+    first, second = evidence.sources
+    assert (first.rank, first.site, first.url, first.read, first.starred) == (1, "en.wikipedia.org", "https://en.wikipedia.org/wiki/1995_World_Series", True, True)
+    assert first.text == "The Atlanta Braves defeated the Cleveland Indians four games to two."
+    assert (second.title, second.read, second.starred) == ("1995 MLB season", False, False)
+
+
+def test_a_result_without_numbered_sources_is_one_source() -> None:
+    evidence = tool_evidence("30", "Twelve percent of 250 is 30.", "What is 12 percent of 250?")
+    assert [(source.rank, source.text, source.starred) for source in evidence.sources] == [(None, "30", True)]
+
+
+def test_answer_words_the_question_already_used_do_not_count() -> None:
+    assert distinctive_terms(ANSWER, QUESTION) == ["atlanta", "braves", "beating", "cleveland", "indians"]
+
+
+def test_stamped_steps_sit_where_they_ran_with_speech_on_either_side() -> None:
+    record = exchange_record_from_transcript(search_transcript())
+    timeline = build_timeline(record, pipeline_run(datetime.fromisoformat("2026-10-11T12:00:00+00:00")))
+    placed = [(bar.lane, bar.start, bar.seconds) for bar in timeline.bars]
+    assert placed == [
+        (Lane.SPEECH, -1.0, 0.8),
+        (Lane.ROUTER, 0.0, 0.1),
+        (Lane.MODEL, 0.5, 1.0),
+        (Lane.TOOL, 1.5, 2.0),
+        (Lane.MODEL, 3.5, 1.5),
+        (Lane.SPEECH, 1.5, 4.5),
+    ]
+    assert not timeline.approximate
+    assert (timeline.bars[2].read_seconds, timeline.bars[2].write_seconds) == (0.4, 0.5)
+
+
+def test_unstamped_records_are_laid_end_to_end_and_marked_approximate() -> None:
+    record = exchange_record_from_transcript(search_transcript())
+    for step in [record.route, *record.model_calls, *record.tool_calls]:
+        step.started_seconds = None
+    timeline = build_timeline(record, None)
+    assert [(bar.lane, bar.start) for bar in timeline.bars] == [(Lane.ROUTER, 0.0), (Lane.MODEL, 0.1), (Lane.TOOL, 1.1), (Lane.MODEL, 3.1)]
+    assert timeline.approximate
+
+
+def recorded(conversation_id: str, recorded_at: str) -> ExchangeRecord:
+    return exchange_record_from_transcript(search_transcript(), recorded_at=datetime.fromisoformat(recorded_at)).model_copy(update={"conversation_id": conversation_id})
+
+
+def test_a_pipeline_run_matches_by_question_within_two_minutes() -> None:
+    record = recorded("", "2026-10-11T12:00:05+00:00")
+    started = datetime.fromisoformat("2026-10-11T12:00:00+00:00")
+    assert matching_run(record, [pipeline_run(started)]).run_id == "run-1"
+    assert matching_run(record, [pipeline_run(started - timedelta(minutes=5))]) is None
+    assert matching_run(record, [pipeline_run(started, intent_input="What time is it?")]) is None
+
+
+def test_a_run_matching_conversation_and_question_beats_a_closer_one_matching_only_the_question() -> None:
+    record = recorded("conv-1", "2026-10-11T12:00:05+00:00")
+    started = datetime.fromisoformat("2026-10-11T12:00:00+00:00")
+    runs = [pipeline_run(started, conversation_id="conv-other", run_id="closer"), pipeline_run(started - timedelta(seconds=30), run_id="same-conversation")]
+    assert matching_run(record, runs).run_id == "same-conversation"
+
+
+def seeded_store(tmp_path: Path) -> tuple[ExchangeStore, ExchangeRecord]:
+    records, traces, runs = ExchangeLog(tmp_path / "exchanges"), TraceLog(tmp_path / "traces"), PipelineRunLog(tmp_path / "pipeline_runs")
+    transcript = search_transcript()
+    record = ExchangeArchive(records, traces).keep(ConverseRequest(conversation_id="conv-1", conversation=transcript.conversation[:3]), transcript)
+    runs.append(pipeline_run(datetime.fromisoformat(record.recorded_at) - timedelta(seconds=record.total_seconds)))
+    append_jsonl(records.path_for(datetime.fromisoformat(record.recorded_at).date()), recorded("", record.recorded_at).model_copy(update={"user_text": "older"}))
+    return ExchangeStore(records, traces, runs), record
+
+
+def client_for(store: ExchangeStore, converse: Converse | None = None) -> httpx.AsyncClient:
+    return httpx.AsyncClient(transport=httpx.ASGITransport(app=build_app(store, ALLOWED_HOSTS, converse=converse, clock=lambda: NEW_YORK_EVENING)), base_url="http://mac.lan:8775")
+
+
+async def test_the_api_lists_a_day_and_opens_an_exchange_with_its_trace_and_speech(tmp_path: Path) -> None:
+    store, record = seeded_store(tmp_path)
+    day = record.recorded_at[:10]
+    async with client_for(store) as client:
+        assert (await client.get("/api/days")).json() == [{"day": day, "exchanges": 2}]
+        assert (await client.get("/api/latest")).json()["user_text"] == "older"
+        assert [summary["user_text"] for summary in (await client.get(f"/api/days/{day}/exchanges")).json()] == [QUESTION, "older"]
+        detail = (await client.get(f"/api/days/{day}/exchanges/0")).json()
+    assert detail["has_trace"] and detail["filler_text"] == "Let me look that up."
+    assert [message["content"] for message in detail["earlier_messages"]] == ["Hello", "Hi."]
+    assert detail["turns"][0]["thinking"] == "A past result; search."
+    assert detail["turns"][0]["tools"][0]["evidence"]["sources"][0]["starred"]
+    assert detail["speech"]["heard"] == QUESTION
+    assert detail["summary"]["model"] == "small"
+
+
+def test_a_reply_asked_again_shows_its_thinking_before_the_turn_of_its_round() -> None:
+    retried = RetriedReply(round_index=0, message=Message(role=Role.ASSISTANT, thinking="Search? Maybe not."))
+    transcript = search_transcript().model_copy(update={"retried_replies": [retried]})
+    turns = turns_from_transcript(transcript, last_question_index(transcript.conversation), exchange_record_from_transcript(transcript))
+    assert [(turn.asked_again, turn.thinking) for turn in turns] == [(True, "Search? Maybe not."), (False, "A past result; search."), (False, "")]
+
+
+def test_a_trace_written_before_retried_replies_were_kept_still_loads() -> None:
+    old_line = search_transcript().model_dump(mode="json")
+    del old_line["retried_replies"]
+    assert Transcript.model_validate(old_line).retried_replies == []
+
+
+async def test_an_exchange_without_a_trace_still_shows_its_tool_calls(tmp_path: Path) -> None:
+    store, record = seeded_store(tmp_path)
+    async with client_for(store) as client:
+        detail = (await client.get(f"/api/days/{record.recorded_at[:10]}/exchanges/1")).json()
+        missing = await client.get(f"/api/days/{record.recorded_at[:10]}/exchanges/9")
+    assert not detail["has_trace"]
+    assert [(card["name"], card["result"], card["result_chars"]) for card in detail["turns"][0]["tools"]] == [("search_and_read", None, len(SEARCH_RESULT))]
+    assert missing.status_code == 404
+
+
+async def test_an_exchange_lists_the_earlier_exchanges_of_its_conversation(tmp_path: Path) -> None:
+    store, record = seeded_store(tmp_path)
+    day = record.recorded_at[:10]
+    append_jsonl(
+        ExchangeLog(tmp_path / "exchanges").path_for(datetime.fromisoformat(record.recorded_at).date()),
+        recorded("conv-1", record.recorded_at).model_copy(update={"user_text": "And who did they beat?"}),
+    )
+    async with client_for(store) as client:
+        follow_up = (await client.get(f"/api/days/{day}/exchanges/2")).json()
+        unrelated = (await client.get(f"/api/days/{day}/exchanges/1")).json()
+    assert [(summary["day"], summary["index"], summary["user_text"]) for summary in follow_up["earlier_exchanges"]] == [(day, 0, QUESTION)]
+    assert unrelated["earlier_exchanges"] == []
+
+
+async def test_other_host_names_and_other_sites_pages_are_turned_away(tmp_path: Path) -> None:
+    store, _record = seeded_store(tmp_path)
+    async with client_for(store) as client:
+        assert (await client.get("/api/days", headers={"host": "evil.example:8775"})).status_code == 421
+        assert (await client.get("/api/days", headers={"origin": "http://evil.example"})).status_code == 421
+        assert (await client.get("/api/days", headers={"origin": "http://mac.lan:8775"})).status_code == 200
+        assert (await client.get("/")).status_code == 200
+
+
+async def test_the_collector_keeps_each_new_run_once(tmp_path: Path) -> None:
+    log = PipelineRunLog(tmp_path / "pipeline_runs")
+    started = datetime.fromisoformat("2026-10-11T12:00:00+00:00")
+    offered = [pipeline_run(started, run_id="run-1"), pipeline_run(started, run_id="run-2")]
+
+    async def pull_new_runs(known: set[str]) -> list[PipelineRun]:
+        return [run for run in offered if run.run_id not in known]
+
+    collector = PipelineRunCollector(log, pull_new_runs)
+    assert await collector.collect() == 2
+    assert await collector.collect() == 0
+    assert [json.loads(line)["run_id"] for path in log.directory.iterdir() for line in path.read_text().splitlines()] == ["run-1", "run-2"]
+
+
+class RememberingHomeAssistant:
+    """Stands in for Home Assistant's websocket: one pipeline remembering the events so far of each run."""
+
+    def __init__(self, events_by_run: dict[str, list[dict[str, Any]]]) -> None:
+        self.events_by_run = events_by_run
+
+    async def ws(self, message: dict[str, Any]) -> dict[str, Any]:
+        answers = {
+            "assist_pipeline/pipeline/list": lambda: {"pipelines": [{"id": "pipeline-1", "name": "Jarvis"}]},
+            "assist_pipeline/pipeline_debug/list": lambda: {"pipeline_runs": [{"pipeline_run_id": run_id} for run_id in self.events_by_run]},
+            "assist_pipeline/pipeline_debug/get": lambda: {"events": self.events_by_run.get(message.get("pipeline_run_id"), [])},
+        }
+        return answers[message["type"]]()
+
+
+async def test_a_run_still_going_is_left_for_the_next_pull() -> None:
+    events = pipeline_events(datetime.fromisoformat("2026-10-11T12:00:00+00:00"))
+    home_assistant = RememberingHomeAssistant({"run-1": events[:2]})
+    assert await pull(home_assistant, None, set()) == []
+    home_assistant.events_by_run["run-1"] = events
+    assert [run.run_id for run in await pull(home_assistant, None, set())] == ["run-1"]
+
+
+async def test_a_run_kept_before_it_finished_is_kept_again_whole(tmp_path: Path) -> None:
+    runs = PipelineRunLog(tmp_path / "pipeline_runs")
+    finished = pipeline_run(datetime.fromisoformat("2026-10-11T12:00:00+00:00"))
+    runs.append(summarize("Jarvis", finished.run_id, finished.raw_events[:2]))
+
+    async def pull_new_runs(known: set[str]) -> list[PipelineRun]:
+        return [run for run in [finished] if run.run_id not in known]
+
+    assert await PipelineRunCollector(runs, pull_new_runs).collect() == 1
+    store = ExchangeStore(ExchangeLog(tmp_path / "exchanges"), TraceLog(tmp_path / "traces"), runs)
+    assert [run.total_seconds for run in store.runs_around(datetime.now(UTC).date())] == [finished.total_seconds]
+
+
+async def test_a_collector_failure_is_logged_once_until_it_recovers(tmp_path: Path, caplog: pytest.LogCaptureFixture) -> None:
+    async def unreachable(_known: set[str]) -> list[PipelineRun]:
+        raise OSError("no route to host")
+
+    collector = PipelineRunCollector(PipelineRunLog(tmp_path / "pipeline_runs"), unreachable)
+    for _ in range(3):
+        await collector.collect_logging_failures()
+    assert [record.getMessage() for record in caplog.records] == ["pipeline runs not collected: OSError: no route to host"]
+
+
+class RecordingHarness:
+    """Stands in for HarnessClient.converse: answers with a filler and one word, or fails as an unreachable harness does."""
+
+    def __init__(self, reachable: bool) -> None:
+        self.reachable = reachable
+        self.requests: list[ConverseRequest] = []
+
+    async def converse(self, request: ConverseRequest) -> AsyncIterator[AgentEvent]:
+        self.requests.append(request)
+        if not self.reachable:
+            raise httpx.ConnectError("connection refused")
+        yield FillerSpoken(text="One moment.")
+        yield AnswerDelta(text="Canberra.")
+        yield Done(transcript=Transcript(model="small", system_prompt="", conversation=request.conversation, final_answer="Canberra."))
+
+
+ASKED = {"conversation_id": "dashboard-1", "conversation": [{"role": "user", "content": "Capital of Australia?"}], "source": "home_assistant"}
+
+
+async def test_the_chat_box_streams_the_harness_events_and_labels_the_exchange(tmp_path: Path) -> None:
+    harness = RecordingHarness(reachable=True)
+    async with client_for(seeded_store(tmp_path)[0], harness.converse) as client:
+        response = await client.post("/api/ask", json=ASKED, headers={"origin": "http://mac.lan:8775"})
+    assert [json.loads(line)["event"] for line in response.text.splitlines()] == ["filler", "answer", "done"]
+    assert harness.requests[0].source == "dashboard"
+
+
+async def test_an_unreachable_harness_ends_the_stream_with_its_reason(tmp_path: Path) -> None:
+    async with client_for(seeded_store(tmp_path)[0], RecordingHarness(reachable=False).converse) as client:
+        response = await client.post("/api/ask", json=ASKED)
+    assert json.loads(response.text.splitlines()[-1]) == {"event": "error", "message": "ConnectError: connection refused"}
+
+
+async def test_the_chat_box_is_off_without_the_harness_key_and_refuses_other_sites(tmp_path: Path) -> None:
+    store = seeded_store(tmp_path)[0]
+    async with client_for(store) as client:
+        assert (await client.post("/api/ask", json=ASKED)).status_code == 503
+    async with client_for(store, RecordingHarness(reachable=True).converse) as client:
+        assert (await client.post("/api/ask", json=ASKED, headers={"origin": "http://evil.example"})).status_code == 421
+
+
+def timed_record(recorded_at: str) -> ExchangeRecord:
+    """The search exchange with both model calls timed: 900 tokens read then 500 more over 900 cached, 20 and 15 written."""
+    record = recorded("", recorded_at)
+    first, second = record.model_calls
+    second = second.model_copy(update={"fresh_prompt_tokens": 500, "prompt_eval_seconds": 0.1, "generation_seconds": 1.0})
+    return record.model_copy(update={"model_calls": [first, second]})
+
+
+def test_a_response_adds_up_its_timed_model_calls() -> None:
+    speed = response_speed(timed_record("2026-11-02T12:00:00+00:00"))
+    assert (speed.prefill_seconds, speed.prefill_tokens, speed.cached_tokens) == (0.5, 1400, 900)
+    assert (speed.decode_seconds, speed.decode_tokens) == (1.5, 35)
+
+
+def test_untimed_model_calls_are_left_out_and_a_response_without_any_has_no_speed() -> None:
+    record = recorded("", "2026-11-02T12:00:00+00:00")
+    assert (response_speed(record).prefill_tokens, response_speed(record).decode_seconds) == (900, 0.5)
+    assert response_speed(record.model_copy(update={"model_calls": record.model_calls[1:]})) is None
+
+
+def test_today_averages_per_response_and_weighs_speed_by_tokens() -> None:
+    since = datetime.fromisoformat("2026-11-02T00:00:00-05:00")
+    timed, untimed = timed_record("2026-11-02T12:00:00+00:00"), recorded("", "2026-11-02T13:00:00+00:00")
+    today = today_speed([timed, untimed], since)
+    assert (today.responses, today.prefill_seconds, today.decode_seconds) == (2, 0.45, 1.0)
+    assert (today.prefill_tokens_per_second, today.decode_tokens_per_second) == (2300 / 0.9, 55 / 2.0)
+    assert today_speed([], since).responses == 0
+
+
+async def test_today_starts_at_midnight_on_the_macs_clock_across_two_utc_day_files(tmp_path: Path) -> None:
+    records = ExchangeLog(tmp_path / "exchanges")
+    for recorded_at in ["2026-11-02T03:00:00+00:00", "2026-11-02T06:00:00+00:00", "2026-11-03T01:30:00+00:00"]:
+        append_jsonl(records.path_for(datetime.fromisoformat(recorded_at).date()), timed_record(recorded_at))
+    store = ExchangeStore(records, TraceLog(tmp_path / "traces"), PipelineRunLog(tmp_path / "pipeline_runs"))
+    async with client_for(store) as client:
+        today = (await client.get("/api/today")).json()
+    assert (today["since"], today["responses"]) == ("2026-11-02T00:00:00-05:00", 2)
+
+
+async def test_an_exchange_carries_its_prefill_and_decode(tmp_path: Path) -> None:
+    store, record = seeded_store(tmp_path)
+    async with client_for(store) as client:
+        speed = (await client.get(f"/api/days/{record.recorded_at[:10]}/exchanges/0")).json()["speed"]
+    assert (speed["prefill_seconds"], speed["prefill_tokens"], speed["decode_tokens"]) == (0.4, 900, 20)

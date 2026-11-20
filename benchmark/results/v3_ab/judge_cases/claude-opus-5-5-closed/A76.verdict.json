@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Names the economy, arms race, Afghanistan, nationalism and Gorbachev's reforms as causes, gives the 1989 revolutions, the August 1991 coup and the December 1991 Ukrainian vote and dissolution agreement in correct order, and explicitly labels causes versus triggers as the sketch requires.",
+  "judgment_reason": "Answered stable history from knowledge without searching and drew the cause-versus-trigger distinction the question demanded.",
+  "spoken_fit_reason": "Leads with the answer in plain prose with years spelled out for speech; its length is justified by a question asking for three events plus a distinction."
+}

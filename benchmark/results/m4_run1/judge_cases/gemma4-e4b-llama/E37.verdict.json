@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Saturday's partly cloudy, dry, 52 to 67 degrees and Sunday's rain at times with 0.04 inches all match the tool result, but Sunday's 54 to 68 degree range is left out.",
+  "judgment_reason": "It called weather_forecast for the weekend and did not search the web.",
+  "spoken_fit_reason": "Two plain sentences, one per day, short enough to speak."
+}

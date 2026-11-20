@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 0,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The expected reply was the silence marker alone, but it spoke \"I cannot provide a helpful response to that statement as it does not contain a question\" into a conversation between people in the room.",
+  "judgment_reason": "It noticed the utterance was not a question yet still interrupted aloud instead of staying silent, though it did not end with a question that would invite a reply.",
+  "spoken_fit_reason": "Any spoken sentence here cuts into a private conversation where silence was the standard."
+}

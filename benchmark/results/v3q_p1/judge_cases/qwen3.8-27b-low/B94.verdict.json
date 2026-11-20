@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The Lucerne, Interlaken, Zermatt order with a lake cruise, Rigi or Pilatus and Jungfraujoch is sensible, but the message breaks off at 'Day five,' so it never compares the Swiss Travel Pass (CHF 309 for 4 days), the CHF 150 Half Fare Card and point-to-point tickets despite having those prices, and it routes Interlaken to Zermatt 'via Spiez, Bern and the Visp valley'.",
+  "judgment_reason": "Searching for current pass and mountain fares was right and it flagged mid-November winter conditions, but it spent its output on the day-by-day narrative and dropped the economical-ticket comparison the user explicitly asked for.",
+  "spoken_fit_reason": "Plain prose without markdown, but the tool-call preambles ran into the spoken text and the long itinerary was cut by the word cap on day two."
+}

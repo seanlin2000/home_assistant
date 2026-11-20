@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The heard part correctly says the query text, IP address and API key leave the machine and lists what stays local, but it was cut at 'The query string itself. This is the big one.' and the listener never heard how to minimize exposure.",
+  "judgment_reason": "It made ten tool calls chasing provider retention policies for a conceptual privacy question, hitting the tool-call limit instead of answering from knowledge.",
+  "spoken_fit_reason": "The listener heard spoken filler like 'Let me check a couple of other providers', section headings and a bulleted list before the word cap cut it."
+}

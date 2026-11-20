@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The dates and sequence are right (1989, August 1991 coup, December 1991 accords, December 25 resignation), but the answer counts Gorbachev's reforms as one of its three events and calls them a trigger, which the reference treats as a cause, and it leaves out the Ukrainian referendum.",
+  "judgment_reason": "Not searching was correct for this stable history question, and the answer sets up the causes-versus-triggers distinction the user asked for.",
+  "spoken_fit_reason": "This is a wall of text of more than 600 words, and the word cap cut it off after the first event, so the listener never heard the triggers or the summary."
+}

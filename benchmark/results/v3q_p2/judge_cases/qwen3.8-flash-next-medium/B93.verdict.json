@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 4,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It picks the five closest restaurants from the Michelin result (Casa Enrique, Meju, Hupo, Vert Frais, R40) with the right cuisine, price level and distinction for each, but it adds claims no result supports, such as Casa Enrique being 'a Michelin one-star winner for years' and R40 sitting 'right on the waterfront side'.",
+  "judgment_reason": "The restaurant tool already answered the question, but it went on to make web searches and page fetches, 16 calls in all and past the limit, and it guessed the user's location rather than working from the tool's distances.",
+  "spoken_fit_reason": "It uses markdown bold for the restaurant names and is a long wall of text that the word cap cut off after the first restaurant."
+}

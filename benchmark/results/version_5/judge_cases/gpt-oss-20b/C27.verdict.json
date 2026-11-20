@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It matches the reference sketch on all three figures, 0.48 kWh a day, 14.4 kWh over a 30-day month and about 4.32 dollars, spoken as 'around four dollars and thirty cents' with the rounding signalled.",
+  "judgment_reason": "It used the energy tool with the given 30-cent rate rather than assuming one, set idle watts to zero for a TV that is only on while watched, and named the 30-day month it used.",
+  "spoken_fit_reason": "Two sentences that walk daily to monthly to dollars, plain prose with no lists or markup."
+}

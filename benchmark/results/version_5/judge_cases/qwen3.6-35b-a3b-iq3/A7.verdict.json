@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Reaches about $6.52 a month from 1.45 kWh a day, matching the sketch's 0.15 per kWh case, and only omits the caveat that the machine is unlikely to sit at a full 300 watts for the whole hour.",
+  "judgment_reason": "Named the electricity rate and the one-hour-active, twenty-three-hour-idle split as assumptions and said the figure moves if either is wrong, which is exactly what the question asked for.",
+  "spoken_fit_reason": "Three sentences that lead with the dollar figure, plain prose with no lists or markup."
+}

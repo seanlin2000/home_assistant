@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It correctly says the Fed held at 3.75 to 4 percent on October 28 after a September 16 hike, cites roughly 7 percent mortgage rates and gives the break-even logic, with small imprecisions: it calls the dissenters Cook and Hammack 'two governors' (Hammack is a Reserve Bank president) and stretches LendingTree's 7.38 percent refinance figure into a '7.1 to 7.4' range.",
+  "judgment_reason": "It searched to check the premise, corrected it plainly ('The Fed did not cut rates to zero last month'), and asked for the user's current rate, balance and time in the home instead of guessing.",
+  "spoken_fit_reason": "It leads with the correction, but it speaks two tool-use narration lines, uses markdown italics (*increase*, *up*), and runs five paragraphs, so the word cap cut it in the mortgage-rate figures."
+}

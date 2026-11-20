@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It answers $563.64 against the sketch's roughly $19,091, having compounded a single $500 deposit instead of an annuity, and then invents a '$5,000 you'd put in' and a '$17.64' difference that appear in none of its own tool results, which had already returned 18,000 in deposits.",
+  "judgment_reason": "It burned through the tool-call limit on a scatter of unrelated expressions and never noticed that $563.64 is less than the $18,000 of deposits its own calculator had just reported.",
+  "spoken_fit_reason": "Two short sentences of plain prose with the figure first, no lists or markup."
+}

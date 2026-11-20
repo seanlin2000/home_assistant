@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "All ten shows, prices, scores and closing dates come straight from the broadway_shows result, in its order, and the ranking is explained as recent TodayTix demand. The descriptions are uneven, though: The Fantasticks is called 'picaresque' and School Girls 'a drama' with no support in the result.",
+  "judgment_reason": "It used the Broadway listings tool rather than a web search and stated the basis for the ranking instead of inventing awards or sales.",
+  "spoken_fit_reason": "It opens with the ranking basis and gives each show a short clause in plain prose, a reasonable length for a ten-item request."
+}

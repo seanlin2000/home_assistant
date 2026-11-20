@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The headline picks and figures trace cleanly to the 16GB VRAM source, Qwen3.8-27B at UD-Q3_K_XL at 12.5 GiB and Qwen 3 14B at Q5_K_M or Q4_K_M, but two of its tradeoff claims are backwards, that Q5_K_M gives 'a larger context window' than Q4_K_M and that 5-bit models 'can be slightly faster'.",
+  "judgment_reason": "It searched as instructed and genuinely explained tradeoffs rather than listing models, but it asserted 3-bit and 5-bit speed relationships when the source it drew from explicitly says 'no published 16GB figure' for those builds.",
+  "spoken_fit_reason": "It breaks into a 'Trade-offs in a nutshell:' heading followed by four markdown bullets with bold labels, and the text runs off mid-sentence at the cap."
+}

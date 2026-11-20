@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Rejects the zero-rate premise outright, gives the 6.842% 30-year average and the hike chatter straight from the excerpts, and pivots to the right refinance logic, though the 'around four and a half percent' fed funds figure comes from the one excerpt that dates it to May 2026.",
+  "judgment_reason": "Searched before answering, corrected the false premise instead of building on it, and asked for the user's current rate and balance rather than inventing them.",
+  "spoken_fit_reason": "Three short paragraphs of plain prose with percentages spoken out and no lists or URLs."
+}

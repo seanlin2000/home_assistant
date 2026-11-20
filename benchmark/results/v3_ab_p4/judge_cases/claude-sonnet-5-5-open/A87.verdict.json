@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Separates the two problems and gives a one-change-at-a-time audio sequence covering 2.4 GHz interference, dual pairing, distance, 5 GHz Wi-Fi, drivers and a wired test, but the eye-strain half omits seating distance and field of view, the DLP rainbow effect and taking breaks.",
+  "judgment_reason": "Answered a troubleshooting question from general knowledge without searching and structured it as a systematic order of tests as asked.",
+  "spoken_fit_reason": "Plain prose with first, next sequencing and no list formatting, at a length the two-problem question warrants."
+}

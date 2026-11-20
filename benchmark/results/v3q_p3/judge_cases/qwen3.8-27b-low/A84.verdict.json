@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "Correctly explains DCF, the uneven effect of a higher discount rate with a calculator-backed example (a dollar in 30 years falling from about 23 to 13 cents), long duration of growth stocks, borrowing costs and bonds as an alternative, but loosely equates the risk-free rate with short-term rates and omits the 2022 multiple-compression example.",
+  "judgment_reason": "Answered stable finance without searching, used the calculator for its worked figures, and added a fair caveat that the reaction depends on why the Fed hikes and what is priced in.",
+  "spoken_fit_reason": "Plain prose that leads with the mechanism, but runs well past the word cap so the listener lost the growth-stock connection, and the text contains markdown asterisks around 'why'."
+}

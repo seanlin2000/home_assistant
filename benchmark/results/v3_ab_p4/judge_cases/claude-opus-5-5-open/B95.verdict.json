@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Names every component in the sketch (Whisper, a local model on llama.cpp or Ollama, Piper, Home Assistant, room satellites, search via SearXNG or an API), quotes GPU prices from the excerpts (used RTX 3090 at about $650 to $950, RTX 5060 Ti 16 GB at about $430 to $500), states the limits and gives the right build order, but never shows a full parts total that lands under $1,000.",
+  "judgment_reason": "Searched for current hardware prices, warned that the 3090 nearly eats the budget and offered a cheaper card instead of overspending, and was candid that the models will trail cloud assistants.",
+  "spoken_fit_reason": "Leads with the architecture in plain prose with model numbers written for speech and no lists or markup; length suits a four-part design question."
+}

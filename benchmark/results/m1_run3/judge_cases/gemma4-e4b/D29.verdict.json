@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The expected reply was the silence marker alone, but it spoke a weekend forecast in response to a television host's line.",
+  "judgment_reason": "It treated broadcast speech as a request, called weather_forecast, and answered, which the sketch lists as exactly wrong.",
+  "spoken_fit_reason": "Any speech here talks over the television, and this is a long sentence where silence was the ideal reply."
+}

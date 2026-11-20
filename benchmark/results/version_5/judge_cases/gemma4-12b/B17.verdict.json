@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It reaches a defensible yes but omits the decisive caveat visible in the excerpts, that the Nabu Casa support page lists only Hey Jarvis, Hey Mycroft and Okay Nabu for the device and that openWakeWord on a Voice PE comes from the third-party open-voice-pe custom firmware, not from stock behavior.",
+  "judgment_reason": "The question explicitly asked which source it trusted and why, and it credited the official Home Assistant documentation and support pages when the openWakeWord capability it relies on actually came from a community GitHub firmware repo.",
+  "spoken_fit_reason": "Four plain sentences leading with the yes, no URLs, lists or markdown."
+}

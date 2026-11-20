@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The skepticism half is sound about latency, the separate speech-to-text and text-to-speech load, and accent and noise, but it leads with Qwen3-8B after searching for the wrong model and only reaches Qwen3.8-27B as an 'if you are referring to' aside, and it never uses the excerpt's most decisive fact for voice, that reasoning_effort defaults to xhigh and can think for many minutes.",
+  "judgment_reason": "Searched as instructed and correctly answered that a VRAM fit does not predict a good voice experience, but issued its query for Qwen3 8B rather than Qwen3.8 and then hedged between the two instead of resolving it from the Unsloth page it had retrieved.",
+  "spoken_fit_reason": "Two paragraphs of plain prose with no lists, URLs or markup, leading with the fit verdict and then the caveat."
+}

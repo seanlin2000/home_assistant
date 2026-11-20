@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The reply asks for the current rent and offers to look things up, but it gives no market comparison and never covers the risks of relying on advertised rents.",
+  "judgment_reason": "Judging whether a 4% increase is competitive doesn't require the dollar rent, so it asked for information it didn't need instead of searching, which was the central call.",
+  "spoken_fit_reason": "Short plain prose, but there is no answer to lead with, so the listener just gets a deferral."
+}

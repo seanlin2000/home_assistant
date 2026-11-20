@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It gives three mechanisms from the sketch (a few giant tech firms lifting the index, living costs outpacing pay, and concentrated stock ownership), though the first and third overlap on who holds the gains and none is tied to a specific episode.",
+  "judgment_reason": "A stable economics question answered from knowledge without searching, with the framing that stocks measure company value rather than household living standards.",
+  "spoken_fit_reason": "Leads with the core answer and lists the three examples in spoken 'first, second, third' prose with no formatting."
+}

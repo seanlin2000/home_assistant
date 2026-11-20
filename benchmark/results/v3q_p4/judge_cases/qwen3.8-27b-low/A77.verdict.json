@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "Covers scattering of short wavelengths, the longer sunset path removing blue, and why the sky is not violet, but calls blue a 'fast' color, which is a small physics imprecision, and leaves out dust and haze.",
+  "judgment_reason": "Answered a stable science question without searching and pitched it in plain language as asked, with everyday images like light plowing through a thicker wall of air.",
+  "spoken_fit_reason": "Plain conversational prose, but six paragraphs long, and the word cap cut it mid-explanation of sunset, before the red-and-orange conclusion."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["agreed_with_false_premise"],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 0,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It says it 'cannot definitively say whether a four gigabyte GPU would be sufficient' and never explains that all experts must be resident so total parameters set the memory need; only the mention of KV cache and precision as factors is correct.",
+  "judgment_reason": "The question demanded a clear no, and the answer treats the false claim as possibly true, listing factors 'beyond just the active parameters' as if active parameters were a valid basis for memory sizing.",
+  "spoken_fit_reason": "A single plain-prose sentence that would read fine aloud, even though its content is wrong."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It doubts the premise and gives sound refinance logic (rate gap, closing costs, break-even, asking for the user's rate), but only says 'I have no confirmation' when the results plainly show the Fed held at 3.75 to 4 percent on October 28 after a September hike, and it omits the roughly 7 percent current mortgage rates it retrieved.",
+  "judgment_reason": "It rightly refused to accept the zero-rate premise and asked for the missing loan details, but it understated what its own search found by claiming it 'could not verify the premise'.",
+  "spoken_fit_reason": "Leads with the pushback and moves to the decision rule in plain prose without lists, at a reasonable length."
+}

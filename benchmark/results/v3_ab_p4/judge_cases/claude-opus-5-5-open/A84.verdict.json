@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Covers every sketch element: value as discounted future cash, discount rate built on Treasury yields plus risk, compounding penalty on distant dollars, growth stocks as long-duration assets like long bonds, plus borrowing costs, bonds as an alternative, multiple compression and the 2022 Nasdaq drop of about a third.",
+  "judgment_reason": "Explained stable finance from knowledge without searching and hedged the Fed-to-Treasury link with 'usually'.",
+  "spoken_fit_reason": "Plain prose that builds the explanation step by step with no lists or markup; length suits an explain-the-relationship question."
+}

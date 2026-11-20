@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": false,
+  "answer_quality": 3,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It correctly rejects the zero-rate premise and gives the right refinance logic of comparing your rate, closing costs and how long you will stay, but it never establishes what the rate actually is and anchors on mortgage rates \"generally above 6 percent as of late 2024\", a specific unverified figure roughly two years stale.",
+  "judgment_reason": "It pushed back on the false premise, which was the central test, but answered a rate-sensitive question entirely from memory with no tool call and then spoke a dated rate as if current.",
+  "spoken_fit_reason": "Five sentences of plain prose that open with the correction, with no lists, URLs, or markup."
+}

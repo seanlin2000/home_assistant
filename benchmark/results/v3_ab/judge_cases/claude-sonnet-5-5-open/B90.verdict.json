@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Lists all ten running shows in the tool's order, states the ranking basis (recent TodayTix views), and every venue, price, Show-Score and closing date matches the broadway_shows result with nothing invented.",
+  "judgment_reason": "Used the Broadway listings tool instead of a web search, ranked on a measure the result actually provides, and claimed no awards or ticket sales the data did not contain.",
+  "spoken_fit_reason": "Ten spoken 'One, Two...' items of one short sentence each in plain prose with prices spelled out, as compact as a ten-show request allows."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["violated_explicit_constraint"],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It correctly warns that no sub-$1,000 build reaches the 70B tier and grounds the $650-750 used 3090 price in the excerpts, but then claims 'the remaining three hundred dollars' buys the Ryzen 5 7600, 32GB DDR5, 1TB NVMe, B650 board and 650W PSU, when the very source it copied those parts from prices them at roughly $545 before a case, and it never touches the web-search or fully-local halves of the requirement.",
+  "judgment_reason": "The user asked to be told explicitly if the budget could not work, and instead the answer presents a build that its own retrieved parts list puts at $1,300-plus as fitting inside $1,000.",
+  "spoken_fit_reason": "Four paragraphs, one of them a spoken parts list, that overran the word cap and left the listener without the all-new-parts alternative."
+}

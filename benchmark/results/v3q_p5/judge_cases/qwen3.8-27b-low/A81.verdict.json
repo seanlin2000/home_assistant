@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 0,
+  "answer_quality_reason": "Correctly says the provider sees the generated query, IP address, API key and timestamp, lists what stays local, and gives sound mitigations (minimal queries, SearXNG, logging policy, a proxy, not searching sensitive topics), but omits that fetched websites also see your IP and requests.",
+  "judgment_reason": "Answering from knowledge was right, and the patent-query example shows how conversation details can leak into a query.",
+  "spoken_fit_reason": "Markdown bold labels such as '**What stays on your machine:**' and asterisk emphasis, plus a length that overran the word cap before any mitigation was heard."
+}

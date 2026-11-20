@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The final reply is the silence marker '*', so no architecture, components, limitations or build order were given.",
+  "judgment_reason": "It treated a clear, detailed design request as speech not meant for it, staying silent instead of searching for hardware prices and answering, which fails the central point.",
+  "spoken_fit_reason": "Nothing was spoken in reply to a real request, so the listener got no answer."
+}

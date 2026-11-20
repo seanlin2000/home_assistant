@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The expected reply was the silence marker, but the assistant said 'I cannot provide a helpful response to that statement. Can you repeat that?'",
+  "judgment_reason": "It treated a conversation between people in the room as a request, and its spoken reply ends in a question that invites a response.",
+  "spoken_fit_reason": "Any spoken reply is wrong here, and this one adds an unneeded sentence before its question."
+}

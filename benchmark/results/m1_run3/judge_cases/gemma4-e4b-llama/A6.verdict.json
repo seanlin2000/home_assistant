@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The final reply gives no recommendation at all, only 'I do not have enough information', never weighing $400 against the larger models and contexts 24 GB allows.",
+  "judgment_reason": "The user had already stated the primary goal (local LLMs) and the price gap, enough for a conditional recommendation, yet it refused rather than stating an assumption.",
+  "spoken_fit_reason": "One short plain sentence that would read aloud cleanly."
+}

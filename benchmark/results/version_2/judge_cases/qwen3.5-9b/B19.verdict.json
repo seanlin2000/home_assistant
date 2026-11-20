@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["presented_estimate_as_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It also conflates two different models, treating the Qwen3-8B recipe page's 45 tokens per second as \"the smaller 8-billion parameter variant\" of Qwen3.8, when that page is about a separate Qwen3 family member entirely.",
+  "judgment_reason": "The question asked whether the found evidence is actually enough to predict the experience, and the sources say plainly that the VRAM math and speeds are \"engine estimates, not measurements\", yet it reported 2 and 45 tokens per second as established findings and raised no doubt about the evidence itself.",
+  "spoken_fit_reason": "Two paragraphs of plain prose with no lists or markup, but long enough that the word cap truncated the closing recommendation before the listener heard it."
+}

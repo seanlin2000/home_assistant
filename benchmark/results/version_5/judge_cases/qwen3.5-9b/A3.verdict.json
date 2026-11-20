@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It reaches the right \"no\" and the right mechanism (all weights must be resident, plus KV cache and activations), but then sizes the model as \"roughly 16 gigabytes for a 4-billion-parameter float32 model\", conflating active parameters with the much larger total parameter count that the sketch says drives memory, and never mentions that different tokens route to different experts.",
+  "judgment_reason": "Opened by flatly rejecting the false premise and answered from general knowledge without a needless search.",
+  "spoken_fit_reason": "Three sentences of plain prose that lead with \"No\", with no lists, markdown, or URLs."
+}

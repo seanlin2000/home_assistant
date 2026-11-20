@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The final message is the text of a weather_forecast call, not a real tool call, so no forecast was retrieved and no answer was given.",
+  "judgment_reason": "It never actually called the forecast tool for a weather question, which fails the central point.",
+  "spoken_fit_reason": "Text-to-speech would read out raw function-call syntax, which would sound wrong."
+}

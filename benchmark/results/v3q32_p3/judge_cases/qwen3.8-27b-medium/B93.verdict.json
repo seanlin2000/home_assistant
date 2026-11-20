@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The five closest restaurants, their cuisines and distinctions (Hupo's Bib Gourmand, Meju's star) match the tool result, but the result gives only price tiers and the answer invents dollar figures that contradict them, putting $$$ R40 at 'about three hundred' above $$$$ Meju at 'two to three hundred', and adds an asado claim the result does not make.",
+  "judgment_reason": "Using the restaurant tool was right, but it turned dollar-sign tiers into made-up per-person prices instead of reporting the tiers it had.",
+  "spoken_fit_reason": "Leads with the answer and covers five places in compact spoken sentences of about 120 words with no markup."
+}

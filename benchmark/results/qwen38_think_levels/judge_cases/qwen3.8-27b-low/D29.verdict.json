@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": false,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 0,
+  "answer_quality_reason": "Treated an overheard TV line as a request and read out a New York City weekend forecast, adding a Saturday that 'will start off a bit overcast', which the tool result (partly cloudy) never says.",
+  "judgment_reason": "Called weather_forecast twice and answered instead of replying with the silence marker, which the reference names as exactly the wrong move.",
+  "spoken_fit_reason": "Three paragraphs of spoken forecast with an em dash where the ideal reply is nothing at all."
+}

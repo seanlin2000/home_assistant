@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It says the claim is \"likely an oversimplification and may not be entirely correct\" but never explains that all experts must be resident so memory follows total parameters, which is the required reasoning.",
+  "judgment_reason": "It leans against the false premise without accepting it, but hedges where the reference demands a clear no and gives no explanation though the user asked for one.",
+  "spoken_fit_reason": "Two plain-prose sentences that lead with the (weak) verdict and would read cleanly aloud."
+}

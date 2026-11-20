@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 1,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The answer explains matrix multiplication and the bandwidth-bound decode phase but says a 70-billion-parameter model at 8-bit is about 35 gigabytes, then breaks off mid-word at 'about 192 gig' before ever covering specialized inference processors or when one could beat an NVIDIA GPU.",
+  "judgment_reason": "A conceptual hardware question needed no search, yet the assistant made ten tool calls chasing current product specs until it hit the tool-call limit, which is needless searching that left the answer unfinished.",
+  "spoken_fit_reason": "It opens with a spoken preamble about grounding the answer, runs long enough to be cut by the word cap, and the full reply ends in a broken fragment."
+}

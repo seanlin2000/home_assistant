@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Gives $11.61 for the tip and $76.11 for the total, exactly the reference figures.",
+  "judgment_reason": "Used the percent and calculate tools rather than doing the arithmetic in its head, and did not search on a pure arithmetic question.",
+  "spoken_fit_reason": "Two short sentences that lead with the tip then the total, with no lists or markup."
+}

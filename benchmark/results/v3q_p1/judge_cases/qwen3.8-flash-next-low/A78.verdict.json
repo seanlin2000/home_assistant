@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 5,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It gives three distinct, concrete mechanisms from the reference sketch (concentrated stock ownership, a narrow tech-led rally, and AI-driven margin gains alongside thinning hiring and flat real wages), and every figure it cites, such as the Fed's 58 to 56 percent participation and the 5.4 versus 5.5 percent price and wage growth, appears in the retrieved excerpts.",
+  "judgment_reason": "A conceptual economics question needed no search, but the assistant made four search calls before answering.",
+  "spoken_fit_reason": "The five dense paragraphs were cut by the word cap partway through the first mechanism, so the listener heard only one of the three examples."
+}

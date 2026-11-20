@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It names nitrogen or potassium deficiency and overwatering, but leaves out normal senescence of old leaves, the most likely cause for an otherwise healthy plant, and asks for only two of the useful details.",
+  "judgment_reason": "It asks for the plant type and watering routine rather than asserting one cause, though it frames the yellowing as 'a common issue' and never raises that it may be normal.",
+  "spoken_fit_reason": "Three short plain sentences that end with a direct question, with no formatting."
+}

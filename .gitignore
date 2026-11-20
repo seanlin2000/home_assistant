@@ -1,0 +1,36 @@
+# Python
+.venv/
+.venv-speech-lab/
+.venv-speech/
+__pycache__/
+*.pyc
+.pytest_cache/
+*.egg-info/
+.mypy_cache/
+.ruff_cache/
+
+# macOS
+.DS_Store
+
+# Secrets: Spotify client secret, API keys. Never committed.
+.env
+secrets/
+
+# Benchmark scratch: cached SearXNG responses inside a run
+benchmark/results/**/cache/
+
+# Copyrighted reference material; the repo is public
+clean-code.pdf
+vm/
+# Operations: log mirror pulled from the Mac mini, Homebrew lock
+logs/
+Brewfile.lock.json
+
+# MkDocs build output of the operator manual
+site/
+
+# Rendered diagrams, keyed by content hash
+.cache/
+
+# newsletter_read keeps its place here when a benchmark run reads aloud
+benchmark/fixtures/newsletters/read_cursor.json

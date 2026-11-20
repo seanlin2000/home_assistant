@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It gives 3,675 a month and 44,100 for the one-year lease and 87,817.80 for the two-year lease, matching the sketch, and its 2,587.20 savings is explicitly framed against an assumed second 5% renewal ($90,405).",
+  "judgment_reason": "It flags that comparing a one-year total to a two-year total is a trap, states the renewal assumption behind its savings figure, and notes the alternative reading of when the first increase lands.",
+  "spoken_fit_reason": "Plain prose with the numbers up front, but four paragraphs ran past the word cap so the listener lost the conclusion and the alternative reading."
+}

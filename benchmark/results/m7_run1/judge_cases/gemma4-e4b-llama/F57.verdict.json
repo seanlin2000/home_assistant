@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The rate of 1.12256 comes from the live-rates excerpt and $1,347.07 is the calculator's result, but it is not rounded to the dollar as the reference asks.",
+  "judgment_reason": "It searched for today's rate, used a source timestamped today, and did the conversion with the calculator.",
+  "spoken_fit_reason": "Two short plain sentences that lead with the rate; reading out a five-decimal rate is slightly clunky but acceptable."
+}

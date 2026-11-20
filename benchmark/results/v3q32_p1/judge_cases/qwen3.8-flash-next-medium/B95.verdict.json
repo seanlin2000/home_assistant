@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "Names the full pipeline (openWakeWord, Silero VAD, faster-whisper, Ollama with tool calling, Piper or Kokoro, all on Home Assistant over Wyoming), sourced limitations, and a sound build order (smart-home intents first, LLM later), with prices from the excerpts, but it never totals a complete under-$1,000 parts list or prices microphones and speakers.",
+  "judgment_reason": "Said plainly that a $700-900 RTX 3090 leaves too little of the $1,000 for the rest of the build, noted the $2,170 price spike, and fell back to a within-budget RTX 3060 build instead of glossing over the constraint.",
+  "spoken_fit_reason": "Leads with the architecture in prose, but four dense paragraphs with '24GB' and dollar figures ran past the word cap and were cut."
+}

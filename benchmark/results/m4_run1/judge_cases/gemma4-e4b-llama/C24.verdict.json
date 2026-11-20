@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It reports one thousand six hundred twenty-three dollars, from a growth_schedule call with three periods at 4 percent per period, versus the correct roughly 19,091 to 19,154.",
+  "judgment_reason": "It set up the tool with 3 periods instead of 36 monthly deposits and did not notice the result is less than the 18,000 deposited, failing the central calculation.",
+  "spoken_fit_reason": "One plain sentence leading with the figure."
+}

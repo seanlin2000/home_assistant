@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It says custom wake words are possible through community firmware like Open Voice PE but not as a standard feature, which is roughly supported, but it never states which source it trusted and why as the user asked, and it ignores the official Nabu Casa article listing only Hey Jarvis, Hey Mycroft and Okay Nabu as the stock options.",
+  "judgment_reason": "It did the instructed search but did not weigh the official Nabu Casa and Home Assistant pages against the community firmware, which was the source-selection judgment the question tested.",
+  "spoken_fit_reason": "Two long, repetitive sentences that both restate the Open Voice PE point, with a hedged answer instead of a clear yes or no first."
+}

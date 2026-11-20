@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It synthesizes rather than parrots, tying CoWoS packaging, HBM, and tight 4nm/3nm wafers to the consumer spillover and the August 15 percent server price notice, all traceable to excerpts [2] and [3], but omits the most concrete recent consumer datum those sources offered, the 27 to 39 percent Newegg jumps on RTX 50-series cards since June.",
+  "judgment_reason": "It searched for a genuinely moving market question, answered the causal question the user asked rather than reciting prices, and attributed the $2,000 to $4,000 RTX 5090 figure to the spot market rather than presenting it as a list price.",
+  "spoken_fit_reason": "Plain prose with no lists or URLs, but roughly 200 words dense with acronyms like CoWoS, HBM, and bill of materials, and long enough that the word cap cut the server-pricing point before the listener heard it."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "About 2,398 a month, roughly 863,000 paid in total and 463,000 in interest, all matching the sketch, with the bonus note that the payment excludes taxes and insurance.",
+  "judgment_reason": "Scoped the figure to principal and interest and rounded sensibly for speech instead of reciting cents on a 30-year total.",
+  "spoken_fit_reason": "Two sentences, payment first, with the memorable framing that interest exceeds the original loan."
+}

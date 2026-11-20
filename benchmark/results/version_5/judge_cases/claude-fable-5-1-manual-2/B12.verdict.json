@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The 3090-at-$900 and 4060 Ti-at-$450 figures are traceable, but it invents an 'RX ninety sixty XT sixteen gigabyte at roughly four hundred fifty' attributed to 'one August source', plus claims the 4060 Ti is 'scarce and above list price this month' and that a memory shortage is driving prices up, none of which appear in any of the four excerpts.",
+  "judgment_reason": "It read the $1,000 as a whole-computer budget and correctly ruled out the $900 3090 on that basis, but attributed fabricated prices and availability to sources it never retrieved.",
+  "spoken_fit_reason": "Plain prose with model numbers spelled out for speech and no lists or URLs, leading with the sixteen-gigabyte conclusion."
+}

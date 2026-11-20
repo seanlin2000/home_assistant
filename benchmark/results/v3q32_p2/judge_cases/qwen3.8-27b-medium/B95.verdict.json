@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It names the right components (wake word on a Pi or ESP32, STT, a local LLM, TTS, a search proxy, Home Assistant) and the latency and quality limits. But it never ties any hardware to the $1,000 budget with prices, the 'used box with 16GB RAM and a modest GPU' is vague, and it puts smart-home control last when the reference has it first.",
+  "judgment_reason": "It skipped the search needed for current hardware prices and never said what $1,000 actually buys or rules out, so the budget constraint went unaddressed.",
+  "spoken_fit_reason": "One plain paragraph that opens with the plan and contains no lists or markdown, at a length the four-part question warrants."
+}

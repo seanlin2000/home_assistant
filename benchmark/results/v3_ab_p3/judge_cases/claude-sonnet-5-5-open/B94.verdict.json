@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The route (Lucerne with a lake cruise and Rigi, then the Brunig line to Interlaken, then Zermatt and the Gornergrat) is sensible and low-effort, and the CHF 150 Half Fare price is sourced, but it gives no point-to-point fares although the excerpts list Lucerne to Interlaken at CHF 62 and Interlaken to Zermatt at CHF 72, and it never prices the pass comparison for this itinerary.",
+  "judgment_reason": "It honestly flags that the sources disagree on Swiss Travel Pass prices, but it calls this a trip with 'only a few long journeys' even though it changes base three times, the classic loop that one excerpt says crosses the pass's break-even.",
+  "spoken_fit_reason": "It walks day by day in plain spoken sentences and then gives a short ticket recommendation, a fitting length for a five-day plan."
+}

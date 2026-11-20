@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It correctly says storage depends on all parameters, but then claims the MoE fits in 16 GB because 'immediate memory pressure during the forward pass' is lower, which is the misleading simplification the sketch rules out and omits quantization or CPU offload.",
+  "judgment_reason": "No search was right, but the answer's central claim conflates active parameters with the memory needed to fit, the exact distinction the question asked it to keep separate.",
+  "spoken_fit_reason": "It opens with the filler 'I can certainly explain that for you' and runs two long paragraphs, listenable but longer than needed."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The rent after the increase, two thousand nine hundred sixty-four, is correct, but 'twenty-one percent of your income goes to rent' is wrong against the correct 38.5 percent.",
+  "judgment_reason": "It called percent with the wrong kind and got 210,900, then spoke an unsupported twenty-one percent instead of retrying or noticing the error.",
+  "spoken_fit_reason": "One plain sentence covering both parts."
+}

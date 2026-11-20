@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The itinerary is sensible and low-effort (Lake Lucerne boat, Rigi, Luzern-Interlaken Express, Jungfraujoch, Gornergrat) and avoids the Glacier Express closure, but it quotes no prices although the sources gave the 2026 Swiss Travel Pass (CHF 254 to 309 for three to four days) and Half Fare Card (CHF 150), its pass advice stays vague, and its night split (one in Interlaken, two in Zermatt) contradicts its own day plan.",
+  "judgment_reason": "Searching was right, but it falsely said 'I could not check current prices' when the results held them, leaving the 'most economical ticket' part of the question to the user.",
+  "spoken_fit_reason": "Day-by-day plain prose without lists or markdown, at a length a five-day plan needs, with only a short opening caveat."
+}

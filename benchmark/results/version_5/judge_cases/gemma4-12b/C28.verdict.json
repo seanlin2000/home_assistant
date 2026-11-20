@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Both figures match the sketch: 2,398.20 a month and about 463,353 in total interest.",
+  "judgment_reason": "It used the loan_payment tool and reported its output faithfully without searching or inventing a rate.",
+  "spoken_fit_reason": "Two sentences with amounts spelled out for speech, no lists or markdown."
+}

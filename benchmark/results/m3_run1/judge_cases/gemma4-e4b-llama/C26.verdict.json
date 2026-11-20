@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The 38.5 percent share is correct, but the increased rent is given as 'two thousand nine hundred seventy-zero and twenty-five cents' instead of the reference 2,964.",
+  "judgment_reason": "It rightly ignored the nonsensical 210,900 percent result, but after the calculate call was refused it spoke an unverified wrong figure instead of retrying with a valid expression.",
+  "spoken_fit_reason": "Two short sentences, but 'seventy-zero and twenty-five cents' is garbled when read aloud."
+}

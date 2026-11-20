@@ -1,0 +1,1058 @@
+{
+ "2026-10-25": [
+  {
+   "theaters": [
+    {
+     "name": "Regal Times Square",
+     "zip": "10036",
+     "isTemporarilyClosed": false,
+     "movies": [
+      {
+       "id": 244768,
+       "mopURI": "/clayface-2026-244768/movie-overview",
+       "title": "Clayface (2026)",
+       "genres": [
+        "Action/Adventure",
+        "Drama",
+        "Horror",
+        "Mystery & Thriller",
+        "Suspense/Thriller"
+       ],
+       "rating": "R",
+       "releaseDate": "2026-10-23",
+       "runtime": 108
+      },
+      {
+       "id": 246507,
+       "mopURI": "/wicker-2026-246507/movie-overview",
+       "title": "Wicker (2026)",
+       "genres": [
+        "Comedy",
+        "Drama",
+        "Romance",
+        "Sci-Fi/Fantasy"
+       ],
+       "rating": "R",
+       "releaseDate": "2026-10-23",
+       "runtime": 105
+      },
+      {
+       "id": 246438,
+       "mopURI": "/wildwood-2026-246438/movie-overview",
+       "title": "Wildwood (2026)",
+       "genres": [
+        "Action/Adventure",
+        "Animated",
+        "Animation",
+        "Sci-Fi/Fantasy"
+       ],
+       "rating": "PG13",
+       "releaseDate": "2026-10-23",
+       "runtime": 130
+      },
+      {
+       "id": 244998,
+       "mopURI": "/sense-and-sensibility-2026-244998/movie-overview",
+       "title": "Sense and Sensibility (2026)",
+       "genres": [
+        "Drama",
+        "Romance"
+       ],
+       "rating": "PG",
+       "releaseDate": "2026-10-16",
+       "runtime": 131
+      },
+      {
+       "id": 246472,
+       "mopURI": "/street-fighter-2026-246472/movie-overview",
+       "title": "Street Fighter (2026)",
+       "genres": [
+        "Action/Adventure"
+       ],
+       "rating": "PG13",
+       "releaseDate": "2026-10-16",
+       "runtime": 119
+      },
+      {
+       "id": 246280,
+       "mopURI": "/whalefall-2026-246280/movie-overview",
+       "title": "Whalefall (2026)",
+       "genres": [
+        "Action/Adventure",
+        "Drama",
+        "Mystery & Thriller",
+        "Suspense/Thriller"
+       ],
+       "rating": "PG13",
+       "releaseDate": "2026-10-16",
+       "runtime": 106
+      },
+      {
+       "id": 247346,
+       "mopURI": "/you-can-see-everything-2026-247346/movie-overview",
+       "title": "You Can See Everything (2026)",
+       "genres": [
+        "Documentary"
+       ],
+       "rating": "R",
+       "releaseDate": "2026-10-16",
+       "runtime": 174
+      },
+      {
+       "id": 246464,
+       "mopURI": "/other-mommy-2026-246464/movie-overview",
+       "title": "Other Mommy (2026)",
+       "genres": [
+        "Horror",
+        "Mystery & Thriller"
+       ],
+       "rating": "R",
+       "releaseDate": "2026-10-09",
+       "runtime": 93
+      },
+      {
+       "id": 245893,
+       "mopURI": "/resident-evil-2026-245893/movie-overview",
+       "title": "Resident Evil (2026)",
+       "genres": [
+        "Action/Adventure",
+        "Horror"
+       ],
+       "rating": "R",
+       "releaseDate": "2026-09-18",
+       "runtime": 94
+      }
+     ]
+    },
+    {
+     "name": "AMC Empire 25",
+     "zip": "10036",
+     "isTemporarilyClosed": false,
+     "movies": [
+      {
+       "id": 244768,
+       "mopURI": "/clayface-2026-244768/movie-overview",
+       "title": "Clayface (2026)",
+       "genres": [
+        "Action/Adventure",
+        "Drama",
+        "Horror",
+        "Mystery & Thriller",
+        "Suspense/Thriller"
+       ],
+       "rating": "R",
+       "releaseDate": "2026-10-23",
+       "runtime": 108
+      },
+      {
+       "id": 246438,
+       "mopURI": "/wildwood-2026-246438/movie-overview",
+       "title": "Wildwood (2026)",
+       "genres": [
+        "Action/Adventure",
+        "Animated",
+        "Animation",
+        "Sci-Fi/Fantasy"
+       ],
+       "rating": "PG13",
+       "releaseDate": "2026-10-23",
+       "runtime": 130
+      },
+      {
+       "id": 244998,
+       "mopURI": "/sense-and-sensibility-2026-244998/movie-overview",
+       "title": "Sense and Sensibility (2026)",
+       "genres": [
+        "Drama",
+        "Romance"
+       ],
+       "rating": "PG",
+       "releaseDate": "2026-10-16",
+       "runtime": 131
+      },
+      {
+       "id": 246472,
+       "mopURI": "/street-fighter-2026-246472/movie-overview",
+       "title": "Street Fighter (2026)",
+       "genres": [
+        "Action/Adventure"
+       ],
+       "rating": "PG13",
+       "releaseDate": "2026-10-16",
+       "runtime": 119
+      },
+      {
+       "id": 247346,
+       "mopURI": "/you-can-see-everything-2026-247346/movie-overview",
+       "title": "You Can See Everything (2026)",
+       "genres": [
+        "Documentary"
+       ],
+       "rating": "R",
+       "releaseDate": "2026-10-16",
+       "runtime": 174
+      },
+      {
+       "id": 246464,
+       "mopURI": "/other-mommy-2026-246464/movie-overview",
+       "title": "Other Mommy (2026)",
+       "genres": [
+        "Horror",
+        "Mystery & Thriller"
+       ],
+       "rating": "R",
+       "releaseDate": "2026-10-09",
+       "runtime": 93
+      }
+     ]
+    },
+    {
+     "name": "New Plaza Cinema",
+     "zip": "10023",
+     "isTemporarilyClosed": false
+    },
+    {
+     "name": "Quad Cinema",
+     "zip": "10011",
+     "isTemporarilyClosed": false
+    },
+    {
+     "name": "Village East By Angelika",
+     "zip": "10003",
+     "isTemporarilyClosed": false,
+     "movies": [
+      {
+       "id": 244998,
+       "mopURI": "/sense-and-sensibility-2026-244998/movie-overview",
+       "title": "Sense and Sensibility (2026)",
+       "genres": [
+        "Drama",
+        "Romance"
+       ],
+       "rating": "PG",
+       "releaseDate": "2026-10-16",
+       "runtime": 131
+      },
+      {
+       "id": 247346,
+       "mopURI": "/you-can-see-everything-2026-247346/movie-overview",
+       "title": "You Can See Everything (2026)",
+       "genres": [
+        "Documentary"
+       ],
+       "rating": "R",
+       "releaseDate": "2026-10-16",
+       "runtime": 174
+      },
+      {
+       "id": 245965,
+       "mopURI": "/primetime-2026-245965/movie-overview",
+       "title": "Primetime (2026)",
+       "genres": [
+        "Drama",
+        "Mystery & Thriller",
+        "Suspense/Thriller"
+       ],
+       "rating": "R",
+       "releaseDate": "2026-09-25",
+       "runtime": 109
+      }
+     ]
+    },
+    {
+     "name": "Firehouse: DCTV's Cinema for Documentary Film",
+     "zip": "10013",
+     "isTemporarilyClosed": false,
+     "movies": [
+      {
+       "id": 247262,
+       "mopURI": "/the-gymnasts-of-fisherman-colony-247262/movie-overview",
+       "title": "The Gymnasts of Fisherman Colony",
+       "genres": [
+        "Documentary",
+        "Sports"
+       ],
+       "rating": "Not Rated",
+       "releaseDate": "2026-06-08",
+       "runtime": 93
+      }
+     ]
+    },
+    {
+     "name": "AMC Newport Centre 11",
+     "zip": "07310",
+     "isTemporarilyClosed": false,
+     "movies": [
+      {
+       "id": 247482,
+       "mopURI": "/bts-world-tour-arirang-in-buenos-aires-live-viewing-2026-247482/movie-overview",
+       "title": "BTS WORLD TOUR 'ARIRANG' IN BUENOS AIRES: LIVE VIEWING (2026)",
+       "genres": [
+        "Concert/Special Events",
+        "Music/Performing Arts"
+       ],
+       "rating": "Not Rated",
+       "releaseDate": "2026-10-24",
+       "runtime": 195
+      },
+      {
+       "id": 244768,
+       "mopURI": "/clayface-2026-244768/movie-overview",
+       "title": "Clayface (2026)",
+       "genres": [
+        "Action/Adventure",
+        "Drama",
+        "Horror",
+        "Mystery & Thriller",
+        "Suspense/Thriller"
+       ],
+       "rating": "R",
+       "releaseDate": "2026-10-23",
+       "runtime": 108
+      },
+      {
+       "id": 246291,
+       "mopURI": "/klara-and-the-sun-2026-246291/movie-overview",
+       "title": "Klara and The Sun (2026)",
+       "genres": [
+        "Comedy",
+        "Drama",
+        "Sci-Fi/Fantasy"
+       ],
+       "rating": "PG13",
+       "releaseDate": "2026-10-23",
+       "runtime": 116
+      },
+      {
+       "id": 246507,
+       "mopURI": "/wicker-2026-246507/movie-overview",
+       "title": "Wicker (2026)",
+       "genres": [
+        "Comedy",
+        "Drama",
+        "Romance",
+        "Sci-Fi/Fantasy"
+       ],
+       "rating": "R",
+       "releaseDate": "2026-10-23",
+       "runtime": 105
+      },
+      {
+       "id": 246438,
+       "mopURI": "/wildwood-2026-246438/movie-overview",
+       "title": "Wildwood (2026)",
+       "genres": [
+        "Action/Adventure",
+        "Animated",
+        "Animation",
+        "Sci-Fi/Fantasy"
+       ],
+       "rating": "PG13",
+       "releaseDate": "2026-10-23",
+       "runtime": 130
+      },
+      {
+       "id": 244998,
+       "mopURI": "/sense-and-sensibility-2026-244998/movie-overview",
+       "title": "Sense and Sensibility (2026)",
+       "genres": [
+        "Drama",
+        "Romance"
+       ],
+       "rating": "PG",
+       "releaseDate": "2026-10-16",
+       "runtime": 131
+      },
+      {
+       "id": 246472,
+       "mopURI": "/street-fighter-2026-246472/movie-overview",
+       "title": "Street Fighter (2026)",
+       "genres": [
+        "Action/Adventure"
+       ],
+       "rating": "PG13",
+       "releaseDate": "2026-10-16",
+       "runtime": 119
+      },
+      {
+       "id": 246280,
+       "mopURI": "/whalefall-2026-246280/movie-overview",
+       "title": "Whalefall (2026)",
+       "genres": [
+        "Action/Adventure",
+        "Drama",
+        "Mystery & Thriller",
+        "Suspense/Thriller"
+       ],
+       "rating": "PG13",
+       "releaseDate": "2026-10-16",
+       "runtime": 106
+      },
+      {
+       "id": 247346,
+       "mopURI": "/you-can-see-everything-2026-247346/movie-overview",
+       "title": "You Can See Everything (2026)",
+       "genres": [
+        "Documentary"
+       ],
+       "rating": "R",
+       "releaseDate": "2026-10-16",
+       "runtime": 174
+      },
+      {
+       "id": 247862,
+       "mopURI": "/jailer-2-247862/movie-overview",
+       "title": "Jailer 2",
+       "genres": [
+        "Action/Adventure",
+        "Comedy",
+        "Drama",
+        "Suspense/Thriller"
+       ],
+       "rating": "Not Rated",
+       "releaseDate": "2026-10-15",
+       "runtime": 175
+      },
+      {
+       "id": 246464,
+       "mopURI": "/other-mommy-2026-246464/movie-overview",
+       "title": "Other Mommy (2026)",
+       "genres": [
+        "Horror",
+        "Mystery & Thriller"
+       ],
+       "rating": "R",
+       "releaseDate": "2026-10-09",
+       "runtime": 93
+      },
+      {
+       "id": 247556,
+       "mopURI": "/drishyam-the-conclusion-2026-247556/movie-overview",
+       "title": "Drishyam - The Conclusion (2026)",
+       "genres": [
+        "Drama",
+        "Mystery & Thriller",
+        "Suspense/Thriller"
+       ],
+       "rating": "Not Rated",
+       "releaseDate": "2026-10-02",
+       "runtime": 150
+      },
+      {
+       "id": 240033,
+       "mopURI": "/verity-2026-240033/movie-overview",
+       "title": "Verity (2026)",
+       "genres": [
+        "Drama",
+        "Mystery & Thriller",
+        "Suspense/Thriller"
+       ],
+       "rating": "R",
+       "releaseDate": "2026-10-02",
+       "runtime": 114
+      }
+     ]
+    },
+    {
+     "name": "Regal UA Kaufman Astoria",
+     "zip": "11101",
+     "isTemporarilyClosed": false,
+     "movies": [
+      {
+       "id": 244768,
+       "mopURI": "/clayface-2026-244768/movie-overview",
+       "title": "Clayface (2026)",
+       "genres": [
+        "Action/Adventure",
+        "Drama",
+        "Horror",
+        "Mystery & Thriller",
+        "Suspense/Thriller"
+       ],
+       "rating": "R",
+       "releaseDate": "2026-10-23",
+       "runtime": 108
+      },
+      {
+       "id": 246507,
+       "mopURI": "/wicker-2026-246507/movie-overview",
+       "title": "Wicker (2026)",
+       "genres": [
+        "Comedy",
+        "Drama",
+        "Romance",
+        "Sci-Fi/Fantasy"
+       ],
+       "rating": "R",
+       "releaseDate": "2026-10-23",
+       "runtime": 105
+      },
+      {
+       "id": 246438,
+       "mopURI": "/wildwood-2026-246438/movie-overview",
+       "title": "Wildwood (2026)",
+       "genres": [
+        "Action/Adventure",
+        "Animated",
+        "Animation",
+        "Sci-Fi/Fantasy"
+       ],
+       "rating": "PG13",
+       "releaseDate": "2026-10-23",
+       "runtime": 130
+      },
+      {
+       "id": 246472,
+       "mopURI": "/street-fighter-2026-246472/movie-overview",
+       "title": "Street Fighter (2026)",
+       "genres": [
+        "Action/Adventure"
+       ],
+       "rating": "PG13",
+       "releaseDate": "2026-10-16",
+       "runtime": 119
+      },
+      {
+       "id": 246280,
+       "mopURI": "/whalefall-2026-246280/movie-overview",
+       "title": "Whalefall (2026)",
+       "genres": [
+        "Action/Adventure",
+        "Drama",
+        "Mystery & Thriller",
+        "Suspense/Thriller"
+       ],
+       "rating": "PG13",
+       "releaseDate": "2026-10-16",
+       "runtime": 106
+      },
+      {
+       "id": 247346,
+       "mopURI": "/you-can-see-everything-2026-247346/movie-overview",
+       "title": "You Can See Everything (2026)",
+       "genres": [
+        "Documentary"
+       ],
+       "rating": "R",
+       "releaseDate": "2026-10-16",
+       "runtime": 174
+      },
+      {
+       "id": 246464,
+       "mopURI": "/other-mommy-2026-246464/movie-overview",
+       "title": "Other Mommy (2026)",
+       "genres": [
+        "Horror",
+        "Mystery & Thriller"
+       ],
+       "rating": "R",
+       "releaseDate": "2026-10-09",
+       "runtime": 93
+      },
+      {
+       "id": 246407,
+       "mopURI": "/your-mother-your-mother-your-mother-2026-246407/movie-overview",
+       "title": "Your Mother Your Mother Your Mother (2026)",
+       "genres": [
+        "Action/Adventure",
+        "Drama"
+       ],
+       "rating": "R",
+       "releaseDate": "2026-09-25",
+       "runtime": 111
+      },
+      {
+       "id": 245893,
+       "mopURI": "/resident-evil-2026-245893/movie-overview",
+       "title": "Resident Evil (2026)",
+       "genres": [
+        "Action/Adventure",
+        "Horror"
+       ],
+       "rating": "R",
+       "releaseDate": "2026-09-18",
+       "runtime": 94
+      }
+     ]
+    }
+   ],
+   "pagination": {
+    "totalPages": 2
+   }
+  },
+  {
+   "theaters": [
+    {
+     "name": " The Bellevue",
+     "zip": "07043",
+     "isTemporarilyClosed": false
+    },
+    {
+     "name": "Cross County Multiplex Cinemas",
+     "zip": "10704",
+     "isTemporarilyClosed": false,
+     "movies": [
+      {
+       "id": 244768,
+       "mopURI": "/clayface-2026-244768/movie-overview",
+       "title": "Clayface (2026)",
+       "genres": [
+        "Action/Adventure",
+        "Drama",
+        "Horror",
+        "Mystery & Thriller",
+        "Suspense/Thriller"
+       ],
+       "rating": "R",
+       "releaseDate": "2026-10-23",
+       "runtime": 108
+      },
+      {
+       "id": 246438,
+       "mopURI": "/wildwood-2026-246438/movie-overview",
+       "title": "Wildwood (2026)",
+       "genres": [
+        "Action/Adventure",
+        "Animated",
+        "Animation",
+        "Sci-Fi/Fantasy"
+       ],
+       "rating": "PG13",
+       "releaseDate": "2026-10-23",
+       "runtime": 130
+      },
+      {
+       "id": 246472,
+       "mopURI": "/street-fighter-2026-246472/movie-overview",
+       "title": "Street Fighter (2026)",
+       "genres": [
+        "Action/Adventure"
+       ],
+       "rating": "PG13",
+       "releaseDate": "2026-10-16",
+       "runtime": 119
+      },
+      {
+       "id": 246280,
+       "mopURI": "/whalefall-2026-246280/movie-overview",
+       "title": "Whalefall (2026)",
+       "genres": [
+        "Action/Adventure",
+        "Drama",
+        "Mystery & Thriller",
+        "Suspense/Thriller"
+       ],
+       "rating": "PG13",
+       "releaseDate": "2026-10-16",
+       "runtime": 106
+      },
+      {
+       "id": 247346,
+       "mopURI": "/you-can-see-everything-2026-247346/movie-overview",
+       "title": "You Can See Everything (2026)",
+       "genres": [
+        "Documentary"
+       ],
+       "rating": "R",
+       "releaseDate": "2026-10-16",
+       "runtime": 174
+      },
+      {
+       "id": 246464,
+       "mopURI": "/other-mommy-2026-246464/movie-overview",
+       "title": "Other Mommy (2026)",
+       "genres": [
+        "Horror",
+        "Mystery & Thriller"
+       ],
+       "rating": "R",
+       "releaseDate": "2026-10-09",
+       "runtime": 93
+      },
+      {
+       "id": 245893,
+       "mopURI": "/resident-evil-2026-245893/movie-overview",
+       "title": "Resident Evil (2026)",
+       "genres": [
+        "Action/Adventure",
+        "Horror"
+       ],
+       "rating": "R",
+       "releaseDate": "2026-09-18",
+       "runtime": 94
+      }
+     ]
+    }
+   ],
+   "pagination": {
+    "totalPages": 2
+   }
+  }
+ ],
+ "2026-10-30": [
+  {
+   "theaters": [
+    {
+     "name": "Regal Times Square",
+     "zip": "10036",
+     "isTemporarilyClosed": false,
+     "movies": [
+      {
+       "id": 244768,
+       "mopURI": "/clayface-2026-244768/movie-overview",
+       "title": "Clayface (2026)",
+       "genres": [
+        "Action/Adventure",
+        "Drama",
+        "Horror",
+        "Mystery & Thriller",
+        "Suspense/Thriller"
+       ],
+       "rating": "R",
+       "releaseDate": "2026-10-23",
+       "runtime": 108
+      },
+      {
+       "id": 228838,
+       "mopURI": "/terrifier-2-2022-228838/movie-overview",
+       "title": "Terrifier 2 (2022)",
+       "genres": [
+        "Holiday",
+        "Horror",
+        "Mystery & Thriller"
+       ],
+       "rating": "R",
+       "releaseDate": "2022-10-06",
+       "runtime": 148
+      }
+     ]
+    },
+    {
+     "name": "AMC Empire 25",
+     "zip": "10036",
+     "isTemporarilyClosed": false,
+     "movies": [
+      {
+       "id": 247109,
+       "mopURI": "/wild-horse-nine-2026-247109/movie-overview",
+       "title": "Wild Horse Nine (2026)",
+       "genres": [
+        "Comedy",
+        "Drama",
+        "Mystery & Thriller",
+        "Suspense/Thriller"
+       ],
+       "rating": "R",
+       "releaseDate": "2026-11-06",
+       "runtime": 118
+      },
+      {
+       "id": 247346,
+       "mopURI": "/you-can-see-everything-2026-247346/movie-overview",
+       "title": "You Can See Everything (2026)",
+       "genres": [
+        "Documentary"
+       ],
+       "rating": "R",
+       "releaseDate": "2026-10-16",
+       "runtime": 174
+      }
+     ]
+    },
+    {
+     "name": "New Plaza Cinema",
+     "zip": "10023",
+     "isTemporarilyClosed": false
+    },
+    {
+     "name": "Quad Cinema",
+     "zip": "10011",
+     "isTemporarilyClosed": false,
+     "movies": [
+      {
+       "id": 247100,
+       "mopURI": "/who-killed-alex-odeh-2026-247100/movie-overview",
+       "title": "Who Killed Alex Odeh? (2026)",
+       "genres": [
+        "Documentary",
+        "Suspense/Thriller"
+       ],
+       "rating": "Not Rated",
+       "releaseDate": null,
+       "runtime": 84
+      },
+      {
+       "id": 146,
+       "mopURI": "/the-rocky-horror-picture-show-146/movie-overview",
+       "title": "The Rocky Horror Picture Show",
+       "genres": [
+        "Comedy",
+        "Horror",
+        "Music/Performing Arts"
+       ],
+       "rating": "R",
+       "releaseDate": "1975-09-29",
+       "runtime": 95
+      }
+     ]
+    },
+    {
+     "name": "Village East By Angelika",
+     "zip": "10003",
+     "isTemporarilyClosed": false,
+     "movies": [
+      {
+       "id": 245695,
+       "mopURI": "/manhood-2026-245695/movie-overview",
+       "title": "Manhood (2026)",
+       "genres": [
+        "Documentary",
+        "Drama"
+       ],
+       "rating": "Not Rated",
+       "releaseDate": null,
+       "runtime": 91
+      },
+      {
+       "id": 246726,
+       "mopURI": "/occupational-hazard-the-first-coral-reefers-246726/movie-overview",
+       "title": "Occupational Hazard: The First Coral Reefers",
+       "genres": [
+        "Documentary",
+        "Music/Performing Arts"
+       ],
+       "rating": "Not Rated",
+       "releaseDate": null,
+       "runtime": 92
+      },
+      {
+       "id": 247484,
+       "mopURI": "/bts-world-tour-arirang-in-sao-paulo-live-viewing-2026-247484/movie-overview",
+       "title": "BTS WORLD TOUR 'ARIRANG' IN SÃO PAULO: LIVE VIEWING (2026)",
+       "genres": [
+        "Concert/Special Events",
+        "Music/Performing Arts"
+       ],
+       "rating": "Not Rated",
+       "releaseDate": "2026-10-30",
+       "runtime": 195
+      },
+      {
+       "id": 22052,
+       "mopURI": "/wild-at-heart-unrated-22052/movie-overview",
+       "title": "Wild At Heart - Unrated",
+       "genres": [
+        "Comedy",
+        "Drama"
+       ],
+       "rating": "R",
+       "releaseDate": "2026-10-30",
+       "runtime": 125
+      }
+     ]
+    },
+    {
+     "name": "Firehouse: DCTV's Cinema for Documentary Film",
+     "zip": "10013",
+     "isTemporarilyClosed": false,
+     "movies": [
+      {
+       "id": 247490,
+       "mopURI": "/naza-2026-247490/movie-overview",
+       "title": "Naza (2026)",
+       "genres": [
+        "Documentary",
+        "War"
+       ],
+       "rating": "Not Rated",
+       "releaseDate": "2026-09-26",
+       "runtime": 77
+      },
+      {
+       "id": 247240,
+       "mopURI": "/love-chaos-kin-2025-247240/movie-overview",
+       "title": "Love Chaos Kin (2025)",
+       "genres": [
+        "Documentary"
+       ],
+       "rating": "Not Rated",
+       "releaseDate": "2025-05-11",
+       "runtime": 97
+      }
+     ]
+    },
+    {
+     "name": "AMC Newport Centre 11",
+     "zip": "07310",
+     "isTemporarilyClosed": false,
+     "movies": [
+      {
+       "id": 247484,
+       "mopURI": "/bts-world-tour-arirang-in-sao-paulo-live-viewing-2026-247484/movie-overview",
+       "title": "BTS WORLD TOUR 'ARIRANG' IN SÃO PAULO: LIVE VIEWING (2026)",
+       "genres": [
+        "Concert/Special Events",
+        "Music/Performing Arts"
+       ],
+       "rating": "Not Rated",
+       "releaseDate": "2026-10-30",
+       "runtime": 195
+      },
+      {
+       "id": 244768,
+       "mopURI": "/clayface-2026-244768/movie-overview",
+       "title": "Clayface (2026)",
+       "genres": [
+        "Action/Adventure",
+        "Drama",
+        "Horror",
+        "Mystery & Thriller",
+        "Suspense/Thriller"
+       ],
+       "rating": "R",
+       "releaseDate": "2026-10-23",
+       "runtime": 108
+      }
+     ]
+    },
+    {
+     "name": "Regal UA Kaufman Astoria",
+     "zip": "11101",
+     "isTemporarilyClosed": false,
+     "movies": [
+      {
+       "id": 247109,
+       "mopURI": "/wild-horse-nine-2026-247109/movie-overview",
+       "title": "Wild Horse Nine (2026)",
+       "genres": [
+        "Comedy",
+        "Drama",
+        "Mystery & Thriller",
+        "Suspense/Thriller"
+       ],
+       "rating": "R",
+       "releaseDate": "2026-11-06",
+       "runtime": 118
+      },
+      {
+       "id": 246958,
+       "mopURI": "/everest-the-other-side-2026-246958/movie-overview",
+       "title": "Everest: The Other Side (2026)",
+       "genres": [
+        "Biography",
+        "Documentary",
+        "Sports"
+       ],
+       "rating": "PG13",
+       "releaseDate": "2026-10-30",
+       "runtime": 115
+      },
+      {
+       "id": 246680,
+       "mopURI": "/the-only-living-pickpocket-in-new-york-2026-246680/movie-overview",
+       "title": "The Only Living Pickpocket in New York (2026)",
+       "genres": [
+        "Drama",
+        "Mystery & Thriller",
+        "Suspense/Thriller"
+       ],
+       "rating": "R",
+       "releaseDate": "2026-10-16",
+       "runtime": 88
+      },
+      {
+       "id": 228838,
+       "mopURI": "/terrifier-2-2022-228838/movie-overview",
+       "title": "Terrifier 2 (2022)",
+       "genres": [
+        "Holiday",
+        "Horror",
+        "Mystery & Thriller"
+       ],
+       "rating": "R",
+       "releaseDate": "2022-10-06",
+       "runtime": 148
+      }
+     ]
+    }
+   ],
+   "pagination": {
+    "totalPages": 2
+   }
+  },
+  {
+   "theaters": [
+    {
+     "name": " The Bellevue",
+     "zip": "07043",
+     "isTemporarilyClosed": false,
+     "movies": [
+      {
+       "id": 246958,
+       "mopURI": "/everest-the-other-side-2026-246958/movie-overview",
+       "title": "Everest: The Other Side (2026)",
+       "genres": [
+        "Biography",
+        "Documentary",
+        "Sports"
+       ],
+       "rating": "PG13",
+       "releaseDate": "2026-10-30",
+       "runtime": 115
+      },
+      {
+       "id": 246507,
+       "mopURI": "/wicker-2026-246507/movie-overview",
+       "title": "Wicker (2026)",
+       "genres": [
+        "Comedy",
+        "Drama",
+        "Romance",
+        "Sci-Fi/Fantasy"
+       ],
+       "rating": "R",
+       "releaseDate": "2026-10-23",
+       "runtime": 105
+      },
+      {
+       "id": 246680,
+       "mopURI": "/the-only-living-pickpocket-in-new-york-2026-246680/movie-overview",
+       "title": "The Only Living Pickpocket in New York (2026)",
+       "genres": [
+        "Drama",
+        "Mystery & Thriller",
+        "Suspense/Thriller"
+       ],
+       "rating": "R",
+       "releaseDate": "2026-10-16",
+       "runtime": 88
+      }
+     ]
+    },
+    {
+     "name": "Cross County Multiplex Cinemas",
+     "zip": "10704",
+     "isTemporarilyClosed": false,
+     "movies": [
+      {
+       "id": 247849,
+       "mopURI": "/christmas-at-the-kringles-2026-247849/movie-overview",
+       "title": "Christmas at the Kringles (2026)",
+       "genres": [
+        "Comedy",
+        "Holiday",
+        "Horror"
+       ],
+       "rating": "R",
+       "releaseDate": "2026-10-30",
+       "runtime": 98
+      }
+     ]
+    }
+   ],
+   "pagination": {
+    "totalPages": 2
+   }
+  }
+ ]
+}

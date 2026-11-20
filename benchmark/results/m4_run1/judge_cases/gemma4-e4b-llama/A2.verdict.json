@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It says the one-year lease costs forty-two thousand and the two-year forty-eight thousand with six thousand saved, none of which match the sketch's 44,100 and 87,817.80 or the 840 year-one difference.",
+  "judgment_reason": "It did not use a calculator, compared options of different lengths without saying so, and declared a wrong winner, failing the central point.",
+  "spoken_fit_reason": "Two short plain sentences that lead with the figures."
+}

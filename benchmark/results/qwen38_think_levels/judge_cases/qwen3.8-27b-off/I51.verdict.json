@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The day-by-day figures and Sunday's heavy rain match the tool result, though Monday's 47 to 50°F is loosely called \"mid-forties\".",
+  "judgment_reason": "It called weather_forecast for Paris, Texas rather than Paris, France, and did not search.",
+  "spoken_fit_reason": "Plain prose that ends on a useful umbrella summary, but reading out all seven days in about eight sentences is longer than the short answer the question calls for."
+}

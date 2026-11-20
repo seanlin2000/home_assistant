@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The yes is right and traces to excerpt [3]'s microWakeWord models for Voice PE, but the user asked which source it trusted and why, and the answer only says 'a GitHub repository listing' without naming it or giving any reason to trust it over the official Home Assistant documentation that was also retrieved.",
+  "judgment_reason": "It searched as instructed and did not overclaim, but it skipped the source-evaluation half of the question and never noted that its chosen source is a third-party repo rather than the official Voice PE firmware docs.",
+  "spoken_fit_reason": "Three plain sentences with no URLs, code, or citation markers, despite the excerpts being full of YAML."
+}

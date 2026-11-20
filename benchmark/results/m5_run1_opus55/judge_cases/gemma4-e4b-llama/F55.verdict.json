@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It uses the 3.88 percent effective rate from the Federal Reserve H.15 excerpt dated October 2026, names that figure, and gives the calculator's 970 dollars for a year on 25,000.",
+  "judgment_reason": "It searched as asked, preferred the current Fed H.15 data over the stale April 2025 page showing 5.33 percent, and used the calculator for the interest.",
+  "spoken_fit_reason": "Two plain sentences stating the rate and then the interest, with no formatting."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The foods suit the brief, but the totals do not add up: the meals it lists sum to about 163 g of protein and at most about 1,650 calories, yet it claims 'right around one hundred seventy grams' and 'just under two thousand four hundred calories', and several per-item figures are off (six ounces of chicken with beans and rice is well over 55 g, two cups of Greek yogurt plus cottage cheese is well over 45 g).",
+  "judgment_reason": "Answering without a search was right, it used no protein powder and kept preparation light, but it presented internally inconsistent totals without catching them.",
+  "spoken_fit_reason": "It is plain prose with no list formatting, but the first paragraph is one long run of meal details and the word cap cut the totals the user asked for."
+}

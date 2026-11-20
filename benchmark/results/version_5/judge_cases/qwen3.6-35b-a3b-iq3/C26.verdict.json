@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "About 38.5 percent and $2,964, exactly the reference figures.",
+  "judgment_reason": "Noticed that its first percent call returned the nonsensical 210,900 from the wrong operation kind and reran it as is_what_percent rather than reporting the bad number.",
+  "spoken_fit_reason": "Two sentences covering both parts, plain prose with no lists or markup."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "A plausible cheap plan whose meal figures (45, 45, 25, 50 grams plus milk and peanuts) reach about 170 grams under 2,500 calories, but the lunch line contradicts itself with 'a pound of cooked chicken breast ... about 6 ounces'.",
+  "judgment_reason": "Respected the calorie cap and the no-powder-every-meal constraint, kept prep minimal with batch cooking, and said the numbers are estimates to check on labels.",
+  "spoken_fit_reason": "Leads with the total and walks through the day meal by meal in plain prose with no lists, a length the meal-plan request needs."
+}

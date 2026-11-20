@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 5,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The answer names stagnation, the arms burden, nationalism and glasnost/perestroika as causes and gives the 1989 revolutions, the August 19-21 1991 coup and the December 8 1991 Belovezha Accords (with the December 1 Ukrainian referendum and December 26 dissolution) as the events, all with correct dates and order.",
+  "judgment_reason": "A stable history question needed no search, yet the assistant made seven Wikipedia and web_search calls before answering.",
+  "spoken_fit_reason": "The reply is a multi-paragraph essay that the word cap cut off before the listener reached any of the three events."
+}

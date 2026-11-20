@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It synthesizes the forecast and the operator pages well (Kriens lifts closed 19 October to 27 November, Pilatus boat ended 18 October, Rigi cogwheel hourly until mid-December), but it says the first winter boat leaves 'around a quarter to ten' when the peakbyrail excerpt gives 09:12.",
+  "judgment_reason": "Checking the forecast and the seasonal closures was the right call, but it misstates a departure time it had retrieved and then offers to 'dig up the exact boat and train departure times' it already had.",
+  "spoken_fit_reason": "Five long paragraphs with a list-style lead-in ran past the word cap, so the listener never heard the Pilatus alternative or the final plan."
+}

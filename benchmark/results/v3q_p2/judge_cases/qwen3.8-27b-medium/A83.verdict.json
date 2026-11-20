@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The value (about $166,667), multiple (8.33x), and profit (about $146,667) are right, but it says the stake is \"about a third of one percent\" and then \"a sixth of one percent\", ten times the true 0.033 and 0.017 percent.",
+  "judgment_reason": "It checked each figure with the calculator and flagged its assumptions: dilution applies evenly, and liquidation preferences and anti-dilution terms are ignored.",
+  "spoken_fit_reason": "Three short plain paragraphs with the figures spoken in words, an appropriate length for a calculation answer."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The final assistant message is empty, so none of the reference sketch numbers (3,675 per month, 44,100, 87,817.80, the 840 year-one difference) appear.",
+  "judgment_reason": "It made no calculator calls and produced nothing at all, so every judgment call the question demanded went unmade.",
+  "spoken_fit_reason": "There is no text to speak."
+}

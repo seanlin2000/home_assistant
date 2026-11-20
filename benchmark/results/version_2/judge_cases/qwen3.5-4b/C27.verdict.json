@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It gives about $4.32 per month, the figure the sketch specifies for a 30-day month at the stated 30 cents per kilowatt hour.",
+  "judgment_reason": "It used the energy_cost tool with the numbers the user supplied, invented no rate, and did not search.",
+  "spoken_fit_reason": "A single sentence that leads with the cost and restates the rate, plain prose with no markup."
+}

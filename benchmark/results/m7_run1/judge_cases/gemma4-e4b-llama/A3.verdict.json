@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 0,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It says 'I cannot determine' instead of giving the clear no the sketch requires; its only sliver of correct content is naming the size of the inactive parameters as a factor.",
+  "judgment_reason": "The question is a false premise built to be pushed back on, and the answer hedges rather than explaining that every expert must be held in memory.",
+  "spoken_fit_reason": "It is a single plain sentence, but it leads with a non-answer rather than the answer."
+}

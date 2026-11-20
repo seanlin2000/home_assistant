@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The 38.5 percent figure is correct, but the new rent of 'two thousand nine hundred seventy-6 dollars' is wrong; the reference says $2,964.",
+  "judgment_reason": "Every calculate call it made was malformed and the percent call answered a different question, yet it gave the figures as if they had been computed and verified.",
+  "spoken_fit_reason": "Two short sentences, but the mixed number 'seventy-6' is a formatting slip that text-to-speech would read badly."
+}

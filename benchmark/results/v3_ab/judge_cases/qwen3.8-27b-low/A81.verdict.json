@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It correctly lists the query, API key, IP address, user agent and timing as visible, and what stays local, and it gives sound mitigations (sanitized queries, a caching proxy, provider policy), but it leaves out that fetched websites also see the IP and never mentions a VPN or searching only when needed.",
+  "judgment_reason": "It answered a stable architecture question from knowledge without searching, which was the right call.",
+  "spoken_fit_reason": "The prose is plain and leads with the key point, but it ran past the word cap, so the listener never heard the advice on reducing exposure, which was a third of what was asked."
+}

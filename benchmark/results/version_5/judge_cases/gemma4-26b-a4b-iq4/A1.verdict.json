@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It makes the key distinction the sketch requires, stating you still need to fit all thirty billion parameters at roughly eighteen gigabytes in four-bit while only the active experts do the math, and ends on heavy quantization or CPU offload.",
+  "judgment_reason": "Correctly answered from general technical knowledge without searching and was explicit that eighteen gigabytes exceeds the sixteen gigabyte card.",
+  "spoken_fit_reason": "Three paragraphs with an extended library analogy overran the word cap, so the listener never heard the offload conclusion."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Explains that blue scatters far more than red, why the sky is not violet (less violet output, upper-air absorption, eye sensitivity), and that the long low sunset path scatters the blue away, with dust and haze strengthening it, matching every point in the sketch.",
+  "judgment_reason": "Answered stable physics without searching and pitched it at a non-scientist as asked, with no unexplained jargon.",
+  "spoken_fit_reason": "Plain conversational prose with no jargon or formatting, and the length fits an explanation the user explicitly asked for."
+}

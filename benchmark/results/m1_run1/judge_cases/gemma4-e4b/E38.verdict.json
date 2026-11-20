@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The 56°F low with clear skies comes straight from the tool result, but that period is today's midnight-to-6-am overnight, which it presents as 'tonight' without noting that it may be the night that has already passed.",
+  "judgment_reason": "It recognized a weather question with no weather word and used the home forecast instead of searching.",
+  "spoken_fit_reason": "One plain sentence that gives the temperature with its unit."
+}

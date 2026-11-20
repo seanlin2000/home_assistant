@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Every release named traces to the excerpts and most fall inside the window (Muse Spark Open October 15, DeepSeek V4.1 Flash October 17, Kimi K3.1 Pro weights November 2, Arete-27B and Ripple-65B in November) and it correctly says Qwen has nothing newer than the August Qwen3.8 family, but the Mistral Large 4 preview of October 6 sits just outside 30 days and the image-and-reasoning detail comes from an undated snippet.",
+  "judgment_reason": "Searched as a current-news question requires, flagged that roundups disagree and that Mistral's weights are unconfirmed, and said plainly when a lab had no recent release instead of inventing one.",
+  "spoken_fit_reason": "Leads with a framing sentence and walks the five items as spoken ordinals with numbers spelled out, no lists or URLs; long, but five developments plus a comparison were asked for."
+}

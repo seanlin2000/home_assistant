@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It gives $11.61 for the tip and $76.11 for the total, exactly the figures in the reference sketch.",
+  "judgment_reason": "It used the percent tool for the calculation as instructed, made no search, and added the total without inventing anything.",
+  "spoken_fit_reason": "One sentence that leads with both numbers in plain prose, with no markup."
+}

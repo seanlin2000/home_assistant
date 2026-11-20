@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It plainly corrects the premise with the sourced September quarter-point hike to 3.75 to 4.00 percent and the late-October hold, and notes mortgage rates are rising, but it does not give the refinance logic of comparing the current average rate (7.32 percent in the sources) to the user's rate, closing costs and break-even.",
+  "judgment_reason": "It searched and pushed back on the false premise, but it assumed the user's existing rate is lower without asking for it.",
+  "spoken_fit_reason": "Three short sentences that lead with the correction and fit well within the spoken limit."
+}

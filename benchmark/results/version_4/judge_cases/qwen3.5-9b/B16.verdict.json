@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It claims Long Island City has seen 'double-digit year-over-year growth for certain unit types' and then cites the very figures that refute it, $4,158 to $4,348 for one-bedrooms, which is 4.6%, while the MNS excerpt puts Queens overall at 3.05% year over year and LIC at +0.28% month over month.",
+  "judgment_reason": "Searching was right, but the question asked specifically about the risk of using advertised rents and it answered with broker fees and pet deposits rather than the actual trap, that asking rents reflect new listings, concessions and unit mix rather than what a renewing tenant pays.",
+  "spoken_fit_reason": "Three sentences of plain prose, about 110 words, that open with the verdict on the 4% offer."
+}

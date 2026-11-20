@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 4,
+  "judgment": 2,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It covers the query text, the API key tied to billing identity, IP address, and timing metadata, plus what stays local and the mitigations (query hygiene, SearXNG, VPN, retention tiers), with Brave's 90-day and SerpApi's 31-day retention traced to excerpts, but it says Tavily stores 'session identifiers' when the excerpt says it hashes human IDs.",
+  "judgment_reason": "The architecture question needed no search, so the three search_and_read calls were unnecessary, though it flagged that provider policies change.",
+  "spoken_fit_reason": "It uses bold markdown headings such as '**What stays local.**' and runs to six long paragraphs, and the word cap cut it off before the mitigation advice."
+}

@@ -1,0 +1,112 @@
+[
+  {
+    "question_id": "A76",
+    "case": "benchmark/results/v3_ab_p3/judge_cases/claude-opus-5-5-open/A76.md",
+    "verdict": "benchmark/results/v3_ab_p3/judge_cases/claude-opus-5-5-open/A76.verdict.json"
+  },
+  {
+    "question_id": "A77",
+    "case": "benchmark/results/v3_ab_p3/judge_cases/claude-opus-5-5-open/A77.md",
+    "verdict": "benchmark/results/v3_ab_p3/judge_cases/claude-opus-5-5-open/A77.verdict.json"
+  },
+  {
+    "question_id": "A78",
+    "case": "benchmark/results/v3_ab_p3/judge_cases/claude-opus-5-5-open/A78.md",
+    "verdict": "benchmark/results/v3_ab_p3/judge_cases/claude-opus-5-5-open/A78.verdict.json"
+  },
+  {
+    "question_id": "A79",
+    "case": "benchmark/results/v3_ab_p3/judge_cases/claude-opus-5-5-open/A79.md",
+    "verdict": "benchmark/results/v3_ab_p3/judge_cases/claude-opus-5-5-open/A79.verdict.json"
+  },
+  {
+    "question_id": "A80",
+    "case": "benchmark/results/v3_ab_p3/judge_cases/claude-opus-5-5-open/A80.md",
+    "verdict": "benchmark/results/v3_ab_p3/judge_cases/claude-opus-5-5-open/A80.verdict.json"
+  },
+  {
+    "question_id": "A81",
+    "case": "benchmark/results/v3_ab_p3/judge_cases/claude-opus-5-5-open/A81.md",
+    "verdict": "benchmark/results/v3_ab_p3/judge_cases/claude-opus-5-5-open/A81.verdict.json"
+  },
+  {
+    "question_id": "A82",
+    "case": "benchmark/results/v3_ab_p3/judge_cases/claude-opus-5-5-open/A82.md",
+    "verdict": "benchmark/results/v3_ab_p3/judge_cases/claude-opus-5-5-open/A82.verdict.json"
+  },
+  {
+    "question_id": "A83",
+    "case": "benchmark/results/v3_ab_p3/judge_cases/claude-opus-5-5-open/A83.md",
+    "verdict": "benchmark/results/v3_ab_p3/judge_cases/claude-opus-5-5-open/A83.verdict.json"
+  },
+  {
+    "question_id": "A84",
+    "case": "benchmark/results/v3_ab_p3/judge_cases/claude-opus-5-5-open/A84.md",
+    "verdict": "benchmark/results/v3_ab_p3/judge_cases/claude-opus-5-5-open/A84.verdict.json"
+  },
+  {
+    "question_id": "A85",
+    "case": "benchmark/results/v3_ab_p3/judge_cases/claude-opus-5-5-open/A85.md",
+    "verdict": "benchmark/results/v3_ab_p3/judge_cases/claude-opus-5-5-open/A85.verdict.json"
+  },
+  {
+    "question_id": "A86",
+    "case": "benchmark/results/v3_ab_p3/judge_cases/claude-opus-5-5-open/A86.md",
+    "verdict": "benchmark/results/v3_ab_p3/judge_cases/claude-opus-5-5-open/A86.verdict.json"
+  },
+  {
+    "question_id": "A87",
+    "case": "benchmark/results/v3_ab_p3/judge_cases/claude-opus-5-5-open/A87.md",
+    "verdict": "benchmark/results/v3_ab_p3/judge_cases/claude-opus-5-5-open/A87.verdict.json"
+  },
+  {
+    "question_id": "A11",
+    "case": "benchmark/results/v3_ab_p3/judge_cases/claude-opus-5-5-open/A11.md",
+    "verdict": "benchmark/results/v3_ab_p3/judge_cases/claude-opus-5-5-open/A11.verdict.json"
+  },
+  {
+    "question_id": "B88",
+    "case": "benchmark/results/v3_ab_p3/judge_cases/claude-opus-5-5-open/B88.md",
+    "verdict": "benchmark/results/v3_ab_p3/judge_cases/claude-opus-5-5-open/B88.verdict.json"
+  },
+  {
+    "question_id": "B89",
+    "case": "benchmark/results/v3_ab_p3/judge_cases/claude-opus-5-5-open/B89.md",
+    "verdict": "benchmark/results/v3_ab_p3/judge_cases/claude-opus-5-5-open/B89.verdict.json"
+  },
+  {
+    "question_id": "B90",
+    "case": "benchmark/results/v3_ab_p3/judge_cases/claude-opus-5-5-open/B90.md",
+    "verdict": "benchmark/results/v3_ab_p3/judge_cases/claude-opus-5-5-open/B90.verdict.json"
+  },
+  {
+    "question_id": "B91",
+    "case": "benchmark/results/v3_ab_p3/judge_cases/claude-opus-5-5-open/B91.md",
+    "verdict": "benchmark/results/v3_ab_p3/judge_cases/claude-opus-5-5-open/B91.verdict.json"
+  },
+  {
+    "question_id": "B92",
+    "case": "benchmark/results/v3_ab_p3/judge_cases/claude-opus-5-5-open/B92.md",
+    "verdict": "benchmark/results/v3_ab_p3/judge_cases/claude-opus-5-5-open/B92.verdict.json"
+  },
+  {
+    "question_id": "B93",
+    "case": "benchmark/results/v3_ab_p3/judge_cases/claude-opus-5-5-open/B93.md",
+    "verdict": "benchmark/results/v3_ab_p3/judge_cases/claude-opus-5-5-open/B93.verdict.json"
+  },
+  {
+    "question_id": "B94",
+    "case": "benchmark/results/v3_ab_p3/judge_cases/claude-opus-5-5-open/B94.md",
+    "verdict": "benchmark/results/v3_ab_p3/judge_cases/claude-opus-5-5-open/B94.verdict.json"
+  },
+  {
+    "question_id": "B95",
+    "case": "benchmark/results/v3_ab_p3/judge_cases/claude-opus-5-5-open/B95.md",
+    "verdict": "benchmark/results/v3_ab_p3/judge_cases/claude-opus-5-5-open/B95.verdict.json"
+  },
+  {
+    "question_id": "B21",
+    "case": "benchmark/results/v3_ab_p3/judge_cases/claude-opus-5-5-open/B21.md",
+    "verdict": "benchmark/results/v3_ab_p3/judge_cases/claude-opus-5-5-open/B21.verdict.json"
+  }
+]

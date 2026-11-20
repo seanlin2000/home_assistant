@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "38.51 percent and $2,964 both match the reference sketch and both trace to tool results rather than mental arithmetic.",
+  "judgment_reason": "It split the question into the right two tool calls, used the percent tool for the ratio and the calculator for the increase, and did not search.",
+  "spoken_fit_reason": "Two sentences that answer each half in order, with the dollar figure spelled out; the digits in \"38.51 percent\" still read cleanly aloud."
+}

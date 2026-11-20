@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Every figure traces to the excerpts (Cerebras's $5.55B May IPO and roughly $27B market value, Etched's $800M while seeking $20B with no revenue, SambaNova's $1B at $11B with JPMorgan and a 2027 IPO, Positron's $750M at $5B with 50 racks at Oracle, MatX's $500M toward tapeout, Fractile's $220M), but it omits MatX's reported valuation and rounds Fractile's $5.5B to $7.3B range down to seven.",
+  "judgment_reason": "Searched for current funding data, separated shipping progress (Cerebras public, Positron racks at Oracle) from plans (Asimov in late 2027, MatX tapeout), and flagged that valuations vary between sources and are estimates.",
+  "spoken_fit_reason": "Leads with a one-line overall picture, then one or two plain sentences per company with numbers spelled out and no lists; long, but six companies were asked about."
+}

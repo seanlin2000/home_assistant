@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It gives only nutrient recycling from old leaves and omits the other likely causes in the sketch such as nitrogen deficiency, shading of the lower canopy, overwatering or root problems, and a pot-bound root ball, even though the user asked for explanations plural.",
+  "judgment_reason": "It rightly asked for species, light, and soil-moisture or pest changes before deciding, but it led by declaring the pattern 'actually a very common, often normal sign' before it had any of that information.",
+  "spoken_fit_reason": "Two conversational paragraphs, answer first, with the follow-up questions folded into prose rather than a list."
+}

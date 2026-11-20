@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It gives three distinct mechanisms from the sketch (giant tech firms driving the index, layoffs and buybacks lifting share prices while wages stagnate, and rising asset prices like housing), though the third is muddled by saying asset gains happen \"without touching the rest of the economy\" while also saying costs outpace incomes.",
+  "judgment_reason": "Answering a conceptual economics question without searching was right, and it gives concrete mechanisms rather than restating that the market is not the economy.",
+  "spoken_fit_reason": "It leads with a one-sentence answer and then gives three short spoken \"First, Second, Third\" paragraphs with no list formatting."
+}

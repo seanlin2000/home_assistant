@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It states $1,623.23 against the sketch's roughly $19,091, because it called growth_schedule with 3 periods and a single $500 start instead of 36 monthly $500 deposits at 4 percent a year compounded monthly.",
+  "judgment_reason": "It repeated the tool's output as fact without noticing that 36 deposits of $500 must be at least $18,000, so the answer is off by more than a factor of ten.",
+  "spoken_fit_reason": "One short sentence with the figure spoken in words, exactly the right shape for a spoken answer even though the number is wrong."
+}

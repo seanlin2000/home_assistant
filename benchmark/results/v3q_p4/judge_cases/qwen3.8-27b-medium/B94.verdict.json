@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The Lucerne-Interlaken-Zermatt route, Rigi, Jungfraujoch, and Gornergrat viewpoints, the CHF 309 four-day pass, and the Eiger Express and First closures all match the sources, but it applies the 25% discount to the May-to-October fare of 271.20 and calls the result \"about 203 francs ... in November\" when the source's November fare is 224.40, and it never prices point-to-point tickets.",
+  "judgment_reason": "It stated its mid-November assumption and planned around the maintenance closures, but its claim that the pass beats the Half Fare Card \"about the same or slightly less overall\" rests on no figures, and it schedules the pass-included Rigi on the day before the pass starts.",
+  "spoken_fit_reason": "This is a wall of text of roughly 800 words, and the word cap cut it off on day two, before the ticket advice the user asked for."
+}

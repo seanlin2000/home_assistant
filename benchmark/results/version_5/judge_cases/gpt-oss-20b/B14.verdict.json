@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 2,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The two main mechanisms are real synthesis rather than parroting and trace cleanly to the excerpts, NVIDIA taking roughly 60 percent of CoWoS and HBM dies crowding GDDR off the same DRAM wafers, but it puts leading-edge wafers 'in the high-four-thousands of dollars' when the source it drew from says 3nm wafers run $17k to $22k.",
+  "judgment_reason": "Searching was clearly right and it answered the mechanism question the user asked rather than reciting prices, but it restated a retrieved wafer price roughly four times too low without hedging.",
+  "spoken_fit_reason": "Plain prose that leads with a clear thesis sentence, but four dense technical paragraphs long enough that the listener only heard the first two of its three causes before the cap cut it."
+}

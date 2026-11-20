@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The three developments it covers are accurate and sourced (Kimi K3.1 Pro weights on November 2, Mistral Large 4 weights on October 29, DeepSeek V4.1-Flash-1017 on October 17 with its Terminal-Bench and DeepSWE figures), but the reply breaks off mid-sentence on DeepSeek, so Qwen (Qwen4-Max preview, no open weights) and Meta (Muse Spark Open), both named in the question, and two of the five developments never appear.",
+  "judgment_reason": "Searching was right and it flagged vendor-reported numbers, but it spent all ten tool calls chasing loose ends instead of answering with the substantial material it already had.",
+  "spoken_fit_reason": "It uses bold markdown headings, speaks five tool-use narration lines aloud, and is a wall of detail that the word cap cut in the first item."
+}

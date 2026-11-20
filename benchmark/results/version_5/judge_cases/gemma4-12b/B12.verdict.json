@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 0,
+  "answer_quality_reason": "Both recommendations are traceable to the excerpts (used 3090 at roughly $400 with 24GB, RTX 5060 Ti 16GB at $430 inside a ~$1,010 parts list) and it correctly frames VRAM capacity as the binding constraint, though it repeats the sources' prices without the first article's warning that used GPU prices swing week to week.",
+  "judgment_reason": "Searching was right for street prices, it stayed inside the $1,000 budget by accounting for the rest of the build, offered a used and a new path, and warned against 8GB cards.",
+  "spoken_fit_reason": "It emits literal markdown bold around the card names and runs three paragraphs long enough to be truncated by the word cap."
+}

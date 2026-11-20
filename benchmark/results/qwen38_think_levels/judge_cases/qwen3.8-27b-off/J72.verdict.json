@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It invents a 37 to 16 loss to the Rams and 245 yards on 18 of 30, when the reference has a 23 to 17 win over Washington with Purdy at 264 yards.",
+  "judgment_reason": "It skipped game_scores and box_score entirely and stated a made-up recent game as fact.",
+  "spoken_fit_reason": "Two plain sentences that would sound natural aloud."
+}

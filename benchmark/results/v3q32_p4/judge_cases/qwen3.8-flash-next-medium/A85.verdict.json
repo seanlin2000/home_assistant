@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The plan uses cheap, quick foods with plausible per-meal figures and the protein correctly sums to 174 g, but the stated 2,135 calories doesn't add up: the four listed meals total 1,725, and the calculator call added an unexplained 120+170+120.",
+  "judgment_reason": "Correctly answered without searching, stayed under 2,500 calories and kept protein powder to an optional extra, respecting every constraint.",
+  "spoken_fit_reason": "Conversational prose with no markup, but it runs well past the length cap and the word limit cut off the spoken output."
+}

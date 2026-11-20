@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Explains present value discounting, why distant cash flows lose more when the rate rises, growth stocks as long-duration assets like long bonds, and adds the bond alternative and borrowing-cost effects, covering every required element of the sketch.",
+  "judgment_reason": "Answered a stable finance concept from knowledge without searching, with no unsupported current figures.",
+  "spoken_fit_reason": "Leads with the core valuation idea and builds the explanation in plain prose without lists, at a length the explanatory question warrants."
+}

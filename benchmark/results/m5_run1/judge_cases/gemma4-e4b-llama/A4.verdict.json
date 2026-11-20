@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It offers only a vague 'nutrient or water distribution' explanation, missing normal senescence of old leaves, nitrogen deficiency, shading, and root issues, and asks for only two of the useful pieces of information (species and watering).",
+  "judgment_reason": "Asking for species and watering instead of asserting one cause is the right instinct, but it skips the explanations the user explicitly asked for and leans on an unstated assumption that something is wrong.",
+  "spoken_fit_reason": "Three short plain sentences ending in a focused question, well suited to speech."
+}

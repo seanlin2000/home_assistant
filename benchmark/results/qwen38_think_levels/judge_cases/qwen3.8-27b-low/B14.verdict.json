@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "Synthesizes the AI-driven memory shortage, GDDR7 scarcity, the NVIDIA CFO quote, DRAM contract increases, MSI's 20 percent shortfall, and tariffs as minor into a causal chain, though it attributes the Q1 93 to 98 percent jump to TrendForce and states the bundled-kit pass-through as fact when pcserverandparts says it is unconfirmed.",
+  "judgment_reason": "It searched for a current-events question, explained causes rather than reciting prices as asked, and flagged that the percentages come from analyst trackers.",
+  "spoken_fit_reason": "Leads with the one-line cause, but five dense paragraphs ran past the word cap."
+}

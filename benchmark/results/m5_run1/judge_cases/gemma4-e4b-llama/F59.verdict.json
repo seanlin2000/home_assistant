@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The 11.7 to 15 degrees Celsius range matches the convert results for the forecast's 53 to 59°F, but it gives a range rather than a low rounded to the degree (about 12°C) as the question asked.",
+  "judgment_reason": "It used the home forecast and the convert tool rather than converting in its head or searching.",
+  "spoken_fit_reason": "One plain sentence with the figures written out for speech."
+}

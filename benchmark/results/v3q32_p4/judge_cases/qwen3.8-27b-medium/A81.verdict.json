@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It correctly separates the transmitted query, IP and headers from local history and reasoning and gives sound mitigations (stripping queries, VPN, caching, no-logging tiers), but it omits that the API key ties every query to your account and billing identity and that fetched websites also see your IP.",
+  "judgment_reason": "A conceptual privacy question needed no search, and the advice is concrete without inventing details about the user's setup.",
+  "spoken_fit_reason": "Two plain-prose paragraphs that lead with what the provider sees and contain no lists or formatting."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 1,
+  "answer_quality_reason": "After two malformed calculate calls passing the bare number 3500, the answer gives no totals at all instead of the 44,100 and 87,817.80 figures in the reference sketch.",
+  "judgment_reason": "The user gave the rent, both increases, and both lease lengths, yet the assistant claims it needs to know 'how to structure the calculation' and asks the user to repeat it, failing the central point.",
+  "spoken_fit_reason": "Plain prose of three sentences, but it leads with an apology and a request rather than any answer."
+}

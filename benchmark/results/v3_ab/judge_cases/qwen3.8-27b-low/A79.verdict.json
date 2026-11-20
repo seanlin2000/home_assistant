@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It covers matrix-multiply parallelism, memory-bandwidth-bound generation, the CUDA moat, the flexibility-versus-efficiency trade-off, and TPU and Groq examples, but it wrongly says the TPU was designed around the transformer and the text breaks off mid-sentence in its fourth case.",
+  "judgment_reason": "It answered a stable technical explainer from knowledge without searching, which was the right call.",
+  "spoken_fit_reason": "It is a wall of text of roughly nine hundred words that the word cap cut after the first GPU paragraph, so the listener never heard the GPU, ASIC and inference-chip comparison or when a specialized chip wins."
+}

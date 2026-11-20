@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 4,
+  "judgment": 2,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It correctly covers matrix multiplication on parallel tensor cores, decode being limited by memory bandwidth, Etched, TPU, Groq SRAM and Cerebras, and when a specialized chip wins or loses, but it leaves out NVIDIA's CUDA software ecosystem as a reason GPUs dominate.",
+  "judgment_reason": "The question was conceptual and needed no search, yet it made four search calls, though it was careful to label Etched's 500,000 tokens per second as an unverified vendor claim.",
+  "spoken_fit_reason": "Six long paragraphs full of jargon hit the word cap, so the listener heard only the GPU section and none of the comparison or the answer about when a specialized chip wins."
+}

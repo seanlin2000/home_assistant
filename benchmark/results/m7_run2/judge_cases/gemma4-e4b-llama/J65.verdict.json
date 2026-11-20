@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It names none of Brock Purdy, Mac Jones, or Kurtis Rourke, and instead claims the 49ers 'do not have a quarterback position'.",
+  "judgment_reason": "It never called team_roster, refused a request its tools could answer, and stated a false claim about the roster as fact.",
+  "spoken_fit_reason": "One short plain sentence with no formatting, though what it says is wrong."
+}

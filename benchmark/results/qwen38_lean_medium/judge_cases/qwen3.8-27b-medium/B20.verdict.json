@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The 3060 12GB ($320 to $400), 5060 Ti ($618 to $800) and 5090 ($6,900 to $7,700) prices trace to the excerpts and the within-budget build is coherent, but the key claim that a used 3090 system costs 'roughly $1,200 to $1,500 today' comes from no retrieved excerpt, since both 3090 searches returned nothing.",
+  "judgment_reason": "It says explicitly up front that ChatGPT-like quality cannot be met under $1,000, labels every over-budget option with how far over it goes, and lets the user choose the tradeoff instead of quietly raising the budget.",
+  "spoken_fit_reason": "Eight paragraphs, including a list-style 'What you can actually do within $1,000:' lead-in, ran far past the word cap, so the listener never heard the within-budget build."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It separates the two problems and gives ordered checks for multipoint switching, 2.4 GHz congestion, distance and codecs, plus room light, motion blur, game mode and breaks for eye strain, but it misses the DLP rainbow effect and firmware updates and offers shaky claims about focal distance and 'stimulating' lamp light.",
+  "judgment_reason": "It answered a troubleshooting question from knowledge without searching, ordered the tests by effort, and was candid that a monitor may simply suit long gaming sessions better.",
+  "spoken_fit_reason": "It uses markdown bold headings ('**The choppy audio**') in a wall of text of more than eight hundred words, and the word cap cut it partway through the audio section."
+}

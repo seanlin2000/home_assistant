@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The results gave Cerebras's May 2026 IPO and roughly 24 billion dollar market cap, Etched at 21 billion, SambaNova's 1 billion dollar round at 11 billion, Positron at 5 billion with racks at Oracle, and Fractile's 220 million dollar round, yet the answer quotes none of it, and its 'stock market plans being the thing to check' and 'smaller startup' for Positron contradict those sources.",
+  "judgment_reason": "Searching was right and it avoided inventing numbers, but it falsely claimed it 'could not check current funding figures' when the results held them, discarding the sources the question needed.",
+  "spoken_fit_reason": "Plain prose without formatting, but it opens with a refusal instead of the overall picture and runs long on generic descriptions."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The calculator-backed 166,667 dollars, 0.0333 and 0.0167 percent stakes, 8.3x multiple and 146,667 dollar profit all match the sketch, but it calls the initial stake 'one thirty-third of one percent', which is wrong (it is one-thirtieth) though corrected by the decimal that follows.",
+  "judgment_reason": "Used the calculator rather than searching and stated the key assumptions: no liquidation preferences, debt or fees, and same share class.",
+  "spoken_fit_reason": "Leads with the dollar answer in the first sentence and walks the steps in plain spoken prose, with caveats that are relevant rather than padding."
+}

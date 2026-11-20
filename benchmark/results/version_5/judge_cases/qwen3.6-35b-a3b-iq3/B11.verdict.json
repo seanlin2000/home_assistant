@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The 3.50 to 3.75 percent range and 3.63 percent effective rate are straight from the H.15 and FRED excerpts, but the year-over-year half is muddled: it opens with 'the rate has actually stayed flat', omits the September, October and November 2025 quarter-point cuts that the retrieved history table shows fall inside the last twelve months, and then contradicts itself by conceding the rate is lower than a year ago.",
+  "judgment_reason": "Correctly treated this as a freshness question, searched, and anchored on the Federal Reserve's own H.15 release rather than the prediction-market page.",
+  "spoken_fit_reason": "Plain spoken prose that leads with the rate, with no lists, URLs or citation markers despite the source-heavy excerpts."
+}

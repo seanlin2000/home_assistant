@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 1,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It delivers no market comparison and, more tellingly, nothing at all on the second half of the question about the risks of using advertised rents as a benchmark, which needed neither a search nor the user's rent figure.",
+  "judgment_reason": "It made zero tool calls on an explicitly current-conditions question and then asked for the current rent, which a percentage comparison does not require, using that as grounds to answer nothing.",
+  "spoken_fit_reason": "Two short sentences that would read aloud cleanly, but they are a request for information rather than an answer."
+}

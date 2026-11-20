@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 0,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It names no hardware, no VRAM figure, and no price, ending at 'I should search for current recommendations' with zero tool calls, so the question is entirely unanswered.",
+  "judgment_reason": "It deserves partial credit for recognizing prices are volatile and refusing to invent a build, but it then failed to make the search it said it needed.",
+  "spoken_fit_reason": "Two sentences of clean prose that would read aloud fine, but they are a statement of intent rather than an answer."
+}

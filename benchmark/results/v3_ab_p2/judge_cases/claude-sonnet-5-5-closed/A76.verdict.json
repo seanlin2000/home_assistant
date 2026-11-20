@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Correctly separates deep causes (stagnant economy, arms race, Afghan war, nationalism) from triggers (the August 1991 coup, Ukraine's December referendum, the Russia-Ukraine-Belarus agreement) with Gorbachev's resignation on December 25, 1991, but counts Gorbachev's reforms as one of the three events where the sketch treats them as a cause, and omits the accord's name and dissolution date.",
+  "judgment_reason": "Answered stable history from knowledge without searching, as expected, and framed the three-event choice as its own pick.",
+  "spoken_fit_reason": "Leads with a one-sentence answer and uses plain spoken prose with ordinal signposts, a length the three-part question warrants."
+}

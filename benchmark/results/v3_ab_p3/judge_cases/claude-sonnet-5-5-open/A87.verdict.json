@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It separates the two problems, names 2.4 GHz interference and the speaker being connected to two devices, and gives one-change-at-a-time steps, but on eye strain it omits focus or keystone, seating distance, and the DLP rainbow effect from the sketch.",
+  "judgment_reason": "Answering a troubleshooting question from stable knowledge without searching was right, and it proposes a controlled test (try the speaker with a phone) to isolate the laptop.",
+  "spoken_fit_reason": "It opens by saying these are two separate problems and stays in plain spoken sentences with no list formatting, at a length two problems warrant."
+}

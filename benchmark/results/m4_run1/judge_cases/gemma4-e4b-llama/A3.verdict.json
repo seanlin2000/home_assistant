@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It notes the inactive parameters must still be stored, but says 'depends on several factors' instead of a clear no, and wrongly cites gradients and optimizer states as inference overhead.",
+  "judgment_reason": "It avoided a needless search and did not endorse the premise, but hedged rather than pushing back clearly on a premise that is plainly false.",
+  "spoken_fit_reason": "It opens with an irrelevant sentence announcing today's date, burying the answer."
+}

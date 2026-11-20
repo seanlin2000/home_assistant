@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The used 4060 Ti 16GB pick is reasonable, but it quotes InsiderLLM's undated $380 to $420 used price as this month's market and ignores the dated runaihome excerpt putting used units at $450 to $700 with thin listings, and its 'used supply is decent' contradicts that source.",
+  "judgment_reason": "It correctly rules out the 3090 as over budget and treats the 5060 Ti under $500 as a sale-only case, but it hides the source disagreement on whether its main pick actually fits under $500.",
+  "spoken_fit_reason": "It leads with the recommendation in plain prose, but three long paragraphs ran past the word cap, so the closing practical advice was lost."
+}

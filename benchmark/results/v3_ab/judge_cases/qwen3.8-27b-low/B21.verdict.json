@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It says plainly that the Fed did not cut to zero, gives the 3.75 to 4 percent range held on October 28 after the September hike, quotes mortgage rates consistent with the 7.18 and 6.57 percent figures in the sources, and frames the refinance decision around the user's current rate and closing-cost break-even.",
+  "judgment_reason": "It searched to check the premise, corrected it, and asked for the user's current rate and time in the home rather than guessing.",
+  "spoken_fit_reason": "It leads with the correction in plain prose, but it ran past the word cap, so the listener never heard the questions about their current rate and how long they plan to stay."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 0,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The two totals of 44,100 and 87,817.80 match the tool results, but it calls the one-year lease cheaper and claims a savings of 43,077.80 by comparing one year against two years, and that subtraction is wrong anyway (the difference is 43,717.80); the 840 first-year saving on the two-year lease never comes up.",
+  "judgment_reason": "It compared leases of different lengths as if they were equivalent and did not note that the second-year rent on the one-year path is unknown, which is the central point of the question.",
+  "spoken_fit_reason": "Two plain sentences with the numbers spelled out for speech, leading with the totals."
+}

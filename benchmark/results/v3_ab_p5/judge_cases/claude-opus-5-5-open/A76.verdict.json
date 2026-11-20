@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Correct dates and the 1989 revolutions, the August 1991 coup, and the December agreement are all there with the economy, arms race, Afghanistan and nationalism as causes, but it counts Gorbachev's reforms as an event rather than a cause and omits the Ukrainian referendum and Gorbachev's resignation.",
+  "judgment_reason": "Answered stable history from knowledge without searching and explicitly separated long-running causes from immediate triggers as asked.",
+  "spoken_fit_reason": "Plain prose with years written out for speech, and its length matches a question that asks for three events plus a causes-versus-triggers distinction."
+}

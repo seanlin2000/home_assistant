@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 4,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It matches the sketch: invite each person to the Hue home, add physical switches, pick one voice platform, and explains that the bridge, automations, local app control and switches survive an outage while cloud Alexa and Google commands and remote control stop, with Apple Home staying local. However, it takes the menu path from a low-quality how-to site, and the message breaks off mid-sentence ('So plug').",
+  "judgment_reason": "This stable architecture question needed no search, yet the assistant made eight search calls and went over the tool-call limit.",
+  "spoken_fit_reason": "It uses markdown bold headings, opens with two filler lead-ins run together, and is a wall of text that the word cap cut off before the internet-outage part."
+}

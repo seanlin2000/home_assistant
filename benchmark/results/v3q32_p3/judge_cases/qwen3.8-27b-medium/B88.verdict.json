@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 1,
+  "answer_quality_reason": "DeepSeek V4.1-Flash, the Qwen3.8 2.4T open flagship, Meta's Muse Spark Open on October 15 and Mistral Large 4's October 29 weights all trace to the excerpts, but it calls Large 4 'Apache 2.0' when no excerpt names its license, lists the API-only Muse Ember among open developments, and wrongly says every lab now ships trillion-parameter MoEs.",
+  "judgment_reason": "Searching per lab with a month window was right, but it filled in a license the sources never gave instead of leaving it out.",
+  "spoken_fit_reason": "Plain prose with no markup, but one roughly 150-word paragraph packed with parameter counts and dates is hard to follow aloud."
+}

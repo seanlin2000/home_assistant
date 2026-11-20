@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The final ASSISTANT message is empty, so no itinerary or pass comparison was given despite the pass, Half Fare and fare data the searches returned.",
+  "judgment_reason": "Searching for current pass prices was right, but it spent every tool call re-checking the six-day pass price and hit the limit without ever answering, which fails the central point.",
+  "spoken_fit_reason": "Nothing was spoken, because the final reply is empty."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It recommends the router design for efficiency and cost, which matches the reference, but leaves out latency, predictable handling of simple commands, the cost of routing errors, and when a single model would be fine.",
+  "judgment_reason": "The recommendation is sound but one-sided, with no tradeoff of the router design and no condition under which the single-LLM design wins.",
+  "spoken_fit_reason": "It opens with a filler sentence about the question being 'a question of opinion and reasoning rather than a factual one I can answer with a tool' before reaching the recommendation."
+}

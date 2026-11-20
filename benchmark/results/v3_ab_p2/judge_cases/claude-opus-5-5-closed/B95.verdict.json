@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Names every component the sketch asks for (wake-word satellites, Whisper, llama.cpp or Ollama, Piper, an MCP search tool, Home Assistant), states the budget's limits on model size, tool reliability and speed, and gives a sensible build order, but the hardware pick stays vague and unpriced although the results gave a used 24 GB RTX 3090 at about $600 to $800.",
+  "judgment_reason": "Stayed within budget and invented no prices, but said it could not check today's prices when the search returned used-GPU price ranges, so the hardware recommendation was not grounded in what it found.",
+  "spoken_fit_reason": "Leads with the architecture in plain prose without lists or markup, at a length the four-part question warrants."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The yes-via-community-firmware answer traces to the Open Voice PE GitHub excerpt, but it never says the stock firmware lacks custom wake words, omits the microWakeWord route by taking control of the device in ESPHome from source 5, and skips the requested explanation of which source it trusted and why.",
+  "judgment_reason": "It searched as instructed and hedged with 'it appears', but it ignored the explicit request to justify its source choice and leaned on a single third-party repo over the official Home Assistant pages.",
+  "spoken_fit_reason": "Two plain sentences that lead with the answer, with no lists, URLs, or markup."
+}

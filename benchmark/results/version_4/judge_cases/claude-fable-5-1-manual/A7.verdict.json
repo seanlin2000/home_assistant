@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Reproduces the sketch's arithmetic exactly, 1.15 plus 0.3 giving 1.45 kilowatt hours a day and about 43.5 a month for roughly 6.50 to 13 dollars, and correctly identifies idle draw as the dominant term.",
+  "judgment_reason": "Named both required assumptions unprompted, the electricity rate given as a US residential range and the fact that a full hour at three hundred watts overstates real load.",
+  "spoken_fit_reason": "Leads with the six-to-thirteen-dollar range and stays in plain prose with numbers spelled out, though the two caveats push it to seven sentences."
+}

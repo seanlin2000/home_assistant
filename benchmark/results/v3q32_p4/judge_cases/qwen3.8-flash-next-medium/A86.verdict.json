@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 4,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "Correctly makes the Bridge the hub, shares access through Home access invites, links one voice ecosystem, and says the app, stored automations and dimmer switches keep working offline while remote and cloud voice control stop, but it never mentions that Apple Home with a home hub or a local controller like Home Assistant keeps voice working without internet.",
+  "judgment_reason": "It ran two web searches on a stable architecture question the rubric expected to be answered from knowledge, which was needless even though the advice that followed was sound.",
+  "spoken_fit_reason": "Plain prose with no markup, but it ran past the word cap, so the spoken output was cut before the closing advice about physical switches."
+}

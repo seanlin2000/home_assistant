@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Twenty-two point two Celsius and three point one one miles match the reference sketch on both conversions.",
+  "judgment_reason": "It used the convert tool for both units rather than searching or estimating, and reported each result without adding unrequested caveats.",
+  "spoken_fit_reason": "One sentence with the numbers written out as words, which reads cleanly through a speech engine."
+}

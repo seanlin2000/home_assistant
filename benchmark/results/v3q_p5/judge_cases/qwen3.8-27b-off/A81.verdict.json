@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 3,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "What stays local and what is transmitted (query, API key, IP, timestamps, user agent, and personal details leaking into queries) is covered well, but the minimization section breaks off after the first item and never reaches a VPN, a privacy-focused or self-hosted search proxy, or searching less, and it pads with LLM-API retention figures that are about the wrong kind of provider.",
+  "judgment_reason": "It searched twice for a stable architecture question that needed no lookup, then leaned on LLM-provider retention policies from the excerpts that do not apply to a search API.",
+  "spoken_fit_reason": "The listener heard tool-use narration ('Let me check on current recommendations', 'Let me put it together in spoken form'), markdown asterisks, and a long multi-paragraph answer cut off by the word cap."
+}

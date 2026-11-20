@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Both conversions match the reference sketch, about 22 degrees Celsius and roughly 3.1 miles, and both trace to the convert tool results of 22.22 and 3.11.",
+  "judgment_reason": "It ran both conversions through the tool rather than doing them in its head, did not search, and rounded sensibly while signalling it with 'about' and 'roughly'.",
+  "spoken_fit_reason": "One sentence answering both halves, plain prose with no lists or markup."
+}

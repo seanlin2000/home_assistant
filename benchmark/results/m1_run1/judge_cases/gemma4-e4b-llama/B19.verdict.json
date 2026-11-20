@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It correctly reports that Flash-Next does not fit and 27B fits at Q3_K_M, but attaches the ~2 tok/s 'slowly' estimate that modelfit gave for the spilled Q4 build, and its 'depends on how you plan to use it' never identifies what a fit check leaves out, such as latency, tokens per second, context, quality loss at Q3, or VRAM shared with speech models.",
+  "judgment_reason": "The question asked for critical reading, yet it did not note that the sources' figures are estimates rather than measurements or say plainly that a fit verdict is not enough to predict the experience.",
+  "spoken_fit_reason": "Two short plain paragraphs that lead with the fit verdict and have no formatting."
+}

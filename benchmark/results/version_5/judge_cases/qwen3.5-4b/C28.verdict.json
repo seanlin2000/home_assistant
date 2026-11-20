@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "About $2,398.20 a month and roughly $463,353 in total interest both match the reference sketch; noting that the payment excludes taxes and insurance would have been a bonus, not a requirement.",
+  "judgment_reason": "It used the loan tool for the amortization instead of estimating, and correctly did not search.",
+  "spoken_fit_reason": "One sentence carrying both figures in plain prose, no lists, markdown, or citation markers."
+}

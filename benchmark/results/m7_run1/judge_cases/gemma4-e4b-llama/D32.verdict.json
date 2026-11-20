@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It does ask for the missing place without guessing, but it adds an apology and preamble, and asks for 'the city or region' instead of where the user wants the capital of.",
+  "judgment_reason": "Asking for clarification instead of guessing was right, but it explains what was unclear rather than giving the short fixed 'Can you repeat that?'.",
+  "spoken_fit_reason": "At two sentences and about 25 words it is far longer than the two-to-five-word clarifier the standard calls for."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["agreed_with_false_premise"],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 0,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It gives only the generic compare-your-rate-and-fees logic, never mentions the roughly 7.5 percent 30-year rates in the Redfin and Bankrate excerpts, and never says the Fed did not cut to zero.",
+  "judgment_reason": "It searched only mortgage rates and let the false 'cut rates to zero' premise stand unchallenged, failing the central point of the question.",
+  "spoken_fit_reason": "Three plain sentences of reasonable length."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Both conversions match the sketch at 22.2 degrees Celsius and 3.1 miles, but the added flourish calls 3.1 miles 'a solid pace for most joggers' when it is a distance, not a pace.",
+  "judgment_reason": "It made both conversions with the convert tool and did not search, but volunteered unasked commentary about the weather feeling cool and the run being a good pace.",
+  "spoken_fit_reason": "Two short sentences of plain prose that lead with each converted figure, no lists or markup."
+}

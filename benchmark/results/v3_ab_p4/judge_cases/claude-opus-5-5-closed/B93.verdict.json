@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 0,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It misses the only listing the tool returned, Vert Frais (Japanese, $$, in the guide with no star), and offers Casa Enríque from memory instead; its sole merit is not padding the list to five.",
+  "judgment_reason": "It falsely claimed it could not read the listings when the tool returned one Long Island City restaurant, failing the central task of reporting what the guide snapshot shows.",
+  "spoken_fit_reason": "Short plain prose, but it leads with a disclaimer rather than an answer and ends by asking for a cross street."
+}

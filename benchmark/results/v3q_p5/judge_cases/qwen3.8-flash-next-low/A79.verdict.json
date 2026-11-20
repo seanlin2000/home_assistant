@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 3,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It explains the memory-bandwidth wall, CUDA and batching, TPU-style ASICs, Etched and the SRAM designs of Groq and Cerebras well, but breaks off mid-sentence at \"when does a specialized chip beat an NVIDIA GPU?\" so the third question is barely answered, and its 24-tokens-a-second H100 bound sits unreconciled beside the quoted 700 at batch one.",
+  "judgment_reason": "It flagged that Sohu's figures are unverified vendor claims, but ran four searches and fetches plus calculator calls on a conceptual question that needed none, and hit the tool-call limit.",
+  "spoken_fit_reason": "A many-paragraph lecture dense with figures that the word cap cut after two paragraphs, so the listener heard only the bandwidth preamble."
+}

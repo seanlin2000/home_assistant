@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Correctly lists queries, IP, timing and the account-linked API key as transmitted and the conversation and answers as local, with scrubbed queries, no-log or self-hosted metasearch and a VPN as mitigations, but omits that the websites the assistant fetches also see your IP and requests.",
+  "judgment_reason": "Answered a conceptual privacy question from knowledge without searching and noted the caveat that software could paste the chat into a query.",
+  "spoken_fit_reason": "Plain prose that leads with what stays local and uses spoken first, second, third rather than a list, at a length the three-part question needs."
+}

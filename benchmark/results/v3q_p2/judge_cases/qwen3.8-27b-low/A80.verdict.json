@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The calculator figures of 35 GB at 4-bit and 17.5 GB at 2-bit are correct and the trade-offs are sound, but it says a 4-bit weight 'takes up a quarter of a byte' (it is half a byte) and claims the 35 GB model fits 'on a single 24-gigabyte graphics card with room to spare', which contradicts its own figure.",
+  "judgment_reason": "Using the calculator instead of searching was right, but it ends on the false 24 GB card recommendation and never says that the context cache comes on top of the weights.",
+  "spoken_fit_reason": "It leads with a definition rather than the numbers, runs to four long paragraphs, and the word cap cut it off at the start of the trade-offs."
+}

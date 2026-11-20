@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It separates the two problems and gives a staged isolation order for the audio (laptop Wi-Fi, then Bluetooth, unpair the laptop from the speaker, 5 GHz, wired fallback) and for eye strain (brightness, contrast, ambient light, refresh rate, focus and keystone), but it misses the DLP rainbow effect, taking breaks, and firmware updates.",
+  "judgment_reason": "No search was needed, it ordered the tests one variable at a time, and it asked for the projector model only as an optional follow-up.",
+  "spoken_fit_reason": "Plain prose, but five dense paragraphs that the word cap cut right after \"I'd isolate the variable\", before any troubleshooting step."
+}

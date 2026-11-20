@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Every release named (DeepSeek V4.1-Flash and its 1017 refresh, Meta's Muse Spark Open on October 15, Mistral Large 4 on October 6, Qwen3.8, LFM2.5 and MiniCPM-V 4.7) traces to the excerpts, but the comparison across labs is thin and Mistral's October 6 preview is not flagged as just outside the 30-day window.",
+  "judgment_reason": "Searched for current news, flagged that Qwen3.8 is older than 30 days, said it could not confirm Mistral's promised weights, and noted no OpenAI open release was found rather than inventing one.",
+  "spoken_fit_reason": "Leads with a caveat then lists five developments as first-through-fifth spoken prose with no markdown, a length the five-item request justifies."
+}

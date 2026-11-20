@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "About four dollars thirty a month from roughly half a kilowatt hour a day over a thirty day month matches the sketch's 0.48, 14.4 and 4.32, all taken from the energy_cost result.",
+  "judgment_reason": "The price was given so no rate assumption was needed, and it still flagged standby draw as something the figure excludes rather than pretending the number is complete.",
+  "spoken_fit_reason": "Three short sentences leading with the monthly cost, all figures spelled out for speech."
+}

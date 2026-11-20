@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Correctly explains short blue waves being scattered by air molecules and the long sunset path stripping out blue, with dust and smoke adding to it, but never says why the sky is not violet.",
+  "judgment_reason": "No search for stable physics, and it uses the plain-language framing the user asked for (\"short, choppy waves\" versus \"long, lazy ones\").",
+  "spoken_fit_reason": "Leads with the core idea in jargon-free prose with no formatting, at a length that suits an explanation request."
+}

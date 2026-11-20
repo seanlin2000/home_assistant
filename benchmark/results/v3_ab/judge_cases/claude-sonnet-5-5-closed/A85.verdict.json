@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The plan uses cheap quick foods with no protein powder and plausibly stays near 2,200 calories, but the per-meal protein figures are understated against the sketch's per-item values (8 ounces of chicken called about 50 grams when it is roughly 70, and four eggs plus a cup of egg whites plus a cup of Greek yogurt called 55), so the real total runs well above the stated 170.",
+  "judgment_reason": "Answered from knowledge without searching, respected the calorie cap and the no-powder-every-meal request, and told the listener to adjust rice and potatoes to hit the calorie target.",
+  "spoken_fit_reason": "Leads with the protein and calorie totals and walks through the day meal by meal in plain prose, a length a full-day plan justifies."
+}

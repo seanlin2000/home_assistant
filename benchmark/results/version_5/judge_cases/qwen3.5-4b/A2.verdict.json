@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It applied the rent increase monthly instead of annually, reporting $58,495.44 for one year against the sketch's $44,100 and $124,107.43 for two years against $87,817.80, so every number spoken is wrong.",
+  "judgment_reason": "It compared a one-year total against a two-year total as a straight $65,612 'savings' without noting the options cover different lengths, and never sanity-checked that a $3,500 rent cannot total $58,495 in twelve months.",
+  "spoken_fit_reason": "Three plain sentences that lead with the totals, no lists, markdown, or citation markers."
+}

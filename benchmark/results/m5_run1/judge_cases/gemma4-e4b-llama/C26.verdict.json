@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The 38.5 percent share is correct, but the new rent of 'two thousand nine hundred seventy-6 dollars' is wrong against the reference 2,964.",
+  "judgment_reason": "Its percent call returned a nonsense 210,900 and every calculate call was malformed, yet it spoke an unverified rent figure without saying the calculation had failed.",
+  "spoken_fit_reason": "Two short sentences, but 'seventy-6' mixes a digit into the spelled-out number, a slip that would read oddly aloud."
+}

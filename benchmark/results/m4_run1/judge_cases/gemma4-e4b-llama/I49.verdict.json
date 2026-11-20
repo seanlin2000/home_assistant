@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The 55 to 56 degree, partly cloudy, dry figures for Chicago match the tool result, though calling 55 degrees 'quite chilly' is a slightly misleading characterization.",
+  "judgment_reason": "It called weather_forecast for Chicago tonight and did not search the web.",
+  "spoken_fit_reason": "One plain sentence that gives the low."
+}

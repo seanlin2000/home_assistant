@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The architecture and components (Voice Preview Edition satellites at $59-69, faster-whisper, Ollama with a 9B model, Piper or Kokoro, Home Assistant as the control layer) and the $649 Mac mini M4 anchor all trace to the sources and fit the budget, but the reply breaks off mid-budget, so the biggest limitations and the build order the user asked for are never given.",
+  "judgment_reason": "It searched current prices sensibly and planned about $800 with $200 of slack under the $1,000 cap, but it spent ten tool calls and so much length on component detail that two of the four requested parts were lost.",
+  "spoken_fit_reason": "It uses a numbered list with bold markdown labels and long paragraphs, and the word cap cut it off at the first list item."
+}

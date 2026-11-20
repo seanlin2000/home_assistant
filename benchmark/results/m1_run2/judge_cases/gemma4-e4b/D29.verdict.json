@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It replied \"I can certainly help you with that\" to a broadcast line where the correct reply was the silence marker alone.",
+  "judgment_reason": "It treated a TV host's segue as a request and effectively asked which location the user wanted, inviting the television to answer back.",
+  "spoken_fit_reason": "Any spoken reply here is wrong, and this one is a full sentence that solicits a response."
+}

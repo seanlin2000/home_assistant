@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The cheap, quick, powder-free foods and the protein total of roughly 170 grams are plausible, but the arithmetic is loose (13 plus 19 called \"roughly 35\") and the claimed 2,430 calories does not follow from the meals listed, which add to well under 2,000.",
+  "judgment_reason": "It respected every stated constraint, using no protein powder, affordable staples, and minimal preparation, and answered without a needless search.",
+  "spoken_fit_reason": "Two dense paragraphs that the word cap cut at dinner, so the listener never heard the snacks or how the totals were reached."
+}

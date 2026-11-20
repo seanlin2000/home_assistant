@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The caveats about asking versus signed rents, concessions, mix shift and seasonality are exactly what the question asked for, but the market anchor is invented: no excerpt gives a Long Island City median of about forty five hundred as of June, a peak last September, or a fifty five dollar gap, and the claim that thousands of new luxury units were added contradicts the retrieved report of a 16.8 percent decline in Northwest Queens listings.",
+  "judgment_reason": "Delivered the skepticism the question demanded and reframed the decision around whether the starting rent is below market, but anchored the whole comparison on a number it did not retrieve.",
+  "spoken_fit_reason": "Plain prose throughout with the verdict in the first sentence and no lists or markup, though nine sentences is at the upper limit of what a listener will hold."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It correctly separates what stays local from what is sent (query text, API key, IP, headers, timing) and gives sound mitigations, but its 'nothing else leaks automatically' skips that fetched websites also see the IP, and it omits searching less and self-hosted proxies.",
+  "judgment_reason": "Stable privacy architecture answered from knowledge without searching, which was right.",
+  "spoken_fit_reason": "Two plain-prose paragraphs that lead with the answer and suit a three-part question, with no lists or markup."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The bridge-as-local-hub, multiple-app-users, and Home Assistant points are right, but it claims an Alexa or Google speaker \"talks to the bridge directly over your local network\" so voice works when the internet is down, which is the opposite of the sketch's point that cloud voice assistants stop.",
+  "judgment_reason": "It made an outage-proof local Alexa or Google speaker \"the key architectural point\", steering the user toward a design that fails in exactly the scenario they asked about.",
+  "spoken_fit_reason": "A long multi-paragraph answer that the word cap cut before the internet-outage section."
+}

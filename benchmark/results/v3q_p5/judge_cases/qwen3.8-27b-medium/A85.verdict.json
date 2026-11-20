@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "A cheap, quick five-meal plan whose stated items (40, 49, 14, 56, 12 g) add to 171 g protein at about 1,750 kcal, under the cap with powder only as a backup, though some item figures are conservative, such as 43 g for six ounces of chicken breast.",
+  "judgment_reason": "Honored the no-powder-every-meal and budget constraints, needed no search, and offered to swap proteins rather than inventing dietary preferences.",
+  "spoken_fit_reason": "Leads with the totals in plain prose, but the meal-by-meal walkthrough was long enough that the word cap cut it after lunch."
+}

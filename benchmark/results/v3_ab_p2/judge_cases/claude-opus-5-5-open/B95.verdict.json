@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Proposes a $899 16 GB Mac mini or a $650 to $800 used RTX 3090 (both from the excerpts), names Home Assistant, Whisper, an 8 to 14 billion parameter local model, Piper, a search tool and voice satellites, lists the limits (weaker than cloud, latency, far-field wake words, memory prices), and gives the sketch's build order.",
+  "judgment_reason": "Stayed within $1,000 at the sources' prices, made it explicit that the 3090 route assumes a PC the user already owns, and searched only for the current hardware prices.",
+  "spoken_fit_reason": "Leads with \"a design that fits a thousand dollars\" and covers architecture, limits and build order in plain prose without lists, at a length the four-part request needs."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 0,
+  "answer_quality_reason": "Covers the economy, arms race, Gorbachev's reforms, 1989, the August coup and December 1991 correctly, but says Ukraine held its referendum after the Belavezha Accords (wrong order) and omits nationalism in the republics as a cause.",
+  "judgment_reason": "Answered from stable historical knowledge without searching and explicitly separated long-term causes from immediate triggers as asked.",
+  "spoken_fit_reason": "A multi-paragraph essay that hit the word cap, so the listener heard only the preamble and the start of the causes and never reached the three events."
+}

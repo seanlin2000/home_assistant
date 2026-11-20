@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It names normal energy reallocation to new growth and gestures at 'nutrient uptake or water distribution', but never names nitrogen deficiency, shading of lower leaves, or root problems, and asks only about species, soil, and watering.",
+  "judgment_reason": "It asks what kind of plant it is, the soil, and the watering routine instead of asserting a single cause.",
+  "spoken_fit_reason": "Four short plain sentences that end with a clear question."
+}

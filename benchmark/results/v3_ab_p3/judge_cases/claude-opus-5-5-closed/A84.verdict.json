@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Explains discounted cash flow with the risk-free rate, the compounding hit to distant cash flows with the calculator-backed 74 versus 56 cents example, growth stocks as long-duration assets likened to long bonds, and costlier funding for unprofitable firms.",
+  "judgment_reason": "Answered a conceptual finance question without searching and used the calculator only to verify the worked discount figures.",
+  "spoken_fit_reason": "Leads with the core mechanism and uses spoken cents figures in plain prose, at a length the explanation request warrants."
+}

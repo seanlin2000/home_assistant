@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "All figures match the sketch (44,100; 43,260; 44,557.80; 87,817.80) and it gives both the year-one 840 comparison and a clearly labelled two-year comparison under an assumed renewal.",
+  "judgment_reason": "It flagged that the options cover different lengths and that the second-year renewal on the one-year path is unknown, naming the five percent assumption before quoting the 2,587 figure.",
+  "spoken_fit_reason": "One paragraph of plain prose with amounts spelled out for speech, and the length is justified by a question asking for totals of both options plus the saving."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "Mistral Large 4 weights on October 29, Muse Spark Open on October 15, DeepSeek V4.1-Flash-1017 on October 17 with its fifteen-cent off-peak input price, and DeepInfer on October 20 all match the excerpts, but it counts GLM-5.3 among the past month's developments without a date from any source, and it gives Qwen 3.8 the 201-language figure the source attached to Qwen 3.5/3.6.",
+  "judgment_reason": "It searched as needed, flagged that Qwen 3.8 falls outside the 30-day window instead of passing it off as recent, and labeled the benchmark claims as vendor-reported.",
+  "spoken_fit_reason": "Prose without markdown, but it runs to eight long paragraphs full of dashes and parameter counts, and the word cap cut it during the second development."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The five meals (35, 45, 25, 40 and 25 g) add up to 170 g of protein with plausible per-item figures, the stated 1,800 to 2,000 kcal is well under 2,500, and the foods (eggs, rotisserie chicken, Greek yogurt, ground turkey, cottage cheese, frozen vegetables) are cheap and quick.",
+  "judgment_reason": "Kept every constraint, labelled the figures as estimates, and limited protein powder to an optional single shake.",
+  "spoken_fit_reason": "Opens with the totals and walks through the day meal by meal in short spoken sentences without bullets or markup; the length is what a full-day plan requires."
+}

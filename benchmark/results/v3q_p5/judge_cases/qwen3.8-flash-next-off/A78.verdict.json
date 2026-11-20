@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It gives three distinct, concrete mechanisms (concentrated stock ownership, buybacks and cost cutting instead of wages, and essential prices staying high while mega-cap tech drives the index), but understates ownership concentration as \"roughly the majority\" for the top ten percent.",
+  "judgment_reason": "It correctly answered a conceptual economics question from knowledge without searching.",
+  "spoken_fit_reason": "It uses bold markdown headings (\"**One: ...**\") and runs long enough that the word cap cut it off in the second example."
+}

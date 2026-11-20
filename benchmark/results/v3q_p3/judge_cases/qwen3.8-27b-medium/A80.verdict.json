@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The calculator-backed 35 GB, 17.5 GB and 140 GB figures are correct and the quality trade-offs at 4-bit versus 2-bit are sound, but it says on-disk sizes are close to the raw figures, garbles 2-bit as 'half as much again', and never names faster bandwidth-bound generation as a benefit.",
+  "judgment_reason": "Not searching was right for stable technical knowledge, and using the calculator for the memory arithmetic was appropriate.",
+  "spoken_fit_reason": "Four long paragraphs of about six hundred words with quoted terms and dashes were cut by the word cap right after the memory figures, so the trade-offs were never heard."
+}

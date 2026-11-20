@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The budget section is grounded and stays under $1,000 (DDR5 at about $450 and a new 5060 Ti at $770-830 ruled out, a used desktop plus a used 16 GB card plus the $59 Voice Preview Edition), but the message stops after the wake-word and VAD stages and never covers the LLM, web search, TTS, limitations or build order.",
+  "judgment_reason": "It searched for current prices, respected the budget and labelled the used-desktop and used-GPU figures as planning estimates, but it never reached the limitations and priorities the question centered on.",
+  "spoken_fit_reason": "Five tool-call narration lines were spoken run together before a long, figure-dense answer that the word cap cut off."
+}

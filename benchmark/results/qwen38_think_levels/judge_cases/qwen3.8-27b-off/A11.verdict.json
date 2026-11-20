@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It correctly answers 1989, on November 9, but adds a false aside that this was 'just three weeks before the day you're asking me this'.",
+  "judgment_reason": "It correctly answered settled history from memory without searching.",
+  "spoken_fit_reason": "Two plain sentences that lead with the year."
+}

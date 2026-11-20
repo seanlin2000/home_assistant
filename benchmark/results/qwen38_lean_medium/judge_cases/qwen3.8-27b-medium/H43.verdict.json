@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 3,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "Leads with 400 degrees and 20 to 30 minutes, while the reference says about 425 degrees with 20 to 45 minutes by vegetable; 425 shows up only as an option for dense chunks.",
+  "judgment_reason": "The user said 'Look up' and the assistant answered from memory with no search, then closed by offering a recipe or seasoning tips.",
+  "spoken_fit_reason": "Leads with the temperature but runs to three paragraphs and ends with an unprompted follow-up question."
+}

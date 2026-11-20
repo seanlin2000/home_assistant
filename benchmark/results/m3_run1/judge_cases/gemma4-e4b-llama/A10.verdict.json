@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The final message is only a raw '<execute_tool> search_and_read{...}' text block, so no explanation of VRAM capacity versus GPU speed was given.",
+  "judgment_reason": "It tried to search the web for a stable conceptual question that needed no search, and produced no answer.",
+  "spoken_fit_reason": "Read aloud, the user would hear tool-call markup and a query string instead of an answer."
+}

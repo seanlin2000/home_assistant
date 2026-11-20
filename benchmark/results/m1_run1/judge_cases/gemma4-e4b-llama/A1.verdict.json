@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The opening claims active parameters are what allow a 16 GB GPU to handle a larger total count, which contradicts its own later correct statement that storing 30 billion parameters costs the same for both, and it never mentions quantization or expert offloading as the real reason an MoE can sometimes fit.",
+  "judgment_reason": "Answering without search was right, but it led with the misleading simplification the question was testing for instead of separating compute from storage up front.",
+  "spoken_fit_reason": "Plain prose with no formatting, but two dense paragraphs are longer than needed and the lead sentence is the misleading one."
+}

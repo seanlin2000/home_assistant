@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The plan uses cheap, quick staples without powder, but its own meal figures (40+68+14+42 g, 500+600+150+700 kcal) sum to about 164 g and 1,950 kcal, not the claimed 170 g and 2,450 kcal, and some items are off (six ounces of 90 percent lean beef credited with only 26 g of protein).",
+  "judgment_reason": "No search was needed, and it respected every stated preference: minimal preparation, grocery-store ingredients, no protein shakes, and under 2,500 calories.",
+  "spoken_fit_reason": "Plain prose with no lists, but long enough that the word cap cut it after lunch, so the listener never heard the snack, dinner or totals."
+}

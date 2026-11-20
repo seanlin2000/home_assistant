@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Every claim traces to the excerpts (Muse Spark Open on October 15, DeepSeek V4.1-Flash and its 1017 refresh, Mistral Large 4 preview on October 6 with no weights yet), but two of the 'five developments' fall outside the 30-day window: Qwen 3.8 is openly dated August, and Muse Glimmer, about two months older per source 3, is listed undated.",
+  "judgment_reason": "Searched as needed, warned that the sources stop in late October, and flagged Mistral's missing weights and the lack of benchmarks, but filled the top five with older items instead of saying the window had fewer releases.",
+  "spoken_fit_reason": "Plain ordinal prose with no lists or URLs that leads with the freshness caveat and the top item, at a length the five-item comparison demands."
+}

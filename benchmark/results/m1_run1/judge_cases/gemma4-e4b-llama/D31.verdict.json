@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 0,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It spoke 'I do not have enough context to provide a helpful response' to a conversation fragment that called for the silence marker alone.",
+  "judgment_reason": "It wrongly treated room conversation as addressed to it, though it avoided advice and did not end with a question that would invite a reply.",
+  "spoken_fit_reason": "A single short sentence, but any speech here interrupts people who were not talking to the assistant."
+}

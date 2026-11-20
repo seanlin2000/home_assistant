@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It replied \"Can you repeat that?\" to a clear request about banana bread baking time, so it gave no time or temperature at all.",
+  "judgment_reason": "The user explicitly asked it to look something up and it neither searched nor answered, treating a clear request as garbled.",
+  "spoken_fit_reason": "The reply is short and plain, but it answers nothing and ends in a question that pushes the work back onto the user."
+}

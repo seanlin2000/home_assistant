@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Names every component the sketch asks for (wake word, Whisper, local model with search and Home Assistant tools, Piper), the key limitations and the right build order, but names no hardware at the sources' prices (the 899 dollar Mac mini M6, the roughly 500 dollar RTX 5060 Ti 16GB), and 'a Mac mini with a lot of unified memory' is vague against a 1,000 dollar budget.",
+  "judgment_reason": "Searching was right and it stayed within budget, but it wrongly claimed it 'could not check current hardware prices' when the results listed them.",
+  "spoken_fit_reason": "Plain connected prose with no lists or markdown, at a length a four-part design question warrants."
+}

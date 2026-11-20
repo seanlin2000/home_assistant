@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The final reply is the silence marker '*' with no tool calls, so it never gives the monthly payment or the total interest.",
+  "judgment_reason": "It treated a clear mortgage question as speech not meant for it and stayed silent, which fails the central point.",
+  "spoken_fit_reason": "Nothing is spoken in reply to a real request, so the listener hears no answer at all."
+}

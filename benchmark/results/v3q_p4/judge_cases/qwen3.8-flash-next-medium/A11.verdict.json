@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "States 1989, specifically November 9, 1989, matching the reference, with accurate context about reunification in October 1990.",
+  "judgment_reason": "Recognized settled history and answered without searching.",
+  "spoken_fit_reason": "Leads with the year in two plain sentences with no formatting; the reunification aside is brief."
+}

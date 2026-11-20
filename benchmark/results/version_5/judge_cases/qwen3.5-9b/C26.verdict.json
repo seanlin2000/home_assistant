@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Both figures match the sketch exactly: 38.5 percent of take-home pay and $2,964 after the 4 percent increase.",
+  "judgment_reason": "Correctly handled this as arithmetic without searching and answered both parts asked.",
+  "spoken_fit_reason": "Two short plain-prose sentences, one per figure, with no lists or markdown."
+}

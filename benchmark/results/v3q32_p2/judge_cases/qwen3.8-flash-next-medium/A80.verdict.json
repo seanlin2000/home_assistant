@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The calculator-backed 140, 35 and 17.5 GB figures match the sketch, it notes that scales and the KV cache push real figures higher, and it describes 4-bit as the sweet spot with 2-bit noticeably degrading reasoning.",
+  "judgment_reason": "It used the calculator for the memory arithmetic, did not search, and noted that real-world sizes run higher than the bare weight math.",
+  "spoken_fit_reason": "Three short plain-prose paragraphs (definition, arithmetic, trade-offs) that map to the three parts of the question without lists or markup."
+}

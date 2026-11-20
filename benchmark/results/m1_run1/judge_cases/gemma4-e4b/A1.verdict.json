@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The answer claims that because only active experts are used, 'the immediate memory demand during the computation is much lower', which is the exact misconception the sketch rules out; it never says all experts must be stored or mentions quantization or CPU offload.",
+  "judgment_reason": "Not searching was right, but it glosses over the key condition (quantization or offloading) that actually decides whether the model fits in 16 GB.",
+  "spoken_fit_reason": "Plain prose with no formatting in four sentences, which is reasonable for an explanation question."
+}

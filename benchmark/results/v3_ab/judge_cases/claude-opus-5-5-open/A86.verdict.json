@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Matches the sketch: bridge as local Zigbee hub, sharing through a platform home with invited accounts or Home Assistant with local voice, Hue dimmer switches for guests, and an accurate outage split where the bridge, switches, home Wi-Fi control, Home Assistant and Apple Home with a hub keep working while remote control and Alexa or Google stop.",
+  "judgment_reason": "Stable smart-home architecture answered without searching, giving a simple default and a privacy-minded alternative without inventing the user's preferences.",
+  "spoken_fit_reason": "Leads with the core recommendation in plain prose with no lists; long, but it covers both parts of the question."
+}

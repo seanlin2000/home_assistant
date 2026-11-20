@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It says clearly that the claim is incorrect and gives the sketch's core reason, that all weights must be loaded regardless of how few are active, but omits why (different tokens route to different experts) and the 4-bit sizing that shows how much larger than 4 GB the model really is.",
+  "judgment_reason": "It answered from knowledge without searching and flatly rejected the false premise instead of hedging around it.",
+  "spoken_fit_reason": "Two sentences of plain prose that open with 'That statement is incorrect', no lists or markup."
+}

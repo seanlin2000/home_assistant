@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "All ten shows, theatres, prices, scores and closing dates match the broadway_shows result in its views order, but a few added descriptions are off, calling The Fantasticks a 'two-person classic' and Cursed Child a 'two-part' play.",
+  "judgment_reason": "It used the Broadway tool instead of web search, said the ranking is by TodayTix views rather than box office, and explained why rush and lottery shows outrank Wicked.",
+  "spoken_fit_reason": "The numbered spoken prose suits a ten-item list, but each entry carries price, theatre and score, so the word cap cut it off after the third show."
+}

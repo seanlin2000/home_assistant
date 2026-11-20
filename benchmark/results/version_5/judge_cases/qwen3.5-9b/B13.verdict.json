@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The sunny 27 degree forecast for September 7th is traceable to the easeweather table, but every transport claim is invented and wrong: no excerpt covers routes or schedules, Pilatus is reached by boat to Alpnachstad rather than Brunnen, Rigi is reached via Vitznau or Arth-Goldau rather than \"Aarau\", and the claim that no special tickets are needed beyond a regular travel pass appears nowhere.",
+  "judgment_reason": "It was right to search, but it searched only for weather and then answered the \"current schedules\" half of the question from imagination rather than running a second search or admitting it had no timetable data.",
+  "spoken_fit_reason": "Two long paragraphs that ran past the word cap and were cut mid-thought before the listener heard the closing ticket advice."
+}

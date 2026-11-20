@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 0,
+  "answer_quality_reason": "Rates, minimums and interest all follow from the excerpts (EverBank 4.20% about $2,100, SoFi 4.40% about $2,200 with its intro conditions, CIT 3.75% about $1,875 with its $5,000 tier, Marcus $1,750, Ally $1,600, Chase 0.01% about $5), but the message breaks off mid-sentence in the big-bank section and never says plainly that these rates are variable.",
+  "judgment_reason": "It searched for current rates and handled the ambiguity in 'major banks' by giving both online high-yield accounts and the big branch banks, flagging promotional and tiered conditions.",
+  "spoken_fit_reason": "Two very long paragraphs packed with rates and conditions ran past the word cap, which cut it off after the second bank."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It names Paris, Texas with dry weather all week and highs of 77 to 80 as in the tool result, but says clouds arrive by Sunday when the tool shows partly cloudy from Friday, and it gives no lows.",
+  "judgment_reason": "It passed Paris, Texas to the weather tool rather than defaulting to the French capital, and did not search the web.",
+  "spoken_fit_reason": "Two short plain sentences summarising the week without listing every day."
+}

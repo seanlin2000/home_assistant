@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 4,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The answer correctly names economic stagnation, nationalism and Gorbachev's reforms as causes and correctly dates the Wall (November 9, 1989), the August 1991 coup, the December 1 referendum, the December 8 Belovezha Accords and the December 26 dissolution, but it labels the non-intervention policy and the Wall as triggers while folding the referendum and accords into the coup paragraph instead of treating them as the final triggers.",
+  "judgment_reason": "This was a stable history question, yet the assistant made four wikipedia_lookup calls before answering.",
+  "spoken_fit_reason": "The reply is a multi-paragraph essay that hit the word cap, so the listener heard only the opening and the causes and never heard the three events that were asked for."
+}

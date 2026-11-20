@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Its five picks and their stats trace to this season's excerpts (Wembanyama's 29 to 30 points, 12 rebounds and league-leading blocks, Doncic's 38 to 40 points, SGA's roughly 30 points with an 8-2 Thunder, DARKO ranking Jokic first), but it reads Jokic's line as '23 and 9 and 10' when HoopsHype shows 10.8 rebounds and 9.0 assists.",
+  "judgment_reason": "It searched for current-season data and opened by noting that only about ten games have been played, so the read is early.",
+  "spoken_fit_reason": "It leads with the five names, then gives one plain sentence per player, a fitting length for a ranked list of five with reasons."
+}

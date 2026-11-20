@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The target range of 3.50% to 3.75%, the 3.63% effective rate, and the December 2025 quarter-point cut all trace to excerpt [1], but the \"last year\" narrative reaches back to the August 2024 peak and September 2024 cuts rather than the four 2026 holds that actually define the past twelve months.",
+  "judgment_reason": "It correctly judged this a freshness question, ran a single search, and dated the effective rate as \"of June 2026\" rather than implying it was today's print.",
+  "spoken_fit_reason": "Three sentences of plain prose leading with the rate, no URLs, citation markers, or lists."
+}

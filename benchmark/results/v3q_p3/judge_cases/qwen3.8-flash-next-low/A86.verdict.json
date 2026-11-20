@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 3,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It correctly puts the Bridge at the center, invites each person with a lighting role, adds physical Zigbee switches, and says bridge automations, local app control and switches survive an outage while cloud voice and remote control stop, but it groups Apple Home with the cloud assistants instead of noting it keeps working locally with a home hub, offers no local voice option, and ends mid-sentence at 'nothing smart works'.",
+  "judgment_reason": "It ran five searches on a stable architecture question that needed none, and spent much of the answer on 2026 Bridge Pro Matter bugs the user did not ask about.",
+  "spoken_fit_reason": "It uses bold markdown section headings across nine long paragraphs and was cut by the word cap after the accounts section, so the listener never heard the internet-outage part."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It names exactly Brock Purdy, Mac Jones, and Kurtis Rourke with the correct jersey numbers, but it labels them starter, backup, and third string, which the roster result does not show.",
+  "judgment_reason": "It used team_roster correctly but stated a depth chart as fact instead of offering it as general knowledge.",
+  "spoken_fit_reason": "It is one plain sentence that leads with the three quarterbacks."
+}

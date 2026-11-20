@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Both figures match the reference sketch exactly, 11.61 for the tip and 76.11 for the total.",
+  "judgment_reason": "It used the calculator tools for the arithmetic rather than doing it in its head and did not search for something no source could answer.",
+  "spoken_fit_reason": "One sentence with the amounts spoken as dollars and cents, nothing extra."
+}

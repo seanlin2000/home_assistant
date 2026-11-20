@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It gives no refinance logic and no rate check, only 'I cannot give you financial advice' and an offer to look things up later.",
+  "judgment_reason": "It did not search to check the claim that the Fed cut rates to zero and did not challenge it, which was the central point of the question.",
+  "spoken_fit_reason": "Two short sentences, but it is a deflection that ends by asking the user a question instead of answering."
+}

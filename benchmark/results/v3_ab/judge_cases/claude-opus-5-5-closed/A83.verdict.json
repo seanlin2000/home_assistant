@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Using calculator results it gives one three-thousandth halved to one six-thousandth, about $166,667, an 8.3x multiple and about $146,667 profit, exactly matching the sketch.",
+  "judgment_reason": "Used the calculator rather than searching and stated the key assumptions, that proceeds are shared pro rata and that liquidation preferences or SAFE terms could change the result.",
+  "spoken_fit_reason": "Leads with the dollar value, spells numbers out for speech, and keeps the walkthrough and caveats in plain prose."
+}

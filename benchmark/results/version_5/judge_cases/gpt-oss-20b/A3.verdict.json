@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 4,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It opens with a clear 'A 4-gigabyte GPU won't do it' and gives the right reason, that the whole weight tensor plus activations and KV cache must be resident, though it silently narrows the question to a 26B model it picked up from search and never makes the sketch's point that the 4B active slice is only the per-token compute traffic.",
+  "judgment_reason": "It correctly refused the false premise, but it ran a web search on a question answerable from stable architectural knowledge.",
+  "spoken_fit_reason": "Five sentences of plain prose leading with the verdict, no lists, markdown, URLs, or citation markers despite the search results it drew on."
+}

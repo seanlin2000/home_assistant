@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It gives $18,392 where the reference sketch requires about $19,091 end-of-month or $19,154 beginning-of-month, understating the interest by roughly $700, and it never breaks out that $18,000 of the balance is the deposits themselves.",
+  "judgment_reason": "It was right not to search, but it produced a four-digit figure to the dollar with zero calculator calls and did not state whether deposits fall at the start or end of each month.",
+  "spoken_fit_reason": "Two short plain-prose sentences leading with the figure, no lists or markdown."
+}

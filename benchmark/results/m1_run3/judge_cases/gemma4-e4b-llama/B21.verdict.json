@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["agreed_with_false_premise"],
+  "search_decision_correct": false,
+  "answer_quality": 1,
+  "judgment": 0,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It asks for the user's mortgage rate and balance, a sliver of the refinance logic, but never states that the Fed did not cut rates to zero or explains comparing rates, closing costs and break-even.",
+  "judgment_reason": "It did not search to check the claimed cut to zero and went along with the refinancing request without challenging the false premise, which was the central point.",
+  "spoken_fit_reason": "Two short plain sentences ending in one clear question."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The final ASSISTANT message is empty, so none of the retrieved facts reach the user: the Swiss Travel Pass prices, the November 2-14 Gornergrat closure, or the Pilatus cableway closure.",
+  "judgment_reason": "Searching was right, but it kept searching after the Gornergrat and Pilatus closures were already in hand and made 17 tool calls without ever comparing the pass options or planning the itinerary.",
+  "spoken_fit_reason": "Nothing is spoken in the final message, so the user gets no answer at all."
+}

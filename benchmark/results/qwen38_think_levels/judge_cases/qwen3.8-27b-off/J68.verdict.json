@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It claims five meetings and a 3-2 record with a 45-7 Super Bowl XLVI win over the Colts, all wrong against the reference of 11 and 6 in 17 games.",
+  "judgment_reason": "It skipped player_matchup and invented a record and a Super Bowl game, failing the central point of the question.",
+  "spoken_fit_reason": "Two plain sentences that lead with the claimed record."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Covers the economy, arms race, Afghanistan and nationalism as causes and the August 1991 coup, independence moves and December 1991 agreement as triggers with correct dates, but counts Gorbachev's reforms as one of the three events rather than a cause and omits the Ukrainian referendum date.",
+  "judgment_reason": "Answered stable history from knowledge without searching and explicitly separated deep causes from immediate triggers as asked.",
+  "spoken_fit_reason": "Leads with a one-sentence answer and stays in plain prose; the length is what a three-event explanation with a causes-versus-triggers distinction demands."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It synthesizes AI demand, memory makers prioritizing high-margin AI memory, and NVIDIA prioritizing premium lines, all traceable to the excerpts, though it names HBM rather than the GDDR squeeze the buysellram and Fusion excerpts tie to consumer cards.",
+  "judgment_reason": "It searched for a current-events question and explained causes rather than listing prices, as the user asked.",
+  "spoken_fit_reason": "Three plain sentences that lead with the main drivers."
+}

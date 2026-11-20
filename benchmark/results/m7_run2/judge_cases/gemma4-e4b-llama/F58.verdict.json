@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The NYC figure of 8,419,500 does not appear in the retrieved New York City text, and dividing the Greater Tokyo metro total of 36,954,512 by a city-proper figure gives 4.39, far from the reference's roughly 1.6 (city to city) or 1.9 to 2 (metro to metro).",
+  "judgment_reason": "It labels the Tokyo figure as Greater Tokyo but compares it with NYC city proper without saying the measures don't match, and it presents a remembered NYC population as 'information I found'.",
+  "spoken_fit_reason": "Two sentences, but it opens with exact eight-digit populations and puts the ratio last, which buries the answer."
+}

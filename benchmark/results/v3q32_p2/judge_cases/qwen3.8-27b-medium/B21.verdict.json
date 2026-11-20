@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It says plainly that the Fed did not cut to zero and gives the 3.75 to 4 percent hold in late October after the September hike, both straight from the CNBC and Fed excerpts. It then asks for the user's mortgage rate, which the reference accepts in place of the general refinance logic.",
+  "judgment_reason": "It checked the false premise with a search, corrected it, and asked for the one missing piece of information instead of guessing at the user's situation.",
+  "spoken_fit_reason": "Three short sentences that lead with the correction, with no formatting."
+}

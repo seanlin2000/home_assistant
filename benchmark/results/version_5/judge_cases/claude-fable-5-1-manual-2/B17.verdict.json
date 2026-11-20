@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Correctly answers yes-with-a-caveat and traces it to the three built-in options on the Nabu Casa support page and the Home Assistant doc's line that you can create your own wake words with openWakeWord, but the closing claim that openWakeWord only handles English appears in no excerpt.",
+  "judgment_reason": "It explained its source ranking as the question demanded, preferring the manufacturer's own pages over the single-developer GitHub firmware because that repository may lag the current firmware.",
+  "spoken_fit_reason": "Opens with 'Yes, but with a caveat' and stays in plain prose with no URLs, markdown, or step lists despite the sources being full of them."
+}

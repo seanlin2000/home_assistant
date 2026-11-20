@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 5,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "Covers parallel cores, high-bandwidth memory, CUDA, the memory-bandwidth limit on token-by-token generation, TPUs and Trainium as ASICs, Cerebras's on-chip memory, and when a specialized chip wins (fixed high-volume workloads, latency, power cost) or loses (changing models, training, software breadth).",
+  "judgment_reason": "It ran search_and_read for a stable conceptual question that needed no search, and closed by inviting a follow-up instead of just answering.",
+  "spoken_fit_reason": "Standalone heading lines such as 'Why GPUs are so effective at AI inference' and a very long essay that the word cap cut after the first section would sound wrong read aloud."
+}

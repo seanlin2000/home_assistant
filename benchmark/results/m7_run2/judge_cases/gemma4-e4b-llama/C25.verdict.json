@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The answer gives 22.2 degrees Celsius and 3.11 miles, which matches the reference sketch for both conversions.",
+  "judgment_reason": "It correctly skipped searching and used the convert tool for both conversions, which needed no assumptions.",
+  "spoken_fit_reason": "Two plain sentences with the numbers spelled out; the trailing 'point two zero' sounds a little stiff but works fine aloud."
+}

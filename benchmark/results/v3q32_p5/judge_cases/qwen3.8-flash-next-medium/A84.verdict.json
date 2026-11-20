@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It covers present-value discounting, why distant cash flows make tech a long-duration asset, and the extra channels of borrowing costs and more attractive bonds, which is everything the reference requires.",
+  "judgment_reason": "Answering a stable finance concept from knowledge without searching was the right call.",
+  "spoken_fit_reason": "It opens with 'Higher rates lower valuations mainly through discounting' and stays at five plain sentences."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Correctly answers yes via openWakeWord running inside Home Assistant and catches the real distinction that the retrieved blog also hit, that an on-device satellite cannot easily use a custom model, but its source justification mischaracterizes the HowToGeek post as an older tutorial for a different detector when it uses openWakeWord too.",
+  "judgment_reason": "Searched as instructed, named the project's own documentation as the trusted source with a reason, and flagged the on-device detection question as something to verify rather than asserting it.",
+  "spoken_fit_reason": "Opens with yes plus the caveat and stays in plain prose for five sentences with no URLs or list formatting."
+}

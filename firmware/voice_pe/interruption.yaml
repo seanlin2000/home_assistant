@@ -1,0 +1,124 @@
+# Interruption for the Voice Preview Edition: saying the wake word over a reply stops it and listens for a new request.
+# The stock config is Nabu Casa's, pulled from GitHub unchanged. Everything this build changes is in this file, applied through
+# ESPHome packages: a list here is appended to the stock list of the same name, and a single mapping replaces a stock list outright.
+
+packages:
+  # Declared before the stock config so these actions run ahead of the stock ones in the same lists, as the factory config does.
+  before_stock:
+    micro_wake_word:
+      on_wake_word_detected:
+        # Remember whether this wake word interrupted a request or a reply; the stock handler that runs next stops it either way.
+        - globals.set:
+            id: interrupted_assistant
+            value: "false"
+        - if:
+            condition:
+              and:
+                - switch.is_off: master_mute_switch
+                - switch.is_off: timer_ringing
+                - lambda: 'return wake_word != "Stop";'
+                - or:
+                    - voice_assistant.is_running:
+                    - media_player.is_announcing: external_media_player
+            then:
+              - globals.set:
+                  id: interrupted_assistant
+                  value: "true"
+    # From the factory config: start the wake word only once Bluetooth Wi-Fi setup has ended.
+    voice_assistant:
+      on_client_connected:
+        - wait_until:
+            not: ble.enabled
+        - delay: 2s
+    wifi:
+      on_disconnect:
+        - ble.enable:
+  # Nabu Casa's config at the 26.9.0 release tag, fetched from GitHub at build time
+  stock: github://esphome/home-assistant-voice-pe/home-assistant-voice.yaml@26.9.0
+
+esphome:
+  # Shown as the firmware version in Home Assistant, so the device page says which build it runs
+  project:
+    name: studio-assistant.voice-pe-interruption
+    version: 26.9.0-interruption.1
+
+# A single mapping, so it replaces the stock list, which points voice_kit at upstream's moving dev branch
+external_components:
+  source:
+    type: git
+    url: https://github.com/esphome/home-assistant-voice-pe
+    ref: 26.9.0
+  components:
+    - voice_kit
+  refresh: 0s
+
+globals:
+  - id: interrupted_assistant
+    type: bool
+    restore_value: no
+    initial_value: "false"
+
+micro_wake_word:
+  on_wake_word_detected:
+    # Runs after the stock handler has stopped the request or the reply. "Stop" never sets the flag, so it still only stops.
+    - if:
+        condition:
+          lambda: return id(interrupted_assistant);
+        then:
+          - script.execute:
+              id: listen_after_interruption
+              wake_word_phrase: !lambda return wake_word;
+
+script:
+  # Stops the request and the reply audio, waits for the request to close (voice_assistant.start does nothing while one is still
+  # running), then listens for a new request exactly as a wake word does when the device is idle.
+  - id: listen_after_interruption
+    parameters:
+      wake_word_phrase: string
+    then:
+      - voice_assistant.stop:
+      - media_player.stop:
+          announcement: true
+          id: external_media_player
+      - wait_until:
+          condition:
+            not:
+              voice_assistant.is_running:
+          timeout: 2s
+      - if:
+          condition:
+            switch.is_on: wake_sound
+          then:
+            - script.execute:
+                id: play_sound
+                priority: true
+                sound_file: "wake_word_triggered_sound"
+            - delay: 300ms
+      - voice_assistant.start:
+          wake_word: !lambda return wake_word_phrase;
+
+wifi:
+  on_connect:
+    # From the factory config: Bluetooth setup stays on until Wi-Fi connects; the delay lets the phone receive the result.
+    - delay: 5s
+    - ble.disable:
+    - script.execute: control_leds
+
+# Wi-Fi setup from the factory config, without its Nabu Casa update entity, which would replace this build with stock.
+# Improv sets up Wi-Fi from a phone over Bluetooth (press the center button to allow it) or from a computer over USB.
+improv_serial:
+
+esp32_ble:
+  name: ha-voice-pe
+
+esp32_improv:
+  authorizer: center_button
+  on_start:
+    - lambda: id(improv_ble_in_progress) = true;
+    - script.execute: control_leds
+  on_provisioned:
+    - lambda: id(improv_ble_in_progress) = false;
+    - script.execute: control_leds
+  on_stop:
+    - lambda: id(improv_ble_in_progress) = false;
+    - script.execute: control_leds

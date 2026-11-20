@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "Gives three distinct mechanisms from the sketch: stock ownership concentrated in the top ten percent, a few mega-cap tech firms like Nvidia lifting the index while other sectors lag, and rent and groceries rising faster than wages.",
+  "judgment_reason": "Correctly answered a conceptual question without searching, and its percentage figures are framed as a hypothetical person's experience rather than as statistics.",
+  "spoken_fit_reason": "Clear prose with no formatting, but five long paragraphs that the word cap cut partway through the second example, so the listener missed the third."
+}

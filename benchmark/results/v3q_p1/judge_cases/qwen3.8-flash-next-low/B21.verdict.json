@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It says plainly the Fed did not cut to zero (it held at 3.75 to 4 percent on October 28 after a September hike), gives current 30-year purchase and refinance rates from the excerpts, explains when a refinance pencils out after closing costs, and asks for the user's rate, balance and term.",
+  "judgment_reason": "It searched to check the premise before advising, corrected it, and asked for the missing loan details instead of guessing.",
+  "spoken_fit_reason": "It leads with the correction in plain prose, but at five paragraphs plus a spoken preamble it was too long, and the word cap cut it before the refinance advice."
+}

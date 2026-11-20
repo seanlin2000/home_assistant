@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It lands the central point that a model which does not fit either will not run or degrades no matter how fast the GPU is, but omits the sketch's second half about less aggressive quantization and longer context, and it slips from VRAM to 'if your RAM is full' and to spilling onto 'your hard drive'.",
+  "judgment_reason": "It answered from knowledge without searching and stayed inside the spoken-length limit the user set, at roughly 95 words against the 120 cap.",
+  "spoken_fit_reason": "Three sentences of plain prose that open with the answer, no lists, markdown, or URLs."
+}

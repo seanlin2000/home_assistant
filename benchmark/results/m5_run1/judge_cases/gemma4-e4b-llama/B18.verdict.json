@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 1,
+  "answer_quality_reason": "Pointing to Qwen 3.8 27B at smaller quantizations for 16 GB matches the codersera excerpt, but it then muddles versions by saying Qwen 3.6 27B Q4_K_M is an 18 GB download you can 'typically run' on 16 GB, omits the 13.4 GB Q3 option the source recommends, and gives generic tradeoffs without the context and KV-cache memory point.",
+  "judgment_reason": "It searched as instructed and hedges with 'the available information suggests', but implying an 18 GB file runs on a 16 GB card is an unflagged stretch.",
+  "spoken_fit_reason": "No markdown or lists, but two long paragraphs plus the spoken 'Q4_K_M' token make it heavy to listen to."
+}

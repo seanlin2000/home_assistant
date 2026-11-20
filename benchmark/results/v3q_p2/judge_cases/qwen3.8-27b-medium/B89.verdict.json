@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 0,
+  "answer_quality_reason": "Most funding and valuation figures trace to the excerpts (Etched's $21B round and $40-50B offers, Positron's $875M at $5B, Fractile's $720M at $7B, MatX's $500M Series B, SambaNova's $1B at $11B), but it introduces errors of its own: $98 against a $385 open is called \"47 to 60 percent\" below, the Intel talks are placed five months before the July round when the source dates them to December, and Etched is said to have had \"10x monthly valuation step-ups\".",
+  "judgment_reason": "It searched every company and separated shipping products (Atlas racks, Cerebras revenue) from plans (MatX and Fractile in 2027), but it gave an unflagged \"35 to 40 times forward revenue\" multiple of its own and used more tool calls than allowed.",
+  "spoken_fit_reason": "It uses markdown bold company headings and runs to a wall of more than a thousand words, far beyond a spoken answer."
+}

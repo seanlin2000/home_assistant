@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The foods are cheap, quick and powder-free, but the totals do not add up: one and a half cups of Greek yogurt is listed at 90 calories (closer to 200), the meals sum to about 1,350 calories against the stated 2,350, and the protein reaches 175 g only by counting the optional beans and a dinner plate rounded up from a 45 g chicken breast to 60 g.",
+  "judgment_reason": "Not searching was right and it respected the no-powder-every-meal limit, but it announced totals it had not checked against its own per-meal figures.",
+  "spoken_fit_reason": "It leads with the totals in plain prose, but the meal-by-meal walkthrough plus a closing rationale ran past the word cap, so the listener never heard dinner."
+}

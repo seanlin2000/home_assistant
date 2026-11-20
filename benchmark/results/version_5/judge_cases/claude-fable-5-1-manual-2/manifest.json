@@ -1,0 +1,142 @@
+[
+  {
+    "question_id": "A1",
+    "case": "benchmark/results/version_5/judge_cases/claude-fable-5-1-manual-2/A1.md",
+    "verdict": "benchmark/results/version_5/judge_cases/claude-fable-5-1-manual-2/A1.verdict.json"
+  },
+  {
+    "question_id": "A2",
+    "case": "benchmark/results/version_5/judge_cases/claude-fable-5-1-manual-2/A2.md",
+    "verdict": "benchmark/results/version_5/judge_cases/claude-fable-5-1-manual-2/A2.verdict.json"
+  },
+  {
+    "question_id": "A3",
+    "case": "benchmark/results/version_5/judge_cases/claude-fable-5-1-manual-2/A3.md",
+    "verdict": "benchmark/results/version_5/judge_cases/claude-fable-5-1-manual-2/A3.verdict.json"
+  },
+  {
+    "question_id": "A4",
+    "case": "benchmark/results/version_5/judge_cases/claude-fable-5-1-manual-2/A4.md",
+    "verdict": "benchmark/results/version_5/judge_cases/claude-fable-5-1-manual-2/A4.verdict.json"
+  },
+  {
+    "question_id": "A5",
+    "case": "benchmark/results/version_5/judge_cases/claude-fable-5-1-manual-2/A5.md",
+    "verdict": "benchmark/results/version_5/judge_cases/claude-fable-5-1-manual-2/A5.verdict.json"
+  },
+  {
+    "question_id": "A6",
+    "case": "benchmark/results/version_5/judge_cases/claude-fable-5-1-manual-2/A6.md",
+    "verdict": "benchmark/results/version_5/judge_cases/claude-fable-5-1-manual-2/A6.verdict.json"
+  },
+  {
+    "question_id": "A7",
+    "case": "benchmark/results/version_5/judge_cases/claude-fable-5-1-manual-2/A7.md",
+    "verdict": "benchmark/results/version_5/judge_cases/claude-fable-5-1-manual-2/A7.verdict.json"
+  },
+  {
+    "question_id": "A8",
+    "case": "benchmark/results/version_5/judge_cases/claude-fable-5-1-manual-2/A8.md",
+    "verdict": "benchmark/results/version_5/judge_cases/claude-fable-5-1-manual-2/A8.verdict.json"
+  },
+  {
+    "question_id": "A9",
+    "case": "benchmark/results/version_5/judge_cases/claude-fable-5-1-manual-2/A9.md",
+    "verdict": "benchmark/results/version_5/judge_cases/claude-fable-5-1-manual-2/A9.verdict.json"
+  },
+  {
+    "question_id": "A10",
+    "case": "benchmark/results/version_5/judge_cases/claude-fable-5-1-manual-2/A10.md",
+    "verdict": "benchmark/results/version_5/judge_cases/claude-fable-5-1-manual-2/A10.verdict.json"
+  },
+  {
+    "question_id": "A11",
+    "case": "benchmark/results/version_5/judge_cases/claude-fable-5-1-manual-2/A11.md",
+    "verdict": "benchmark/results/version_5/judge_cases/claude-fable-5-1-manual-2/A11.verdict.json"
+  },
+  {
+    "question_id": "B11",
+    "case": "benchmark/results/version_5/judge_cases/claude-fable-5-1-manual-2/B11.md",
+    "verdict": "benchmark/results/version_5/judge_cases/claude-fable-5-1-manual-2/B11.verdict.json"
+  },
+  {
+    "question_id": "B12",
+    "case": "benchmark/results/version_5/judge_cases/claude-fable-5-1-manual-2/B12.md",
+    "verdict": "benchmark/results/version_5/judge_cases/claude-fable-5-1-manual-2/B12.verdict.json"
+  },
+  {
+    "question_id": "B13",
+    "case": "benchmark/results/version_5/judge_cases/claude-fable-5-1-manual-2/B13.md",
+    "verdict": "benchmark/results/version_5/judge_cases/claude-fable-5-1-manual-2/B13.verdict.json"
+  },
+  {
+    "question_id": "B14",
+    "case": "benchmark/results/version_5/judge_cases/claude-fable-5-1-manual-2/B14.md",
+    "verdict": "benchmark/results/version_5/judge_cases/claude-fable-5-1-manual-2/B14.verdict.json"
+  },
+  {
+    "question_id": "B15",
+    "case": "benchmark/results/version_5/judge_cases/claude-fable-5-1-manual-2/B15.md",
+    "verdict": "benchmark/results/version_5/judge_cases/claude-fable-5-1-manual-2/B15.verdict.json"
+  },
+  {
+    "question_id": "B16",
+    "case": "benchmark/results/version_5/judge_cases/claude-fable-5-1-manual-2/B16.md",
+    "verdict": "benchmark/results/version_5/judge_cases/claude-fable-5-1-manual-2/B16.verdict.json"
+  },
+  {
+    "question_id": "B17",
+    "case": "benchmark/results/version_5/judge_cases/claude-fable-5-1-manual-2/B17.md",
+    "verdict": "benchmark/results/version_5/judge_cases/claude-fable-5-1-manual-2/B17.verdict.json"
+  },
+  {
+    "question_id": "B18",
+    "case": "benchmark/results/version_5/judge_cases/claude-fable-5-1-manual-2/B18.md",
+    "verdict": "benchmark/results/version_5/judge_cases/claude-fable-5-1-manual-2/B18.verdict.json"
+  },
+  {
+    "question_id": "B19",
+    "case": "benchmark/results/version_5/judge_cases/claude-fable-5-1-manual-2/B19.md",
+    "verdict": "benchmark/results/version_5/judge_cases/claude-fable-5-1-manual-2/B19.verdict.json"
+  },
+  {
+    "question_id": "B20",
+    "case": "benchmark/results/version_5/judge_cases/claude-fable-5-1-manual-2/B20.md",
+    "verdict": "benchmark/results/version_5/judge_cases/claude-fable-5-1-manual-2/B20.verdict.json"
+  },
+  {
+    "question_id": "B21",
+    "case": "benchmark/results/version_5/judge_cases/claude-fable-5-1-manual-2/B21.md",
+    "verdict": "benchmark/results/version_5/judge_cases/claude-fable-5-1-manual-2/B21.verdict.json"
+  },
+  {
+    "question_id": "C23",
+    "case": "benchmark/results/version_5/judge_cases/claude-fable-5-1-manual-2/C23.md",
+    "verdict": "benchmark/results/version_5/judge_cases/claude-fable-5-1-manual-2/C23.verdict.json"
+  },
+  {
+    "question_id": "C24",
+    "case": "benchmark/results/version_5/judge_cases/claude-fable-5-1-manual-2/C24.md",
+    "verdict": "benchmark/results/version_5/judge_cases/claude-fable-5-1-manual-2/C24.verdict.json"
+  },
+  {
+    "question_id": "C25",
+    "case": "benchmark/results/version_5/judge_cases/claude-fable-5-1-manual-2/C25.md",
+    "verdict": "benchmark/results/version_5/judge_cases/claude-fable-5-1-manual-2/C25.verdict.json"
+  },
+  {
+    "question_id": "C26",
+    "case": "benchmark/results/version_5/judge_cases/claude-fable-5-1-manual-2/C26.md",
+    "verdict": "benchmark/results/version_5/judge_cases/claude-fable-5-1-manual-2/C26.verdict.json"
+  },
+  {
+    "question_id": "C27",
+    "case": "benchmark/results/version_5/judge_cases/claude-fable-5-1-manual-2/C27.md",
+    "verdict": "benchmark/results/version_5/judge_cases/claude-fable-5-1-manual-2/C27.verdict.json"
+  },
+  {
+    "question_id": "C28",
+    "case": "benchmark/results/version_5/judge_cases/claude-fable-5-1-manual-2/C28.md",
+    "verdict": "benchmark/results/version_5/judge_cases/claude-fable-5-1-manual-2/C28.verdict.json"
+  }
+]

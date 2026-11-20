@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 1,
+  "judgment": 0,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It gives only generic advice about a used system with 'at least twelve gigabytes of VRAM' and cites an RTX 3060, with no current prices or VRAM-per-dollar comparison, and tells the user to search for themselves.",
+  "judgment_reason": "This is a current-pricing question and the assistant had a search tool, yet it claimed 'I cannot browse current retail stock or pricing' and passed the search back to the user.",
+  "spoken_fit_reason": "Two plain sentences with no lists or markdown, readable aloud."
+}

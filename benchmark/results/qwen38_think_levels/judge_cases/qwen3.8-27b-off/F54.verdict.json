@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Both ranges (Lisbon 65 to 68°F, home 53 to 59°F) are read correctly, but the stated difference of 'ten to fourteen degrees' does not follow from them (low to low is 12, high to high is 9, Lisbon high to home low is 15, not 14).",
+  "judgment_reason": "It correctly used weather_forecast twice without searching, but it worked out the difference in its head instead of with the calculator, and the figure came out wrong.",
+  "spoken_fit_reason": "Three plain sentences that lead with Lisbon being warmer, with no lists or markup."
+}

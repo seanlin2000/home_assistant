@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Gives 25.6 points a game over 47 meetings, says that covers both regular season and playoffs, and adds the 31 wins, all matching player_matchup.",
+  "judgment_reason": "Called player_matchup against the Cavaliers without searching and stated the scope of the average.",
+  "spoken_fit_reason": "Leads with the average in three short sentences, plus a brief offer to break it down."
+}

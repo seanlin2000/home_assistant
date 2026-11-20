@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["violated_explicit_constraint"],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 0,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The user asked for an NVIDIA card, but both picks, the RX 9060 XT 16GB and a used RX 6950 XT, are AMD, and the answer never reports that the excerpts put the RTX 5060 Ti 16GB at about $569 to $800, above budget; only the AMD prices traced to the sources are correct.",
+  "judgment_reason": "Instead of saying plainly that no new 16 GB NVIDIA card in the results fits under $500, it silently swapped in another brand, failing the question's central constraint.",
+  "spoken_fit_reason": "Two plain sentences that lead with the pick, with prices spelled out for speech and no lists or markup."
+}

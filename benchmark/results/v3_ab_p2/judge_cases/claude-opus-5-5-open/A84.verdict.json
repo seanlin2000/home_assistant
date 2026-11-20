@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Explains present value with discounting tied to the safe rate, the outsized hit to far-future cash flows, growth stocks as long-duration assets like long bonds, and the extra pressures from bonds competing for money and pricier borrowing, covering the sketch.",
+  "judgment_reason": "Answered conceptual finance without searching and made no unsupported claims about current rates.",
+  "spoken_fit_reason": "Leads with the core reason in plain conversational prose with no formatting, at a length suited to the explanation requested."
+}

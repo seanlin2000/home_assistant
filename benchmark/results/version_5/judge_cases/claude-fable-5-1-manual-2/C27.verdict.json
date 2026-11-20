@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Gives 4.32 dollars a month with the 0.48 kWh per day and 14.4 kWh per month intermediate figures, exactly the sketch.",
+  "judgment_reason": "Used the price the user gave rather than assuming a rate, and flagged the standby draw as excluded while still committing to the number asked for.",
+  "spoken_fit_reason": "Leads with the dollar figure and stays under three spoken sentences."
+}

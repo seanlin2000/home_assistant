@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 2,
+  "spoken_fit": 1,
+  "answer_quality_reason": "Every figure traces to the excerpts: Etched at $21B after $700M, SambaNova at $11B with JPMorgan, Positron's $875M at $5B with 50-plus racks at Oracle, MatX at $4.3-5B, and Fractile raising at $5.5-7.3B. But Cerebras's wafer-scale technology and funding go unmentioned, and 'largest semiconductor IPO of 2026' misstates the source's 'largest ever'.",
+  "judgment_reason": "Searching was right and it separated shipping deployments from planned tapeouts, but it gave Cerebras a $26.7B market cap without noting that another excerpt puts its IPO valuation near $56B.",
+  "spoken_fit_reason": "It leads with the overall picture, but one dense paragraph of figures for six companies ran past the word cap, and the listener never heard the Cerebras part."
+}

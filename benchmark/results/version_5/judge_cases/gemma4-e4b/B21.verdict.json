@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["agreed_with_false_premise"],
+  "search_decision_correct": false,
+  "answer_quality": 1,
+  "judgment": 0,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It lets the claim that the Fed cut rates to zero last month stand unchallenged and asks only for the user's rate and loan terms, missing the sketch's central requirement to state plainly that rates were not cut to zero.",
+  "judgment_reason": "It neither searched to verify a checkable current claim nor pushed back on an obviously shaky premise, which was the whole point of this question.",
+  "spoken_fit_reason": "Two short sentences of plain prose that would read naturally aloud, with no lists or markup."
+}

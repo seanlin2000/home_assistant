@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Both searches returned 'No room left', so it gave no developments or comparison, only a hedged general picture of each lab's direction.",
+  "judgment_reason": "It searched as it should, then said plainly that it could not verify recent releases instead of naming any from memory.",
+  "spoken_fit_reason": "A short spoken reply that leads with the fact that it could not find the information and uses no formatting."
+}

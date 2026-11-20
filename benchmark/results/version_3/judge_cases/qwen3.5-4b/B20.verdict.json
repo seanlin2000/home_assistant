@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["violated_explicit_constraint"],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It picks the right build from the excerpts but presents it as meeting the $1,000 budget when that exact parts list totals about $1,085 in the source, and for an all-in voice assistant it never mentions a microphone, speaker, or the speech-to-text and text-to-speech load sharing the machine.",
+  "judgment_reason": "It did give the explicit 'budget is insufficient' pushback the user asked for regarding 70B-class quality, but it quietly overshot the budget on the build it did recommend and pulled a 'roughly $1,500' upgrade figure that no retrieved price supports.",
+  "spoken_fit_reason": "A single paragraph of three sentences, recommendation first, in plain prose without lists, tables, or URLs despite the tabular sources."
+}

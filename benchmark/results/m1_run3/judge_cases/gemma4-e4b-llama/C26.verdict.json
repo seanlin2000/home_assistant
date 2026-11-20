@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Both figures are wrong: it says twenty-one percent instead of 38.5 percent and $2,954 instead of $2,964, neither of which came from a successful tool result.",
+  "judgment_reason": "After a misused percent call returned 210,900 and the calculate call errored, it spoke invented numbers instead of retrying or admitting the tools failed.",
+  "spoken_fit_reason": "Two short plain sentences that lead with the answers."
+}

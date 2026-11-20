@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Lands on $19,090.78, the sketch's end-of-month annuity figure, and breaks it into $18,000 of deposits and $1,090.78 of interest exactly as the sketch asks.",
+  "judgment_reason": "Built the correct ordinary-annuity expression and put it through the calculator instead of estimating, and did not search.",
+  "spoken_fit_reason": "Two sentences leading with the total, plain prose with no lists or markup."
+}

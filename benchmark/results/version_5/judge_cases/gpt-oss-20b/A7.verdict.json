@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It lands the sketch's numbers exactly, 1.45 kWh a day and 43.5 a month, and prices them at a named 12 cents per kWh, a little under the sketch's 0.15 to 0.30 band, and it never notes the machine is unlikely to draw a flat 300 watts for the full hour.",
+  "judgment_reason": "It closes by listing all three assumptions, the 23 idle hours, the 300 watt active draw and the twelve-cent rate, exactly as the question demanded.",
+  "spoken_fit_reason": "Two sentences with the numbers written out for speech and no lists, markdown, or symbols."
+}

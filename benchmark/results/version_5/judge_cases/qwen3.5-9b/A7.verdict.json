@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It uses the sketch's 1 hour at 300 W plus 23 hours at 50 W split and a stated 14 cents per kWh rate, but reports $6.18 where 43.5 kWh at that rate is about $6.09, and never states the 1.45 kWh per day or 43.5 kWh per month intermediate.",
+  "judgment_reason": "It named every assumption up front, including the full-load hour, the 30-day month and the electricity rate, exactly as the question demanded.",
+  "spoken_fit_reason": "Two plain-prose sentences with the assumptions first and the dollar figure stated once, no lists or markdown."
+}

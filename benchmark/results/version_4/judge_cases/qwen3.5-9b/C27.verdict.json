@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It recites the right procedure but lands on $10.80 when 120 watts for 4 hours over 30 days is 14.4 kilowatt hours, which at 30 cents comes to about $4.32; the stated figure corresponds to roughly ten hours of viewing a day.",
+  "judgment_reason": "No search or assumed rate was needed and it correctly avoided both, but it made zero calculator calls on an explicit arithmetic question and then presented the wrong total as settled.",
+  "spoken_fit_reason": "Two sentences that lead with the dollar figure in plain prose, though the second spends its length narrating the watt-hour conversion steps aloud."
+}

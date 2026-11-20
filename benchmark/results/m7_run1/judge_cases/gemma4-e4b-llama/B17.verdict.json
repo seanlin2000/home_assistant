@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It gives a qualified yes through the third-party Open Voice PE firmware, but never explains which source it trusted or why, which the user explicitly asked for, and it skips the retrieved route of taking control in ESPHome and loading custom microWakeWord models.",
+  "judgment_reason": "It leaned on one community GitHub repo without saying it is unofficial or that the stock firmware does not support custom wake words out of the box.",
+  "spoken_fit_reason": "Two plain sentences that lead with the answer, with no markdown or URLs."
+}

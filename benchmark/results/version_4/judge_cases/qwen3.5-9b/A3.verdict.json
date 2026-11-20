@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It correctly says no because 'the model still loads all its parameters into memory', but never states that all experts must be resident since tokens route differently, and then drifts into sizing a 4-billion dense model at '8-10 GB' plus optimizer states and gradients, which are irrelevant to inference.",
+  "judgment_reason": "It rejected the false premise without searching, which was right, but padded the answer with training-time memory it had to hedge as '(if training)' instead of sticking to the total-versus-active distinction.",
+  "spoken_fit_reason": "One plain-prose paragraph of about 150 words, but it carries spoken-awkward fragments like 'INT4' and '8-10 GB' and keeps qualifying after the answer has landed."
+}

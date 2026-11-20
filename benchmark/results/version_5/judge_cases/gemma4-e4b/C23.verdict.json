@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Tip of 11.61 and total of 76.11 match the reference sketch exactly, computed with the percent and calculate tools.",
+  "judgment_reason": "It used the calculator tools rather than doing the arithmetic in its head, and searched for nothing.",
+  "spoken_fit_reason": "One sentence carrying both numbers in spoken-out dollars and cents, no lists or markup."
+}

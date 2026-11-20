@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "Meju (one star, Korean, $235 tasting), Casa Enrique, and R40 are described from the Michelin result and details, but the answer cuts off at 'Hupo' so only three of five are given, and it adds claims the result does not support: a 'four-block radius around 49th Avenue and Northern Boulevard' and that Casa Enrique 'has held a Michelin star historically'.",
+  "judgment_reason": "The restaurant tool already answered the question, yet it ran six web searches and two fetches until it hit the tool-call limit, though asking for cross streets to rank by distance was sensible.",
+  "spoken_fit_reason": "It is plain prose, but five spoken filler lines come first and each restaurant gets a dense paragraph, so the cap cut it off at the first restaurant."
+}

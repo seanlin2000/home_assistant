@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 2,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It lands on the RTX 4060 Ti 16GB with new ($449-499) and used ($380-420) prices traceable to the InsiderLLM and BetterFPS excerpts, though it repeats the card twice and never notes the RTX 5060 Ti 16GB is now priced over budget.",
+  "judgment_reason": "It respects the budget and acknowledges used pricing, but drags in the AMD RX 7700 XT even though the user asked specifically for an NVIDIA 16 GB card.",
+  "spoken_fit_reason": "Plain prose without formatting, but it hedges with 'based on the information I found', restates the same card in a second paragraph, and runs longer than needed."
+}

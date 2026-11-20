@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It hits every element of the sketch, stating that all thirty billion weights must be resident so both need roughly fifteen to eighteen gigabytes at four bits, and that MoE wins on tolerating offload rather than needing less memory by nature.",
+  "judgment_reason": "Correctly answered from stable technical knowledge without searching and explicitly refused the common misconception that MoE inherently needs less VRAM.",
+  "spoken_fit_reason": "Plain prose that leads with the one-line distinction between memory and speed, with no lists, markdown, or numerals that would trip a speech engine."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 2,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The plan is geographically sensible and low-effort (Lake Lucerne boat, Rigi, Pilatus, the Luzern-Interlaken Express, Lake Brienz or Harder Kulm, Gornergrat), and pass prices of CHF 309 and 399 and the CHF 12 November reservation come from the sources, but 'two nights Lucerne, two Interlaken, one Zermatt' contradicts its own four-night itinerary, and a four-day pass does not fit five travel days.",
+  "judgment_reason": "Searched appropriately and compared the pass, Half Fare Card, and point-to-point tickets, but stated pass-coverage rules for Rigi, Pilatus, and Gornergrat that none of the excerpts give, and never mentioned checking seasonal operation.",
+  "spoken_fit_reason": "Leads with the plan in plain spoken prose, but the day-by-day plan plus ticket comparison ran past the word cap and was cut."
+}

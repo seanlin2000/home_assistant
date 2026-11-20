@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The arithmetic matches the sketch (1.45 kWh a day, 43.5 a month, about seven dollars at sixteen cents) and the rate and one-hour split are named as assumptions, but it never notes that the machine is unlikely to draw the full 300 watts for that entire hour.",
+  "judgment_reason": "It framed the figure as an estimate and disclosed the electricity rate and the one-hour-active, twenty-three-hour-idle split, but skipped the one caveat the user was explicitly fishing for about time under load.",
+  "spoken_fit_reason": "Two sentences leading with the roughly seven dollar figure, plain prose with no lists or markdown."
+}

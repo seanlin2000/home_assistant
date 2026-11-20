@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It never names a best hardware approach beyond a Raspberry Pi 5 or mini PC, which the excerpts frame as home-control hardware, and its claim that a dedicated GPU \"would push the cost over your budget\" is not supported by any retrieved excerpt, so the core request goes largely unanswered.",
+  "judgment_reason": "It does tell the user that ChatGPT-like quality under $1,000 is a significant challenge rather than quietly raising the budget, but hedges with \"likely\" instead of saying plainly what the budget can and cannot deliver.",
+  "spoken_fit_reason": "It leads with the verdict in plain prose, but runs five sentences with reader phrasing like \"The text notes\" that is long for a spoken reply."
+}

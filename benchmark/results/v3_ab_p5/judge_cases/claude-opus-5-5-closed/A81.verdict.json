@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Names query text, IP address, API key tied to account and billing, timing, personal details leaking into queries, and fetched websites seeing the IP, then gives the sketch's mitigations: stripped queries, no-logging provider, VPN, self-hosted SearXNG, and searching only when needed.",
+  "judgment_reason": "Correctly answered a stable architecture question without searching and flagged the subtle risk of the model copying personal details into queries.",
+  "spoken_fit_reason": "Leads with the core point in plain prose with no list formatting, at a length suited to a three-part question."
+}

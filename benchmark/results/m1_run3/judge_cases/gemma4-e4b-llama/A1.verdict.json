@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The answer claims MoE sparse activation 'drastically reduces the computational load and memory needed at inference time', which is exactly the misconception the reference sketch rules out, since all experts must still be stored; only the compute point is right.",
+  "judgment_reason": "Not searching was right, but it accepted the question's implication that MoE inherently needs less memory instead of explaining that fitting 16 GB depends on quantization or expert offload.",
+  "spoken_fit_reason": "Three plain-prose sentences with no formatting, leading with the explanation."
+}

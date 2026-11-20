@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It explains present value with compounding discounting, tech as long-duration assets, a higher risk-free rate, borrowing costs, bonds as an alternative, multiple compression (one over discount rate minus growth), and the 2022 Nasdaq drop of about a third, matching the reference.",
+  "judgment_reason": "It answered a stable finance concept from knowledge without searching, and it added fair caveats about rate hikes driven by strong growth and about profitable, cash-rich tech firms.",
+  "spoken_fit_reason": "The plain prose leads with the core idea, but it runs seven long paragraphs and the word cap cut it in the third."
+}

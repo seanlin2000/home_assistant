@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It reaches a defensible yes traceable to the open-voice-pe excerpt, but hedges the device's native capability as \"might have limitations\" and never uses the official home-assistant.io and microWakeWord excerpts that explain the on-device wake-word engine the Voice PE actually ships with, nor the Colab training workflow described in the How-To Geek excerpt.",
+  "judgment_reason": "The question specifically asked which source it trusted and why, and it named an unofficial third-party firmware fork on GitHub over the retrieved official Home Assistant pages, justifying the choice by the excerpt's specificity rather than by its authority.",
+  "spoken_fit_reason": "Two paragraphs of plain prose with no URLs, lists, or markdown, though the source-attribution half is wordier than it needs to be."
+}

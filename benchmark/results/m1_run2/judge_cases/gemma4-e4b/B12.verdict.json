@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 0,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It names no hardware, prices, or VRAM figures and only asks whether the user wants individual components or a pre-built system.",
+  "judgment_reason": "It skipped the search a current-prices question needed and asked about a preference the question did not depend on, though the clarification is not unreasonable.",
+  "spoken_fit_reason": "One short plain sentence ending in a clear question."
+}

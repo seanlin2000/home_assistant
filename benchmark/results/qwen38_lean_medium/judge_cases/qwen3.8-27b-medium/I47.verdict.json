@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Names Lisbon and matches the tool result: Saturday mostly clear with a high near 67 and light showers at times, Sunday wetter with light rain and highs in the low 60s.",
+  "judgment_reason": "Called weather_forecast for Lisbon for the weekend instead of searching the web.",
+  "spoken_fit_reason": "Short plain prose that leads with the overall picture, though it ends on a filler sentence."
+}

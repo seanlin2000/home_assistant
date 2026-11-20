@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Every figure matches the sketch and the calculator results: one three-thousandth halved to about 0.017 percent, about $166,667 at exit, an 8.33x multiple and about $146,667 profit.",
+  "judgment_reason": "Used the calculator instead of searching and named the pro-rata assumption, noting that liquidation preferences, fees or escrow could reduce the payout.",
+  "spoken_fit_reason": "Leads with the payout and writes numbers out for speech in plain prose, though the payout figure is repeated once."
+}

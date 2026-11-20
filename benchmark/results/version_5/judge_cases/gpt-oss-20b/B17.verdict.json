@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It answers a flat 'No' from the Nabu Casa page that merely lists three default wake words, while two other retrieved sources contradict that conclusion, the official docs saying 'you can create your own wake words' with openWakeWord and the open-voice-pe repo describing custom Voice PE firmware that adds openWakeWord support.",
+  "judgment_reason": "It searched as instructed and fetched the page to verify, and it did name the source it trusted and why, but it read absence of mention in one narrow support article as proof of impossibility while ignoring two retrieved sources that spoke directly to custom wake words on this device.",
+  "spoken_fit_reason": "Two sentences opening with the verdict, plain prose with no URLs or citation markers even though the question asked it to identify a source."
+}

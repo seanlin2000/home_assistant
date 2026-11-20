@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The Etched ($300M at $10.3B), Positron ($230M then $875M at $5B, 50+ Atlas racks at Oracle), MatX ($500M, no valuation disclosed) and Fractile ($220M, Anthropic supply deal) figures all trace to the excerpts, but there is nothing sourced on Cerebras or SambaNova, no overall picture of the industry up front, and the message breaks off mid-sentence on Cerebras.",
+  "judgment_reason": "It searched as it should and said plainly that the Cerebras and SambaNova searches failed, but it then offered an unsourced recollection that Cerebras 'went public via a direct listing in May of last year' instead of stopping at what it could not verify.",
+  "spoken_fit_reason": "It is plain prose, but it runs company by company through long paragraphs, and the word cap cut it after Etched, so the listener heard one company out of six."
+}

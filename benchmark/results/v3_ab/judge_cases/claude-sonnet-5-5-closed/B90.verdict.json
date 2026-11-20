@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 0,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The broadway_shows result listed ten running shows with views and audience scores (The Rocky Horror Show, Paranormal Activity, & Juliet and so on), but the answer gives no ranking and instead names shows absent from the result such as The Lion King, Hamilton and Hadestown, with only Wicked and Chicago overlapping.",
+  "judgment_reason": "It called the right listings tool without a web search, then falsely said 'I could not see the live list' and told the user to ask again, failing the central task of ranking the shows it had just retrieved.",
+  "spoken_fit_reason": "Plain prose without lists, but it leads with a disclaimer instead of an answer and ends with off-topic advice about performance times."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The foods are cheap and quick and use no protein powder, but the per-meal protein figures do not add up against the sketch's values: eight ounces of chicken breast alone is about 70 g yet lunch is called 'about fifty grams', and four eggs plus a cup of egg whites plus a cup of Greek yogurt is well over the stated fifty for breakfast, so the claimed 170 g total is badly undercounted.",
+  "judgment_reason": "Answered without searching, respected the no-powder-every-meal and low-prep constraints, and flagged the figures as estimates to check against labels.",
+  "spoken_fit_reason": "Plain prose walking meal by meal with no list formatting, leading with the protein and calorie totals; length fits a full-day plan."
+}

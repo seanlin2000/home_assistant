@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Covers the sketch's essentials: present value of future cash flows, a discount rate built on the Treasury rate, distant cash flows shrinking more through compounding, growth stocks as long-duration assets like long bonds, plus bonds as an alternative and costlier capital for unprofitable firms.",
+  "judgment_reason": "Correctly answered a stable finance concept from knowledge without searching and contrasted near-term earners with growth firms to make the timing point concrete.",
+  "spoken_fit_reason": "Leads with the one-line reason and explains in plain spoken prose with no formatting, at a length an explanatory question warrants."
+}

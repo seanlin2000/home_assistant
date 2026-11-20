@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The 3.75 to 4 percent target range after the September 16, 2026 meeting is traceable to the Finder excerpt, but it pairs it with the pre-hike 3.63 percent effective rate and describes the past year only as a September 2025 cut, missing the late-2025 cuts, the 2026 holds, and that September 2026 was a hike.",
+  "judgment_reason": "It searched for a current rate as it should and hedged with 'the most recent information suggests'.",
+  "spoken_fit_reason": "Two plain sentences that lead with the current rate and have no formatting."
+}

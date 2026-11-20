@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Explains DCF built on the risk-free rate plus a premium, compounding loss for distant cash flows, tech as long-duration assets like long bonds, and adds borrowing costs and bonds as the alternative, covering the sketch's required elements.",
+  "judgment_reason": "Correctly answered stable finance theory without searching and avoided citing any current rate figures.",
+  "spoken_fit_reason": "Leads with a one-sentence answer and continues in plain prose with no formatting, at a length the explain-the-relationship request warrants."
+}

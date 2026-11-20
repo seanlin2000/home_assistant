@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It offers $2,052 or $484,213 against the sketch's roughly $19,091, both produced by a tool call that multiplied each period by 12 and compounded 4 percent per month rather than per year.",
+  "judgment_reason": "It never noticed that $484,213 is impossible from $18,000 of deposits, and instead of catching the bad tool call it handed the listener two contradictory figures and asked them to pick.",
+  "spoken_fit_reason": "Two sentences of plain prose with no markup, but it leads with an either-or rather than an answer, so the listener hears no single number."
+}

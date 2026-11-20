@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The answer says $1,623.23, which comes from a misconfigured growth_schedule call (3 periods at 4 percent starting from 500), not the roughly $19,091 the reference sketch requires; that is less than the $18,000 deposited.",
+  "judgment_reason": "It modeled 36 monthly deposits as three periods at 4 percent per period, and it did not notice that the result was smaller than the deposits themselves, so the central computation failed.",
+  "spoken_fit_reason": "One plain sentence that leads with the figure, even though the figure is wrong."
+}

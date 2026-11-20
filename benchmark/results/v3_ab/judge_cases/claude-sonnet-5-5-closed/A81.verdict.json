@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Correctly lists the query, IP, timing, headers and API key as visible, the leak risk of queries written from the conversation, and SearXNG, VPN and scrubbed queries as mitigations, but omits that fetched websites also see the IP and requests and does not mention caching or searching only when needed.",
+  "judgment_reason": "Answered a stable architecture question from knowledge without searching, and sensibly noted the provider does not see the full conversation unless the software sends it.",
+  "spoken_fit_reason": "Plain prose that opens with what stays local and covers the three asked parts without lists, a length the question warrants."
+}

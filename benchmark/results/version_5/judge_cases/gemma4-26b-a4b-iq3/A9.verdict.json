@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Gets starting point, budget in numbers, trip length and beach-versus-city, but omits dates and season, domestic versus international, and passport or visa status, and its 'avoid' list (comfort level, dietary needs, flight-versus-activity split) misses the obvious traps of assuming a home city or that 'warm' means beach.",
+  "judgment_reason": "Names no destination and invents no preferences, keeping the answer to what it would need to ask.",
+  "spoken_fit_reason": "Two short paragraphs of plain prose with no lists or markup."
+}

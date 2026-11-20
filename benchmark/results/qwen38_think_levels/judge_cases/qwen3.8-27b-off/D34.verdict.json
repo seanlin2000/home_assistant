@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It correctly answers Canberra and adds accurate context about the Australian Capital Territory and the Sydney and Melbourne compromise.",
+  "judgment_reason": "It answered the terse question directly without searching, clarifying, or staying silent.",
+  "spoken_fit_reason": "The final message has a leaked '</think>' tag and then repeats the whole two-sentence answer, so it would be spoken twice with markup in between."
+}

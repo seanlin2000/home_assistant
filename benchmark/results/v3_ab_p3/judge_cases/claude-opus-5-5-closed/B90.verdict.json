@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 0,
+  "spoken_fit": 1,
+  "answer_quality_reason": "broadway_shows returned ten running shows with views and audience scores (Rocky Horror, Paranormal Activity, & Juliet, Cursed Child and others), but the answer claims it couldn't pull rankings and lists mostly shows absent from the result (Lion King, Hamilton, Aladdin, MJ, Hadestown, Moulin Rouge, Maybe Happy Ending); only Wicked, Chicago and Book of Mormon overlap.",
+  "judgment_reason": "Calling the Broadway tool was right, but it then falsely said the data was unavailable and substituted an unranked memory list, failing the central point of ranking from the result; it is hedged ('check that each is still running'), so not gated.",
+  "spoken_fit_reason": "Brief per-show descriptions in plain prose suit ten items, but it leads with a disclaimer rather than the answer and ends by pointing to TodayTix."
+}

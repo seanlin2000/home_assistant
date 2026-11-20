@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 4,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It correctly lays out one bridge with invited users and permission levels, voice through Apple Home, Alexa, or Google, and the offline split (local app, bridge automations, and dimmer switches keep working, cloud voice and remote control stop, Apple Home with a hub may still work), but it never mentions a local voice option such as Home Assistant.",
+  "judgment_reason": "Stable smart-home architecture needed no search, yet the assistant ran searches until it hit the tool-call limit.",
+  "spoken_fit_reason": "It uses bold markdown section headers, opens with three narrated tool steps, and is long enough that the word cap cut it off."
+}

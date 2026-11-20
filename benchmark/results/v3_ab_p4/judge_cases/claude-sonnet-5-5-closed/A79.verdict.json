@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Correctly covers parallel matrix math, the TPU as an ASIC, Groq and Cerebras on-chip memory and hard-wired transformer chips, and when specialized chips win or lose, but only says 'very fast memory' without making the point that token generation is memory-bandwidth bound, and does not name CUDA.",
+  "judgment_reason": "Answered a stable architecture question from knowledge without searching and balanced the win conditions with the flexibility and software caveat.",
+  "spoken_fit_reason": "Leads with why GPUs work, stays in plain prose without lists or jargon dumps, at a length the three-part question demands."
+}

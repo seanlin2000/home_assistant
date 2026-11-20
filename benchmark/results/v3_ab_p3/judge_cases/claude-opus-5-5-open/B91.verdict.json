@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Dončić's 38 to 40 points with PER and win shares, Wembanyama's 29 to 30 points, 12 rebounds, 4.5 blocks and 52-24 game, and SGA's 30 points with three starters out and an 8-2 start all trace to the excerpts, but Curry's 'about 28 points a game' appears in no retrieved result.",
+  "judgment_reason": "Searched current-season sources, flagged the small early sample and honestly said it found no numbers for Maxey and little on advanced metrics, but supplied an unsupported scoring average for Curry instead of saying the same.",
+  "spoken_fit_reason": "Leads with the small-sample caveat and gives each player a sentence or two of plain prose with no lists or URLs, a length five ranked players justify."
+}

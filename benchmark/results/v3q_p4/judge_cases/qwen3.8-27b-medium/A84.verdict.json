@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The answer correctly explains discounted cash flows, long-duration growth cash flows by analogy to long bonds, higher borrowing costs, and bonds as an alternative, but the claim that a twenty-year dollar gets \"cut almost in half for the same rate hike\" is loose because no hike size is given, and it offers no concrete example such as 2022.",
+  "judgment_reason": "Not searching was right for a textbook finance question, and the answer adds a fair caveat that this is a tendency rather than a law.",
+  "spoken_fit_reason": "The plain prose leads with the core mechanism but is far too long, and the word cap cut it off just as it began explaining why tech is hit harder."
+}

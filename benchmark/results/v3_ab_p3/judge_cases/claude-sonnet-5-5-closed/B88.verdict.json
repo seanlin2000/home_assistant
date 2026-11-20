@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The excerpts named recent releases (Meta's Muse Spark Open on October 15, DeepSeek V4.1-Flash-1017, Mistral Large 4 preview on October 6), yet the answer names none of them and offers only generic trends, even saying Meta has been cautious about opening models when a source shows it just released open weights.",
+  "judgment_reason": "Searching was right, but the answer falsely says 'I could not check the latest news just now' after two searches returned usable results, discarding the evidence instead of reporting it.",
+  "spoken_fit_reason": "Plain prose without formatting, but it opens with a disclaimer rather than an answer and runs long on general background."
+}

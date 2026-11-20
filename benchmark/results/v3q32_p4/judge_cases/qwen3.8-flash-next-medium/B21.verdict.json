@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It correctly says the Fed held at 3.75 to 4 percent on October 28 after a September hike and cites the sourced 7.3 percent mortgage average, but it never gives the refinance logic the sketch requires (compare to your own rate, closing costs, break-even time); it only compares to rates earlier in the year.",
+  "judgment_reason": "Searched and plainly corrected the false zero-rate premise, but it never asked for or considered the user's current mortgage rate, which is what decides whether refinancing pays.",
+  "spoken_fit_reason": "It leads with the correction in four short plain sentences with no markup."
+}

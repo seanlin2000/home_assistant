@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "Explains MCP servers advertising named tools with JSON Schema and lays out a sound architecture (local model, orchestration loop, search and fetch-with-truncation tools, summarizing done by the model), but defines a tool generically rather than as a model-callable function and the message breaks off mid-sentence at 'You also want timeouts' without covering prompt injection or a round cap.",
+  "judgment_reason": "Answered stable software-architecture knowledge without searching and made sensible design calls such as not making summarization a tool and blocking private IP fetches.",
+  "spoken_fit_reason": "Plain prose without markdown, but far too long, so the word cap cut it after the API and tool definitions and the listener never heard the architecture."
+}

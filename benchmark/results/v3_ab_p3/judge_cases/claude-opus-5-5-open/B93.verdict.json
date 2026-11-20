@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Names all five restaurants from the tool result with the cuisine, dollar-sign price, Michelin distinction (Meju's star, Hupo's Bib Gourmand) and distance it gives, and draws each one's appeal from the guide's description.",
+  "judgment_reason": "Used the restaurant tool rather than searching, stated it measured from central Long Island City since it lacks the user's spot, and said plainly it has only dollar signs and no Yelp or Google ratings instead of inventing per-person prices.",
+  "spoken_fit_reason": "Plain spoken prose with a sentence per restaurant and a one-line wrap-up of splurge versus value, with no lists or URLs, a length five compared restaurants justify."
+}

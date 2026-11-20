@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 4,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It correctly names the query, the API key tied to the account and billing identity, the IP address and timing as what the provider sees, separates what stays local, and gives sound mitigations (query hygiene, SearXNG, an egress proxy, caching, retention terms), but it omits that websites the assistant fetches also see the IP and requests.",
+  "judgment_reason": "It ran six tool calls, including two page fetches, for a conceptual privacy question that needed no search, exceeding the tool-call limit.",
+  "spoken_fit_reason": "It is a four-paragraph wall of text with markdown italics (*conversation*, *queries*, *from*) and was cut by the word cap before any of the mitigation advice."
+}

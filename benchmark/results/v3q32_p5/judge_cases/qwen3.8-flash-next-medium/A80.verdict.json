@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The memory figures match the reference and the calculator results (35 GB at 4-bit, 17.5 GB at 2-bit, about 140 GB at 16-bit), and it notes that the cache and activations come on top, but it does not say that real quantized files run a few GB larger, and 'slower to multiply' is an imprecise way to describe the compute cost.",
+  "judgment_reason": "It answered without a web search and used the calculator for the memory arithmetic, which was right for a stable technical question.",
+  "spoken_fit_reason": "Plain prose that leads with the definition, but at about 150 words over three paragraphs it runs past the roughly 120-word limit the harness set."
+}

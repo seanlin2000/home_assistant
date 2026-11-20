@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Separates what stays local (weights, conversation, files, reasoning) from what is sent (query text that can carry personal context, IP, API key tied to billing, timing and volume, plus IP to fetched sites) and gives the sketch's mitigations: generic queries, searching only when needed, zero-retention provider, VPN, and self-hosted SearXNG.",
+  "judgment_reason": "Answered a stable privacy-architecture question without searching and flagged the non-obvious risk that the model folds personal context into queries.",
+  "spoken_fit_reason": "Leads with what stays local in plain prose; the mitigation series is spoken with semicolons rather than a bulleted list, and the length fits the three-part question."
+}

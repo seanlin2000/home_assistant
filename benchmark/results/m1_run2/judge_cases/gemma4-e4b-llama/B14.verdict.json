@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It synthesizes AI demand, HBM and DRAM shortages from fabs reallocating to AI, and NVIDIA prioritizing higher-margin data center parts, all traceable to excerpts [2], [3], [5] and [7], though it omits the scale of the rise and the point in [6] that AMD's matching hikes show the pressure is upstream.",
+  "judgment_reason": "It searched for a recent-market question and focused on supply-chain causes rather than prices, as the user asked.",
+  "spoken_fit_reason": "Three plain-prose sentences that lead with the main cause and contain no lists or citations."
+}

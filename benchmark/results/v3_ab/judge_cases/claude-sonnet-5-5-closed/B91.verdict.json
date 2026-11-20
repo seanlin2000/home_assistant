@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The results gave this season's figures (Doncic 38.5 to 39.3 points, Wembanyama about 30 and 12, Gilgeous-Alexander about 30, the Kia MVP Ladder order), but the answer quotes none, places Giannis Antetokounmpo 'of Milwaukee' when the results list him with Miami, and does not mention small early-season samples, leaving only a plausible set of names.",
+  "judgment_reason": "Searching was right, but it falsely says 'I could not check this season's numbers', discards results that answered the question, and asks the user to ask again.",
+  "spoken_fit_reason": "Plain prose without lists, but it opens with a disclaimer rather than the ranking and ends with a request to ask again."
+}

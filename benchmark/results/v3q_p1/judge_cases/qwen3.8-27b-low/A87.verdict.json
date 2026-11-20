@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It separates the two problems, names multipoint competition, 2.4 GHz interference and firmware with an ordered test sequence ending in a wired control, and covers motion blur, softness, seating distance, ambient light and DLP color-wheel effects, though it skips input lag and game mode and the message breaks off mid-sentence on the 20-20-20 rule.",
+  "judgment_reason": "Generic troubleshooting needed no search, and it isolates variables one at a time as a systematic approach should.",
+  "spoken_fit_reason": "Bold markdown headings and about a dozen long paragraphs make a formatted wall of text, which the word cap cut off before the troubleshooting steps."
+}

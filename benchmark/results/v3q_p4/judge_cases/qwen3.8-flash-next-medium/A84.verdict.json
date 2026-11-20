@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "Covers present value of future cash flows, the risk-free rate as the base of the discount rate, back-loaded long-duration tech cash flows magnified by the exponent, bonds as an alternative, costlier capital, and 2022 as the example, matching every element of the reference.",
+  "judgment_reason": "Answered stable finance theory without searching and added the right nuance that long-term real yields, not the Fed funds target itself, drive the effect.",
+  "spoken_fit_reason": "Plain, well-led prose, but at six dense paragraphs it was cut by the word cap before the listener heard the second through fourth mechanisms."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It applied 4 percent per month to a growing $500 payment (growth_schedule with rate 4 over 36 periods) and then garbled the resulting 40,351.12 into 'four zero three thousand five hundred one dollars', nowhere near the reference 19,091.",
+  "judgment_reason": "It treated an annual 4 percent rate as 4 percent per month and modeled the deposit itself growing, never noticing the result was more than double the $18,000 deposited.",
+  "spoken_fit_reason": "A single sentence that leads with the figure, but the number is spoken as a garbled 'four zero three thousand' that would confuse a listener."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 0,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The final message stops mid-sentence at 'so treat the', with no itinerary, viewpoints or pass comparison.",
+  "judgment_reason": "It rightly searched for current pass prices and began to flag that it had none, but it delivered no plan at all.",
+  "spoken_fit_reason": "The listener would hear one opening sentence that breaks off mid-clause, which sounds broken aloud."
+}

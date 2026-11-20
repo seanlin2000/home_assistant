@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It covers the microphone array and beamforming but omits most of the sketch, including acoustic echo cancellation, placement away from walls and noise sources, a local wake-word path, speaker separation from the mic, where the compute runs, and always-on audio privacy, and its opening garbles the goal as needing 'to hear yourself clearly'.",
+  "judgment_reason": "It answered from knowledge without searching and honored the no-product-names constraint, naming only generic technologies like beamforming and voice isolation.",
+  "spoken_fit_reason": "Three sentences of plain prose with no lists, markdown, or URLs; the quoted word 'beamforming' is the only mild artifact."
+}

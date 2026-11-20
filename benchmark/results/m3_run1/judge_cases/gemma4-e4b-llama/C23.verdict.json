@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It says the tip is about nine dollars sixty and the total seventy-four fifty, when the reference is an 11.61 tip and a 76.11 total; neither figure matches anything a tool returned either.",
+  "judgment_reason": "After two calculate calls were refused for passing a number instead of a string and a percent call returned a meaningless 0.30, it spoke invented figures instead of retrying with a valid expression.",
+  "spoken_fit_reason": "Two short plain sentences that lead with the tip and then the total."
+}

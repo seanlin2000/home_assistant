@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "Every search returned 'No room left for this result', yet it gives funding figures and company facts no source supports, some of them wrong (SambaNova's '$1.1 billion Series D in late 2024', Etched 'founded by Gary Lauter, Intel's chief scientist', Etched's sparsity design), and it covers only three of the six companies.",
+  "judgment_reason": "It flagged that the search failed and admitted it knew nothing about MatX, Positron and Fractile, but it still stated specific funding totals and a founder from memory, some with only an 'I believe' hedge.",
+  "spoken_fit_reason": "It uses markdown bold company names in a long multi-paragraph answer that the word cap cut partway through SambaNova."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact", "violated_explicit_constraint"],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It reaches the right verdict that the budget cannot buy ChatGPT-quality local inference, but gets there through invented figures no excerpt supports - roughly $1,800 for a used 4090 and $2,000 to $3,000 for a case, power supply and 48 GB of RAM - plus the self-contradictory line that 'the only consumer hardware that can run larger models under $1,000 is the Apple M3 Ultra Mac Studio' at $5,499, and it never mentions the RTX 5060 Ti 16GB at about $500 that excerpt [2] calls the 2026 budget recommendation, nor the microphone, speech-to-text and text-to-speech parts of a voice assistant.",
+  "judgment_reason": "It did say explicitly that the requirements cannot be met, which the question demanded, but it opened by recommending the RTX 4080 and 4090 as the sub-$1,000 approach and closed by offering a $1,000 MSRP RTX 5080 as the closest fit without noting that the GPU alone consumes the entire all-in budget.",
+  "spoken_fit_reason": "Four paragraphs long enough that the word cap cut the answer before the listener ever heard the 'cannot be met' verdict, leaving only the over-budget GPU recommendations spoken aloud."
+}

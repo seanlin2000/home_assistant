@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 1,
+  "answer_quality_reason": "Explains quantization and the quality, speed and fine-tuning trade-offs well, but gives 17.5 GB for 4-bit and 8.75 GB for 2-bit, half the correct 35 GB and 17.5 GB its own calculator returned.",
+  "judgment_reason": "Rightly skipped search and noted the KV cache and activations come on top, but ignored its own calculator results and divided the 16-bit figure from the wrong base.",
+  "spoken_fit_reason": "Plain prose, but long enough to be cut by the word cap mid-figure and it includes the garbled 'seven-ti-billion parameters'."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It correctly explains the DCF discount rate tied to the risk-free rate, growth stocks as long-duration assets like a thirty-year bond, and the rotation into bonds, but it gives no 2022 example or worked figure, skips the higher borrowing costs for unprofitable firms, and calls the effect 'asymmetric' while describing a symmetric reversal.",
+  "judgment_reason": "Answering this stable finance question from knowledge without searching was right, and it rightly separates the mechanical DCF channel from the behavioral effects.",
+  "spoken_fit_reason": "It is plain prose but runs to six long paragraphs, and the word cap cut it before the long-duration explanation that answers the question."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It names Portland, Maine and says no umbrella, backed by the tool's mostly clear, dry, 60 to 63°F afternoon forecast.",
+  "judgment_reason": "It used the region the user gave to pick the right Portland and did not search the web.",
+  "spoken_fit_reason": "One plain sentence that leads with the answer."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Correctly separates structural causes (stagnant economy, glasnost and perestroika) from three triggers (1989 revolutions, August 1991 coup, Belovezha Accords) with correct order, but omits nationalism in the republics, the arms race and Afghanistan, and the Ukrainian referendum.",
+  "judgment_reason": "Answered stable history from knowledge without searching and drew the cause-versus-trigger distinction the question asked for.",
+  "spoken_fit_reason": "Plain prose that leads with the answer, and its length fits a question asking for three events plus causes."
+}

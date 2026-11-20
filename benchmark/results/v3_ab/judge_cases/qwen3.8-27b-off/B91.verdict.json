@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 0,
+  "answer_quality_reason": "Jokic's and SGA's figures trace to the excerpts and it keeps last season and this season apart, but it says Wembanyama anchored 'a Spurs team that won the NBA Cup' when the Wikipedia excerpt says the Knicks beat the Spurs, gives him 'roughly 26 points' last season with no source for it, and the message breaks off at the third player, so two of the five are never named.",
+  "judgment_reason": "Searching was right, and it notes that the season is only two weeks old, but it built its first query around the 2025-26 season and leaned on last season's numbers for a 'this season' ranking.",
+  "spoken_fit_reason": "The spoken text runs three 'Let me search' narration lines together before a long preamble and dense stat-heavy paragraphs, and the word cap cut it during the first player."
+}

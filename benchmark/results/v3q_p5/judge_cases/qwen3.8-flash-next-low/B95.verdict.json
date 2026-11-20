@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The core stack (Home Assistant, Ollama, faster-whisper, Piper, Wyoming, SearXNG, Voice Preview Edition) and the in-budget pricing of the RTX 3060, Pi 5 and 3090 follow the sources, but the used office desktop is priced \"around two hundred to two-fifty\" with no source, and the answer breaks off at \"For extra rooms,\" so it never states the biggest limitations or the build order.",
+  "judgment_reason": "It correctly ruled out the 3090 on the sources' prices, noted that the trackers disagree on the A770, and flagged that SearXNG snippets are noisy, but it used up the tool-call limit and asserted an unsourced desktop price.",
+  "spoken_fit_reason": "It is long, dense paragraphs of prices and product names, and the word cap cut it after the first hardware paragraph."
+}

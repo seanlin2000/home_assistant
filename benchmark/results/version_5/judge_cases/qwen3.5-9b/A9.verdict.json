@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It names only departure location and timing from the sketch's missing-information list, skipping budget number, what \"warm\" means, domestic versus international, passport and visa, companions and interests, and its \"avoid assuming\" half misfires by telling the user what not to assume about guidebooks rather than naming the assistant's own assumptions.",
+  "judgment_reason": "It resisted naming any destination and asked for the genuinely missing details instead of inventing a home city or budget level.",
+  "spoken_fit_reason": "Four sentences of plain prose with no lists or markdown, though the reply runs slightly long for a spoken reply."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The roughly two tokens per second figure traces to [4], but calling that 'might be acceptable for some basic interactions' misreads results showing an F grade for chat and time-to-first-token in the tens of seconds, and it never says what else a voice experience depends on, such as latency, context, or smaller model sizes.",
+  "judgment_reason": "The question asked it to read the result critically, but it treated 'can run with offload' as nearly sufficient instead of explaining that a fit verdict alone cannot predict voice responsiveness.",
+  "spoken_fit_reason": "Two short paragraphs of plain prose that lead with the finding."
+}

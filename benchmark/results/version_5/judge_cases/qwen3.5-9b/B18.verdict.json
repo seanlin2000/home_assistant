@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It reads excerpt [3]'s table off by one column, calling 9 GB the 8B's 4-bit footprint and 15 GB the 14B's when those are the Q8 figures (Q4 is ~5 GB and ~8 GB), which makes the 14B sound borderline when it fits easily; it also ignores the \"latest\" models the search surfaced (Qwen 3.5 Small, Qwen 3.6 Plus Preview, QwQ-32B) and the MoE-VRAM trap both [1] and [3] spell out, and transfers [2]'s \"frontier-class reasoning\" praise from QwQ-32B onto Qwen3-8B.",
+  "judgment_reason": "It searched as instructed and committed to a concrete recommendation with quantization reasoning, but stated the mismapped memory figures as settled fact and never flagged that the sources disagree on sizing.",
+  "spoken_fit_reason": "Two paragraphs of roughly 230 words, dense with semicolons and per-model figures, and long enough that the word cap cut the second paragraph before the listener heard it."
+}

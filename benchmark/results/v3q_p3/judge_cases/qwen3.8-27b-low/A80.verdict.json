@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "Gives the correct 140, 35 and 17.5 gigabyte weight figures from the calculator, notes KV cache on top, and describes small 4-bit versus marked 2-bit quality loss with AWQ and GPTQ, but misses the faster bandwidth-bound generation and that real 4-bit files run a few gigabytes larger.",
+  "judgment_reason": "Answered from stable knowledge without searching, used the calculator for the memory arithmetic, and clearly separated weights-only figures from total deployment memory.",
+  "spoken_fit_reason": "Leads with the definition and figures in plain prose, but is too long and was cut by the word cap before the KV-cache and practical notes."
+}

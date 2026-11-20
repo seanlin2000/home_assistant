@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 5,
+  "judgment": 2,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It covers inviting users to one Hue Home with permissions, picking one voice ecosystem, physical Hue switches, and the offline behavior: the bridge, app and switches keep working locally, Alexa and Google stop, and Apple Home with a HomePod stays local, all matching the sketch and the excerpts.",
+  "judgment_reason": "Hue's architecture is stable and needed no search, so the three search_and_read calls were unnecessary, though it sensibly separated an internet outage from a router or power failure.",
+  "spoken_fit_reason": "Six long paragraphs hit the word cap, so the listener heard only the multi-user setup and never heard what happens when the internet goes down."
+}

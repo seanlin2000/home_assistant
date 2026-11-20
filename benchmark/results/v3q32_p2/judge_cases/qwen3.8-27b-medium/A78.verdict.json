@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It gives three distinct mechanisms from the reference: mega-cap tech concentration plus thin household ownership, profits built on layoffs and weak wages, and everyday prices staying high. The examples stay generic, though, and never name a concrete case such as the 2020-21 K-shaped recovery.",
+  "judgment_reason": "This is a stable conceptual economics question, so answering without a search was right, and it gave the three examples the user asked for.",
+  "spoken_fit_reason": "A short spoken paragraph that signposts First, Second, Third in prose rather than a list."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The memory and quantization analysis is accurate and traceable, the 12.5 GiB UD-Q3_K_XL build of Qwen3.8-27B, the 18 GB Q4 that will not fit, Qwen 3 14B at about 9 GB at Q4 and 11 GB at Q5, and Qwen 3.5 9B at 5.7 GB, but speed is one of the four tradeoffs asked for and it never uses the ~30 and ~35 tok/s figures sitting in the excerpt.",
+  "judgment_reason": "Searched as instructed across three queries and committed to a concrete recommendation of Qwen 3 14B at 4-bit with clear conditions for choosing the 27B or the 9B instead.",
+  "spoken_fit_reason": "Opens by narrating its own process, 'I will now synthesize this into a clear, spoken-style answer', then runs five paragraphs long, so the word cap cut it before the listener ever heard the recommendation."
+}

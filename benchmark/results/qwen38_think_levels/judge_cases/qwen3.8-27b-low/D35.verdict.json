@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Names Jane Austen and adds the correct 1813 publication year.",
+  "judgment_reason": "Read 'rote' as 'wrote' and answered without remarking on the wording or searching.",
+  "spoken_fit_reason": "Two short plain sentences leading with the answer."
+}

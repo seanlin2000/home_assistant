@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Distinguishes API, tool (name, purpose, inputs) and MCP server (standard wrapper over APIs), then lays out a local llama.cpp model, an agent loop, an MCP server with search and fetch-and-clean tools, model-side summarizing, treating results as untrusted text, and limits on length and call count.",
+  "judgment_reason": "Answered a stable design question without searching and included the safety point about untrusted fetched text.",
+  "spoken_fit_reason": "Plain spoken prose that defines each term in a sentence before the architecture, with no lists or markup, at a length the two-part question needs."
+}

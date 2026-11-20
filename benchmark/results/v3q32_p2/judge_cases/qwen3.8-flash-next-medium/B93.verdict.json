@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 3,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "Meju (one star), Hupo (Bib Gourmand), Casa Enrique, R40 and Vert Frais, with their cuisines and price bands, all come from the restaurant_recommendations result, but it adds details the result does not give, calling Hupo 'Sichuan' and R40 a 'tasting menu', and it gives dollar ranges for each Michelin price band without a source.",
+  "judgment_reason": "The restaurant tool had already returned enough nearby places, yet it also ran a needless web search, and it described 0.3 to 0.4 miles as 'a block or two'.",
+  "spoken_fit_reason": "One long paragraph after a colon-led intro, about 150 words, is listenable but runs past the word target."
+}

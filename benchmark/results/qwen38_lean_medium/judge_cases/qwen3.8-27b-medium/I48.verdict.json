@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Answers 'No, it looks dry in Tokyo tomorrow', which matches every period marked dry in the tool result, with temperatures correctly rounded to the mid-40s through about sixty.",
+  "judgment_reason": "Used weather_forecast for Tokyo tomorrow rather than a web search.",
+  "spoken_fit_reason": "Leads with a direct no in three plain sentences."
+}

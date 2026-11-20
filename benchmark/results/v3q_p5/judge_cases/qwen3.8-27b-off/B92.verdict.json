@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The final message is unfinished reasoning that ends in an unexecuted calculator call, so the user never got the comparison; it lists Arca's Chase, Bank of America, Wells Fargo and U.S. Bank rates with rough interest figures like $5 and $1,000, but it leaves Citi as 'likely similar' and never answers the minimum-balance part.",
+  "judgment_reason": "It rightly searched and noticed that big branch banks pay near-zero rates, but it spent its tool budget second-guessing which banks to use and never delivered an answer, the point about variable rates, or minimums.",
+  "spoken_fit_reason": "The listener heard the assistant's internal planning ('The user is asking about five major US banks... Let me search...') read aloud, with no answer, and the final message also contains bullet lists."
+}

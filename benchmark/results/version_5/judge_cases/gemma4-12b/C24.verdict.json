@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It reports 40,351.12 against the sketch's roughly 19,091, because it passed 4 percent as a per-period rate over 36 periods, compounding 4 percent monthly rather than 4 percent annually.",
+  "judgment_reason": "The figure is more than double the 18,000 the user would actually deposit, an implausibility a single sanity check would have caught, and the closing sentence presents the bad tool output as a modelling assumption instead of questioning it.",
+  "spoken_fit_reason": "Two short sentences with the amount spelled out, leading with the answer and free of markdown."
+}

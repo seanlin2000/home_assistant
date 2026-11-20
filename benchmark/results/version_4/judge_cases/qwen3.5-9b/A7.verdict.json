@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The arithmetic is off by roughly eighty times: one hour a day at 300 W is 9 kWh a month, about $1.35 at the 15 cent rate it chose, and 23 idle hours add about 34.5 kWh or $5.18, so the total is near $6.50, not the $450 plus $78 equalling $528 it reported.",
+  "judgment_reason": "It did name the 15 cent rate and the 23 idle hours as assumptions as the question demanded, but it claimed 'the tool I have available can calculate this directly' when the harness records zero calculator calls, and never flagged that the machine will not draw the full 300 W for the whole hour.",
+  "spoken_fit_reason": "Plain prose with no markdown, but about 150 words that spend the opening explaining method and tooling before the dollar figure arrives near the end."
+}

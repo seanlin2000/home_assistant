@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It corrects the premise with sourced facts (a September hike to 3.75-4.00 percent, a hold in October, a December hike priced in, 30-year rates of 6.9 to 7.2 percent) and gives the refinance logic, though 'above roughly 7 percent' is a thin threshold when market rates are 6.9 to 7.2, and it does not spell out break-even time.",
+  "judgment_reason": "It checked the current rate, pushed back plainly on the false premise, and asked for the missing current mortgage rate and balance.",
+  "spoken_fit_reason": "Leads with the correction in short plain paragraphs, and only the closing question fell past the word cap."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The 30 and 25 record and both splits are correct, but it reads the scoring averages as 'about 30 and a half' and '25 and a third' instead of 30.7 and 25.3 as the tool gave them.",
+  "judgment_reason": "It used player_matchup and compared the two players fairly on points, rebounds, assists, and threes.",
+  "spoken_fit_reason": "It is plain prose, but at three paragraphs ending with an offer for more it runs longer than needed."
+}

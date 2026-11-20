@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The memory figures (about 35 GB at 4-bit, 17.5 GB at 2-bit, 140 GB at 16-bit) and the quality trade-off are correct, but it leaves out the speed gain, the real-file overhead and that the context cache comes on top.",
+  "judgment_reason": "Stable technical arithmetic answered from knowledge without searching, with the figures hedged as 'about' and 'roughly'.",
+  "spoken_fit_reason": "Short plain-prose paragraphs that lead with the definition and read cleanly aloud, at a length the three-part question warrants."
+}

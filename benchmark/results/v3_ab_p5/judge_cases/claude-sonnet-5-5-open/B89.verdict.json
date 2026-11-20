@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Every figure traces to the excerpts (Cerebras IPO at 185 dollars and 56.4 billion, Etched 700 million at 21 billion with the Jane Street rack, SambaNova 1 billion at 11 billion with JPMorgan, Positron's 50 Oracle racks, Fractile's 720 million Series C with no shipped chip), but technology is thin for Positron and SambaNova, and MatX gets no valuation even though Sacra gave an implied 4.65 billion.",
+  "judgment_reason": "Searched twice, including a targeted MatX follow-up, and separated shipping companies from plans, flagging that Fractile has shipped no production chip and MatX ships only in 2027.",
+  "spoken_fit_reason": "Leads with the overall picture and gives each company one sentence in plain prose with no lists, a reasonable fit for six companies though number-dense."
+}

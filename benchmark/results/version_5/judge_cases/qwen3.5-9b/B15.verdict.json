@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The RTX 4060 Ti 16GB at $380-420 used and $449-499 new comes straight from excerpt [3] and satisfies the 16 GB NVIDIA under-$500 constraint, but it tacks on an unretrieved \"DLSS 4 support\" claim and omits the same source's warning that the card's 288 GB/s bandwidth hurts token throughput.",
+  "judgment_reason": "Searched as asked, stayed inside the $500 budget rather than drifting to the RTX 5060 Ti the sources price above it, and named the warranty risk of buying used.",
+  "spoken_fit_reason": "Three plain-prose sentences that lead with the pick and its price, no lists, markdown, or URLs."
+}

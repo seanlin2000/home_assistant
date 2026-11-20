@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 3,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "Names five real LIC restaurants with mostly traceable details (Meju's Michelin star and $235 tasting menu, Soothr's Yaowarat menu, Sami's 4.8 Tripadvisor rating), but calls Casa Enrique 'Mexican and Peruvian' and its mole 'de Puebla' when the excerpt says Mexican and mole de Piaxtla, and four of the five price ranges are guesses.",
+  "judgment_reason": "Ran seven web searches and fetches instead of the Michelin restaurant tool, and asserted that all five are walkable 'of each other' without knowing where the user is, though it did label the prices as rough estimates.",
+  "spoken_fit_reason": "Markdown bold restaurant names in five long paragraphs, which would sound wrong read aloud and was cut by the word cap after the first restaurant."
+}

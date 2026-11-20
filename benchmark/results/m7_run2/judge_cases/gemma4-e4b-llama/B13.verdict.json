@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Interlaken at about 1 hour 50 minutes, Pilatus and Rigi within an hour, a lake cruise, and Bern all trace to the excerpts, and the 44 to 56°F mostly clear and dry forecast matches the weather tool, but it doesn't tie the clear weather to favoring the mountain trips or mention seasonal boat timing.",
+  "judgment_reason": "It rightly searched and checked tomorrow's forecast, but the user asked about current schedules and it gave none, without saying it could not check timetables.",
+  "spoken_fit_reason": "Four plain sentences in two short paragraphs with no lists or markup, a fair length for a question with two parts."
+}

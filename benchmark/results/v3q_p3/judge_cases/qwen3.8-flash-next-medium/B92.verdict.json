@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 2,
+  "spoken_fit": 0,
+  "answer_quality_reason": "Every rate and minimum matches the excerpts (SoFi 4.40 percent with direct-deposit conditions, CIT 3.75 percent above $5,000 with a $100 opening deposit, Marcus 3.50, Ally, Capital One and Amex 3.20, Chase 0.01, Bank of America 0.04), and the interest figures ($2,200, $1,875, $1,750, $1,600, $5, $20) correctly follow from $50,000 times the APY.",
+  "judgment_reason": "It searched as needed, labeled the CIT boost figure as approximate, flagged Citi's 4.30 percent as unverified, and stressed that the rates are variable, but it used 14 tool calls and overran the limit.",
+  "spoken_fit_reason": "Three 'let me look up' preambles were spoken run together ahead of a long multi-paragraph answer, and the word cap cut it in the second paragraph."
+}

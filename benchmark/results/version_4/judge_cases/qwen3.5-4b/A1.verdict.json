@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It asserts the opposite of the reference sketch, saying the MoE \"might only require 8-16 GB because it selects and processes a small subset of experts per token\", when all 30B weights must still be stored, and it even misexpands MoE as \"Memory-Oriented\".",
+  "judgment_reason": "Not searching was right, but it confidently invented a VRAM mechanism (30 GB dense vs 8-16 GB MoE) with no hedge and never mentions quantization or CPU offload as the real reason a 30B MoE can fit.",
+  "spoken_fit_reason": "Plain prose with no markup, but two dense paragraphs of roughly 160 words that restate the same wrong point twice is longer than this spoken answer needed."
+}

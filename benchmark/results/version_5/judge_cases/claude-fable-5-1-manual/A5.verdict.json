@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It hits the sketch's points in priority order, a beamforming array with echo cancellation, open placement at seated head height, on-device wake word, local compute with the models kept resident for round-trip latency, and speaker separation plus network reliability.",
+  "judgment_reason": "It respected the no-product-names constraint throughout and framed the wake word as keeping audio local, addressing the always-on privacy concern without being asked.",
+  "spoken_fit_reason": "Enumerated with spoken ordinals rather than bullets and no markdown or brand names, though at roughly two hundred words it is a long listen."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The $195.11 unit price is the 'Current Price in USA' in the pricehistory.app excerpt, and the calculator's $842.88 for four with 8 percent tax is correct, but it doesn't say this is one Amazon listing's price when retailers vary.",
+  "judgment_reason": "It searched as told, used a dated figure from a retrieved excerpt rather than memory, and passed the arithmetic to the calculator.",
+  "spoken_fit_reason": "Two plain sentences, unit price first and then the total, with no formatting."
+}

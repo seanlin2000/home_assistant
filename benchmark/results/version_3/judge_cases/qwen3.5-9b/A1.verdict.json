@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It eventually says the full 30B checkpoint must stay in VRAM, but it opens by claiming you \"only store and compute on a much smaller set of weights at a time\" and gives a wrong reason (the router needing the weights) rather than the sketch's point that total parameters set storage while active parameters set compute.",
+  "judgment_reason": "Correctly answered from general knowledge without searching, which is right for a stable architectural explanation, and it flagged quantization and CPU offload as the real enablers.",
+  "spoken_fit_reason": "One plain-prose paragraph of four sentences with no lists, markdown, or citations, which is acceptable length for an explanation request."
+}

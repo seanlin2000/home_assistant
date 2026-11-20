@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It makes exactly the error the reference sketch warns against, claiming the MoE's \"active memory footprint stays well within the GPU's limits\" when all 30B total weights must still be stored, and it inflates the dense case to \"60-120 GB\" while never mentioning quantization or expert offload.",
+  "judgment_reason": "Not searching was right, but it asserted the active-parameters-equal-memory claim with no hedge and never named the precision or quantization assumption that actually decides whether either model fits.",
+  "spoken_fit_reason": "Three sentences of plain prose that lead with the answer, no lists, markdown, or URLs."
+}

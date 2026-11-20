@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Both totals match the sketch (44,100 and 87,817.80) and it names the basis of the 382.20 figure as 'paying the one-year rate for two years', but it never notes that the second year on the one-year path is actually an unknown renewal.",
+  "judgment_reason": "It framed the comparison conditionally rather than dropping a bare savings number, yet treated a frozen 3,675 second year as the baseline without flagging that assumption.",
+  "spoken_fit_reason": "Three short sentences of plain prose with the totals first and no markup."
+}

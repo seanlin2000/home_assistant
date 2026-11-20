@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": false,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The five LIC restaurants and their descriptions come from the fetched Infatuation and Eater pages, but it ignores the restaurant_recommendations result (only Vert Frais, $$ Japanese), invents per-person prices such as 'thirty to fifty dollars' for Casa Enrique and Hupo and 'forty to sixty' for Soothr, makes up street locations, and miscounts 'two Sichuan-leaning spots'.",
+  "judgment_reason": "Ran a web search and page fetches when the restaurant tool was the intended source, never said the Michelin snapshot had only one LIC restaurant, and padded the answer with unsupported prices rather than admitting the sources gave none.",
+  "spoken_fit_reason": "Plain prose without markdown, but the long per-restaurant paragraphs ran past the word cap, so the listener heard only the first two restaurants."
+}

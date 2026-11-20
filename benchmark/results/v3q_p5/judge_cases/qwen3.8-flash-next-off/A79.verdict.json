@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The GPU section (matmul parallelism, tensor cores, decode limited by memory bandwidth, the 140 GB over 3.35 TB/s worked example) is correct, but the reply stops at \"An ASIC is an\", so the ASIC and inference-processor differences and when a specialized chip beats NVIDIA are never given.",
+  "judgment_reason": "A conceptual hardware question needed no search, yet the assistant made five searches plus two calculator calls and still ran out of room for most of the answer.",
+  "spoken_fit_reason": "The listener heard the narrated tool steps run together (\"Let me check a couple of the specific 2026 claims...\"), section headings like \"Why GPUs work so well\", and a long reply that the word cap cut off."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It correctly explains that blue scatters more and that the longer sunset path scatters the blue out and leaves reds and oranges, but it never says why the sky isn't violet and offers no everyday comparison.",
+  "judgment_reason": "Answering stable physics from knowledge without a search was the right call.",
+  "spoken_fit_reason": "It is plain, jargon-free prose that leads with the idea and closes on the memorable line \"Same light, longer trip, different color.\""
+}

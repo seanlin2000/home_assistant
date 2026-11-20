@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It draws on several sources for the causes: AI demand, HBM and memory shortages as the main cost driver, capacity moved to high-margin AI parts, and 'demand spillover' onto consumer cards. It leaves out the vendor price hikes reported in the sources and gives no concrete figures, such as the RTX 5090 roughly doubling over its MSRP.",
+  "judgment_reason": "It searched for a current market question and answered the why without just reading out prices, keeping every claim within the excerpts.",
+  "spoken_fit_reason": "It leads with the main cause in plain prose of about four sentences, a fair length for an explanation the question asks for."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Covers the far-field array with beamforming and echo cancellation, placement away from walls and appliances, an always-on local wake-word chip, the latency path to speech recognition and the LLM host, speaker separation from the mics, and privacy, which is the sketch's full list.",
+  "judgment_reason": "It honored the no-product-names constraint throughout and correctly ranked the microphone array as the decision that matters most for the stated priority.",
+  "spoken_fit_reason": "Prose paragraph with no brand names, bullets, or markup, and the length is justified by a request for the main considerations."
+}

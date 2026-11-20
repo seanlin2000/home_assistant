@@ -1,0 +1,100 @@
+# 09. Development environment
+
+## 1. Purpose
+
+Every piece of Python in this repository runs from a virtual environment inside the project folder, never from the machine's Python. Dependencies are pinned exactly so an environment can be rebuilt byte for byte, and upgraded on purpose with one command. This doc defines the tool, the files, the commands, the project layout, and how the pieces that are not Python are pinned.
+
+## 2. Diagram
+
+```
+  home_assistant/                                 what pins it
+  ├── .python-version        "3.12"               uv installs and uses this interpreter; the Mac's python3 is never touched
+  ├── pyproject.toml         direct dependencies   loose constraints, e.g. httpx>=0.27; also black/isort config, scripts
+  ├── uv.lock                every dependency      exact versions and hashes, committed
+  ├── .venv/                 the environment       created by `uv sync`, ignored by git, rebuilt anywhere from the lock
+  │
+  ├── assistant_core/        shared agent loop     ┐
+  ├── web_search_mcp/        MCP search server     │ Python packages in this repo,
+  ├── benchmark/             harness, judge, report│ importable from .venv
+  ├── custom_components/     studio_assistant      │ (HA component: developed here, deployed into the VM)
+  ├── scripts/               benchmark_llm, deploy │
+  ├── tests/                                       ┘
+  │
+  ├── docker/searxng/        compose + settings    image tag pinned in docker-compose.yml
+  ├── deploy/launchd/        plists                point at /abs/path/.venv/bin/python
+  ├── design_docs/           v0 frozen, v1 living
+  ├── claude_docs/           coding conventions
+  └── CLAUDE.md
+
+  freeze:   uv lock                       → rewrites uv.lock from pyproject constraints
+  rebuild:  uv sync --frozen              → .venv exactly as locked, fails if lock is stale
+  upgrade:  uv lock --upgrade [--upgrade-package X] && uv sync && uv run pytest
+  run:      uv run python scripts/benchmark_llm.py      uv run web-search-mcp      uv run pytest
+```
+
+## 3. How it works, step by step
+
+1. Install `uv` once with Homebrew. It is a single binary that manages Python interpreters, virtual environments, and dependency resolution.
+2. `uv python install 3.12` downloads a standalone interpreter into uv's own directory. `.python-version` in the repo tells uv to use it here. The interpreter that ships with macOS, and any Homebrew Python, are never involved.
+3. `uv sync` reads `pyproject.toml` and `uv.lock`, creates `.venv/` in the project folder, and installs exactly the locked versions. On a clean clone this reproduces the environment. `--frozen` makes it fail loudly instead of silently re-resolving if the lock is out of date.
+4. Adding a dependency is `uv add httpx`, which edits `pyproject.toml`, re-locks, and syncs in one step.
+5. Running anything is `uv run <command>`, which guarantees the command executes inside `.venv`. Scripts declared under `[project.scripts]` become commands, so the search server is `uv run web-search-mcp`.
+6. Upgrading is deliberate: `uv lock --upgrade` moves everything to the newest versions allowed by the constraints, or `--upgrade-package` moves one. Then `uv sync`, `uv run pytest`, review the lock diff, commit.
+7. Long-running services on the Mac are launchd agents whose plists call `.venv/bin/python` by absolute path, so they also run inside the environment without needing `uv` on the path at login.
+
+## 4. The Home Assistant component exception
+
+`custom_components/studio_assistant` is developed and tested in `.venv` like everything else, using `pytest-homeassistant-custom-component` to boot a minimal Home Assistant in-process. At runtime, though, Home Assistant loads the component inside its own Python in the VM and installs the packages listed in the component's `manifest.json` itself. So that folder has two dependency declarations that must agree: the project lock (for development) and `manifest.json` (for deployment). `scripts/deploy_component.py` copies the folder into the VM's config directory and checks that the versions in `manifest.json` match the lock before doing so.
+
+## 5. What is not Python, and how it is pinned
+
+| Piece | Pinned by |
+|---|---|
+| Ollama | Homebrew formula version, recorded in `docs/VERSIONS.md`; upgraded deliberately after re-running the benchmark |
+| Models | Ollama tag plus digest, recorded in `benchmark/config.yaml` and `docs/VERSIONS.md` |
+| SearXNG | Image tag in `docker/searxng/docker-compose.yml` |
+| Home Assistant OS | Version recorded in `docs/VERSIONS.md`; updated monthly by hand |
+| Music Assistant, ESPHome, Piper add-ons | Versions recorded in `docs/VERSIONS.md` |
+| `uv` itself | Homebrew; minimum version noted in `pyproject.toml` |
+
+## 6. Packages and tools, and what they do for us
+
+| Tool | Role |
+|---|---|
+| `uv` | Interpreter management, virtual environment, resolver, lock file, script runner. Replaces pyenv, venv, pip, and pip-tools with one tool. Chosen over pip-tools because it also manages the interpreter, which is what makes "never the machine's Python" enforceable, and because it is fast enough that re-locking is not a chore. |
+| `pyproject.toml` | The single source for project metadata, direct dependencies, console scripts, and tool configuration: black at line length 200, isort with the black profile, pytest options. |
+| `uv.lock` | The exact, hashed dependency graph. Committed. Reviewed in diffs like code. |
+| `black`, `isort` | Formatting and import ordering per CLAUDE.md, run with `uv run black .` and `uv run isort .`. |
+| `pytest`, `pytest-asyncio` | Tests. Async because the agent loop, the MCP client, and the HA component are async. |
+| `pytest-homeassistant-custom-component` | Home Assistant test fixtures for the custom component. |
+| `mypy` (optional, later) | Type checking; every function is typed per CLAUDE.md, so this is cheap to add. |
+
+## 7. Project layout and conventions
+
+- Packages: `assistant_core`, `web_search_mcp`, `benchmark`, `custom_components/studio_assistant`. Shared helpers only when two packages need the same function, and then in `utils/{util_type}_utils.py` per CLAUDE.md.
+- Every function parameter typed. Functions small. No flag arguments. Exceptions, not error codes. Comments explain why, not what. See `claude_docs/CLEAN_CODE.md`.
+- Secrets (Spotify client secret, the frontier API key for the benchmark) live in `secrets/` or `.env`, both ignored by git, and are read through one small settings module.
+- Benchmark results are committed under `benchmark/results/<date>/` so runs can be compared over time; only the SearXNG response cache inside a run is ignored.
+
+## 8. Failure modes
+
+- **Someone runs `python3 script.py`.** It may work by accident with the system Python and then fail on the next machine. Every documented command uses `uv run`; a pre-commit hook can refuse commits when `.venv` is not active.
+- **Lock drifts from pyproject.** `uv sync --frozen` fails and says so; `uv lock` fixes it.
+- **A transitive dependency breaks on upgrade.** The upgrade command is followed by the test suite before commit; the lock diff shows exactly what moved.
+- **`manifest.json` and the lock disagree.** The deploy script refuses to copy.
+- **launchd agent runs the wrong interpreter.** Plists use absolute `.venv/bin/python` paths; a health check logs `sys.executable` at startup.
+
+## 9. Concepts for newcomers
+
+Most of this will be familiar from data work; two things are worth stating plainly.
+
+**Lock file versus requirements file.** `requirements.txt` produced by `pip freeze` lists what happened to be installed. A lock file records the full resolved graph with hashes and the constraints it was solved from, and can be regenerated deterministically. `uv export --format requirements-txt` produces the classic file when another tool needs it.
+
+**Why the interpreter matters as much as the packages.** Two machines with identical package pins but different Python versions can still behave differently, especially for compiled packages like the MLX wheels. Pinning the interpreter closes that gap.
+
+## 10. Sources
+
+- uv documentation: [docs.astral.sh/uv](https://docs.astral.sh/uv/)
+- uv lock and sync semantics: [docs.astral.sh/uv/concepts/projects/sync](https://docs.astral.sh/uv/concepts/projects/sync/)
+- Home Assistant custom component manifest: [developers.home-assistant.io/docs/creating_integration_manifest](https://developers.home-assistant.io/docs/creating_integration_manifest/)
+- pytest-homeassistant-custom-component: [github.com/MatthewFlamm/pytest-homeassistant-custom-component](https://github.com/MatthewFlamm/pytest-homeassistant-custom-component)

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It picks the router design and gives determinism for timers and weather plus cost savings, but it is a one-sided case: no routing-error or added-complexity cost, no real characterization of the single-model design, and no note on when one big model is fine.",
+  "judgment_reason": "It committed to a recommendation with reasons rather than hedging, and correctly treated this as a design question needing no search.",
+  "spoken_fit_reason": "Three sentences of plain prose leading with the recommendation, with only scare quotes around 'hallucinations' as a mild blemish."
+}

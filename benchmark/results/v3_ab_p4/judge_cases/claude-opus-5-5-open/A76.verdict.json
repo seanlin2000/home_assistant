@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Names the reforms, the 1989 revolutions and the August 1991 coup, separates economy, arms race, Afghanistan and nationalism as causes from the coup, the December 1 Ukrainian vote, the accords a week later and the December 25 resignation as triggers, with correct dates and order.",
+  "judgment_reason": "Answered stable history from knowledge without searching and explicitly drew the cause-versus-trigger distinction the question asked for.",
+  "spoken_fit_reason": "Plain spoken prose with dates written out for speech; long, but the three-part explanatory question demands that length."
+}

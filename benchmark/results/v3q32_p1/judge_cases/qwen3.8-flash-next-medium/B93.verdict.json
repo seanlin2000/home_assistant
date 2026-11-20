@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The five picks (Meju, Hupo, R40, Casa Enrique, Vert Frais) are the closest LIC entries in the tool result, with correct cuisines, price bands, and Michelin distinctions, but it adds details the result does not give, R40's 'osteria-style tasting menu' of offal and dry-aged beef and Casa Enrique's 'mole and seafood'.",
+  "judgment_reason": "Used the restaurant tool well and honestly flagged that Michelin price bands are not per-person costs, but it padded descriptions with menu specifics it had no source for.",
+  "spoken_fit_reason": "Leads with the standout pick and covers five restaurants in compact spoken prose with no symbols, apart from a small 'Korean, Korean price level' slip."
+}

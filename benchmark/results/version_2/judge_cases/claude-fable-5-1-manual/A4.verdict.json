@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Names senescence as most likely plus the sketch's alternatives (mobile nitrogen pulled from old leaves, shading, overwatering or pot-bound roots) and lists the diagnostic information wanted, including species, watering, light, fertilizer, and whether the yellowing is patterned.",
+  "judgment_reason": "Held back from asserting a single cause, framed aging as probable rather than certain, and closed by asking for the species and watering routine.",
+  "spoken_fit_reason": "Plain conversational prose that leads with the likely explanation and folds the follow-up questions into a sentence instead of a bulleted list."
+}

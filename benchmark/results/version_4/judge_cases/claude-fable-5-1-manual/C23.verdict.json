@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Gives 11.61 for the tip and 76.11 for the total, matching the reference sketch exactly.",
+  "judgment_reason": "Used the calculator tools rather than doing the arithmetic in its head and added no unnecessary caveats to a fully specified question.",
+  "spoken_fit_reason": "One sentence with both figures said as dollars and cents, ideal for text to speech."
+}

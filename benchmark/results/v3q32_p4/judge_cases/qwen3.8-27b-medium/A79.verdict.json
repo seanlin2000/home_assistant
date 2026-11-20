@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It correctly covers matrix multiplies on parallel cores with high-bandwidth memory, the TPU as an ASIC, Groq's on-chip memory, and fixed high-volume workloads as when a specialized chip wins, but it omits NVIDIA's CUDA software advantage and latency per token as a reason to choose specialized chips.",
+  "judgment_reason": "A stable technical explainer needed no search, and it states the trade-off conditions instead of declaring one chip type simply better.",
+  "spoken_fit_reason": "Four short plain-prose paragraphs that lead with the answer, a fitting length for a three-part question."
+}

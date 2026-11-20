@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Covers white light as a mix of colors, stronger scattering of short wavelengths, why not violet (less violet from the sun, eyes less sensitive), the long low path at sunset scattering blue away, and dust and haze deepening the reds.",
+  "judgment_reason": "Correctly answered stable physics without searching and pitched it to a non-scientist without jargon such as Rayleigh or inverse fourth power.",
+  "spoken_fit_reason": "Plain conversational prose that ends with a memorable one-line summary about short path at noon versus long path at sunset."
+}

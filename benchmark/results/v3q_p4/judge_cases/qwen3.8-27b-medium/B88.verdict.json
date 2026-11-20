@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 0,
+  "answer_quality_reason": "All five developments fall within the 30-day window and trace to the excerpts (Muse Spark Open on October 15, Mistral Large 4 weights on October 29, Kimi K3.1 Pro weights on November 4, Tencent Hy4 on November 4, DeepSeek V4.1-Flash-1017 on October 17, and the hosted-only Qwen4-Max-Preview), but it calls the July 2026 Qwen3.8-Max \"last year's\" and overstates Kimi as leading the benchmarks on the strength of one guide's pick.",
+  "judgment_reason": "Searching was required, and the answer says plainly that DeepSeek and Qwen shipped no new open release, flags the V5 rumors as speculation, and marks vendor benchmark numbers as directional.",
+  "spoken_fit_reason": "This is a wall of text of roughly 800 words with em dashes and a colon-led list, and the word cap cut it off after the first item."
+}

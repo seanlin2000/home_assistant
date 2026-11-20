@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "All five restaurants, cuisines, price levels, Michelin distinctions (Hupo Bib Gourmand, Meju one star, the rest in the guide without stars) and distinguishing details match the restaurant_recommendations result, and it ends with a useful budget-versus-occasion pick.",
+  "judgment_reason": "It used the restaurant tool and said plainly that it had only Michelin price levels and no user ratings or exact per-person prices, rather than inventing them.",
+  "spoken_fit_reason": "It leads with the scope and limits, then gives one short spoken sentence per restaurant with no list formatting."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 5,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It explains parallel cores, tensor cores, HBM and memory-bound decode, credits CUDA and the software stack, contrasts TPU systolic arrays with Groq SRAM, Cerebras wafer-scale and Etched/Taalas hard-wiring, and lists when specialized chips win or lose, matching the reference sketch, with every figure it cites present in the excerpts.",
+  "judgment_reason": "A conceptual hardware question needed no search, but the assistant opened with \"I'll ground the current landscape part with a quick search\" and made two search_and_read calls.",
+  "spoken_fit_reason": "The six-paragraph reply was cut by the word cap after the prefill/decode paragraph, so the listener never heard the GPU-versus-ASIC comparison or when a specialized chip wins."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 2,
+  "spoken_fit": 0,
+  "answer_quality_reason": "Kimi K3.1 Pro (weights Nov 5), Mistral Large 4 (Oct 29), DeepSeek V4.1 Flash 1017 (Oct 17) and Meta Muse Spark Open (Oct 15) all match the retrieved excerpts in dates and specs, but Qwen, which the user named, gets only a passing mention of its August 2.4T release instead of a clear statement that it had nothing new in the window.",
+  "judgment_reason": "Searched appropriately, flagged vendor benchmark numbers and the unverified GLM-5.3 date, but folded the out-of-window Qwen3.8 release into the 'pack' rather than saying plainly that Qwen had no recent release.",
+  "spoken_fit_reason": "A seven-paragraph report dense with parameter counts and benchmark scores, cut by the word cap after the first item."
+}

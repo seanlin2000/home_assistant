@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The Rigi boat-plus-cogwheel and Pilatus loop routes, the Swiss Travel Pass and the hotel guest card are all traceable, but the stated forecast of sunny with a high around twenty six and a low around sixteen appears in no excerpt, which only give September climatology of 9 to 22 degrees.",
+  "judgment_reason": "It admitted it could not retrieve departure times yet invented a specific next-day forecast for the other half of the same question instead of falling back on the seasonal ranges the sources actually gave.",
+  "spoken_fit_reason": "Leads with the recommendation in plain prose with no lists or URLs and spells out the SBB app phonetically."
+}

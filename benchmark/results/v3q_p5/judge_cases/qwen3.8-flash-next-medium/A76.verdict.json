@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 4,
+  "judgment": 2,
+  "spoken_fit": 0,
+  "answer_quality_reason": "Dates and order are right (Berlin Wall November 9, coup August 18 to 22, Belovezha December 8, resignation December 25, dissolution December 26) and causes are cleanly separated from triggers, but it counts Gorbachev's reform program, which it later lists as a cause, as one of the three key events, blurring the distinction it was asked to draw.",
+  "judgment_reason": "It made three Wikipedia lookups for a stable history question that needed no search, though the lookups were harmless and nothing unverified was added.",
+  "spoken_fit_reason": "Seven long paragraphs ran past the word cap, so the listener heard only the intro and the first event and never reached the causes-versus-triggers part."
+}

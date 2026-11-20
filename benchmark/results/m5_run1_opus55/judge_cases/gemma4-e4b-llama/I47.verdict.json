@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It names Lisbon and reports Saturday 60 to 79 partly cloudy dry and Sunday 62 to 76 cloudy dry exactly as the weather_forecast result gave them.",
+  "judgment_reason": "It used the weather_forecast tool rather than a web search and added nothing beyond the tool result.",
+  "spoken_fit_reason": "A single plain sentence covering both days with no formatting, short enough to speak."
+}

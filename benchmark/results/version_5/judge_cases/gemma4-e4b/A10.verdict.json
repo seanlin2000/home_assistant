@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It captures the sketch's core, that capacity decides which models fit at all and that spilling to system memory drastically slows inference, but omits that more memory also allows lighter quantization and longer context.",
+  "judgment_reason": "No search was needed for a conceptual hardware explanation and it made no unsupported claims.",
+  "spoken_fit_reason": "Roughly seventy words, well inside the 120-word limit, three sentences of natural spoken prose with no formatting."
+}

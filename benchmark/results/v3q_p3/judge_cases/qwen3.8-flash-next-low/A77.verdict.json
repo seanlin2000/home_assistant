@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It covers white light as a mix of colors, Rayleigh scattering of blue about six times more than red (checked with the calculator), the violet loose end (less emitted, eye sensitivity, absorption), the long sunset path stripping out blue, and dust and haze strengthening the reds.",
+  "judgment_reason": "It answered from knowledge without searching, used the calculator only to check the scattering ratio, and explained jargon in plain terms for a non-scientist.",
+  "spoken_fit_reason": "Seven long paragraphs of prose were cut by the word cap, so the listener heard the daytime mechanism but never the sunset half of the question."
+}

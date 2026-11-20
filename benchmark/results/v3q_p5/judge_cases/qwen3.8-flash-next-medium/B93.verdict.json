@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 4,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "The five picks (Meju one star, Hupo Bib Gourmand, Casa Enrique, R40 and Vert Frais in the guide) match the restaurant_recommendations result with the right cuisines and distinctions, and per-person prices are labeled as estimates built from menus, but it wrongly describes all five as clustered around 49th Avenue and Vernon Boulevard, which does not fit Vert Frais at 43-10 Crescent Street.",
+  "judgment_reason": "The Michelin tool already answered the question, yet it added web searches and detail lookups until it hit thirteen tool calls, far over the limit, though it did label its estimates and offer to narrow by cross street.",
+  "spoken_fit_reason": "Seven long paragraphs with addresses, menu prices and review counts ran past the word cap during the first restaurant."
+}

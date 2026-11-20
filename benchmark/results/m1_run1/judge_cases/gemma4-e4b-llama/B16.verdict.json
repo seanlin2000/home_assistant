@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 1,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It compares the user's 4 percent per year to the 2024 rent-stabilized 5.25 percent two-year guideline, which is a cumulative figure, a regulated benchmark rather than the Long Island City market, and two years old, and it never addresses the risks of advertised rents that the user asked about.",
+  "judgment_reason": "It caveats that stabilized guidelines are not market rates, but it presents 2024 guidelines as 'recently approved' current conditions and does not say plainly that no current LIC market data was found.",
+  "spoken_fit_reason": "Plain prose that leads with a verdict, but two paragraphs with long dates read aloud make it longer than needed."
+}

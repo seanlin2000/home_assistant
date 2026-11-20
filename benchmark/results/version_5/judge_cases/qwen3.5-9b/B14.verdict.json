@@ -1,0 +1,10 @@
+{
+  "gates_hit": ["fabricated_current_fact"],
+  "search_decision_correct": false,
+  "answer_quality": 2,
+  "judgment": 0,
+  "spoken_fit": 1,
+  "answer_quality_reason": "With zero retrieved excerpts it delivers a generic AI-demand narrative and asserts specific current events such as \"NVIDIA has recently started releasing older generations of their cards at lower prices\" and current packaging bottlenecks at TSMC and Samsung, none of which are verified, so nothing in it is traceable to what actually changed in the market.",
+  "judgment_reason": "The question explicitly asked what changed recently in the supply chain, and the assistant answered entirely from memory without a single search.",
+  "spoken_fit_reason": "Two paragraphs running roughly 180 words with a company-and-product-name list, far longer than a spoken reply should be."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 4,
+  "judgment": 2,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It correctly lays out the Bridge as the local Zigbee hub, per-person Hue accounts invited through Home access, a linked voice assistant and physical tap switches, and says the app, automations and switches survive an outage while Alexa and Google voice stops, but it never mentions that Apple Home with a home hub or a local controller like Home Assistant keeps voice working offline.",
+  "judgment_reason": "The architecture and outage reasoning are sound, but it ran two web searches for a question it could answer from stable knowledge.",
+  "spoken_fit_reason": "Plain prose with spoken signposts, but at six long paragraphs the word cap cut it before the internet-outage part the user specifically asked about."
+}

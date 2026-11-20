@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It covers only the microphone itself (omnidirectional sensitivity, noise cancellation, beamforming) and omits acoustic echo cancellation, placement away from walls, a local wake-word chip, latency, where the compute runs, speaker quality and always-on-audio privacy, and its 'wide field of view so they can detect your presence' borrows a camera concept that does not apply to a mic array.",
+  "judgment_reason": "It respected the no-product-names constraint and rightly answered from general knowledge, but treated a question about overall hardware design as a microphone-only question without saying it was narrowing the scope.",
+  "spoken_fit_reason": "One ~110-word paragraph of plain prose that opens on the answer, with no lists, markdown or URLs."
+}

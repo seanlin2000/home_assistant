@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 3,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Names every component in the sketch (wake word, Whisper, local model on llama.cpp, Piper, Home Assistant, tool calls, ReSpeaker satellites), states the limitations and gives the right build order, but the hardware recommendation of a 32-gigabyte Mac mini or a used 24-gigabyte GPU PC is not backed by any price, so fit within 1,000 dollars is unshown.",
+  "judgment_reason": "It did not search for current hardware prices on a question whose budget constraint depends on them, hedging only with 'probably' instead of checking.",
+  "spoken_fit_reason": "Plain prose with no lists or markdown, leading with the architecture, at a length the four-part question warrants."
+}

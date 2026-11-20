@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Gives 68 rushing yards on 11 carries with a touchdown in the 32 to 29 win at Seattle, and keeps the 15 receiving yards separate, all matching the box score.",
+  "judgment_reason": "Resolved October 11th to 2026-10-11 and called box_score, with no search.",
+  "spoken_fit_reason": "Two short plain sentences that lead with the yardage."
+}

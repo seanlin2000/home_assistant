@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 2,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The audio part rightly names 2.4 GHz interference and gives test steps, but it opens by claiming the two problems share a common root, misses the speaker also pairing with the laptop, and its eye-strain causes leave out field of view, seating distance, focus or keystone, and the DLP rainbow effect.",
+  "judgment_reason": "Answered from knowledge without searching as expected, but it imposed a false common cause on two unrelated problems and gave no ordered test sequence for the eye strain.",
+  "spoken_fit_reason": "Plain prose with no markup, but three dense paragraphs of comma-separated steps are long for listening."
+}

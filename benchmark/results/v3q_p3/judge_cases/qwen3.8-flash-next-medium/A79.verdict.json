@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It explains matrix multiplication, memory-bandwidth-bound decoding and the CUDA software stack well and starts on ASICs (TPU systolic arrays, Trainium), but the message breaks off mid-sentence at 'heavily used for' and never covers specialized inference processors such as Groq or Cerebras or when one could beat an NVIDIA GPU.",
+  "judgment_reason": "A conceptual hardware question needed no search, yet it ran four searches and five unneeded calculations, hit the tool-call limit, and ran out before finishing the answer.",
+  "spoken_fit_reason": "It is a long technical essay stuffed with vendor benchmark figures, and the preambles 'I'll ground...' and 'Let me verify...' were run together into the spoken output before the word cap cut it."
+}

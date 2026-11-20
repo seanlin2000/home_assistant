@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 4,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "Matches the sketch on the bridge as local Zigbee hub, sharing through the Hue app, physical switches, the app and schedules surviving an outage, Alexa and Google voice failing, and Apple Home's local path, but it omits a local voice controller such as Home Assistant as the way around the cloud dependency.",
+  "judgment_reason": "Ran a web search on a stable architecture question that needed none, and the advice itself is sound.",
+  "spoken_fit_reason": "About six long paragraphs with a markdown-italic '*can*' and a closing follow-up question, cut by the word cap before the offline explanation."
+}

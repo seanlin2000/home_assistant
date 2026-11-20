@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Separates the two problems and gives one-change-at-a-time steps covering 2.4 GHz interference, a competing second connection, distance, 5 GHz Wi-Fi, brightness, focus, game mode, seating and breaks, but misses the DLP rainbow effect and larger field of view, and its 'connect the speaker to the laptop alone' step is muddled.",
+  "judgment_reason": "Answered a troubleshooting question from knowledge without searching and structured it as a systematic order of tests as asked.",
+  "spoken_fit_reason": "Plain prose that handles audio then eye strain with no lists, at a length the two-problem question needs."
+}

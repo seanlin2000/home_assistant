@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Distinguishes API, tool (name, purpose, typed arguments) and MCP server (protocol wrapping tools that call APIs), then lays out a local llama.cpp model, an agent loop, an MCP server with search and text-extracting fetch tools, model-side summarizing, and untrusted-text and size-cap safeguards.",
+  "judgment_reason": "Answered a stable design question without searching and tailored the architecture to a small local model with a combined search-and-read tool.",
+  "spoken_fit_reason": "Leads with the definitions and describes the architecture in plain prose with no lists or code, at a length the two-part question needs."
+}

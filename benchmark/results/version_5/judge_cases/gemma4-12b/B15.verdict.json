@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It leans on the weakest excerpt, a Q1 2026 benchmark roundup listing the RTX 4060 Ti 16GB at $499, and presents that as where the card 'typically sits' today, while the two current-pricing sources say the memory shortage has pushed every 16GB NVIDIA card past $500; it also drifts into suggesting a 12GB RTX 3080, which does not meet the stated 16GB requirement.",
+  "judgment_reason": "The central call here was to tell the user that no NVIDIA 16GB card reliably lands under $500 right now, and instead it produced a confident pick at exactly the budget line without flagging the volatility every source warned about or checking used prices despite the user allowing used hardware.",
+  "spoken_fit_reason": "Four plain sentences that lead with a named answer, no lists, URLs or markdown."
+}

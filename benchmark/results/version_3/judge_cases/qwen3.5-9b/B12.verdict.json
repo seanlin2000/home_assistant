@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The used RTX 3090 at 24GB and roughly $900, the 16GB new alternatives, and the power and warranty tradeoffs all trace to excerpts [2], [3], and [4], but the user asked for a whole computer on a $1,000 total budget and the answer only prices the graphics card.",
+  "judgment_reason": "It searched appropriately and cited real price points, yet never flags that a $900 card leaves essentially nothing for the rest of the machine, so the stated total budget is quietly glossed over.",
+  "spoken_fit_reason": "Three plain-prose sentences leading with the recommendation, with no URLs, lists, or citation markers despite heavily tabular sources."
+}

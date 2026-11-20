@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It explains wavelength-dependent scattering with a bowling ball and ping-pong ball comparison, and explains that at sunset the light crosses much more air so the blue is scattered out, but it never says why the sky is not violet.",
+  "judgment_reason": "It correctly answered stable physics from knowledge with no search and pitched it at a non-scientist as asked.",
+  "spoken_fit_reason": "Seven paragraphs of prose ran past the word cap, so the listener heard only the daytime half and never heard the sunset explanation."
+}

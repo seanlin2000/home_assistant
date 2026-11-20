@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "Correctly lists what the provider sees (query text, IP, time, API key, user agent), the risk of personal details leaking into queries, what stays local, and mitigations including a self-hosted instance, VPN and retention policy, but omits searching only when needed and caching results.",
+  "judgment_reason": "Answered a conceptual privacy question from knowledge without searching and noted the key caveat that model-built queries can carry personal context.",
+  "spoken_fit_reason": "Plain spoken prose with ordinal words rather than a list, leading with what stays local; length fits the three-part question."
+}

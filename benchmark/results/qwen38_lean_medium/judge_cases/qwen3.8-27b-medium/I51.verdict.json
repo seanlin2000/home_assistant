@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The tool returned a service error, and the reply honestly says it could not get the forecast for Paris, Texas, so it gives none of the forecast the question asked for.",
+  "judgment_reason": "Called weather_forecast for Paris, Texas, and when it failed reported the failure plainly instead of inventing a forecast or falling back to a web search.",
+  "spoken_fit_reason": "Two short plain sentences that state the failure first."
+}

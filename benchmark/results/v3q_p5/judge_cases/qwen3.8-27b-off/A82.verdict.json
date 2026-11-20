@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 0,
+  "answer_quality_reason": "API and MCP server are defined well, but 'software tool' is described as a standalone program like a calculator rather than a function the model asks to call with a name, description and schema, and the architecture breaks off after the fetch server, with no summarization step and no safeguards such as round caps, timeouts or untrusted page text.",
+  "judgment_reason": "It searched for a stable conceptual question ('the MCP landscape has moved quickly') that needed no lookup, though it did not let the excerpts mislead it.",
+  "spoken_fit_reason": "The reply uses bold markdown headings, a numbered list, code-formatted tool names and spoken narration ('Let me ground this in current sources'), and it was cut by the word cap."
+}

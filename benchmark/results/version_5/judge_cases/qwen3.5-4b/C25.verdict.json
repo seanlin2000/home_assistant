@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The temperature is right at about 22 degrees Celsius, but it restated the tool's correct 3.11 miles as '3 miles and 110 yards', which is really 3.06 miles since 0.11 of a mile is about 194 yards.",
+  "judgment_reason": "It used the conversion tool for both figures and did not search a question that needs no search.",
+  "spoken_fit_reason": "Two short sentences of plain prose carrying both answers, with no lists or markup."
+}

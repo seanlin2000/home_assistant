@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 3,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The itinerary is geographically sensible and low-effort (Lake Lucerne boat, Pilatus or Rigi, Luzern-Interlaken Express, Lake Brienz, Jungfrau region viewpoints, Gornergrat), but the pass comparison gives no prices although the excerpts listed the Half Fare Card at CHF 150 and the Swiss Travel Pass at CHF 309 for 4 days and 399 for 6, and it never prices point-to-point tickets.",
+  "judgment_reason": "It searched for pass prices, then said it 'couldn't check current ticket prices' and fell back on generic advice, discarding the retrieved figures that the 'most economical' part of the question depended on.",
+  "spoken_fit_reason": "A day-by-day plan in plain spoken prose with no lists or markup, at a length a five-day itinerary reasonably requires."
+}

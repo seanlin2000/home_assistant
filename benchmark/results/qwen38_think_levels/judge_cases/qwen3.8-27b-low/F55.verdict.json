@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "Names the 3.75 to 4.00 percent target range and the 3.88 percent effective rate from the retrieved sources, and gives $970 from the calculator's 25000 * 0.0388.",
+  "judgment_reason": "Searched as instructed, ignored the stale fedfundrate.org page showing 5.25 to 5.50 percent, used the calculator, and said which rate it used.",
+  "spoken_fit_reason": "Two paragraphs with em-dash asides, percent symbols and extra commentary about midpoints and future hikes, longer than the answer needed."
+}

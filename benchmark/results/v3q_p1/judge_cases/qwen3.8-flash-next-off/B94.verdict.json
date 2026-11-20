@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 2,
+  "spoken_fit": 0,
+  "answer_quality_reason": "It rightly flags the retrieved Glacier Express (Oct 11-Dec 4), Gornergrat (Nov 2-14) and Eiger Express closures and lays out a sensible Lucerne-Interlaken-Zermatt order, but it places Brunni 'near Brienz' and breaks off mid-sentence on day three, so the Zermatt days and the pass-versus-Half-Fare comparison the user asked for never appear.",
+  "judgment_reason": "Searching current fares and seasonal closures was the right call and it planned around the closures, but ten calls hit the tool-call limit, so the economics part went unwritten.",
+  "spoken_fit_reason": "Filler preambles run together and the day-by-day narrative ran far past the word cap, so the listener heard only the closure warning and the route, not a single day or the ticket advice."
+}

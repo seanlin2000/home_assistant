@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "After dropping the wrong growth_schedule result of 19,478.78, it calculated the ordinary annuity and gave about $19,090, noting $18,000 of deposits and about $1,090 of interest, as the reference requires.",
+  "judgment_reason": "It recognized the first tool's model did not fit, recomputed correctly, and stated the end-of-month deposit assumption.",
+  "spoken_fit_reason": "It leads with the answer, but four sentences with a quoted parenthetical about the 'ordinary annuity' and a filler aside ('nothing worth losing sleep over') make it longer than needed."
+}

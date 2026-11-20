@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "Correctly explains that air molecules scatter short blue wavelengths more than red and that the long low sunset path strips out the blue, with a plain-language comparison, but omits why the sky is not violet and opens with the imprecise claim that sunlight is not white.",
+  "judgment_reason": "Answered stable physics without searching and pitched it at a non-scientist as asked, avoiding jargon like Rayleigh.",
+  "spoken_fit_reason": "Plain prose but too long, so the word cap cut it before the listener heard the sunset half of the explanation."
+}

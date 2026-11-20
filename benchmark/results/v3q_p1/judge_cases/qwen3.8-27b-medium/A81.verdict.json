@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It correctly lists the query, IP, API key, timing and user agent, flags that the model's query can leak personal details, and gives sound mitigations, but it omits that fetched websites also see the IP and overstates SearXNG as zero external exposure when it still forwards queries to upstream engines.",
+  "judgment_reason": "Answering a privacy-architecture question from knowledge without searching was right, and it pointed the user to the provider's retention policy rather than guessing it.",
+  "spoken_fit_reason": "Plain prose organized under spoken signposts, but it opens with filler and runs six paragraphs, so the word cap cut it before the mitigation advice."
+}

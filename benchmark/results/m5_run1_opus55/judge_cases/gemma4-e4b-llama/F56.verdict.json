@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 2,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The rain part correctly matches the heavy morning and light afternoon rain in the forecast, but the last ferry is given as 12:50 am when the weekday Seattle-to-Bainbridge table in the bainbridgeisland.com excerpt lists a 2:10 am sailing after it.",
+  "judgment_reason": "It used weather_forecast for the rain and a web search for the schedule, the right tool for each part, and named the weekday timetable it relied on.",
+  "spoken_fit_reason": "Two plain sentences, one per part of the question, with no formatting."
+}

@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 1,
+  "judgment": 0,
+  "spoken_fit": 1,
+  "answer_quality_reason": "Ignores the broadway_shows result, which ranked ten running shows by views with audience scores (Rocky Horror, Paranormal Activity, & Juliet and so on), and instead lists ten shows from memory, of which only Wicked, The Book of Mormon and Chicago appear in the result.",
+  "judgment_reason": "It falsely claimed it could not read the rankings when the tool returned a complete ranked list, failing the central point of grounding the answer in the listing; its hedge to confirm each show is still playing is what keeps the memory list from being presented as verified.",
+  "spoken_fit_reason": "Brief one-line descriptions per show in plain prose suit a ten-item spoken list, but it opens with a disclaimer rather than the answer."
+}

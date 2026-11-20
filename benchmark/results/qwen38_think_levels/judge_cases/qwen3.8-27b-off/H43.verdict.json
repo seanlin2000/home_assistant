@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 1,
+  "answer_quality_reason": "The whole reply is \"Can you repeat that?\", with no oven temperature or roasting times.",
+  "judgment_reason": "It treated a clear request to look up a roasting temperature as garbled input and never searched.",
+  "spoken_fit_reason": "The reply is short and would sound fine aloud, but it gives no answer to lead with."
+}

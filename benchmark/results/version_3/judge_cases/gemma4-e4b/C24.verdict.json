@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 2,
+  "answer_quality_reason": "It states about four hundred eighty-four thousand dollars against the sketch's roughly 19,091, off by a factor of twenty-five because it fed the tool a per_period_multiplier of 12 and read back the cumulative column.",
+  "judgment_reason": "The user deposits only 18,000 in total over three years, so a 484,213 result is impossible on its face and the assistant repeated it without any sanity check.",
+  "spoken_fit_reason": "One clean sentence that restates the inputs and leads with the figure, with the number spelled out for speech."
+}

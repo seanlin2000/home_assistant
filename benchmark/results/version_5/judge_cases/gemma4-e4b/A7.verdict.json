@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 0,
+  "judgment": 0,
+  "spoken_fit": 0,
+  "answer_quality_reason": "After the energy_cost tool returned 1.45 kWh per day and 43.50 kWh per month the final ASSISTANT message is empty, so the listener gets no estimate at all.",
+  "judgment_reason": "The one assumption it did voice was a nonsensical rate of one hundred and fifty cents per kilowatt-hour, and it then failed to deliver any answer or caveat about load time.",
+  "spoken_fit_reason": "There is nothing to read aloud after the tool call."
+}

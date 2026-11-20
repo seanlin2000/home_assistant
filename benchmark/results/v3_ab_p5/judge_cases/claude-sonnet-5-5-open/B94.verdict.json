@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 4,
+  "judgment": 3,
+  "spoken_fit": 2,
+  "answer_quality_reason": "A geographically sensible Lucerne, Interlaken, Zermatt plan with a lake cruise, the Brunig line, Jungfrau viewpoints and the Gornergrat, with pass prices that trace to source 1 (Flex 599 and 721 dollars, Half Fare 150 francs), but it quotes only first-class Flex prices although second-class fares were retrieved, and gives no point-to-point figure.",
+  "judgment_reason": "Searched for current pass prices, kept the plan to rides and viewpoints with no strenuous hiking, and followed the sources' caution that a pass is not automatically cheaper, telling the user to price both.",
+  "spoken_fit_reason": "Plain day-by-day prose followed by a short pass comparison, with no lists or URLs, at a length a five-day plan needs."
+}

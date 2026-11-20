@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": true,
+  "answer_quality": 5,
+  "judgment": 3,
+  "spoken_fit": 1,
+  "answer_quality_reason": "It gives the 30-25 record with the 13-14 regular-season and 17-11 playoff splits and both players' per-game averages, exactly as player_matchup returned them.",
+  "judgment_reason": "It used player_matchup with no web search and reported the figures without adding anything.",
+  "spoken_fit_reason": "It leads with the record, but it reads out a dense run of eight per-game stats and ends with an unneeded follow-up question, which is too long for speech."
+}

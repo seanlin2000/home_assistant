@@ -1,0 +1,10 @@
+{
+  "gates_hit": [],
+  "search_decision_correct": false,
+  "answer_quality": 2,
+  "judgment": 1,
+  "spoken_fit": 2,
+  "answer_quality_reason": "The Cavaliers' 93 to 89 win and LeBron James's 27 points are right, but it names Kyrie Irving, a Cavalier, as Golden State's top scorer with 26, and leaves out Draymond Green's 32.",
+  "judgment_reason": "It wasted calls (an unrelated Spurs query, then season 2016, which returned the 2016-17 playoffs) instead of asking for the 2015-16 season, then searched and hit the tool-call limit, and never checked which team Irving played for.",
+  "spoken_fit_reason": "Two plain sentences that lead with the winner and score."
+}
