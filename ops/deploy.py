@@ -262,18 +262,22 @@ def carry_out(actions: list[str]) -> list[str]:
 
 
 def switch_to(ref: str, run_tests: bool, dry_run: bool) -> dict:
-    """Check out `ref`, sync and test as needed, and carry out the plan. Returns a summary for the laptop to print."""
+    """Check out `ref`, sync and test as needed, and carry out the plan. The plan covers everything between the commit last deployed and `ref`,
+    not between the checkout and `ref`: a `git pull` moves the checkout without restarting anything. Returns a summary for the laptop to print."""
     paths.log_dir().mkdir(parents=True, exist_ok=True)
     if tree_is_dirty() and not dry_run:
         raise SystemExit("the checkout on this machine has local changes; refusing to deploy over them")
-    old = git("rev-parse", "HEAD")
+    checkout = git("rev-parse", "HEAD")
+    old = deployed_commit(checkout)
     git("fetch", "--quiet", "origin")
     new = git("rev-parse", "--verify", f"{ref}^{{commit}}")
     changed = git("diff", "--name-only", old, new).splitlines()
     plan = plan_actions(changed)
     summary = {"from": old, "to": new, "changed": len(changed), "plan": plan.actions, "reasons": plan.reasons, "tests": None, "applied": False}
-    if dry_run or old == new and not plan.actions:
-        summary["note"] = "already at this commit" if old == new else "dry run"
+    if checkout != old:
+        summary["checkout_moved"] = f"the checkout was at {checkout[:10]}, but {old[:10]} is what was last deployed; planned from {old[:10]}"
+    if dry_run or old == new == checkout and not plan.actions:
+        summary["note"] = "already at this commit" if old == new == checkout else "dry run"
         return summary
     paths.maintenance_flag().touch()
     git("checkout", "--detach", "--quiet", new)
@@ -300,11 +304,19 @@ def switch_to(ref: str, run_tests: bool, dry_run: bool) -> dict:
         if ensured_strata:
             summary["strata"] = put_strata_back()
         summary["tests"] = f"failed: {error}"
-        summary["note"] = f"aborted before any restart; checkout returned to {old[:10]}; maintenance flag left set"
+        summary["note"] = f"aborted before any restart; checkout returned to {old[:10]}, the deployed commit; maintenance flag left set"
         return summary
     summary["failed_steps"] = carry_out([action for action in plan.actions if action != "sync_env"])
     summary["applied"] = True
     return summary
+
+
+def deployed_commit(checkout: str) -> str:
+    """What is running: last_good_ref, which only a passing test question writes and every failure returns to. A Mac without one has never
+    deployed, and its checkout is the best guess."""
+    if not paths.last_good_ref().exists():
+        return checkout
+    return paths.last_good_ref().read_text().strip()
 
 
 def active_engine_here() -> str:

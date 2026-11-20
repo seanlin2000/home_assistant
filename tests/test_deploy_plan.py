@@ -220,6 +220,61 @@ def test_an_old_commit_from_before_strata_has_nothing_to_put_back(monkeypatch: p
     assert summary["strata"] == "the old commit has no scripts/strata.sh; nothing to put back"
 
 
+class PulledCheckout:
+    """The Studio on 2026-11-20: 3761220 deployed, then `git pull` moved the checkout to the target without restarting anything."""
+
+    def __init__(self, monkeypatch: pytest.MonkeyPatch, tmp_path: Path, failing: str = "") -> None:
+        monkeypatch.setenv("STUDIO_LOG_DIR", str(tmp_path))
+        (tmp_path / "last_good_ref").write_text("deployed\n")
+        self.checkouts: list[str] = []
+        self.restarted: list[str] = []
+        self.failing = failing
+        monkeypatch.setattr(deploy, "tree_is_dirty", lambda: False)
+        monkeypatch.setattr(deploy, "git", self.git)
+        monkeypatch.setattr(deploy, "run", self.run)
+        monkeypatch.setattr(deploy, "check_manifest_matches_lock", lambda: None)
+        monkeypatch.setattr(deploy, "carry_out", self.restarted.extend)
+        monkeypatch.setattr(deploy, "active_engine_here", lambda: "llama-server")
+
+    def git(self, *args: str) -> str:
+        if args[0] == "checkout":
+            self.checkouts.append(args[-1])
+        answers = {("rev-parse", "HEAD"): "new", ("rev-parse", "--verify", "new^{commit}"): "new", ("diff", "--name-only", "deployed", "new"): "config/serving.toml"}
+        return answers.get(args, "")
+
+    def run(self, command: list[str], timeout: int = 0) -> None:
+        if command[-1] == self.failing:
+            raise subprocess.CalledProcessError(1, command)
+
+
+def test_a_checkout_pulled_to_the_target_still_gets_the_restarts_since_the_last_deploy(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    pulled = PulledCheckout(monkeypatch, tmp_path)
+
+    summary = deploy.switch_to("new", run_tests=False, dry_run=False)
+
+    assert (summary["from"], summary["applied"]) == ("deployed", True)
+    assert pulled.restarted == ["restart:llama", "restart:harness"]
+    assert summary["checkout_moved"] == "the checkout was at new, but deployed is what was last deployed; planned from deployed"
+
+
+def test_an_abort_after_a_pull_returns_the_checkout_to_what_is_running(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    pulled = PulledCheckout(monkeypatch, tmp_path, failing="check")
+
+    summary = deploy.switch_to("new", run_tests=False, dry_run=False)
+
+    assert (pulled.checkouts, pulled.restarted) == (["new", "deployed"], [])
+    assert "checkout returned to deployed, the deployed commit" in summary["note"]
+
+
+def test_only_a_checkout_at_the_deployed_target_has_nothing_to_do(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    PulledCheckout(monkeypatch, tmp_path)
+    (tmp_path / "last_good_ref").write_text("new\n")
+
+    summary = deploy.switch_to("new", run_tests=False, dry_run=False)
+
+    assert (summary["note"], "checkout_moved" in summary) == ("already at this commit", False)
+
+
 def test_vendored_core_files_import_only_each_other() -> None:
     vendored_modules = {Path(relative_path).with_suffix("").as_posix().replace("/", ".") for relative_path in VENDORED_CORE_FILES}
     vendored_modules.add("assistant_core")

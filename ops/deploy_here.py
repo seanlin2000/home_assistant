@@ -32,6 +32,8 @@ def deploy_here(ref: str, smoke_flags: list[str], run_tests: bool) -> int:
     refuse_a_branch_checkout()
     remember_the_running_commit_as_good()
     summary = deploy.with_lock(lambda: deploy.switch_to(ref, run_tests=run_tests, dry_run=False))
+    if "checkout_moved" in summary:
+        print(f"deploy: {summary['checkout_moved']}")
     print(f"deploy: {summary['to'][:10]}  {deploy.git('log', '-1', '--format=%s', summary['to'])}")
     if not summary["applied"]:
         return report_nothing_applied(summary)
