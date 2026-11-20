@@ -35,7 +35,10 @@ QUESTIONS_PATH = Path("benchmark/questions.yaml")
 PIPELINE_NAME = "Jarvis"
 PIPELINE_RATE = 16000  # Home Assistant's speech-to-text stage takes 16 kHz, 16-bit, mono
 CHUNK_SAMPLES = 1024
-TRAILING_SILENCE_SECONDS = 1.5  # long enough for the pipeline's own end-of-speech detection to end the question, as it does for the puck
+TRAILING_SILENCE_SECONDS = 3.0  # an upper bound: streaming stops as soon as the pipeline hears the end of speech, as the puck's does
+MAX_PAUSE_SECONDS = 0.25  # Kokoro's pauses between sentences are long enough for the pipeline to take them as the end of the question
+SILENCE_FRAME_SAMPLES = 320  # 20 ms
+SILENCE_LEVEL = 0.02  # a frame quieter than this share of the loudest sample counts as a pause
 FIRST_AUDIO_BYTES = 4096  # a stream's header arrives before any speech; the reply counts as started once this much has come
 RUN_TIMEOUT_SECONDS = 300
 KOKORO_HOST, KOKORO_PORT = "127.0.0.1", 10210
@@ -85,7 +88,7 @@ async def prepare(run_dir: Path) -> None:
     audio_dir = run_dir / "audio"
     audio_dir.mkdir(parents=True, exist_ok=True)
     for question in load_questions(QUESTIONS_PATH).questions:
-        samples = await kokoro_samples(question.exchanges[0])
+        samples = shorten_pauses(await kokoro_samples(question.exchanges[0]))
         write_wav(audio_dir / f"{question.id}.wav", samples)
         print(f"{question.id}: {len(samples) / PIPELINE_RATE:.1f} s")
 
@@ -102,6 +105,20 @@ async def kokoro_samples(text: str) -> numpy.ndarray:
     source_times = numpy.arange(len(samples)) / chunks[0].rate
     target_times = numpy.arange(int(len(samples) * PIPELINE_RATE / chunks[0].rate)) / PIPELINE_RATE
     return numpy.interp(target_times, source_times, samples).astype(numpy.int16)
+
+
+def shorten_pauses(samples: numpy.ndarray) -> numpy.ndarray:
+    """Every run of quiet 20 ms frames longer than MAX_PAUSE_SECONDS cut down to that length, so the question reaches the pipeline in one breath."""
+    frame_count = len(samples) // SILENCE_FRAME_SAMPLES
+    frames = samples[: frame_count * SILENCE_FRAME_SAMPLES].reshape(frame_count, SILENCE_FRAME_SAMPLES)
+    quiet = numpy.abs(frames).max(axis=1) < SILENCE_LEVEL * max(int(numpy.abs(samples).max()), 1)
+    longest_pause_frames = int(MAX_PAUSE_SECONDS * PIPELINE_RATE / SILENCE_FRAME_SAMPLES)
+    kept, quiet_run = [], 0
+    for frame, is_quiet in zip(frames, quiet):
+        quiet_run = quiet_run + 1 if is_quiet else 0
+        if quiet_run <= longest_pause_frames:
+            kept.append(frame)
+    return numpy.concatenate(kept) if kept else samples
 
 
 def write_wav(path: Path, samples: numpy.ndarray) -> None:
@@ -150,10 +167,36 @@ async def pipeline_id(socket: websockets.ClientConnection) -> str:
     return next(pipeline["id"] for pipeline in reply["result"]["pipelines"] if pipeline["name"] == PIPELINE_NAME)
 
 
+class QuestionStream:
+    """The question's audio going out while the run's events come in. The user's wait starts when the speech itself ends (speech_end); the stream
+    then sends silence until the pipeline hears the end of speech, as the puck does, and an event before speech_end means the question was cut short."""
+
+    def __init__(self, socket: websockets.ClientConnection, handler_id: int, wav_path: Path) -> None:
+        with wave.open(str(wav_path), "rb") as handle:
+            self.speech = handle.readframes(handle.getnframes())
+        self.started = time.monotonic()
+        self.speech_end = self.started + len(self.speech) / (2 * PIPELINE_RATE)
+        self.end_of_speech_heard = asyncio.Event()
+        self.task = asyncio.create_task(self.send(socket, bytes([handler_id])))
+
+    async def send(self, socket: websockets.ClientConnection, prefix: bytes) -> None:
+        frames = self.speech + bytes(2 * int(TRAILING_SILENCE_SECONDS * PIPELINE_RATE))
+        chunk_bytes, chunk_seconds = 2 * CHUNK_SAMPLES, CHUNK_SAMPLES / PIPELINE_RATE
+        for index, offset in enumerate(range(0, len(frames), chunk_bytes)):
+            if self.end_of_speech_heard.is_set():
+                break
+            await socket.send(prefix + frames[offset : offset + chunk_bytes])
+            await asyncio.sleep(max(0.0, self.started + (index + 1) * chunk_seconds - time.monotonic()))
+        await socket.send(prefix)
+
+    def seconds_since_speech_end(self) -> float:
+        return time.monotonic() - self.speech_end
+
+
 async def follow_run(socket: websockets.ClientConnection, base: str, wav_path: Path, answer: VoiceAnswer) -> None:
-    """Streams the question once the run hands out its audio channel, then times each event from the end of the question's speech. The spoken reply
-    is fetched as a satellite fetches it: as soon as the agent starts streaming text to speech, or at the end of text to speech when it does not."""
-    speech_end = 0.0
+    """Times each event from the end of the question's speech, reading events while the question streams. The spoken reply is fetched as a satellite
+    fetches it: as soon as the agent starts streaming text to speech, or at the end of text to speech when it does not."""
+    stream: QuestionStream | None = None
     audio_task: asyncio.Task | None = None
     tts_url = ""
     async for raw in socket:
@@ -165,47 +208,41 @@ async def follow_run(socket: websockets.ClientConnection, base: str, wav_path: P
         event, data = message["event"]["type"], message["event"].get("data") or {}
         if event == "run-start":
             tts_url = (data.get("tts_output") or {}).get("url", "")
-            speech_end = await stream_question(socket, data["runner_data"]["stt_binary_handler_id"], wav_path)
-        elif event == "stt-end":
-            answer.transcript = data["stt_output"]["text"]
-            answer.stt_seconds = time.monotonic() - speech_end
+            stream = QuestionStream(socket, data["runner_data"]["stt_binary_handler_id"], wav_path)
+        elif event in ("stt-vad-end", "stt-end"):
+            note_end_of_question(stream, event, data, answer)
         elif event == "intent-progress":
             if answer.first_words_seconds is None and (data.get("chat_log_delta") or {}).get("content"):
-                answer.first_words_seconds = time.monotonic() - speech_end
+                answer.first_words_seconds = stream.seconds_since_speech_end()
             if data.get("tts_start_streaming") and audio_task is None and tts_url:
-                audio_task = asyncio.create_task(first_audio_seconds(base + tts_url, speech_end))
+                audio_task = asyncio.create_task(first_audio_seconds(base + tts_url, stream.speech_end))
         elif event == "intent-end":
-            answer.answer_seconds = time.monotonic() - speech_end
+            answer.answer_seconds = stream.seconds_since_speech_end()
             answer.answer = spoken_answer(data)
         elif event == "tts-end" and audio_task is None:
-            audio_task = asyncio.create_task(first_audio_seconds(base + ((data.get("tts_output") or {}).get("url") or tts_url), speech_end))
+            audio_task = asyncio.create_task(first_audio_seconds(base + ((data.get("tts_output") or {}).get("url") or tts_url), stream.speech_end))
         elif event == "error":
             raise RuntimeError(f"{data.get('code')}: {data.get('message')}")
         elif event == "run-end":
             break
+    if stream is not None:
+        await stream.task
     if audio_task is not None:
         answer.first_audio_seconds = await audio_task
+
+
+def note_end_of_question(stream: QuestionStream, event: str, data: dict, answer: VoiceAnswer) -> None:
+    stream.end_of_speech_heard.set()
+    if stream.seconds_since_speech_end() < 0 and not answer.error:
+        answer.error = f"cut short: {event} {-stream.seconds_since_speech_end():.1f} s before the question's speech ended"
+    if event == "stt-end":
+        answer.transcript = data["stt_output"]["text"]
+        answer.stt_seconds = stream.seconds_since_speech_end()
 
 
 def spoken_answer(intent_end_data: dict) -> str:
     response = (intent_end_data.get("intent_output") or {}).get("response") or {}
     return response.get("speech", {}).get("plain", {}).get("speech", "")
-
-
-async def stream_question(socket: websockets.ClientConnection, handler_id: int, wav_path: Path) -> float:
-    """The question's audio at the pace it was spoken, then silence until the pipeline hears the end of speech, then the end of the stream.
-    Returns the moment the speech itself ended: the user's wait starts there, end-of-speech detection included."""
-    with wave.open(str(wav_path), "rb") as handle:
-        speech = handle.readframes(handle.getnframes())
-    frames = speech + bytes(2 * int(TRAILING_SILENCE_SECONDS * PIPELINE_RATE))
-    prefix = bytes([handler_id])
-    chunk_bytes, chunk_seconds = 2 * CHUNK_SAMPLES, CHUNK_SAMPLES / PIPELINE_RATE
-    started = time.monotonic()
-    for index, offset in enumerate(range(0, len(frames), chunk_bytes)):
-        await socket.send(prefix + frames[offset : offset + chunk_bytes])
-        await asyncio.sleep(max(0.0, started + (index + 1) * chunk_seconds - time.monotonic()))
-    await socket.send(prefix)
-    return started + len(speech) / (2 * PIPELINE_RATE)
 
 
 async def first_audio_seconds(url: str, speech_end: float) -> float | None:

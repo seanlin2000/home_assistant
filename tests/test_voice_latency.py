@@ -1,4 +1,6 @@
-from benchmark.voice_latency import VoiceAnswer, median_of, rate_of, sample_averages, spoken_answer
+import numpy
+
+from benchmark.voice_latency import VoiceAnswer, median_of, rate_of, sample_averages, shorten_pauses, spoken_answer
 
 PAGES_PER_MB = 64  # 16 KiB pages
 
@@ -30,3 +32,11 @@ def test_a_stage_that_never_happened_is_left_out_of_the_median() -> None:
 def test_the_spoken_answer_is_read_from_the_intent_output() -> None:
     assert spoken_answer({"intent_output": {"response": {"speech": {"plain": {"speech": "It fell in 1989."}}}}}) == "It fell in 1989."
     assert spoken_answer({}) == ""
+
+
+def test_a_long_pause_between_sentences_is_cut_to_a_quarter_second() -> None:
+    tone = (numpy.sin(numpy.arange(16000) / 5) * 10000).astype(numpy.int16)  # one second of speech-loud sound
+    pause = numpy.zeros(16000, dtype=numpy.int16)  # one second of silence
+    shortened = shorten_pauses(numpy.concatenate([tone, pause, tone]))
+    kept_pause_seconds = (len(shortened) - 2 * 16000) / 16000
+    assert 0.2 <= kept_pause_seconds <= 0.25  # whole 20 ms frames, so just under a quarter second
