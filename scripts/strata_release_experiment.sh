@@ -8,18 +8,20 @@
 #   release  the copies given back: the same answers, and the memory they held
 # off and release also time a first request after IDLE_SECONDS of quiet, with the file reads (pageins) and swap-ins it costs.
 # The first failed check stops the experiment; production returns to llama-server on any exit.
-# Usage: scripts/strata_release_experiment.sh [smallest allocation touched, in MiB; default 32]
-# Results: benchmark/results/strata_release/ (experiment.txt every snapshot, checks.tsv, results.tsv, greedy_check.jsonl, engine_probe.md).
+# Usage: [RELEASE_RUN=folder] [STRATA_RELEASE_PROJECTIONS=1] [SETTLE_SECONDS=s] [IDLE_SECONDS=s] scripts/strata_release_experiment.sh [smallest allocation touched, in MiB; default 32]
+#   STRATA_RELEASE_PROJECTIONS=1 also poisons or releases the 300 native projection matrices (scripts/strata_patches/release_projections.patch).
+# Results: benchmark/results/${RELEASE_RUN:-strata_release}/ (experiment.txt every snapshot, checks.tsv, results.tsv, greedy_check.jsonl, engine_probe.md).
 # Run it on the Studio, from this worktree.
 
 set -u
-RUN=strata_release
+RUN="${RELEASE_RUN:-strata_release}"
 # shellcheck disable=SC1091  # the shared helpers beside this script
 source "$(dirname "$0")/strata_trial_common.sh"
 OUT="${TRIAL}/benchmark/results/${RUN}"
-SETTLE_SECONDS=120
-IDLE_SECONDS=600
+SETTLE_SECONDS="${SETTLE_SECONDS:-120}"
+IDLE_SECONDS="${IDLE_SECONDS:-600}"
 MIN_HANDLED_GB=1.4
+MIN_PROJECTIONS_HANDLED_GB=1.8 # the startup log's 1,781 MiB of native projection matrices
 MAX_DECODE_DROP=0.05
 MAX_SWAP_GROWTH_MB=500
 MIN_MEMORY_PRESSURE_FREE_PERCENT=10
@@ -44,7 +46,7 @@ start_engine() {
     local mode="$1" release_mode=""
     [[ "$mode" == off ]] || release_mode="$mode"
     engine_log_start="$(wc -l <"$ENGINE_LOG")"
-    if ! STRATA_PORT=8090 STRATA_RELEASE_HOST_WEIGHTS="$release_mode" STRATA_RELEASE_MIN_MIB="$MIN_MIB" "${TRIAL}/scripts/strata_trial.sh" start lean2 | head -1; then
+    if ! STRATA_PORT=8090 STRATA_RELEASE_HOST_WEIGHTS="$release_mode" STRATA_RELEASE_MIN_MIB="$MIN_MIB" STRATA_RELEASE_PROJECTIONS="${STRATA_RELEASE_PROJECTIONS:-}" "${TRIAL}/scripts/strata_trial.sh" start lean2 | head -1; then
         record_check "$mode" start FAIL "Strata lean2 did not start; see ${STRATA_LOG}"
         return 1
     fi
@@ -98,6 +100,11 @@ run_switched() {
     local handled
     handled="$(handled_gb "$mode")"
     check_that "$mode" F1-copies-handled "${handled:-none} GB ${mode}ed (at least ${MIN_HANDLED_GB})" at_least "${handled:-0}" "$MIN_HANDLED_GB"
+    if [[ "${STRATA_RELEASE_PROJECTIONS:-}" == 1 ]]; then
+        handled="$(handled_gb "$mode projections")"
+        check_that "$mode" F1-projections-handled "${handled:-none} GB of projection matrices ${mode}ed (at least ${MIN_PROJECTIONS_HANDLED_GB})" \
+            at_least "${handled:-0}" "$MIN_PROJECTIONS_HANDLED_GB"
+    fi
     check_that "$mode" F2-same-answers "${mode} against off-1" greedy "$mode" --compare-to off-1
     measure "$mode"
 }
