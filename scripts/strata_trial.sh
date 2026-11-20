@@ -1,7 +1,12 @@
 #!/bin/bash
 # The Strata trial on the Studio: install Strata beside our Flash Next file, start it on the bench port in one of the variants below, and stop it.
 # Production must be stopped first (scripts/services.sh stop). Run it at the Studio's own keyboard, not over SSH.
-# Usage: scripts/strata_trial.sh preflight|install|start <plain|dflash2|dflash2-f16|lowmem>|stop
+# Usage: scripts/strata_trial.sh preflight|install|start <variant>|stop
+# Variants: plain, dflash2, dflash2-f16, lowmem, and the phase 4 trims of dflash2-f16, each adding to the one before:
+#   lean1  no conversation cache (--conversation-cache-mib 0): with route_questions off only the conversation runs, so nothing is parked
+#   lean2  prompt chunks of 1024 rows instead of 2048 (STRATA_METAL_PROMPT_CHUNK), halving the prompt buffers
+#   lean3  the hyper-connection matrices read as BF16 from the file (STRATA_HC_Q8=0) instead of a 0.63 GB Q8_0 copy
+# STRATA_CONTEXT=N starts with a context of N tokens instead of 34,816, to measure what the K/V costs per token.
 #
 # Every variant keeps the model resident (STRATA_METAL_STREAM=0): Strata's own sizing rule would stream it from the SSD on 64 GB, though llama-server
 # holds the same file in memory. plain runs two request slots, one each for the conversation and the router as llama-server's two slots do. The DFlash2
@@ -16,7 +21,7 @@ MODEL_DIR="${HOME}/models/gguf/Qwen3.8-Flash-Next-GSQ-RCO/IQ3_XXS"
 API_KEY_FILE="${HOME}/Library/Application Support/studio-assistant/llama-server.key"
 # STRATA_PORT=8090 puts Strata where production llama-server listens, so the whole stack runs on it (the memory-fit check)
 PORT="${STRATA_PORT:-8092}"
-CONTEXT_TOKENS=34816
+CONTEXT_TOKENS="${STRATA_CONTEXT:-34816}"
 REASONING_BUDGET_TOKENS=3072
 HEALTH_TIMEOUT_SECONDS=900
 ENGINE_EXIT_TIMEOUT_SECONDS=60
@@ -81,24 +86,28 @@ start_variant() {
 
 write_trial_config() {
     # Setup's own config, with the trial's memory, drafter, slots, budget and key on top. The key file is the one llama-server and the harness read.
-    /usr/bin/python3 -I - "$(setup_config)" "${TRIAL_CONFIG}" "$1" "${API_KEY_FILE}" "${PORT}" "${REASONING_BUDGET_TOKENS}" <<'PY'
+    /usr/bin/python3 -I - "$(setup_config)" "${TRIAL_CONFIG}" "$1" "${API_KEY_FILE}" "${PORT}" "${REASONING_BUDGET_TOKENS}" "${CONTEXT_TOKENS}" <<'PY'
 import json, sys
 from pathlib import Path
-source, target, variant, key_file, port, budget = sys.argv[1:]
+source, target, variant, key_file, port, budget, context = sys.argv[1:]
 config = json.loads(Path(source).read_text())
-environment = {"STRATA_METAL_STREAM": "0"}
-if variant == "dflash2-f16":
-    environment["STRATA_METAL_F16"] = "1"
-if variant == "lowmem":
-    environment["STRATA_METAL_PROMPT_CHUNK"] = "1024"
-if variant not in ("plain", "dflash2", "dflash2-f16", "lowmem"):
-    sys.exit(f"unknown variant {variant}: plain, dflash2, dflash2-f16 or lowmem")
-# Setup writes --suffix-draft 0 only for a Mac it streams on; a resident config leaves Strata's own look-ahead in the text on.
+f16 = {"STRATA_METAL_F16": "1"}
+lean1 = {**f16}
+lean2 = {**lean1, "STRATA_METAL_PROMPT_CHUNK": "1024"}
+lean3 = {**lean2, "STRATA_HC_Q8": "0"}
+variant_environments = {"plain": {}, "dflash2": {}, "dflash2-f16": f16, "lowmem": {"STRATA_METAL_PROMPT_CHUNK": "1024"}, "lean1": lean1, "lean2": lean2, "lean3": lean3}
+if variant not in variant_environments:
+    sys.exit(f"unknown variant {variant}: {', '.join(variant_environments)}")
+drafts_with_dflash2 = variant not in ("plain", "lowmem")
 arguments = config["args"]
+# Setup writes --suffix-draft 0 only for a Mac it streams on; a resident config leaves Strata's own look-ahead in the text on.
 if "--suffix-draft" in arguments:
     del arguments[arguments.index("--suffix-draft"):arguments.index("--suffix-draft") + 2]
-config.update(env=environment, parallel=1 if variant.startswith("dflash2") else 2, port=int(port), reasoning_budget_tokens=int(budget), api_key=Path(key_file).read_text().strip(),
-              drafting="dflash2" if variant.startswith("dflash2") else "off", open_browser=False)
+arguments[arguments.index("--max-context") + 1] = context
+if variant.startswith("lean"):
+    arguments += ["--conversation-cache-mib", "0"]
+config.update(env={"STRATA_METAL_STREAM": "0", **variant_environments[variant]}, parallel=1 if drafts_with_dflash2 else 2, port=int(port), reasoning_budget_tokens=int(budget),
+              api_key=Path(key_file).read_text().strip(), drafting="dflash2" if drafts_with_dflash2 else "off", open_browser=False)
 Path(target).write_text(json.dumps(config, indent=2))
 Path(target).chmod(0o600)
 PY
@@ -165,7 +174,7 @@ strata_terminal_dir() {
 case "${1:-}" in
 preflight) preflight ;;
 install) install_strata ;;
-start) start_variant "${2:?usage: scripts/strata_trial.sh start plain|dflash2|dflash2-f16|lowmem}" ;;
+start) start_variant "${2:?usage: scripts/strata_trial.sh start plain|dflash2|dflash2-f16|lowmem|lean1|lean2|lean3}" ;;
 stop) stop_trial ;;
 *) fail "usage: scripts/strata_trial.sh preflight|install|start <variant>|stop" ;;
 esac
