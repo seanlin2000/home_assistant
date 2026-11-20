@@ -6,12 +6,14 @@
 #                               pin with the patches built only checks; one at another commit stops and points at update.
 #   scripts/strata.sh update    after a PR changed the pinned commit: take the patches off, check out the new commit, put them back, build, check.
 #                               The running engine keeps its old binary until the next deploy or scripts/services.sh restart llama.
+#   scripts/strata.sh ensure    install when missing, update when at another commit, otherwise install (which only checks when nothing is
+#                               wrong). Under Strata the deploy runs the deployed commit's own copy before restarting the engine.
 #   scripts/strata.sh check     the launch's own check: the pinned commit, exactly our patches, a binary built from them
 set -euo pipefail
 
 PROJECT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 PYTHON="$PROJECT_DIR/.venv/bin/python"
-STRATA_REPOSITORY="https://github.com/Niko1221/Strata"
+STRATA_REPOSITORY="${STRATA_REPOSITORY:-https://github.com/Niko1221/Strata}" # a test clones a local stand-in
 BUILD_DIR="engine/build-metal"
 
 fail() {
@@ -20,7 +22,7 @@ fail() {
 }
 
 usage() {
-    sed -n '2,10p' "$0"
+    sed -n '2,12p' "$0"
     exit 1
 }
 
@@ -101,7 +103,14 @@ PY
     )
 }
 
+tree_has_our_patches() {
+    "$PYTHON" -c 'from serving.settings import load_serving_config
+from serving.strata import tree_is_commit_plus_patches
+raise SystemExit(0 if tree_is_commit_plus_patches(load_serving_config().served_model.strata) else 1)'
+}
+
 apply_patches() {
+    tree_has_our_patches && return # already applied: only the build was missing or stale
     [[ -z "$(git -C "$INSTALL_DIR" status --porcelain --untracked-files=no)" ]] || fail "$INSTALL_DIR has changes that are not ours; look at git -C $INSTALL_DIR diff"
     local patch
     for patch in "${PATCHES[@]}"; do
@@ -132,11 +141,22 @@ update_strata() {
     check
 }
 
+ensure_strata() {
+    if [[ ! -d "$INSTALL_DIR/.git" ]]; then
+        install_strata
+    elif [[ "$(head_commit)" != "$COMMIT" ]]; then
+        update_strata
+    else
+        install_strata
+    fi
+}
+
 [[ $# -eq 1 ]] || usage
 load_pin
 case "$1" in
 install) install_strata ;;
 update) update_strata ;;
+ensure) ensure_strata ;;
 check) check ;;
 *) usage ;;
 esac

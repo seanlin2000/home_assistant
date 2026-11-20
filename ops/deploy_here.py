@@ -70,6 +70,8 @@ def report_nothing_applied(summary: dict) -> int:
         return DEPLOYED
     print(f"deploy: NOT deployed. Tests {summary['tests']}", file=sys.stderr)
     print(f"deploy: still running {summary['from'][:10]}; nothing was restarted", file=sys.stderr)
+    if "strata" in summary:
+        print(f"deploy: Strata {summary['strata']}", file=sys.stderr)
     return NOT_DEPLOYED
 
 

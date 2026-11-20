@@ -133,7 +133,7 @@ max_output_tokens = 4096                    # thinking and the answer share it; 
 # llama-server's quality with prefill 1.84x and decode 1.55x faster. scripts/strata.sh install builds it; changing `commit` is how Strata is updated,
 # by a PR and then scripts/strata.sh update on the Studio. Nothing else updates it.
 [models."qwen3.8-flash-next".strata]
-install_dir = "~/strata"
+install_dir = "~/Code/strata"                  # beside the other checkouts; changing it means a fresh install there (the deploy runs it)
 commit = "64524fb9fc82222ddce554c0643b64f056ec8366"  # the launch refuses any other checkout
 release = "v0.2.16"                         # the commit's release name, for people
 setup_config = "engine/strata-iq3_xxs.json" # what Strata's setup wrote (the pack, the GGUF shards, the engine flags); the launch builds on it

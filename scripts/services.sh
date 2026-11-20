@@ -33,6 +33,8 @@ UNLOAD_TIMEOUT_SECONDS="${UNLOAD_TIMEOUT_SECONDS:-30}"
 # engine takes a few seconds more to unmap the model, so a restart waits for it instead of loading a second engine beside it.
 ENGINE_OVERRIDE_FILE="$APP_SUPPORT_DIR/engine"
 STRATA_ENGINE_PROCESS=strata
+SERVING_CLI="${SERVING_CLI:-$PROJECT_DIR/.venv/bin/serving}"
+STRATA_SCRIPT="${STRATA_SCRIPT:-$PROJECT_DIR/scripts/strata.sh}"
 ENGINE_EXIT_TIMEOUT_SECONDS="${ENGINE_EXIT_TIMEOUT_SECONDS:-60}"
 # How often MLX renews the speech server's wired memory (install_agents explains why); scripts/speech_server.sh uses the same default.
 MLX_RESIDENCY_REFRESH_MS="${MLX_RESIDENCY_REFRESH_MS:-1000}"
@@ -277,7 +279,19 @@ restart_agent() {
     echo "restarted $name"
 }
 
+prepare_engine() {
+    # Under Strata, bring it to this checkout's pinned commit and folder before the running engine stops: only a check when it already is, an
+    # install or update otherwise, so the old engine keeps answering meanwhile and a failed install leaves it running. Every engine start
+    # comes through here (a deploy, start, install, the health check, engine), including a deploy run by code from before Strata.
+    [[ "$("$SERVING_CLI" engine)" == strata ]] || return 0
+    "$STRATA_SCRIPT" ensure
+}
+
 restart_engine() {
+    prepare_engine || {
+        echo "Strata is not at this checkout's pin; the running engine was left alone" >&2
+        return 1
+    }
     # A slow unload must not stop the script before it loads the agent again: under the health check, that would leave the engine down.
     launchctl bootout "$(agent_target llama)" 2>/dev/null || true
     wait_until_unloaded llama || true
@@ -311,7 +325,7 @@ set_engine() {
         return 1
         ;;
     esac
-    if ! "${SERVING_CLI:-$PROJECT_DIR/.venv/bin/serving}" check; then
+    if ! { prepare_engine && "$SERVING_CLI" check; }; then
         if [[ -n "$previous" ]]; then echo "$previous" >"$ENGINE_OVERRIDE_FILE"; else rm -f "$ENGINE_OVERRIDE_FILE"; fi
         echo "the engine was not switched; the running one is untouched" >&2
         return 1

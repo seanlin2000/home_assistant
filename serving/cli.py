@@ -1,5 +1,5 @@
-"""`serving launch | show | check | fetch`: start the active engine (llama-server or Strata) from config/serving.toml, print what it would run, check its
-files and install, or download the served model and its drafter."""
+"""`serving launch | show | check | engine | fetch`: start the active engine (llama-server or Strata) from config/serving.toml, print what it would run,
+check its files and install, name the active engine, or download the served model and its drafter."""
 
 import argparse
 import json
@@ -24,8 +24,11 @@ def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="serving", description="Serve the model with llama-server or Strata, using only the settings in config/serving.toml.")
     parser.add_argument(
         "action",
-        choices=("launch", "show", "check", "fetch"),
-        help="launch: check the files and replace this process with the active engine; show: print its command or run config; check: exit 1 when the launch would refuse; fetch: download the model and drafter",
+        choices=("launch", "show", "check", "engine", "fetch"),
+        help=(
+            "launch: check the files and replace this process with the active engine; show: print its command or run config; check: exit 1 when the launch"
+            " would refuse; engine: print the active engine's name; fetch: download the model and drafter"
+        ),
     )
     return parser
 
@@ -37,6 +40,8 @@ def main() -> None:
         show(config)
     elif action == "check":
         check(config)
+    elif action == "engine":
+        print(active_engine(config))
     elif action == "fetch":
         for pinned_file in config.served_model.pinned_files:
             fetch(pinned_file)

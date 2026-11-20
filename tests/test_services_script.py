@@ -36,8 +36,14 @@ echo "pkill $*" >>"$HOME/calls.log"
 touch "$HOME/engine_killed"
 """
 FAKE_SERVING = """#!/bin/bash
+# serving engine names the override, or serving.toml's engine from DEFAULT_ENGINE; serving check logs which engine it saw and fails on CHECK_FAILS
+if [[ "$1" == engine ]]; then cat "$HOME/Library/Application Support/studio-assistant/engine" 2>/dev/null || echo "${DEFAULT_ENGINE:-llama-server}"; exit; fi
 echo "serving $1 sees $(cat "$HOME/Library/Application Support/studio-assistant/engine" 2>/dev/null || echo default)" >>"$HOME/calls.log"
 [[ -z "$CHECK_FAILS" ]]
+"""
+FAKE_STRATA_SCRIPT = """#!/bin/bash
+echo "strata.sh $1" >>"$HOME/calls.log"
+[[ -z "$ENSURE_FAILS" ]]
 """
 FAKE_LSOF = """#!/bin/bash
 # lsof -nP -iTCP:PORT -sTCP:LISTEN
@@ -50,7 +56,7 @@ port="${2#-iTCP:}"
 def mac(tmp_path: Path) -> dict[str, str]:
     bin_dir = tmp_path / "bin"
     bin_dir.mkdir()
-    for name, body in (("launchctl", FAKE_LAUNCHCTL), ("lsof", FAKE_LSOF), ("pgrep", FAKE_PGREP), ("pkill", FAKE_PKILL), ("serving", FAKE_SERVING)):
+    for name, body in (("launchctl", FAKE_LAUNCHCTL), ("lsof", FAKE_LSOF), ("pgrep", FAKE_PGREP), ("pkill", FAKE_PKILL), ("serving", FAKE_SERVING), ("strata.sh", FAKE_STRATA_SCRIPT)):
         (bin_dir / name).write_text(body)
         (bin_dir / name).chmod((bin_dir / name).stat().st_mode | stat.S_IEXEC)
     agents = tmp_path / "Library" / "LaunchAgents"
@@ -60,7 +66,17 @@ def mac(tmp_path: Path) -> dict[str, str]:
     logs = tmp_path / "Library" / "Logs" / "studio-assistant"
     logs.mkdir(parents=True)
     environment = {"PATH": f"{bin_dir}:{os.environ['PATH']}", "HOME": str(tmp_path), "STUDIO_LOG_DIR": str(logs), "NOT_LOADED": "", "DOWN_PORTS": "", "REFUSED": ""}
-    return environment | {"SERVING_CLI": str(bin_dir / "serving"), "ENGINE_RUNNING": "", "CHECK_FAILS": "", "ENGINE_EXIT_TIMEOUT_SECONDS": "1", "UNLOAD_TIMEOUT_SECONDS": "1", "STILL_UNLOADING": ""}
+    return environment | {
+        "SERVING_CLI": str(bin_dir / "serving"),
+        "STRATA_SCRIPT": str(bin_dir / "strata.sh"),
+        "ENSURE_FAILS": "",
+        "DEFAULT_ENGINE": "",
+        "ENGINE_RUNNING": "",
+        "CHECK_FAILS": "",
+        "ENGINE_EXIT_TIMEOUT_SECONDS": "1",
+        "UNLOAD_TIMEOUT_SECONDS": "1",
+        "STILL_UNLOADING": "",
+    }
 
 
 def services(command: str, environment: dict[str, str], *arguments: str) -> subprocess.CompletedProcess:
@@ -136,10 +152,21 @@ def test_a_switch_the_check_refuses_is_undone_and_nothing_restarts(mac: dict[str
     refused = services("engine", mac | {"CHECK_FAILS": "1"}, "strata")
 
     assert (refused.returncode, engine_override(mac).read_text().strip()) == (1, "llama-server")
-    assert calls(mac) == ["serving check sees strata"]
+    assert calls(mac) == ["strata.sh ensure", "serving check sees strata"]
 
 
 def test_an_engine_agent_slow_to_unload_is_still_loaded_again_so_a_health_check_restart_never_leaves_it_down(mac: dict[str, str]) -> None:
     restarted = services("restart", mac | {"STILL_UNLOADING": "1"}, "llama")
     assert calls(mac) == ["bootout llama", "bootstrap llama"]
     assert "llama still unloading after 1 s" in restarted.stderr
+
+
+def test_under_strata_an_engine_restart_first_brings_strata_to_the_checkouts_pin_while_the_old_engine_still_runs(mac: dict[str, str]) -> None:
+    restarted = services("restart", mac | {"DEFAULT_ENGINE": "strata"}, "llama")
+    assert (restarted.returncode, calls(mac)) == (0, ["strata.sh ensure", "bootout llama", "bootstrap llama"])
+
+
+def test_a_strata_install_that_fails_leaves_the_running_engine_alone(mac: dict[str, str]) -> None:
+    restarted = services("restart", mac | {"DEFAULT_ENGINE": "strata", "ENSURE_FAILS": "1"}, "llama")
+    assert (restarted.returncode, calls(mac)) == (1, ["strata.sh ensure"])
+    assert "the running engine was left alone" in restarted.stderr
