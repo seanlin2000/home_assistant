@@ -24,10 +24,10 @@ TIMED_RUN_SCRIPT = "strata_voice_latency.sh"
 
 def main() -> None:
     out = Path(sys.argv[1]).resolve()
-    mapped_files: dict[str, list[Path]] = {}
+    model_files: set[Path] = set()
     last_pull, last_header = 0.0, ""
     while timed_run_is_alive():
-        last_header = append_row(out / "samples_extra.tsv", sample(out, mapped_files), last_header)
+        last_header = append_row(out / "samples_extra.tsv", sample(out, model_files), last_header)
         if time.time() - last_pull >= PIPELINE_PULL_SECONDS:
             pull_pipeline_runs(out / "pipeline_runs.jsonl")
             last_pull = time.time()
@@ -39,14 +39,15 @@ def timed_run_is_alive() -> bool:
     return subprocess.run(["pgrep", "-f", TIMED_RUN_SCRIPT], capture_output=True).returncode == 0
 
 
-def sample(out: Path, mapped_files: dict[str, list[Path]]) -> dict[str, str]:
+def sample(out: Path, model_files: set[Path]) -> dict[str, str]:
     label, _, phase = (out / "phase").read_text().strip().partition("\t")
     row = {"epoch": str(int(time.time())), "label": label, "phase": phase, "load_1m": command_output(["sysctl", "-n", "vm.loadavg"]).split()[1]}
     row |= vm_stat_counters()
     engine_pid = command_output(["pgrep", "-x", "llama-server"]) or command_output(["pgrep", "-x", "strata"])
     row["engine_pid"] = engine_pid.split("\n")[0]
     row["engine_footprint_mb"] = footprint_mb(row["engine_pid"])
-    for path in mapped_files.setdefault(row["engine_pid"], large_mapped_files(row["engine_pid"])):
+    model_files.update(large_mapped_files(row["engine_pid"]))  # every file either engine has mapped, so the columns stay the same across engines
+    for path in sorted(model_files):
         row[f"resident_mb:{path.name}"] = str(resident_bytes(path) // 1024**2)
     return row
 
