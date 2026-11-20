@@ -170,8 +170,9 @@ def sections_mentioning(issue: Issue, topic: str) -> list[Section]:
 
 
 def issue_line(issue: Issue, sections: list[Section]) -> str:
+    """No arrival time: the model repeated it in every answer about newsletters, and the user does not want it. The day's issues come in arrival order."""
     titles = SECTION_SEPARATOR.join(listed_titles(sections)) or "no sections"
-    return f'- {spoken_time(issue.received)}: {issue.publication}, "{issue.headline}", about {issue.words:,} words. Sections: {titles}.'
+    return f'- {issue.publication}, "{issue.headline}", about {issue.words:,} words. Sections: {titles}.'
 
 
 def listed_titles(sections: list[Section]) -> list[str]:
@@ -187,7 +188,7 @@ def issue_text(issue: Issue, sections: list[Section], max_words: int) -> str:
             break
         kept.append(section)
         words += section.words
-    heading = f'{issue.publication}, "{issue.headline}", received at {spoken_time(issue.received)}.'
+    heading = f'{issue.publication}, "{issue.headline}".'
     body = "\n\n".join(f"## {section.title}\n" + "\n".join(section.paragraphs) for section in kept)
     left_out = listed_titles(sections[len(kept) :])
     return with_note(f"{heading}\n\n{body}", LEFT_OUT_NOTE.format(titles=SECTION_SEPARATOR.join(left_out)) if left_out else "")

@@ -27,7 +27,7 @@ def register_newsletters_tools(server: MCPServer, settings: NewslettersSettings)
         newsletter: Annotated[str, Field(max_length=MAX_NAME_CHARS, description='one newsletter, as the user named it, e.g. "Money Stuff"; empty for all')] = "",
         topic: Annotated[str, Field(max_length=MAX_TOPIC_CHARS, description='only the sections that mention this, e.g. "Nvidia"; empty for all')] = "",
     ) -> str:
-        """The user's own email newsletters for a day: each issue's time, publication, headline and section names. Use this first for anything about the user's newsletters, and to find which ones mention a topic. Then call newsletter_summarize for what an issue or section says."""
+        """The user's own email newsletters for a day: each issue's publication, headline and section names, in the order they arrived. Use this first for anything about the user's newsletters, and to find which ones mention a topic. Then call newsletter_summarize for what an issue or section says."""
         return answers.listing(date, newsletter, topic)
 
     @server.tool(name=NEWSLETTER_SUMMARIZE_TOOL_NAME)
