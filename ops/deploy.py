@@ -293,7 +293,7 @@ def switch_to(ref: str, run_tests: bool, dry_run: bool) -> dict:
             if ensured_strata:
                 run([str(STRATA_SCRIPT), "ensure"], timeout=STRATA_ENSURE_TIMEOUT_SECONDS)
             run([str(SERVING_CLI), "check"], timeout=SERVING_CHECK_TIMEOUT_SECONDS)
-    except (subprocess.CalledProcessError, SystemExit) as error:
+    except (subprocess.CalledProcessError, subprocess.TimeoutExpired, SystemExit) as error:
         git("checkout", "--detach", "--quiet", old)
         if "sync_env" in plan.actions:
             execute("sync_env")  # put the environment back with the old lock

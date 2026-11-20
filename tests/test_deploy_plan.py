@@ -142,7 +142,8 @@ def test_serving_settings_launcher_or_strata_patches_restart_the_engine() -> Non
 
 
 class EngineDeploy:
-    """A deploy of a serving.toml change with git, the steps and the restarts faked: records checkouts, the commands run, and the restarts."""
+    """A deploy of a serving.toml change with git, the steps and the restarts faked: records checkouts, the commands run, and the restarts. The
+    step named in `failing` exits 1, or runs out of time when the name ends in " (hangs)"."""
 
     def __init__(self, monkeypatch: pytest.MonkeyPatch, tmp_path: Path, engine: str, failing: str = "") -> None:
         monkeypatch.setenv("STUDIO_LOG_DIR", str(tmp_path))
@@ -168,6 +169,8 @@ class EngineDeploy:
         self.ran.append(step)
         if step == self.failing:
             raise subprocess.CalledProcessError(1, command)
+        if f"{step} (hangs)" == self.failing:
+            raise subprocess.TimeoutExpired(command, timeout)
 
 
 def test_an_engine_the_launch_would_refuse_aborts_the_deploy_before_any_restart(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
@@ -198,6 +201,14 @@ def test_a_strata_install_that_fails_aborts_and_the_old_commits_strata_sh_puts_s
 
     assert deploying.ran == ["strata.sh ensure@new", "strata.sh ensure@old"]
     assert (summary["strata"], deploying.restarted) == ("matches the old pin", [])
+
+
+def test_a_strata_install_that_runs_out_of_time_aborts_like_one_that_fails(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    deploying = EngineDeploy(monkeypatch, tmp_path, engine="strata", failing="strata.sh ensure@new (hangs)")
+
+    summary = deploy.switch_to("new", run_tests=False, dry_run=False)
+
+    assert summary["note"].startswith("aborted before any restart") and deploying.restarted == []
 
 
 def test_an_old_commit_from_before_strata_has_nothing_to_put_back(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
