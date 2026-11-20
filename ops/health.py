@@ -52,6 +52,10 @@ CHROME_RELEASE_STALE_DAYS = 14  # the listings refresh records it nightly, and C
 ROTATE_OVER_BYTES = 20 * 1024 * 1024
 ROTATE_GENERATIONS = 3
 SEARXNG_SCRIPT = PROJECT_DIR / "scripts" / "searxng.sh"
+SERVICES_SCRIPT = PROJECT_DIR / "scripts" / "services.sh"
+ENGINE_AGENT = "llama"
+# services.sh waits up to 30 s for the agent to unload and 60 s for Strata's engine to exit before loading it again
+ENGINE_RESTART_TIMEOUT_SECONDS = 150
 SEARXNG_STOP_TIMEOUT_SECONDS = 150
 DOCKER_DESKTOP_BACKEND = "/Applications/Docker.app/Contents/MacOS/com.docker.backend"
 KEPT_RUNNING = SearxngVerdict(reason="kept running on this Mac (--keep-searxng)")
@@ -479,7 +483,9 @@ def daily_restart_due(state: State, policy: Policy, local_now: datetime, last_ex
 
 def execute(action: Action, settings: Settings) -> str:
     """Run one action and return a one-line account of it for the snapshot."""
-    if action.kind == "kickstart":
+    if action.kind == "kickstart" and action.target == ENGINE_AGENT:
+        result = restart_engine()
+    elif action.kind == "kickstart":
         result = subprocess.run(["launchctl", "kickstart", "-k", f"gui/{os.getuid()}/{paths.LAUNCHD_PREFIX}.{action.target}"], capture_output=True, text=True)
     elif action.kind == "searxng_up":
         return f"{action.key} ({action.reason}): {start_searxng_in_background()}"
@@ -491,6 +497,15 @@ def execute(action: Action, settings: Settings) -> str:
         raise ValueError(f"unknown action {action.kind}")
     outcome = "ok" if result.returncode == 0 else f"exit {result.returncode}: {(result.stderr or result.stdout).strip()[:120]}"
     return f"{action.key} ({action.reason}): {outcome}"
+
+
+def restart_engine() -> subprocess.CompletedProcess:
+    """Through services.sh, which waits for Strata's engine to exit before starting it again; kickstart -k would start a second engine beside the
+    old one while the old one still holds its buffers (design doc v2/10 section 3.12)."""
+    try:
+        return subprocess.run([str(SERVICES_SCRIPT), "restart", ENGINE_AGENT], capture_output=True, text=True, timeout=ENGINE_RESTART_TIMEOUT_SECONDS)
+    except subprocess.TimeoutExpired as error:
+        return subprocess.CompletedProcess(error.cmd, 124, "", f"no restart after {ENGINE_RESTART_TIMEOUT_SECONDS} s")
 
 
 def start_searxng_in_background() -> str:

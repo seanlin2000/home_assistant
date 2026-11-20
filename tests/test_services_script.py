@@ -19,7 +19,7 @@ name="$(basename "$label" .plist)"
 name="${name##*.}"
 echo "$1 $name" >>"$HOME/calls.log"
 case "$1" in
-print) [[ " $NOT_LOADED " != *" $name "* && ! -f "$HOME/unloaded.$name" ]] ;;
+print) [[ -n "$STILL_UNLOADING" || (" $NOT_LOADED " != *" $name "* && ! -f "$HOME/unloaded.$name") ]] ;;
 bootout) touch "$HOME/unloaded.$name" ;;
 kickstart | bootstrap)
     [[ " $REFUSED " != *" $name "* ]] || { echo "Bootstrap failed: 5: Input/output error" >&2; exit 5; }
@@ -60,7 +60,7 @@ def mac(tmp_path: Path) -> dict[str, str]:
     logs = tmp_path / "Library" / "Logs" / "studio-assistant"
     logs.mkdir(parents=True)
     environment = {"PATH": f"{bin_dir}:{os.environ['PATH']}", "HOME": str(tmp_path), "STUDIO_LOG_DIR": str(logs), "NOT_LOADED": "", "DOWN_PORTS": "", "REFUSED": ""}
-    return environment | {"SERVING_CLI": str(bin_dir / "serving"), "ENGINE_RUNNING": "", "CHECK_FAILS": "", "ENGINE_EXIT_TIMEOUT_SECONDS": "1", "UNLOAD_TIMEOUT_SECONDS": "2"}
+    return environment | {"SERVING_CLI": str(bin_dir / "serving"), "ENGINE_RUNNING": "", "CHECK_FAILS": "", "ENGINE_EXIT_TIMEOUT_SECONDS": "1", "UNLOAD_TIMEOUT_SECONDS": "1", "STILL_UNLOADING": ""}
 
 
 def services(command: str, environment: dict[str, str], *arguments: str) -> subprocess.CompletedProcess:
@@ -137,3 +137,9 @@ def test_a_switch_the_check_refuses_is_undone_and_nothing_restarts(mac: dict[str
 
     assert (refused.returncode, engine_override(mac).read_text().strip()) == (1, "llama-server")
     assert calls(mac) == ["serving check sees strata"]
+
+
+def test_an_engine_agent_slow_to_unload_is_still_loaded_again_so_a_health_check_restart_never_leaves_it_down(mac: dict[str, str]) -> None:
+    restarted = services("restart", mac | {"STILL_UNLOADING": "1"}, "llama")
+    assert calls(mac) == ["bootout llama", "bootstrap llama"]
+    assert "llama still unloading after 1 s" in restarted.stderr

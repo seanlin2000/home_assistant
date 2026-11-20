@@ -278,8 +278,9 @@ restart_agent() {
 }
 
 restart_engine() {
+    # A slow unload must not stop the script before it loads the agent again: under the health check, that would leave the engine down.
     launchctl bootout "$(agent_target llama)" 2>/dev/null || true
-    wait_until_unloaded llama
+    wait_until_unloaded llama || true
     wait_for_engine_exit
     launchctl bootstrap "gui/$(id -u)" "$(plist_path llama)"
 }
