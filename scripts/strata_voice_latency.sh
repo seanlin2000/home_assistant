@@ -6,12 +6,14 @@
 # calculator), 10 more quiet minutes, then B90 (a cold question that needs a tool).
 # A sampler writes memory every 5 seconds through all of it: swap, swap-ins and -outs, file reads, memory_pressure's free %, wired, the compressor,
 # and the engine, Qwen3-ASR, Kokoro and the HA VM each in RAM and compressed. Production returns to llama-server on any exit.
-# Usage: scripts/strata_voice_latency.sh
-# Results: benchmark/results/strata_voice/ (voice.txt the log, voice_latency.jsonl one row a question, samples.tsv, summary.md).
+# Usage: [VOICE_RUN=folder] [STRATA_KEEPALIVE_WINDOW_S=seconds] scripts/strata_voice_latency.sh [round...]
+#   rounds default to llama-1 strata-1 llama-2 strata-2; a round named strata-* runs Strata, any other llama-server. STRATA_KEEPALIVE_WINDOW_S
+#   holds Strata's model wired that long after the last request (Strata's default 120 s unwires it two minutes into every quiet spell).
+# Results: benchmark/results/${VOICE_RUN:-strata_voice}/ (voice.txt the log, voice_latency.jsonl one row a question, samples.tsv, summary.md).
 # Run it on the Studio, from this worktree.
 
 set -u
-RUN=strata_voice
+RUN="${VOICE_RUN:-strata_voice}"
 # shellcheck disable=SC1091  # the shared helpers beside this script
 source "$(dirname "$0")/strata_trial_common.sh"
 OUT="${TRIAL}/benchmark/results/${RUN}"
@@ -21,7 +23,8 @@ SAMPLE_SECONDS=5
 FIRST_AFTER_QUIET=A11
 BURST=(A77 A80 B93 B91 A84 B92) # A83 is spoken in 19 s, past Home Assistant's 15-second limit on one voice command
 COLD_TOOL=B90
-ROUNDS=(llama-1 strata-1 llama-2 strata-2)
+ROUNDS=("$@")
+((${#ROUNDS[@]} > 0)) || ROUNDS=(llama-1 strata-1 llama-2 strata-2)
 sampler_pid=""
 
 set_phase() { # label, phase
@@ -70,7 +73,8 @@ sample_forever() {
 start_strata_released() {
     stop_llama
     engine_log_start="$(wc -l <"$ENGINE_LOG")"
-    if ! STRATA_PORT=8090 STRATA_RELEASE_HOST_WEIGHTS=release STRATA_RELEASE_MIN_MIB=32 "${TRIAL}/scripts/strata_trial.sh" start lean2 | head -1; then
+    if ! STRATA_PORT=8090 STRATA_RELEASE_HOST_WEIGHTS=release STRATA_RELEASE_MIN_MIB=32 STRATA_KEEPALIVE_WINDOW_S="${STRATA_KEEPALIVE_WINDOW_S:-}" \
+        "${TRIAL}/scripts/strata_trial.sh" start lean2 | head -1; then
         echo "Strata lean2 did not start; see ${STRATA_LOG}"
         return 1
     fi
@@ -83,6 +87,7 @@ report_strata_health() { # label
     local log
     log="$(tail -n +"$((engine_log_start + 1))" "$ENGINE_LOG")"
     echo "-- $1: $(echo "$log" | grep "strata metal resident: release" | tail -1)"
+    echo "-- $1: $(echo "$log" | grep "GPU keep-alive" | tail -1)"
     echo "-- $1: engine pid ${engine_pid} at the start, $(pgrep -x strata || echo none) now; $(echo "$log" | grep -ciE "given back|abort|assert|segmentation|ERR") error lines"
     cp "$ENGINE_LOG" "$OUT/engine_$1.log"
 }

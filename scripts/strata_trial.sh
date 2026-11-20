@@ -8,7 +8,8 @@
 #   lean3  the hyper-connection matrices read as BF16 from the file (STRATA_HC_Q8=0) instead of a 0.63 GB Q8_0 copy
 # STRATA_CONTEXT=N starts with a context of N tokens instead of 34,816, to measure what the K/V costs per token.
 # STRATA_RELEASE_HOST_WEIGHTS=poison|release turns on the release experiment's engine patch (scripts/strata_release_experiment.sh), and
-# STRATA_RELEASE_MIN_MIB sets the smallest allocation it touches.
+# STRATA_RELEASE_MIN_MIB sets the smallest allocation it touches. STRATA_KEEPALIVE_WINDOW_S sets how long after the last request Strata's
+# GPU keep-alive holds its buffers wired (Strata's default: 120 s; scripts/strata_voice_latency.sh).
 #
 # Every variant keeps the model resident (STRATA_METAL_STREAM=0): Strata's own sizing rule would stream it from the SSD on 64 GB, though llama-server
 # holds the same file in memory. plain runs two request slots, one each for the conversation and the router as llama-server's two slots do. The DFlash2
@@ -89,10 +90,10 @@ start_variant() {
 write_trial_config() {
     # Setup's own config, with the trial's memory, drafter, slots, budget and key on top. The key file is the one llama-server and the harness read.
     /usr/bin/python3 -I - "$(setup_config)" "${TRIAL_CONFIG}" "$1" "${API_KEY_FILE}" "${PORT}" "${REASONING_BUDGET_TOKENS}" "${CONTEXT_TOKENS}" \
-        "${STRATA_RELEASE_HOST_WEIGHTS:-}" "${STRATA_RELEASE_MIN_MIB:-}" <<'PY'
+        "${STRATA_RELEASE_HOST_WEIGHTS:-}" "${STRATA_RELEASE_MIN_MIB:-}" "${STRATA_KEEPALIVE_WINDOW_S:-}" <<'PY'
 import json, sys
 from pathlib import Path
-source, target, variant, key_file, port, budget, context, release_mode, release_min_mib = sys.argv[1:]
+source, target, variant, key_file, port, budget, context, release_mode, release_min_mib, keepalive_window = sys.argv[1:]
 config = json.loads(Path(source).read_text())
 f16 = {"STRATA_METAL_F16": "1"}
 lean1 = {**f16}
@@ -112,7 +113,8 @@ if variant.startswith("lean"):
 release = {"STRATA_METAL_RELEASE_HOST_WEIGHTS": release_mode} if release_mode else {}
 if release_mode and release_min_mib:
     release["STRATA_METAL_RELEASE_MIN_MIB"] = release_min_mib
-config.update(env={"STRATA_METAL_STREAM": "0", **variant_environments[variant], **release}, parallel=1 if drafts_with_dflash2 else 2, port=int(port), reasoning_budget_tokens=int(budget),
+keepalive = {"STRATA_METAL_KEEPALIVE_WINDOW_S": keepalive_window} if keepalive_window else {}
+config.update(env={"STRATA_METAL_STREAM": "0", **variant_environments[variant], **release, **keepalive}, parallel=1 if drafts_with_dflash2 else 2, port=int(port), reasoning_budget_tokens=int(budget),
               api_key=Path(key_file).read_text().strip(), drafting="dflash2" if drafts_with_dflash2 else "off", open_browser=False)
 Path(target).write_text(json.dumps(config, indent=2))
 Path(target).chmod(0o600)

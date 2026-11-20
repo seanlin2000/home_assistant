@@ -42,8 +42,10 @@ stop_llama() {
     while pgrep -x llama-server >/dev/null; do sleep 1; done
 }
 
+# Only llama-server's agent: services.sh start restarts every agent, and a restarted Kokoro or speech server starts with all its memory in RAM,
+# which would flatter whichever engine runs next.
 start_llama() {
-    (cd "$LIVE" && scripts/services.sh start 2>&1 | tail -1)
+    launchctl bootstrap "gui/$(id -u)" "${HOME}/Library/LaunchAgents/com.studio-assistant.llama.plist"
     until curl -sf -o /dev/null http://127.0.0.1:8090/health; do sleep 5; done
 }
 
