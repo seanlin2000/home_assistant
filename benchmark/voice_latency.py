@@ -254,7 +254,7 @@ def read_samples(samples_path: Path) -> list[dict[str, str]]:
 
 def sample_averages(rows: list[dict[str, str]]) -> str:
     """Each setup's averages over its 5-second samples; the cumulative counters (swap-ins, swap-outs, file reads) become MB per minute."""
-    process_headers = "".join(f" {name} in RAM / compressed GB |" for name in PROCESS_COLUMNS.values())
+    process_headers = "".join(f" {name} total / of it compressed GB |" for name in PROCESS_COLUMNS.values())
     lines = [
         "| Setup | Samples | Swap used GB | Swap-ins MB/min | Swap-outs MB/min | File reads MB/min | memory_pressure free % | Wired GB | Compressor GB |" + process_headers,
         "|---|" + "---|" * (8 + len(PROCESS_COLUMNS)),
