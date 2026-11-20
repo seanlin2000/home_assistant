@@ -136,6 +136,9 @@ class Candidate(BaseModel):
     model: str
     think: bool | str | None = None
     preview: bool = False
+    # Another engine serving the same model table with llama-server's API (Strata): its address and key file, used instead of serving.toml's
+    server_url: str | None = None
+    api_key_file: str | None = None
 
 
 class WeatherHome(BaseModel):

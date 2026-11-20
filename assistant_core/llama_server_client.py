@@ -104,6 +104,10 @@ class LlamaServerClient:
         """Each slot's state and its last request's sizes, as llama-server's monitoring endpoint reports them."""
         return await self._get("/slots")
 
+    async def props(self) -> dict[str, Any]:
+        """The server's own description of its build, model and settings."""
+        return await self._get("/props")
+
     async def _get(self, path: str) -> Any:
         async with httpx.AsyncClient(timeout=MONITORING_TIMEOUT_SECONDS, headers=self._headers) as client:
             response = await client.get(f"{self._base_url}{path}")

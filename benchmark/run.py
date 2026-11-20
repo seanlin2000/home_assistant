@@ -151,6 +151,7 @@ async def run_candidate(candidate: Candidate, questions: list[Question], config:
     async with McpToolBox(mcp_url) as toolbox:
         if isinstance(llm, LlamaServerClient):
             await warm_up_llama_server(llm, toolbox)
+            await record_server_props(llm, run_dir / f"{candidate.key}.server_props.json")
         for question in pending:
             async with fixture_selected(mcp_url, question.fixture):
                 result = await run_question(question, candidate, llm.model_name, in_process_exchange(llm, toolbox, policy, question.today), memory_fit)
@@ -211,7 +212,10 @@ def candidate_policy(candidate: Candidate, config: BenchmarkConfig) -> AgentPoli
 
 
 def llama_server_client(candidate: Candidate) -> LlamaServerClient:
-    """The client for the server config/serving.toml describes. The candidate names the model table it expects, so a server started with another model is caught."""
+    """The client for the server config/serving.toml describes. The candidate names the model table it expects, so a server started with another model is caught.
+    A candidate with its own server_url runs on another engine serving the same model table, so serving.toml's served model is not its business."""
+    if candidate.server_url:
+        return LlamaServerClient(candidate.server_url, read_api_key(Path(candidate.api_key_file or "").expanduser()), candidate.model)
     serving = load_serving_config()
     if serving.server.model != candidate.model:
         raise SystemExit(f"{candidate.key} expects llama-server to serve {candidate.model}, but config/serving.toml serves {serving.server.model}")
@@ -223,6 +227,11 @@ async def warm_up_llama_server(llm: LlamaServerClient, toolbox: McpToolBox) -> N
     if not await llm.is_ready():
         raise SystemExit("llama-server is not answering on its /health route. Start it with `uv run serving launch`.")
     await llm.warm_up(system_prompt(), await toolbox.list_tools(), ROUTER_SYSTEM_PROMPT)
+
+
+async def record_server_props(llm: LlamaServerClient, path: Path) -> None:
+    """What the server says it runs (/props: its build and model), since run_meta.json's llama_server_version names only the llama-server on PATH."""
+    path.write_text(json.dumps(await llm.props(), indent=2))
 
 
 async def prepare_model(candidate: Candidate, config: BenchmarkConfig) -> MemoryFit:

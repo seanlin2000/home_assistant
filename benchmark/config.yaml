@@ -71,6 +71,14 @@ candidates:
     provider: llama-server
     model: qwen3.8-flash-next
     think: false
+  # The same file on the Strata engine, started by scripts/strata_trial.sh on port 8092 with llama-server's key; sampling still comes from serving.toml's table.
+  - key: qwen3.8-flash-next-strata-medium
+    label: Qwen 3.8 Flash Next, GSQ-RCO IQ3_XXS (n-gram table on disk), on Strata, thinking medium
+    provider: llama-server
+    model: qwen3.8-flash-next
+    think: medium
+    server_url: http://127.0.0.1:8092
+    api_key_file: ~/Library/Application Support/studio-assistant/llama-server.key
   # harness: the same model through the harness's HTTP API (design doc v2/04 section 3.2); install the services first (scripts/services.sh install).
   - key: gemma4-e4b-harness
     label: Gemma 4 E4B on llama-server, through the harness service
