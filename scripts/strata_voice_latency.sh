@@ -2,7 +2,7 @@
 # What the user hears under each engine: spoken benchmark questions through Home Assistant's Assist pipeline (Qwen3-ASR, the agent, Kokoro), for
 # llama-server as production runs it and for Strata lean2 with the host weight copies released, alternated llama, Strata, llama, Strata.
 # One round: settle, 10 quiet minutes, A11 (the first question after quiet), a burst of six questions back to back (long explanation, calculator,
-# restaurant tool, search, arithmetic, search with the calculator), 10 more quiet minutes, then B90 (a cold question that needs a tool).
+# restaurant tool, search, finance reasoning, search with the calculator), 10 more quiet minutes, then B90 (a cold question that needs a tool).
 # A sampler writes memory every 5 seconds through all of it: swap, swap-ins and -outs, file reads, memory_pressure's free %, wired, the compressor,
 # and the engine, Qwen3-ASR, Kokoro and the HA VM each in RAM and compressed. Production returns to llama-server on any exit.
 # Usage: scripts/strata_voice_latency.sh
@@ -18,7 +18,7 @@ SETTLE_SECONDS=120
 QUIET_SECONDS=600
 SAMPLE_SECONDS=5
 FIRST_AFTER_QUIET=A11
-BURST=(A77 A80 B93 B91 A83 B92)
+BURST=(A77 A80 B93 B91 A84 B92) # A83 is spoken in 19 s, past Home Assistant's 15-second limit on one voice command
 COLD_TOOL=B90
 ROUNDS=(llama-1 strata-1 llama-2 strata-2)
 sampler_pid=""
