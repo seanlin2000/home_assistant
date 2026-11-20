@@ -1,6 +1,7 @@
 """newsletters_list and newsletter_summarize (design doc v2/14 section 3.5), called directly against the benchmark's made-up day of issues
 (benchmark/fixtures/newsletters), and the route, filler, tool table, and benchmark questions around them."""
 
+import re
 import shutil
 from datetime import date, datetime, timedelta
 from pathlib import Path
@@ -64,9 +65,14 @@ async def test_the_list_names_each_issue_with_its_headline_and_sections(settings
     reply = await listing(settings)
     assert reply.startswith("Newsletters for Monday, November 16:")
     lines = issue_lines(reply)
-    assert [line.split(": ", 1)[1].split(",")[0] for line in lines] == ["WSJ Markets A.M.", "The Morning", "The Daily Widget", "Money Stuff"]
+    assert [line.removeprefix("- ").split(",")[0] for line in lines] == ["WSJ Markets A.M.", "The Morning", "The Daily Widget", "Money Stuff"]
     assert 'Money Stuff, "Hypothetical Widgets"' in lines[3] and "Sections: Hypothetical widgets; Procurement; Things happen." in lines[3]
     assert "Opening" not in reply
+
+
+async def test_the_list_and_a_summary_leave_out_the_arrival_time(settings: NewslettersSettings) -> None:
+    for reply in (await listing(settings), await summary(settings, newsletter="Money Stuff")):
+        assert not re.search(r"\d:\d\d", reply)
 
 
 async def test_a_named_newsletter_lists_only_its_sections(settings: NewslettersSettings) -> None:
@@ -141,7 +147,7 @@ async def test_a_pull_that_was_never_set_up_says_so(tmp_path: Path) -> None:
 
 async def test_a_summary_request_returns_the_whole_issue_with_its_quotations(settings: NewslettersSettings) -> None:
     reply = await summary(settings, newsletter="Money Stuff")
-    assert reply.startswith('Money Stuff, "Hypothetical Widgets", received at ')
+    assert reply.startswith('Money Stuff, "Hypothetical Widgets".\n')
     assert "## Hypothetical widgets" in reply and "## Procurement" in reply and "## Things happen" in reply
     assert '> Widgetron Inc. said Monday that its board "regularly reviews all strategic options,"' in reply
 
