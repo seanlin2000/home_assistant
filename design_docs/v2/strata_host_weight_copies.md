@@ -25,8 +25,9 @@ Strata process, resident mode (STRATA_METAL_STREAM=0)
 │     expert arena, K/V, prompt buffers
 ├── the model file, memory-mapped ......... read on every request
 └── host code's device allocations ........ allocated at load, never read on Mac
-      ├── five of 32 MiB or more ........ 3,122.9 MiB  ← released by the trial patch
-      ├── ~316 smaller ones ............. ~1,781 MiB   ← not audited, kept
+      ├── five of 32 MiB or more ........ 3,122.9 MiB  ← released by the first trial patch
+      ├── 300 native projection matrices  1,781.1 MiB  ← released by the second patch (being tested)
+      ├── ~16 other small ones .......... a few MiB    ← not audited, kept
       └── token embedding (a host allocation, not a device one) 260 MiB ← kept
 ```
 
@@ -102,6 +103,68 @@ Both #3030 and #5401 ended in the loud abort above, not in wrong answers.
 - **High** that no wrong answers can come from this: every guarded route aborts, and the unguarded one never points at these buffers.
 - **Medium-high** that no request in our setup crashes. The audit didn't trace every `cudaMemcpy` in the 24,000-line `generate.cpp`. It relied on the abort guard for those, so a missed one would mean a crash and an engine restart, not a wrong answer.
 
+## The 300 native projection matrices
+
+A second audit (2026-11-20) covered the roughly 316 device allocations under 32 MiB that the first patch leaves alone. Nearly all of them, and nearly all of their 1.78 GiB, are one set: the host code's native copies of the projection matrices.
+
+### What they are
+
+- **Who makes them:** `NativeDense::load` (`engine/src/core/native_dense.cpp:329-634`), called at `engine/src/program/generate.cpp:5751`.
+  - Each matrix gets its own `cudaMalloc`, then a `cudaMemcpy` from the memory-mapped GGUF (`native_dense.cpp:454-457`).
+  - The startup log reports the set at `generate.cpp:5755`: "300 native projection matrices, 1781.11 MiB of weights".
+- **Which tensors:** the name filter `eligible()` (`native_dense.cpp:165`) picks them. The Studio's pack index (`~/Strata-data/packs/iq3_xxs/index.txt`) gives exactly 300:
+
+  | Layers | Matrices | Count |
+  |---|---|---|
+  | 36 GatedDeltaNet layers | `attn_qkv`, `attn_gate`, `ssm_out` | 108 |
+  | 12 attention layers | `attn_q`, `attn_k`, `attn_v`, `attn_output` | 48 |
+  | all 48 layers, shared expert | `ffn_gate_shexp`, `ffn_up_shexp`, `ffn_down_shexp` | 144 |
+
+- **Their size:** about 5.9 MiB on average. The largest possible, `attn_q` (2,560 × 12,288) at Q8_0, is 31.9 MiB, so none reaches the 32 MiB threshold, and streaming mode's purge skips them too.
+- **Where the pointers live:** `NativeDense::weights_` (`engine/include/strata/core/native_dense.hpp:73`). Each is also published into its tensor's `WeightRef::native_data`, with `native_q8_1` pointing at one shared scratch of about 7 KB (`native_dense.cpp:603-606`; the fields are at `engine/include/strata/core/weights.hpp:90-95`).
+- **What else is in the small allocations:** that scratch, plus about 15 allocations not listed. On Metal there's no packed Q8_0 copy (`engine/metal/src/engine/mmvq_host.cpp:62-64`), and no hyper-connection Q8 copy unless `STRATA_HC_Q8=1` is set.
+
+### Why nothing on a Mac reads them
+
+The Metal window reads the same weights from the mapped model file. Its header says so (`engine/metal/src/engine/window.cpp:1-9`), and the shared host code hands decoding and prompt reading to it before any code that would use the copies:
+
+| Path | Where it hands off to the Metal window |
+|---|---|
+| Decode window: init, run, commit | `engine/src/core/verify.cpp:922` (`window_init`), `:3355` (`window_run`), `:3986` (`window_commit`) |
+| Prompt reading | `engine/src/prefill/prefill.cpp:2376` (`window_ensure`), `:9002` (`prompt_run`) |
+| DFlash2 drafter | `Dflash2Drafter::bind` ignores the weight table and binds to the window (`engine/metal/src/engine/dflash2.inc:1059`) |
+
+Every reader of `native_data` is CUDA-path code. On a Mac, each one is either unreachable or ends in a stub:
+
+| Reader | Reached on a Mac? | If it ran with the memory gone |
+|---|---|---|
+| Single-token projections and the shared expert (`engine/src/core/layer.cpp:170`, `:497-499`, `:1166`) | No: the decode window replaces the layer path | The kernels are Metal stubs (`native_mmvq`, `engine/metal/src/engine/stubs.cpp:261`; `shared_expert`), which stop the engine with exit code 86 (`engine/metal/src/engine/missing.cpp:22`) |
+| The verifier's own window build (`verify.cpp`, after `capture`) | No: init, run and commit hand off first | Stub, exit 86 |
+| Prompt-path GEMMs (`Gemm::native`) | No: the prompt goes to `prompt_run` | Stub (`stubs.cpp:334`), exit 86 |
+| The PLE key copy (`generate.cpp:5923`) | No: needs `native_ple_key`; the PLE key isn't one of the 300 | Only stub PLE kernels read it |
+| `host_view` | Never on these pointers. Its only callers are the arena poison (`engine/src/core/device.cu:336`) and the window's logit bias, history and M-RoPE buffers | n/a |
+| Copies (`cudaMemcpy`) after load | None found. The only other `release()` is a multi-GPU stage reload (`generate.cpp:7236`) | The purge guard aborts with a backtrace (`check_purged`) |
+
+- **Nothing under `engine/metal/src` refers to `native_data`, `native_q8_1`, `hc_q8`, `NativeDense` or the PLE key fields.** The window builds its own Q8 copies of the hyper-connection projections (`window.cpp:892` on).
+- **`mmvq_host.cpp:1-3` states outright** that the native kernels aren't ported to Metal.
+- **The checks for a non-null pointer still pass after a release,** because purging keeps the pointer value. So a path that checks for the copy sees it present, and the kernel it then calls is a stub.
+
+### If the audit is wrong
+
+Every route fails loudly. A stub kernel exits with code 86, and a copy aborts with a backtrace. The one unguarded route, `host_view`, is never used on these pointers. So a miss means an engine restart, not wrong answers.
+
+### Confidence and what wasn't checked
+
+**High, about 90%,** that nothing in our setup reads them. This comes from reading the code, not from a run; the poison test checks it at runtime. Not checked:
+- a full read of `generate.cpp`, `prompt_chain.inc` and `dflash2.inc` (pointers were traced by field name)
+- `terminal/serve/server.py`
+- the `STRATA_HC_Q8=1` and multi-GPU variants
+- the ~15 other small allocations
+- the per-tensor GGUF types and exact sizes
+- shutdown with given-back buffers: `free_alloc` (`engine/metal/src/gpu/runtime.cpp:296-312`) doesn't check `purged`. Stock streaming mode takes the same path with its purged buffers, so this is probably harmless.
+
+Strata has never freed these copies in any mode, and a search of its GitHub issues found nothing about them.
+
 ## How the trial gives them back
 
 The patch is `scripts/strata_patches/release_host_weights.patch` on the `strata-trial` branch. It's built into `~/strata/engine/build-metal/strata`, and the stock binary is kept as `strata.v0.2.16-orig`.
@@ -114,6 +177,17 @@ What it adds:
   - **unset** keeps stock behaviour.
 - `STRATA_METAL_RELEASE_MIN_MIB` sets the size threshold, 32 MiB by default, like streaming mode's.
 - Two functions in `engine/metal/src/gpu/runtime.cpp`: `log_device_allocations`, which lists what will be touched, and `poison_device_allocations`.
+
+### The second patch: the projection matrices
+
+`scripts/strata_patches/release_projections.patch` applies on top of the first. The size threshold can't be used here: lowering it would also catch the small buffers that are read through `host_view` (logit bias, penalty history, M-RoPE positions). So the patch hands over the matrices' exact addresses instead:
+
+1. **`NativeDense::device_weights()`** (`native_dense.hpp`) exposes the 300 pointers in `weights_`.
+2. **`generate.cpp`, right after the load log line, Metal build only,** passes them to `strata::gpu::mark_unread_allocations`. That function flags each allocation that starts exactly at one of the pointers and logs "marked 300 of 300 native projection matrices".
+3. **At the first request, with `STRATA_METAL_RELEASE_PROJECTIONS=1`,** `release_host_weights_once` poisons or releases the flagged set, the same way as the first set. The log line reads "release projections: X GB of the host code's native projection matrices".
+4. **The runtime gives them back with the stock purge,** now behind a selection: size threshold, or the flag. The memory is purged, not freed. A freed address could go to a later allocation, and a stale `native_data` would then point into it.
+
+In the trial scripts, `STRATA_RELEASE_PROJECTIONS=1` turns it on for `strata_trial.sh`, the release experiment and the voice run.
 
 ## What the release experiment measured
 
@@ -141,11 +215,20 @@ What it adds:
 
 The whole-Mac compressor didn't shrink, because macOS used the freed RAM for file cache and model pages. Strata's own footprint is the right measure of the saving.
 
+### The projection release: being tested
+
+`RELEASE_RUN=strata_release_projections STRATA_RELEASE_PROJECTIONS=1 scripts/strata_release_experiment.sh` runs the same off, poison and release checks, with the 300 matrices included, and records results in `benchmark/results/strata_release_projections/`. It adds one check: at least 1.8 GB of projection matrices handled.
+
+Then the voice run measures release, projections and a 24-hour GPU keep-alive (`STRATA_KEEPALIVE_WINDOW_S=86400`) together. The results go here when they're in.
+
 ## What remains
 
-- **About 1.78 GiB in roughly 316 smaller device allocations.** These are most likely the native projection matrices, which the startup log reports as 1,781.11 MiB (`engine/src/program/generate.cpp:5755`). Each is under 32 MiB, so the purge skips them in streaming mode too. Nobody has checked whether the Metal window reads them. An audit of what reads them is under way; removal would be tested only if it finds them unread, and would have to target these allocations rather than lower the size threshold, which would also catch small buffers in use.
+- **The projection release's results:** the poison and release checks, then the voice rounds (see above).
+- **About 15 small allocations** besides the projection matrices and their scratch, not audited.
 - **The 260 MiB token embedding.** It's a host allocation, so the purge skips it.
-- **Even with all five released, Strata needs about 4.3 GiB more RAM than llama-server**: lean2's footprint is 7.5 GiB, against llama-server's 3.2 GiB. The voice-latency comparison (`scripts/strata_voice_latency.sh`) measures whether that difference reaches Kokoro, Qwen3-ASR or the model in a way a user would hear.
+- **With the five released, Strata needs about 4.3 GiB more RAM than llama-server:** lean2's footprint is 7.5 GiB, against llama-server's 3.2 GiB.
+  - Releasing the projection matrices should bring that down to about 2.5 GiB. That's an estimate, not yet measured.
+  - The voice-latency comparison (`scripts/strata_voice_latency.sh`) measures whether the difference reaches Kokoro, Qwen3-ASR or the model in a way a user would hear.
 - **More checks before production would rely on the release:**
   - a build that aborts with a backtrace on any GPU dispatch argument or `host_view` lookup that falls inside a given-back buffer
   - a full benchmark pass, A and B, through the harness with production settings: medium reasoning effort and real multi-round tool calls.
