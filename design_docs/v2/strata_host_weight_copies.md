@@ -143,7 +143,7 @@ The whole-Mac compressor didn't shrink, because macOS used the freed RAM for fil
 
 ## What remains
 
-- **About 1.78 GiB in roughly 316 smaller device allocations.** These are most likely the native projection matrices, which the startup log reports as 1,781.11 MiB (`engine/src/program/generate.cpp:5755`). Each is under 32 MiB, so the purge skips them in streaming mode too. Nobody has checked whether the Metal window reads them. Releasing them would need the same audit and the same poison and release runs, with the threshold lowered.
+- **About 1.78 GiB in roughly 316 smaller device allocations.** These are most likely the native projection matrices, which the startup log reports as 1,781.11 MiB (`engine/src/program/generate.cpp:5755`). Each is under 32 MiB, so the purge skips them in streaming mode too. Nobody has checked whether the Metal window reads them. Releasing them is not planned (decided 2026-11-20): the extra memory is accepted.
 - **The 260 MiB token embedding.** It's a host allocation, so the purge skips it.
 - **Even with all five released, Strata needs about 4.3 GiB more RAM than llama-server**: lean2's footprint is 7.5 GiB, against llama-server's 3.2 GiB. The voice-latency comparison (`scripts/strata_voice_latency.sh`) measures whether that difference reaches Kokoro, Qwen3-ASR or the model in a way a user would hear.
 - **More checks before production would rely on the release:**
