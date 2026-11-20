@@ -14,8 +14,8 @@ STRATA_REPOSITORY="https://github.com/Niko1221/Strata"
 STRATA_DIR="${HOME}/strata"
 MODEL_DIR="${HOME}/models/gguf/Qwen3.8-Flash-Next-GSQ-RCO/IQ3_XXS"
 API_KEY_FILE="${HOME}/Library/Application Support/studio-assistant/llama-server.key"
-PORT=8092
-PRODUCTION_PORT=8090
+# STRATA_PORT=8090 puts Strata where production llama-server listens, so the whole stack runs on it (the memory-fit check)
+PORT="${STRATA_PORT:-8092}"
 CONTEXT_TOKENS=34816
 REASONING_BUDGET_TOKENS=3072
 HEALTH_TIMEOUT_SECONDS=900
@@ -30,8 +30,8 @@ fail() {
 }
 
 preflight() {
-    if curl -s -o /dev/null --max-time 3 "http://127.0.0.1:${PRODUCTION_PORT}/health"; then
-        fail "production llama-server still answers on ${PRODUCTION_PORT}; stop it first: scripts/services.sh stop"
+    if pgrep -x llama-server >/dev/null; then
+        fail "llama-server still runs; stop it first: scripts/services.sh stop"
     fi
     pmset -g | grep -qE '^ *sleep +0( |$)' || fail "the Mac may sleep mid-run; set it with: sudo pmset -a sleep 0"
     xcode-select -p >/dev/null 2>&1 || fail "Strata builds its engine with the Command Line Tools: xcode-select --install"
