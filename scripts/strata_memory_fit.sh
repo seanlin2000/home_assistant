@@ -20,6 +20,7 @@ RUN=strata_phase4
 OUT="${TRIAL}/benchmark/results/${RUN}"
 PAGE_BYTES=16384
 SETTLE_SECONDS=120
+HARNESS_WARM_UP_SECONDS=45
 
 snapshot() {
     echo "== $1 ($(date +%T))"
@@ -53,7 +54,14 @@ restore_production() {
     pgrep -x strata >/dev/null && "${TRIAL}/scripts/strata_trial.sh" stop
     pgrep -x llama-server >/dev/null || start_llama
     launchctl kickstart -k "$AGENT.harness"
+    wait_for_harness
     (cd "$LIVE" && uv run python -m ops.deploy clear-maintenance >/dev/null)
+}
+
+wait_for_harness() {
+    # A smoke test sent while the harness restarts answers "I can't reach the assistant"; its warm-up reads both slots' prompts first.
+    until nc -z 127.0.0.1 8770 2>/dev/null; do sleep 2; done
+    sleep "$HARNESS_WARM_UP_SECONDS"
 }
 
 probe() {
