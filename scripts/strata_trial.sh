@@ -19,6 +19,7 @@ PRODUCTION_PORT=8090
 CONTEXT_TOKENS=34816
 REASONING_BUDGET_TOKENS=3072
 HEALTH_TIMEOUT_SECONDS=900
+ENGINE_EXIT_TIMEOUT_SECONDS=60
 TRIAL_CONFIG="${STRATA_DIR}/strata-trial.json"
 PID_FILE="${STRATA_DIR}/strata-trial.pid"
 LOG_FILE="${STRATA_DIR}/strata-trial.log"
@@ -67,8 +68,10 @@ start_variant() {
     local variant="$1"
     [[ ! -f "${PID_FILE}" ]] || fail "a trial server may still run (pid $(cat "${PID_FILE}")); run: scripts/strata_trial.sh stop"
     write_trial_config "${variant}"
+    # cd on its own line: with "cd && nohup ... &", $! is the subshell running the pair, and stop would kill that instead of the server.
     (
-        cd "$(strata_terminal_dir)" && nohup "$(strata_python)" serve/server.py --engine strata --config "${TRIAL_CONFIG}" --port "${PORT}" >"${LOG_FILE}" 2>&1 &
+        cd "$(strata_terminal_dir)"
+        nohup "$(strata_python)" serve/server.py --engine strata --config "${TRIAL_CONFIG}" --port "${PORT}" >"${LOG_FILE}" 2>&1 &
         echo $! >"${PID_FILE}"
     )
     wait_until_healthy
@@ -121,12 +124,21 @@ stop_trial() {
     }
     kill "$(cat "${PID_FILE}")" 2>/dev/null || true
     rm -f "${PID_FILE}"
-    sleep 5
+    wait_until_engine_exits
     if pgrep -x strata >/dev/null; then
         echo "an engine process named strata still runs (pid $(pgrep -x strata | tr '\n' ' ')); stop it before starting llama-server again" >&2
         exit 1
     fi
     echo "stopped"
+}
+
+wait_until_engine_exits() {
+    # The server stops its engine as it exits; unmapping 47 GB of experts takes a few seconds.
+    local waited=0
+    while pgrep -x strata >/dev/null && ((waited < ENGINE_EXIT_TIMEOUT_SECONDS)); do
+        sleep 1
+        ((waited += 1))
+    done
 }
 
 setup_config() {
