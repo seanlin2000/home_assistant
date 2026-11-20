@@ -7,8 +7,9 @@ from collections.abc import Awaitable, Callable
 from typing import Protocol
 
 from dashboard.gguf_header import GgufHeaderError
-from dashboard.memory_views import MemoryOutputs, MemoryView, memory_view
+from dashboard.memory_views import MemoryOutputs, MemoryView, memory_view, swap_counters
 from dashboard.model_memory import ModelMemory
+from dashboard.swap_traffic import SwapReading, SwapWindow
 
 SNAPSHOT_SECONDS = 4.0  # the page asks every two seconds; top alone takes about half a second
 COMMAND_TIMEOUT_SECONDS = 10.0
@@ -53,14 +54,19 @@ class MemoryReader:
         self._lock = asyncio.Lock()
         self._view: MemoryView | None = None
         self._taken_at = 0.0
+        self._swap_window = SwapWindow()
 
     async def current(self) -> MemoryView:
         async with self._lock:
             if self._view is None or self._clock() - self._taken_at >= SNAPSHOT_SECONDS:
-                outputs, model_memory = await asyncio.gather(self._read_outputs(), self._served_model_memory())
-                self._view = memory_view(outputs, model_memory)
-                self._taken_at = self._clock()
+                self._view = await self._new_reading()
             return self._view
+
+    async def _new_reading(self) -> MemoryView:
+        outputs, model_memory = await asyncio.gather(self._read_outputs(), self._served_model_memory())
+        self._taken_at = self._clock()
+        self._swap_window.record(SwapReading(taken_at=self._taken_at, counters=swap_counters(outputs.vm_stat)))
+        return memory_view(outputs, model_memory).model_copy(update={"swap_traffic": self._swap_window.traffic()})
 
     async def _served_model_memory(self) -> ModelMemory | None:
         if self._model_memory is None:

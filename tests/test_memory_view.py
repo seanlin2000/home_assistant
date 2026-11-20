@@ -10,8 +10,9 @@ from assistant_service.exchange_log import ExchangeLog, TraceLog
 from dashboard.app import build_app
 from dashboard.exchange_views import ExchangeStore
 from dashboard.memory_reader import MemoryReader
-from dashboard.memory_views import MemoryOutputs, memory_view, size_in_bytes
+from dashboard.memory_views import MemoryOutputs, memory_view, size_in_bytes, swap_counters
 from dashboard.model_memory import ModelFileMemory, ModelMemory
+from dashboard.swap_traffic import SwapCounters, SwapTraffic
 from ops.pipeline_runs import PipelineRunLog
 
 GIB = 1024**3
@@ -51,7 +52,10 @@ Pages purgeable:                          16384.
 "Translation faults":               22081456363.
 File-backed pages:                        65536.
 Anonymous pages:                         262144.
+Pages stored in compressor:               98304.
 Pages occupied by compressor:             65536.
+Swapins:                                   1000.
+Swapouts:                                  3000.
 """
 SYSCTL = """17179869184
 total = 2048.00M  used = 1024.50M  free = 1023.50M  (encrypted)
@@ -101,6 +105,15 @@ def test_the_pieces_add_up_to_the_macs_ram() -> None:
     assert (machine.swap_used_bytes, machine.swap_total_bytes) == (round(1024.5 * 1024**2), 2048 * 1024**2)
 
 
+def test_the_compressor_shows_both_the_ram_it_takes_and_the_memory_it_holds() -> None:
+    machine = memory_view(outputs(), served(MODEL_WEIGHTS_BYTES)).machine
+    assert (machine.compressed_bytes, machine.compressed_original_bytes) == (65536 * 16384, 98304 * 16384)
+
+
+def test_swap_counters_are_read_as_bytes_since_the_mac_started() -> None:
+    assert swap_counters(VM_STAT) == SwapCounters(read_back_bytes=1000 * 16384, written_out_bytes=3000 * 16384)
+
+
 def test_an_app_counts_only_what_it_holds_in_ram_and_the_rest_as_compressed_or_on_disk() -> None:
     view = memory_view(outputs(), served(MODEL_WEIGHTS_BYTES))
     home_assistant = next(group for group in view.setup if group.name == "Home Assistant VM (UTM)")
@@ -143,6 +156,22 @@ async def test_one_reading_serves_every_page_for_a_few_seconds() -> None:
     now[0] += 3
     await reader.current()
     assert reads == [100.0, 105.0]
+
+
+async def test_each_reading_reports_the_swap_traffic_since_the_readings_of_the_last_minute() -> None:
+    now = [100.0]
+    swapped_in_pages = [1000]
+
+    async def read_outputs() -> MemoryOutputs:
+        return outputs().model_copy(update={"vm_stat": VM_STAT.replace("1000.", f"{swapped_in_pages[0]}.")})
+
+    reader = MemoryReader(read_outputs, ServedModel(MODEL_WEIGHTS_BYTES), clock=lambda: now[0])
+    first = await reader.current()
+    now[0] += 30
+    swapped_in_pages[0] = 1064
+    second = await reader.current()
+    assert first.swap_traffic == SwapTraffic()
+    assert second.swap_traffic == SwapTraffic(read_back_bytes=64 * 16384, written_out_bytes=0, window_seconds=30.0)
 
 
 async def test_the_served_model_is_measured_at_every_reading_so_a_model_switch_shows_at_the_next() -> None:

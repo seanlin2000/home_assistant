@@ -965,23 +965,55 @@ function memoryElements(view) {
   const machine = view.machine;
   return [
     sectionHead(machine.name, machine.chip, `${memorySize(machine.total_bytes)} of RAM`, "read every 4 s"),
-    setupHeadline(view),
+    memoryFigures(view),
     el("p", { class: "panel-lead" }, "What fills the RAM right now. Each app counts only what it holds in RAM; what macOS has compressed for it or moved to disk is in the tables below."),
     ramBar(view),
     ramLegend(view),
-    swapNote(view),
     el("div", { class: "memory-tables" }, setupTable(view), othersTable(view)),
+    el("p", { class: "memory-footnote" }, COMPRESSED_COLUMN_NOTE),
   ];
 }
 
-function setupHeadline(view) {
-  const share = Math.round((view.setup_ram_bytes / view.machine.total_bytes) * 100);
+const COMPRESSED_COLUMN_NOTE =
+  "* Size before compression, not RAM. macOS does not say how much of it is in the compressor and how much is on disk, and shared memory counts once per app, so this column adds up to more than the compressed and on-disk figures at the top.";
+
+// The headline figures: what the setup holds, what is free, and the two places macOS puts memory it pushes out of RAM, the compressor (still in
+// RAM, smaller) and swap (on disk, no RAM), with how much was read back from disk lately, the waiting an app does for memory it needs again.
+function memoryFigures(view) {
+  const machine = view.machine;
   return el(
     "div",
-    { class: "memory-headline" },
-    el("span", { class: "hero" }, memorySize(view.setup_ram_bytes)),
-    el("span", {}, `of RAM held by the Home Assistant setup, ${share}% of this Mac's ${memorySize(view.machine.total_bytes)}`),
+    { class: "memory-figures" },
+    memoryFigure(swatch("mem-setup"), "Home Assistant setup", memorySize(view.setup_ram_bytes), `${shareOfRam(view.setup_ram_bytes, machine)} of ${memorySize(machine.total_bytes)}`),
+    memoryFigure(swatch("mem-free"), "free", memorySize(freeBytes(machine)), `${shareOfRam(freeBytes(machine), machine)} · ${memorySize(machine.unused_bytes)} unused + ${memorySize(machine.file_cache_bytes)} cache`),
+    memoryFigure(swatch("mem-compressed"), "compressed, all apps", memorySize(machine.compressed_bytes), compressorNote(machine)),
+    memoryFigure(swatch("mem-disk"), "on disk", memorySize(machine.swap_used_bytes), "in swap on the SSD · takes no RAM"),
+    memoryFigure(el("span", { class: "figure-arrow", "aria-hidden": "true" }, "↑"), "read back from disk", readBackSize(view.swap_traffic), swapTrafficNote(view.swap_traffic)),
   );
+}
+
+function memoryFigure(marker, name, value, note) {
+  return el("div", { class: "memory-figure" }, el("span", { class: "figure-name" }, marker, name), el("span", { class: "figure-value" }, value), el("span", { class: "figure-note" }, note));
+}
+
+const swatch = (className) => el("i", { class: className });
+const shareOfRam = (bytes, machine) => `${Math.round((bytes / machine.total_bytes) * 100)}%`;
+
+function compressorNote(machine) {
+  if (!machine.compressed_bytes) return "nothing compressed";
+  const ratio = (machine.compressed_original_bytes / machine.compressed_bytes).toFixed(2);
+  return `of RAM, holding ${memorySize(machine.compressed_original_bytes)} (${ratio} : 1)`;
+}
+
+// The dashboard measures the change across its own readings, so until it has read for a minute the span is shorter, and says so.
+const FULL_MINUTE_SECONDS = 50;
+
+const readBackSize = (traffic) => (traffic.window_seconds === 0 ? "–" : memorySize(traffic.read_back_bytes));
+
+function swapTrafficNote(traffic) {
+  if (traffic.window_seconds === 0) return "measuring, back in a few seconds";
+  const span = traffic.window_seconds >= FULL_MINUTE_SECONDS ? "in the last minute" : `in the last ${Math.round(traffic.window_seconds)} s`;
+  return `${span} · ${memorySize(traffic.written_out_bytes)} written out`;
 }
 
 // The pieces add up to the Mac's RAM: the apps' own, then what no single app owns.
@@ -1088,18 +1120,6 @@ function ramLegend(view) {
   );
 }
 
-function swapNote(view) {
-  const swapped = view.machine.swap_used_bytes;
-  if (!swapped) return null;
-  const setupOut = view.setup.reduce((total, group) => total + group.compressed_bytes, 0);
-  return el(
-    "div",
-    { class: "disk-note" },
-    el("strong", {}, `${memorySize(swapped)} on disk.`),
-    ` RAM is full, so macOS has moved memory to disk, and an app waits while its memory comes back. ${memorySize(setupOut)} of the Home Assistant setup is compressed or on disk.`,
-  );
-}
-
 // Every component is listed, running or not, so a service that has stopped shows as stopped rather than vanishing.
 function setupTable(view) {
   const rows = view.setup.map((group) =>
@@ -1159,7 +1179,7 @@ function othersTable(view) {
 }
 
 function memoryTable(title, nameHeading, rows) {
-  const heading = el("tr", {}, el("th", {}, nameHeading), el("th", { class: "number" }, "in RAM"), el("th", { class: "number", title: "compressed in RAM, or moved to disk; macOS does not say which" }, "compressed or on disk"));
+  const heading = el("tr", {}, el("th", {}, nameHeading), el("th", { class: "number" }, "in RAM"), el("th", { class: "number", title: "size before compression; compressed in RAM, or moved to disk; macOS does not say which" }, "compressed or on disk*"));
   return el("div", {}, el("h3", { class: "table-title" }, title), el("table", { class: "parts" }, el("thead", {}, heading), el("tbody", {}, rows)));
 }
 

@@ -11,9 +11,10 @@ import re
 from collections import defaultdict
 from pathlib import PurePosixPath
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from dashboard.model_memory import ModelMemory
+from dashboard.swap_traffic import SwapCounters, SwapTraffic
 
 OTHER_GROUPS_SHOWN = 7
 UNIT_BYTES = {"B": 1, "K": 1024, "M": 1024**2, "G": 1024**3, "T": 1024**4}
@@ -61,11 +62,12 @@ class MachineMemory(BaseModel):
     chip: str
     total_bytes: int
     compressed_bytes: int  # the RAM every app's compressed memory takes, packed together; macOS does not say whose is whose
+    compressed_original_bytes: int  # the same memory at its size before compression
     macos_bytes: int  # the remainder: the system itself, and memory no single app owns
     file_cache_bytes: int  # copies of files, which macOS drops the moment anything needs room
     unused_bytes: int
-    swap_used_bytes: int
-    swap_total_bytes: int
+    swap_used_bytes: int  # on disk now: a level, which falls when memory is read back or its app quits
+    swap_total_bytes: int  # the swap files' size so far, which macOS grows and shrinks; not a limit
 
 
 class ProcessGroup(BaseModel):
@@ -84,6 +86,7 @@ class MemoryView(BaseModel):
     setup_ram_bytes: int
     others: list[ProcessGroup]  # the apps holding the most RAM, then the rest as one group
     others_ram_bytes: int
+    swap_traffic: SwapTraffic = Field(default_factory=SwapTraffic)  # measured across readings, so the memory reader adds it
 
 
 class ProcessMemory(BaseModel):
@@ -201,6 +204,7 @@ def machine_memory(outputs: MemoryOutputs, held_by_apps: int) -> MachineMemory:
     total_text, swap_text, chip = (outputs.sysctl.splitlines() + ["", "", ""])[:3]
     total = int(total_text)
     compressed = pages.get("Pages occupied by compressor", 0) * page_size
+    compressed_original = pages.get("Pages stored in compressor", 0) * page_size
     file_cache = (pages.get("File-backed pages", 0) + pages.get("Pages purgeable", 0)) * page_size
     unused = pages.get("Pages free", 0) * page_size
     swap = swap_sizes(swap_text)
@@ -209,12 +213,18 @@ def machine_memory(outputs: MemoryOutputs, held_by_apps: int) -> MachineMemory:
         chip=chip.strip(),
         total_bytes=total,
         compressed_bytes=compressed,
+        compressed_original_bytes=compressed_original,
         macos_bytes=max(total - held_by_apps - compressed - file_cache - unused, 0),
         file_cache_bytes=file_cache,
         unused_bytes=unused,
         swap_used_bytes=swap.get("used", 0),
         swap_total_bytes=swap.get("total", 0),
     )
+
+
+def swap_counters(vm_stat_output: str) -> SwapCounters:
+    page_size, pages = vm_stat_pages(vm_stat_output)
+    return SwapCounters(read_back_bytes=pages.get("Swapins", 0) * page_size, written_out_bytes=pages.get("Swapouts", 0) * page_size)
 
 
 def vm_stat_pages(vm_stat_output: str) -> tuple[int, dict[str, int]]:
