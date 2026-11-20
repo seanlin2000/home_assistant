@@ -152,7 +152,17 @@ The Memory view shows how much of the serving Mac's RAM the Home Assistant setup
 | `sysctl` | The Mac's RAM, its swap, and its chip |
 | `scutil --get ComputerName` | The Mac's name, at the head of the view |
 
-**One bar of the RAM, by process.** A headline gives the setup's total and its share of the Mac's RAM. Under it, one bar splits the RAM into pieces that add up to it, with each kind's size beside its legend entry:
+**The headline figures.** Five figures head the view, each with the mark it has in the bar. Free sits beside the setup because what is left matters as much as what the setup holds, and the compressor and swap are kept apart because one costs RAM and the other does not:
+
+| Figure | What it is | How it is worked out |
+|---|---|---|
+| Home Assistant setup | What the setup holds in RAM, and its share of the RAM | The setup's pieces of the bar, added up |
+| Free | Unused pages plus file copies macOS drops the moment anything needs room, and its share of the RAM | `vm_stat`'s free pages, plus its file-backed and purgeable pages, times the page size |
+| Compressed, all apps | The RAM the compressor takes, and the memory it holds at its size before compression, with their ratio | Pages occupied by the compressor, and pages stored in it, times the page size |
+| On disk | Memory macOS has written to swap on the SSD, which takes no RAM | `vm.swapusage`'s used: a level now, which falls when memory is read back or its app quits. Its total is the swap files' size so far, which macOS grows and shrinks, so it is not shown as a limit |
+| Read back from disk | Memory read back from swap over the last minute, the waiting an app does for memory it needs again, with the amount written out beside it | The change in `vm_stat`'s Swapins and Swapouts, which count pages since the Mac started, across the dashboard's readings of the last minute (`dashboard/swap_traffic.py`). The readings stay in the dashboard's process, so for its first minute the figure covers the time it has read, and says how long |
+
+**One bar of the RAM, by process.** Under the figures, one bar splits the RAM into pieces that add up to it, with each kind's size beside its legend entry:
 
 | Piece | What it is |
 |---|---|
@@ -165,9 +175,9 @@ The Memory view shows how much of the serving Mac's RAM the Home Assistant setup
 
 An app's physical footprint, the figure Activity Monitor shows, counts what macOS has compressed for it or moved to disk, so footprints can add up to far more than the RAM: on the 16 GB laptop, with Firefox open, the apps outside the setup alone came to 35 GB. `top`'s CMPRS column gives that part per process, so each app counts only its footprint less CMPRS, what it holds in RAM as-is. The compressed memory itself is one piece, from `vm_stat`'s pages occupied by the compressor. macOS's piece is the remainder, so the pieces add up to the RAM; it never goes below zero.
 
-Hovering a piece shows its name and sizes, and lights its row in the tables; hovering a row lights its piece. When macOS has moved memory to disk, a note under the bar says how much, and how much of the setup is compressed or on disk: a service whose memory is on disk waits for it to come back when it is asked something.
+Hovering a piece shows its name and sizes, and lights its row in the tables; hovering a row lights its piece.
 
-**The tables.** Two tables under the bar, the setup and the other apps, give each group's RAM and its compressed or on-disk memory, so colour is not the only way to read the bar. A setup component with more compressed or on disk than in RAM, at least 100 MB, has that figure marked. The setup's components are found by:
+**The tables.** Two tables under the bar, the setup and the other apps, give each group's RAM and its compressed or on-disk memory, so colour is not the only way to read the bar. The compressed or on-disk column is each app's memory at its size before compression, not RAM: `top` does not say how much of it is in the compressor and how much on disk, and memory two apps share counts in both, so the column adds up to more than the figures at the top. A footnote under the tables says so. A setup component with more compressed or on disk than in RAM, at least 100 MB, has that figure marked. The setup's components are found by:
 
 | Component | Found by |
 |---|---|
@@ -211,6 +221,7 @@ A component is matched on the executable and the first two words of its command 
 | Page refresh interval | `dashboard/static/app.js` | 2 seconds |
 | llama-server address and key | `config/serving.toml` | The prompt cache view is off when the key file is missing |
 | Memory reading interval | `dashboard/memory_reader.py` | At most one reading every 4 seconds, shared by every page |
+| Swap traffic window | `dashboard/swap_traffic.py` | The last 60 seconds of readings, kept in the dashboard's process |
 | The setup's components | `dashboard/memory_views.py` | The eight in section 3.11, each a pattern matched against the program a process runs |
 
 ## 6. Failure modes
