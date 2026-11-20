@@ -31,6 +31,7 @@ from ops import paths
 from ops.pipeline_runs import PipelineRunLog
 from ops.searxng_demand import SearxngPolicy, SearxngVerdict, judge_searxng_demand, read_searxng_demand
 from serving.settings import load_serving_config, read_api_key
+from serving.strata import STRATA_ENGINE_PROCESS
 from utils.browser_utils import CHROME_RELEASE_PATH, FALLBACK_CHROME_MAJOR, ChromeRelease
 from utils.jsonl_utils import append_jsonl
 from utils.snapshot_utils import SnapshotMissing, read_snapshot
@@ -38,6 +39,7 @@ from web_search_mcp.searxng_client import describe_unresponsive_engines
 
 LAUNCHD_SERVICES = ("llama", "mcp", "harness", "speech", "kokoro")
 LLAMA_SERVER_PROCESS = "llama-server"
+ENGINE_PROCESSES = (LLAMA_SERVER_PROCESS, STRATA_ENGINE_PROCESS)  # whichever serves the model (serving.toml's engine)
 LLAMA_RESTART_KEY = "kickstart:llama"
 DEFAULT_VM_NAME = "Home Assistant"
 # utmctl talks to UTM through Apple Events, which an SSH session or a Mac nobody has logged in to cannot send (OSStatus -1743). It then also
@@ -50,6 +52,10 @@ CHROME_RELEASE_STALE_DAYS = 14  # the listings refresh records it nightly, and C
 ROTATE_OVER_BYTES = 20 * 1024 * 1024
 ROTATE_GENERATIONS = 3
 SEARXNG_SCRIPT = PROJECT_DIR / "scripts" / "searxng.sh"
+SERVICES_SCRIPT = PROJECT_DIR / "scripts" / "services.sh"
+ENGINE_AGENT = "llama"
+# services.sh waits up to 30 s for the agent to unload and 60 s for Strata's engine to exit before loading it again
+ENGINE_RESTART_TIMEOUT_SECONDS = 150
 SEARXNG_STOP_TIMEOUT_SECONDS = 150
 DOCKER_DESKTOP_BACKEND = "/Applications/Docker.app/Contents/MacOS/com.docker.backend"
 KEPT_RUNNING = SearxngVerdict(reason="kept running on this Mac (--keep-searxng)")
@@ -199,9 +205,10 @@ async def timed(name: str, probe: Awaitable[Check]) -> tuple[str, Check]:
 
 
 async def check_llama_server(client: httpx.AsyncClient, settings: Settings) -> Check:
-    """llama-server's /health needs no key: 200 once the model is loaded, 503 while it loads, which is neither healthy nor a failure."""
+    """The engine's /health needs no key: 200 once the model is loaded; while it loads, llama-server answers 503 and Strata 200 with "loaded": false,
+    which is neither healthy nor a failure."""
     response = await client.get(f"{settings.llama_server_url}/health")
-    if response.status_code == httpx.codes.SERVICE_UNAVAILABLE:
+    if response.status_code == httpx.codes.SERVICE_UNAVAILABLE or (response.status_code == httpx.codes.OK and response.json().get("loaded") is False):
         return Check(ok=None, detail="loading the model")
     if response.status_code != httpx.codes.OK:
         return Check(ok=False, detail=f"HTTP {response.status_code}")
@@ -218,7 +225,8 @@ async def read_busy_llama_slots(client: httpx.AsyncClient, settings: Settings) -
 
 
 def busy_slots(reply: list[dict]) -> list[LlamaSlot]:
-    return [LlamaSlot(slot=slot["id"], task=slot["id_task"], decoded=decoded_tokens(slot)) for slot in reply if slot.get("is_processing")]
+    """Strata's slots carry no task id or token count, so one request cannot be told from the next; they are left out rather than judged stuck."""
+    return [LlamaSlot(slot=slot["id"], task=slot["id_task"], decoded=decoded_tokens(slot)) for slot in reply if slot.get("is_processing") and "id_task" in slot]
 
 
 def decoded_tokens(slot: dict) -> int:
@@ -371,20 +379,21 @@ def read_memory() -> Memory:
         memory.swap_used_mb = parse_swapusage(subprocess.run(["sysctl", "-n", "vm.swapusage"], capture_output=True, text=True, timeout=10).stdout)
     except (OSError, subprocess.SubprocessError):
         pass
-    add_llama_server_memory(memory)
+    for engine_process in ENGINE_PROCESSES:
+        add_engine_memory(memory, engine_process)
     return memory
 
 
-def add_llama_server_memory(memory: Memory) -> None:
-    """llama-server's resident memory: the weights, the KV pool, and the prompt cache in RAM (design doc v2/08 section 3.3)."""
+def add_engine_memory(memory: Memory, engine_process: str) -> None:
+    """The engine's resident memory: the weights, the KV pool, and the prompt cache in RAM (design doc v2/08 section 3.3)."""
     try:
-        pids = subprocess.run(["pgrep", "-x", LLAMA_SERVER_PROCESS], capture_output=True, text=True, timeout=10).stdout.split()
+        pids = subprocess.run(["pgrep", "-x", engine_process], capture_output=True, text=True, timeout=10).stdout.split()
         if not pids:
             return
         resident_kb = sum(int(value) for value in subprocess.run(["ps", "-o", "rss=", "-p", ",".join(pids)], capture_output=True, text=True, timeout=10).stdout.split())
     except (OSError, subprocess.SubprocessError, ValueError):
         return
-    memory.resident_models.append(LLAMA_SERVER_PROCESS)
+    memory.resident_models.append(engine_process)
     memory.resident_model_mb = round((memory.resident_model_mb or 0.0) + resident_kb / 1024, 1)
 
 
@@ -474,7 +483,9 @@ def daily_restart_due(state: State, policy: Policy, local_now: datetime, last_ex
 
 def execute(action: Action, settings: Settings) -> str:
     """Run one action and return a one-line account of it for the snapshot."""
-    if action.kind == "kickstart":
+    if action.kind == "kickstart" and action.target == ENGINE_AGENT:
+        result = restart_engine()
+    elif action.kind == "kickstart":
         result = subprocess.run(["launchctl", "kickstart", "-k", f"gui/{os.getuid()}/{paths.LAUNCHD_PREFIX}.{action.target}"], capture_output=True, text=True)
     elif action.kind == "searxng_up":
         return f"{action.key} ({action.reason}): {start_searxng_in_background()}"
@@ -486,6 +497,15 @@ def execute(action: Action, settings: Settings) -> str:
         raise ValueError(f"unknown action {action.kind}")
     outcome = "ok" if result.returncode == 0 else f"exit {result.returncode}: {(result.stderr or result.stdout).strip()[:120]}"
     return f"{action.key} ({action.reason}): {outcome}"
+
+
+def restart_engine() -> subprocess.CompletedProcess:
+    """Through services.sh, which waits for Strata's engine to exit before starting it again; kickstart -k would start a second engine beside the
+    old one while the old one still holds its buffers (design doc v2/10 section 3.12)."""
+    try:
+        return subprocess.run([str(SERVICES_SCRIPT), "restart", ENGINE_AGENT], capture_output=True, text=True, timeout=ENGINE_RESTART_TIMEOUT_SECONDS)
+    except subprocess.TimeoutExpired as error:
+        return subprocess.CompletedProcess(error.cmd, 124, "", f"no restart after {ENGINE_RESTART_TIMEOUT_SECONDS} s")
 
 
 def start_searxng_in_background() -> str:

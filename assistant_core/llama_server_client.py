@@ -69,7 +69,8 @@ class LlamaServerClient:
         return json.loads(reply["choices"][0]["message"]["content"])
 
     async def warm_up(self, conversation_system_prompt: str, tools: list[ToolSpec], quiet_system_prompt: str) -> None:
-        """Read each slot's stable prompt once, so the first question after a restart reads only its own tokens (design doc 02 section 3.4)."""
+        """Read each slot's stable prompt once, so the first question after a restart reads only its own tokens (design doc 02 section 3.4). The quiet
+        prompt goes first: Strata serves both from one slot, where the prompt read last is the one kept, and that should be the conversation's."""
         conversation_body = {
             "messages": [{"role": "system", "content": conversation_system_prompt}, {"role": "user", "content": WARM_UP_USER_TEXT}],
             "tools": [to_openai_tool(tool) for tool in tools] or None,
@@ -78,17 +79,17 @@ class LlamaServerClient:
             "cache_prompt": True,
         }
         quiet_body = {"messages": [{"role": "system", "content": quiet_system_prompt}, {"role": "user", "content": WARM_UP_USER_TEXT}], "max_tokens": 1, "id_slot": QUIET_SLOT, "cache_prompt": True}
-        await self._post("/v1/chat/completions", conversation_body)
         await self._post("/v1/chat/completions", quiet_body)
+        await self._post("/v1/chat/completions", conversation_body)
 
     async def is_ready(self) -> bool:
-        """True once llama-server has loaded the model; /health answers 503 while it loads."""
+        """True once the engine has loaded the model: llama-server's /health answers 503 while it loads, Strata's 200 with "loaded": false."""
         try:
             async with httpx.AsyncClient(timeout=5.0) as client:
                 response = await client.get(f"{self._base_url}/health")
-        except httpx.HTTPError:
+            return response.status_code == httpx.codes.OK and response.json().get("loaded") is not False
+        except (httpx.HTTPError, ValueError, AttributeError):
             return False
-        return response.status_code == httpx.codes.OK
 
     async def render_prompt(self, messages: list[Message], tools: list[ToolSpec]) -> str:
         """The prompt text the model reads for these messages and tools, through the model's own chat template, the opener of its turn included."""

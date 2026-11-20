@@ -1,6 +1,6 @@
-"""What the served model holds in RAM, measured without touching llama-server, for the memory tab (design doc v2/13 section 3.11).
+"""What the served model holds in RAM, measured without touching the engine, for the memory tab (design doc v2/13 section 3.11).
 
-Model weights: llama-server maps its model files (and a speculative drafter's, when serving.toml names one), so how much of a file is in RAM is how many of its pages macOS holds, which mincore reports from
+Model weights: both engines map the model's GGUF files; llama-server maps its model files (and a speculative drafter's, when serving.toml names one), so how much of a file is in RAM is how many of its pages macOS holds, which mincore reports from
 a mapping of our own. A model whose n-gram table stays on the SSD (Qwen 3.8 Flash Next, lazy_mode on) has only the rows read so far in RAM, so a
 file's size would overstate it by tens of gigabytes. vmmap would show the same per process, but it pauses the process for a second or two.
 
@@ -8,7 +8,10 @@ KV cache: llama-server reports no size, so it is worked out from the model file'
 every cell on each attention layer, one fixed recurrent state (f32) per slot on each recurrent layer, and for Qwen 4's sparse attention an indexer
 key per cell. A layout this does not know (sliding-window layers, per-layer head counts, other indexers) gives no figure rather than a wrong one.
 
-Prompt cache: llama-server logs its use only at trace level, so the tab shows the limit it was started with.
+Under Strata the cache is Strata v0.2.16's own layout (strata_kv_cache_bytes): int8 keys and values with f32 scales, which it allocates for the whole
+context when it starts, for the one conversation it serves.
+
+Prompt cache: llama-server logs its use only at trace level, so the tab shows the limit it was started with; under Strata, its conversation cache's.
 """
 
 import asyncio
@@ -24,7 +27,7 @@ from pathlib import Path
 from pydantic import BaseModel
 
 from dashboard.gguf_header import MetadataValue, read_gguf_metadata
-from serving.settings import ModelSettings, load_serving_config
+from serving.settings import Engine, ModelSettings, active_engine, load_serving_config
 
 RESIDENCY_SECONDS = 30.0  # mincore over Flash Next's 70 GB takes about a second; what is resident changes slowly
 F16_BYTES = 2
@@ -34,6 +37,14 @@ PAGE_IN_CORE = 1
 SHARD_NAME = re.compile(r"-(\d{5})-of-(\d{5})\.gguf$")
 QWEN4_SPARSE_ATTENTION = "qwen4exp"
 QWEN4_INDEXER_ROWS = 2  # a raw and a pooled key per cell, when its keys are pooled (llama.cpp src/models/qwen4exp.cpp)
+INT8_BYTES = 1
+# Strata v0.2.16, engine/metal/src/engine/window.cpp: the cells it allocates (Window::init), and per attention layer the indexer's raw tail of four
+# keys and its tail-block key (TAIL_B, DEAD_B), and two f32 scales per cell for each of keys and values; one pooled indexer key per four cells.
+STRATA_MIN_CELLS = 4096
+STRATA_INDEXER_TAIL_KEYS = 5
+STRATA_SCALES_PER_CELL = 2
+STRATA_CELLS_PER_POOLED_KEY = 4
+STRATA_CONV_HISTORY_ROWS = 3  # each of a GatedDeltaNet layer's two convolution histories (HIST_B)
 _LIBC = ctypes.CDLL(ctypes.util.find_library("c"), use_errno=True)
 _LIBC.mmap.restype = ctypes.c_void_p
 _LIBC.mmap.argtypes = [ctypes.c_void_p, ctypes.c_size_t, ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_longlong]
@@ -65,8 +76,14 @@ class ModelMemory(BaseModel):
 class ServedModelMemory:
     """Reads config/serving.toml at every reading, so a switch to another model shows at the next one; a file's residency is kept RESIDENCY_SECONDS."""
 
-    def __init__(self, load_model: Callable[[], ModelSettings] = lambda: load_serving_config().served_model, clock: Callable[[], float] = time.monotonic) -> None:
+    def __init__(
+        self,
+        load_model: Callable[[], ModelSettings] = lambda: load_serving_config().served_model,
+        clock: Callable[[], float] = time.monotonic,
+        load_engine: Callable[[], Engine] = lambda: active_engine(load_serving_config()),
+    ) -> None:
         self._load_model = load_model
+        self._load_engine = load_engine
         self._clock = clock
         self._residency: dict[Path, tuple[float, int]] = {}
         self._metadata: dict[Path, dict[str, MetadataValue]] = {}
@@ -74,12 +91,14 @@ class ServedModelMemory:
     async def current(self) -> ModelMemory:
         model = self._load_model()
         model_paths = model_files(model.gguf_path)
+        files = [await self._file_memory(path) for path in model_paths]
+        metadata = await self._header(model_paths[0])
+        if self._load_engine() == "strata":
+            return strata_model_memory(model, files, metadata)
         drafter_paths = model_files(model.draft.gguf_path) if model.draft else []
         drafter_files = [(await self._file_memory(path)).model_copy(update={"is_drafter": True}) for path in drafter_paths]
-        files = [await self._file_memory(path) for path in model_paths] + drafter_files
-        metadata = await self._header(model_paths[0])
         return ModelMemory(
-            files=files,
+            files=files + drafter_files,
             kv_cache_bytes=kv_cache_bytes(metadata, model.context_tokens, model.slots),
             context_tokens=model.context_tokens,
             slots=model.slots,
@@ -100,6 +119,17 @@ class ServedModelMemory:
         if path not in self._metadata:
             self._metadata[path] = await asyncio.to_thread(read_gguf_metadata, path)
         return self._metadata[path]
+
+
+def strata_model_memory(model: ModelSettings, files: list[ModelFileMemory], metadata: dict[str, MetadataValue]) -> ModelMemory:
+    """Strata serves one conversation and drafts with its own DFlash2 pack, so llama-server's drafter file and second slot are not in its memory."""
+    return ModelMemory(
+        files=files,
+        kv_cache_bytes=strata_kv_cache_bytes(metadata, model.context_tokens),
+        context_tokens=model.context_tokens,
+        slots=1,
+        prompt_cache_limit_bytes=model.strata.conversation_cache_mib * MIB if model.strata else 0,
+    )
 
 
 def model_files(first_file: Path) -> list[Path]:
@@ -178,3 +208,46 @@ def recurrent_state_bytes(hyperparameters: dict[str, MetadataValue]) -> int:
     inner, state = int(hyperparameters["ssm.inner_size"]), int(hyperparameters["ssm.state_size"])
     groups, kernel = int(hyperparameters.get("ssm.group_count") or 0), int(hyperparameters["ssm.conv_kernel"])
     return ((kernel - 1) * (inner + 2 * groups * state) + state * inner) * F32_BYTES
+
+
+def strata_kv_cache_bytes(metadata: dict[str, MetadataValue], context_tokens: int) -> int | None:
+    """One conversation's state as Strata v0.2.16 allocates it (Window::alloc_set): the attention layers' cache and the GatedDeltaNet layers' state.
+    Its log names the same sum: "strata metal: 2 batch slots ... (0.62 GB each)" at 34,816 tokens."""
+    hyperparameters = architecture_hyperparameters(metadata)
+    if str(metadata.get("general.architecture", "")) != QWEN4_SPARSE_ATTENTION or not strata_layout_keys_present(hyperparameters):
+        return None
+    layers = int(hyperparameters["block_count"])
+    attention_layers = layers // int(hyperparameters["full_attention_interval"])
+    cells = strata_cells(context_tokens)
+    return attention_layers * strata_attention_layer_bytes(hyperparameters, cells) + (layers - attention_layers) * strata_recurrent_layer_bytes(hyperparameters)
+
+
+def architecture_hyperparameters(metadata: dict[str, MetadataValue]) -> dict[str, MetadataValue]:
+    architecture = str(metadata.get("general.architecture", ""))
+    return {key.removeprefix(f"{architecture}."): value for key, value in metadata.items() if key.startswith(f"{architecture}.")}
+
+
+def strata_layout_keys_present(hyperparameters: dict[str, MetadataValue]) -> bool:
+    needed = ("block_count", "full_attention_interval", "attention.head_count_kv", "attention.key_length", "attention.indexer.key_length")
+    return all(isinstance(hyperparameters.get(key), int) for key in needed + ("ssm.state_size", "ssm.time_step_rank", "ssm.group_count"))
+
+
+def strata_cells(context_tokens: int) -> int:
+    """The cells Window::init allocates for --max-context: rounded to a multiple of four, plus 64, and at least 4,096."""
+    return max(STRATA_MIN_CELLS, (context_tokens + 64) // 4 * 4 + 64)
+
+
+def strata_attention_layer_bytes(hyperparameters: dict[str, MetadataValue], cells: int) -> int:
+    kv_heads, head_width = int(hyperparameters["attention.head_count_kv"]), int(hyperparameters["attention.key_length"])
+    indexer_width = int(hyperparameters["attention.indexer.key_length"])
+    keys_and_values = 2 * cells * kv_heads * head_width * INT8_BYTES
+    scales = 2 * STRATA_SCALES_PER_CELL * cells * kv_heads * F32_BYTES
+    pooled_indexer_keys = (cells // STRATA_CELLS_PER_POOLED_KEY + 2) * indexer_width * F32_BYTES
+    return keys_and_values + scales + pooled_indexer_keys + STRATA_INDEXER_TAIL_KEYS * indexer_width * F32_BYTES
+
+
+def strata_recurrent_layer_bytes(hyperparameters: dict[str, MetadataValue]) -> int:
+    """The f32 recurrence, state x value heads x state, and two convolution histories over the layer's q, k and v channels."""
+    state, value_heads, key_heads = int(hyperparameters["ssm.state_size"]), int(hyperparameters["ssm.time_step_rank"]), int(hyperparameters["ssm.group_count"])
+    conv_channels = 2 * state * key_heads + state * value_heads
+    return state * value_heads * state * F32_BYTES + 2 * STRATA_CONV_HISTORY_ROWS * conv_channels * F32_BYTES

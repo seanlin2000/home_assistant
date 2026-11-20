@@ -178,7 +178,7 @@ Three is the default: it called a tool as often as two here, keeps one more exch
 
 - **`chat`**: streams a completion with tools from `/v1/chat/completions` and turns the chunks into the loop's existing events (`TextDelta`, `ToolCallRequest`, `MalformedToolCall`, `Completion`). The `Completion` carries llama-server's `timings`, including the tokens served from the cache.
 - **`classify`**: one llama.cpp request with the reply forced into a JSON schema, for the router, the summariser, compaction, and the quarantined reader (doc 12 §3.6).
-- **Slot pinning**: every response request is sent with `id_slot: 0` and every quiet request with `id_slot: 1`, so the router and the summaries never push the conversation out of the cache (doc 02 §3.4). At startup the client sends one warm-up request to each slot.
+- **Slot pinning**: every response request is sent with `id_slot: 0` and every quiet request with `id_slot: 1`, so the router and the summaries never push the conversation out of the cache (doc 02 §3.4). At startup the client sends one warm-up request to each slot, the quiet slot's first: Strata serves both from one slot (doc 02 §3.10), which keeps only the prompt read last, and that should be the conversation's. The client counts the engine ready once `/health` answers 200 without `"loaded": false`, which is how Strata reports a model still loading.
 - **`count_tokens`**: `/tokenize`, for the budget.
 
 The benchmark keeps `OllamaClient` until M1 ends, so the bake-off can compare both engines through the same loop.

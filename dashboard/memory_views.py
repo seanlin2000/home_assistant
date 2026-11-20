@@ -1,10 +1,11 @@
 """This Mac's RAM, and how much of it the Home Assistant setup holds, for the memory tab (design doc v2/13 section 3.11).
 
-The tab splits the RAM into pieces that add up to it: what each app holds in RAM as-is, llama-server's model weights, the compressed memory of every
+The tab splits the RAM into pieces that add up to it: what each app holds in RAM as-is, the engine's model weights, the compressed memory of every
 app packed together, macOS itself, and what is free. An app's physical footprint, the figure Activity Monitor shows, also counts what macOS has
 compressed for it or moved to disk, so footprints can add up to far more than the RAM; `top` reports that part per process, and the footprint minus
-it is what the app holds in RAM. llama-server's model weights are mapped from the model files and held by the GPU, outside any footprint, so the
-part of each file macOS holds in RAM is added to its own; its KV cache is inside its own, and is named there (dashboard/model_memory.py).
+it is what the app holds in RAM. The model weights either engine (llama-server or Strata) maps from the model files are held by the GPU, outside any
+footprint, so the part of each file macOS holds in RAM is added to the engine's own; its KV cache is inside its own, and is named there
+(dashboard/model_memory.py).
 """
 
 import re
@@ -24,6 +25,8 @@ VM_STAT_LINE = re.compile(r'^"?([^":]+)"?:\s+(\d+)\.?$')
 PAGE_SIZE = re.compile(r"page size of (\d+) bytes")
 APP_BUNDLE = re.compile(r"/([^/]+)\.app/")
 LLAMA_SERVER = "llama-server"
+STRATA = "Strata"  # its engine and the Python server in front of it
+ENGINES = (LLAMA_SERVER, STRATA)
 UNKNOWN_WEIGHTS_NOTE = "model weights not counted: the served model's files, named in config/serving.toml, could not be read"
 
 
@@ -34,6 +37,7 @@ class SetupComponent(BaseModel):
 
 SETUP_COMPONENTS = [
     SetupComponent(name=LLAMA_SERVER, pattern=r"/llama-server\b"),
+    SetupComponent(name=STRATA, pattern=r"/build-metal/strata\b|serve/server\.py"),
     SetupComponent(name="Home Assistant VM (UTM)", pattern=r"/QEMULauncher\b"),
     SetupComponent(name="Qwen3-ASR, speech to text", pattern=r"speech-server"),
     SetupComponent(name="Kokoro, text to speech", pattern=r"kokoro-server"),
@@ -73,10 +77,10 @@ class MachineMemory(BaseModel):
 class ProcessGroup(BaseModel):
     name: str
     processes: int
-    ram_bytes: int  # held in RAM as-is, llama-server's model weights included
+    ram_bytes: int  # held in RAM as-is, the engine's model weights included
     compressed_bytes: int  # compressed in RAM or moved to disk, which `top` does not tell apart
     model_weights_bytes: int = 0  # the part of the model files in RAM
-    model_memory: ModelMemory | None = None  # llama-server's: each model file, the KV cache, and the prompt cache's limit
+    model_memory: ModelMemory | None = None  # the engine's: each model file, the KV cache, and the prompt cache's limit
     note: str = ""
 
 
@@ -105,12 +109,18 @@ def memory_view(outputs: MemoryOutputs, model_memory: ModelMemory | None) -> Mem
     processes = running_processes(outputs)
     setup_processes = {component.name: [process for process in processes if matches(component, process)] for component in SETUP_COMPONENTS}
     claimed = {process.pid for members in setup_processes.values() for process in members}
-    setup_groups = (setup_group(name, members, model_memory) for name, members in setup_processes.items())
-    setup = sorted(setup_groups, key=lambda group: (-group.ram_bytes, -group.compressed_bytes))
+    setup_groups = [setup_group(name, members, model_memory) for name, members in setup_processes.items()]
+    setup = sorted(without_the_idle_engine(setup_groups), key=lambda group: (-group.ram_bytes, -group.compressed_bytes))
     others = other_groups([process for process in processes if process.pid not in claimed])
     setup_ram = sum(group.ram_bytes for group in setup)
     others_ram = sum(group.ram_bytes for group in others)
     return MemoryView(machine=machine_memory(outputs, setup_ram + others_ram), setup=setup, setup_ram_bytes=setup_ram, others=others, others_ram_bytes=others_ram)
+
+
+def without_the_idle_engine(groups: list[ProcessGroup]) -> list[ProcessGroup]:
+    """Only one engine serves at a time, so the other is not listed as stopped while one runs; with neither running, both show as stopped."""
+    engine_runs = any(group.name in ENGINES and group.processes for group in groups)
+    return [group for group in groups if not (engine_runs and group.name in ENGINES and not group.processes)]
 
 
 def running_processes(outputs: MemoryOutputs) -> list[RunningProcess]:
@@ -157,7 +167,7 @@ def program_text(process: RunningProcess) -> str:
 
 def setup_group(name: str, members: list[RunningProcess], model_memory: ModelMemory | None) -> ProcessGroup:
     group = plain_group(name, members)
-    if name != LLAMA_SERVER or not members:
+    if name not in ENGINES or not members:
         return group
     if model_memory is None:
         return group.model_copy(update={"note": UNKNOWN_WEIGHTS_NOTE})

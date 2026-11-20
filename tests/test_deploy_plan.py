@@ -135,9 +135,37 @@ def test_cli_status_reports_head_and_flags(monkeypatch: pytest.MonkeyPatch, tmp_
     assert report["maintenance"] is False and report["last_good_ref"] is None
 
 
-def test_serving_settings_or_launcher_restart_llama_server() -> None:
+def test_serving_settings_launcher_or_strata_patches_restart_the_engine() -> None:
     assert deploy.plan_actions(["config/serving.toml"]).actions == ["restart:llama", "restart:harness"]
     assert deploy.plan_actions(["serving/command.py"]).actions == ["restart:llama", "restart:harness"]
+    assert deploy.plan_actions(["scripts/strata_patches/release_projections.patch"]).actions == ["restart:llama", "restart:harness"]
+
+
+def test_an_engine_the_launch_would_refuse_aborts_the_deploy_before_any_restart(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    monkeypatch.setenv("STUDIO_LOG_DIR", str(tmp_path))
+    checkouts, ran, carried_out = [], [], []
+    answers = {("rev-parse", "HEAD"): "old", ("rev-parse", "--verify", "new^{commit}"): "new", ("diff", "--name-only", "old", "new"): "config/serving.toml"}
+
+    def git(*args: str) -> str:
+        if args[0] == "checkout":
+            checkouts.append(args[-1])
+        return answers.get(args, "")
+
+    def run(command: list[str], timeout: int = 0) -> None:
+        ran.append(command[-1])
+        if command[-1] == "check":
+            raise subprocess.CalledProcessError(1, command)
+
+    monkeypatch.setattr(deploy, "tree_is_dirty", lambda: False)
+    monkeypatch.setattr(deploy, "git", git)
+    monkeypatch.setattr(deploy, "run", run)
+    monkeypatch.setattr(deploy, "check_manifest_matches_lock", lambda: None)
+    monkeypatch.setattr(deploy, "carry_out", carried_out.extend)
+
+    summary = deploy.switch_to("new", run_tests=True, dry_run=False)
+
+    assert summary["note"].startswith("aborted before any restart; checkout returned to old")
+    assert (checkouts, ran, carried_out) == (["new", "old"], ["check"], [])  # the tests never ran, and nothing restarted
 
 
 def test_vendored_core_files_import_only_each_other() -> None:

@@ -1,20 +1,31 @@
-"""`serving launch | show | fetch`: start llama-server from config/serving.toml, print the command it would run, or download the served model and its drafter."""
+"""`serving launch | show | check | fetch`: start the active engine (llama-server or Strata) from config/serving.toml, print what it would run, check its
+files and install, or download the served model and its drafter."""
 
 import argparse
+import json
 import os
 import sys
 
 from serving.command import build_command, printable_command
 from serving.model_file import ModelFileMismatch, fetch_model_file, model_file_matches, verify_model_file
-from serving.settings import PinnedFile, ServingConfig, load_serving_config
+from serving.settings import PinnedFile, ServingConfig, active_engine, load_serving_config
+from serving.strata import (
+    SERVER_DIR,
+    StrataInstallProblem,
+    redacted_run_config,
+    strata_command,
+    strata_run_config,
+    verify_strata_install,
+    write_strata_run_config,
+)
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(prog="serving", description="Serve the model with llama-server, using only the settings in config/serving.toml.")
+    parser = argparse.ArgumentParser(prog="serving", description="Serve the model with llama-server or Strata, using only the settings in config/serving.toml.")
     parser.add_argument(
         "action",
-        choices=("launch", "show", "fetch"),
-        help="launch: check the model's and drafter's hashes and replace this process with llama-server; show: print the command; fetch: download the model and drafter",
+        choices=("launch", "show", "check", "fetch"),
+        help="launch: check the files and replace this process with the active engine; show: print its command or run config; check: exit 1 when the launch would refuse; fetch: download the model and drafter",
     )
     return parser
 
@@ -24,6 +35,8 @@ def main() -> None:
     config = load_serving_config()
     if action == "show":
         show(config)
+    elif action == "check":
+        check(config)
     elif action == "fetch":
         for pinned_file in config.served_model.pinned_files:
             fetch(pinned_file)
@@ -32,9 +45,39 @@ def main() -> None:
 
 
 def show(config: ServingConfig) -> None:
-    print(printable_command(build_command(config)))
+    engine = active_engine(config)
+    print(f"engine: {engine}")
+    if engine == "strata":
+        print(json.dumps(redacted_run_config(strata_run_config(config)), indent=2))
+    else:
+        print(printable_command(build_command(config)))
     for pinned_file in config.served_model.pinned_files:
         report_pinned_file(pinned_file)
+
+
+def check(config: ServingConfig) -> None:
+    """What the deploy runs before restarting the engine, so a broken install stops the deploy instead of leaving launchd restarting a launch that refuses."""
+    problem = launch_problem(config)
+    if problem:
+        sys.exit(f"serving: {problem}")
+    print(f"serving: {active_engine(config)} is ready to launch")
+
+
+def launch_problem(config: ServingConfig) -> str | None:
+    try:
+        verify_launch_files(config)
+    except (ModelFileMismatch, StrataInstallProblem, FileNotFoundError) as error:
+        return str(error)
+    return None
+
+
+def verify_launch_files(config: ServingConfig) -> None:
+    for pinned_file in config.served_model.pinned_files:
+        verify_model_file(pinned_file)
+    if not config.server.api_key_path.is_file():
+        raise FileNotFoundError(f"no API key at {config.server.api_key_path}; scripts/services.sh install creates it")
+    if active_engine(config) == "strata":
+        verify_strata_install(config.served_model.strata)
 
 
 def report_pinned_file(pinned_file: PinnedFile) -> None:
@@ -54,14 +97,18 @@ def fetch(pinned_file: PinnedFile) -> None:
 
 
 def launch(config: ServingConfig) -> None:
-    """Replace this process with llama-server, so launchd supervises the server itself and a crash restarts it."""
-    command = build_command(config)
-    try:
-        for pinned_file in config.served_model.pinned_files:
-            verify_model_file(pinned_file)
-    except ModelFileMismatch as error:
-        sys.exit(f"serving: {error}")
-    if not config.server.api_key_path.is_file():
-        sys.exit(f"serving: no API key at {config.server.api_key_path}; scripts/services.sh install creates it")
+    """Replace this process with the engine's server, so launchd supervises the server itself and a crash restarts it."""
+    problem = launch_problem(config)
+    if problem:
+        sys.exit(f"serving: {problem}")
+    command = strata_launch_command(config) if active_engine(config) == "strata" else build_command(config)
     print(f"serving: {printable_command(command)}", flush=True)
     os.execv(command[0], command)
+
+
+def strata_launch_command(config: ServingConfig) -> list[str]:
+    """Writes the run config, then moves into the server's folder, which it imports its modules from."""
+    strata = config.served_model.strata
+    run_config_path = write_strata_run_config(strata_run_config(config))
+    os.chdir(strata.install_path / SERVER_DIR)
+    return strata_command(strata, run_config_path, config.server.port)

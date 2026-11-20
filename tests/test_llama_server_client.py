@@ -1,5 +1,23 @@
-from assistant_core.llama_server_client import CONVERSATION_SLOT, StreamedReply, parse_stream_line, response_request_body, thinking_template_options, to_openai_message, to_openai_tool
+from typing import Any
+
+import httpx
+import pytest
+
+from assistant_core import llama_server_client
+from assistant_core.llama_server_client import (
+    CONVERSATION_SLOT,
+    QUIET_SLOT,
+    LlamaServerClient,
+    StreamedReply,
+    parse_stream_line,
+    response_request_body,
+    thinking_template_options,
+    to_openai_message,
+    to_openai_tool,
+)
 from assistant_core.models import AgentPolicy, MalformedToolCall, Message, Role, ToolCall, ToolCallRequest, ToolSpec
+
+REAL_ASYNC_CLIENT = httpx.AsyncClient
 
 
 def chunk(delta: dict, finish_reason: str | None = None, timings: dict | None = None) -> dict:
@@ -127,3 +145,26 @@ def test_text_held_back_as_a_possible_tag_is_released_when_no_tag_follows() -> N
 def test_a_reply_ending_in_a_possible_tag_start_is_released_at_the_end() -> None:
     spoken, content = streamed_text("It is a <")
     assert "".join(spoken) == content == "It is a <"
+
+
+async def test_warm_up_reads_the_quiet_prompt_first_so_one_slot_engines_keep_the_conversation_s(monkeypatch: pytest.MonkeyPatch) -> None:
+    client = LlamaServerClient("http://127.0.0.1:8090", "key", "qwen3.8-flash-next")
+    slots = []
+
+    async def post(path: str, body: dict[str, Any]) -> dict[str, Any]:
+        slots.append(body["id_slot"])
+        return {}
+
+    monkeypatch.setattr(client, "_post", post)
+    await client.warm_up("conversation prompt", [], "quiet prompt")
+    assert slots == [QUIET_SLOT, CONVERSATION_SLOT]  # Strata serves both slots from one, which keeps only the prompt read last
+
+
+@pytest.mark.parametrize(
+    ("status", "reply", "ready"),
+    [(200, {"status": "ok"}, True), (503, {"error": "loading model"}, False), (200, {"status": "ok", "loaded": False}, False), (200, {"loaded": True}, True)],
+)
+async def test_ready_means_the_model_is_loaded_for_either_engine(monkeypatch: pytest.MonkeyPatch, status: int, reply: dict, ready: bool) -> None:
+    transport = httpx.MockTransport(lambda request: httpx.Response(status, json=reply))
+    monkeypatch.setattr(llama_server_client.httpx, "AsyncClient", lambda **options: REAL_ASYNC_CLIENT(transport=transport, **options))
+    assert await LlamaServerClient("http://127.0.0.1:8090", "key", "qwen3.8-flash-next").is_ready() is ready

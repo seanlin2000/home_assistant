@@ -196,6 +196,12 @@ A component is matched on the executable and the first two words of its command 
 
 **llama-server's KV cache.** The cache is inside llama-server's own footprint, in the buffers it shares with the GPU, and llama-server reports no size, so the view works it out from the model file's header as llama.cpp lays the cache out: keys and values (f16) for every cell of the context on each attention layer, one recurrent state (f32) per slot on each recurrent layer, and for Qwen 4's sparse attention a raw and a pooled indexer key per cell. For Flash Next that is 1.22 GB for 34,816 tokens and 2 slots, inside the 1.36 GB of shared buffers `vmmap` showed llama-server holding; the rest is the GPU's work buffers. A layout the view does not work out (sliding-window layers, per-layer head counts, another model's indexer) shows no figure rather than a wrong one.
 
+**Under Strata** (doc 02 §3.10), the row is named Strata and counts its engine and the Python server in front of it. While one engine runs, the other is not listed. The weights are measured the same way, from the same GGUF shards, but without llama-server's drafter file: Strata drafts with its own pack. The KV cache follows Strata v0.2.16's layout (`strata_kv_cache_bytes`):
+- on each attention layer, int8 keys and values for every cell, with two f32 scales per cell for each, the indexer's pooled keys (one per four cells), and its short tail;
+- on each recurrent layer, the f32 recurrence and two convolution histories.
+
+Strata allocates this for the whole context, for its one slot, when it starts. At 34,816 tokens that is 0.62 GB, the figure Strata's own log gives. The prompt cache shows as none, since `conversation_cache_mib` is 0.
+
 **llama-server's prompt cache.** llama-server logs the prompt cache's use only at trace level, so the row shows the limit it was started with (`prompt_cache_mib`, `-cram`). Its entries are in the rest of llama-server's own RAM, with its context checkpoints and work buffers.
 
 **The other apps** are grouped by app, so a browser's dozens of helper processes count as the browser. The seven holding the most RAM are named, and the rest are one group. Sizes are binary gigabytes labelled GB, as Activity Monitor labels them, so the two read the same.
@@ -205,7 +211,7 @@ A component is matched on the executable and the first two words of its command 
 | Package | What it does here |
 |---|---|
 | Starlette and uvicorn | Serve the page and its small JSON API, as they already serve the harness |
-| llama-server's `/apply-template`, `/tokenize`, and `/slots` | Render a prompt through the model's chat template, count its tokens, and report each slot's state |
+| llama-server's `/apply-template`, `/tokenize`, and `/slots` | Render a prompt through the model's chat template, count its tokens, and report each slot's state. Strata answers `/slots` alone, so under it the prompt layout says it needs llama-server's two endpoints |
 | macOS's `top`, `ps`, `vm_stat`, `sysctl`, and `scutil` | Read the Mac's memory, and each process's, for the memory view |
 | `mincore`, through ctypes | Tell how much of each model file macOS holds in RAM, without touching llama-server |
 | websockets (through `ops/ha_client.py`) | Ask Home Assistant for its recent pipeline runs |

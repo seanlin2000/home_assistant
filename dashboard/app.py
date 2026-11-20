@@ -135,16 +135,23 @@ async def event_lines(events: AsyncIterator[AgentEvent]) -> AsyncIterator[str]:
 
 
 async def from_llama_server(view: Callable[[], Awaitable[BaseModel]]) -> Response:
-    """A view built from llama-server's answers, or why llama-server could not give them (it is down, still loading, or refused the key)."""
+    """A view built from the engine's answers, or why the engine could not give them (it is down, still loading, refused the key, or lacks the endpoint)."""
     try:
         built = await view()
     except httpx.HTTPError as error:
-        return JSONResponse({"error": f"llama-server did not answer: {type(error).__name__}: {error}"}, status_code=503)
+        return JSONResponse({"error": engine_error_message(error)}, status_code=503)
     return Response(built.model_dump_json(), media_type="application/json")
 
 
+def engine_error_message(error: httpx.HTTPError) -> str:
+    """Strata answers the slots view but has no /apply-template or /tokenize, which rebuilding an exchange's prompt needs."""
+    if isinstance(error, httpx.HTTPStatusError) and error.response.status_code == httpx.codes.NOT_FOUND:
+        return f"the engine has no {error.request.url.path}: the prompt layout needs llama-server's /apply-template and /tokenize, which Strata does not have"
+    return f"the engine did not answer: {type(error).__name__}: {error}"
+
+
 def llama_server_off() -> Response:
-    return JSONResponse({"error": "llama-server's API key was not found on this Mac, so the dashboard cannot ask it"}, status_code=503)
+    return JSONResponse({"error": "the engine's API key was not found on this Mac, so the dashboard cannot ask it"}, status_code=503)
 
 
 def from_this_dashboard(request: Request, allowed_hosts: list[str]) -> bool:

@@ -250,7 +250,7 @@ Added 2026-11-11. Section 3.3's deploy is driven from the laptop over SSH by `sc
 
 1. **Refuse a branch.** The serving checkout is detached at one commit. A checkout on a branch is somebody's working copy, and the deploy stops.
 2. **Record a last good commit if none exists.** A Mac set up before this script has none, so the first failed deploy would have nothing to return to. The running commit is the best one known.
-3. **Apply.** `ops.deploy`'s `switch_to` fetches, checks out `origin/main` (or `--ref`), runs the tests and restarts what changed, as in 3.3. If the tests fail, nothing restarts, the old commit is checked out again, the maintenance flag is cleared, and the script exits 1.
+3. **Apply.** `ops.deploy`'s `switch_to` fetches, checks out `origin/main` (or `--ref`), runs the tests and restarts what changed, as in 3.3. When the engine is among the restarts (a change to `config/serving.toml`, `serving/`, Strata's patches, or the agents), `serving check` runs first: the model's hash, the key, and for Strata its pinned, patched install (doc 02 §3.10). If the check or the tests fail, nothing restarts, the old commit is checked out again, the maintenance flag is cleared, and the script exits 1. A broken engine install therefore stops the deploy, instead of leaving launchd restarting a launch that refuses.
 4. **Wait for the model.** If the restarts touched the answer path (llama-server, the tool server, the harness, the environment or every agent), the script polls the harness's `/health` until it reports llama-server and the tool server ready, for up to 15 minutes. A large model takes minutes to load, and the smoke test should judge the answer, not the start-up.
 5. **Ask the test question.** `ops.smoke`, through Home Assistant, as in 3.3.
 6. **Keep or roll back.**
@@ -258,6 +258,14 @@ Added 2026-11-11. Section 3.3's deploy is driven from the laptop over SSH by `sc
     - It does not: switch back to the last good commit without tests, wait, and ask again. If that answers, clear the flag and exit 1. If not, leave the flag set, so the health check does not restart services under a person, and exit 2.
 
 `scripts/mini.sh deploy` stays for a Mac that is still driven over SSH. `docs/DEPLOYING.md` is the human version of this section.
+
+### 3.12 The engine agent under Strata
+
+Added 2026-11-20. The `llama` agent runs whichever engine `config/serving.toml` names (doc 02 §3.10). Under Strata, three things differ:
+
+- **Restarts wait for the engine.** Strata's Python server starts the engine as a child process, and the engine takes a few seconds to unmap the model after the server stops. `scripts/services.sh` therefore stops the agent, waits for the `strata` process to exit, and only then loads the agent again. It kills the engine if it is still running after 60 s, so two engines never hold their buffers at once. `stop`, `start`, `install` and `restart llama` all wait this way, and so do the health check's own engine restarts (a stuck slot, two failed checks, the daily refresh): they run `services.sh restart llama` instead of `launchctl kickstart -k`, which would start the new engine at once beside the old one.
+- **The health check follows the engine.** It reads the memory of whichever engine process runs, `llama-server` or `strata`. It counts Strata's `/health` with `"loaded": false` as still loading, neither healthy nor failed. The stuck-slot check is off under Strata: its `/slots` reports whether its one slot is busy, but carries no task id or token count, so the check cannot tell a stuck request from the next one.
+- **Switching back takes one command at the keyboard.** `scripts/services.sh engine llama-server` (or `strata`) writes this Mac's override, runs `serving check`, and restarts the engine and the harness. A choice the check refuses is undone, and nothing restarts. `scripts/services.sh engine default` follows `serving.toml` again.
 
 ## 4. Packages and tools, and what each does for the business logic
 

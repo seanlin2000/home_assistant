@@ -328,3 +328,43 @@ def test_a_vm_that_cannot_be_reached_from_this_session_is_neither_started_nor_re
     state = after_failures(checks, 9)
     assert state.consecutive_failures["vm"] == 0
     assert health.decide_actions(checks, state, Policy(), NOW, maintenance=False) == []
+
+
+async def test_the_engine_check_counts_strata_still_loading_as_neither_healthy_nor_failing() -> None:
+    replies = {"llama-server loading": (503, {}), "Strata loading": (200, {"status": "ok", "loaded": False}), "loaded": (200, {"status": "ok", "loaded": True})}
+    results = {}
+    for name, (status, reply) in replies.items():
+        async with httpx.AsyncClient(transport=httpx.MockTransport(lambda request, status=status, reply=reply: httpx.Response(status, json=reply))) as client:
+            results[name] = (await health.check_llama_server(client, health.Settings(llama_key_path=Path("/nonexistent")))).ok
+    assert results == {"llama-server loading": None, "Strata loading": None, "loaded": True}
+
+
+def test_strata_s_busy_slot_is_never_judged_stuck_since_it_names_no_task() -> None:
+    strata_reply = [{"id": 0, "n_ctx": 34816, "is_processing": True, "n_prompt_tokens": 7900}]
+    llama_reply = [{"id": 0, "id_task": 41, "is_processing": True, "next_token": [{"n_decoded": 12}]}]
+    assert health.busy_slots(strata_reply) == []
+    assert health.busy_slots(llama_reply) == [health.LlamaSlot(slot=0, task=41, decoded=12)]
+
+
+def test_the_health_check_restarts_the_engine_through_services_sh_so_it_waits_for_strata_s_engine(monkeypatch: pytest.MonkeyPatch) -> None:
+    calls: list[list[str]] = []
+
+    def fake_run(command: list[str], **kwargs: object) -> subprocess.CompletedProcess[str]:
+        calls.append(command)
+        return subprocess.CompletedProcess(command, 0, "restarted llama\n", "")
+
+    monkeypatch.setattr(health.subprocess, "run", fake_run)
+    engine = health.execute(health.Action(kind="kickstart", target="llama", reason="daily refresh"), health.Settings(llama_key_path=Path("/nonexistent")))
+    kokoro = health.execute(health.Action(kind="kickstart", target="kokoro", reason="failed 2 checks"), health.Settings(llama_key_path=Path("/nonexistent")))
+    assert calls[0] == [str(health.SERVICES_SCRIPT), "restart", "llama"]
+    assert calls[1][:3] == ["launchctl", "kickstart", "-k"]  # other agents have no engine process to wait for
+    assert engine.endswith(": ok") and kokoro.endswith(": ok")
+
+
+def test_an_engine_restart_that_hangs_is_reported_rather_than_blocking_the_health_run(monkeypatch: pytest.MonkeyPatch) -> None:
+    def hanging_run(command: list[str], **kwargs: object) -> subprocess.CompletedProcess[str]:
+        raise subprocess.TimeoutExpired(command, kwargs["timeout"])
+
+    monkeypatch.setattr(health.subprocess, "run", hanging_run)
+    outcome = health.execute(health.Action(kind="kickstart", target="llama", reason="daily refresh"), health.Settings(llama_key_path=Path("/nonexistent")))
+    assert "exit 124: no restart after 150 s" in outcome

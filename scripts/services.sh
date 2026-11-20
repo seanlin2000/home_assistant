@@ -4,13 +4,14 @@
 #   scripts/services.sh install      write launchd agents for speech to text, kokoro, the harness and the exchange dashboard (LAN), llama-server and mcp (127.0.0.1), the health check, the nightly listings refresh, and the hourly newsletters pull, and load them
 #   scripts/services.sh start|stop   load/unload the agents
 #   scripts/services.sh restart NAME restart one agent (llama|mcp|harness|dashboard|speech|kokoro|health|listings|newsletters)
+#   scripts/services.sh engine NAME  serve with llama-server or strata on this Mac whatever config/serving.toml says, or default to follow it again
 #   scripts/services.sh status       show what is listening on each port and the last health snapshot; exits 1 if an agent or port is down
 #   scripts/services.sh dashboard    start the exchange dashboard if it is not running and open it in the browser
 #   scripts/services.sh logs NAME    tail a service log (speech|kokoro|mcp|harness|dashboard|llama|health|listings|newsletters)
 #   scripts/services.sh uninstall    unload and remove the agents
 #
 # Ports: speech to text 10300 (the speech server, config/speech.toml), Kokoro 10210 and the harness 8770 (with an API key) bind 0.0.0.0 so the VM can reach them, and the
-# exchange dashboard 8775 does so a laptop on the home network can open it. llama-server 127.0.0.1:8090 (with an API key, from config/serving.toml)
+# exchange dashboard 8775 does so a laptop on the home network can open it. The engine 127.0.0.1:8090 (with an API key, from config/serving.toml)
 # and the tool server 127.0.0.1:8765 answer only this Mac (design_docs/v2/08 section 3.2).
 set -euo pipefail
 
@@ -28,11 +29,16 @@ LISTINGS_REFRESH_HOUR="${LISTINGS_REFRESH_HOUR:-4}"
 LISTINGS_REFRESH_MINUTE="${LISTINGS_REFRESH_MINUTE:-30}"
 NEWSLETTERS_INTERVAL_SECONDS="${NEWSLETTERS_INTERVAL_SECONDS:-3600}"
 UNLOAD_TIMEOUT_SECONDS="${UNLOAD_TIMEOUT_SECONDS:-30}"
+# The llama agent runs whichever engine serving.toml (or this file, written by `engine`) names; Strata's server stops its engine as it exits, and the
+# engine takes a few seconds more to unmap the model, so a restart waits for it instead of loading a second engine beside it.
+ENGINE_OVERRIDE_FILE="$APP_SUPPORT_DIR/engine"
+STRATA_ENGINE_PROCESS=strata
+ENGINE_EXIT_TIMEOUT_SECONDS="${ENGINE_EXIT_TIMEOUT_SECONDS:-60}"
 # How often MLX renews the speech server's wired memory (install_agents explains why); scripts/speech_server.sh uses the same default.
 MLX_RESIDENCY_REFRESH_MS="${MLX_RESIDENCY_REFRESH_MS:-1000}"
 
 usage() {
-    sed -n '2,14p' "$0"
+    sed -n '2,15p' "$0"
     exit 1
 }
 
@@ -147,7 +153,8 @@ install_agents() {
     # With the harness stopped, nothing appends to the old turns/ folder while the exchange logs move out of it (a no-op once moved).
     # A failed move leaves the files where they were, so it must not stop the agents from coming back.
     "$PROJECT_DIR/.venv/bin/python" -m ops.legacy_exchange_logs "$LOG_DIR" || echo "warning: exchange logs not moved out of $LOG_DIR/turns; rerun: .venv/bin/python -m ops.legacy_exchange_logs" >&2
-    # llama-server: the launcher checks the model's hash and replaces itself with llama-server, so launchd supervises the server directly.
+    # The engine: the launcher checks the model's hash (and Strata's install) and replaces itself with llama-server or Strata's server, so launchd
+    # supervises the server directly.
     ensure_api_key llama-server
     ENV_KEYS=() ENV_VALUES=()
     write_plist llama "$PROJECT_DIR/.venv/bin/serving" launch
@@ -206,7 +213,9 @@ start_agents() {
     local name error failed=()
     for name in "${SERVICES[@]}"; do
         [[ -f "$(plist_path "$name")" ]] || continue
-        if agent_loaded "$name"; then
+        if [[ "$name" == llama ]]; then
+            error="$(restart_engine 2>&1)" || failed+=("$name (${error##*$'\n'})")
+        elif agent_loaded "$name"; then
             error="$(launchctl kickstart -k "$(agent_target "$name")" 2>&1)" || failed+=("$name (${error%%$'\n'*})")
         else
             error="$(launchctl bootstrap "gui/$(id -u)" "$(plist_path "$name")" 2>&1)" || failed+=("$name (${error%%$'\n'*})")
@@ -230,6 +239,7 @@ stop_agents() {
     for name in "${SERVICES[@]}"; do
         wait_until_unloaded "$name"
     done
+    wait_for_engine_exit
 }
 
 remove_retired_agents() {
@@ -259,8 +269,55 @@ wait_until_unloaded() {
 
 restart_agent() {
     local name="${1:?service name}"
-    launchctl kickstart -k "$(agent_target "$name")" 2>/dev/null || launchctl bootstrap "gui/$(id -u)" "$(plist_path "$name")"
+    if [[ "$name" == llama ]]; then
+        restart_engine
+    else
+        launchctl kickstart -k "$(agent_target "$name")" 2>/dev/null || launchctl bootstrap "gui/$(id -u)" "$(plist_path "$name")"
+    fi
     echo "restarted $name"
+}
+
+restart_engine() {
+    # A slow unload must not stop the script before it loads the agent again: under the health check, that would leave the engine down.
+    launchctl bootout "$(agent_target llama)" 2>/dev/null || true
+    wait_until_unloaded llama || true
+    wait_for_engine_exit
+    launchctl bootstrap "gui/$(id -u)" "$(plist_path llama)"
+}
+
+wait_for_engine_exit() {
+    # Past the timeout the engine is stopped outright: two engines would each hold several GB of their own buffers.
+    local half_seconds=0
+    while pgrep -x "$STRATA_ENGINE_PROCESS" >/dev/null; do
+        if ((half_seconds >= ENGINE_EXIT_TIMEOUT_SECONDS * 2)); then
+            echo "Strata's engine still runs $ENGINE_EXIT_TIMEOUT_SECONDS s after its server stopped; killing it" >&2
+            pkill -9 -x "$STRATA_ENGINE_PROCESS" || true
+            return
+        fi
+        sleep 0.5
+        half_seconds=$((half_seconds + 1))
+    done
+}
+
+set_engine() {
+    # The quick rollback at the keyboard: no commit, no deploy. The choice is checked before the engine restarts, and a refused one is undone.
+    local choice="${1:-}" previous
+    previous="$(cat "$ENGINE_OVERRIDE_FILE" 2>/dev/null || true)"
+    case "$choice" in
+    llama-server | strata) mkdir -p "$APP_SUPPORT_DIR" && echo "$choice" >"$ENGINE_OVERRIDE_FILE" ;;
+    default) rm -f "$ENGINE_OVERRIDE_FILE" ;;
+    *)
+        echo "usage: scripts/services.sh engine llama-server|strata|default" >&2
+        return 1
+        ;;
+    esac
+    if ! "${SERVING_CLI:-$PROJECT_DIR/.venv/bin/serving}" check; then
+        if [[ -n "$previous" ]]; then echo "$previous" >"$ENGINE_OVERRIDE_FILE"; else rm -f "$ENGINE_OVERRIDE_FILE"; fi
+        echo "the engine was not switched; the running one is untouched" >&2
+        return 1
+    fi
+    restart_agent llama
+    restart_agent harness
 }
 
 status() {
@@ -322,6 +379,7 @@ install) install_agents ;;
 start) start_agents ;;
 stop) stop_agents ;;
 restart) restart_agent "${2:-}" ;;
+engine) set_engine "${2:-}" ;;
 status) status ;;
 dashboard) open_dashboard ;;
 logs) tail -n 50 -f "$LOG_DIR/${2:?service name}.log" ;;

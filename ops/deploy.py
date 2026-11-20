@@ -85,9 +85,9 @@ RULES: tuple[Rule, ...] = (
     Rule(prefixes=("assistant_core/", "assistant_service/", "config/harness.toml", "utils/"), actions=("restart:harness",), why="the harness's code or settings changed"),
     Rule(prefixes=("custom_components/", *paths.VENDORED_CORE_FILES), actions=("deploy_component",), why="the component or its vendored core changed"),
     Rule(
-        prefixes=("config/serving.toml", "serving/"),
+        prefixes=("config/serving.toml", "serving/", "scripts/strata_patches/"),
         actions=("restart:llama", "restart:harness"),
-        why="llama-server's settings or its launcher changed; the harness reads the model's budget from them",
+        why="the engine's settings, its launcher or Strata's patches changed; the harness reads the model's budget from them",
     ),
     Rule(prefixes=("voice/", "utils/pronunciation_utils.py"), actions=("restart:kokoro",), why="Kokoro server wrapper, or the pronunciation dictionary code it runs, changed"),
     Rule(prefixes=("speech_server/", "config/speech.toml", "scripts/speech_env.sh"), actions=("restart:speech",), why="the speech server's code or settings changed"),
@@ -112,6 +112,8 @@ ACTION_ORDER = (
     "restart_searxng",
     "deploy_component",
 )
+# Actions that start the engine again; before them `serving check` must pass, or launchd would keep restarting a launch that refuses.
+ENGINE_STARTS = {"restart:llama", "reinstall_agents"}
 RESTARTS_COVERED_BY_REINSTALL = {"restart:llama", "restart:mcp", "restart:harness", "restart:dashboard", "restart:kokoro", "restart:speech"}
 
 
@@ -276,6 +278,8 @@ def switch_to(ref: str, run_tests: bool, dry_run: bool) -> dict:
             plan = plan_after_sync(plan, environments_changed(packages_before, installed_packages()))
             summary.update(plan=plan.actions, reasons=plan.reasons)
         check_manifest_matches_lock()
+        if ENGINE_STARTS & set(plan.actions):
+            run([str(PROJECT_DIR / ".venv" / "bin" / "serving"), "check"], timeout=300)  # hashes the model (about 47 GB), then checks Strata's install
         if run_tests:
             run([str(PROJECT_DIR / ".venv" / "bin" / "python"), "-m", "pytest", "-q", "-x"], timeout=900)
             summary["tests"] = "passed"

@@ -222,3 +222,26 @@ async def test_the_api_serves_the_memory_view_or_says_why_it_cannot(tmp_path: Pa
     assert view["machine"]["name"] == "Studio" and view["setup"][0]["name"] == "llama-server"
     assert (failed.status_code, failed.json()["error"]) == (503, "this Mac's memory could not be read: OSError: top: not found")
     assert off.status_code == 503
+
+
+def test_under_strata_its_engine_and_server_are_one_row_given_the_weights_and_llama_server_is_not_listed() -> None:
+    strata_outputs = outputs().model_copy(
+        update={
+            "executables": EXECUTABLES.replace("/opt/homebrew/bin/llama-server", "/Users/me/strata/engine/build-metal/strata") + "  108 /Users/me/strata/terminal/.venv/bin/python\n",
+            "command_lines": COMMAND_LINES.replace("/opt/homebrew/bin/llama-server --port 8090 -m /models/gemma.gguf", "/Users/me/strata/engine/build-metal/strata --serve")
+            + "  108 /Users/me/strata/terminal/.venv/bin/python serve/server.py --engine strata --port 8090\n",
+            "top": TOP + "108    256M   0B\n",
+        }
+    )
+    by_name = {group.name: group for group in memory_view(strata_outputs, served(MODEL_WEIGHTS_BYTES)).setup}
+    strata = by_name["Strata"]
+    assert "llama-server" not in by_name
+    assert (strata.processes, strata.model_weights_bytes, strata.ram_bytes) == (2, MODEL_WEIGHTS_BYTES, (384 + 256) * 1024**2 + MODEL_WEIGHTS_BYTES)
+
+
+def test_with_no_engine_running_both_are_listed_as_not_running() -> None:
+    idle = outputs().model_copy(
+        update={"executables": EXECUTABLES.replace("/opt/homebrew/bin/llama-server", "/bin/sleep"), "command_lines": COMMAND_LINES.replace("/opt/homebrew/bin/llama-server", "/bin/sleep")}
+    )
+    by_name = {group.name: group for group in memory_view(idle, served(MODEL_WEIGHTS_BYTES)).setup}
+    assert (by_name["llama-server"].processes, by_name["Strata"].processes) == (0, 0)

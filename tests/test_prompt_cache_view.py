@@ -52,6 +52,14 @@ class TemplatingServer:
             raise httpx.ConnectError("connection refused")
 
 
+class StrataServer(TemplatingServer):
+    """Strata answers /slots as llama-server does but has no /apply-template or /tokenize."""
+
+    async def render_prompt(self, messages: list[Message], tools: list[ToolSpec]) -> str:
+        request = httpx.Request("POST", "http://127.0.0.1:8090/apply-template")
+        raise httpx.HTTPStatusError("404 Not Found", request=request, response=httpx.Response(404, request=request))
+
+
 def rendered_turn(message: Message, tools: list[ToolSpec]) -> str:
     declared = "{" + ",".join(tool.name for tool in tools) + "}" if message.role == Role.SYSTEM and tools else ""
     calls = "".join(f"call:{call.name}" for call in message.tool_calls)
@@ -194,6 +202,16 @@ async def test_the_tab_says_why_when_llama_server_is_down_or_its_key_is_missing(
         down_prompt = await client.get(f"/api/days/{day}/exchanges/0/prompt")
     async with client_with(store, None) as client:
         no_key = await client.get("/api/slots")
-    assert (down.status_code, down.json()["error"]) == (503, "llama-server did not answer: ConnectError: connection refused")
+    assert (down.status_code, down.json()["error"]) == (503, "the engine did not answer: ConnectError: connection refused")
     assert down_prompt.status_code == 503
     assert no_key.status_code == 503 and "key was not found" in no_key.json()["error"]
+
+
+async def test_under_strata_the_slots_show_and_the_prompt_layout_says_what_it_needs(tmp_path: Path) -> None:
+    store = kept_store(tmp_path, TOOLS)
+    day = store.days()[0].day
+    async with client_with(store, StrataServer()) as client:
+        slots = await client.get("/api/slots")
+        layout = await client.get(f"/api/days/{day}/exchanges/0/prompt")
+    assert slots.status_code == 200
+    assert (layout.status_code, layout.json()["error"]) == (503, "the engine has no /apply-template: the prompt layout needs llama-server's /apply-template and /tokenize, which Strata does not have")

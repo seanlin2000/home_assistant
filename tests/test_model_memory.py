@@ -1,11 +1,11 @@
-"""What the served model holds in RAM: the GGUF header read without loading the model, the KV cache worked out from it as llama.cpp lays it out,
-every shard of a split model, and the part of each file macOS holds in RAM, kept half a minute between readings."""
+"""What the served model holds in RAM: the GGUF header read without loading the model, the KV cache worked out from it as llama.cpp or Strata lays
+it out, every shard of a split model, and the part of each file macOS holds in RAM, kept half a minute between readings."""
 
 import struct
 from pathlib import Path
 
 from dashboard.gguf_header import MetadataValue, read_gguf_metadata
-from dashboard.model_memory import ServedModelMemory, kv_cache_bytes, model_files, resident_bytes
+from dashboard.model_memory import ServedModelMemory, kv_cache_bytes, model_files, resident_bytes, strata_kv_cache_bytes
 from serving.settings import ModelSettings, load_serving_config
 
 MIB = 1024**2
@@ -23,6 +23,7 @@ FLASH_NEXT_HEADER: dict[str, MetadataValue] = {
     "qwen4exp.ssm.state_size": 128,
     "qwen4exp.ssm.group_count": 16,
     "qwen4exp.ssm.inner_size": 6144,
+    "qwen4exp.ssm.time_step_rank": 48,
     "qwen4exp.attention.indexer.key_length": 128,
     "qwen4exp.attention.compress_ratios": [0, 0, 0, 4] * 12,
 }
@@ -97,8 +98,35 @@ async def test_the_drafters_file_is_measured_after_the_models_shards_and_named_a
     drafter = tmp_path / "dflash.gguf"
     for path in [*shards, drafter]:
         path.write_bytes(header)
-    measured = await ServedModelMemory(load_model=lambda: served_model_with_drafter(shards[0], drafter)).current()
+    measured = await ServedModelMemory(load_model=lambda: served_model_with_drafter(shards[0], drafter), load_engine=lambda: "llama-server").current()
     assert [(model_file.name, model_file.is_drafter) for model_file in measured.files] == [(shards[0].name, False), (shards[1].name, False), (drafter.name, True)]
+
+
+def test_flash_nexts_cache_under_strata_is_the_size_strata_itself_reports() -> None:
+    # Strata's log on the Studio, 2026-11-20 at a 34,816-token context: "2 batch slots, each with its own running state and K/V (0.62 GB each)";
+    # its docs/MAC.md: "0.65 GB each at a 36,864-token context".
+    assert round(strata_kv_cache_bytes(FLASH_NEXT_HEADER, context_tokens=34816) / 1e9, 2) == 0.62
+    assert round(strata_kv_cache_bytes(FLASH_NEXT_HEADER, context_tokens=36864) / 1e9, 2) == 0.65
+    cells = 34816 + 128  # rounded to four, plus 64, as Window::init allocates them
+    attention = 12 * (2 * cells * 2 * 256 + 2 * 2 * cells * 2 * 4 + (cells // 4 + 2) * 128 * 4 + 5 * 128 * 4)  # int8 K and V, their scales, the indexer
+    recurrent = 36 * (128 * 48 * 128 * 4 + 2 * 3 * (2 * 128 * 16 + 128 * 48) * 4)  # the f32 recurrence and two convolution histories
+    assert strata_kv_cache_bytes(FLASH_NEXT_HEADER, context_tokens=34816) == attention + recurrent
+
+
+def test_strata_gives_no_figure_for_a_model_its_layout_is_not_worked_out_for() -> None:
+    plain_attention = {"general.architecture": "llama", "llama.block_count": 32, "llama.attention.head_count_kv": 8}
+    without_recurrence = {key: value for key, value in FLASH_NEXT_HEADER.items() if "ssm." not in key}
+    assert [strata_kv_cache_bytes(header, 34816) for header in (plain_attention, without_recurrence, {})] == [None, None, None]
+
+
+async def test_under_strata_the_drafter_file_and_second_slot_drop_out_and_its_cache_is_strata_s(tmp_path: Path) -> None:
+    header = gguf_bytes([("general.architecture", STRING, gguf_string("unknown"))])
+    shard, drafter = tmp_path / "model.gguf", tmp_path / "dflash.gguf"
+    for path in (shard, drafter):
+        path.write_bytes(header)
+    measured = await ServedModelMemory(load_model=lambda: served_model_with_drafter(shard, drafter), load_engine=lambda: "strata").current()
+    assert [model_file.name for model_file in measured.files] == [shard.name]
+    assert (measured.slots, measured.prompt_cache_limit_bytes, measured.kv_cache_bytes) == (1, 0, None)  # conversation_cache_mib = 0; an unknown header
 
 
 def test_a_file_just_written_is_in_ram_and_never_counts_past_its_pages(tmp_path: Path) -> None:
@@ -111,7 +139,7 @@ async def test_residency_is_kept_half_a_minute_and_the_header_read_once(tmp_path
     path = tmp_path / "model.gguf"
     path.write_bytes(gguf_bytes([("general.architecture", STRING, gguf_string("unknown"))]))
     now = [0.0]
-    measured = ServedModelMemory(load_model=lambda: served_model(path), clock=lambda: now[0])
+    measured = ServedModelMemory(load_model=lambda: served_model(path), clock=lambda: now[0], load_engine=lambda: "llama-server")
     first = await measured.current()
     path.write_bytes(path.read_bytes() + b"\x00" * MIB)
     now[0] += 10

@@ -6,7 +6,13 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-SERVING_CONFIG_PATH = Path(__file__).resolve().parent.parent / "config" / "serving.toml"
+PROJECT_DIR = Path(__file__).resolve().parent.parent
+SERVING_CONFIG_PATH = PROJECT_DIR / "config" / "serving.toml"
+# A file holding "llama-server" or "strata" overrides [server] engine on this Mac only: scripts/services.sh engine writes it, for a rollback
+# that needs no commit (design doc v2/02 section 3.10).
+ENGINE_OVERRIDE_PATH = Path("~/Library/Application Support/studio-assistant/engine").expanduser()
+Engine = Literal["llama-server", "strata"]
+ENGINES: tuple[Engine, ...] = ("llama-server", "strata")
 
 
 class StrictModel(BaseModel):
@@ -14,6 +20,7 @@ class StrictModel(BaseModel):
 
 
 class ServerSettings(StrictModel):
+    engine: Engine  # which program serves the model; both read the same model table, and Strata also its own [models.<name>.strata] table
     host: str
     port: int
     api_key_file: str
@@ -68,6 +75,27 @@ class DraftModel(PinnedFile):
     max_draft_tokens: int  # --spec-draft-n-max; each step the drafter proposes up to this many tokens and the served model checks them all at once
 
 
+class StrataSettings(StrictModel):
+    """Strata (github.com/Niko1221/Strata) built from one pinned commit with our patches; the launch refuses any other checkout (design doc v2/02 section 3.10)."""
+
+    install_dir: str
+    commit: str = Field(pattern=r"^[0-9a-f]{40}$")  # the whole SHA-1: a tag or branch could move
+    release: str  # the commit's release name, for people; the commit is what is checked
+    setup_config: str  # the run config Strata's setup wrote, relative to install_dir; the launch builds ours on top of it
+    patches: list[str]  # relative to this repository, applied in this order
+    drafting: Literal["dflash2", "off"]
+    conversation_cache_mib: int  # --conversation-cache-mib: room for parked conversations; one conversation parks nothing
+    env: dict[str, str]  # the engine's environment switches
+
+    @property
+    def install_path(self) -> Path:
+        return Path(self.install_dir).expanduser()
+
+    @property
+    def patch_paths(self) -> list[Path]:
+        return [PROJECT_DIR / patch for patch in self.patches]
+
+
 class ModelSettings(PinnedFile):
     context_tokens: int
     conversation_tokens: int
@@ -86,6 +114,7 @@ class ModelSettings(PinnedFile):
     lazy_mode: Literal["off", "on"] = "off"  # -lzm; "on" reads per-layer embedding tables (an n-gram table) from disk on demand instead of keeping them resident
     sampling: Sampling
     thinking_sampling: Sampling | None = None  # the model maker's set for thinking mode; without one, thinking uses `sampling`
+    strata: StrataSettings | None = None  # how Strata serves this model; needed only when the engine is Strata
 
     @model_validator(mode="after")
     def require_a_draft_model_exactly_for_dflash(self) -> "ModelSettings":
@@ -112,6 +141,22 @@ class ServingConfig(StrictModel):
         if self.server.model not in self.models:
             raise KeyError(f"[server] model = {self.server.model!r} names no [models.{self.server.model}] table")
         return self.models[self.server.model]
+
+    @model_validator(mode="after")
+    def require_strata_settings_for_strata(self) -> "ServingConfig":
+        if self.server.engine == "strata" and self.server.model in self.models and self.models[self.server.model].strata is None:
+            raise ValueError(f'engine = "strata" needs a [models."{self.server.model}".strata] table')
+        return self
+
+
+def active_engine(config: ServingConfig) -> Engine:
+    """The engine this Mac runs: the override file's, when scripts/services.sh engine wrote one, else serving.toml's."""
+    if not ENGINE_OVERRIDE_PATH.is_file():
+        return config.server.engine
+    named = ENGINE_OVERRIDE_PATH.read_text().strip()
+    if named not in ENGINES:
+        raise ValueError(f"{ENGINE_OVERRIDE_PATH} names {named!r}; expected one of {', '.join(ENGINES)} (scripts/services.sh engine default removes it)")
+    return named
 
 
 def load_serving_config(path: Path = SERVING_CONFIG_PATH) -> ServingConfig:

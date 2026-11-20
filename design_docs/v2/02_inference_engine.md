@@ -245,11 +245,98 @@ Every setting below was measured on the laptop with `llama-bench` or the slot te
 
 The prefill rate is fixed by the chip, at about 400 tokens a second on the laptop. That is why the design spends its effort on reading fewer tokens rather than reading them faster. The GPU neural accelerators in the M5 and M6 chips raise prefill three to four times (v1/02 §6), a larger change than any setting here.
 
+### 3.10 Strata, the default engine
+
+The Studio serves Qwen 3.8 Flash Next with [Strata](https://github.com/Niko1221/Strata) v0.2.16 by default. llama-server stays one setting away. Both engines map the same GGUF shards, so any difference between them comes from the engine alone. Measured on the Studio on 2026-11-20 (PR #110):
+
+| Measure | llama-server, DFlash2 | Strata, DFlash2 |
+|---|---|---|
+| Benchmark A+B, five passes: gated score | 152.2 (140 to 162) | 153.8 (142 to 162) |
+| Benchmark A+B, five passes: quality without gates | 86.0 | 87.6 |
+| Prefill, tokens a second | 851 | 1,565 |
+| Decode, tokens a second | 72.0 | 111.4 |
+| Median answer time | 10.0 s | 7.5 s |
+| Footprint, with our two patches and the keep-alive | 3.2 GB (the weights are mapped, outside it) | 5.9 GB |
+
+**The setting.** `[server] engine` names the engine: `"strata"` or `"llama-server"`. The two engines read the model's table in different ways:
+- **Both read:** the model file and its hash, `context_tokens`, `conversation_tokens`, `reasoning_budget_tokens`, and the sampling tables. The harness sends the sampling settings and `max_output_tokens` with every request, whichever engine runs.
+- **llama-server alone reads:** the other model keys and the `draft` table.
+- **Strata alone reads:** the model's `strata` table and its `env` switches.
+
+Here is Strata's table as checked in:
+
+```toml
+[models."qwen3.8-flash-next".strata]
+install_dir = "~/strata"
+commit = "64524fb9fc82222ddce554c0643b64f056ec8366"  # the launch refuses any other checkout
+release = "v0.2.16"
+setup_config = "engine/strata-iq3_xxs.json"
+patches = ["scripts/strata_patches/release_host_weights.patch", "scripts/strata_patches/release_projections.patch"]
+drafting = "dflash2"
+conversation_cache_mib = 0
+
+[models."qwen3.8-flash-next".strata.env]
+STRATA_METAL_STREAM = "0"
+STRATA_METAL_F16 = "1"
+STRATA_METAL_PROMPT_CHUNK = "1024"
+STRATA_METAL_RELEASE_HOST_WEIGHTS = "release"
+STRATA_METAL_RELEASE_PROJECTIONS = "1"
+STRATA_METAL_KEEPALIVE_WINDOW_S = "86400"
+STRATA_UPDATE_CHECK = "0"
+STRATA_NO_ACQUIRE = "1"
+```
+
+**What `serving launch` does under Strata:**
+1. Checks the model file's hash and the API key, as for llama-server.
+2. Checks the install (`serving/strata.py`). It refuses to start, naming the fix, when:
+   - `~/strata` is not at the pinned commit;
+   - its source is not that commit with exactly our patches applied, checked by applying them to a throwaway index of the commit and comparing it with the working tree;
+   - the engine binary is older than the patched sources, or lacks the strings the patches add.
+3. Writes Strata's run config, readable only by you, to `~/Library/Application Support/studio-assistant/strata.json`. It is the config Strata's setup wrote, with these values on top:
+
+   | From `serving.toml` | In the run config |
+   |---|---|
+   | `context_tokens` | `--max-context` |
+   | `reasoning_budget_tokens` | `reasoning_budget_tokens`: Strata ends the thinking there, and a request can set its own |
+   | `[server]` host, port and key file | `host`, `port`, `api_key` |
+   | `strata.drafting`, `conversation_cache_mib`, `env` | `drafting`, `--conversation-cache-mib`, `env` |
+   | always | one slot (`parallel = 1`), Strata's text look-ahead on (`--suffix-draft` removed), no browser |
+4. Replaces itself with Strata's Python server, run from its own folder, which starts the engine. launchd supervises the server, as it does llama-server.
+
+`uv run serving show` prints the run config with the key redacted. `uv run serving check` runs steps 1 and 2 and exits 1 on a problem. The deploy runs it before restarting the engine (doc 10).
+
+**Pinning and updating.** Strata runs only the commit `serving.toml` names, and changes only when someone decides it should:
+- `scripts/strata.sh install` clones that commit (detached, never a branch or tag), runs Strata's setup, applies the patches, builds the engine with Strata's own CMake, and checks. On an install already at the pin it only checks.
+- **To update:** a pull request changes `commit` and `release`, and refreshes the patches if they no longer apply. Then, at the Studio's keyboard, `scripts/strata.sh update` checks out the new commit, reapplies the patches, rebuilds, and checks, and a deploy restarts the engine on it.
+- **Nothing else updates it.** Our engine is built from source, so Strata's signed package feed never applies to it. Its server never calls its updater. The two env switches turn off its daily feed check and any download from the serving path.
+
+**The two patches.** In resident mode Strata keeps host copies of weights that only its CPU and CUDA code read. The patches give them back after loading:
+- `release_host_weights.patch` releases five copies of 32 MiB or more, 3.27 GB.
+- `release_projections.patch` releases the 300 native projection matrices, 1.87 GB.
+
+[Strata in resident mode: the host code's unused weight copies](strata_host_weight_copies.md) has the code audit. With every copy overwritten with `0xFF`, the answers stayed identical word for word, so nothing reads them.
+
+**The keep-alive.** By default Strata stops touching its GPU buffers two minutes after the last request, and macOS then unwires them. Unwiring and wiring them again each pushed more than 1 GB to swap, and left Kokoro fully compressed. `STRATA_METAL_KEEPALIVE_WINDOW_S = 86400` keeps the model wired for a day after the last request. Across two 10-minute quiet spells, wired memory held at 53 GB, swap stayed flat, and the first question afterwards reached first audio in 1.4 s.
+
+**Differences the rest of the system allows for:**
+
+| Difference | What allows for it |
+|---|---|
+| One slot. On Metal, Strata drafts with DFlash2 only beside a single slot, so quiet requests share the conversation's slot | The harness warms the quiet prompt first and the conversation second, so the conversation's stays cached (doc 04) |
+| No prompt cache in RAM (`conversation_cache_mib = 0`) | One conversation never parks |
+| `/health` answers 200 while loading, with `"loaded": false` | The harness and the health check read the flag |
+| No `/apply-template` or `/tokenize` | The dashboard's prompt layout says it needs llama-server (doc 13). The slots view works |
+| The KV cache is int8 with f32 scales, allocated for the whole context at start | The memory tab works it out as Strata lays it out: 0.62 GB at 34,816 tokens (doc 13) |
+| The engine is a child process that takes a few seconds to unmap the model after its server stops | `scripts/services.sh` waits for it before starting the engine again, and kills it after 60 s |
+
+**Switching back.** `scripts/services.sh engine llama-server` writes `~/Library/Application Support/studio-assistant/engine`, which overrides `serving.toml` on this Mac alone. It checks that the launch would go ahead, then restarts the engine and the harness, in about a minute. `scripts/services.sh engine default` removes the override. To keep llama-server for good, change `engine` in a pull request.
+
 ## 4. Packages and tools, and what each does for the business logic
 
 | Package or tool | Role |
 |---|---|
 | llama.cpp (`llama-server`), homebrew-core, pinned | Serves the model: reads the prompt, keeps the prompt cache, parses tool calls, forces JSON output when asked |
+| Strata v0.2.16, built from source at a pinned commit with two patches (3.10) | The default engine on the Studio: the same model file, faster prefill and decode |
 | Gemma 4 E4B, QAT 4-bit GGUF from `google/` | The model, 5.2 GB on disk, pinned by revision and SHA-256 |
 | `httpx` (already a dependency) | The harness's client for llama-server's HTTP API (doc 04); no `openai` or `litellm` package |
 | `tomllib` (standard library) | Reads `config/serving.toml` |
@@ -257,7 +344,8 @@ The prefill rate is fixed by the chip, at about 400 tokens a second on the lapto
 
 ## 5. Configuration we control
 
-- `config/serving.toml`: the server's address and key file, and one table per model with its file, source, revision, hash, the flags in 3.5, and sampling defaults. A change to it restarts llama-server (doc 10).
+- `config/serving.toml`: the engine, the server's address and key file, and one table per model with its file, source, revision, hash, the flags in 3.5, Strata's table (3.10), and sampling defaults. A change to it restarts the engine (doc 10).
+- `~/Library/Application Support/studio-assistant/engine`, written only by `scripts/services.sh engine`: this Mac's engine, overriding `serving.toml`.
 - The API key file, generated once at install and kept outside the repository.
 - The order of the prompt (3.3), which lives in the harness's prompt builder (doc 04), not in the server.
 
@@ -272,6 +360,8 @@ The prefill rate is fixed by the chip, at about 400 tokens a second on the lapto
 | The model or llama.cpp is upgraded and tool calls break | Malformed calls rise in the benchmark | Pin back the previous version; upgrades go through the benchmark first |
 | Not enough memory for the window | llama-server fails to load or the Mac swaps | Lower `context_tokens`; doc 08 has the budget |
 | llama-server is down | The harness answers "I can't reach the model right now" and the health check reports it | `scripts/services.sh restart llama` (doc 10) |
+| Strata's install is not the pinned commit with our patches built | `serving check` fails, the deploy stops before any restart, and the launch refuses | `scripts/strata.sh install`, or `update` after a pin change |
+| Strata misbehaves in production | Answers slow, fail, or the memory tab shows swap growing | `scripts/services.sh engine llama-server`, then investigate |
 
 ## 7. Concepts for newcomers
 
