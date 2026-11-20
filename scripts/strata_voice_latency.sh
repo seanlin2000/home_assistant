@@ -1,8 +1,9 @@
 #!/bin/bash
 # What the user hears under each engine: spoken benchmark questions through Home Assistant's Assist pipeline (Qwen3-ASR, the agent, Kokoro), for
 # llama-server as production runs it and for Strata lean2 with the host weight copies released, alternated llama, Strata, llama, Strata.
-# One round: settle, 10 quiet minutes, A11 (the first question after quiet), a burst of six questions back to back (long explanation, calculator,
-# restaurant tool, search, finance reasoning, search with the calculator), 10 more quiet minutes, then B90 (a cold question that needs a tool).
+# One round: settle, one typed question (so the round does not start on a cold prompt cache), 10 quiet minutes, A11 (the first question after
+# quiet), a burst of six questions back to back (long explanation, calculator, restaurant tool, search, finance reasoning, search with the
+# calculator), 10 more quiet minutes, then B90 (a cold question that needs a tool).
 # A sampler writes memory every 5 seconds through all of it: swap, swap-ins and -outs, file reads, memory_pressure's free %, wired, the compressor,
 # and the engine, Qwen3-ASR, Kokoro and the HA VM each in RAM and compressed. Production returns to llama-server on any exit.
 # Usage: scripts/strata_voice_latency.sh
@@ -92,6 +93,10 @@ run_round() { # label
     if [[ "$label" == strata-* ]]; then start_strata_released || return 1; else restart_harness; fi
     set_phase "$label" settle
     sleep "$SETTLE_SECONDS"
+    # After a harness restart the first real question re-reads the whole ~7,900-token prompt (the warm-up's cached state cannot be reused), which
+    # production pays only after a deploy; one typed question first makes the question after quiet measure the quiet, not the restart.
+    set_phase "$label" prime
+    smoke
     set_phase "$label" quiet
     sleep "$QUIET_SECONDS"
     set_phase "$label" first-after-quiet
