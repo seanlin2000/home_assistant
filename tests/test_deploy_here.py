@@ -31,6 +31,7 @@ class FakeMac:
         monkeypatch.setattr(deploy, "git", self.git)
         monkeypatch.setattr(deploy, "switch_to", self.switch_to)
         monkeypatch.setattr(deploy_here.smoke, "main", lambda flags: next(self.answers))
+        monkeypatch.setattr(deploy_here, "answers_after", deploy_here.answers_now)  # the fresh process, run here
         monkeypatch.setattr(deploy_here, "wait_until_ready", self.wait_until_ready)
 
     def git(self, *args: str) -> str:
@@ -143,3 +144,34 @@ def test_a_failed_step_is_reported_and_the_test_question_still_decides(monkeypat
     assert "these steps reported a failure: reinstall_agents exited 1" in capsys.readouterr().err
     assert recorded_good() == NEW
     assert not paths.maintenance_flag().exists()
+
+
+def test_the_answers_are_judged_by_a_fresh_process_from_the_new_checkout(monkeypatch: pytest.MonkeyPatch) -> None:
+    """The deploy itself runs the old commit's code; reading the new commit's strict configs with it failed #128's healthy deploy."""
+    commands: list[list[str]] = []
+
+    def run(command: list[str], cwd: Path, timeout: float) -> object:
+        commands.append(command)
+        return type("Finished", (), {"returncode": 0})()
+
+    monkeypatch.setattr(deploy_here.subprocess, "run", run)
+
+    assert deploy_here.answers_after(["restart:voice", "hand_voice_to_home_assistant"], ["--full"])
+    assert commands == [[str(deploy.PROJECT_DIR / ".venv" / "bin" / "python"), "-m", "ops.deploy_here", "--answers-after", "restart:voice", "hand_voice_to_home_assistant", "--full-smoke"]]
+
+
+@pytest.mark.parametrize(("answers", "exit_code"), [([0], deploy_here.DEPLOYED), ([1], deploy_here.NOT_DEPLOYED)])
+def test_the_fresh_process_waits_as_the_plan_needs_and_exits_with_the_verdict(monkeypatch: pytest.MonkeyPatch, answers: list[int], exit_code: int) -> None:
+    mac = FakeMac(monkeypatch, switches=[], answers=answers)
+
+    assert deploy_here.main(["--answers-after", "restart:harness"]) == exit_code
+    assert mac.waits == 1 and mac.switched_to == []
+
+
+def test_a_fresh_process_that_never_answers_counts_as_not_answering(monkeypatch: pytest.MonkeyPatch) -> None:
+    def run(command: list[str], cwd: Path, timeout: float) -> object:
+        raise deploy_here.subprocess.TimeoutExpired(command, timeout)
+
+    monkeypatch.setattr(deploy_here.subprocess, "run", run)
+
+    assert not deploy_here.answers_after([], [])

@@ -25,6 +25,7 @@ NEEDS_A_PERSON = 2
 # A restart of llama-server reloads the model from disk, which takes minutes for a large one.
 READY_TIMEOUT_SECONDS = 900
 READY_POLL_SECONDS = 5
+ANSWER_CHECK_TIMEOUT_SECONDS = READY_TIMEOUT_SECONDS + 600  # the wait for the model, then the test questions
 ACTIONS_THAT_RESTART_THE_ANSWER_PATH = {"sync_env", "reinstall_agents", "restart:llama", "restart:mcp", "restart:harness"}
 
 
@@ -78,6 +79,19 @@ def report_nothing_applied(summary: dict) -> int:
 
 
 def answers_after(plan: list[str], smoke_flags: list[str]) -> bool:
+    """Asked by a fresh process from the checkout as it now stands, never by this one. This process started on the commit checked out before
+    the deploy, so its settings classes are that commit's: a key the new commit adds to a strict config (config/voice.toml in #128) reads as a
+    typo, and a healthy deploy was rolled back. Every later commit must keep the --answers-after option, since the deploy before it calls it."""
+    full_smoke = ["--full-smoke"] if "--full" in smoke_flags else []
+    command = [str(deploy.PROJECT_DIR / ".venv" / "bin" / "python"), "-m", "ops.deploy_here", "--answers-after", *plan, *full_smoke]
+    try:
+        return subprocess.run(command, cwd=deploy.PROJECT_DIR, timeout=ANSWER_CHECK_TIMEOUT_SECONDS).returncode == 0
+    except subprocess.TimeoutExpired:
+        print(f"deploy: no verdict on the answers after {ANSWER_CHECK_TIMEOUT_SECONDS} s", file=sys.stderr)
+        return False
+
+
+def answers_now(plan: list[str], smoke_flags: list[str]) -> bool:
     if ACTIONS_THAT_RESTART_THE_ANSWER_PATH.intersection(plan):
         wait_until_ready(lambda: asyncio.run(harness_reports_ready()))
     return smoke.main(smoke_flags) == 0
@@ -130,10 +144,14 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--full-smoke", action="store_true", help="also ask a searched question, which needs the web")
     parser.add_argument("--skip-tests", action="store_true", help="skip the test suite before restarting")
     parser.add_argument("--dry-run", action="store_true", help="print what would restart and why, and change nothing")
+    parser.add_argument("--answers-after", nargs="*", metavar="ACTION", help="only wait for what these restarts need and ask the test question (a deploy runs this)")
     args = parser.parse_args(argv)
+    smoke_flags = ["--full"] if args.full_smoke else []
+    if args.answers_after is not None:
+        return DEPLOYED if answers_now(args.answers_after, smoke_flags) else NOT_DEPLOYED
     if args.dry_run:
         return show_plan(args.ref)
-    return deploy_here(args.ref, ["--full"] if args.full_smoke else [], run_tests=not args.skip_tests)
+    return deploy_here(args.ref, smoke_flags, run_tests=not args.skip_tests)
 
 
 if __name__ == "__main__":
