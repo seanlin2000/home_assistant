@@ -35,7 +35,7 @@ def test_a_misspelt_setting_stops_the_voice(tmp_path: Path) -> None:
 
 def test_an_unknown_engine_is_refused(tmp_path: Path) -> None:
     config = tmp_path / "voice.toml"
-    config.write_text(Path(voice_settings.VOICE_CONFIG_PATH).read_text().replace('engine = "kokoro"', 'engine = "piper"'))
+    config.write_text(Path(voice_settings.VOICE_CONFIG_PATH).read_text().replace('engine = "omnivoice"', 'engine = "piper"'))
     with pytest.raises(ValidationError, match="engine"):
         load_voice_settings(config)
 

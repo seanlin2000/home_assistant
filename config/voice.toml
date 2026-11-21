@@ -3,7 +3,7 @@
 # so a voice change never restarts Qwen3-ASR. Unknown keys stop the voice rather than being ignored.
 
 [voice]
-engine = "kokoro"                            # "omnivoice" or "kokoro"; scripts/services.sh can override it on one Mac
+engine = "omnivoice"                         # "omnivoice" or "kokoro"; scripts/services.sh can override it on one Mac
 host = "0.0.0.0"                             # the Home Assistant VM reaches the port over the bridge
 port = 10210                                 # Kokoro's port, so Home Assistant's Wyoming entry for text to speech stays as it is
 
