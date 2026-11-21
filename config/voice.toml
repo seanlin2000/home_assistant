@@ -18,6 +18,10 @@ reference_max_seconds = 20.0                 # mlx-audio's 10 s default would cu
 steps = 32                                   # OmniVoice's own sampler; 16 was faster and audibly rougher
 language = "English"
 loudness_dbfs = -20.0                        # each piece levelled to Kokoro's loudness (its voiced RMS); OmniVoice comes out about 2 dB louder
+# Each piece is trimmed to its speech, then given this much silence before and after; the gap between sentences comes out near Kokoro's 0.45 s.
+# The silence after matters most: the puck holds back the last moment of a stream that has run dry (after a filler), so that moment must be quiet.
+lead_silence_seconds = 0.1
+trail_silence_seconds = 0.35
 mlx_cache_limit_mib = 256                    # freed GPU memory MLX may keep for reuse; anything above goes back to macOS
 # Wired as the speech server wires Qwen3-ASR, so an idle spell cannot swap the model out; the agent sets MLX_METAL_RESIDENCY_REFRESH_INTERVAL_MS.
 mlx_wired_limit_mib = 3400
