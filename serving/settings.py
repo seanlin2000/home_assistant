@@ -6,11 +6,13 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
+from utils.engine_override_utils import OVERRIDES_DIR, EngineOverride
+
 PROJECT_DIR = Path(__file__).resolve().parent.parent
 SERVING_CONFIG_PATH = PROJECT_DIR / "config" / "serving.toml"
 # A file holding "llama-server" or "strata" overrides [server] engine on this Mac only: scripts/services.sh engine writes it, for a rollback
 # that needs no commit (design doc v2/02 section 3.10).
-ENGINE_OVERRIDE_PATH = Path("~/Library/Application Support/studio-assistant/engine").expanduser()
+ENGINE_OVERRIDE_PATH = OVERRIDES_DIR / "engine"
 Engine = Literal["llama-server", "strata"]
 ENGINES: tuple[Engine, ...] = ("llama-server", "strata")
 
@@ -151,12 +153,7 @@ class ServingConfig(StrictModel):
 
 def active_engine(config: ServingConfig) -> Engine:
     """The engine this Mac runs: the override file's, when scripts/services.sh engine wrote one, else serving.toml's."""
-    if not ENGINE_OVERRIDE_PATH.is_file():
-        return config.server.engine
-    named = ENGINE_OVERRIDE_PATH.read_text().strip()
-    if named not in ENGINES:
-        raise ValueError(f"{ENGINE_OVERRIDE_PATH} names {named!r}; expected one of {', '.join(ENGINES)} (scripts/services.sh engine default removes it)")
-    return named
+    return EngineOverride(path=ENGINE_OVERRIDE_PATH, engines=ENGINES, reset_command="scripts/services.sh engine default").engine_or(config.server.engine)
 
 
 def load_serving_config(path: Path = SERVING_CONFIG_PATH) -> ServingConfig:
