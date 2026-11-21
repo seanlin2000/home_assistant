@@ -1,7 +1,8 @@
-"""movies_showing, movie_details, and the nightly Fandango refresh behind them: which theaters count as Manhattan, one entry per movie across
-theaters and days, the session Fandango asks for and the snapshot kept when it fails, each movie's scores read nightly and its page read once, every
-filter and order the tools offer, this week and coming up, horror left out unless asked for, the replies when nothing matches or there is no snapshot,
-and the router, filler, and refresh command around them. The listings are the benchmark's own (benchmark/fixtures/movies/movies.json, 60 days from
+"""movies_showing, popular_movies, movie_details, and the nightly Fandango refresh behind them: which theaters count as Manhattan, one entry per
+movie across theaters and days, the session Fandango asks for and the snapshot kept when it fails, each movie's scores read nightly and its page
+read once, every filter and order the tools offer, this week and coming up, wide and limited releases, a lowest critics score, revivals marked,
+popular_movies' preset filters, horror left out unless asked for, the replies when nothing matches or there is no snapshot, and the router,
+filler, and refresh command around them. The listings are the benchmark's own (benchmark/fixtures/movies/movies.json, 60 days from
 2026-10-25); tests/fixtures/fandango_theaters.json is a trimmed copy of two of its raw days, and tests/fixtures/fandango_movie_details.json two
 movies' trimmed pages and three movies' scores."""
 
@@ -22,7 +23,7 @@ from assistant_core.tools import McpToolBox
 from benchmark.mcp_process import MOVIES_RECORDED_ON, MOVIES_SNAPSHOT_PATH
 from movies_mcp.fandango import FandangoUnavailable, refresh_movies_snapshot
 from movies_mcp.movies import GENRE_LABELS, MovieGenre, MoviesSnapshot, RottenTomatoesScores
-from movies_mcp.register import MOVIE_DETAILS_TOOL_NAME, MOVIES_TOOL_NAME, NO_SNAPSHOT_MESSAGE, register_movies_tools
+from movies_mcp.register import MOVIE_DETAILS_TOOL_NAME, MOVIES_TOOL_NAME, NO_SNAPSHOT_MESSAGE, POPULAR_MOVIES_TOOL_NAME, register_movies_tools
 from movies_mcp.settings import MoviesSettings, movies_settings_from_environment
 from utils.snapshot_utils import read_snapshot, write_snapshot
 
@@ -191,7 +192,9 @@ async def test_a_refused_session_writes_nothing_and_keeps_the_last_snapshot(tmp_
 
 async def test_by_default_the_widest_releases_this_week_horror_left_out_and_counted() -> None:
     reply = await ask()
-    assert reply.split("\n")[0] == ("Movies at Manhattan theaters, October 25 to 31, showing at the most theaters first (10 of 81); 37 horror movies left out, which include_horror=true lists:")
+    assert reply.split("\n")[0] == (
+        "Movies at Manhattan theaters, October 25 to 31, showing at the most theaters first (10 of 81); 37 horror movies left out, which movies_showing lists with include_horror=true:"
+    )
     assert movie_lines(reply)[0] == ("1. You Can See Everything | Documentary | rated R | 2 hours 54 minutes | Rotten Tomatoes: critics 98%, Certified Fresh, audience 96% | playing at 17 theaters")
     assert "Clayface" not in reply
     with_horror = await ask(include_horror=True, limit=3)
@@ -236,6 +239,60 @@ async def test_the_score_orders_put_the_best_reviewed_first_and_movies_without_a
     action = movie_lines(await ask(when="coming_up", sort_by="critics_score", genre="action", limit=25))
     scored = ["critics" in line for line in action]
     assert scored == sorted(scored, reverse=True) and scored.count(True) == 9 < len(action)  # every scored movie before every unscored one
+
+
+async def test_wide_releases_with_a_lowest_critics_score_leave_out_and_count_the_unscored() -> None:
+    reply = await ask(release_size="wide", min_critics_score=70, limit=25)
+    assert reply.split("\n")[0] == (
+        "Wide-release (at 5 theaters or more) movies with a critics score of 70% or more at Manhattan theaters, October 25 to 31, showing at the most"
+        " theaters first (11 of 11); 2 horror movies left out, which movies_showing lists with include_horror=true; 4 movies with no critics score yet"
+        " left out, which movies_showing lists with min_critics_score=0:"
+    )
+    theater_counts = [int(count) for count in re.findall(r"playing at (\d+) theaters", reply)]
+    assert len(theater_counts) == 11 and min(theater_counts) == 5
+    assert min(int(score) for score in re.findall(r"critics (\d+)%", reply)) >= 70
+    assert "Clayface" not in reply and "Street Fighter" not in reply  # horror; 41%
+    assert "no critics score" not in await ask(release_size="wide")
+
+
+async def test_limited_releases_name_at_most_three_theaters_and_hold_the_lowest_score() -> None:
+    reply = await ask(release_size="limited", min_critics_score=70, sort_by="critics_score", limit=25)
+    assert reply.startswith("Limited-release (at 3 theaters or fewer) movies with a critics score of 70% or more")
+    assert "(25 of 27); 15 horror movies left out" in reply and "; 25 movies with no critics score yet left out" in reply
+    lines = movie_lines(reply)
+    assert len(lines) == 25 and not any("playing at" in line for line in lines)
+    assert min(int(score) for score in re.findall(r"critics (\d+)%", reply)) >= 70
+    assert listed_titles(reply)[:2] == ["Making Marie Antoinette", "Naza"] and "Wildwood" not in reply  # Wildwood: 100%, but at 12 theaters
+
+
+async def test_a_revival_is_marked_by_its_title_its_release_or_its_age_on_fandango() -> None:
+    for title in ["The Nightmare Before Christmas Re-Release", "A Place in the Sun", "Terrifier 3"]:  # a title word; an old number and no date; a 2024 release
+        assert movie_lines(await ask(title=title))[0].startswith(f"1. {title} | revival of an older film | ")
+    assert "revival" not in " ".join(movie_lines(await ask(title="Naza")))
+    assert (await ask_details("Vertigo")).split("\n")[1].startswith("revival of an older film | Mystery & Thriller |")
+    assert "revival" not in movie_lines(await ask())[0]
+
+
+async def test_revivals_can_be_asked_for_alone_or_left_out() -> None:
+    revivals = await ask(revivals="only", include_horror=True)
+    assert revivals.startswith("Revival movies at Manhattan theaters, October 25 to 31, showing at the most theaters first (10 of 41):")
+    assert all(" | revival of an older film | " in line for line in movie_lines(revivals))
+    new_films = await ask(revivals="none", release_size="limited", limit=25, include_horror=True)
+    assert new_films.startswith("Limited-release (at 3 theaters or fewer) non-revival movies at Manhattan theaters")
+    assert movie_lines(new_films) and not any("revival" in line for line in movie_lines(new_films))
+
+
+async def test_popular_movies_are_wide_new_well_reviewed_releases_without_horror() -> None:
+    popular = await call_tool(POPULAR_MOVIES_TOOL_NAME, recorded_settings(), {"limit": 25})
+    assert popular.split("\n")[0] == (
+        "Wide-release (at 5 theaters or more) non-revival movies with a critics score of 70% or more at Manhattan theaters, October 25 to 31, showing at"
+        " the most theaters first (11 of 11); 2 horror movies left out, which movies_showing lists with include_horror=true; 4 movies with no critics"
+        " score yet left out, which movies_showing lists with min_critics_score=0:"
+    )
+    assert listed_titles(popular) == listed_titles(await ask(release_size="wide", min_critics_score=70, revivals="none", limit=25))
+    comedies = await call_tool(POPULAR_MOVIES_TOOL_NAME, recorded_settings(), {"genre": "comedy", "sort_by": "critics_score"})
+    assert comedies.startswith("Wide-release (at 5 theaters or more) non-revival comedy movies with a critics score of 70% or more")
+    assert listed_titles(comedies)[0] == "Wicker"
 
 
 async def test_details_say_what_one_movie_is_about_who_made_it_and_where_it_opens() -> None:
@@ -327,6 +384,6 @@ def test_a_movies_question_gets_the_movies_directive_and_is_searched_when_the_se
 
 def test_movies_get_their_own_filler_line_and_it_is_stripped_from_replays() -> None:
     policy = AgentPolicy()
-    assert MOVIES_TOOL_NAMES == {MOVIES_TOOL_NAME, MOVIE_DETAILS_TOOL_NAME}
-    assert filler_for(MOVIES_TOOL_NAME, policy) in DEFAULT_MOVIES_FILLER_PHRASES
+    assert MOVIES_TOOL_NAMES == {MOVIES_TOOL_NAME, POPULAR_MOVIES_TOOL_NAME, MOVIE_DETAILS_TOOL_NAME}
+    assert filler_for(POPULAR_MOVIES_TOOL_NAME, policy) in DEFAULT_MOVIES_FILLER_PHRASES
     assert set(DEFAULT_MOVIES_FILLER_PHRASES) <= set(policy.every_filler_phrase)

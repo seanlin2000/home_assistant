@@ -1,5 +1,5 @@
-"""Expose what movies are showing at Manhattan theaters, and what one movie is about, as MCP tools on the existing server, so the agent sees one
-tool list.
+"""Expose what movies are showing at Manhattan theaters, the good ones playing almost everywhere, and what one movie is about, as MCP tools on the
+existing server, so the agent sees one tool list. popular_movies is movies_showing with the filters of the question asked most already set.
 
 The tools read only the snapshot the nightly refresh writes (ops/listings_refresh.py); they never call Fandango while the user waits. Every failure is
 one sentence telling the model what to do next, never an exception, as the other tools do.
@@ -14,40 +14,64 @@ from mcp.server.mcpserver import MCPServer
 from pydantic import Field
 
 from movies_mcp.details import movie_details_text, movies_named
-from movies_mcp.movies import DEFAULT_LIMIT, MovieGenre, MovieQuery, MovieSortBy, MoviesSnapshot, MovieWhen, found_movies
+from movies_mcp.movies import DEFAULT_LIMIT, MAX_LIMIT, MovieGenre, MovieQuery, MovieReleaseSize, MovieRevivals, MovieSortBy, MoviesSnapshot, MovieWhen, found_movies
 from movies_mcp.render import movies_text
 from movies_mcp.settings import MoviesSettings
 from utils.snapshot_utils import SnapshotMissing, answered_from_snapshot
 from utils.text_utils import clip_to_whole_lines
 
 MOVIES_TOOL_NAME = "movies_showing"
+POPULAR_MOVIES_TOOL_NAME = "popular_movies"
 MOVIE_DETAILS_TOOL_NAME = "movie_details"
 NO_SNAPSHOT_MESSAGE = "Movies error: the movie listings have not been fetched yet. Tell the user the movie listings are not available right now."
 _LOGGER = logging.getLogger(__name__)
+GenreArgument = Annotated[MovieGenre, Field(description="empty for all")]
+SortByArgument = Annotated[MovieSortBy, Field(description="most_theaters: widest; release_date: newest or soonest; critics_score, audience_score: best reviewed")]
+LimitArgument = Annotated[int, Field(description=f"how many, 1 to {MAX_LIMIT}")]
 
 
 def register_movies_tools(server: MCPServer, settings: MoviesSettings) -> None:
     @server.tool(name=MOVIES_TOOL_NAME)
     async def movies_showing(
         when: Annotated[MovieWhen, Field(description="this_week: next 7 days; coming_up: opening later")] = "this_week",
-        genre: Annotated[MovieGenre, Field(description="empty for all")] = "",
+        genre: GenreArgument = "",
         include_horror: Annotated[bool, Field(description="true if the user asks for horror")] = False,
         title: Annotated[str, Field(description='part of a title, e.g. "Clayface", to see where it shows')] = "",
         theater: Annotated[str, Field(description='part of a theater name, e.g. "Angelika"')] = "",
-        sort_by: Annotated[
-            MovieSortBy,
-            Field(description="most_theaters: widest; release_date: newest or soonest; critics_score, audience_score: best reviewed"),
-        ] = "most_theaters",
-        limit: Annotated[int, Field(description="how many")] = DEFAULT_LIMIT,
+        sort_by: SortByArgument = "most_theaters",
+        release_size: Annotated[MovieReleaseSize, Field(description='wide: 5+ theaters, "playing everywhere", "in many theaters"; limited: 1-3, "niche"')] = "any",
+        min_critics_score: Annotated[int, Field(description='lowest Rotten Tomatoes critics percent, e.g. 70 for "good" or "over seventy percent"; 0 for any')] = 0,
+        revivals: Annotated[MovieRevivals, Field(description='only: older films back in theaters, "classics"; none: new films only')] = "any",
+        limit: LimitArgument = DEFAULT_LIMIT,
     ) -> str:
         """Movies at Manhattan theaters, from Fandango, with rating, length, Rotten Tomatoes scores and theaters. Use this first for what is showing or coming up, before searching the web. Name movies in the order given; say scores as given. Horror is left out unless asked for; if the reply says how many were left out, mention they can be included. No showtimes: tell the user to check Fandango or the theater."""
-        query = MovieQuery(when=when, genre=genre, include_horror=include_horror, title=title, theater=theater, sort_by=sort_by, limit=limit)
-        return snapshot_answer(settings, lambda snapshot, today: clip_to_whole_lines(movies_text(found_movies(snapshot, query, today), query, snapshot, today), settings.max_words))
+        query = MovieQuery(
+            when=when,
+            genre=genre,
+            include_horror=include_horror,
+            title=title,
+            theater=theater,
+            sort_by=sort_by,
+            release_size=release_size,
+            min_critics_score=min_critics_score,
+            revivals=revivals,
+            limit=limit,
+        )
+        return movies_answer(settings, query)
+
+    @server.tool(name=POPULAR_MOVIES_TOOL_NAME)
+    async def popular_movies(genre: GenreArgument = "", sort_by: SortByArgument = "most_theaters", limit: LimitArgument = DEFAULT_LIMIT) -> str:
+        """Good movies playing widely at Manhattan theaters this week, from Fandango: Rotten Tomatoes critics 70% or more, at 5 or more theaters, new films only, no horror. Use this first when the user asks what is good, popular, or worth seeing in theaters; use movies_showing for a title, a theater, coming up, niche movies, revivals, or horror. Name movies in the order given; say scores as given. If the reply says how many were left out, mention they can be included. No showtimes: tell the user to check Fandango or the theater."""
+        return movies_answer(settings, MovieQuery.popular(genre=genre, sort_by=sort_by, limit=limit))
 
     @server.tool(name=MOVIE_DETAILS_TOOL_NAME)
     async def movie_details(title: Annotated[str, Field(description='title as the user said it, e.g. "Clayface"; part is enough')]) -> str:
         """What one movie at Manhattan theaters is about, from Fandango, with cast, Rotten Tomatoes scores, opening date and theaters. Use this first for any one movie in theaters. No showtimes: tell the user to check Fandango or the theater. If it is not found or has no synopsis, search the web."""
         return snapshot_answer(settings, lambda snapshot, today: movie_details_text(movies_named(snapshot.movies, title), title, snapshot, today))
+
+
+def movies_answer(settings: MoviesSettings, query: MovieQuery) -> str:
+    return snapshot_answer(settings, lambda snapshot, today: clip_to_whole_lines(movies_text(found_movies(snapshot, query, today), query, snapshot, today), settings.max_words))
 
 
 def snapshot_answer(settings: MoviesSettings, answer: Callable[[MoviesSnapshot, date], str]) -> str:

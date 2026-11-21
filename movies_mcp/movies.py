@@ -6,6 +6,10 @@ labelled here. Horror is left out unless it is asked for.
 
 The listings reach weeks ahead, as far as theaters have put tickets on sale, so a question is about one of two periods: the movies showing this
 week, or the ones whose first Manhattan showing comes after it (anniversary re-releases, concerts, the next big openings).
+
+A question can also ask for wide releases (five theaters or more), the ones playing almost everywhere, or limited ones (three or fewer), the niche
+movies at one or two art houses, and for a lowest critics score. Many of the limited ones are revivals: older films back for a screening or a
+series, which every line marks and a question can ask for alone or leave out.
 """
 
 from collections.abc import Callable
@@ -87,6 +91,8 @@ MovieGenre = Literal[
 ]
 MovieWhen = Literal["this_week", "coming_up"]
 MovieSortBy = Literal["most_theaters", "release_date", "critics_score", "audience_score"]
+MovieReleaseSize = Literal["any", "wide", "limited"]
+MovieRevivals = Literal["any", "only", "none"]
 
 # Every genre Fandango gave a Manhattan movie in the listings of 2026-10-25, under the choice that stands for it, its usual label first.
 GENRE_LABELS: dict[str, tuple[str, ...]] = {
@@ -117,6 +123,16 @@ DAYS_IN_A_WEEK = 7
 DEFAULT_LIMIT = 10
 MAX_LIMIT = 25  # the longest list the system prompt lets the model read out
 NO_SCORE = -1  # sorts after a score of 0
+HIGHEST_SCORE = 100
+# In the listings of 2026-11-14, 26 of this week's 124 movies were at five theaters or more and 98 at three or fewer, 87 of them at one.
+WIDE_RELEASE_MIN_THEATERS = 5
+LIMITED_RELEASE_MAX_THEATERS = 3
+POPULAR_MIN_CRITICS_SCORE = 70  # the user's own bar for a good movie
+REVIVAL_TITLE_WORDS = ("reissue", "re-release", "anniversary")  # Fandango's own words: "Dune: Part Two Reissue", "V for Vendetta 20th Anniversary"
+REVIVAL_AGE = timedelta(days=2 * 365)  # a late Manhattan opening of a film from last year is not a revival
+# Fandango gives many revivals no release date (Network, Local Hero), but it numbers movies in the order it adds them: TÁR, released October 2022,
+# is 228595, and this year's releases are above 240000. A movie numbered below this one was on Fandango years before this showing.
+OLDEST_RECENT_FANDANGO_ID = 230000
 MOVIE_TITLES = TitleMatcher(frozenset({"the", "a", "an", "movie", "film", "new"}))
 THEATER_NAMES = TitleMatcher(frozenset({"the", "theater", "theatre", "theaters", "cinema", "cinemas", "movie"}))
 
@@ -128,12 +144,25 @@ class MovieQuery(BaseModel):
     title: str = ""
     theater: str = ""
     sort_by: MovieSortBy = "most_theaters"
+    release_size: MovieReleaseSize = "any"
+    min_critics_score: int = 0  # 0 asks for no lowest score, and keeps the movies without one
+    revivals: MovieRevivals = "any"
     limit: int = DEFAULT_LIMIT
+
+    @classmethod
+    def popular(cls, genre: MovieGenre, sort_by: MovieSortBy, limit: int) -> "MovieQuery":
+        """The question asked most: good movies playing almost everywhere this week, new films only, horror left out."""
+        return cls(genre=genre, sort_by=sort_by, release_size="wide", min_critics_score=POPULAR_MIN_CRITICS_SCORE, revivals="none", limit=limit)
 
     @field_validator("limit")
     @classmethod
     def limit_to_a_spoken_list(cls, limit: int) -> int:
         return max(1, min(limit, MAX_LIMIT))
+
+    @field_validator("min_critics_score")
+    @classmethod
+    def score_to_a_percentage(cls, min_critics_score: int) -> int:
+        return max(0, min(min_critics_score, HIGHEST_SCORE))
 
 
 class Period(BaseModel):
@@ -163,6 +192,7 @@ class MoviesFound(BaseModel):
     period: Period
     theaters: list[str]  # the theaters a theater filter matched; empty when no theater was asked for
     horror_left_out: int  # horror movies that fit every other filter and were left out by default
+    unscored_left_out: int  # movies that fit every other filter but have no critics score yet, left out by a lowest score
 
 
 def found_movies(snapshot: MoviesSnapshot, query: MovieQuery, today: date) -> MoviesFound:
@@ -172,14 +202,36 @@ def found_movies(snapshot: MoviesSnapshot, query: MovieQuery, today: date) -> Mo
     if query.title:
         titles = set(MOVIE_TITLES.matches(query.title, [movie.title for movie in candidates]).titles)
         candidates = [movie for movie in candidates if movie.title in titles]
-    candidates = [movie for movie in candidates if has_genre(movie, query.genre)]
-    shown = [movie for movie in candidates if horror_is_shown(movie, query)]
+    candidates = [movie for movie in candidates if has_genre(movie, query.genre) and has_release_size(len(period.theaters(movie)), query.release_size)]
+    candidates = [movie for movie in candidates if fits_revivals_choice(is_revival(movie, today), query.revivals)]
+    unscored_left_out = sum(1 for movie in candidates if horror_is_shown(movie, query) and is_left_out_unscored(movie, query))
+    well_reviewed = [movie for movie in candidates if meets_critics_score(movie, query.min_critics_score)]
+    shown = [movie for movie in well_reviewed if horror_is_shown(movie, query)]
     ordered = sorted(shown, key=sort_key(query.sort_by, period))
-    return MoviesFound(movies=ordered, period=period, theaters=theaters, horror_left_out=len(candidates) - len(shown))
+    return MoviesFound(movies=ordered, period=period, theaters=theaters, horror_left_out=len(well_reviewed) - len(shown), unscored_left_out=unscored_left_out)
 
 
 def has_genre(movie: Movie, genre: MovieGenre) -> bool:
     return not genre or bool(set(GENRE_LABELS[genre]) & set(movie.genres))
+
+
+def has_release_size(theater_count: int, release_size: MovieReleaseSize) -> bool:
+    sizes = {"any": True, "wide": theater_count >= WIDE_RELEASE_MIN_THEATERS, "limited": theater_count <= LIMITED_RELEASE_MAX_THEATERS}
+    return sizes[release_size]
+
+
+def fits_revivals_choice(movie_is_revival: bool, revivals: MovieRevivals) -> bool:
+    choices = {"any": True, "only": movie_is_revival, "none": not movie_is_revival}
+    return choices[revivals]
+
+
+def meets_critics_score(movie: Movie, min_critics_score: int) -> bool:
+    """No lowest score keeps every movie, those without a score too; any lowest score leaves out the movies without one."""
+    return not min_critics_score or critics_score(movie) >= min_critics_score
+
+
+def is_left_out_unscored(movie: Movie, query: MovieQuery) -> bool:
+    return query.min_critics_score > 0 and critics_score(movie) == NO_SCORE
 
 
 def horror_is_shown(movie: Movie, query: MovieQuery) -> bool:
@@ -210,3 +262,10 @@ def critics_score(movie: Movie) -> int:
 
 def audience_score(movie: Movie) -> int:
     return movie.scores.audience_score if movie.scores and movie.scores.audience_score is not None else NO_SCORE
+
+
+def is_revival(movie: Movie, today: date) -> bool:
+    """An older film back in theaters: Fandango calls it a reissue or an anniversary, its release is years past, or Fandango has listed it for years."""
+    is_named_a_revival = any(word in movie.title.lower() for word in REVIVAL_TITLE_WORDS)
+    is_released_long_ago = movie.release_date is not None and movie.release_date < today - REVIVAL_AGE
+    return is_named_a_revival or is_released_long_ago or movie.fandango_id < OLDEST_RECENT_FANDANGO_ID
