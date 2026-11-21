@@ -1,0 +1,23 @@
+# Copied to /config/custom_sentences/en/ by scripts/deploy_component.py (design doc v2/04 section 3.8).
+#
+# Home Assistant's built-in "who is [in] [the] {zone:state}" takes any words after "who is" as a place, so "who is the president of France" was
+# answered "Not any" before studio_assistant heard it. A custom sentence beats every built-in one, so "who is ..." matches StudioAssistantAskAgent,
+# whose handler answers "no intent match" on purpose, and the pipeline then gives the question to the agent. "Who is home" keeps Home Assistant's
+# own answer: among custom sentences the one with more literal words wins, so it matches the HassGetState sentence below.
+language: en
+intents:
+  StudioAssistantAskAgent:
+    data:
+      - sentences:
+          - "who is {question}"
+  HassGetState:
+    data:
+      - sentences:
+          - "who is [at] home"
+        slots:
+          domain: person
+          state: home
+        response: which
+lists:
+  question:
+    wildcard: true

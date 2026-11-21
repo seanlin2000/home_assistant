@@ -1,4 +1,5 @@
-"""Copy custom_components/studio_assistant (with the part of assistant_core it needs, vendored) into Home Assistant's config share and restart Home Assistant.
+"""Copy custom_components/studio_assistant (with the part of assistant_core it needs, vendored) into Home Assistant's config share, with its custom
+sentences, and restart Home Assistant.
 
 Home Assistant OS exposes /config over SMB once the Samba add-on is running (scripts/ha_setup.py installs it). This script mounts the share,
 syncs the component, unmounts, and asks Home Assistant to restart so the new code is loaded.
@@ -26,6 +27,8 @@ from ops.paths import VENDORED_CORE_FILES
 PROJECT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT))  # scripts/ is not a package; make `ops` importable when run as a file
 COMPONENT = PROJECT / "custom_components" / "studio_assistant"
+# Home Assistant reads custom sentences only from /config/custom_sentences/<language>/, not from a component's folder
+CUSTOM_SENTENCES = COMPONENT / "custom_sentences"
 
 
 def main() -> None:
@@ -41,6 +44,8 @@ def main() -> None:
         target = mount_point / "custom_components" / "studio_assistant"
         sync(staged, target)
         print(f"deployed to //{host}/config/custom_components/studio_assistant")
+        for installed in install_custom_sentences(mount_point):
+            print(f"installed //{host}/config/{installed}")
     finally:
         unmount(mount_point)
         shutil.rmtree(staged.parent, ignore_errors=True)
@@ -58,12 +63,24 @@ def parse_args() -> argparse.Namespace:
 def stage_component() -> Path:
     """Build the exact tree that will land in /config: the component plus the vendored part of assistant_core under vendor/."""
     staging = Path(tempfile.mkdtemp(prefix="studio_assistant-")) / "studio_assistant"
-    shutil.copytree(COMPONENT, staging, ignore=shutil.ignore_patterns("__pycache__", "vendor"))
+    shutil.copytree(COMPONENT, staging, ignore=shutil.ignore_patterns("__pycache__", "vendor", CUSTOM_SENTENCES.name))
     for relative_path in VENDORED_CORE_FILES:
         destination = staging / "vendor" / relative_path
         destination.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(PROJECT / relative_path, destination)
     return staging
+
+
+def install_custom_sentences(config_dir: Path) -> list[Path]:
+    """Copy each sentence file to the same place under config_dir/custom_sentences, overwriting the deployed copy; returns the paths written,
+    relative to config_dir. Restarting Home Assistant loads them."""
+    installed = []
+    for source in sorted(CUSTOM_SENTENCES.rglob("*.yaml")):
+        relative_path = Path(CUSTOM_SENTENCES.name) / source.relative_to(CUSTOM_SENTENCES)
+        (config_dir / relative_path).parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(source, config_dir / relative_path)
+        installed.append(relative_path)
+    return installed
 
 
 def mount(host: str, user: str, password: str, mount_point: Path) -> None:
