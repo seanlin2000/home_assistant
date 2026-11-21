@@ -28,10 +28,10 @@ checks:
     expected: [broadway_show_details, broadway_shows]
   - id: movies-weekend
     question: What movies are playing in Manhattan this weekend?
-    expected: [movies_showing]
+    expected: [movies_showing, popular_movies]
   - id: movies-comedy
     question: Is there a good comedy in theaters right now?
-    expected: [movies_showing]
+    expected: [popular_movies, movies_showing]
   - id: movie-one
     question: What's the movie Wicked For Good about, and is it still in theaters?
     expected: [movie_details, movies_showing]

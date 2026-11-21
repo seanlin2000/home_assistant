@@ -74,7 +74,7 @@ This question is about what is playing on Broadway or Off-Broadway. Call broadwa
 Example call: broadway_shows(show_type="musical", sort_by="audience_score")
 """
 MOVIES_DIRECTIVE = """Routing for this question: MOVIES.
-This question is about what movies are showing in theaters. Call movies_showing for a list of movies, with when="coming_up" when the user asks about later than this week, title set when the user names a movie, theater when they name a theater, and genre only when they ask for one; call movie_details with the title when the user asks what one movie is about. Do not search the web unless the tool says to, and do not answer from memory. Answer from the movies the tool returns.
+This question is about what movies are showing in theaters. Call popular_movies when the user asks what is good, popular, or worth seeing and nothing more specific; call movies_showing for any other list of movies, with when="coming_up" when the user asks about later than this week, title set when the user names a movie, theater when they name a theater, and genre only when they ask for one; call movie_details with the title when the user asks what one movie is about. Do not search the web unless the tool says to, and do not answer from memory. Answer from the movies the tool returns.
 Example call: movies_showing(genre="comedy")
 """
 REDDIT_DIRECTIVE = """Routing for this question: REDDIT.

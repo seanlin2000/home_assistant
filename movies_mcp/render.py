@@ -1,12 +1,13 @@
 """movies_showing's reply as the model reads it: a heading saying which period, which filters, and in what order, then one "a | b" line per movie.
 
 A movie at three theaters or fewer names them; a wider release says how many, since 17 theater names are not something to say aloud. When the user
-asked about one movie or one theater, the theaters are always named. The heading says how many horror movies were left out, so the model can offer them.
+asked about one movie or one theater, the theaters are always named. The heading says how many horror movies, and how many movies without a critics
+score, were left out, so the model can offer them. A revival says so right after its title.
 """
 
 from datetime import date
 
-from movies_mcp.movies import GENRE_LABELS, Movie, MovieQuery, MoviesFound, MoviesSnapshot, Period
+from movies_mcp.movies import GENRE_LABELS, LIMITED_RELEASE_MAX_THEATERS, WIDE_RELEASE_MIN_THEATERS, Movie, MovieQuery, MoviesFound, MoviesSnapshot, Period, is_revival
 from utils.text_utils import spoken_month_day
 
 MOST_THEATERS_NAMED = 3
@@ -15,6 +16,12 @@ NO_TITLE_ADVICE = {
     "this_week": 'Tell the user it is not in these theaters this week; when="coming_up" says whether it opens later.',
     "coming_up": "Tell the user no Manhattan theater sells tickets for it yet.",
 }
+RELEASE_SIZE_LABELS = {
+    "any": "",
+    "wide": f"wide-release (at {WIDE_RELEASE_MIN_THEATERS} theaters or more) ",
+    "limited": f"limited-release (at {LIMITED_RELEASE_MAX_THEATERS} theaters or fewer) ",
+}
+REVIVALS_LABELS = {"any": "", "only": "revival ", "none": "non-revival "}
 
 
 def movies_text(found: MoviesFound, query: MovieQuery, snapshot: MoviesSnapshot, today: date) -> str:
@@ -28,18 +35,29 @@ def movies_text(found: MoviesFound, query: MovieQuery, snapshot: MoviesSnapshot,
 
 def heading(found: MoviesFound, query: MovieQuery, snapshot: MoviesSnapshot, today: date, shown: int) -> str:
     what = f"{movies_label(query)} at {theaters_label(found)}, {period_label(found.period, snapshot, today)}"
-    horror = f"; {found.horror_left_out} horror {plural('movie', found.horror_left_out)} left out, which include_horror=true lists" if found.horror_left_out else ""
+    left_out = left_out_note(found)
     if not found.movies and query.title:
-        return f'No movie titled like "{query.title}" is showing at {theaters_label(found)} on Fandango, {period_label(found.period, snapshot, today)}{horror}. {NO_TITLE_ADVICE[query.when]}'
+        return f'No movie titled like "{query.title}" is showing at {theaters_label(found)} on Fandango, {period_label(found.period, snapshot, today)}{left_out}. {NO_TITLE_ADVICE[query.when]}'
     if not found.movies:
-        return f"No {what} on Fandango{horror}. Tell the user, and offer to drop a filter."
-    return f"{what[0].upper()}{what[1:]}, {order_label(query)} ({shown} of {len(found.movies)}){horror}:"
+        return f"No {what} on Fandango{left_out}. Tell the user, and offer to drop a filter."
+    return f"{what[0].upper()}{what[1:]}, {order_label(query)} ({shown} of {len(found.movies)}){left_out}:"
+
+
+def left_out_note(found: MoviesFound) -> str:
+    horror = [f"{found.horror_left_out} horror {plural('movie', found.horror_left_out)} left out, which movies_showing lists with include_horror=true"] if found.horror_left_out else []
+    unscored = (
+        [f"{found.unscored_left_out} {plural('movie', found.unscored_left_out)} with no critics score yet left out, which movies_showing lists with min_critics_score=0"]
+        if found.unscored_left_out
+        else []
+    )
+    return "".join(f"; {note}" for note in horror + unscored)
 
 
 def movies_label(query: MovieQuery) -> str:
     genre = f"{query.genre.replace('_', ' ')} " if query.genre else ""
     titled = f' titled like "{query.title}"' if query.title else ""
-    return f"{genre}movies{titled}"
+    scored = f" with a critics score of {query.min_critics_score}% or more" if query.min_critics_score else ""
+    return f"{RELEASE_SIZE_LABELS[query.release_size]}{REVIVALS_LABELS[query.revivals]}{genre}movies{titled}{scored}"
 
 
 def theaters_label(found: MoviesFound) -> str:
@@ -70,8 +88,21 @@ def order_label(query: MovieQuery) -> str:
 
 
 def movie_line(rank: int, movie: Movie, query: MovieQuery, found: MoviesFound, today: date) -> str:
-    parts = [f"{rank}. {movie.title}", *genre_parts(movie), *rating_parts(movie), *runtime_parts(movie), *score_parts(movie), where_part(movie, query, found), *date_parts(movie, query, today)]
+    parts = [
+        f"{rank}. {movie.title}",
+        *revival_parts(movie, today),
+        *genre_parts(movie),
+        *rating_parts(movie),
+        *runtime_parts(movie),
+        *score_parts(movie),
+        where_part(movie, query, found),
+        *date_parts(movie, query, today),
+    ]
     return " | ".join(parts)
+
+
+def revival_parts(movie: Movie, today: date) -> list[str]:
+    return ["revival of an older film"] if is_revival(movie, today) else []
 
 
 def genre_parts(movie: Movie) -> list[str]:
