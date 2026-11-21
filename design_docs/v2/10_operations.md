@@ -99,12 +99,14 @@ What changes is the list that maps each changed folder to what must restart, the
 | The files of `assistant_core/` that the component vendors (the event and transcript models) | Copies the component into the VM and restarts Home Assistant | The component and the harness must agree on the events they exchange |
 | `custom_components/` | Copies the component into the VM and restarts Home Assistant | As in v1 |
 | `uv.lock`, `pyproject.toml` | Syncs the environment and restarts every Python service, the harness included | As in v1 |
-| `dashboard/`, `ops/paths.py`, and the `assistant_core/`, `assistant_service/` and `utils/` code it imports | The exchange dashboard | Added 2026-11-11: the dashboard runs as its own service and kept old code until restarted by hand |
+| `dashboard/`, the code it imports (`assistant_core/`, `assistant_service/`, `utils/`, `serving/settings.py`, `voice_server/settings.py`, `web_search_mcp/`, `wikipedia_mcp/`, and `ops/paths.py`, `ops/ha_client.py`, `ops/pipeline_runs.py`), and the configs it reads (`config/harness.toml`, `config/serving.toml`, `config/voice.toml`) | The exchange dashboard | Added 2026-11-11: the dashboard runs as its own service and kept old code until restarted by hand. Widened 2026-11-21: after #131 added a key to `config/voice.toml`, the dashboard's old settings code rejected it and the pronunciation list failed |
 | `voice/`, `voice_server/`, `config/voice.toml`, `config/voices/`, and the `speech_server/`, `utils/` and `assistant_core/models.py` code and `config/harness.toml` fillers it uses | The voice. A change to `config/voice.toml` also has Home Assistant reload its Wyoming entry and clear its text-to-speech cache (`voice handoff`) | Added 2026-11-21 with the `voice` agent |
 | `scripts/services.sh` | Rewrites and reloads every agent | As in v1 |
 | `docker/searxng/` | SearXNG | As in v1 |
 | `Brewfile` | Nothing | Programs are upgraded by hand (3.8) |
-| `ops/`, docs, the benchmark, tests | Nothing | As in v1 |
+| The rest of `ops/`, docs, the benchmark, tests | Nothing | As in v1 |
+
+Each service's row must cover every file its running process loaded and every config file it reads, or the service keeps old code that may reject new settings. `tests/test_deploy_plan.py` follows each long-running service's imports from its entry module, counts a config file as read when a loaded file calls its loader, and fails on any change that would not restart the service.
 
 In v1, every change to `assistant_core/` copied the component into the VM and restarted Home Assistant, because the loop ran there. In v2 the loop runs in the harness, so most changes to it restart only the harness, which takes seconds instead of a minute.
 

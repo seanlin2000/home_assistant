@@ -29,6 +29,7 @@ def test_tool_server_code_restarts_only_the_tool_server() -> None:
 
 def test_shared_utilities_restart_every_service_that_imports_them() -> None:
     assert actions("utils/jsonl_utils.py") == ["restart:mcp", "restart:harness", "restart:dashboard"]
+    assert actions("ops/paths.py") == ["restart:mcp", "restart:harness", "restart:dashboard"]
 
 
 def test_shared_core_restarts_the_harness_and_redeploys_the_component_only_for_vendored_files() -> None:
@@ -36,8 +37,8 @@ def test_shared_core_restarts_the_harness_and_redeploys_the_component_only_for_v
     assert actions("assistant_core/agent_loop.py") == ["restart:mcp", "restart:harness", "restart:dashboard"]
 
 
-def test_harness_settings_restart_the_harness_and_the_voice_that_makes_its_fillers_ahead_and_its_code_also_the_dashboard() -> None:
-    assert actions("config/harness.toml") == ["restart:harness", "restart:voice"]
+def test_harness_settings_restart_the_harness_the_dashboard_and_the_voice_that_makes_its_fillers_ahead_and_its_code_also_the_dashboard() -> None:
+    assert actions("config/harness.toml") == ["restart:harness", "restart:dashboard", "restart:voice"]
     assert actions("assistant_service/app.py") == ["restart:harness", "restart:dashboard"]
 
 
@@ -47,7 +48,6 @@ def test_the_tools_the_harness_may_call_restart_the_harness() -> None:
 
 def test_dashboard_code_restarts_only_the_dashboard() -> None:
     assert actions("dashboard/app.py", "dashboard/static/app.js") == ["restart:dashboard"]
-    assert actions("ops/paths.py") == ["restart:dashboard"]
 
 
 def test_component_only_change_redeploys_the_component() -> None:
@@ -83,10 +83,10 @@ def test_a_speech_server_change_restarts_the_speech_server_and_the_voice_that_re
     assert actions("config/speech.toml") == ["restart:speech"]
 
 
-def test_the_voices_code_settings_and_clip_restart_only_the_voice_and_a_settings_change_tells_home_assistant() -> None:
+def test_the_voices_code_and_clip_restart_only_the_voice_and_its_settings_also_the_dashboard_that_reads_them_and_home_assistant() -> None:
     assert actions("voice_server/handlers.py", "config/voices/jarvis/reference.wav", "utils/spoken_sentence_utils.py") == ["restart:mcp", "restart:harness", "restart:dashboard", "restart:voice"]
     assert actions("voice_server/handlers.py", "config/voices/jarvis/reference.wav") == ["restart:voice"]
-    assert actions("config/voice.toml") == ["restart:voice", "hand_voice_to_home_assistant"]
+    assert actions("config/voice.toml") == ["restart:dashboard", "restart:voice", "hand_voice_to_home_assistant"]
     assert actions("config/voice.toml", "scripts/services.sh") == ["reinstall_agents", "hand_voice_to_home_assistant"]
 
 
@@ -96,7 +96,12 @@ def test_services_script_change_reinstalls_agents_instead_of_individual_restarts
 
 
 def test_searxng_config_restarts_the_container_and_component_deploy_runs_last() -> None:
-    assert actions("docker/searxng/settings.yml", "custom_components/studio_assistant/adapter.py", "web_search_mcp/settings.py") == ["restart:mcp", "restart_searxng", "deploy_component"]
+    assert actions("docker/searxng/settings.yml", "custom_components/studio_assistant/adapter.py", "web_search_mcp/settings.py") == [
+        "restart:mcp",
+        "restart:dashboard",
+        "restart_searxng",
+        "deploy_component",
+    ]
 
 
 def test_plan_records_why_each_action_was_chosen() -> None:
@@ -143,7 +148,7 @@ def test_cli_status_reports_head_and_flags(monkeypatch: pytest.MonkeyPatch, tmp_
 
 
 def test_serving_settings_launcher_or_strata_patches_restart_the_engine() -> None:
-    assert deploy.plan_actions(["config/serving.toml"]).actions == ["restart:llama", "restart:harness"]
+    assert deploy.plan_actions(["config/serving.toml"]).actions == ["restart:llama", "restart:harness", "restart:dashboard", "restart:voice"]
     assert deploy.plan_actions(["serving/command.py"]).actions == ["restart:llama", "restart:harness"]
     assert deploy.plan_actions(["scripts/strata_patches/release_projections.patch"]).actions == ["restart:llama", "restart:harness"]
 
@@ -196,7 +201,7 @@ def test_under_strata_the_deployed_commits_strata_sh_brings_strata_to_its_pin_be
     summary = deploy.switch_to("new", run_tests=False, dry_run=False)
 
     assert deploying.ran == ["strata.sh ensure@new", "serving check@new"]
-    assert summary["applied"] and deploying.restarted == ["restart:llama", "restart:harness"]
+    assert summary["applied"] and deploying.restarted == ["restart:llama", "restart:harness", "restart:dashboard", "restart:voice"]
 
 
 def test_a_strata_install_that_fails_aborts_and_the_old_commits_strata_sh_puts_strata_back(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
@@ -260,7 +265,7 @@ def test_a_checkout_pulled_to_the_target_still_gets_the_restarts_since_the_last_
     summary = deploy.switch_to("new", run_tests=False, dry_run=False)
 
     assert (summary["from"], summary["applied"]) == ("deployed", True)
-    assert pulled.restarted == ["restart:llama", "restart:harness"]
+    assert pulled.restarted == ["restart:llama", "restart:harness", "restart:dashboard", "restart:voice"]
     assert summary["checkout_moved"] == "the checkout was at new, but deployed is what was last deployed; planned from deployed"
 
 
@@ -289,6 +294,68 @@ def test_vendored_core_files_import_only_each_other() -> None:
         tree = ast.parse((deploy.PROJECT_DIR / relative_path).read_text())
         imported = {node.module for node in ast.walk(tree) if isinstance(node, ast.ImportFrom) and node.module}
         assert {module for module in imported if module.startswith("assistant_core")} <= vendored_modules, relative_path
+
+
+# The modules each launchd agent keeps running. The voice's launcher replaces itself with one of its two servers, so only theirs stay loaded.
+LONG_RUNNING_ENTRY_MODULES = {
+    "restart:dashboard": ("dashboard.__main__",),
+    "restart:mcp": ("assistant_mcp.server",),
+    "restart:harness": ("assistant_service.__main__",),
+    "restart:speech": ("speech_server.__main__",),
+    "restart:voice": ("voice_server.__main__", "voice.kokoro_server"),
+}
+# A service reads a config file when a file it loaded calls that file's loader; importing the settings module alone reads nothing.
+CONFIG_READ_BY_LOADER = {
+    "load_tool_table": "config/tools.toml",
+    "load_harness_config": "config/harness.toml",
+    "load_serving_config": "config/serving.toml",
+    "load_speech_settings": "config/speech.toml",
+    "load_voice_settings": "config/voice.toml",
+}
+
+
+def project_module_path(module: str) -> str | None:
+    base = deploy.PROJECT_DIR.joinpath(*module.split("."))
+    for candidate in (base.with_suffix(".py"), base / "__init__.py"):
+        if candidate.exists():
+            return candidate.relative_to(deploy.PROJECT_DIR).as_posix()
+    return None
+
+
+def modules_named_in(relative_path: str) -> set[str]:
+    """Every module an import in the file names, with each package above it, since importing a.b.c also runs a and a.b."""
+    named: set[str] = set()
+    for node in ast.walk(ast.parse((deploy.PROJECT_DIR / relative_path).read_text())):
+        if isinstance(node, ast.Import):
+            named.update(alias.name for alias in node.names)
+        elif isinstance(node, ast.ImportFrom) and node.module:
+            named.update([node.module, *(f"{node.module}.{alias.name}" for alias in node.names)])
+    return {".".join(module.split(".")[:depth]) for module in named for depth in range(1, module.count(".") + 2)}
+
+
+def configs_read_in(relative_path: str) -> set[str]:
+    calls = (node.func for node in ast.walk(ast.parse((deploy.PROJECT_DIR / relative_path).read_text())) if isinstance(node, ast.Call))
+    called = {call.id if isinstance(call, ast.Name) else call.attr for call in calls if isinstance(call, ast.Name | ast.Attribute)}
+    return {config for loader, config in CONFIG_READ_BY_LOADER.items() if loader in called}
+
+
+def files_loaded_by(entry_modules: tuple[str, ...]) -> set[str]:
+    loaded: set[str] = set()
+    pending = [path for module in entry_modules if (path := project_module_path(module))]
+    while pending:
+        relative_path = pending.pop()
+        if relative_path not in loaded:
+            loaded.add(relative_path)
+            pending.extend(path for module in modules_named_in(relative_path) if (path := project_module_path(module)))
+    return loaded
+
+
+@pytest.mark.parametrize("restart", LONG_RUNNING_ENTRY_MODULES)
+def test_a_change_to_any_file_a_running_service_loaded_or_any_config_it_reads_restarts_it(restart: str) -> None:
+    """A service left running keeps its old code, and its strict settings then reject a new config key (the dashboard after #131)."""
+    loaded = files_loaded_by(LONG_RUNNING_ENTRY_MODULES[restart])
+    configs_read = {config for path in loaded for config in configs_read_in(path)}
+    assert sorted(path for path in loaded | configs_read if restart not in actions(path)) == []
 
 
 def test_one_failed_step_does_not_stop_the_steps_after_it(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -370,7 +437,7 @@ def test_a_rollback_after_a_failed_test_question_restarts_what_the_failed_deploy
     back = deploy.switch_to(paths.last_good_ref().read_text().strip(), run_tests=False, dry_run=False)
 
     assert (forward["from"], forward["to"], back["from"], back["to"]) == ("good", "failed", "failed", "good")
-    assert mac.restarts == [["restart:llama", "restart:harness"], ["restart:llama", "restart:harness"]]
+    assert mac.restarts == [["restart:llama", "restart:harness", "restart:dashboard", "restart:voice"], ["restart:llama", "restart:harness", "restart:dashboard", "restart:voice"]]
     assert (mac.head, paths.applied_ref().read_text().strip()) == ("good", "good")
 
 
