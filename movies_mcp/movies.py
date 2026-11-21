@@ -9,7 +9,7 @@ week, or the ones whose first Manhattan showing comes after it (anniversary re-r
 
 A question can also ask for wide releases (five theaters or more), the ones playing almost everywhere, or limited ones (three or fewer), the niche
 movies at one or two art houses, and for a lowest critics score. Many of the limited ones are revivals: older films back for a screening or a
-series, which every line marks.
+series, which every line marks and a question can ask for alone or leave out.
 """
 
 from collections.abc import Callable
@@ -92,6 +92,7 @@ MovieGenre = Literal[
 MovieWhen = Literal["this_week", "coming_up"]
 MovieSortBy = Literal["most_theaters", "release_date", "critics_score", "audience_score"]
 MovieReleaseSize = Literal["any", "wide", "limited"]
+MovieRevivals = Literal["any", "only", "none"]
 
 # Every genre Fandango gave a Manhattan movie in the listings of 2026-10-25, under the choice that stands for it, its usual label first.
 GENRE_LABELS: dict[str, tuple[str, ...]] = {
@@ -144,6 +145,7 @@ class MovieQuery(BaseModel):
     sort_by: MovieSortBy = "most_theaters"
     release_size: MovieReleaseSize = "any"
     min_critics_score: int = 0  # 0 asks for no lowest score, and keeps the movies without one
+    revivals: MovieRevivals = "any"
     limit: int = DEFAULT_LIMIT
 
     @field_validator("limit")
@@ -195,6 +197,7 @@ def found_movies(snapshot: MoviesSnapshot, query: MovieQuery, today: date) -> Mo
         titles = set(MOVIE_TITLES.matches(query.title, [movie.title for movie in candidates]).titles)
         candidates = [movie for movie in candidates if movie.title in titles]
     candidates = [movie for movie in candidates if has_genre(movie, query.genre) and has_release_size(len(period.theaters(movie)), query.release_size)]
+    candidates = [movie for movie in candidates if fits_revivals_choice(is_revival(movie, today), query.revivals)]
     unscored_left_out = sum(1 for movie in candidates if horror_is_shown(movie, query) and is_left_out_unscored(movie, query))
     well_reviewed = [movie for movie in candidates if meets_critics_score(movie, query.min_critics_score)]
     shown = [movie for movie in well_reviewed if horror_is_shown(movie, query)]
@@ -209,6 +212,11 @@ def has_genre(movie: Movie, genre: MovieGenre) -> bool:
 def has_release_size(theater_count: int, release_size: MovieReleaseSize) -> bool:
     sizes = {"any": True, "wide": theater_count >= WIDE_RELEASE_MIN_THEATERS, "limited": theater_count <= LIMITED_RELEASE_MAX_THEATERS}
     return sizes[release_size]
+
+
+def fits_revivals_choice(movie_is_revival: bool, revivals: MovieRevivals) -> bool:
+    choices = {"any": True, "only": movie_is_revival, "none": not movie_is_revival}
+    return choices[revivals]
 
 
 def meets_critics_score(movie: Movie, min_critics_score: int) -> bool:

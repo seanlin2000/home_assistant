@@ -270,6 +270,15 @@ async def test_a_revival_is_marked_by_its_title_its_release_or_its_age_on_fandan
     assert "revival" not in movie_lines(await ask())[0]
 
 
+async def test_revivals_can_be_asked_for_alone_or_left_out() -> None:
+    revivals = await ask(revivals="only", include_horror=True)
+    assert revivals.startswith("Revival movies at Manhattan theaters, October 25 to 31, showing at the most theaters first (10 of 41):")
+    assert all(" | revival of an older film | " in line for line in movie_lines(revivals))
+    new_films = await ask(revivals="none", release_size="limited", limit=25, include_horror=True)
+    assert new_films.startswith("Limited-release (at 3 theaters or fewer) non-revival movies at Manhattan theaters")
+    assert movie_lines(new_films) and not any("revival" in line for line in movie_lines(new_films))
+
+
 async def test_details_say_what_one_movie_is_about_who_made_it_and_where_it_opens() -> None:
     clayface = (await ask_details("clayface")).split("\n")
     assert clayface[0] == "Clayface, from Fandango:"

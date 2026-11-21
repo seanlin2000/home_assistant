@@ -21,6 +21,7 @@ RELEASE_SIZE_LABELS = {
     "wide": f"wide-release (at {WIDE_RELEASE_MIN_THEATERS} theaters or more) ",
     "limited": f"limited-release (at {LIMITED_RELEASE_MAX_THEATERS} theaters or fewer) ",
 }
+REVIVALS_LABELS = {"any": "", "only": "revival ", "none": "non-revival "}
 
 
 def movies_text(found: MoviesFound, query: MovieQuery, snapshot: MoviesSnapshot, today: date) -> str:
@@ -52,7 +53,7 @@ def movies_label(query: MovieQuery) -> str:
     genre = f"{query.genre.replace('_', ' ')} " if query.genre else ""
     titled = f' titled like "{query.title}"' if query.title else ""
     scored = f" with a critics score of {query.min_critics_score}% or more" if query.min_critics_score else ""
-    return f"{RELEASE_SIZE_LABELS[query.release_size]}{genre}movies{titled}{scored}"
+    return f"{RELEASE_SIZE_LABELS[query.release_size]}{REVIVALS_LABELS[query.revivals]}{genre}movies{titled}{scored}"
 
 
 def theaters_label(found: MoviesFound) -> str:
