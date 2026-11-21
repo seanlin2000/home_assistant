@@ -20,10 +20,12 @@ from utils.pronunciation_utils import VERBATIM_SPEAKER, LivePronunciations, Pron
 from voice_server.handlers import SAMPLES_PER_CHUNK, VoiceHandler, voice_info
 from voice_server.settings import load_voice_settings
 from voice_server.speaker import PEAK_CEILING, SentenceSpeaker, levelled
+from voice_server.start_cache import StartCache
 
 SETTINGS = load_voice_settings()
 SAMPLE_RATE = 24000
 SAMPLES_PER_CHARACTER = 100
+ENGINE = "mlx-audio==0.6.5 mlx==0.32.4"
 
 
 class StandInSynthesizer:
@@ -52,6 +54,11 @@ def speaker(synthesizer: StandInSynthesizer, tmp_path: Path) -> SentenceSpeaker:
     dictionary.write_text('{"model": "omnivoice", "voice": "jarvis", "revision": 0, "entries": [{"written": "Jokic", "say_as": "Yo-Kich"}]}')
     store = PronunciationStore("omnivoice", "jarvis", live_dir=tmp_path / "live", versioned_dir=tmp_path / "versioned")
     return SentenceSpeaker(synthesizer, ModelThread(), LivePronunciations(store), loudness_dbfs=-20.0)
+
+
+@pytest.fixture
+def start_cache(tmp_path: Path) -> StartCache:
+    return StartCache(SETTINGS.voice.omnivoice, tmp_path / "cache", ENGINE)
 
 
 @asynccontextmanager
@@ -148,8 +155,8 @@ async def test_the_dashboards_verbatim_previews_are_not_respelled(speaker: Sente
     assert synthesizer.made == ["Jokic scored."]
 
 
-async def test_fillers_made_ahead_are_replayed_without_the_model(speaker: SentenceSpeaker, synthesizer: StandInSynthesizer) -> None:
-    speaker.make_ahead(["One moment.", "Let me look that up."])
+async def test_fillers_made_ahead_are_replayed_without_the_model(speaker: SentenceSpeaker, synthesizer: StandInSynthesizer, start_cache: StartCache) -> None:
+    speaker.make_ahead(["One moment.", "Let me look that up."], start_cache)
     async with connected(voice_handler(speaker)) as client:
         await client.write_event(SynthesizeStart().event())
         await client.write_event(SynthesizeChunk(text="One moment.\n\nIt is 72 degrees.").event())
