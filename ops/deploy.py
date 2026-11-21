@@ -16,6 +16,7 @@ import os
 import re
 import subprocess
 import sys
+import time
 import tomllib
 from collections.abc import Callable, Iterable
 from pathlib import Path
@@ -34,6 +35,8 @@ MANIFEST = PROJECT_DIR / "custom_components" / "studio_assistant" / "manifest.js
 LOCK = PROJECT_DIR / "uv.lock"
 PATH_WITH_BREW = "/opt/homebrew/bin:" + os.environ.get("PATH", "/usr/bin:/bin:/usr/sbin:/sbin")
 SERVICES_SCRIPT = PROJECT_DIR / "scripts" / "services.sh"
+AGENT_UNLOAD_TIMEOUT_SECONDS = 30
+AGENT_UNLOAD_POLL_SECONDS = 0.5
 
 
 class Rule(BaseModel):
@@ -230,9 +233,23 @@ def retire_agents_the_checkout_does_not_list() -> None:
     would leave it holding port 10300 against the Whisper agent the old install starts. So before installing, unload and delete every agent of
     ours that the checked-out services.sh does not list."""
     for name in sorted(installed_agent_names() - services_listed_in(SERVICES_SCRIPT.read_text())):
-        subprocess.run(["launchctl", "bootout", f"gui/{os.getuid()}/{paths.LAUNCHD_PREFIX}.{name}"], capture_output=True)
+        target = f"gui/{os.getuid()}/{paths.LAUNCHD_PREFIX}.{name}"
+        subprocess.run(["launchctl", "bootout", target], capture_output=True)
+        wait_until_agent_gone(target)
         (paths.LAUNCH_AGENTS_DIR / f"{paths.LAUNCHD_PREFIX}.{name}.plist").unlink(missing_ok=True)
         print(f"retired the {name} agent, which this commit's services.sh does not list", flush=True)
+
+
+def wait_until_agent_gone(target: str) -> None:
+    """bootout returns while launchd still holds the job (scripts/services.sh wait_until_unloaded): a retired server that still holds its port
+    when the install starts the agent taking it over leaves that agent failing to bind. A job still there after the timeout is left to the
+    install, which reports what fails."""
+    deadline = time.monotonic() + AGENT_UNLOAD_TIMEOUT_SECONDS
+    while time.monotonic() < deadline:
+        if subprocess.run(["launchctl", "print", target], capture_output=True).returncode != 0:
+            return
+        time.sleep(AGENT_UNLOAD_POLL_SECONDS)
+    print(f"{target} still unloading after {AGENT_UNLOAD_TIMEOUT_SECONDS} s; installing anyway", flush=True)
 
 
 def installed_agent_names() -> set[str]:
@@ -308,15 +325,18 @@ def switch_to(ref: str, run_tests: bool, dry_run: bool) -> dict:
         return summary
     summary["failed_steps"] = carry_out([action for action in plan.actions if action != "sync_env"])
     summary["applied"] = True
+    paths.applied_ref().write_text(new + "\n")
     return summary
 
 
 def deployed_commit(checkout: str) -> str:
-    """What is running: last_good_ref, which only a passing test question writes and every failure returns to. A Mac without one has never
-    deployed, and its checkout is the best guess."""
-    if not paths.last_good_ref().exists():
-        return checkout
-    return paths.last_good_ref().read_text().strip()
+    """What is running: the commit whose restarts were last carried out. A rollback after a failed test question plans from there, so it reverses
+    what the failed deploy restarted; planning from last_good_ref, which a failure never moves, would plan nothing and leave the new code running.
+    A Mac deployed before applied_ref was kept falls back to last_good_ref, and one that has never deployed to its checkout."""
+    for recorded in (paths.applied_ref(), paths.last_good_ref()):
+        if recorded.exists():
+            return recorded.read_text().strip()
+    return checkout
 
 
 def active_engine_here() -> str:
