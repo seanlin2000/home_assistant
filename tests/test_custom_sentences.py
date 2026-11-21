@@ -1,7 +1,6 @@
 """The custom sentences studio_assistant installs, matched the way Home Assistant 2026.9.1's default agent matches them: its built-in English
 sentences with ours merged in, ours marked as custom, and the strict best match that prefers custom sentences (design doc v2/04 section 3.8)."""
 
-import importlib.util
 from pathlib import Path
 
 import home_assistant_intents
@@ -12,6 +11,7 @@ from hassil.intents import TextSlotList
 from hassil.util import merge_dict
 
 from scripts.deploy_component import CUSTOM_SENTENCES, install_custom_sentences
+from utils.module_utils import module_from_file
 
 SENTENCES_FILE = CUSTOM_SENTENCES / "en" / "studio_assistant.yaml"
 CONST_PATH = Path(__file__).resolve().parent.parent / "custom_components" / "studio_assistant" / "const.py"
@@ -25,10 +25,7 @@ SLOT_LISTS = {
 
 
 def load_const() -> object:
-    spec = importlib.util.spec_from_file_location("studio_assistant_const", CONST_PATH)
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    return module
+    return module_from_file("studio_assistant_const", CONST_PATH)
 
 
 def intents_with_custom_sentences(custom: dict | None) -> Intents:

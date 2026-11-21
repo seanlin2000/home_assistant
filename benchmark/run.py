@@ -31,6 +31,7 @@ from assistant_service.settings import load_harness_config
 from benchmark.mcp_process import McpServerProcess, fixture_selected
 from benchmark.ollama_utils import delete_model, ensure_model_present, unload, warm_up
 from benchmark.records import BenchmarkConfig, Candidate, MemoryFit, Question, QuestionResult, QuestionSet, append_jsonl, load_config, load_questions, read_jsonl
+from benchmark.speaking import VoiceAddress, spoken_transcript
 from ops.searxng_demand import searxng_lease
 from serving.command import llama_server_program
 from serving.settings import load_serving_config, read_api_key
@@ -52,6 +53,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--run", required=True, help="results folder name under benchmark/results, one per pass of the agent: version_1, version_2, ...")
     parser.add_argument("--force", action="store_true", help="re-run questions that already have a result")
     parser.add_argument("--delete-models", action="store_true", help="delete each Ollama model after its run to save disk")
+    parser.add_argument(
+        "--speak",
+        type=VoiceAddress.from_text,
+        metavar="HOST:PORT",
+        help="speak every answer through this Wyoming voice as Home Assistant would, and record when its audio starts and ends (e.g. 127.0.0.1:10210)",
+    )
     return parser.parse_args()
 
 
@@ -141,7 +148,7 @@ async def run_candidate(candidate: Candidate, questions: list[Question], config:
         return
     console.rule(f"{candidate.label}  ({len(pending)} questions)")
     if candidate.provider == "harness":
-        await run_through_harness(candidate, pending, output_path)
+        await run_through_harness(candidate, pending, output_path, args.speak)
         return
     llm = build_llm(candidate, config)
     if llm is None:
@@ -153,13 +160,13 @@ async def run_candidate(candidate: Candidate, questions: list[Question], config:
             await warm_up_llama_server(llm, toolbox)
         for question in pending:
             async with fixture_selected(mcp_url, question.fixture):
-                result = await run_question(question, candidate, llm.model_name, in_process_exchange(llm, toolbox, policy, question.today), memory_fit)
+                result = await run_question(question, candidate, llm.model_name, in_process_exchange(llm, toolbox, policy, question.today, args.speak), memory_fit)
             append_jsonl(output_path, result)
             print_result_line(question, result)
     await release_model(candidate, config, args.delete_models)
 
 
-async def run_through_harness(candidate: Candidate, pending: list[Question], output_path: Path) -> None:
+async def run_through_harness(candidate: Candidate, pending: list[Question], output_path: Path, voice: VoiceAddress | None) -> None:
     """The same questions through the harness's HTTP API, as Home Assistant asks them; each question is its own conversation."""
     client = harness_client(candidate)
     health = await client.health()
@@ -170,7 +177,7 @@ async def run_through_harness(candidate: Candidate, pending: list[Question], out
             console.print(f"  {question.id:<4} [dim]skipped: its fixture pages or recorded scores exist only on the benchmark's own tool server[/dim]")
             continue
         conversation_id = f"benchmark-{candidate.key}-{question.id}-{uuid.uuid4().hex[:8]}"
-        result = await run_question(question, candidate, candidate.model, harness_exchange(client, conversation_id), MemoryFit())
+        result = await run_question(question, candidate, candidate.model, harness_exchange(client, conversation_id, voice), MemoryFit())
         append_jsonl(output_path, result)
         print_result_line(question, result)
 
@@ -266,27 +273,39 @@ async def run_question(question: Question, candidate: Candidate, model_name: str
     return QuestionResult(question_id=question.id, candidate_key=candidate.key, model=model_name, exchanges=transcripts, memory_fit=memory_fit)
 
 
-def in_process_exchange(llm: LLMClient, toolbox: McpToolBox, policy: AgentPolicy, today: date | None) -> ExchangeRunner:
+def in_process_exchange(llm: LLMClient, toolbox: McpToolBox, policy: AgentPolicy, today: date | None, voice: VoiceAddress | None) -> ExchangeRunner:
     async def run_exchange(conversation: list[Message]) -> Transcript:
-        return await transcript_of(agent_loop.run(conversation, llm, toolbox, policy, today=today))
+        return await heard_transcript(agent_loop.run(conversation, llm, toolbox, policy, today=today), voice, time.perf_counter())
 
     return run_exchange
 
 
-def harness_exchange(client: HarnessClient, conversation_id: str) -> ExchangeRunner:
+def harness_exchange(client: HarnessClient, conversation_id: str, voice: VoiceAddress | None) -> ExchangeRunner:
     """The first spoken word is timed here, at the client, so the transcript's figure includes the HTTP hop that M2's exit criterion is about."""
 
     async def run_exchange(conversation: list[Message]) -> Transcript:
-        started = time.perf_counter()
-        first_spoken: float | None = None
-        async for event in client.converse(ConverseRequest(conversation_id=conversation_id, conversation=conversation, source="benchmark")):
-            if first_spoken is None and isinstance(event, (FillerSpoken, AnswerDelta)):
-                first_spoken = time.perf_counter() - started
-            if isinstance(event, Done):
-                return event.transcript.model_copy(update={"time_to_first_spoken_seconds": first_spoken})
-        raise RuntimeError("the harness stream ended without a Done event")
+        clock = FirstSpokenClock(time.perf_counter())
+        events = clock.timed(client.converse(ConverseRequest(conversation_id=conversation_id, conversation=conversation, source="benchmark")))
+        transcript = await heard_transcript(events, voice, clock.started)
+        return transcript.model_copy(update={"time_to_first_spoken_seconds": clock.first_spoken})
 
     return run_exchange
+
+
+class FirstSpokenClock:
+    def __init__(self, started: float) -> None:
+        self.started = started
+        self.first_spoken: float | None = None
+
+    async def timed(self, events: AsyncIterator[AgentEvent]) -> AsyncIterator[AgentEvent]:
+        async for event in events:
+            if self.first_spoken is None and isinstance(event, (FillerSpoken, AnswerDelta)):
+                self.first_spoken = time.perf_counter() - self.started
+            yield event
+
+
+async def heard_transcript(events: AsyncIterator[AgentEvent], voice: VoiceAddress | None, started: float) -> Transcript:
+    return await (spoken_transcript(events, voice, started) if voice else transcript_of(events))
 
 
 async def transcript_of(events: AsyncIterator[AgentEvent]) -> Transcript:
@@ -304,8 +323,15 @@ def print_result_line(question: Question, result: QuestionResult) -> None:
     searched = "search" if result.searched else "no search"
     route = f"route={result.route.route.value}/{result.route.source}" if result.route else "route=off"
     console.print(
-        f"  {question.id:<4} {searched:<9} {route:<24} calls={result.tool_call_count} ttft={final.time_to_first_token_seconds or 0:.1f}s total={final.total_seconds:.1f}s words={len(final.final_answer.split())}"
+        f"  {question.id:<4} {searched:<9} {route:<24} calls={result.tool_call_count} ttft={final.time_to_first_token_seconds or 0:.1f}s total={final.total_seconds:.1f}s words={len(final.final_answer.split())}{heard(final)}"
     )
+
+
+def heard(transcript: Transcript) -> str:
+    if transcript.time_to_first_audio_seconds is None:
+        return ""
+    answer_audio = transcript.time_to_first_answer_audio_seconds
+    return f" audio={transcript.time_to_first_audio_seconds:.1f}s answer_audio={answer_audio or 0:.1f}s played={transcript.spoken_audio_seconds or 0:.1f}s"
 
 
 if __name__ == "__main__":

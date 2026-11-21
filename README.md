@@ -103,6 +103,7 @@ scripts/mini.sh logs; scripts/mini.sh report --days 7   # mirror the mini's logs
 ```
 scripts/searxng.sh up                                  # local search aggregator (Docker)
 uv run benchmark-run --run version_5 --candidate qwen3.5-9b   # one folder per pass of the agent; omit --candidate for every model
+uv run benchmark-run --run voice_1 --speak 127.0.0.1:10210  # also speak every answer through the voice, recording when its audio starts and ends
 uv run benchmark-judge version_5 --export              # write judge cases for the Opus subagent; --import reads its verdicts back
 uv run benchmark-report version_5                      # writes report.md and the review sheet
 uv run benchmark-report version_5 --compare version_4  # with a table against the previous pass
