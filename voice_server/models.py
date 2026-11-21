@@ -1,4 +1,5 @@
-"""OmniVoice on mlx-audio, loaded once at its pinned revision, with the JARVIS voice encoded once at start-up. Load and call it on one thread only
+"""OmniVoice on mlx-audio, loaded once at its pinned revision, with the JARVIS voice's tokens encoded at start-up, or read back from the start cache
+(voice_server/start_cache.py) when an earlier start encoded the same clip with the same model. Load and call it on one thread only
 (speech_server.worker.ModelThread): MLX does not allow two calls at once, and keeps state per thread."""
 
 import gc
@@ -14,6 +15,7 @@ from mlx_audio.tts.utils import load_model
 
 from speech_server.wiring import RESIDENCY_REFRESH_VARIABLE, wiring_summary
 from voice_server.settings import OmniVoiceSettings
+from voice_server.start_cache import StartCache
 
 BYTES_PER_MIB = 2**20
 BYTES_PER_GIB = 2**30
@@ -36,17 +38,22 @@ def downloaded_model(settings: OmniVoiceSettings) -> Path:
 
 
 class OmniVoice:
-    def __init__(self, settings: OmniVoiceSettings) -> None:
+    def __init__(self, settings: OmniVoiceSettings, cache: StartCache) -> None:
         self._settings = settings
         pin_memory(settings)
         self._model = load_model(downloaded_model(settings))
-        self._reference_tokens = create_voice_clone_prompt(
-            str(settings.reference_clip_path),
-            tokenizer=self._model.audio_tokenizer,
-            max_duration_s=settings.reference_max_seconds,
-        )
+        self._reference_tokens = self._reference_tokens_from(cache)
         free_encoder_parts(self._model.audio_tokenizer)
-        _LOGGER.info("model loaded and voice encoded: %.2f GiB of MLX memory in use", mx.get_active_memory() / BYTES_PER_GIB)
+        _LOGGER.info("model loaded and voice ready: %.2f GiB of MLX memory in use", mx.get_active_memory() / BYTES_PER_GIB)
+
+    def _reference_tokens_from(self, cache: StartCache) -> mx.array:
+        saved = cache.saved_reference_tokens()
+        if saved is not None:
+            _LOGGER.info("voice tokens read from the start cache: %s", cache.reference_tokens_path)
+            return mx.array(saved)
+        tokens = create_voice_clone_prompt(str(self._settings.reference_clip_path), tokenizer=self._model.audio_tokenizer, max_duration_s=self._settings.reference_max_seconds)
+        cache.save_reference_tokens(np.array(tokens))
+        return tokens
 
     @property
     def sample_rate(self) -> int:
