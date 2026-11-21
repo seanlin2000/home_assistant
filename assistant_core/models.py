@@ -279,6 +279,12 @@ class Transcript(BaseModel):
     total_seconds: float = 0.0
     time_to_first_token_seconds: float | None = None
     time_to_first_spoken_seconds: float | None = None
+    # The four below are set only by the benchmark's --speak (benchmark/speaking.py): seconds from sending the exchange to the voice's first audio,
+    # to the first audio of the answer itself (after the filler), and to its last audio; and how long the reply plays.
+    time_to_first_audio_seconds: float | None = None
+    time_to_first_answer_audio_seconds: float | None = None
+    audio_done_seconds: float | None = None
+    spoken_audio_seconds: float | None = None
     route: RouteDecision | None = None
     untrusted: bool = False  # a tool whose text is written by strangers ran in this exchange (design doc v2/12 section 3.2)
     error: str | None = None

@@ -88,7 +88,7 @@ async def healthy_harness_client(candidate: Candidate) -> HarnessClient:
 async def ask_question(client: HarnessClient, candidate: Candidate, trivia_set: TriviaSet, question: TriviaQuestion) -> TriviaResult:
     """One conversation per question, so no answer leans on an earlier one. A failed question is recorded with its error and asked again on the next run."""
     conversation_id = f"triviabench-{candidate.key}-{question.id}-{uuid.uuid4().hex[:8]}"
-    run_exchange = harness_exchange(client, conversation_id)
+    run_exchange = harness_exchange(client, conversation_id, voice=None)
     try:
         transcript = await run_exchange([Message(role=Role.USER, content=trivia_set.spoken_question(question))])
     except Exception as error:

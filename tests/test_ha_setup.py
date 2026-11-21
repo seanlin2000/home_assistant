@@ -1,15 +1,14 @@
 """The setup script is loaded by file path because scripts/ is not a package."""
 
 import argparse
-import importlib.util
 from pathlib import Path
 
 import pytest
 
+from utils.module_utils import module_from_file
+
 SCRIPT_PATH = Path("scripts/ha_setup.py")
-spec = importlib.util.spec_from_file_location("ha_setup", SCRIPT_PATH)
-ha_setup = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(ha_setup)
+ha_setup = module_from_file("ha_setup", SCRIPT_PATH)
 
 
 def parsed(monkeypatch: pytest.MonkeyPatch, *flags: str) -> argparse.Namespace:

@@ -1,6 +1,5 @@
 """The Home Assistant adapter is loaded by file path because the component package itself imports Home Assistant, which is not installed in this venv."""
 
-import importlib.util
 from collections.abc import AsyncIterator
 from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
@@ -13,11 +12,10 @@ from assistant_core import agent_loop
 from assistant_core.models import AgentEvent, AgentPolicy, AnswerDelta, Done, FillerSpoken, Message, Role, ToolCall, ToolStarted, Transcript
 from assistant_core.prompts import ACKNOWLEDGEMENT_REPLY, REPEAT_REQUEST_REPLY, SILENCE_MARKER
 from tests.fakes import FakeToolBox, ScriptedLLM, text_reply, tool_replies_past_the_cap
+from utils.module_utils import module_from_file
 
 ADAPTER_PATH = Path("custom_components/studio_assistant/adapter.py")
-spec = importlib.util.spec_from_file_location("studio_assistant_adapter", ADAPTER_PATH)
-adapter = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(adapter)
+adapter = module_from_file("studio_assistant_adapter", ADAPTER_PATH)
 CONVERSATION_START = datetime(2026, 10, 21, 1, 0, tzinfo=UTC)
 
 
