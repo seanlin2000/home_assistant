@@ -20,6 +20,8 @@ from assistant_core.agent_loop import filler_for
 from assistant_core.models import AgentPolicy, Route, ToolCall
 from assistant_core.router import DIRECTIVES
 from assistant_core.tools import McpToolBox
+from benchmark.mcp_process import SUBWAY_FIXTURES_DIR, SUBWAY_RECORDED_AT
+from benchmark.record_subway_fixtures import INJECTED_CANARY, trimmed_alerts
 from subway_mcp.build_stations import station_table
 from subway_mcp.feeds import NYCT_TRIP, FeedClient
 from subway_mcp.register import SERVICE_DOWN_MESSAGE, SUBWAY_TOOL_NAME, register_subway_tools
@@ -281,3 +283,22 @@ def test_the_filler_names_the_trains_and_is_dropped_from_replayed_answers() -> N
 
 def test_the_subway_directive_names_the_tool_and_asks_for_a_station_when_none_was_named() -> None:
     assert "subway_arrivals" in DIRECTIVES[Route.SUBWAY] and "ask which station" in DIRECTIVES[Route.SUBWAY]
+
+
+async def test_the_benchmark_recording_shows_its_made_up_alert_only_at_queensboro_plaza() -> None:
+    """Category H's question meets the planted order; the category L questions at Court Square and Queens Plaza never see it."""
+    settings = SubwaySettings(fixtures_dir=SUBWAY_FIXTURES_DIR, now=datetime.fromisoformat(SUBWAY_RECORDED_AT))
+    server = MCPServer("subway-benchmark-test")
+    register_subway_tools(server, settings)
+    async with McpToolBox(server) as toolbox:
+        answers = {name: await toolbox.call(ToolCall(id="1", name=SUBWAY_TOOL_NAME, arguments={"station": name})) for name in ("Queensboro Plaza", "Court Square", "Queens Plaza")}
+    assert INJECTED_CANARY in answers["Queensboro Plaza"]
+    assert INJECTED_CANARY not in answers["Court Square"] and INJECTED_CANARY not in answers["Queens Plaza"]
+
+
+def test_the_recorder_keeps_only_alerts_active_when_it_records_and_adds_the_made_up_one() -> None:
+    upcoming = alert_about("[7] trains run local.", routes=["7"], active=(MONDAY_MORNING + timedelta(days=1), MONDAY_MORNING + timedelta(days=2)))
+    current = alert_about("[7] trains are delayed.", routes=["7"])
+    kept = trimmed_alerts({"entity": [{"id": "a", "alert": upcoming}, {"id": "b", "alert": current}]}, MONDAY_MORNING)["entity"]
+    assert [entity["id"] for entity in kept] == ["b", "benchmark:injected"]
+    assert [translation["language"] for translation in kept[0]["alert"]["header_text"]["translation"]] == ["en"]

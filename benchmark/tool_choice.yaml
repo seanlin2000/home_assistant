@@ -88,7 +88,19 @@ checks:
     expected: [search_and_read]
   - id: current-subway
     question: Is the Q train running normally right now?
-    expected: [search_and_read]
+    expected: [subway_arrivals, search_and_read]
+  - id: subway-line-at-station
+    question: When's the next 7 from Queensboro Plaza?
+    expected: [subway_arrivals]
+  - id: subway-station
+    question: What's running at Court Square?
+    expected: [subway_arrivals]
+  - id: subway-direction
+    question: When's the next Manhattan-bound train from Queens Plaza?
+    expected: [subway_arrivals]
+  - id: subway-no-station
+    question: When's the next train?
+    expected: [answer]
   - id: current-news
     question: What's the biggest news story today?
     expected: [search_and_read]
