@@ -1,0 +1,10 @@
+{
+  "model": "omnivoice",
+  "voice": "jarvis",
+  "revision": 0,
+  "entries": [
+    {"written": "Jokic", "say_as": "Yo-Kich"},
+    {"written": "Nvidia", "say_as": "N-Vidia"},
+    {"written": "Xi Jinping", "say_as": "She Jin Ping"}
+  ]
+}

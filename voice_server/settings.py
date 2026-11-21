@@ -24,6 +24,7 @@ class OmniVoiceSettings(StrictModel):
     reference_max_seconds: float = Field(gt=0)
     steps: int = Field(ge=1)
     language: str
+    loudness_dbfs: float = Field(lt=0)
     mlx_cache_limit_mib: int = Field(ge=0)
     mlx_wired_limit_mib: int = Field(ge=0)
 
