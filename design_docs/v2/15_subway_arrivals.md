@@ -1,6 +1,6 @@
 # 15. Subway arrivals
 
-Status: designed
+Status: building
 
 ## 1. Purpose
 
@@ -90,8 +90,8 @@ The table comes from New York State's open-data copy of MTA's station list, the 
 
 **Matching a spoken name:**
 
-1. Spoken shortcuts first: "Court Square", "Queensboro" and "Queensboro Plaza", "Queens Plaza".
-2. Otherwise every station name, matched loosely (`utils/title_matching_utils.TitleMatcher`), so small differences in wording still match.
+1. The table's abbreviations are spelled out first, so "Court Sq" is matched as "court square", "86 St" as "86 street", and a leading "St" as "saint" ("St George"). An ordinal is matched as its number, so "86th Street" finds "86 St".
+2. Every station name is then matched loosely (`utils/title_matching_utils.TitleMatcher`), so small differences in wording still match. Your three stations need no shortcuts: "Court Square", "Queensboro", and "Queens Plaza" each find exactly one station, and Queens Plaza never matches Queensboro Plaza.
 3. A name several stations share, such as "86 St", returns a sentence listing each one's lines and borough, for the model to ask which. A `line` narrows the match, so "86 St" with `line="Q"` is the Second Avenue station.
 
 Station names never leave the house. They are matched against the local table, and the feed addresses are fixed.
@@ -107,33 +107,36 @@ Each trip in a feed lists its line, its direction (the stop ID's last letter, `N
 5. **Explain a missing line.** A line in the station's `daytime_routes` with no trips in the window gets one sentence: "No F trains are coming. The F stops here in weekday daytime service." The table never adds a train.
 6. **Say when a train is only scheduled.** A trip whose `is_assigned` is false has not been dispatched, so its time is the timetable's, not a tracked train's. Such trips are kept. A group whose trains are all unassigned is marked "scheduled".
 
-Example result, from the live feed on Saturday 2026-11-21:
+Example result, from the feeds recorded at 5:09 PM on Saturday 2026-11-21 (`tests/fixtures/mta_2026-11-21/`):
 
 ```
-Queens Plaza, as of 4:33 PM
-E toward Jamaica Center: 2, 12, 23 min
-E toward World Trade Center (Manhattan): 8, 19, 31 min
-R toward Forest Hills-71 Av: 2, 16, 23 min
-R toward Bay Ridge-95 St (Manhattan): 16, 29, 41 min
+Queens Plaza, as of 5:09 PM
+E toward Jamaica Center-Parsons/Archer: now, 14, 21 min
+E toward World Trade Center (Manhattan): 3, 19, 31 min
+R toward Forest Hills-71 Av: 1, 19, 35 min
+R toward Bay Ridge-95 St (Manhattan): now, 4, 16 min
 No F trains are coming. The F stops here in weekday daytime service.
-Alert: F trains are running with delays in both directions while we conduct planned work in Manhattan.
+Alert: A, C and F trains are running with delays in both directions while we conduct planned work in Manhattan.
+Alert: Downtown R trains are running with delays after we were unable to move a train at Jackson Heights-Roosevelt Av.
 ```
 
 **The station name always comes first**, and the tool description tells the model to say it. Queens Plaza and Queensboro Plaza are a block apart, and speech to text can swap them.
 
 ### 3.4 The direction filter
 
-`direction` holds what you said: "Manhattan", "Flushing", "Brooklyn", "Times Square", "uptown". It is matched against each live trip's own remaining stops, so reroutes and weekend patterns are followed. The first rule that matches wins:
+`direction` holds what you said: "Manhattan", "Flushing", "Brooklyn", "Times Square", "uptown". It is matched against each live trip's own remaining stops, so reroutes and weekend patterns are followed. Words such as "toward", "bound", and "the" are dropped first. The rules are tried in this order, and the first that recognizes the words decides:
 
 | # | You say | Trains kept |
 |---|---|---|
-| 1 | A station: "Times Square", "Flushing" | Trips whose remaining stops include it, matched with `TitleMatcher`. "Next train to Times Square from Queensboro" keeps both the 7 and the N toward Manhattan. |
-| 2 | Another borough: "Manhattan", "Brooklyn", "the Bronx" | Trips whose remaining stops reach it, using each stop's `borough`. A Coney Island-bound N from Queensboro Plaza counts as Manhattan-bound, because it crosses Manhattan first. |
-| 2 | The station's own borough: "Queens" at Court Square | Trips that end their run in it: the Flushing-bound 7, not the Manhattan-bound one, which leaves Queens one stop later. |
+| 1 | Another borough: "Manhattan", "Brooklyn", "the Bronx" | Trips whose remaining stops reach it, using each stop's `borough`. A Coney Island-bound N from Queensboro Plaza counts as Manhattan-bound, because it crosses Manhattan first. |
+| 1 | The station's own borough: "Queens" at Court Square | Trips that end their run in it: the Flushing-bound 7, not the Manhattan-bound one, which leaves Queens one stop later. |
+| 2 | "uptown", "northbound", "downtown", "southbound" | The feed's `N` or `S` direction. |
 | 3 | The station's MTA direction label: "Astoria" | That direction. |
-| 4 | "uptown", "northbound", "downtown", "southbound" | The feed's `N` or `S` direction. |
+| 4 | A station: "Times Square", "Flushing" | Trips whose remaining stops include it, matched with `TitleMatcher`. "Next train to Times Square from Queensboro" keeps both the 7 and the N toward Manhattan. |
 
-**When nothing matches,** the tool returns both directions after the line "No trains toward the Bronx in the next 40 minutes; trains here go toward Flushing-Main St, 34 St-Hudson Yards, and Church Av." The model can then say what does run. When the words could mean two things, nothing is dropped.
+**Fixed words before station names.** A borough or a compass word is a closed set, so it is tried before the station names. Otherwise "Queens" would match the station Queens Plaza and keep only the trains stopping there next.
+
+**When nothing matches,** whether no rule recognizes the words or no train goes that way, the tool returns both directions after the line "No trains toward the Bronx in the next 40 minutes; trains here go toward Flushing-Main St, 34 St-Hudson Yards, and Church Av." The model can then say what does run.
 
 ### 3.5 Alerts
 
@@ -142,7 +145,7 @@ The alerts feed holds every current and planned service change, each with a type
 - names one of the station's stop IDs, or
 - names a line at the station and no stops at all, as line-wide delays do.
 
-An alert about skipped stops elsewhere on a line names those stops, so it is left out. Only the alert's header is used, never its long description. `[F]` becomes "F", the header is clipped to 40 words (`utils/text_utils.clip_to_words`), and at most three alerts are shown.
+An alert about skipped stops elsewhere on a line names those stops, so it is left out. Only the alert's header is used, never its long description. `[A][C][F]` is said "A, C and F", the header is clipped to 40 words (`utils/text_utils.clip_to_words`), and at most three alerts are shown.
 
 Example: on 2026-11-21 the G at Court Square carried "G trains are running with delays in both directions while we address a switch problem at Court Sq."
 
@@ -201,7 +204,7 @@ The answers to doc 12 §3.12:
 
 | | Tokens |
 |---|---|
-| The tool's definition, added to the fixed prompt | about 250, measured when it is built |
+| The tool's definition, added to the fixed prompt | about 310 (1,235 characters of name, description, and schema) |
 | One result | about 100 to 200: a busy station with alerts at the upper end |
 
 ## 4. Packages and what they do for the business logic

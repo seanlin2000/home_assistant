@@ -1,0 +1,7458 @@
+[
+ {
+  "complex_id": "293",
+  "stops": [
+   {
+    "stop_id": "101",
+    "name": "Van Cortlandt Park-242 St",
+    "daytime_lines": [
+     "1"
+    ],
+    "north_label": "Last Stop",
+    "south_label": "Manhattan",
+    "borough": "Bronx"
+   }
+  ]
+ },
+ {
+  "complex_id": "294",
+  "stops": [
+   {
+    "stop_id": "103",
+    "name": "238 St",
+    "daytime_lines": [
+     "1"
+    ],
+    "north_label": "Van Cortlandt",
+    "south_label": "Manhattan",
+    "borough": "Bronx"
+   }
+  ]
+ },
+ {
+  "complex_id": "295",
+  "stops": [
+   {
+    "stop_id": "104",
+    "name": "231 St",
+    "daytime_lines": [
+     "1"
+    ],
+    "north_label": "Van Cortlandt",
+    "south_label": "Manhattan",
+    "borough": "Bronx"
+   }
+  ]
+ },
+ {
+  "complex_id": "296",
+  "stops": [
+   {
+    "stop_id": "106",
+    "name": "Marble Hill-225 St",
+    "daytime_lines": [
+     "1"
+    ],
+    "north_label": "The Bronx",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "297",
+  "stops": [
+   {
+    "stop_id": "107",
+    "name": "215 St",
+    "daytime_lines": [
+     "1"
+    ],
+    "north_label": "The Bronx",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "298",
+  "stops": [
+   {
+    "stop_id": "108",
+    "name": "207 St",
+    "daytime_lines": [
+     "1"
+    ],
+    "north_label": "The Bronx",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "299",
+  "stops": [
+   {
+    "stop_id": "109",
+    "name": "Dyckman St",
+    "daytime_lines": [
+     "1"
+    ],
+    "north_label": "The Bronx",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "300",
+  "stops": [
+   {
+    "stop_id": "110",
+    "name": "191 St",
+    "daytime_lines": [
+     "1"
+    ],
+    "north_label": "The Bronx",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "301",
+  "stops": [
+   {
+    "stop_id": "111",
+    "name": "181 St",
+    "daytime_lines": [
+     "1"
+    ],
+    "north_label": "The Bronx",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "303",
+  "stops": [
+   {
+    "stop_id": "113",
+    "name": "157 St",
+    "daytime_lines": [
+     "1"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "304",
+  "stops": [
+   {
+    "stop_id": "114",
+    "name": "145 St",
+    "daytime_lines": [
+     "1"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "305",
+  "stops": [
+   {
+    "stop_id": "115",
+    "name": "137 St-City College",
+    "daytime_lines": [
+     "1"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "306",
+  "stops": [
+   {
+    "stop_id": "116",
+    "name": "125 St",
+    "daytime_lines": [
+     "1"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "307",
+  "stops": [
+   {
+    "stop_id": "117",
+    "name": "116 St-Columbia University",
+    "daytime_lines": [
+     "1"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "308",
+  "stops": [
+   {
+    "stop_id": "118",
+    "name": "Cathedral Pkwy (110 St)",
+    "daytime_lines": [
+     "1"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "309",
+  "stops": [
+   {
+    "stop_id": "119",
+    "name": "103 St",
+    "daytime_lines": [
+     "1"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "310",
+  "stops": [
+   {
+    "stop_id": "120",
+    "name": "96 St",
+    "daytime_lines": [
+     "1",
+     "2",
+     "3"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "311",
+  "stops": [
+   {
+    "stop_id": "121",
+    "name": "86 St",
+    "daytime_lines": [
+     "1"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "312",
+  "stops": [
+   {
+    "stop_id": "122",
+    "name": "79 St",
+    "daytime_lines": [
+     "1"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "313",
+  "stops": [
+   {
+    "stop_id": "123",
+    "name": "72 St",
+    "daytime_lines": [
+     "1",
+     "2",
+     "3"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "314",
+  "stops": [
+   {
+    "stop_id": "124",
+    "name": "66 St-Lincoln Center",
+    "daytime_lines": [
+     "1"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "316",
+  "stops": [
+   {
+    "stop_id": "126",
+    "name": "50 St",
+    "daytime_lines": [
+     "1"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "318",
+  "stops": [
+   {
+    "stop_id": "128",
+    "name": "34 St-Penn Station",
+    "daytime_lines": [
+     "1",
+     "2",
+     "3"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "319",
+  "stops": [
+   {
+    "stop_id": "129",
+    "name": "28 St",
+    "daytime_lines": [
+     "1"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "320",
+  "stops": [
+   {
+    "stop_id": "130",
+    "name": "23 St",
+    "daytime_lines": [
+     "1"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "321",
+  "stops": [
+   {
+    "stop_id": "131",
+    "name": "18 St",
+    "daytime_lines": [
+     "1"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "323",
+  "stops": [
+   {
+    "stop_id": "133",
+    "name": "Christopher St-Stonewall",
+    "daytime_lines": [
+     "1"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "324",
+  "stops": [
+   {
+    "stop_id": "134",
+    "name": "Houston St",
+    "daytime_lines": [
+     "1"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "325",
+  "stops": [
+   {
+    "stop_id": "135",
+    "name": "Canal St",
+    "daytime_lines": [
+     "1"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "326",
+  "stops": [
+   {
+    "stop_id": "136",
+    "name": "Franklin St",
+    "daytime_lines": [
+     "1"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "327",
+  "stops": [
+   {
+    "stop_id": "137",
+    "name": "Chambers St",
+    "daytime_lines": [
+     "1",
+     "2",
+     "3"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "328",
+  "stops": [
+   {
+    "stop_id": "138",
+    "name": "WTC Cortlandt",
+    "daytime_lines": [
+     "1"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "329",
+  "stops": [
+   {
+    "stop_id": "139",
+    "name": "Rector St",
+    "daytime_lines": [
+     "1"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "416",
+  "stops": [
+   {
+    "stop_id": "201",
+    "name": "Wakefield-241 St",
+    "daytime_lines": [
+     "2"
+    ],
+    "north_label": "Last Stop",
+    "south_label": "Manhattan",
+    "borough": "Bronx"
+   }
+  ]
+ },
+ {
+  "complex_id": "417",
+  "stops": [
+   {
+    "stop_id": "204",
+    "name": "Nereid Av",
+    "daytime_lines": [
+     "2",
+     "5"
+    ],
+    "north_label": "Northbound",
+    "south_label": "Manhattan",
+    "borough": "Bronx"
+   }
+  ]
+ },
+ {
+  "complex_id": "418",
+  "stops": [
+   {
+    "stop_id": "205",
+    "name": "233 St",
+    "daytime_lines": [
+     "2",
+     "5"
+    ],
+    "north_label": "Northbound",
+    "south_label": "Manhattan",
+    "borough": "Bronx"
+   }
+  ]
+ },
+ {
+  "complex_id": "419",
+  "stops": [
+   {
+    "stop_id": "206",
+    "name": "225 St",
+    "daytime_lines": [
+     "2",
+     "5"
+    ],
+    "north_label": "Northbound",
+    "south_label": "Manhattan",
+    "borough": "Bronx"
+   }
+  ]
+ },
+ {
+  "complex_id": "420",
+  "stops": [
+   {
+    "stop_id": "207",
+    "name": "219 St",
+    "daytime_lines": [
+     "2",
+     "5"
+    ],
+    "north_label": "Northbound",
+    "south_label": "Manhattan",
+    "borough": "Bronx"
+   }
+  ]
+ },
+ {
+  "complex_id": "421",
+  "stops": [
+   {
+    "stop_id": "208",
+    "name": "Gun Hill Rd",
+    "daytime_lines": [
+     "2",
+     "5"
+    ],
+    "north_label": "Northbound",
+    "south_label": "Manhattan",
+    "borough": "Bronx"
+   }
+  ]
+ },
+ {
+  "complex_id": "422",
+  "stops": [
+   {
+    "stop_id": "209",
+    "name": "Burke Av",
+    "daytime_lines": [
+     "2",
+     "5"
+    ],
+    "north_label": "Northbound",
+    "south_label": "Manhattan",
+    "borough": "Bronx"
+   }
+  ]
+ },
+ {
+  "complex_id": "423",
+  "stops": [
+   {
+    "stop_id": "210",
+    "name": "Allerton Av",
+    "daytime_lines": [
+     "2",
+     "5"
+    ],
+    "north_label": "Northbound",
+    "south_label": "Manhattan",
+    "borough": "Bronx"
+   }
+  ]
+ },
+ {
+  "complex_id": "424",
+  "stops": [
+   {
+    "stop_id": "211",
+    "name": "Pelham Pkwy",
+    "daytime_lines": [
+     "2",
+     "5"
+    ],
+    "north_label": "Northbound",
+    "south_label": "Manhattan",
+    "borough": "Bronx"
+   }
+  ]
+ },
+ {
+  "complex_id": "425",
+  "stops": [
+   {
+    "stop_id": "212",
+    "name": "Bronx Park East",
+    "daytime_lines": [
+     "2",
+     "5"
+    ],
+    "north_label": "Northbound",
+    "south_label": "Manhattan",
+    "borough": "Bronx"
+   }
+  ]
+ },
+ {
+  "complex_id": "426",
+  "stops": [
+   {
+    "stop_id": "213",
+    "name": "E 180 St",
+    "daytime_lines": [
+     "2",
+     "5"
+    ],
+    "north_label": "Northbound",
+    "south_label": "Manhattan",
+    "borough": "Bronx"
+   }
+  ]
+ },
+ {
+  "complex_id": "427",
+  "stops": [
+   {
+    "stop_id": "214",
+    "name": "West Farms Sq-E Tremont Av",
+    "daytime_lines": [
+     "2",
+     "5"
+    ],
+    "north_label": "Northbound",
+    "south_label": "Manhattan",
+    "borough": "Bronx"
+   }
+  ]
+ },
+ {
+  "complex_id": "428",
+  "stops": [
+   {
+    "stop_id": "215",
+    "name": "174 St",
+    "daytime_lines": [
+     "2",
+     "5"
+    ],
+    "north_label": "Northbound",
+    "south_label": "Manhattan",
+    "borough": "Bronx"
+   }
+  ]
+ },
+ {
+  "complex_id": "429",
+  "stops": [
+   {
+    "stop_id": "216",
+    "name": "Freeman St",
+    "daytime_lines": [
+     "2",
+     "5"
+    ],
+    "north_label": "Northbound",
+    "south_label": "Manhattan",
+    "borough": "Bronx"
+   }
+  ]
+ },
+ {
+  "complex_id": "430",
+  "stops": [
+   {
+    "stop_id": "217",
+    "name": "Simpson St",
+    "daytime_lines": [
+     "2",
+     "5"
+    ],
+    "north_label": "Northbound",
+    "south_label": "Manhattan",
+    "borough": "Bronx"
+   }
+  ]
+ },
+ {
+  "complex_id": "431",
+  "stops": [
+   {
+    "stop_id": "218",
+    "name": "Intervale Av",
+    "daytime_lines": [
+     "2",
+     "5"
+    ],
+    "north_label": "Northbound",
+    "south_label": "Manhattan",
+    "borough": "Bronx"
+   }
+  ]
+ },
+ {
+  "complex_id": "432",
+  "stops": [
+   {
+    "stop_id": "219",
+    "name": "Prospect Av",
+    "daytime_lines": [
+     "2",
+     "5"
+    ],
+    "north_label": "Northbound",
+    "south_label": "Manhattan",
+    "borough": "Bronx"
+   }
+  ]
+ },
+ {
+  "complex_id": "433",
+  "stops": [
+   {
+    "stop_id": "220",
+    "name": "Jackson Av",
+    "daytime_lines": [
+     "2",
+     "5"
+    ],
+    "north_label": "Northbound",
+    "south_label": "Manhattan",
+    "borough": "Bronx"
+   }
+  ]
+ },
+ {
+  "complex_id": "434",
+  "stops": [
+   {
+    "stop_id": "221",
+    "name": "3 Av-149 St",
+    "daytime_lines": [
+     "2",
+     "5"
+    ],
+    "north_label": "Northbound",
+    "south_label": "Manhattan",
+    "borough": "Bronx"
+   }
+  ]
+ },
+ {
+  "complex_id": "438",
+  "stops": [
+   {
+    "stop_id": "224",
+    "name": "135 St",
+    "daytime_lines": [
+     "2",
+     "3"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "439",
+  "stops": [
+   {
+    "stop_id": "225",
+    "name": "125 St",
+    "daytime_lines": [
+     "2",
+     "3"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "440",
+  "stops": [
+   {
+    "stop_id": "226",
+    "name": "116 St",
+    "daytime_lines": [
+     "2",
+     "3"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "441",
+  "stops": [
+   {
+    "stop_id": "227",
+    "name": "110 St-Malcolm X Plaza",
+    "daytime_lines": [
+     "2",
+     "3"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "333",
+  "stops": [
+   {
+    "stop_id": "230",
+    "name": "Wall St",
+    "daytime_lines": [
+     "2",
+     "3"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Brooklyn",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "334",
+  "stops": [
+   {
+    "stop_id": "231",
+    "name": "Clark St",
+    "daytime_lines": [
+     "2",
+     "3"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Outbound",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "336",
+  "stops": [
+   {
+    "stop_id": "233",
+    "name": "Hoyt St",
+    "daytime_lines": [
+     "2",
+     "3"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Outbound",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "337",
+  "stops": [
+   {
+    "stop_id": "234",
+    "name": "Nevins St",
+    "daytime_lines": [
+     "2",
+     "3",
+     "4",
+     "5"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Outbound",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "339",
+  "stops": [
+   {
+    "stop_id": "236",
+    "name": "Bergen St",
+    "daytime_lines": [
+     "2",
+     "3"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Outbound",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "340",
+  "stops": [
+   {
+    "stop_id": "237",
+    "name": "Grand Army Plaza",
+    "daytime_lines": [
+     "2",
+     "3"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Outbound",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "341",
+  "stops": [
+   {
+    "stop_id": "238",
+    "name": "Eastern Pkwy-Brooklyn Museum",
+    "daytime_lines": [
+     "2",
+     "3"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Outbound",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "353",
+  "stops": [
+   {
+    "stop_id": "241",
+    "name": "President St-Medgar Evers College",
+    "daytime_lines": [
+     "2",
+     "5"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Flatbush",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "354",
+  "stops": [
+   {
+    "stop_id": "242",
+    "name": "Sterling St",
+    "daytime_lines": [
+     "2",
+     "5"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Flatbush",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "355",
+  "stops": [
+   {
+    "stop_id": "243",
+    "name": "Winthrop St",
+    "daytime_lines": [
+     "2",
+     "5"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Flatbush",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "356",
+  "stops": [
+   {
+    "stop_id": "244",
+    "name": "Church Av",
+    "daytime_lines": [
+     "2",
+     "5"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Flatbush",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "357",
+  "stops": [
+   {
+    "stop_id": "245",
+    "name": "Beverly Rd",
+    "daytime_lines": [
+     "2",
+     "5"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Flatbush",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "358",
+  "stops": [
+   {
+    "stop_id": "246",
+    "name": "Newkirk Av-Little Haiti",
+    "daytime_lines": [
+     "2",
+     "5"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Flatbush",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "359",
+  "stops": [
+   {
+    "stop_id": "247",
+    "name": "Flatbush Av-Brooklyn College",
+    "daytime_lines": [
+     "2",
+     "5"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Last Stop",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "343",
+  "stops": [
+   {
+    "stop_id": "248",
+    "name": "Nostrand Av",
+    "daytime_lines": [
+     "3"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Outbound",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "344",
+  "stops": [
+   {
+    "stop_id": "249",
+    "name": "Kingston Av",
+    "daytime_lines": [
+     "3"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Outbound",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "345",
+  "stops": [
+   {
+    "stop_id": "250",
+    "name": "Crown Hts-Utica Av",
+    "daytime_lines": [
+     "3",
+     "4"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Outbound",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "346",
+  "stops": [
+   {
+    "stop_id": "251",
+    "name": "Sutter Av-Rutland Rd",
+    "daytime_lines": [
+     "3"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "New Lots",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "347",
+  "stops": [
+   {
+    "stop_id": "252",
+    "name": "Saratoga Av",
+    "daytime_lines": [
+     "3"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "New Lots",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "348",
+  "stops": [
+   {
+    "stop_id": "253",
+    "name": "Rockaway Av",
+    "daytime_lines": [
+     "3"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "New Lots",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "349",
+  "stops": [
+   {
+    "stop_id": "254",
+    "name": "Junius St",
+    "daytime_lines": [
+     "3"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "New Lots",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "350",
+  "stops": [
+   {
+    "stop_id": "255",
+    "name": "Pennsylvania Av",
+    "daytime_lines": [
+     "3"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "New Lots",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "351",
+  "stops": [
+   {
+    "stop_id": "256",
+    "name": "Van Siclen Av",
+    "daytime_lines": [
+     "3"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "New Lots",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "352",
+  "stops": [
+   {
+    "stop_id": "257",
+    "name": "New Lots Av",
+    "daytime_lines": [
+     "3"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Last Stop",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "436",
+  "stops": [
+   {
+    "stop_id": "301",
+    "name": "Harlem-148 St",
+    "daytime_lines": [
+     "3"
+    ],
+    "north_label": "Last Stop",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "437",
+  "stops": [
+   {
+    "stop_id": "302",
+    "name": "145 St",
+    "daytime_lines": [
+     "3"
+    ],
+    "north_label": "Harlem",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "378",
+  "stops": [
+   {
+    "stop_id": "401",
+    "name": "Woodlawn",
+    "daytime_lines": [
+     "4"
+    ],
+    "north_label": "Last Stop",
+    "south_label": "Manhattan",
+    "borough": "Bronx"
+   }
+  ]
+ },
+ {
+  "complex_id": "379",
+  "stops": [
+   {
+    "stop_id": "402",
+    "name": "Mosholu Pkwy",
+    "daytime_lines": [
+     "4"
+    ],
+    "north_label": "Woodlawn",
+    "south_label": "Manhattan",
+    "borough": "Bronx"
+   }
+  ]
+ },
+ {
+  "complex_id": "380",
+  "stops": [
+   {
+    "stop_id": "405",
+    "name": "Bedford Park Blvd-Lehman College",
+    "daytime_lines": [
+     "4"
+    ],
+    "north_label": "Northbound",
+    "south_label": "Manhattan",
+    "borough": "Bronx"
+   }
+  ]
+ },
+ {
+  "complex_id": "381",
+  "stops": [
+   {
+    "stop_id": "406",
+    "name": "Kingsbridge Rd",
+    "daytime_lines": [
+     "4"
+    ],
+    "north_label": "Northbound",
+    "south_label": "Manhattan",
+    "borough": "Bronx"
+   }
+  ]
+ },
+ {
+  "complex_id": "382",
+  "stops": [
+   {
+    "stop_id": "407",
+    "name": "Fordham Rd",
+    "daytime_lines": [
+     "4"
+    ],
+    "north_label": "Northbound",
+    "south_label": "Manhattan",
+    "borough": "Bronx"
+   }
+  ]
+ },
+ {
+  "complex_id": "383",
+  "stops": [
+   {
+    "stop_id": "408",
+    "name": "183 St",
+    "daytime_lines": [
+     "4"
+    ],
+    "north_label": "Northbound",
+    "south_label": "Manhattan",
+    "borough": "Bronx"
+   }
+  ]
+ },
+ {
+  "complex_id": "384",
+  "stops": [
+   {
+    "stop_id": "409",
+    "name": "Burnside Av",
+    "daytime_lines": [
+     "4"
+    ],
+    "north_label": "Northbound",
+    "south_label": "Manhattan",
+    "borough": "Bronx"
+   }
+  ]
+ },
+ {
+  "complex_id": "385",
+  "stops": [
+   {
+    "stop_id": "410",
+    "name": "176 St",
+    "daytime_lines": [
+     "4"
+    ],
+    "north_label": "Northbound",
+    "south_label": "Manhattan",
+    "borough": "Bronx"
+   }
+  ]
+ },
+ {
+  "complex_id": "386",
+  "stops": [
+   {
+    "stop_id": "411",
+    "name": "Mt Eden Av",
+    "daytime_lines": [
+     "4"
+    ],
+    "north_label": "Northbound",
+    "south_label": "Manhattan",
+    "borough": "Bronx"
+   }
+  ]
+ },
+ {
+  "complex_id": "387",
+  "stops": [
+   {
+    "stop_id": "412",
+    "name": "170 St",
+    "daytime_lines": [
+     "4"
+    ],
+    "north_label": "Northbound",
+    "south_label": "Manhattan",
+    "borough": "Bronx"
+   }
+  ]
+ },
+ {
+  "complex_id": "388",
+  "stops": [
+   {
+    "stop_id": "413",
+    "name": "167 St",
+    "daytime_lines": [
+     "4"
+    ],
+    "north_label": "Northbound",
+    "south_label": "Manhattan",
+    "borough": "Bronx"
+   }
+  ]
+ },
+ {
+  "complex_id": "603",
+  "stops": [
+   {
+    "stop_id": "415",
+    "name": "149 St-Hostos",
+    "daytime_lines": [
+     "4"
+    ],
+    "north_label": "Northbound",
+    "south_label": "Manhattan",
+    "borough": "Bronx"
+   },
+   {
+    "stop_id": "222",
+    "name": "149 St-Hostos",
+    "daytime_lines": [
+     "2",
+     "5"
+    ],
+    "north_label": "Northbound",
+    "south_label": "Manhattan",
+    "borough": "Bronx"
+   }
+  ]
+ },
+ {
+  "complex_id": "391",
+  "stops": [
+   {
+    "stop_id": "416",
+    "name": "138 St-Grand Concourse",
+    "daytime_lines": [
+     "4",
+     "5"
+    ],
+    "north_label": "Northbound",
+    "south_label": "Manhattan",
+    "borough": "Bronx"
+   }
+  ]
+ },
+ {
+  "complex_id": "413",
+  "stops": [
+   {
+    "stop_id": "419",
+    "name": "Wall St",
+    "daytime_lines": [
+     "4",
+     "5"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "414",
+  "stops": [
+   {
+    "stop_id": "420",
+    "name": "Bowling Green",
+    "daytime_lines": [
+     "4",
+     "5"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "442",
+  "stops": [
+   {
+    "stop_id": "501",
+    "name": "Eastchester-Dyre Av",
+    "daytime_lines": [
+     "5"
+    ],
+    "north_label": "Last Stop",
+    "south_label": "Manhattan",
+    "borough": "Bronx"
+   }
+  ]
+ },
+ {
+  "complex_id": "443",
+  "stops": [
+   {
+    "stop_id": "502",
+    "name": "Baychester Av",
+    "daytime_lines": [
+     "5"
+    ],
+    "north_label": "Eastchester",
+    "south_label": "Manhattan",
+    "borough": "Bronx"
+   }
+  ]
+ },
+ {
+  "complex_id": "444",
+  "stops": [
+   {
+    "stop_id": "503",
+    "name": "Gun Hill Rd",
+    "daytime_lines": [
+     "5"
+    ],
+    "north_label": "Eastchester",
+    "south_label": "Manhattan",
+    "borough": "Bronx"
+   }
+  ]
+ },
+ {
+  "complex_id": "445",
+  "stops": [
+   {
+    "stop_id": "504",
+    "name": "Pelham Pkwy",
+    "daytime_lines": [
+     "5"
+    ],
+    "north_label": "Eastchester",
+    "south_label": "Manhattan",
+    "borough": "Bronx"
+   }
+  ]
+ },
+ {
+  "complex_id": "446",
+  "stops": [
+   {
+    "stop_id": "505",
+    "name": "Morris Park",
+    "daytime_lines": [
+     "5"
+    ],
+    "north_label": "Eastchester",
+    "south_label": "Manhattan",
+    "borough": "Bronx"
+   }
+  ]
+ },
+ {
+  "complex_id": "360",
+  "stops": [
+   {
+    "stop_id": "601",
+    "name": "Pelham Bay Park",
+    "daytime_lines": [
+     "6"
+    ],
+    "north_label": "Last Stop",
+    "south_label": "Manhattan",
+    "borough": "Bronx"
+   }
+  ]
+ },
+ {
+  "complex_id": "361",
+  "stops": [
+   {
+    "stop_id": "602",
+    "name": "Buhre Av",
+    "daytime_lines": [
+     "6"
+    ],
+    "north_label": "Pelham Bay",
+    "south_label": "Manhattan",
+    "borough": "Bronx"
+   }
+  ]
+ },
+ {
+  "complex_id": "362",
+  "stops": [
+   {
+    "stop_id": "603",
+    "name": "Middletown Rd",
+    "daytime_lines": [
+     "6"
+    ],
+    "north_label": "Pelham Bay",
+    "south_label": "Manhattan",
+    "borough": "Bronx"
+   }
+  ]
+ },
+ {
+  "complex_id": "363",
+  "stops": [
+   {
+    "stop_id": "604",
+    "name": "Westchester Sq-E Tremont Av",
+    "daytime_lines": [
+     "6"
+    ],
+    "north_label": "Pelham Bay",
+    "south_label": "Manhattan",
+    "borough": "Bronx"
+   }
+  ]
+ },
+ {
+  "complex_id": "364",
+  "stops": [
+   {
+    "stop_id": "606",
+    "name": "Zerega Av",
+    "daytime_lines": [
+     "6"
+    ],
+    "north_label": "Pelham Bay",
+    "south_label": "Manhattan",
+    "borough": "Bronx"
+   }
+  ]
+ },
+ {
+  "complex_id": "365",
+  "stops": [
+   {
+    "stop_id": "607",
+    "name": "Castle Hill Av",
+    "daytime_lines": [
+     "6"
+    ],
+    "north_label": "Pelham Bay",
+    "south_label": "Manhattan",
+    "borough": "Bronx"
+   }
+  ]
+ },
+ {
+  "complex_id": "366",
+  "stops": [
+   {
+    "stop_id": "608",
+    "name": "Parkchester",
+    "daytime_lines": [
+     "6"
+    ],
+    "north_label": "Northbound",
+    "south_label": "Manhattan",
+    "borough": "Bronx"
+   }
+  ]
+ },
+ {
+  "complex_id": "367",
+  "stops": [
+   {
+    "stop_id": "609",
+    "name": "St Lawrence Av",
+    "daytime_lines": [
+     "6"
+    ],
+    "north_label": "Northbound",
+    "south_label": "Manhattan",
+    "borough": "Bronx"
+   }
+  ]
+ },
+ {
+  "complex_id": "368",
+  "stops": [
+   {
+    "stop_id": "610",
+    "name": "Morrison Av-Soundview",
+    "daytime_lines": [
+     "6"
+    ],
+    "north_label": "Northbound",
+    "south_label": "Manhattan",
+    "borough": "Bronx"
+   }
+  ]
+ },
+ {
+  "complex_id": "369",
+  "stops": [
+   {
+    "stop_id": "611",
+    "name": "Elder Av",
+    "daytime_lines": [
+     "6"
+    ],
+    "north_label": "Northbound",
+    "south_label": "Manhattan",
+    "borough": "Bronx"
+   }
+  ]
+ },
+ {
+  "complex_id": "370",
+  "stops": [
+   {
+    "stop_id": "612",
+    "name": "Whitlock Av",
+    "daytime_lines": [
+     "6"
+    ],
+    "north_label": "Northbound",
+    "south_label": "Manhattan",
+    "borough": "Bronx"
+   }
+  ]
+ },
+ {
+  "complex_id": "371",
+  "stops": [
+   {
+    "stop_id": "613",
+    "name": "Hunts Point Av",
+    "daytime_lines": [
+     "6"
+    ],
+    "north_label": "Northbound",
+    "south_label": "Manhattan",
+    "borough": "Bronx"
+   }
+  ]
+ },
+ {
+  "complex_id": "372",
+  "stops": [
+   {
+    "stop_id": "614",
+    "name": "Longwood Av",
+    "daytime_lines": [
+     "6"
+    ],
+    "north_label": "Northbound",
+    "south_label": "Manhattan",
+    "borough": "Bronx"
+   }
+  ]
+ },
+ {
+  "complex_id": "373",
+  "stops": [
+   {
+    "stop_id": "615",
+    "name": "E 149 St",
+    "daytime_lines": [
+     "6"
+    ],
+    "north_label": "Northbound",
+    "south_label": "Manhattan",
+    "borough": "Bronx"
+   }
+  ]
+ },
+ {
+  "complex_id": "374",
+  "stops": [
+   {
+    "stop_id": "616",
+    "name": "E 143 St-St Mary's St",
+    "daytime_lines": [
+     "6"
+    ],
+    "north_label": "Northbound",
+    "south_label": "Manhattan",
+    "borough": "Bronx"
+   }
+  ]
+ },
+ {
+  "complex_id": "375",
+  "stops": [
+   {
+    "stop_id": "617",
+    "name": "Cypress Av",
+    "daytime_lines": [
+     "6"
+    ],
+    "north_label": "Northbound",
+    "south_label": "Manhattan",
+    "borough": "Bronx"
+   }
+  ]
+ },
+ {
+  "complex_id": "376",
+  "stops": [
+   {
+    "stop_id": "618",
+    "name": "Brook Av",
+    "daytime_lines": [
+     "6"
+    ],
+    "north_label": "Northbound",
+    "south_label": "Manhattan",
+    "borough": "Bronx"
+   }
+  ]
+ },
+ {
+  "complex_id": "377",
+  "stops": [
+   {
+    "stop_id": "619",
+    "name": "3 Av-138 St",
+    "daytime_lines": [
+     "6"
+    ],
+    "north_label": "Northbound",
+    "south_label": "Manhattan",
+    "borough": "Bronx"
+   }
+  ]
+ },
+ {
+  "complex_id": "392",
+  "stops": [
+   {
+    "stop_id": "621",
+    "name": "125 St",
+    "daytime_lines": [
+     "4",
+     "5",
+     "6"
+    ],
+    "north_label": "The Bronx",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "393",
+  "stops": [
+   {
+    "stop_id": "622",
+    "name": "116 St",
+    "daytime_lines": [
+     "6"
+    ],
+    "north_label": "The Bronx",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "394",
+  "stops": [
+   {
+    "stop_id": "623",
+    "name": "110 St",
+    "daytime_lines": [
+     "6"
+    ],
+    "north_label": "The Bronx",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "395",
+  "stops": [
+   {
+    "stop_id": "624",
+    "name": "103 St",
+    "daytime_lines": [
+     "6"
+    ],
+    "north_label": "The Bronx",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "396",
+  "stops": [
+   {
+    "stop_id": "625",
+    "name": "96 St",
+    "daytime_lines": [
+     "6"
+    ],
+    "north_label": "The Bronx",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "397",
+  "stops": [
+   {
+    "stop_id": "626",
+    "name": "86 St",
+    "daytime_lines": [
+     "4",
+     "5",
+     "6"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "398",
+  "stops": [
+   {
+    "stop_id": "627",
+    "name": "77 St",
+    "daytime_lines": [
+     "6"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "399",
+  "stops": [
+   {
+    "stop_id": "628",
+    "name": "68 St-Hunter College",
+    "daytime_lines": [
+     "6"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "610",
+  "stops": [
+   {
+    "stop_id": "631",
+    "name": "Grand Central-42 St",
+    "daytime_lines": [
+     "4",
+     "5",
+     "6"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   },
+   {
+    "stop_id": "723",
+    "name": "Grand Central-42 St",
+    "daytime_lines": [
+     "7"
+    ],
+    "north_label": "Queens",
+    "south_label": "Hudson Yards",
+    "borough": "Manhattan"
+   },
+   {
+    "stop_id": "901",
+    "name": "Grand Central-42 St",
+    "daytime_lines": [
+     "S"
+    ],
+    "north_label": "Times Square",
+    "south_label": "Last Stop",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "403",
+  "stops": [
+   {
+    "stop_id": "632",
+    "name": "33 St",
+    "daytime_lines": [
+     "6"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "404",
+  "stops": [
+   {
+    "stop_id": "633",
+    "name": "28 St",
+    "daytime_lines": [
+     "6"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "405",
+  "stops": [
+   {
+    "stop_id": "634",
+    "name": "23 St-Baruch College",
+    "daytime_lines": [
+     "6"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "407",
+  "stops": [
+   {
+    "stop_id": "636",
+    "name": "Astor Pl",
+    "daytime_lines": [
+     "6"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "409",
+  "stops": [
+   {
+    "stop_id": "638",
+    "name": "Spring St",
+    "daytime_lines": [
+     "6"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "447",
+  "stops": [
+   {
+    "stop_id": "701",
+    "name": "Flushing-Main St",
+    "daytime_lines": [
+     "7"
+    ],
+    "north_label": "Last Stop",
+    "south_label": "Manhattan",
+    "borough": "Queens"
+   }
+  ]
+ },
+ {
+  "complex_id": "448",
+  "stops": [
+   {
+    "stop_id": "702",
+    "name": "Mets-Willets Point",
+    "daytime_lines": [
+     "7"
+    ],
+    "north_label": "Outbound",
+    "south_label": "Manhattan",
+    "borough": "Queens"
+   }
+  ]
+ },
+ {
+  "complex_id": "449",
+  "stops": [
+   {
+    "stop_id": "705",
+    "name": "111 St",
+    "daytime_lines": [
+     "7"
+    ],
+    "north_label": "Outbound",
+    "south_label": "Manhattan",
+    "borough": "Queens"
+   }
+  ]
+ },
+ {
+  "complex_id": "450",
+  "stops": [
+   {
+    "stop_id": "706",
+    "name": "103 St-Corona Plaza",
+    "daytime_lines": [
+     "7"
+    ],
+    "north_label": "Outbound",
+    "south_label": "Manhattan",
+    "borough": "Queens"
+   }
+  ]
+ },
+ {
+  "complex_id": "451",
+  "stops": [
+   {
+    "stop_id": "707",
+    "name": "Junction Blvd",
+    "daytime_lines": [
+     "7"
+    ],
+    "north_label": "Outbound",
+    "south_label": "Manhattan",
+    "borough": "Queens"
+   }
+  ]
+ },
+ {
+  "complex_id": "452",
+  "stops": [
+   {
+    "stop_id": "708",
+    "name": "90 St-Elmhurst Av",
+    "daytime_lines": [
+     "7"
+    ],
+    "north_label": "Outbound",
+    "south_label": "Manhattan",
+    "borough": "Queens"
+   }
+  ]
+ },
+ {
+  "complex_id": "453",
+  "stops": [
+   {
+    "stop_id": "709",
+    "name": "82 St-Jackson Hts",
+    "daytime_lines": [
+     "7"
+    ],
+    "north_label": "Outbound",
+    "south_label": "Manhattan",
+    "borough": "Queens"
+   }
+  ]
+ },
+ {
+  "complex_id": "455",
+  "stops": [
+   {
+    "stop_id": "711",
+    "name": "69 St",
+    "daytime_lines": [
+     "7"
+    ],
+    "north_label": "Outbound",
+    "south_label": "Manhattan",
+    "borough": "Queens"
+   }
+  ]
+ },
+ {
+  "complex_id": "456",
+  "stops": [
+   {
+    "stop_id": "712",
+    "name": "61 St-Woodside",
+    "daytime_lines": [
+     "7"
+    ],
+    "north_label": "Outbound",
+    "south_label": "Manhattan",
+    "borough": "Queens"
+   }
+  ]
+ },
+ {
+  "complex_id": "457",
+  "stops": [
+   {
+    "stop_id": "713",
+    "name": "52 St",
+    "daytime_lines": [
+     "7"
+    ],
+    "north_label": "Outbound",
+    "south_label": "Manhattan",
+    "borough": "Queens"
+   }
+  ]
+ },
+ {
+  "complex_id": "458",
+  "stops": [
+   {
+    "stop_id": "714",
+    "name": "46 St-Bliss St",
+    "daytime_lines": [
+     "7"
+    ],
+    "north_label": "Outbound",
+    "south_label": "Manhattan",
+    "borough": "Queens"
+   }
+  ]
+ },
+ {
+  "complex_id": "459",
+  "stops": [
+   {
+    "stop_id": "715",
+    "name": "40 St-Lowery St",
+    "daytime_lines": [
+     "7"
+    ],
+    "north_label": "Outbound",
+    "south_label": "Manhattan",
+    "borough": "Queens"
+   }
+  ]
+ },
+ {
+  "complex_id": "460",
+  "stops": [
+   {
+    "stop_id": "716",
+    "name": "33 St-Rawson St",
+    "daytime_lines": [
+     "7"
+    ],
+    "north_label": "Outbound",
+    "south_label": "Manhattan",
+    "borough": "Queens"
+   }
+  ]
+ },
+ {
+  "complex_id": "463",
+  "stops": [
+   {
+    "stop_id": "720",
+    "name": "Hunters Point Av",
+    "daytime_lines": [
+     "7"
+    ],
+    "north_label": "Outbound",
+    "south_label": "Manhattan",
+    "borough": "Queens"
+   }
+  ]
+ },
+ {
+  "complex_id": "464",
+  "stops": [
+   {
+    "stop_id": "721",
+    "name": "Vernon Blvd-Jackson Av",
+    "daytime_lines": [
+     "7"
+    ],
+    "north_label": "Outbound",
+    "south_label": "Manhattan",
+    "borough": "Queens"
+   }
+  ]
+ },
+ {
+  "complex_id": "471",
+  "stops": [
+   {
+    "stop_id": "726",
+    "name": "34 St-Hudson Yards",
+    "daytime_lines": [
+     "7"
+    ],
+    "north_label": "Last Stop",
+    "south_label": "Queens",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "143",
+  "stops": [
+   {
+    "stop_id": "A02",
+    "name": "Inwood-207 St",
+    "daytime_lines": [
+     "A"
+    ],
+    "north_label": "Last Stop",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "144",
+  "stops": [
+   {
+    "stop_id": "A03",
+    "name": "Dyckman St",
+    "daytime_lines": [
+     "A"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "145",
+  "stops": [
+   {
+    "stop_id": "A05",
+    "name": "190 St",
+    "daytime_lines": [
+     "A"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "146",
+  "stops": [
+   {
+    "stop_id": "A06",
+    "name": "181 St",
+    "daytime_lines": [
+     "A"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "147",
+  "stops": [
+   {
+    "stop_id": "A07",
+    "name": "175 St",
+    "daytime_lines": [
+     "A"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "605",
+  "stops": [
+   {
+    "stop_id": "A09",
+    "name": "168 St",
+    "daytime_lines": [
+     "A",
+     "C"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   },
+   {
+    "stop_id": "112",
+    "name": "168 St-Washington Hts",
+    "daytime_lines": [
+     "1"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "149",
+  "stops": [
+   {
+    "stop_id": "A10",
+    "name": "163 St-Amsterdam Av",
+    "daytime_lines": [
+     "C"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "150",
+  "stops": [
+   {
+    "stop_id": "A11",
+    "name": "155 St",
+    "daytime_lines": [
+     "C"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "151",
+  "stops": [
+   {
+    "stop_id": "A12",
+    "name": "145 St",
+    "daytime_lines": [
+     "A",
+     "C"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   },
+   {
+    "stop_id": "D13",
+    "name": "145 St",
+    "daytime_lines": [
+     "B",
+     "D"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "152",
+  "stops": [
+   {
+    "stop_id": "A14",
+    "name": "135 St",
+    "daytime_lines": [
+     "C",
+     "B"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "153",
+  "stops": [
+   {
+    "stop_id": "A15",
+    "name": "125 St",
+    "daytime_lines": [
+     "A",
+     "C",
+     "B",
+     "D"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "154",
+  "stops": [
+   {
+    "stop_id": "A16",
+    "name": "116 St",
+    "daytime_lines": [
+     "C",
+     "B"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "155",
+  "stops": [
+   {
+    "stop_id": "A17",
+    "name": "Cathedral Pkwy (110 St)",
+    "daytime_lines": [
+     "C",
+     "B"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "156",
+  "stops": [
+   {
+    "stop_id": "A18",
+    "name": "103 St",
+    "daytime_lines": [
+     "C",
+     "B"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "157",
+  "stops": [
+   {
+    "stop_id": "A19",
+    "name": "96 St",
+    "daytime_lines": [
+     "C",
+     "B"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "158",
+  "stops": [
+   {
+    "stop_id": "A20",
+    "name": "86 St",
+    "daytime_lines": [
+     "C",
+     "B"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "159",
+  "stops": [
+   {
+    "stop_id": "A21",
+    "name": "81 St-Museum of Natural History",
+    "daytime_lines": [
+     "C",
+     "B"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "160",
+  "stops": [
+   {
+    "stop_id": "A22",
+    "name": "72 St",
+    "daytime_lines": [
+     "C",
+     "B"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "614",
+  "stops": [
+   {
+    "stop_id": "A24",
+    "name": "59 St-Columbus Circle",
+    "daytime_lines": [
+     "A",
+     "C",
+     "B",
+     "D"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   },
+   {
+    "stop_id": "125",
+    "name": "59 St-Columbus Circle",
+    "daytime_lines": [
+     "1"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "162",
+  "stops": [
+   {
+    "stop_id": "A25",
+    "name": "50 St",
+    "daytime_lines": [
+     "C",
+     "E"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "164",
+  "stops": [
+   {
+    "stop_id": "A28",
+    "name": "34 St-Penn Station",
+    "daytime_lines": [
+     "A",
+     "C",
+     "E"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "165",
+  "stops": [
+   {
+    "stop_id": "A30",
+    "name": "23 St",
+    "daytime_lines": [
+     "C",
+     "E"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "167",
+  "stops": [
+   {
+    "stop_id": "A32",
+    "name": "W 4 St-Wash Sq",
+    "daytime_lines": [
+     "A",
+     "C",
+     "E"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   },
+   {
+    "stop_id": "D20",
+    "name": "W 4 St-Wash Sq",
+    "daytime_lines": [
+     "B",
+     "D",
+     "F",
+     "M"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "168",
+  "stops": [
+   {
+    "stop_id": "A33",
+    "name": "Spring St",
+    "daytime_lines": [
+     "C",
+     "E"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "169",
+  "stops": [
+   {
+    "stop_id": "A34",
+    "name": "Canal St",
+    "daytime_lines": [
+     "A",
+     "C",
+     "E"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "173",
+  "stops": [
+   {
+    "stop_id": "A40",
+    "name": "High St",
+    "daytime_lines": [
+     "A",
+     "C"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Outbound",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "175",
+  "stops": [
+   {
+    "stop_id": "A42",
+    "name": "Hoyt-Schermerhorn Sts",
+    "daytime_lines": [
+     "A",
+     "C",
+     "G"
+    ],
+    "north_label": "Westbound",
+    "south_label": "Queens",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "176",
+  "stops": [
+   {
+    "stop_id": "A43",
+    "name": "Lafayette Av",
+    "daytime_lines": [
+     "C"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Outbound",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "177",
+  "stops": [
+   {
+    "stop_id": "A44",
+    "name": "Clinton-Washington Avs",
+    "daytime_lines": [
+     "C"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Outbound",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "179",
+  "stops": [
+   {
+    "stop_id": "A46",
+    "name": "Nostrand Av",
+    "daytime_lines": [
+     "A",
+     "C"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Outbound",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "180",
+  "stops": [
+   {
+    "stop_id": "A47",
+    "name": "Kingston-Throop Avs",
+    "daytime_lines": [
+     "C"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Outbound",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "181",
+  "stops": [
+   {
+    "stop_id": "A48",
+    "name": "Utica Av",
+    "daytime_lines": [
+     "A",
+     "C"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Outbound",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "182",
+  "stops": [
+   {
+    "stop_id": "A49",
+    "name": "Ralph Av",
+    "daytime_lines": [
+     "C"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Outbound",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "183",
+  "stops": [
+   {
+    "stop_id": "A50",
+    "name": "Rockaway Av",
+    "daytime_lines": [
+     "C"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Outbound",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "185",
+  "stops": [
+   {
+    "stop_id": "A52",
+    "name": "Liberty Av",
+    "daytime_lines": [
+     "C"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Outbound",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "186",
+  "stops": [
+   {
+    "stop_id": "A53",
+    "name": "Van Siclen Av",
+    "daytime_lines": [
+     "C"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Outbound",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "187",
+  "stops": [
+   {
+    "stop_id": "A54",
+    "name": "Shepherd Av",
+    "daytime_lines": [
+     "C"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Outbound",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "188",
+  "stops": [
+   {
+    "stop_id": "A55",
+    "name": "Euclid Av",
+    "daytime_lines": [
+     "A",
+     "C"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Queens",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "189",
+  "stops": [
+   {
+    "stop_id": "A57",
+    "name": "Grant Av",
+    "daytime_lines": [
+     "A"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Queens",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "190",
+  "stops": [
+   {
+    "stop_id": "A59",
+    "name": "80 St",
+    "daytime_lines": [
+     "A"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Outbound",
+    "borough": "Queens"
+   }
+  ]
+ },
+ {
+  "complex_id": "191",
+  "stops": [
+   {
+    "stop_id": "A60",
+    "name": "88 St",
+    "daytime_lines": [
+     "A"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Outbound",
+    "borough": "Queens"
+   }
+  ]
+ },
+ {
+  "complex_id": "192",
+  "stops": [
+   {
+    "stop_id": "A61",
+    "name": "Rockaway Blvd",
+    "daytime_lines": [
+     "A"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Outbound",
+    "borough": "Queens"
+   }
+  ]
+ },
+ {
+  "complex_id": "193",
+  "stops": [
+   {
+    "stop_id": "A63",
+    "name": "104 St",
+    "daytime_lines": [
+     "A"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Ozone Park",
+    "borough": "Queens"
+   }
+  ]
+ },
+ {
+  "complex_id": "194",
+  "stops": [
+   {
+    "stop_id": "A64",
+    "name": "111 St",
+    "daytime_lines": [
+     "A"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Ozone Park",
+    "borough": "Queens"
+   }
+  ]
+ },
+ {
+  "complex_id": "195",
+  "stops": [
+   {
+    "stop_id": "A65",
+    "name": "Ozone Park-Lefferts Blvd",
+    "daytime_lines": [
+     "A"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Last Stop",
+    "borough": "Queens"
+   }
+  ]
+ },
+ {
+  "complex_id": "221",
+  "stops": [
+   {
+    "stop_id": "B04",
+    "name": "21 St-Queensbridge",
+    "daytime_lines": [
+     "M"
+    ],
+    "north_label": "Outbound",
+    "south_label": "Manhattan",
+    "borough": "Queens"
+   }
+  ]
+ },
+ {
+  "complex_id": "222",
+  "stops": [
+   {
+    "stop_id": "B06",
+    "name": "Roosevelt Island",
+    "daytime_lines": [
+     "M"
+    ],
+    "north_label": "Queens",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "223",
+  "stops": [
+   {
+    "stop_id": "B08",
+    "name": "Lexington Av/63 St",
+    "daytime_lines": [
+     "M",
+     "Q"
+    ],
+    "north_label": "Uptown & Queens",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "224",
+  "stops": [
+   {
+    "stop_id": "B10",
+    "name": "57 St",
+    "daytime_lines": [
+     "M"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "59",
+  "stops": [
+   {
+    "stop_id": "B12",
+    "name": "9 Av",
+    "daytime_lines": [
+     "D"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Southbound",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "60",
+  "stops": [
+   {
+    "stop_id": "B13",
+    "name": "Fort Hamilton Pkwy",
+    "daytime_lines": [
+     "D"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Southbound",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "61",
+  "stops": [
+   {
+    "stop_id": "B14",
+    "name": "50 St",
+    "daytime_lines": [
+     "D"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Southbound",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "62",
+  "stops": [
+   {
+    "stop_id": "B15",
+    "name": "55 St",
+    "daytime_lines": [
+     "D"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Southbound",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "615",
+  "stops": [
+   {
+    "stop_id": "B16",
+    "name": "62 St",
+    "daytime_lines": [
+     "D"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Southbound",
+    "borough": "Brooklyn"
+   },
+   {
+    "stop_id": "N04",
+    "name": "New Utrecht Av",
+    "daytime_lines": [
+     "N"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Coney Island",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "64",
+  "stops": [
+   {
+    "stop_id": "B17",
+    "name": "71 St",
+    "daytime_lines": [
+     "D"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Southbound",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "65",
+  "stops": [
+   {
+    "stop_id": "B18",
+    "name": "79 St",
+    "daytime_lines": [
+     "D"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Southbound",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "66",
+  "stops": [
+   {
+    "stop_id": "B19",
+    "name": "18 Av",
+    "daytime_lines": [
+     "D"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Southbound",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "67",
+  "stops": [
+   {
+    "stop_id": "B20",
+    "name": "20 Av",
+    "daytime_lines": [
+     "D"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Southbound",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "68",
+  "stops": [
+   {
+    "stop_id": "B21",
+    "name": "Bay Pkwy",
+    "daytime_lines": [
+     "D"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Southbound",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "69",
+  "stops": [
+   {
+    "stop_id": "B22",
+    "name": "25 Av",
+    "daytime_lines": [
+     "D"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Coney Island",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "70",
+  "stops": [
+   {
+    "stop_id": "B23",
+    "name": "Bay 50 St",
+    "daytime_lines": [
+     "D"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Coney Island",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "210",
+  "stops": [
+   {
+    "stop_id": "D01",
+    "name": "Norwood-205 St",
+    "daytime_lines": [
+     "D"
+    ],
+    "north_label": "Last Stop",
+    "south_label": "Manhattan",
+    "borough": "Bronx"
+   }
+  ]
+ },
+ {
+  "complex_id": "211",
+  "stops": [
+   {
+    "stop_id": "D03",
+    "name": "Bedford Park Blvd",
+    "daytime_lines": [
+     "B",
+     "D"
+    ],
+    "north_label": "Northbound",
+    "south_label": "Manhattan",
+    "borough": "Bronx"
+   }
+  ]
+ },
+ {
+  "complex_id": "212",
+  "stops": [
+   {
+    "stop_id": "D04",
+    "name": "Kingsbridge Rd",
+    "daytime_lines": [
+     "B",
+     "D"
+    ],
+    "north_label": "Northbound",
+    "south_label": "Manhattan",
+    "borough": "Bronx"
+   }
+  ]
+ },
+ {
+  "complex_id": "213",
+  "stops": [
+   {
+    "stop_id": "D05",
+    "name": "Fordham Rd",
+    "daytime_lines": [
+     "B",
+     "D"
+    ],
+    "north_label": "Northbound",
+    "south_label": "Manhattan",
+    "borough": "Bronx"
+   }
+  ]
+ },
+ {
+  "complex_id": "214",
+  "stops": [
+   {
+    "stop_id": "D06",
+    "name": "182-183 Sts",
+    "daytime_lines": [
+     "B",
+     "D"
+    ],
+    "north_label": "Northbound",
+    "south_label": "Manhattan",
+    "borough": "Bronx"
+   }
+  ]
+ },
+ {
+  "complex_id": "215",
+  "stops": [
+   {
+    "stop_id": "D07",
+    "name": "Tremont Av",
+    "daytime_lines": [
+     "B",
+     "D"
+    ],
+    "north_label": "Northbound",
+    "south_label": "Manhattan",
+    "borough": "Bronx"
+   }
+  ]
+ },
+ {
+  "complex_id": "216",
+  "stops": [
+   {
+    "stop_id": "D08",
+    "name": "174-175 Sts",
+    "daytime_lines": [
+     "B",
+     "D"
+    ],
+    "north_label": "Northbound",
+    "south_label": "Manhattan",
+    "borough": "Bronx"
+   }
+  ]
+ },
+ {
+  "complex_id": "217",
+  "stops": [
+   {
+    "stop_id": "D09",
+    "name": "170 St",
+    "daytime_lines": [
+     "B",
+     "D"
+    ],
+    "north_label": "Northbound",
+    "south_label": "Manhattan",
+    "borough": "Bronx"
+   }
+  ]
+ },
+ {
+  "complex_id": "218",
+  "stops": [
+   {
+    "stop_id": "D10",
+    "name": "167 St",
+    "daytime_lines": [
+     "B",
+     "D"
+    ],
+    "north_label": "Northbound",
+    "south_label": "Manhattan",
+    "borough": "Bronx"
+   }
+  ]
+ },
+ {
+  "complex_id": "604",
+  "stops": [
+   {
+    "stop_id": "D11",
+    "name": "161 St-Yankee Stadium",
+    "daytime_lines": [
+     "B",
+     "D"
+    ],
+    "north_label": "Northbound",
+    "south_label": "Manhattan",
+    "borough": "Bronx"
+   },
+   {
+    "stop_id": "414",
+    "name": "161 St-Yankee Stadium",
+    "daytime_lines": [
+     "4"
+    ],
+    "north_label": "Northbound",
+    "south_label": "Manhattan",
+    "borough": "Bronx"
+   }
+  ]
+ },
+ {
+  "complex_id": "220",
+  "stops": [
+   {
+    "stop_id": "D12",
+    "name": "155 St",
+    "daytime_lines": [
+     "B",
+     "D"
+    ],
+    "north_label": "The Bronx",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "277",
+  "stops": [
+   {
+    "stop_id": "D14",
+    "name": "7 Av",
+    "daytime_lines": [
+     "E",
+     "B",
+     "D"
+    ],
+    "north_label": "Outbound",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "225",
+  "stops": [
+   {
+    "stop_id": "D15",
+    "name": "47-50 Sts-Rockefeller Ctr",
+    "daytime_lines": [
+     "B",
+     "D",
+     "F",
+     "M"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "609",
+  "stops": [
+   {
+    "stop_id": "D16",
+    "name": "42 St-Bryant Pk",
+    "daytime_lines": [
+     "B",
+     "D",
+     "F",
+     "M"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   },
+   {
+    "stop_id": "724",
+    "name": "5 Av",
+    "daytime_lines": [
+     "7"
+    ],
+    "north_label": "Queens",
+    "south_label": "Hudson Yards",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "228",
+  "stops": [
+   {
+    "stop_id": "D18",
+    "name": "23 St",
+    "daytime_lines": [
+     "F",
+     "M"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "619",
+  "stops": [
+   {
+    "stop_id": "D21",
+    "name": "Broadway-Lafayette St",
+    "daytime_lines": [
+     "B",
+     "D",
+     "F",
+     "M"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   },
+   {
+    "stop_id": "637",
+    "name": "Bleecker St",
+    "daytime_lines": [
+     "6"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "231",
+  "stops": [
+   {
+    "stop_id": "D22",
+    "name": "Grand St",
+    "daytime_lines": [
+     "B",
+     "D"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Brooklyn",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "41",
+  "stops": [
+   {
+    "stop_id": "D25",
+    "name": "7 Av",
+    "daytime_lines": [
+     "B",
+     "Q"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Southbound",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "42",
+  "stops": [
+   {
+    "stop_id": "D26",
+    "name": "Prospect Park",
+    "daytime_lines": [
+     "B",
+     "Q",
+     "S"
+    ],
+    "north_label": "Northbound",
+    "south_label": "Southbound",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "43",
+  "stops": [
+   {
+    "stop_id": "D27",
+    "name": "Parkside Av",
+    "daytime_lines": [
+     "Q"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Southbound",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "44",
+  "stops": [
+   {
+    "stop_id": "D28",
+    "name": "Church Av",
+    "daytime_lines": [
+     "B",
+     "Q"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Southbound",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "45",
+  "stops": [
+   {
+    "stop_id": "D29",
+    "name": "Beverley Rd",
+    "daytime_lines": [
+     "Q"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Southbound",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "46",
+  "stops": [
+   {
+    "stop_id": "D30",
+    "name": "Cortelyou Rd",
+    "daytime_lines": [
+     "Q"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Southbound",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "47",
+  "stops": [
+   {
+    "stop_id": "D31",
+    "name": "Newkirk Plaza",
+    "daytime_lines": [
+     "B",
+     "Q"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Southbound",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "48",
+  "stops": [
+   {
+    "stop_id": "D32",
+    "name": "Avenue H",
+    "daytime_lines": [
+     "Q"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Southbound",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "49",
+  "stops": [
+   {
+    "stop_id": "D33",
+    "name": "Avenue J",
+    "daytime_lines": [
+     "Q"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Southbound",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "50",
+  "stops": [
+   {
+    "stop_id": "D34",
+    "name": "Avenue M",
+    "daytime_lines": [
+     "Q"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Southbound",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "51",
+  "stops": [
+   {
+    "stop_id": "D35",
+    "name": "Kings Hwy",
+    "daytime_lines": [
+     "B",
+     "Q"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Southbound",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "52",
+  "stops": [
+   {
+    "stop_id": "D37",
+    "name": "Avenue U",
+    "daytime_lines": [
+     "Q"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Southbound",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "53",
+  "stops": [
+   {
+    "stop_id": "D38",
+    "name": "Neck Rd",
+    "daytime_lines": [
+     "Q"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Southbound",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "54",
+  "stops": [
+   {
+    "stop_id": "D39",
+    "name": "Sheepshead Bay",
+    "daytime_lines": [
+     "B",
+     "Q"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Southbound",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "55",
+  "stops": [
+   {
+    "stop_id": "D40",
+    "name": "Brighton Beach",
+    "daytime_lines": [
+     "B",
+     "Q"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Southbound",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "56",
+  "stops": [
+   {
+    "stop_id": "D41",
+    "name": "Ocean Pkwy",
+    "daytime_lines": [
+     "Q"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Coney Island",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "57",
+  "stops": [
+   {
+    "stop_id": "D42",
+    "name": "W 8 St-NY Aquarium",
+    "daytime_lines": [
+     "F",
+     "Q"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Coney Island",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "58",
+  "stops": [
+   {
+    "stop_id": "D43",
+    "name": "Coney Island-Stillwell Av",
+    "daytime_lines": [
+     "D",
+     "F",
+     "N",
+     "Q"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Last Stop",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "254",
+  "stops": [
+   {
+    "stop_id": "F01",
+    "name": "Jamaica-179 St",
+    "daytime_lines": [
+     "F"
+    ],
+    "north_label": "Last Stop",
+    "south_label": "Manhattan",
+    "borough": "Queens"
+   }
+  ]
+ },
+ {
+  "complex_id": "255",
+  "stops": [
+   {
+    "stop_id": "F02",
+    "name": "169 St",
+    "daytime_lines": [
+     "F"
+    ],
+    "north_label": "Jamaica",
+    "south_label": "Manhattan",
+    "borough": "Queens"
+   }
+  ]
+ },
+ {
+  "complex_id": "256",
+  "stops": [
+   {
+    "stop_id": "F03",
+    "name": "Parsons Blvd",
+    "daytime_lines": [
+     "F"
+    ],
+    "north_label": "Jamaica",
+    "south_label": "Manhattan",
+    "borough": "Queens"
+   }
+  ]
+ },
+ {
+  "complex_id": "257",
+  "stops": [
+   {
+    "stop_id": "F04",
+    "name": "Sutphin Blvd",
+    "daytime_lines": [
+     "F"
+    ],
+    "north_label": "Jamaica",
+    "south_label": "Manhattan",
+    "borough": "Queens"
+   }
+  ]
+ },
+ {
+  "complex_id": "258",
+  "stops": [
+   {
+    "stop_id": "F05",
+    "name": "Briarwood",
+    "daytime_lines": [
+     "E",
+     "F"
+    ],
+    "north_label": "Jamaica",
+    "south_label": "Manhattan",
+    "borough": "Queens"
+   }
+  ]
+ },
+ {
+  "complex_id": "259",
+  "stops": [
+   {
+    "stop_id": "F06",
+    "name": "Kew Gardens-Union Tpke",
+    "daytime_lines": [
+     "E",
+     "F"
+    ],
+    "north_label": "Jamaica",
+    "south_label": "Manhattan",
+    "borough": "Queens"
+   }
+  ]
+ },
+ {
+  "complex_id": "260",
+  "stops": [
+   {
+    "stop_id": "F07",
+    "name": "75 Av",
+    "daytime_lines": [
+     "E",
+     "F"
+    ],
+    "north_label": "Jamaica",
+    "south_label": "Manhattan",
+    "borough": "Queens"
+   }
+  ]
+ },
+ {
+  "complex_id": "606",
+  "stops": [
+   {
+    "stop_id": "F09",
+    "name": "Court Sq-23 St",
+    "daytime_lines": [
+     "E",
+     "F"
+    ],
+    "north_label": "Outbound",
+    "south_label": "Manhattan",
+    "borough": "Queens"
+   },
+   {
+    "stop_id": "G22",
+    "name": "Court Sq",
+    "daytime_lines": [
+     "G"
+    ],
+    "north_label": "Last Stop",
+    "south_label": "Brooklyn",
+    "borough": "Queens"
+   },
+   {
+    "stop_id": "719",
+    "name": "Court Sq",
+    "daytime_lines": [
+     "7"
+    ],
+    "north_label": "Outbound",
+    "south_label": "Manhattan",
+    "borough": "Queens"
+   }
+  ]
+ },
+ {
+  "complex_id": "612",
+  "stops": [
+   {
+    "stop_id": "F11",
+    "name": "Lexington Av/53 St",
+    "daytime_lines": [
+     "E",
+     "F"
+    ],
+    "north_label": "Queens",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   },
+   {
+    "stop_id": "630",
+    "name": "51 St",
+    "daytime_lines": [
+     "6"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "276",
+  "stops": [
+   {
+    "stop_id": "F12",
+    "name": "5 Av/53 St",
+    "daytime_lines": [
+     "E",
+     "F"
+    ],
+    "north_label": "Queens",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "232",
+  "stops": [
+   {
+    "stop_id": "F14",
+    "name": "2 Av",
+    "daytime_lines": [
+     "F"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "234",
+  "stops": [
+   {
+    "stop_id": "F16",
+    "name": "East Broadway",
+    "daytime_lines": [
+     "F"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Brooklyn",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "235",
+  "stops": [
+   {
+    "stop_id": "F18",
+    "name": "York St",
+    "daytime_lines": [
+     "F"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Southbound",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "236",
+  "stops": [
+   {
+    "stop_id": "F20",
+    "name": "Bergen St",
+    "daytime_lines": [
+     "F",
+     "G"
+    ],
+    "north_label": "Northbound",
+    "south_label": "Southbound",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "237",
+  "stops": [
+   {
+    "stop_id": "F21",
+    "name": "Carroll St",
+    "daytime_lines": [
+     "F",
+     "G"
+    ],
+    "north_label": "Northbound",
+    "south_label": "Southbound",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "238",
+  "stops": [
+   {
+    "stop_id": "F22",
+    "name": "Smith-9 Sts",
+    "daytime_lines": [
+     "F",
+     "G"
+    ],
+    "north_label": "Northbound",
+    "south_label": "Southbound",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "240",
+  "stops": [
+   {
+    "stop_id": "F24",
+    "name": "7 Av",
+    "daytime_lines": [
+     "F",
+     "G"
+    ],
+    "north_label": "Northbound",
+    "south_label": "Southbound",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "241",
+  "stops": [
+   {
+    "stop_id": "F25",
+    "name": "15 St-Prospect Park",
+    "daytime_lines": [
+     "F",
+     "G"
+    ],
+    "north_label": "Northbound",
+    "south_label": "Southbound",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "242",
+  "stops": [
+   {
+    "stop_id": "F26",
+    "name": "Fort Hamilton Pkwy",
+    "daytime_lines": [
+     "F",
+     "G"
+    ],
+    "north_label": "Northbound",
+    "south_label": "Southbound",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "243",
+  "stops": [
+   {
+    "stop_id": "F27",
+    "name": "Church Av",
+    "daytime_lines": [
+     "F",
+     "G"
+    ],
+    "north_label": "Northbound",
+    "south_label": "Southbound",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "244",
+  "stops": [
+   {
+    "stop_id": "F29",
+    "name": "Ditmas Av",
+    "daytime_lines": [
+     "F"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Southbound",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "245",
+  "stops": [
+   {
+    "stop_id": "F30",
+    "name": "18 Av",
+    "daytime_lines": [
+     "F"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Southbound",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "246",
+  "stops": [
+   {
+    "stop_id": "F31",
+    "name": "Avenue I",
+    "daytime_lines": [
+     "F"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Southbound",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "247",
+  "stops": [
+   {
+    "stop_id": "F32",
+    "name": "Bay Pkwy",
+    "daytime_lines": [
+     "F"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Southbound",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "248",
+  "stops": [
+   {
+    "stop_id": "F33",
+    "name": "Avenue N",
+    "daytime_lines": [
+     "F"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Southbound",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "249",
+  "stops": [
+   {
+    "stop_id": "F34",
+    "name": "Avenue P",
+    "daytime_lines": [
+     "F"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Southbound",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "250",
+  "stops": [
+   {
+    "stop_id": "F35",
+    "name": "Kings Hwy",
+    "daytime_lines": [
+     "F"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Southbound",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "251",
+  "stops": [
+   {
+    "stop_id": "F36",
+    "name": "Avenue U",
+    "daytime_lines": [
+     "F"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Coney Island",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "252",
+  "stops": [
+   {
+    "stop_id": "F38",
+    "name": "Avenue X",
+    "daytime_lines": [
+     "F"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Coney Island",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "253",
+  "stops": [
+   {
+    "stop_id": "F39",
+    "name": "Neptune Av",
+    "daytime_lines": [
+     "F"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Coney Island",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "278",
+  "stops": [
+   {
+    "stop_id": "G05",
+    "name": "Jamaica Center-Parsons/Archer",
+    "daytime_lines": [
+     "E",
+     "J",
+     "Z"
+    ],
+    "north_label": "Last Stop",
+    "south_label": "Manhattan",
+    "borough": "Queens"
+   }
+  ]
+ },
+ {
+  "complex_id": "279",
+  "stops": [
+   {
+    "stop_id": "G06",
+    "name": "Sutphin Blvd-Archer Av-JFK Airport",
+    "daytime_lines": [
+     "E",
+     "J",
+     "Z"
+    ],
+    "north_label": "Jamaica",
+    "south_label": "Manhattan",
+    "borough": "Queens"
+   }
+  ]
+ },
+ {
+  "complex_id": "280",
+  "stops": [
+   {
+    "stop_id": "G07",
+    "name": "Jamaica-Van Wyck",
+    "daytime_lines": [
+     "E"
+    ],
+    "north_label": "Jamaica",
+    "south_label": "Manhattan",
+    "borough": "Queens"
+   }
+  ]
+ },
+ {
+  "complex_id": "261",
+  "stops": [
+   {
+    "stop_id": "G08",
+    "name": "Forest Hills-71 Av",
+    "daytime_lines": [
+     "E",
+     "F",
+     "M",
+     "R"
+    ],
+    "north_label": "Outbound",
+    "south_label": "Manhattan",
+    "borough": "Queens"
+   }
+  ]
+ },
+ {
+  "complex_id": "262",
+  "stops": [
+   {
+    "stop_id": "G09",
+    "name": "67 Av",
+    "daytime_lines": [
+     "M",
+     "R"
+    ],
+    "north_label": "Outbound",
+    "south_label": "Manhattan",
+    "borough": "Queens"
+   }
+  ]
+ },
+ {
+  "complex_id": "263",
+  "stops": [
+   {
+    "stop_id": "G10",
+    "name": "63 Dr-Rego Park",
+    "daytime_lines": [
+     "M",
+     "R"
+    ],
+    "north_label": "Outbound",
+    "south_label": "Manhattan",
+    "borough": "Queens"
+   }
+  ]
+ },
+ {
+  "complex_id": "264",
+  "stops": [
+   {
+    "stop_id": "G11",
+    "name": "Woodhaven Blvd",
+    "daytime_lines": [
+     "M",
+     "R"
+    ],
+    "north_label": "Outbound",
+    "south_label": "Manhattan",
+    "borough": "Queens"
+   }
+  ]
+ },
+ {
+  "complex_id": "265",
+  "stops": [
+   {
+    "stop_id": "G12",
+    "name": "Grand Av-Newtown",
+    "daytime_lines": [
+     "M",
+     "R"
+    ],
+    "north_label": "Outbound",
+    "south_label": "Manhattan",
+    "borough": "Queens"
+   }
+  ]
+ },
+ {
+  "complex_id": "266",
+  "stops": [
+   {
+    "stop_id": "G13",
+    "name": "Elmhurst Av",
+    "daytime_lines": [
+     "M",
+     "R"
+    ],
+    "north_label": "Outbound",
+    "south_label": "Manhattan",
+    "borough": "Queens"
+   }
+  ]
+ },
+ {
+  "complex_id": "616",
+  "stops": [
+   {
+    "stop_id": "G14",
+    "name": "Jackson Hts-Roosevelt Av",
+    "daytime_lines": [
+     "E",
+     "F",
+     "M",
+     "R"
+    ],
+    "north_label": "Outbound",
+    "south_label": "Manhattan",
+    "borough": "Queens"
+   },
+   {
+    "stop_id": "710",
+    "name": "74 St-Broadway",
+    "daytime_lines": [
+     "7"
+    ],
+    "north_label": "Outbound",
+    "south_label": "Manhattan",
+    "borough": "Queens"
+   }
+  ]
+ },
+ {
+  "complex_id": "268",
+  "stops": [
+   {
+    "stop_id": "G15",
+    "name": "65 St",
+    "daytime_lines": [
+     "M",
+     "R"
+    ],
+    "north_label": "Outbound",
+    "south_label": "Manhattan",
+    "borough": "Queens"
+   }
+  ]
+ },
+ {
+  "complex_id": "269",
+  "stops": [
+   {
+    "stop_id": "G16",
+    "name": "Northern Blvd",
+    "daytime_lines": [
+     "M",
+     "R"
+    ],
+    "north_label": "Outbound",
+    "south_label": "Manhattan",
+    "borough": "Queens"
+   }
+  ]
+ },
+ {
+  "complex_id": "270",
+  "stops": [
+   {
+    "stop_id": "G18",
+    "name": "46 St",
+    "daytime_lines": [
+     "M",
+     "R"
+    ],
+    "north_label": "Outbound",
+    "south_label": "Manhattan",
+    "borough": "Queens"
+   }
+  ]
+ },
+ {
+  "complex_id": "271",
+  "stops": [
+   {
+    "stop_id": "G19",
+    "name": "Steinway St",
+    "daytime_lines": [
+     "M",
+     "R"
+    ],
+    "north_label": "Outbound",
+    "south_label": "Manhattan",
+    "borough": "Queens"
+   }
+  ]
+ },
+ {
+  "complex_id": "272",
+  "stops": [
+   {
+    "stop_id": "G20",
+    "name": "36 St",
+    "daytime_lines": [
+     "M",
+     "R"
+    ],
+    "north_label": "Outbound",
+    "south_label": "Manhattan",
+    "borough": "Queens"
+   }
+  ]
+ },
+ {
+  "complex_id": "273",
+  "stops": [
+   {
+    "stop_id": "G21",
+    "name": "Queens Plaza",
+    "daytime_lines": [
+     "E",
+     "F",
+     "R"
+    ],
+    "north_label": "Outbound",
+    "south_label": "Manhattan",
+    "borough": "Queens"
+   }
+  ]
+ },
+ {
+  "complex_id": "282",
+  "stops": [
+   {
+    "stop_id": "G24",
+    "name": "21 St",
+    "daytime_lines": [
+     "G"
+    ],
+    "north_label": "Court Square",
+    "south_label": "Brooklyn",
+    "borough": "Queens"
+   }
+  ]
+ },
+ {
+  "complex_id": "283",
+  "stops": [
+   {
+    "stop_id": "G26",
+    "name": "Greenpoint Av",
+    "daytime_lines": [
+     "G"
+    ],
+    "north_label": "Queens",
+    "south_label": "Southbound",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "284",
+  "stops": [
+   {
+    "stop_id": "G28",
+    "name": "Nassau Av",
+    "daytime_lines": [
+     "G"
+    ],
+    "north_label": "Queens",
+    "south_label": "Southbound",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "286",
+  "stops": [
+   {
+    "stop_id": "G30",
+    "name": "Broadway",
+    "daytime_lines": [
+     "G"
+    ],
+    "north_label": "Queens",
+    "south_label": "Southbound",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "287",
+  "stops": [
+   {
+    "stop_id": "G31",
+    "name": "Flushing Av",
+    "daytime_lines": [
+     "G"
+    ],
+    "north_label": "Queens",
+    "south_label": "Southbound",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "288",
+  "stops": [
+   {
+    "stop_id": "G32",
+    "name": "Myrtle-Willoughby Avs",
+    "daytime_lines": [
+     "G"
+    ],
+    "north_label": "Queens",
+    "south_label": "Southbound",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "289",
+  "stops": [
+   {
+    "stop_id": "G33",
+    "name": "Bedford-Nostrand Avs",
+    "daytime_lines": [
+     "G"
+    ],
+    "north_label": "Queens",
+    "south_label": "Southbound",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "290",
+  "stops": [
+   {
+    "stop_id": "G34",
+    "name": "Classon Av",
+    "daytime_lines": [
+     "G"
+    ],
+    "north_label": "Queens",
+    "south_label": "Southbound",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "291",
+  "stops": [
+   {
+    "stop_id": "G35",
+    "name": "Clinton-Washington Avs",
+    "daytime_lines": [
+     "G"
+    ],
+    "north_label": "Queens",
+    "south_label": "Southbound",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "292",
+  "stops": [
+   {
+    "stop_id": "G36",
+    "name": "Fulton St",
+    "daytime_lines": [
+     "G"
+    ],
+    "north_label": "Queens",
+    "south_label": "Southbound",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "196",
+  "stops": [
+   {
+    "stop_id": "H01",
+    "name": "Aqueduct Racetrack",
+    "daytime_lines": [
+     "A"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Rockaways",
+    "borough": "Queens"
+   }
+  ]
+ },
+ {
+  "complex_id": "197",
+  "stops": [
+   {
+    "stop_id": "H02",
+    "name": "Aqueduct-N Conduit Av",
+    "daytime_lines": [
+     "A"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Rockaways",
+    "borough": "Queens"
+   }
+  ]
+ },
+ {
+  "complex_id": "198",
+  "stops": [
+   {
+    "stop_id": "H03",
+    "name": "Howard Beach-JFK Airport",
+    "daytime_lines": [
+     "A"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Rockaways",
+    "borough": "Queens"
+   }
+  ]
+ },
+ {
+  "complex_id": "199",
+  "stops": [
+   {
+    "stop_id": "H04",
+    "name": "Broad Channel",
+    "daytime_lines": [
+     "A",
+     "S"
+    ],
+    "north_label": "Inbound",
+    "south_label": "Rockaways",
+    "borough": "Queens"
+   }
+  ]
+ },
+ {
+  "complex_id": "204",
+  "stops": [
+   {
+    "stop_id": "H06",
+    "name": "Beach 67 St",
+    "daytime_lines": [
+     "A"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Far Rockaway",
+    "borough": "Queens"
+   }
+  ]
+ },
+ {
+  "complex_id": "205",
+  "stops": [
+   {
+    "stop_id": "H07",
+    "name": "Beach 60 St",
+    "daytime_lines": [
+     "A"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Far Rockaway",
+    "borough": "Queens"
+   }
+  ]
+ },
+ {
+  "complex_id": "206",
+  "stops": [
+   {
+    "stop_id": "H08",
+    "name": "Beach 44 St",
+    "daytime_lines": [
+     "A"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Far Rockaway",
+    "borough": "Queens"
+   }
+  ]
+ },
+ {
+  "complex_id": "207",
+  "stops": [
+   {
+    "stop_id": "H09",
+    "name": "Beach 36 St",
+    "daytime_lines": [
+     "A"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Far Rockaway",
+    "borough": "Queens"
+   }
+  ]
+ },
+ {
+  "complex_id": "208",
+  "stops": [
+   {
+    "stop_id": "H10",
+    "name": "Beach 25 St",
+    "daytime_lines": [
+     "A"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Far Rockaway",
+    "borough": "Queens"
+   }
+  ]
+ },
+ {
+  "complex_id": "209",
+  "stops": [
+   {
+    "stop_id": "H11",
+    "name": "Far Rockaway-Mott Av",
+    "daytime_lines": [
+     "A"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Last Stop",
+    "borough": "Queens"
+   }
+  ]
+ },
+ {
+  "complex_id": "200",
+  "stops": [
+   {
+    "stop_id": "H12",
+    "name": "Beach 90 St",
+    "daytime_lines": [
+     "A",
+     "S"
+    ],
+    "north_label": "Inbound",
+    "south_label": "Rockaway Park",
+    "borough": "Queens"
+   }
+  ]
+ },
+ {
+  "complex_id": "201",
+  "stops": [
+   {
+    "stop_id": "H13",
+    "name": "Beach 98 St",
+    "daytime_lines": [
+     "A",
+     "S"
+    ],
+    "north_label": "Inbound",
+    "south_label": "Rockaway Park",
+    "borough": "Queens"
+   }
+  ]
+ },
+ {
+  "complex_id": "202",
+  "stops": [
+   {
+    "stop_id": "H14",
+    "name": "Beach 105 St",
+    "daytime_lines": [
+     "A",
+     "S"
+    ],
+    "north_label": "Inbound",
+    "south_label": "Rockaway Park",
+    "borough": "Queens"
+   }
+  ]
+ },
+ {
+  "complex_id": "203",
+  "stops": [
+   {
+    "stop_id": "H15",
+    "name": "Rockaway Park-Beach 116 St",
+    "daytime_lines": [
+     "A",
+     "S"
+    ],
+    "north_label": "Inbound",
+    "south_label": "Last Stop",
+    "borough": "Queens"
+   }
+  ]
+ },
+ {
+  "complex_id": "80",
+  "stops": [
+   {
+    "stop_id": "J12",
+    "name": "121 St",
+    "daytime_lines": [
+     "J",
+     "Z"
+    ],
+    "north_label": "Jamaica",
+    "south_label": "Manhattan",
+    "borough": "Queens"
+   }
+  ]
+ },
+ {
+  "complex_id": "81",
+  "stops": [
+   {
+    "stop_id": "J13",
+    "name": "111 St",
+    "daytime_lines": [
+     "J"
+    ],
+    "north_label": "Jamaica",
+    "south_label": "Manhattan",
+    "borough": "Queens"
+   }
+  ]
+ },
+ {
+  "complex_id": "82",
+  "stops": [
+   {
+    "stop_id": "J14",
+    "name": "104 St",
+    "daytime_lines": [
+     "J",
+     "Z"
+    ],
+    "north_label": "Jamaica",
+    "south_label": "Manhattan",
+    "borough": "Queens"
+   }
+  ]
+ },
+ {
+  "complex_id": "83",
+  "stops": [
+   {
+    "stop_id": "J15",
+    "name": "Woodhaven Blvd",
+    "daytime_lines": [
+     "J",
+     "Z"
+    ],
+    "north_label": "Jamaica",
+    "south_label": "Manhattan",
+    "borough": "Queens"
+   }
+  ]
+ },
+ {
+  "complex_id": "84",
+  "stops": [
+   {
+    "stop_id": "J16",
+    "name": "85 St-Forest Pkwy",
+    "daytime_lines": [
+     "J"
+    ],
+    "north_label": "Jamaica",
+    "south_label": "Manhattan",
+    "borough": "Queens"
+   }
+  ]
+ },
+ {
+  "complex_id": "85",
+  "stops": [
+   {
+    "stop_id": "J17",
+    "name": "75 St-Elderts Ln",
+    "daytime_lines": [
+     "J",
+     "Z"
+    ],
+    "north_label": "Jamaica",
+    "south_label": "Manhattan",
+    "borough": "Queens"
+   }
+  ]
+ },
+ {
+  "complex_id": "86",
+  "stops": [
+   {
+    "stop_id": "J19",
+    "name": "Cypress Hills",
+    "daytime_lines": [
+     "J"
+    ],
+    "north_label": "Queens",
+    "south_label": "Manhattan",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "87",
+  "stops": [
+   {
+    "stop_id": "J20",
+    "name": "Crescent St",
+    "daytime_lines": [
+     "J",
+     "Z"
+    ],
+    "north_label": "Outbound",
+    "south_label": "Manhattan",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "88",
+  "stops": [
+   {
+    "stop_id": "J21",
+    "name": "Norwood Av",
+    "daytime_lines": [
+     "J",
+     "Z"
+    ],
+    "north_label": "Outbound",
+    "south_label": "Manhattan",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "89",
+  "stops": [
+   {
+    "stop_id": "J22",
+    "name": "Cleveland St",
+    "daytime_lines": [
+     "J"
+    ],
+    "north_label": "Outbound",
+    "south_label": "Manhattan",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "90",
+  "stops": [
+   {
+    "stop_id": "J23",
+    "name": "Van Siclen Av",
+    "daytime_lines": [
+     "J",
+     "Z"
+    ],
+    "north_label": "Outbound",
+    "south_label": "Manhattan",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "91",
+  "stops": [
+   {
+    "stop_id": "J24",
+    "name": "Alabama Av",
+    "daytime_lines": [
+     "J",
+     "Z"
+    ],
+    "north_label": "Outbound",
+    "south_label": "Manhattan",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "621",
+  "stops": [
+   {
+    "stop_id": "J27",
+    "name": "Broadway Junction",
+    "daytime_lines": [
+     "J",
+     "Z"
+    ],
+    "north_label": "Outbound",
+    "south_label": "Manhattan",
+    "borough": "Brooklyn"
+   },
+   {
+    "stop_id": "L22",
+    "name": "Broadway Junction",
+    "daytime_lines": [
+     "L"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Outbound",
+    "borough": "Brooklyn"
+   },
+   {
+    "stop_id": "A51",
+    "name": "Broadway Junction",
+    "daytime_lines": [
+     "A",
+     "C"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Outbound",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "93",
+  "stops": [
+   {
+    "stop_id": "J28",
+    "name": "Chauncey St",
+    "daytime_lines": [
+     "J",
+     "Z"
+    ],
+    "north_label": "Outbound",
+    "south_label": "Manhattan",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "94",
+  "stops": [
+   {
+    "stop_id": "J29",
+    "name": "Halsey St",
+    "daytime_lines": [
+     "J"
+    ],
+    "north_label": "Outbound",
+    "south_label": "Manhattan",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "95",
+  "stops": [
+   {
+    "stop_id": "J30",
+    "name": "Gates Av",
+    "daytime_lines": [
+     "J",
+     "Z"
+    ],
+    "north_label": "Outbound",
+    "south_label": "Manhattan",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "96",
+  "stops": [
+   {
+    "stop_id": "J31",
+    "name": "Kosciuszko St",
+    "daytime_lines": [
+     "J"
+    ],
+    "north_label": "Outbound",
+    "south_label": "Manhattan",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "618",
+  "stops": [
+   {
+    "stop_id": "L01",
+    "name": "8 Av",
+    "daytime_lines": [
+     "L"
+    ],
+    "north_label": "Last Stop",
+    "south_label": "Brooklyn",
+    "borough": "Manhattan"
+   },
+   {
+    "stop_id": "A31",
+    "name": "14 St",
+    "daytime_lines": [
+     "A",
+     "C",
+     "E"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "601",
+  "stops": [
+   {
+    "stop_id": "L02",
+    "name": "6 Av",
+    "daytime_lines": [
+     "L"
+    ],
+    "north_label": "West Side",
+    "south_label": "Brooklyn",
+    "borough": "Manhattan"
+   },
+   {
+    "stop_id": "D19",
+    "name": "14 St",
+    "daytime_lines": [
+     "F",
+     "M"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   },
+   {
+    "stop_id": "132",
+    "name": "14 St",
+    "daytime_lines": [
+     "1",
+     "2",
+     "3"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "118",
+  "stops": [
+   {
+    "stop_id": "L05",
+    "name": "3 Av",
+    "daytime_lines": [
+     "L"
+    ],
+    "north_label": "West Side",
+    "south_label": "Brooklyn",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "119",
+  "stops": [
+   {
+    "stop_id": "L06",
+    "name": "1 Av",
+    "daytime_lines": [
+     "L"
+    ],
+    "north_label": "West Side",
+    "south_label": "Brooklyn",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "120",
+  "stops": [
+   {
+    "stop_id": "L08",
+    "name": "Bedford Av",
+    "daytime_lines": [
+     "L"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Outbound",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "629",
+  "stops": [
+   {
+    "stop_id": "L10",
+    "name": "Lorimer St",
+    "daytime_lines": [
+     "L"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Outbound",
+    "borough": "Brooklyn"
+   },
+   {
+    "stop_id": "G29",
+    "name": "Metropolitan Av",
+    "daytime_lines": [
+     "G"
+    ],
+    "north_label": "Queens",
+    "south_label": "Southbound",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "122",
+  "stops": [
+   {
+    "stop_id": "L11",
+    "name": "Graham Av",
+    "daytime_lines": [
+     "L"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Outbound",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "123",
+  "stops": [
+   {
+    "stop_id": "L12",
+    "name": "Grand St",
+    "daytime_lines": [
+     "L"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Outbound",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "124",
+  "stops": [
+   {
+    "stop_id": "L13",
+    "name": "Montrose Av",
+    "daytime_lines": [
+     "L"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Outbound",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "125",
+  "stops": [
+   {
+    "stop_id": "L14",
+    "name": "Morgan Av",
+    "daytime_lines": [
+     "L"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Outbound",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "126",
+  "stops": [
+   {
+    "stop_id": "L15",
+    "name": "Jefferson St",
+    "daytime_lines": [
+     "L"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Outbound",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "127",
+  "stops": [
+   {
+    "stop_id": "L16",
+    "name": "DeKalb Av",
+    "daytime_lines": [
+     "L"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Outbound",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "129",
+  "stops": [
+   {
+    "stop_id": "L19",
+    "name": "Halsey St",
+    "daytime_lines": [
+     "L"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Outbound",
+    "borough": "Queens"
+   }
+  ]
+ },
+ {
+  "complex_id": "130",
+  "stops": [
+   {
+    "stop_id": "L20",
+    "name": "Wilson Av",
+    "daytime_lines": [
+     "L"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Outbound",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "131",
+  "stops": [
+   {
+    "stop_id": "L21",
+    "name": "Bushwick Av-Aberdeen St",
+    "daytime_lines": [
+     "L"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Outbound",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "133",
+  "stops": [
+   {
+    "stop_id": "L24",
+    "name": "Atlantic Av",
+    "daytime_lines": [
+     "L"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Canarsie",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "134",
+  "stops": [
+   {
+    "stop_id": "L25",
+    "name": "Sutter Av",
+    "daytime_lines": [
+     "L"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Canarsie",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "135",
+  "stops": [
+   {
+    "stop_id": "L26",
+    "name": "Livonia Av",
+    "daytime_lines": [
+     "L"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Canarsie",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "136",
+  "stops": [
+   {
+    "stop_id": "L27",
+    "name": "New Lots Av",
+    "daytime_lines": [
+     "L"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Canarsie",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "137",
+  "stops": [
+   {
+    "stop_id": "L28",
+    "name": "East 105 St",
+    "daytime_lines": [
+     "L"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Canarsie",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "138",
+  "stops": [
+   {
+    "stop_id": "L29",
+    "name": "Canarsie-Rockaway Pkwy",
+    "daytime_lines": [
+     "L"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Last Stop",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "108",
+  "stops": [
+   {
+    "stop_id": "M01",
+    "name": "Middle Village-Metropolitan Av",
+    "daytime_lines": [
+     "M"
+    ],
+    "north_label": "Inbound",
+    "south_label": "Last Stop",
+    "borough": "Queens"
+   }
+  ]
+ },
+ {
+  "complex_id": "109",
+  "stops": [
+   {
+    "stop_id": "M04",
+    "name": "Fresh Pond Rd",
+    "daytime_lines": [
+     "M"
+    ],
+    "north_label": "Inbound",
+    "south_label": "Middle Village",
+    "borough": "Queens"
+   }
+  ]
+ },
+ {
+  "complex_id": "110",
+  "stops": [
+   {
+    "stop_id": "M05",
+    "name": "Forest Av",
+    "daytime_lines": [
+     "M"
+    ],
+    "north_label": "Inbound",
+    "south_label": "Middle Village",
+    "borough": "Queens"
+   }
+  ]
+ },
+ {
+  "complex_id": "111",
+  "stops": [
+   {
+    "stop_id": "M06",
+    "name": "Seneca Av",
+    "daytime_lines": [
+     "M"
+    ],
+    "north_label": "Inbound",
+    "south_label": "Middle Village",
+    "borough": "Queens"
+   }
+  ]
+ },
+ {
+  "complex_id": "630",
+  "stops": [
+   {
+    "stop_id": "M08",
+    "name": "Myrtle-Wyckoff Avs",
+    "daytime_lines": [
+     "M"
+    ],
+    "north_label": "Inbound",
+    "south_label": "Middle Village",
+    "borough": "Brooklyn"
+   },
+   {
+    "stop_id": "L17",
+    "name": "Myrtle-Wyckoff Avs",
+    "daytime_lines": [
+     "L"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Outbound",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "113",
+  "stops": [
+   {
+    "stop_id": "M09",
+    "name": "Knickerbocker Av",
+    "daytime_lines": [
+     "M"
+    ],
+    "north_label": "Inbound",
+    "south_label": "Middle Village",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "114",
+  "stops": [
+   {
+    "stop_id": "M10",
+    "name": "Central Av",
+    "daytime_lines": [
+     "M"
+    ],
+    "north_label": "Inbound",
+    "south_label": "Middle Village",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "97",
+  "stops": [
+   {
+    "stop_id": "M11",
+    "name": "Myrtle Av",
+    "daytime_lines": [
+     "M",
+     "J",
+     "Z"
+    ],
+    "north_label": "Outbound",
+    "south_label": "Manhattan",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "98",
+  "stops": [
+   {
+    "stop_id": "M12",
+    "name": "Flushing Av",
+    "daytime_lines": [
+     "M",
+     "J"
+    ],
+    "north_label": "Outbound",
+    "south_label": "Manhattan",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "99",
+  "stops": [
+   {
+    "stop_id": "M13",
+    "name": "Lorimer St",
+    "daytime_lines": [
+     "M",
+     "J"
+    ],
+    "north_label": "Outbound",
+    "south_label": "Manhattan",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "100",
+  "stops": [
+   {
+    "stop_id": "M14",
+    "name": "Hewes St",
+    "daytime_lines": [
+     "M",
+     "J"
+    ],
+    "north_label": "Outbound",
+    "south_label": "Manhattan",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "101",
+  "stops": [
+   {
+    "stop_id": "M16",
+    "name": "Marcy Av",
+    "daytime_lines": [
+     "M",
+     "J",
+     "Z"
+    ],
+    "north_label": "Outbound",
+    "south_label": "Manhattan",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "625",
+  "stops": [
+   {
+    "stop_id": "M18",
+    "name": "Delancey St-Essex St",
+    "daytime_lines": [
+     "M",
+     "J",
+     "Z"
+    ],
+    "north_label": "Brooklyn",
+    "south_label": "Inbound",
+    "borough": "Manhattan"
+   },
+   {
+    "stop_id": "F15",
+    "name": "Delancey St-Essex St",
+    "daytime_lines": [
+     "F"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Brooklyn",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "103",
+  "stops": [
+   {
+    "stop_id": "M19",
+    "name": "Bowery",
+    "daytime_lines": [
+     "J",
+     "Z"
+    ],
+    "north_label": "Brooklyn",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "622",
+  "stops": [
+   {
+    "stop_id": "M21",
+    "name": "Chambers St",
+    "daytime_lines": [
+     "J",
+     "Z"
+    ],
+    "north_label": "Brooklyn",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   },
+   {
+    "stop_id": "640",
+    "name": "Brooklyn Bridge-City Hall",
+    "daytime_lines": [
+     "4",
+     "5",
+     "6"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "628",
+  "stops": [
+   {
+    "stop_id": "M22",
+    "name": "Fulton St",
+    "daytime_lines": [
+     "J",
+     "Z"
+    ],
+    "north_label": "Brooklyn",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   },
+   {
+    "stop_id": "A38",
+    "name": "Fulton St",
+    "daytime_lines": [
+     "A",
+     "C"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Brooklyn",
+    "borough": "Manhattan"
+   },
+   {
+    "stop_id": "229",
+    "name": "Fulton St",
+    "daytime_lines": [
+     "2",
+     "3"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Brooklyn",
+    "borough": "Manhattan"
+   },
+   {
+    "stop_id": "418",
+    "name": "Fulton St",
+    "daytime_lines": [
+     "4",
+     "5"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "107",
+  "stops": [
+   {
+    "stop_id": "M23",
+    "name": "Broad St",
+    "daytime_lines": [
+     "J",
+     "Z"
+    ],
+    "north_label": "Brooklyn",
+    "south_label": "Last Stop",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "71",
+  "stops": [
+   {
+    "stop_id": "N02",
+    "name": "8 Av",
+    "daytime_lines": [
+     "N"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Coney Island",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "72",
+  "stops": [
+   {
+    "stop_id": "N03",
+    "name": "Fort Hamilton Pkwy",
+    "daytime_lines": [
+     "N"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Coney Island",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "74",
+  "stops": [
+   {
+    "stop_id": "N05",
+    "name": "18 Av",
+    "daytime_lines": [
+     "N"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Coney Island",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "75",
+  "stops": [
+   {
+    "stop_id": "N06",
+    "name": "20 Av",
+    "daytime_lines": [
+     "N"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Coney Island",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "76",
+  "stops": [
+   {
+    "stop_id": "N07",
+    "name": "Bay Pkwy",
+    "daytime_lines": [
+     "N"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Coney Island",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "77",
+  "stops": [
+   {
+    "stop_id": "N08",
+    "name": "Kings Hwy",
+    "daytime_lines": [
+     "N"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Coney Island",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "78",
+  "stops": [
+   {
+    "stop_id": "N09",
+    "name": "Avenue U",
+    "daytime_lines": [
+     "N"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Coney Island",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "79",
+  "stops": [
+   {
+    "stop_id": "N10",
+    "name": "86 St",
+    "daytime_lines": [
+     "N"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Coney Island",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "477",
+  "stops": [
+   {
+    "stop_id": "Q03",
+    "name": "72 St",
+    "daytime_lines": [
+     "Q"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "476",
+  "stops": [
+   {
+    "stop_id": "Q04",
+    "name": "86 St",
+    "daytime_lines": [
+     "Q"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "475",
+  "stops": [
+   {
+    "stop_id": "Q05",
+    "name": "96 St",
+    "daytime_lines": [
+     "Q"
+    ],
+    "north_label": "Last Stop",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "1",
+  "stops": [
+   {
+    "stop_id": "R01",
+    "name": "Astoria-Ditmars Blvd",
+    "daytime_lines": [
+     "N",
+     "W"
+    ],
+    "north_label": "Last Stop",
+    "south_label": "Manhattan",
+    "borough": "Queens"
+   }
+  ]
+ },
+ {
+  "complex_id": "2",
+  "stops": [
+   {
+    "stop_id": "R03",
+    "name": "Astoria Blvd",
+    "daytime_lines": [
+     "N",
+     "W"
+    ],
+    "north_label": "Astoria",
+    "south_label": "Manhattan",
+    "borough": "Queens"
+   }
+  ]
+ },
+ {
+  "complex_id": "3",
+  "stops": [
+   {
+    "stop_id": "R04",
+    "name": "30 Av",
+    "daytime_lines": [
+     "N",
+     "W"
+    ],
+    "north_label": "Astoria",
+    "south_label": "Manhattan",
+    "borough": "Queens"
+   }
+  ]
+ },
+ {
+  "complex_id": "4",
+  "stops": [
+   {
+    "stop_id": "R05",
+    "name": "Broadway",
+    "daytime_lines": [
+     "N",
+     "W"
+    ],
+    "north_label": "Astoria",
+    "south_label": "Manhattan",
+    "borough": "Queens"
+   }
+  ]
+ },
+ {
+  "complex_id": "5",
+  "stops": [
+   {
+    "stop_id": "R06",
+    "name": "36 Av",
+    "daytime_lines": [
+     "N",
+     "W"
+    ],
+    "north_label": "Astoria",
+    "south_label": "Manhattan",
+    "borough": "Queens"
+   }
+  ]
+ },
+ {
+  "complex_id": "6",
+  "stops": [
+   {
+    "stop_id": "R08",
+    "name": "39 Av-Dutch Kills",
+    "daytime_lines": [
+     "N",
+     "W"
+    ],
+    "north_label": "Astoria",
+    "south_label": "Manhattan",
+    "borough": "Queens"
+   }
+  ]
+ },
+ {
+  "complex_id": "461",
+  "stops": [
+   {
+    "stop_id": "R09",
+    "name": "Queensboro Plaza",
+    "daytime_lines": [
+     "N",
+     "W"
+    ],
+    "north_label": "Astoria",
+    "south_label": "Manhattan",
+    "borough": "Queens"
+   },
+   {
+    "stop_id": "718",
+    "name": "Queensboro Plaza",
+    "daytime_lines": [
+     "7"
+    ],
+    "north_label": "Outbound",
+    "south_label": "Manhattan",
+    "borough": "Queens"
+   }
+  ]
+ },
+ {
+  "complex_id": "613",
+  "stops": [
+   {
+    "stop_id": "R11",
+    "name": "Lexington Av/59 St",
+    "daytime_lines": [
+     "N",
+     "R",
+     "W"
+    ],
+    "north_label": "Queens",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   },
+   {
+    "stop_id": "629",
+    "name": "59 St",
+    "daytime_lines": [
+     "4",
+     "5",
+     "6"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "8",
+  "stops": [
+   {
+    "stop_id": "R13",
+    "name": "5 Av/59 St",
+    "daytime_lines": [
+     "N",
+     "R",
+     "W"
+    ],
+    "north_label": "Queens",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "9",
+  "stops": [
+   {
+    "stop_id": "R14",
+    "name": "57 St-7 Av",
+    "daytime_lines": [
+     "N",
+     "Q",
+     "R",
+     "W"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "10",
+  "stops": [
+   {
+    "stop_id": "R15",
+    "name": "49 St",
+    "daytime_lines": [
+     "N",
+     "R",
+     "W"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "611",
+  "stops": [
+   {
+    "stop_id": "R16",
+    "name": "Times Sq-42 St",
+    "daytime_lines": [
+     "N",
+     "Q",
+     "R",
+     "W"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   },
+   {
+    "stop_id": "A27",
+    "name": "42 St-Port Authority Bus Terminal",
+    "daytime_lines": [
+     "A",
+     "C",
+     "E"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   },
+   {
+    "stop_id": "127",
+    "name": "Times Sq-42 St",
+    "daytime_lines": [
+     "1",
+     "2",
+     "3"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   },
+   {
+    "stop_id": "725",
+    "name": "Times Sq-42 St",
+    "daytime_lines": [
+     "7"
+    ],
+    "north_label": "Queens",
+    "south_label": "Hudson Yards",
+    "borough": "Manhattan"
+   },
+   {
+    "stop_id": "902",
+    "name": "Times Sq-42 St",
+    "daytime_lines": [
+     "S"
+    ],
+    "north_label": "Last Stop",
+    "south_label": "Grand Central",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "607",
+  "stops": [
+   {
+    "stop_id": "R17",
+    "name": "34 St-Herald Sq",
+    "daytime_lines": [
+     "N",
+     "Q",
+     "R",
+     "W"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   },
+   {
+    "stop_id": "D17",
+    "name": "34 St-Herald Sq",
+    "daytime_lines": [
+     "B",
+     "D",
+     "F",
+     "M"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "13",
+  "stops": [
+   {
+    "stop_id": "R18",
+    "name": "28 St",
+    "daytime_lines": [
+     "R",
+     "W"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "14",
+  "stops": [
+   {
+    "stop_id": "R19",
+    "name": "23 St",
+    "daytime_lines": [
+     "R",
+     "W"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "602",
+  "stops": [
+   {
+    "stop_id": "R20",
+    "name": "14 St-Union Sq",
+    "daytime_lines": [
+     "N",
+     "Q",
+     "R",
+     "W"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   },
+   {
+    "stop_id": "L03",
+    "name": "14 St-Union Sq",
+    "daytime_lines": [
+     "L"
+    ],
+    "north_label": "West Side",
+    "south_label": "Brooklyn",
+    "borough": "Manhattan"
+   },
+   {
+    "stop_id": "635",
+    "name": "14 St-Union Sq",
+    "daytime_lines": [
+     "4",
+     "5",
+     "6"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "16",
+  "stops": [
+   {
+    "stop_id": "R21",
+    "name": "8 St-NYU",
+    "daytime_lines": [
+     "R",
+     "W"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "17",
+  "stops": [
+   {
+    "stop_id": "R22",
+    "name": "Prince St",
+    "daytime_lines": [
+     "R",
+     "W"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "623",
+  "stops": [
+   {
+    "stop_id": "R23",
+    "name": "Canal St",
+    "daytime_lines": [
+     "R",
+     "W"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   },
+   {
+    "stop_id": "Q01",
+    "name": "Canal St",
+    "daytime_lines": [
+     "N",
+     "Q"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   },
+   {
+    "stop_id": "M20",
+    "name": "Canal St",
+    "daytime_lines": [
+     "J",
+     "Z"
+    ],
+    "north_label": "Brooklyn",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   },
+   {
+    "stop_id": "639",
+    "name": "Canal St",
+    "daytime_lines": [
+     "6"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "20",
+  "stops": [
+   {
+    "stop_id": "R24",
+    "name": "City Hall",
+    "daytime_lines": [
+     "R",
+     "W"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "624",
+  "stops": [
+   {
+    "stop_id": "R25",
+    "name": "Cortlandt St",
+    "daytime_lines": [
+     "R",
+     "W"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   },
+   {
+    "stop_id": "A36",
+    "name": "Chambers St",
+    "daytime_lines": [
+     "A",
+     "C"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Brooklyn",
+    "borough": "Manhattan"
+   },
+   {
+    "stop_id": "E01",
+    "name": "World Trade Center",
+    "daytime_lines": [
+     "E"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Last Stop",
+    "borough": "Manhattan"
+   },
+   {
+    "stop_id": "228",
+    "name": "Park Place",
+    "daytime_lines": [
+     "2",
+     "3"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Brooklyn",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "22",
+  "stops": [
+   {
+    "stop_id": "R26",
+    "name": "Rector St",
+    "daytime_lines": [
+     "R",
+     "W"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "635",
+  "stops": [
+   {
+    "stop_id": "R27",
+    "name": "Whitehall St-South Ferry",
+    "daytime_lines": [
+     "R",
+     "W"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Downtown",
+    "borough": "Manhattan"
+   },
+   {
+    "stop_id": "142",
+    "name": "South Ferry",
+    "daytime_lines": [
+     "1"
+    ],
+    "north_label": "Uptown",
+    "south_label": "Last Stop",
+    "borough": "Manhattan"
+   }
+  ]
+ },
+ {
+  "complex_id": "620",
+  "stops": [
+   {
+    "stop_id": "R28",
+    "name": "Court St",
+    "daytime_lines": [
+     "R"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Southbound",
+    "borough": "Brooklyn"
+   },
+   {
+    "stop_id": "232",
+    "name": "Borough Hall",
+    "daytime_lines": [
+     "2",
+     "3"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Outbound",
+    "borough": "Brooklyn"
+   },
+   {
+    "stop_id": "423",
+    "name": "Borough Hall",
+    "daytime_lines": [
+     "4",
+     "5"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Outbound",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "636",
+  "stops": [
+   {
+    "stop_id": "R29",
+    "name": "Jay St-MetroTech",
+    "daytime_lines": [
+     "R"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Southbound",
+    "borough": "Brooklyn"
+   },
+   {
+    "stop_id": "A41",
+    "name": "Jay St-MetroTech",
+    "daytime_lines": [
+     "A",
+     "C",
+     "F"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Outbound",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "26",
+  "stops": [
+   {
+    "stop_id": "R30",
+    "name": "DeKalb Av",
+    "daytime_lines": [
+     "B",
+     "Q",
+     "R"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Southbound",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "617",
+  "stops": [
+   {
+    "stop_id": "R31",
+    "name": "Atlantic Av-Barclays Ctr",
+    "daytime_lines": [
+     "D",
+     "N",
+     "R"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Southbound",
+    "borough": "Brooklyn"
+   },
+   {
+    "stop_id": "D24",
+    "name": "Atlantic Av-Barclays Ctr",
+    "daytime_lines": [
+     "B",
+     "Q"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Southbound",
+    "borough": "Brooklyn"
+   },
+   {
+    "stop_id": "235",
+    "name": "Atlantic Av-Barclays Ctr",
+    "daytime_lines": [
+     "2",
+     "3",
+     "4",
+     "5"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Outbound",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "28",
+  "stops": [
+   {
+    "stop_id": "R32",
+    "name": "Union St",
+    "daytime_lines": [
+     "R"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Southbound",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "608",
+  "stops": [
+   {
+    "stop_id": "R33",
+    "name": "4 Av-9 St",
+    "daytime_lines": [
+     "R"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Southbound",
+    "borough": "Brooklyn"
+   },
+   {
+    "stop_id": "F23",
+    "name": "4 Av-9 St",
+    "daytime_lines": [
+     "F",
+     "G"
+    ],
+    "north_label": "Northbound",
+    "south_label": "Southbound",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "30",
+  "stops": [
+   {
+    "stop_id": "R34",
+    "name": "Prospect Av",
+    "daytime_lines": [
+     "R"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Southbound",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "31",
+  "stops": [
+   {
+    "stop_id": "R35",
+    "name": "25 St",
+    "daytime_lines": [
+     "R"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Southbound",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "32",
+  "stops": [
+   {
+    "stop_id": "R36",
+    "name": "36 St",
+    "daytime_lines": [
+     "D",
+     "N",
+     "R"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Southbound",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "33",
+  "stops": [
+   {
+    "stop_id": "R39",
+    "name": "45 St",
+    "daytime_lines": [
+     "R"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Southbound",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "34",
+  "stops": [
+   {
+    "stop_id": "R40",
+    "name": "53 St",
+    "daytime_lines": [
+     "R"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Southbound",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "35",
+  "stops": [
+   {
+    "stop_id": "R41",
+    "name": "59 St",
+    "daytime_lines": [
+     "N",
+     "R"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Southbound",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "36",
+  "stops": [
+   {
+    "stop_id": "R42",
+    "name": "Bay Ridge Av",
+    "daytime_lines": [
+     "R"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Bay Ridge",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "37",
+  "stops": [
+   {
+    "stop_id": "R43",
+    "name": "77 St",
+    "daytime_lines": [
+     "R"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Bay Ridge",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "38",
+  "stops": [
+   {
+    "stop_id": "R44",
+    "name": "86 St",
+    "daytime_lines": [
+     "R"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Bay Ridge",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "39",
+  "stops": [
+   {
+    "stop_id": "R45",
+    "name": "Bay Ridge-95 St",
+    "daytime_lines": [
+     "R"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Last Stop",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "627",
+  "stops": [
+   {
+    "stop_id": "S01",
+    "name": "Franklin Av",
+    "daytime_lines": [
+     "S"
+    ],
+    "north_label": "Last Stop",
+    "south_label": "Prospect Park",
+    "borough": "Brooklyn"
+   },
+   {
+    "stop_id": "A45",
+    "name": "Franklin Av",
+    "daytime_lines": [
+     "C"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Outbound",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "141",
+  "stops": [
+   {
+    "stop_id": "S03",
+    "name": "Park Pl",
+    "daytime_lines": [
+     "S"
+    ],
+    "north_label": "Franklin Av",
+    "south_label": "Prospect Park",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "626",
+  "stops": [
+   {
+    "stop_id": "S04",
+    "name": "Botanic Garden",
+    "daytime_lines": [
+     "S"
+    ],
+    "north_label": "Franklin Av",
+    "south_label": "Prospect Park",
+    "borough": "Brooklyn"
+   },
+   {
+    "stop_id": "239",
+    "name": "Franklin Av-Medgar Evers College",
+    "daytime_lines": [
+     "2",
+     "3",
+     "4",
+     "5"
+    ],
+    "north_label": "Manhattan",
+    "south_label": "Outbound",
+    "borough": "Brooklyn"
+   }
+  ]
+ },
+ {
+  "complex_id": "522",
+  "stops": [
+   {
+    "stop_id": "S09",
+    "name": "Tottenville",
+    "daytime_lines": [
+     "SIR"
+    ],
+    "north_label": "Ferry",
+    "south_label": "Last Stop",
+    "borough": "Staten Island"
+   }
+  ]
+ },
+ {
+  "complex_id": "523",
+  "stops": [
+   {
+    "stop_id": "S11",
+    "name": "Arthur Kill",
+    "daytime_lines": [
+     "SIR"
+    ],
+    "north_label": "Ferry",
+    "south_label": "Tottenville",
+    "borough": "Staten Island"
+   }
+  ]
+ },
+ {
+  "complex_id": "519",
+  "stops": [
+   {
+    "stop_id": "S13",
+    "name": "Richmond Valley",
+    "daytime_lines": [
+     "SIR"
+    ],
+    "north_label": "Ferry",
+    "south_label": "Tottenville",
+    "borough": "Staten Island"
+   }
+  ]
+ },
+ {
+  "complex_id": "518",
+  "stops": [
+   {
+    "stop_id": "S14",
+    "name": "Pleasant Plains",
+    "daytime_lines": [
+     "SIR"
+    ],
+    "north_label": "Ferry",
+    "south_label": "South Shore",
+    "borough": "Staten Island"
+   }
+  ]
+ },
+ {
+  "complex_id": "517",
+  "stops": [
+   {
+    "stop_id": "S15",
+    "name": "Prince's Bay",
+    "daytime_lines": [
+     "SIR"
+    ],
+    "north_label": "Ferry",
+    "south_label": "South Shore",
+    "borough": "Staten Island"
+   }
+  ]
+ },
+ {
+  "complex_id": "516",
+  "stops": [
+   {
+    "stop_id": "S16",
+    "name": "Huguenot",
+    "daytime_lines": [
+     "SIR"
+    ],
+    "north_label": "Ferry",
+    "south_label": "South Shore",
+    "borough": "Staten Island"
+   }
+  ]
+ },
+ {
+  "complex_id": "515",
+  "stops": [
+   {
+    "stop_id": "S17",
+    "name": "Annadale",
+    "daytime_lines": [
+     "SIR"
+    ],
+    "north_label": "Ferry",
+    "south_label": "South Shore",
+    "borough": "Staten Island"
+   }
+  ]
+ },
+ {
+  "complex_id": "514",
+  "stops": [
+   {
+    "stop_id": "S18",
+    "name": "Eltingville",
+    "daytime_lines": [
+     "SIR"
+    ],
+    "north_label": "Ferry",
+    "south_label": "South Shore",
+    "borough": "Staten Island"
+   }
+  ]
+ },
+ {
+  "complex_id": "513",
+  "stops": [
+   {
+    "stop_id": "S19",
+    "name": "Great Kills",
+    "daytime_lines": [
+     "SIR"
+    ],
+    "north_label": "Ferry",
+    "south_label": "South Shore",
+    "borough": "Staten Island"
+   }
+  ]
+ },
+ {
+  "complex_id": "512",
+  "stops": [
+   {
+    "stop_id": "S20",
+    "name": "Bay Terrace",
+    "daytime_lines": [
+     "SIR"
+    ],
+    "north_label": "Ferry",
+    "south_label": "South Shore",
+    "borough": "Staten Island"
+   }
+  ]
+ },
+ {
+  "complex_id": "511",
+  "stops": [
+   {
+    "stop_id": "S21",
+    "name": "Oakwood Heights",
+    "daytime_lines": [
+     "SIR"
+    ],
+    "north_label": "Ferry",
+    "south_label": "South Shore",
+    "borough": "Staten Island"
+   }
+  ]
+ },
+ {
+  "complex_id": "510",
+  "stops": [
+   {
+    "stop_id": "S22",
+    "name": "New Dorp",
+    "daytime_lines": [
+     "SIR"
+    ],
+    "north_label": "Ferry",
+    "south_label": "South Shore",
+    "borough": "Staten Island"
+   }
+  ]
+ },
+ {
+  "complex_id": "509",
+  "stops": [
+   {
+    "stop_id": "S23",
+    "name": "Grant City",
+    "daytime_lines": [
+     "SIR"
+    ],
+    "north_label": "Ferry",
+    "south_label": "South Shore",
+    "borough": "Staten Island"
+   }
+  ]
+ },
+ {
+  "complex_id": "508",
+  "stops": [
+   {
+    "stop_id": "S24",
+    "name": "Jefferson Av",
+    "daytime_lines": [
+     "SIR"
+    ],
+    "north_label": "Ferry",
+    "south_label": "South Shore",
+    "borough": "Staten Island"
+   }
+  ]
+ },
+ {
+  "complex_id": "507",
+  "stops": [
+   {
+    "stop_id": "S25",
+    "name": "Dongan Hills",
+    "daytime_lines": [
+     "SIR"
+    ],
+    "north_label": "Ferry",
+    "south_label": "South Shore",
+    "borough": "Staten Island"
+   }
+  ]
+ },
+ {
+  "complex_id": "506",
+  "stops": [
+   {
+    "stop_id": "S26",
+    "name": "Old Town",
+    "daytime_lines": [
+     "SIR"
+    ],
+    "north_label": "Ferry",
+    "south_label": "South Shore",
+    "borough": "Staten Island"
+   }
+  ]
+ },
+ {
+  "complex_id": "505",
+  "stops": [
+   {
+    "stop_id": "S27",
+    "name": "Grasmere",
+    "daytime_lines": [
+     "SIR"
+    ],
+    "north_label": "Ferry",
+    "south_label": "South Shore",
+    "borough": "Staten Island"
+   }
+  ]
+ },
+ {
+  "complex_id": "504",
+  "stops": [
+   {
+    "stop_id": "S28",
+    "name": "Clifton",
+    "daytime_lines": [
+     "SIR"
+    ],
+    "north_label": "Ferry",
+    "south_label": "South Shore",
+    "borough": "Staten Island"
+   }
+  ]
+ },
+ {
+  "complex_id": "503",
+  "stops": [
+   {
+    "stop_id": "S29",
+    "name": "Stapleton",
+    "daytime_lines": [
+     "SIR"
+    ],
+    "north_label": "Ferry",
+    "south_label": "South Shore",
+    "borough": "Staten Island"
+   }
+  ]
+ },
+ {
+  "complex_id": "502",
+  "stops": [
+   {
+    "stop_id": "S30",
+    "name": "Tompkinsville",
+    "daytime_lines": [
+     "SIR"
+    ],
+    "north_label": "Ferry",
+    "south_label": "South Shore",
+    "borough": "Staten Island"
+   }
+  ]
+ },
+ {
+  "complex_id": "501",
+  "stops": [
+   {
+    "stop_id": "S31",
+    "name": "St George",
+    "daytime_lines": [
+     "SIR"
+    ],
+    "north_label": "Last Stop",
+    "south_label": "South Shore",
+    "borough": "Staten Island"
+   }
+  ]
+ }
+]

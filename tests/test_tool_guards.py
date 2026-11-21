@@ -144,3 +144,8 @@ def test_the_show_listings_read_public_text_and_mark_the_exchange_untrusted() ->
 def test_the_restaurant_tools_read_public_text_and_mark_the_exchange_untrusted() -> None:
     rules = load_tool_table().tools
     assert {(rules[name].tier.value, rules[name].marks_untrusted) for name in RESTAURANTS_TOOL_NAMES} == {("read_public", True)}
+
+
+def test_subway_arrivals_reads_public_data_and_marks_the_exchange_untrusted_for_its_alert_text() -> None:
+    rule = load_tool_table().tools["subway_arrivals"]
+    assert (rule.tier.value, rule.marks_untrusted) == ("read_public", True)

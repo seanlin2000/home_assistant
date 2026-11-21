@@ -1,5 +1,5 @@
 """The agent's tool server over streamable HTTP. Every tool package registers its tools on this one server: web search, the calculator tools, the home weather
-forecast, Wikipedia lookups, NBA and NFL scores and statistics, Broadway and movie listings, and what people on Reddit say."""
+forecast, Wikipedia lookups, NBA and NFL scores and statistics, Broadway and movie listings, what people on Reddit say, and live New York City subway arrivals."""
 
 from pathlib import Path
 
@@ -23,6 +23,8 @@ from restaurants_mcp.register import register_restaurants_tools
 from restaurants_mcp.settings import RestaurantsSettings, restaurants_settings_from_environment
 from sports_mcp.register import register_sports_tools
 from sports_mcp.settings import SportsSettings, sports_settings_from_environment
+from subway_mcp.register import register_subway_tools
+from subway_mcp.settings import SubwaySettings, subway_settings_from_environment
 from utils.http_access_utils import host_allowed, misdirected
 from weather_mcp.register import register_weather_tools
 from weather_mcp.settings import WeatherSettings, weather_settings_from_environment
@@ -49,6 +51,7 @@ def build_server(
     reddit: RedditSettings | None = None,
     restaurants: RestaurantsSettings | None = None,
     newsletters: NewslettersSettings | None = None,
+    subway: SubwaySettings | None = None,
     tool_server: ToolServerSettings | None = None,
 ) -> MCPServer:
     cache = QueryCache(settings.cache_dir)
@@ -61,12 +64,12 @@ def build_server(
     server = MCPServer(
         "assistant-tools",
         instructions=(
-            "Web search through Brave's API, falling back to a local SearXNG instance, Wikipedia articles, exact calculator tools, the forecast for home, NBA and NFL statistics from ESPN, what is playing on Broadway, what movies are showing in Manhattan, what people on Reddit say, restaurants from the Michelin Guide, and the user's own email newsletters. Prefer"
+            "Web search through Brave's API, falling back to a local SearXNG instance, Wikipedia articles, exact calculator tools, the forecast for home, NBA and NFL statistics from ESPN, what is playing on Broadway, what movies are showing in Manhattan, what people on Reddit say, restaurants from the Michelin Guide, the user's own email newsletters, and live New York City subway arrivals. Prefer"
             " search_and_read for questions about the world and wikipedia_lookup for settled facts, lists, and records; use the calculator tools for any arithmetic,"
             " weather_forecast for the weather, and game_scores, box_score, team_roster, roster_stats, player_stats, player_matchup, player_rankings, and team_rankings for NBA and NFL scores, rosters, and statistics,"
             " broadway_shows for what is playing on Broadway and Off-Broadway, popular_movies, movies_showing and movie_details for the good movies playing widely, what movies are showing in Manhattan theaters, and what one is about,"
             " reddit_search when the user asks what people on Reddit or a subreddit say, restaurant_recommendations and restaurant_details for Michelin Guide restaurants,"
-            " and newsletters_list, newsletter_summarize and newsletter_read for the user's newsletters."
+            " newsletters_list, newsletter_summarize and newsletter_read for the user's newsletters, and subway_arrivals for New York City subway times at a station."
         ),
     )
     register_web_search_tools(server, settings, search, extractor)
@@ -79,6 +82,7 @@ def build_server(
     register_reddit_tools(server, reddit or RedditSettings(), search)  # reddit_search searches through the same client as web search
     register_restaurants_tools(server, restaurants or RestaurantsSettings())
     register_newsletters_tools(server, newsletters or newsletters_settings_from_environment())  # the environment lets the benchmark and tests point it elsewhere
+    register_subway_tools(server, subway or SubwaySettings())
     register_operations_routes(server, allowed_host_list(tool_server or ToolServerSettings()))
     if fixture_pages:
         server.custom_route(FIXTURE_ROUTE, ["POST"])(fixture_route(fixture_pages))
@@ -119,6 +123,7 @@ def main() -> None:
         reddit=reddit_settings_from_environment(),
         restaurants=restaurants_settings_from_environment(),
         newsletters=newsletters_settings_from_environment(),
+        subway=subway_settings_from_environment(),
         tool_server=tool_server,
     ).run(transport="streamable-http", host=tool_server.host, port=tool_server.port, transport_security=transport_security_for(tool_server))
 
