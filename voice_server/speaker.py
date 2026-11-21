@@ -25,6 +25,8 @@ VOICED_SAMPLE_FLOOR = 0.01  # samples quieter than this are pauses, left out of 
 QUIET_WINDOW_SECONDS = 0.01
 QUIET_DBFS = -45.0  # a 10 ms window quieter than this is silence or breath, not speech
 FADE_OUT_SECONDS = 0.015  # the last sound eases out instead of stopping mid-wave
+TAIL_NOISE_DBFS = -80.0  # far below hearing, close to 16-bit audio's floor, yet FLAC cannot squeeze it away as it does digital zeros
+TAIL_NOISE_SEED = 0  # the same faint noise every time, so a piece comes out identical on every run
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -69,8 +71,12 @@ def with_even_edges(samples: np.ndarray, sample_rate: int, finish: PieceFinish) 
     fade_length = min(len(speech), int(FADE_OUT_SECONDS * sample_rate))
     speech[len(speech) - fade_length :] *= np.linspace(1.0, 0.0, fade_length, dtype=np.float32)
     lead = np.zeros(round(finish.lead_silence_seconds * sample_rate), dtype=np.float32)
-    trail = np.zeros(round(finish.trail_silence_seconds * sample_rate), dtype=np.float32)
-    return np.concatenate([lead, speech, trail])
+    return np.concatenate([lead, speech, faint_noise(round(finish.trail_silence_seconds * sample_rate))])
+
+
+def faint_noise(length: int) -> np.ndarray:
+    """Silence that costs bytes: the puck holds back about the last kilobyte of a stream that runs dry, and FLAC squeezes zeros to nothing."""
+    return (np.random.default_rng(TAIL_NOISE_SEED).standard_normal(length) * 10 ** (TAIL_NOISE_DBFS / 20)).astype(np.float32)
 
 
 def speech_span(samples: np.ndarray, sample_rate: int) -> tuple[int, int] | None:
