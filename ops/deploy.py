@@ -59,7 +59,8 @@ ENVIRONMENTS = (
 )
 
 
-# Order matters twice: rules are matched in this order, and ACTION_ORDER below decides execution order.
+# Order matters twice: rules are matched in this order, and ACTION_ORDER below decides execution order. Each service's rule must cover every file
+# its running process loaded and every config file it reads; tests/test_deploy_plan.py follows each service's imports and fails on a gap.
 RULES: tuple[Rule, ...] = (
     Rule(
         prefixes=("uv.lock", "pyproject.toml"),
@@ -81,11 +82,17 @@ RULES: tuple[Rule, ...] = (
             "newsletters_mcp/",
             "assistant_core/",
             "utils/",
+            "ops/__init__.py",
+            "ops/paths.py",
         ),
         actions=("restart:mcp",),
         why="tool server code changed",
     ),
-    Rule(prefixes=("assistant_core/", "assistant_service/", "config/harness.toml", "utils/"), actions=("restart:harness",), why="the harness's code or settings changed"),
+    Rule(
+        prefixes=("assistant_core/", "assistant_service/", "config/harness.toml", "utils/", "ops/__init__.py", "ops/paths.py"),
+        actions=("restart:harness",),
+        why="the harness's code or settings changed",
+    ),
     Rule(prefixes=("custom_components/", *paths.VENDORED_CORE_FILES), actions=("deploy_component",), why="the component or its vendored core changed"),
     Rule(
         prefixes=("config/serving.toml", "serving/", "scripts/strata_patches/"),
@@ -103,8 +110,17 @@ RULES: tuple[Rule, ...] = (
             "utils/pronunciation_utils.py",
             "utils/spoken_sentence_utils.py",
             "utils/engine_override_utils.py",
+            "assistant_core/__init__.py",
             "assistant_core/models.py",
+            "assistant_service/__init__.py",
+            "assistant_service/settings.py",
             "config/harness.toml",
+            "config/serving.toml",
+            "serving/__init__.py",
+            "utils/__init__.py",
+            "utils/http_access_utils.py",
+            "utils/snapshot_utils.py",
+            "utils/text_utils.py",
         ),
         actions=("restart:voice",),
         why="the voice's code, settings or reference clip changed, or code it imports (OmniVoice reuses the speech server's parts and makes the harness's fillers ahead)",
@@ -114,14 +130,44 @@ RULES: tuple[Rule, ...] = (
         actions=("hand_voice_to_home_assistant",),
         why="the voice may have changed engine: Home Assistant re-reads its description and drops replies cached in the old voice",
     ),
-    Rule(prefixes=("speech_server/", "config/speech.toml", "scripts/speech_env.sh"), actions=("restart:speech",), why="the speech server's code or settings changed"),
+    Rule(
+        prefixes=(
+            "speech_server/",
+            "config/speech.toml",
+            "scripts/speech_env.sh",
+            "serving/__init__.py",
+            "serving/settings.py",
+            "utils/__init__.py",
+            "utils/engine_override_utils.py",
+        ),
+        actions=("restart:speech",),
+        why="the speech server's code or settings changed, or code it imports",
+    ),
     Rule(prefixes=("scripts/services.sh",), actions=("reinstall_agents",), why="launchd definitions changed"),
     Rule(prefixes=("docker/searxng/",), actions=("restart_searxng",), why="SearXNG configuration changed"),
     Rule(prefixes=("config/tools.toml",), actions=("restart:harness",), why="the tools the harness may call changed; it reads them at start"),
     Rule(
-        prefixes=("dashboard/", "assistant_core/", "assistant_service/", "ops/paths.py", "utils/"),
+        prefixes=(
+            "dashboard/",
+            "assistant_core/",
+            "assistant_service/",
+            "utils/",
+            "ops/__init__.py",
+            "ops/paths.py",
+            "ops/ha_client.py",
+            "ops/pipeline_runs.py",
+            "serving/__init__.py",
+            "serving/settings.py",
+            "voice_server/__init__.py",
+            "voice_server/settings.py",
+            "web_search_mcp/",
+            "wikipedia_mcp/",
+            "config/harness.toml",
+            "config/serving.toml",
+            "config/voice.toml",
+        ),
         actions=("restart:dashboard",),
-        why="the exchange dashboard's code, or code it imports, changed",
+        why="the exchange dashboard's code, code it imports, or a config file it reads changed",
     ),
 )
 ACTION_ORDER = (
