@@ -1,16 +1,17 @@
 #!/usr/bin/env bash
 # Install, start, stop, and inspect the native macOS services that Home Assistant talks to over the LAN.
 #
-#   scripts/services.sh install      write launchd agents for speech to text, kokoro, the harness and the exchange dashboard (LAN), llama-server and mcp (127.0.0.1), the health check, the nightly listings refresh, and the hourly newsletters pull, and load them
+#   scripts/services.sh install      write launchd agents for speech to text, the voice, the harness and the exchange dashboard (LAN), llama-server and mcp (127.0.0.1), the health check, the nightly listings refresh, and the hourly newsletters pull, and load them
 #   scripts/services.sh start|stop   load/unload the agents
-#   scripts/services.sh restart NAME restart one agent (llama|mcp|harness|dashboard|speech|kokoro|health|listings|newsletters)
+#   scripts/services.sh restart NAME restart one agent (llama|mcp|harness|dashboard|speech|voice|health|listings|newsletters)
 #   scripts/services.sh engine NAME  serve with llama-server or strata on this Mac whatever config/serving.toml says, or default to follow it again
+#   scripts/services.sh voice-engine NAME  speak with omnivoice or kokoro on this Mac whatever config/voice.toml says, or default to follow it again
 #   scripts/services.sh status       show what is listening on each port and the last health snapshot; exits 1 if an agent or port is down
 #   scripts/services.sh dashboard    start the exchange dashboard if it is not running and open it in the browser
-#   scripts/services.sh logs NAME    tail a service log (speech|kokoro|mcp|harness|dashboard|llama|health|listings|newsletters)
+#   scripts/services.sh logs NAME    tail a service log (speech|voice|mcp|harness|dashboard|llama|health|listings|newsletters)
 #   scripts/services.sh uninstall    unload and remove the agents
 #
-# Ports: speech to text 10300 (the speech server, config/speech.toml), Kokoro 10210 and the harness 8770 (with an API key) bind 0.0.0.0 so the VM can reach them, and the
+# Ports: speech to text 10300 (the speech server, config/speech.toml), the voice 10210 (config/voice.toml) and the harness 8770 (with an API key) bind 0.0.0.0 so the VM can reach them, and the
 # exchange dashboard 8775 does so a laptop on the home network can open it. The engine 127.0.0.1:8090 (with an API key, from config/serving.toml)
 # and the tool server 127.0.0.1:8765 answer only this Mac (design_docs/v2/08 section 3.2).
 set -euo pipefail
@@ -19,10 +20,10 @@ PROJECT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 AGENTS_DIR="$HOME/Library/LaunchAgents"
 LOG_DIR="$HOME/Library/Logs/studio-assistant"
 PREFIX="com.studio-assistant"
-SERVICES=(llama mcp harness dashboard speech kokoro health listings newsletters)
-# Agents an older install wrote and install now removes: llama-server replaced Ollama (design_docs/v2/10 section 3.1), and the speech server's
-# Qwen3-ASR replaced Whisper.
-RETIRED_SERVICES=(ollama whisper)
+SERVICES=(llama mcp harness dashboard speech voice health listings newsletters)
+# Agents an older install wrote and install now removes: llama-server replaced Ollama (design_docs/v2/10 section 3.1), the speech server's
+# Qwen3-ASR replaced Whisper, and the voice agent, which launches OmniVoice or Kokoro, replaced the Kokoro agent.
+RETIRED_SERVICES=(ollama whisper kokoro)
 APP_SUPPORT_DIR="$HOME/Library/Application Support/studio-assistant"
 HEALTH_INTERVAL_SECONDS="${HEALTH_INTERVAL_SECONDS:-300}"
 LISTINGS_REFRESH_HOUR="${LISTINGS_REFRESH_HOUR:-4}"
@@ -34,13 +35,16 @@ UNLOAD_TIMEOUT_SECONDS="${UNLOAD_TIMEOUT_SECONDS:-30}"
 ENGINE_OVERRIDE_FILE="$APP_SUPPORT_DIR/engine"
 STRATA_ENGINE_PROCESS=strata
 SERVING_CLI="${SERVING_CLI:-$PROJECT_DIR/.venv/bin/serving}"
+# The voice agent runs whichever voice config/voice.toml (or this file, written by `voice-engine`) names.
+VOICE_ENGINE_OVERRIDE_FILE="$APP_SUPPORT_DIR/voice_engine"
+VOICE_CLI="${VOICE_CLI:-$PROJECT_DIR/.venv/bin/voice}"
 STRATA_SCRIPT="${STRATA_SCRIPT:-$PROJECT_DIR/scripts/strata.sh}"
 ENGINE_EXIT_TIMEOUT_SECONDS="${ENGINE_EXIT_TIMEOUT_SECONDS:-60}"
 # How often MLX renews the speech server's wired memory (install_agents explains why); scripts/speech_server.sh uses the same default.
 MLX_RESIDENCY_REFRESH_MS="${MLX_RESIDENCY_REFRESH_MS:-1000}"
 
 usage() {
-    sed -n '2,15p' "$0"
+    sed -n '2,16p' "$0"
     exit 1
 }
 
@@ -120,6 +124,13 @@ prepare_speech() {
     "$PROJECT_DIR/.venv-speech/bin/speech-server" --download-only
 }
 
+prepare_voice() {
+    # Both voices are kept ready whichever one config/voice.toml names, so switching is a restart, never a download. OmniVoice runs from
+    # .venv-speech, which prepare_speech builds.
+    prepare_kokoro
+    "$PROJECT_DIR/.venv-speech/bin/voice-server" --download-only
+}
+
 ensure_api_key() {
     # $1 the key's name. Made once, readable only by this user, and kept on later installs; delete the file to change the key (design_docs/v2/10 section 3.2).
     local path="$APP_SUPPORT_DIR/$1.key"
@@ -147,8 +158,8 @@ host_names_with_port() {
 
 install_agents() {
     mkdir -p "$AGENTS_DIR" "$LOG_DIR"
-    prepare_kokoro
     prepare_speech
+    prepare_voice
     # launchd keeps running the definition it loaded, so every agent is unloaded before its plist is rewritten; start_agents then loads the new ones.
     stop_agents
     remove_retired_agents
@@ -192,9 +203,10 @@ install_agents() {
     ENV_KEYS=(MLX_METAL_RESIDENCY_REFRESH_INTERVAL_MS)
     ENV_VALUES=("$MLX_RESIDENCY_REFRESH_MS")
     write_plist speech "$PROJECT_DIR/.venv-speech/bin/speech-server"
+    # The voice: the launcher starts OmniVoice or Kokoro with its settings from config/voice.toml. OmniVoice is wired as Qwen3-ASR is, so it needs
+    # the same residency variable; Kokoro ignores it.
+    write_plist voice "$VOICE_CLI" launch
     ENV_KEYS=() ENV_VALUES=()
-    # --volume 2 (+6 dB) brings answers level with the speaker's wake sound, which was about 8 dB louder. Kokoro lowers a sentence that would clip.
-    write_plist kokoro "$PROJECT_DIR/.venv/bin/kokoro-server" --uri tcp://0.0.0.0:10210 --voice bm_fable --data-dir "$HOME/.cache/wyoming-kokoro" --streaming --volume 2 --device cpu
     # HEALTH_CHECK_FLAGS="--leave-vm" restarts services but never the VM (used on the laptop, where the VM is stopped on purpose most of the time);
     # "--no-remediate" installs an observe-only check.
     read -ra health_flags <<<"${HEALTH_CHECK_FLAGS:-}"
@@ -334,6 +346,28 @@ set_engine() {
     restart_agent harness
 }
 
+set_voice_engine() {
+    # The voice's quick rollback at the keyboard, as set_engine is the model's: checked before the voice restarts, and a refused choice undone.
+    local choice="${1:-}" previous
+    previous="$(cat "$VOICE_ENGINE_OVERRIDE_FILE" 2>/dev/null || true)"
+    case "$choice" in
+    omnivoice | kokoro) mkdir -p "$APP_SUPPORT_DIR" && echo "$choice" >"$VOICE_ENGINE_OVERRIDE_FILE" ;;
+    default) rm -f "$VOICE_ENGINE_OVERRIDE_FILE" ;;
+    *)
+        echo "usage: scripts/services.sh voice-engine omnivoice|kokoro|default" >&2
+        return 1
+        ;;
+    esac
+    if ! "$VOICE_CLI" check; then
+        if [[ -n "$previous" ]]; then echo "$previous" >"$VOICE_ENGINE_OVERRIDE_FILE"; else rm -f "$VOICE_ENGINE_OVERRIDE_FILE"; fi
+        echo "the voice was not switched; the running one is untouched" >&2
+        return 1
+    fi
+    restart_agent voice
+    # Home Assistant re-reads the voice's description and forgets replies cached in the old voice; a failure there leaves the new voice speaking.
+    "$VOICE_CLI" handoff || echo "warning: Home Assistant was not told about the new voice; rerun: .venv/bin/voice handoff" >&2
+}
+
 status() {
     # The exit code is the live state: 1 when an agent is not loaded or a port is not listening, which includes llama-server still loading its
     # model, since it is not serving yet. The last health snapshot is printed for reading but does not decide it: it can be minutes old.
@@ -344,7 +378,7 @@ status() {
             problems=$((problems + 1))
         fi
     done
-    local ports=("llama:8090" "mcp:8765" "harness:8770" "dashboard:8775" "speech:10300" "kokoro:10210")
+    local ports=("llama:8090" "mcp:8765" "harness:8770" "dashboard:8775" "speech:10300" "voice:$("$VOICE_CLI" port 2>/dev/null || echo 10210)")
     for entry in "${ports[@]}"; do
         local name="${entry%%:*}" port="${entry##*:}"
         if lsof -nP -iTCP:"$port" -sTCP:LISTEN >/dev/null 2>&1; then
@@ -394,6 +428,7 @@ start) start_agents ;;
 stop) stop_agents ;;
 restart) restart_agent "${2:-}" ;;
 engine) set_engine "${2:-}" ;;
+voice-engine) set_voice_engine "${2:-}" ;;
 status) status ;;
 dashboard) open_dashboard ;;
 logs) tail -n 50 -f "$LOG_DIR/${2:?service name}.log" ;;

@@ -245,3 +245,22 @@ def test_with_no_engine_running_both_are_listed_as_not_running() -> None:
     )
     by_name = {group.name: group for group in memory_view(idle, served(MODEL_WEIGHTS_BYTES)).setup}
     assert (by_name["llama-server"].processes, by_name["Strata"].processes) == (0, 0)
+
+
+def test_omnivoice_speaking_is_listed_with_its_ram_and_the_stopped_kokoro_is_not() -> None:
+    """What the voice agent runs once config/voice.toml names OmniVoice: the launcher replaced itself with .venv-speech's voice-server."""
+    speaking = outputs().model_copy(
+        update={
+            "executables": EXECUTABLES + "  108 /Users/me/home_assistant/.venv-speech/bin/python3\n",
+            "command_lines": COMMAND_LINES + "  108 /Users/me/home_assistant/.venv-speech/bin/python3 /Users/me/home_assistant/.venv-speech/bin/voice-server\n",
+            "top": TOP + "108    2150M  0B\n",
+        }
+    )
+    by_name = {group.name: group for group in memory_view(speaking, served(MODEL_WEIGHTS_BYTES)).setup}
+    assert (by_name["OmniVoice (mlx-audio), text to speech"].processes, by_name["OmniVoice (mlx-audio), text to speech"].ram_bytes) == (1, 2150 * 1024**2)
+    assert "Kokoro, text to speech" not in by_name
+
+
+def test_with_no_voice_running_both_are_listed_as_not_running() -> None:
+    by_name = {group.name: group for group in memory_view(outputs(), served(MODEL_WEIGHTS_BYTES)).setup}
+    assert (by_name["OmniVoice (mlx-audio), text to speech"].processes, by_name["Kokoro, text to speech"].processes) == (0, 0)

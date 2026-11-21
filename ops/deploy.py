@@ -54,8 +54,8 @@ class Environment(NamedTuple):
 # A lock change can move packages in one environment and not the other (a speech-group bump leaves .venv alone), so each is restarted only when
 # its sync changed what is installed.
 ENVIRONMENTS = (
-    Environment(".venv", "dev_setup.sh", ("restart:mcp", "restart:harness", "restart:dashboard", "restart:kokoro")),
-    Environment(".venv-speech", "speech_env.sh", ("restart:speech",)),
+    Environment(".venv", "dev_setup.sh", ("restart:mcp", "restart:harness", "restart:dashboard", "restart:voice")),  # the voice's launcher and Kokoro
+    Environment(".venv-speech", "speech_env.sh", ("restart:speech", "restart:voice")),  # OmniVoice
 )
 
 
@@ -92,7 +92,28 @@ RULES: tuple[Rule, ...] = (
         actions=("restart:llama", "restart:harness"),
         why="the engine's settings, its launcher or Strata's patches changed; the harness reads the model's budget from them",
     ),
-    Rule(prefixes=("voice/", "utils/pronunciation_utils.py"), actions=("restart:kokoro",), why="Kokoro server wrapper, or the pronunciation dictionary code it runs, changed"),
+    Rule(
+        prefixes=(
+            "voice/",
+            "voice_server/",
+            "config/voice.toml",
+            "config/voices/",
+            "speech_server/",
+            "serving/settings.py",
+            "utils/pronunciation_utils.py",
+            "utils/spoken_sentence_utils.py",
+            "utils/engine_override_utils.py",
+            "assistant_core/models.py",
+            "config/harness.toml",
+        ),
+        actions=("restart:voice",),
+        why="the voice's code, settings or reference clip changed, or code it imports (OmniVoice reuses the speech server's parts and makes the harness's fillers ahead)",
+    ),
+    Rule(
+        prefixes=("config/voice.toml",),
+        actions=("hand_voice_to_home_assistant",),
+        why="the voice may have changed engine: Home Assistant re-reads its description and drops replies cached in the old voice",
+    ),
     Rule(prefixes=("speech_server/", "config/speech.toml", "scripts/speech_env.sh"), actions=("restart:speech",), why="the speech server's code or settings changed"),
     Rule(prefixes=("scripts/services.sh",), actions=("reinstall_agents",), why="launchd definitions changed"),
     Rule(prefixes=("docker/searxng/",), actions=("restart_searxng",), why="SearXNG configuration changed"),
@@ -110,8 +131,9 @@ ACTION_ORDER = (
     "restart:mcp",
     "restart:harness",
     "restart:dashboard",
-    "restart:kokoro",
+    "restart:voice",
     "restart:speech",
+    "hand_voice_to_home_assistant",
     "restart_searxng",
     "deploy_component",
 )
@@ -119,11 +141,12 @@ ACTION_ORDER = (
 ENGINE_STARTS = {"restart:llama", "reinstall_agents"}
 SERVING_CLI = PROJECT_DIR / ".venv" / "bin" / "serving"
 STRATA_SCRIPT = PROJECT_DIR / "scripts" / "strata.sh"
-SERVING_CHECK_TIMEOUT_SECONDS = 300  # hashes the model (about 47 GB), then checks Strata's install
+SERVING_CHECK_TIMEOUT_SECONDS = 300
+VOICE_HANDOFF_TIMEOUT_SECONDS = 420  # the voice check inside waits up to 300 s for a voice still loading  # hashes the model (about 47 GB), then checks Strata's install
 # Under Strata the deploy runs the deployed commit's own strata.sh ensure, so Strata follows that commit's pin and folder: only a check when it already
 # matches, an install when the folder is empty, an update when it is at another commit. A first install runs Strata's setup and builds its engine.
 STRATA_ENSURE_TIMEOUT_SECONDS = 3600
-RESTARTS_COVERED_BY_REINSTALL = {"restart:llama", "restart:mcp", "restart:harness", "restart:dashboard", "restart:kokoro", "restart:speech"}
+RESTARTS_COVERED_BY_REINSTALL = {"restart:llama", "restart:mcp", "restart:harness", "restart:dashboard", "restart:voice", "restart:speech"}
 
 
 class Plan(BaseModel):
@@ -222,6 +245,8 @@ def execute(action: str) -> None:
         run([str(scripts / "services.sh"), "restart", action.split(":", 1)[1]])
     elif action == "restart_searxng":
         run([str(scripts / "searxng.sh"), "restart"])
+    elif action == "hand_voice_to_home_assistant":
+        run([str(PROJECT_DIR / ".venv" / "bin" / "voice"), "handoff"], timeout=VOICE_HANDOFF_TIMEOUT_SECONDS)
     elif action == "deploy_component":
         run([str(PROJECT_DIR / ".venv" / "bin" / "python"), str(scripts / "deploy_component.py")])
     else:

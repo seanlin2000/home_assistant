@@ -1,5 +1,5 @@
-"""Hear a sentence in a voice before it goes into the pronunciation dictionary: one Wyoming request to the voice's server on this Mac, returned as a
-WAV for the page to play. The request names the verbatim speaker, so the server reads the text exactly as sent."""
+"""Hear a sentence in a voice before it goes into the pronunciation dictionary: one Wyoming request to the voice on this Mac, returned as a WAV for
+the page to play. The request names the verbatim speaker, so the server reads the text exactly as sent."""
 
 import asyncio
 import io
@@ -9,15 +9,29 @@ from wyoming.audio import AudioChunk, AudioStart, AudioStop
 from wyoming.client import AsyncTcpClient
 from wyoming.tts import Synthesize, SynthesizeVoice
 
+from dashboard.pronunciation_views import Refused, Speak
 from utils.pronunciation_utils import VERBATIM_SPEAKER
+from voice_server.settings import VoiceEngine, active_voice_engine, load_voice_settings
 
-KOKORO_HOST = "127.0.0.1"
-KOKORO_PORT = 10210
-PREVIEW_TIMEOUT_SECONDS = 30.0
+VOICE_HOST = "127.0.0.1"
+PREVIEW_TIMEOUT_SECONDS = 30.0  # OmniVoice makes a sentence whole before sending any of it
 
 
-async def kokoro_wav(text: str, voice: str) -> bytes:
-    async with asyncio.timeout(PREVIEW_TIMEOUT_SECONDS), AsyncTcpClient(KOKORO_HOST, KOKORO_PORT) as client:
+def preview_in(engine: VoiceEngine) -> Speak:
+    """Both voices answer on the one port, so only the running one can be heard; asking for the other is refused, not answered wrongly."""
+
+    async def wav(text: str, voice: str) -> bytes:
+        settings = load_voice_settings()
+        running = active_voice_engine(settings)
+        if running != engine:
+            raise Refused(503, f"{running} is the voice on this Mac, so {engine} cannot be heard (scripts/services.sh voice-engine {engine} switches)")
+        return await voice_wav(settings.voice.port, text, voice)
+
+    return wav
+
+
+async def voice_wav(port: int, text: str, voice: str) -> bytes:
+    async with asyncio.timeout(PREVIEW_TIMEOUT_SECONDS), AsyncTcpClient(VOICE_HOST, port) as client:
         await client.write_event(Synthesize(text=text, voice=SynthesizeVoice(name=voice, speaker=VERBATIM_SPEAKER)).event())
         return await wav_until_audio_stops(client)
 

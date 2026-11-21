@@ -72,7 +72,7 @@ Each port is bound to the narrowest address that still works. A service bound to
 |---|---|---|---|---|
 | 10300 | Whisper | The network | Home Assistant | Nothing; the Wyoming protocol has no authentication. Unchanged from v1 |
 | 8770 | The harness | The network | Home Assistant | An API key, a list of allowed host names, and refusal of browser requests (doc 12 §3.9) |
-| 10210 | Kokoro | The network | Home Assistant | Nothing, as for Whisper |
+| 10210 | The voice: OmniVoice or Kokoro, whichever `config/voice.toml` names | The network | Home Assistant | Nothing, as for Whisper |
 | 8775 | The exchange dashboard (doc 13) | The network | A browser on the home network | A list of allowed host names and refusal of other sites' pages. It has no key of its own; its chat box asks the harness with the harness's key, which stays on the Mac |
 | 22 | SSH | The network | Your laptop | Keys only, one user (v1/10 §3.9) |
 | 8090 | llama-server | `127.0.0.1` | The harness, the benchmark | An API key |

@@ -118,6 +118,6 @@ def test_every_checked_in_dictionary_reads_names_its_own_file_and_keeps_gits_one
         assert path.read_text() == versioned_json(dictionary)
 
 
-def test_a_deploy_restarts_kokoro_for_the_dictionary_code_but_never_touches_the_dictionary() -> None:
-    assert plan_actions(["config/pronunciations/kokoro/bm_fable.json"]).actions == []
-    assert "restart:kokoro" in plan_actions(["utils/pronunciation_utils.py"]).actions
+def test_a_deploy_restarts_the_voice_for_the_dictionary_code_but_never_touches_the_dictionary() -> None:
+    assert plan_actions(["config/pronunciations/kokoro/bm_fable.json", "config/pronunciations/omnivoice/jarvis.json"]).actions == []
+    assert "restart:voice" in plan_actions(["utils/pronunciation_utils.py"]).actions

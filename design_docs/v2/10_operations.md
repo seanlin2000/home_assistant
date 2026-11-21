@@ -56,7 +56,8 @@ A deploy restarts only the parts whose files changed. A restart of llama-server 
 | `llama` | `uv run serving launch`, which checks the model's hash and replaces itself with `llama-server` (doc 02 §3.5) | Always (`KeepAlive`) | `llama.log` |
 | `harness` | `.venv/bin/python -m assistant_service` | Always | `harness.log` |
 | `mcp` | The tool server, as in v1, on `127.0.0.1` from M2 | Always | `mcp.log` |
-| `whisper`, `kokoro` | As in v1 | Always | As in v1 |
+| `speech` | Qwen3-ASR, `.venv-speech/bin/speech-server` | Always | `speech.log` |
+| `voice` | `.venv/bin/voice launch`, which replaces itself with OmniVoice's `voice-server` or Kokoro's `kokoro-server`, whichever `config/voice.toml` (or this Mac's `voice_engine` file) names | Always | `voice.log` |
 | `health` | `scripts/health_check.py` | Every 300 seconds (`StartInterval`) | `health.log` |
 | `listings` | `.venv/bin/listings-refresh`: the show, movie and restaurant snapshots the tool server reads | Daily at 4:30 (`StartCalendarInterval`) | `listings.log` |
 | `newsletters` | `.venv/bin/newsletters-pull`: copies the Gmail newsletters label to dated markdown files (doc 14 §3.2) | Every 3,600 seconds (`StartInterval`) | `newsletters.log` |
@@ -99,7 +100,7 @@ What changes is the list that maps each changed folder to what must restart, the
 | `custom_components/` | Copies the component into the VM and restarts Home Assistant | As in v1 |
 | `uv.lock`, `pyproject.toml` | Syncs the environment and restarts every Python service, the harness included | As in v1 |
 | `dashboard/`, `ops/paths.py`, and the `assistant_core/`, `assistant_service/` and `utils/` code it imports | The exchange dashboard | Added 2026-11-11: the dashboard runs as its own service and kept old code until restarted by hand |
-| `voice/` | Kokoro | As in v1 |
+| `voice/`, `voice_server/`, `config/voice.toml`, `config/voices/`, and the `speech_server/`, `utils/` and `assistant_core/models.py` code and `config/harness.toml` fillers it uses | The voice. A change to `config/voice.toml` also has Home Assistant reload its Wyoming entry and clear its text-to-speech cache (`voice handoff`) | Added 2026-11-21 with the `voice` agent |
 | `scripts/services.sh` | Rewrites and reloads every agent | As in v1 |
 | `docker/searxng/` | SearXNG | As in v1 |
 | `Brewfile` | Nothing | Programs are upgraded by hand (3.8) |
@@ -283,7 +284,7 @@ Added 2026-11-20. The `llama` agent runs whichever engine `config/serving.toml` 
 
 | Setting | Where | Value |
 |---|---|---|
-| The agents | `scripts/services.sh` | `llama`, `harness`, `mcp`, `whisper`, `kokoro`, `health` (`ollama` removed) |
+| The agents | `scripts/services.sh` | `llama`, `harness`, `mcp`, `dashboard`, `speech`, `voice`, `health`, `listings`, `newsletters` (`ollama`, `whisper`, `kokoro` removed) |
 | API key files | `~/Library/Application Support/studio-assistant/` | `llama-server.key`, `harness.key`, mode 600 |
 | The harness's address, port and allowed host names | The harness's config file | Every address, port 8770, the Mac's name and address |
 | The restart list | `ops/deploy.py` | The table in 3.3 |

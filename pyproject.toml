@@ -45,6 +45,7 @@ newsletters-pull = "newsletters_mcp.pull:main"
 speech-lab = "speech_lab.__main__:main"
 speech-server = "speech_server.__main__:main"
 voice-server = "voice_server.__main__:main"
+voice = "voice_server.launcher:main"
 
 [dependency-groups]
 deploy = [

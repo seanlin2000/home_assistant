@@ -1,5 +1,6 @@
-# The voice that speaks the answers. OmniVoice (voice_server/, on mlx-audio) is being added beside Kokoro; until the voice agent can launch it,
-# Kokoro speaks. Kept apart from config/speech.toml so a voice change never restarts Qwen3-ASR. Unknown keys stop the voice rather than being ignored.
+# The voice that speaks the answers: OmniVoice (voice_server/, on mlx-audio) or Kokoro. The voice agent runs `voice launch`, which starts whichever
+# engine names, so switching is a restart (scripts/services.sh voice-engine switches one Mac without a commit). Kept apart from config/speech.toml
+# so a voice change never restarts Qwen3-ASR. Unknown keys stop the voice rather than being ignored.
 
 [voice]
 engine = "kokoro"                            # "omnivoice" or "kokoro"; scripts/services.sh can override it on one Mac
@@ -20,3 +21,10 @@ loudness_dbfs = -20.0                        # each piece levelled to Kokoro's l
 mlx_cache_limit_mib = 256                    # freed GPU memory MLX may keep for reuse; anything above goes back to macOS
 # Wired as the speech server wires Qwen3-ASR, so an idle spell cannot swap the model out; the agent sets MLX_METAL_RESIDENCY_REFRESH_INTERVAL_MS.
 mlx_wired_limit_mib = 3400
+
+# Kokoro as it ran before OmniVoice (voice/kokoro_server.py), kept one setting away.
+[voice.kokoro]
+voice = "bm_fable"
+data_dir = "~/.cache/wyoming-kokoro"
+volume = 2.0                                 # +6 dB brings answers level with the speaker's wake sound; Kokoro lowers a sentence that would clip
+device = "cpu"

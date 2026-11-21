@@ -19,18 +19,21 @@ import time
 from pathlib import Path
 
 from dotenv import load_dotenv
+from pydantic import BaseModel
 from wyoming.audio import AudioChunk, AudioStop
 from wyoming.client import AsyncTcpClient
+from wyoming.info import Describe, Info
 from wyoming.tts import Synthesize
 
 from ops.ha_client import HomeAssistant, conversation_entity_id, converse, wait_for_api, wait_for_component
+from voice_server.settings import active_voice_engine, load_voice_settings
 
 PROJECT_DIR = Path(__file__).resolve().parent.parent
 CALCULATOR_QUESTION = "What is 12 percent of 250?"
 CALCULATOR_EXPECTED = re.compile(r"\b(30|thirty)\b", re.IGNORECASE)
 SEARCH_QUESTION = "Search the web: what is the latest stable version of Home Assistant?"
 SEARCH_EXPECTED = re.compile(r"\b(20\d\d|two thousand (twenty|thirty))\b", re.IGNORECASE)  # a year-style version, in digits or spoken, proves a search was read
-VOICE_PORT = 10210
+LOCAL_HOST = "127.0.0.1"
 VOICE_SENTENCE = "This is the voice check."
 MINIMUM_VOICE_AUDIO_SECONDS = 0.5  # the sentence is about 1.5 s spoken; a server that answers with a click or silence stub fails
 # A voice server that was just restarted loads its model (and OmniVoice encodes its reference clip and warms up) before it listens.
@@ -56,23 +59,47 @@ async def smoke(ha: HomeAssistant, timeout_seconds: float, full: bool) -> list[t
     return results
 
 
-async def voice_check(host: str, port: int, ready_timeout_seconds: float) -> tuple[str, bool, str, float]:
+class VoiceTarget(BaseModel):
+    host: str
+    port: int
+    engine: str | None  # the program the voice must report (omnivoice or kokoro); None skips that check, for a voice on another Mac
+
+
+async def voice_check(target: VoiceTarget, ready_timeout_seconds: float) -> tuple[str, bool, str, float]:
     """One sentence from the text-to-speech server, retried until it answers or the time runs out; a result in the questions' shape."""
-    label = f"voice on {host}:{port}: {VOICE_SENTENCE}"
+    label = f"voice on {target.host}:{target.port}: {VOICE_SENTENCE}"
     started = time.monotonic()
     while True:
         try:
-            audio_seconds = await asyncio.wait_for(spoken_audio_seconds(host, port, VOICE_SENTENCE), VOICE_REPLY_TIMEOUT_SECONDS)
-            return label, audio_seconds >= MINIMUM_VOICE_AUDIO_SECONDS, f"{audio_seconds:.2f} s of audio", time.monotonic() - started
+            program = await asyncio.wait_for(program_name(target), VOICE_REPLY_TIMEOUT_SECONDS)
+            audio_seconds = await asyncio.wait_for(spoken_audio_seconds(target, VOICE_SENTENCE), VOICE_REPLY_TIMEOUT_SECONDS)
+            return label, *voice_verdict(target, program, audio_seconds), time.monotonic() - started
         except (OSError, TimeoutError) as error:  # a refused or dropped connection is an OSError
             if time.monotonic() - started + VOICE_RETRY_SECONDS > ready_timeout_seconds:
                 return label, False, f"<no audio: {type(error).__name__}: {error}>", time.monotonic() - started
             await asyncio.sleep(VOICE_RETRY_SECONDS)
 
 
-async def spoken_audio_seconds(host: str, port: int, text: str) -> float:
+def voice_verdict(target: VoiceTarget, program: str, audio_seconds: float) -> tuple[bool, str]:
+    heard = f"{program}: {audio_seconds:.2f} s of audio"
+    if target.engine is not None and program != target.engine:
+        return False, f"{heard}, but this Mac should be speaking with {target.engine}"
+    return audio_seconds >= MINIMUM_VOICE_AUDIO_SECONDS, heard
+
+
+async def program_name(target: VoiceTarget) -> str:
+    async with AsyncTcpClient(target.host, target.port) as client:
+        await client.write_event(Describe().event())
+        while (event := await client.read_event()) is not None:
+            if Info.is_type(event.type):
+                programs = Info.from_event(event).tts
+                return programs[0].name if programs else "<no text-to-speech program>"
+    raise ConnectionError("the voice server closed the connection before describing itself")
+
+
+async def spoken_audio_seconds(target: VoiceTarget, text: str) -> float:
     audio_bytes, bytes_per_second = 0, 0
-    async with AsyncTcpClient(host, port) as client:
+    async with AsyncTcpClient(target.host, target.port) as client:
         await client.write_event(Synthesize(text=text).event())
         while True:
             event = await client.read_event()
@@ -92,8 +119,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--full", action="store_true", help="add one searched question")
     parser.add_argument("--timeout", type=float, default=60.0, help="seconds to wait for each answer (default 60)")
     parser.add_argument("--host", default=os.environ.get("HA_HOST"), help="Home Assistant host (default HA_HOST from .env)")
-    parser.add_argument("--voice-host", default="127.0.0.1", help="the text-to-speech server's host (default this Mac, where a deploy runs)")
-    parser.add_argument("--voice-port", type=int, default=VOICE_PORT, help=f"its Wyoming port (default {VOICE_PORT})")
+    parser.add_argument("--voice-host", default=LOCAL_HOST, help="the text-to-speech server's host (default this Mac, where a deploy runs)")
+    parser.add_argument("--voice-port", type=int, help="its Wyoming port (default [voice] port in config/voice.toml)")
     args = parser.parse_args(argv)
     if not args.host:
         print("HA_HOST is not set", file=sys.stderr)
@@ -101,7 +128,7 @@ def main(argv: list[str] | None = None) -> int:
     ha = HomeAssistant(args.host, os.environ.get("HA_TOKEN", ""), os.environ.get("HA_BASE"))
     try:
         results = asyncio.run(run(ha, args.timeout, args.full))
-        results.append(asyncio.run(voice_check(args.voice_host, args.voice_port, VOICE_READY_TIMEOUT_SECONDS)))
+        results.append(asyncio.run(voice_check(voice_target(args.voice_host, args.voice_port), VOICE_READY_TIMEOUT_SECONDS)))
     except Exception as error:  # noqa: BLE001
         print(f"smoke: FAIL before asking anything: {type(error).__name__}: {error}")
         return 1
@@ -109,6 +136,13 @@ def main(argv: list[str] | None = None) -> int:
     for question, ok, answer, elapsed in results:
         print(f"smoke: {'pass' if ok else 'FAIL'} {elapsed:5.1f}s  {question!r} -> {answer!r}")
     return 0 if passed else 1
+
+
+def voice_target(host: str, port: int | None) -> VoiceTarget:
+    """On this Mac the engine it should run is known (config/voice.toml and its override); another Mac's override cannot be read from here."""
+    settings = load_voice_settings()
+    engine = active_voice_engine(settings) if host == LOCAL_HOST else None
+    return VoiceTarget(host=host, port=port or settings.voice.port, engine=engine)
 
 
 async def run(ha: HomeAssistant, timeout_seconds: float, full: bool):

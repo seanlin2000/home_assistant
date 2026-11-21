@@ -33,11 +33,23 @@ class OmniVoiceSettings(StrictModel):
         return PROJECT_DIR / self.reference_clip
 
 
+class KokoroSettings(StrictModel):
+    voice: str
+    data_dir: str
+    volume: float = Field(gt=0)
+    device: str
+
+    @property
+    def data_path(self) -> Path:
+        return Path(self.data_dir).expanduser()
+
+
 class VoiceServerSettings(StrictModel):
     engine: VoiceEngine
     host: str
     port: int
     omnivoice: OmniVoiceSettings
+    kokoro: KokoroSettings
 
 
 class VoiceSettings(StrictModel):
