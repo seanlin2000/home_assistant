@@ -10,7 +10,7 @@ from speech_server.worker import ModelThread
 from tests.test_voice_server import ENGINE, StandInSynthesizer
 from utils.pronunciation_utils import LivePronunciations, PronunciationStore
 from voice_server.settings import OmniVoiceSettings, load_voice_settings
-from voice_server.speaker import SentenceSpeaker
+from voice_server.speaker import PieceFinish, SentenceSpeaker
 from voice_server.start_cache import StartCache
 
 OMNIVOICE = load_voice_settings().voice.omnivoice
@@ -27,7 +27,7 @@ def dictionary_saying(folder: Path, say_as: str) -> PronunciationStore:
 def started(tmp_path: Path, fillers: list[str], settings: OmniVoiceSettings = OMNIVOICE, say_as: str = "look", engine: str = ENGINE) -> list[str]:
     """One start's filler make-ahead; returns what the model was asked to make."""
     synthesizer = StandInSynthesizer()
-    speaker = SentenceSpeaker(synthesizer, ModelThread(), LivePronunciations(dictionary_saying(tmp_path / "dictionary", say_as)), loudness_dbfs=settings.loudness_dbfs)
+    speaker = SentenceSpeaker(synthesizer, ModelThread(), LivePronunciations(dictionary_saying(tmp_path / "dictionary", say_as)), PieceFinish.from_settings(settings))
     speaker.make_ahead(fillers, StartCache(settings, tmp_path / "cache", engine))
     return synthesizer.made
 

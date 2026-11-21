@@ -19,12 +19,14 @@ from speech_server.worker import ModelThread
 from utils.pronunciation_utils import VERBATIM_SPEAKER, LivePronunciations, PronunciationStore
 from voice_server.handlers import SAMPLES_PER_CHUNK, VoiceHandler, voice_info
 from voice_server.settings import load_voice_settings
-from voice_server.speaker import PEAK_CEILING, SentenceSpeaker, levelled
+from voice_server.speaker import FADE_OUT_SECONDS, PEAK_CEILING, PieceFinish, SentenceSpeaker, levelled, with_even_edges
 from voice_server.start_cache import StartCache
 
 SETTINGS = load_voice_settings()
 SAMPLE_RATE = 24000
 SAMPLES_PER_CHARACTER = 100
+FINISH = PieceFinish(loudness_dbfs=-20.0, lead_silence_seconds=0.1, trail_silence_seconds=0.35)
+EDGE_SAMPLES = round(FINISH.lead_silence_seconds * SAMPLE_RATE) + round(FINISH.trail_silence_seconds * SAMPLE_RATE)
 ENGINE = "mlx-audio==0.6.5 mlx==0.32.4"
 
 
@@ -53,7 +55,7 @@ def speaker(synthesizer: StandInSynthesizer, tmp_path: Path) -> SentenceSpeaker:
     dictionary.parent.mkdir(parents=True)
     dictionary.write_text('{"model": "omnivoice", "voice": "jarvis", "revision": 0, "entries": [{"written": "Jokic", "say_as": "Yo-Kich"}]}')
     store = PronunciationStore("omnivoice", "jarvis", live_dir=tmp_path / "live", versioned_dir=tmp_path / "versioned")
-    return SentenceSpeaker(synthesizer, ModelThread(), LivePronunciations(store), loudness_dbfs=-20.0)
+    return SentenceSpeaker(synthesizer, ModelThread(), LivePronunciations(store), FINISH)
 
 
 @pytest.fixture
@@ -89,6 +91,11 @@ async def events_until(client: AsyncTcpClient, last_type: str) -> list[Event]:
     return events
 
 
+def heard_samples(*pieces: str) -> int:
+    """The stand-in tone is loud throughout, so trimming leaves it whole; each piece then gains its two edges of silence."""
+    return sum(len(piece) * SAMPLES_PER_CHARACTER + EDGE_SAMPLES for piece in pieces)
+
+
 def utterances(events: list[Event]) -> list[int]:
     """The audio between each AudioStart and its AudioStop, as a sample count."""
     lengths = []
@@ -116,7 +123,7 @@ async def test_a_whole_text_is_one_utterance_made_sentence_by_sentence(speaker: 
         events = await events_until(client, AudioStop().event().type)
 
     assert synthesizer.made == ["It is sunny.", "Yo-Kich scored forty."]
-    assert utterances(events) == [(len("It is sunny.") + len("Yo-Kich scored forty.")) * SAMPLES_PER_CHARACTER]
+    assert utterances(events) == [heard_samples("It is sunny.", "Yo-Kich scored forty.")]
     assert all(len(AudioChunk.from_event(event).audio) <= SAMPLES_PER_CHUNK * 2 for event in events if AudioChunk.is_type(event.type))
 
 
@@ -132,7 +139,7 @@ async def test_a_stream_speaks_the_filler_then_each_sentence_as_its_end_arrives(
         events = await events_until(client, SynthesizeStopped().event().type)
 
     assert synthesizer.made == ["Let me check.", "The Knicks won 108 to 102.", "Brunson scored 31."]
-    assert utterances(events) == [len(text) * SAMPLES_PER_CHARACTER for text in synthesizer.made]
+    assert utterances(events) == [heard_samples(text) for text in synthesizer.made]
     assert events[-1].type == SynthesizeStopped().event().type
 
 
@@ -164,7 +171,7 @@ async def test_fillers_made_ahead_are_replayed_without_the_model(speaker: Senten
         events = await events_until(client, SynthesizeStopped().event().type)
 
     assert synthesizer.made == ["One moment.", "Let me look that up.", "It is 72 degrees."]
-    assert utterances(events) == [len("One moment.") * SAMPLES_PER_CHARACTER, len("It is 72 degrees.") * SAMPLES_PER_CHARACTER]
+    assert utterances(events) == [heard_samples("One moment."), heard_samples("It is 72 degrees.")]
 
 
 def test_each_piece_is_levelled_to_the_target_loudness_with_its_peak_capped() -> None:
@@ -175,3 +182,21 @@ def test_each_piece_is_levelled_to_the_target_loudness_with_its_peak_capped() ->
     spiky = np.concatenate([np.full(10, 0.9), np.full(24000, 0.02)]).astype(np.float32)
     assert np.abs(levelled(spiky, -20.0)).max() == pytest.approx(PEAK_CEILING)
     assert np.array_equal(levelled(np.zeros(100, dtype=np.float32), -20.0), np.zeros(100))
+
+
+def test_each_piece_is_trimmed_to_its_speech_and_ends_in_set_silence_so_the_puck_never_holds_back_a_word() -> None:
+    """As OmniVoice made "Checking Reddit.": most of a second of near-silence first, and the last syllable still sounding at the very end."""
+    near_silence = np.full(SAMPLE_RATE, 0.001, dtype=np.float32)
+    speech_to_the_end = (0.3 * np.sin(2 * np.pi * 220 * np.arange(SAMPLE_RATE // 2) / SAMPLE_RATE)).astype(np.float32)
+
+    finished = with_even_edges(np.concatenate([near_silence, speech_to_the_end]), SAMPLE_RATE, FINISH)
+
+    lead, trail = round(FINISH.lead_silence_seconds * SAMPLE_RATE), round(FINISH.trail_silence_seconds * SAMPLE_RATE)
+    assert len(finished) == lead + len(speech_to_the_end) + trail
+    assert not finished[:lead].any() and not finished[-trail:].any()
+    assert finished[-trail - 1] == 0.0 and np.abs(finished[-trail - int(FADE_OUT_SECONDS * SAMPLE_RATE) // 2]) < 0.3
+
+
+def test_a_silent_piece_is_left_as_it_is() -> None:
+    silent = np.zeros(SAMPLE_RATE, dtype=np.float32)
+    assert np.array_equal(with_even_edges(silent, SAMPLE_RATE, FINISH), silent)

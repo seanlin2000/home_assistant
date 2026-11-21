@@ -24,7 +24,7 @@ from voice_server.handlers import JARVIS, OMNIVOICE
 from voice_server.models import OmniVoice, download_model
 from voice_server.server import serve
 from voice_server.settings import VOICE_CONFIG_PATH, VoiceSettings, load_voice_settings
-from voice_server.speaker import SentenceSpeaker
+from voice_server.speaker import PieceFinish, SentenceSpeaker
 from voice_server.start_cache import StartCache
 
 _LOGGER = logging.getLogger(__name__)
@@ -63,7 +63,7 @@ def serve_voice(settings: VoiceSettings) -> None:
     cache = StartCache.for_this_mac(settings.voice.omnivoice)
     voice = thread.run(OmniVoice, settings.voice.omnivoice, cache)
     thread.run(voice.warm_up)
-    speaker = SentenceSpeaker(voice, thread, LivePronunciations(PronunciationStore(OMNIVOICE, JARVIS)), settings.voice.omnivoice.loudness_dbfs)
+    speaker = SentenceSpeaker(voice, thread, LivePronunciations(PronunciationStore(OMNIVOICE, JARVIS)), PieceFinish.from_settings(settings.voice.omnivoice))
     speaker.make_ahead(load_harness_config().policy(load_serving_config()).every_filler_phrase, cache)
     _LOGGER.info("listening: text to speech on %s:%d", settings.voice.host, settings.voice.port)
     asyncio.run(serve(speaker, settings))
