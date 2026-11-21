@@ -28,7 +28,7 @@ def access_in(tmp_path: Path, kokoro: FakeKokoro) -> PronunciationAccess:
     versioned = PronunciationStore("kokoro", "bm_fable", live_dir=tmp_path / "live", versioned_dir=tmp_path / "git").versioned_path
     versioned.parent.mkdir(parents=True)
     versioned.write_text(PronunciationDictionary(model="kokoro", voice="bm_fable", revision=1, entries=GIT_ENTRIES).model_dump_json())
-    return PronunciationAccess(speakers={"kokoro": kokoro.speak}, live_dir=tmp_path / "live", versioned_dir=tmp_path / "git")
+    return PronunciationAccess(speakers={"kokoro": kokoro.speak}, voice_in_use=lambda: "kokoro", live_dir=tmp_path / "live", versioned_dir=tmp_path / "git")
 
 
 def client_for(tmp_path: Path, kokoro: FakeKokoro) -> httpx.AsyncClient:
@@ -47,7 +47,7 @@ async def test_the_page_lists_each_voice_and_reads_gits_copy_until_the_first_sav
         view = (await client.get(DICTIONARY)).json()
         unknown = await client.get("/api/pronunciations/kokoro/af_heart")
 
-    assert voices == [{"model": "kokoro", "voice": "bm_fable"}]
+    assert voices == [{"model": "kokoro", "voice": "bm_fable", "speaking": True}]
     assert (view["revision"], view["source"], view["in_git"], view["git_revision"]) == (1, "git", True, 1)
     assert said_as(view) == {"Jokic": "Yo-Kich", "Nvidia": "N-Vidia"}
     assert unknown.status_code == 404
@@ -136,3 +136,23 @@ async def test_another_site_cannot_change_the_dictionary(tmp_path: Path) -> None
 
     assert refused.status_code == 421
     assert view["revision"] == 1
+
+
+async def test_the_voice_list_marks_the_one_speaking_now_so_the_page_opens_on_it(tmp_path: Path) -> None:
+    access = access_in(tmp_path, FakeKokoro())
+    jarvis = PronunciationStore("omnivoice", "jarvis", live_dir=tmp_path / "live", versioned_dir=tmp_path / "git").versioned_path
+    jarvis.parent.mkdir(parents=True)
+    jarvis.write_text(PronunciationDictionary(model="omnivoice", voice="jarvis", revision=1, entries=GIT_ENTRIES).model_dump_json())
+    store = ExchangeStore(ExchangeLog(tmp_path / "exchanges"), TraceLog(tmp_path / "traces"), PipelineRunLog(tmp_path / "pipeline_runs"))
+    speaking = ["omnivoice"]
+    app = build_app(
+        store, ["mac.lan:8775"], pronunciations=PronunciationAccess(speakers=access.speakers, voice_in_use=lambda: speaking[0], live_dir=access.live_dir, versioned_dir=access.versioned_dir)
+    )
+
+    async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app), base_url="http://mac.lan:8775", headers=SAME_SITE) as client:
+        while_omnivoice_speaks = (await client.get("/api/pronunciations")).json()
+        speaking[0] = "kokoro"
+        after_a_switch = (await client.get("/api/pronunciations")).json()
+
+    assert [(voice["model"], voice["speaking"]) for voice in while_omnivoice_speaks] == [("kokoro", False), ("omnivoice", True)]
+    assert [(voice["model"], voice["speaking"]) for voice in after_a_switch] == [("kokoro", True), ("omnivoice", False)]

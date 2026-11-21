@@ -28,7 +28,7 @@ from dashboard.settings import (
     home_assistant_access,
     llama_server_access,
 )
-from dashboard.speech_preview import preview_in
+from dashboard.speech_preview import preview_in, voice_in_use
 from ops import paths
 from ops.ha_client import HomeAssistant
 from ops.pipeline_runs import PipelineRun, PipelineRunLog, pull_and_close
@@ -43,7 +43,7 @@ def main() -> None:
     store = ExchangeStore(ExchangeLog(paths.exchanges_dir()), TraceLog(paths.traces_dir()), runs)
     lifespan = lifespan_for(collector_for(runs, home_assistant_access()))
     llama_server = llama_server_access()
-    pronunciations = PronunciationAccess(speakers={engine: preview_in(engine) for engine in VOICE_ENGINES})
+    pronunciations = PronunciationAccess(speakers={engine: preview_in(engine) for engine in VOICE_ENGINES}, voice_in_use=voice_in_use)
     app = build_app(store, allowed_hosts(), converse=converse_for(harness_key()), lifespan=lifespan, llama_server=llama_server, memory=memory_reader(), pronunciations=pronunciations)
     uvicorn.run(app, host=DASHBOARD_HOST, port=DASHBOARD_PORT, log_level="warning")
 

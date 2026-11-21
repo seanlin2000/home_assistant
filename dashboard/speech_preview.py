@@ -17,6 +17,11 @@ VOICE_HOST = "127.0.0.1"
 PREVIEW_TIMEOUT_SECONDS = 30.0  # OmniVoice makes a sentence whole before sending any of it
 
 
+def voice_in_use() -> VoiceEngine:
+    """Read at every request, so a switch with scripts/services.sh voice-engine shows without restarting the dashboard."""
+    return active_voice_engine(load_voice_settings())
+
+
 def preview_in(engine: VoiceEngine) -> Speak:
     """Both voices answer on the one port, so only the running one can be heard; asking for the other is refused, not answered wrongly."""
 

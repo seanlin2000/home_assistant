@@ -36,6 +36,7 @@ PREVIEW_CHARACTERS = 500
 @dataclass(frozen=True)
 class PronunciationAccess:
     speakers: Mapping[str, Speak]  # by model: how to hear text in one of its voices
+    voice_in_use: Callable[[], str] = lambda: ""  # the model speaking on this Mac now; its dictionaries are the ones the page opens on
     live_dir: Path = LIVE_DIR
     versioned_dir: Path = VERSIONED_DIR
 
@@ -98,7 +99,8 @@ class Refused(Exception):
 
 def pronunciation_routes(access: PronunciationAccess) -> list[Route]:
     async def dictionaries(_request: Request) -> Response:
-        return JSONResponse([{"model": model, "voice": voice} for model, voice in access.dictionaries()])
+        speaking = access.voice_in_use()
+        return JSONResponse([{"model": model, "voice": voice, "speaking": model == speaking} for model, voice in access.dictionaries()])
 
     async def dictionary(request: Request) -> Response:
         return await answered(request, lambda store, _body: dictionary_view(store))

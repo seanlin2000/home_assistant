@@ -6,14 +6,14 @@ const PRONUNCIATION_SAMPLE = "Xi Jinping met Nikola Jokic at Nvidia.";
 const pron = { dictionaries: null, key: null, view: null, draft: { written: "", say_as: "" }, editing: null, confirming: null, filter: "", sentence: PRONUNCIATION_SAMPLE, spoken: "", audio: null };
 
 const pronBase = () => `/api/pronunciations/${pron.key.model}/${pron.key.voice}`;
-const pronKeyLabel = (key) => `${key.model[0].toUpperCase()}${key.model.slice(1)} · ${key.voice}`;
+const pronKeyLabel = (key) => `${key.model[0].toUpperCase()}${key.model.slice(1)} · ${key.voice}${key.speaking ? " (speaking now)" : ""}`;
 const isPhonemes = (sayAs) => /^\/.+\/$/.test(sayAs);
 const sameWord = (left, right) => left.normalize("NFKD").replace(/\p{M}/gu, "").toLowerCase() === right.normalize("NFKD").replace(/\p{M}/gu, "").toLowerCase();
 
 async function refreshPronunciation() {
   try {
     pron.dictionaries = pron.dictionaries || (await getJsonOrReason("/api/pronunciations"));
-    pron.key = pron.key || pron.dictionaries[0] || null;
+    pron.key = pron.key || pron.dictionaries.find((key) => key.speaking) || pron.dictionaries[0] || null;
     if (pron.key) pron.view = await getJsonOrReason(pronBase());
     renderPronunciation();
   } catch (error) {
