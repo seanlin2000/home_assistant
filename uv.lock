@@ -527,6 +527,19 @@ wheels = [
 ]
 
 [[package]]
+name = "hassil"
+version = "3.12.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "pyyaml" },
+    { name = "unicode-rbnf" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/d9/1f/c9494eb84fa7a901bcb1316e8196789400d189841decf0b5854f87f0aec3/hassil-3.12.0.tar.gz", hash = "sha256:848397674400036d64bf527bf2f142944c07e03330bdcae1ee015655c03cfcc5", size = 69693, upload-time = "2026-08-25T21:30:27.548Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/d5/ed/90a008f651e16fee57f8167a1b897b024ead11156d318af217a01d1c1ea1/hassil-3.12.0-py3-none-any.whl", hash = "sha256:4f5fed98753c9f730c029a1142b79d89d17305c752ba27238e8cdcb7ac1f6e17", size = 57326, upload-time = "2026-08-25T21:30:26.165Z" },
+]
+
+[[package]]
 name = "hf-xet"
 version = "1.6.0"
 source = { registry = "https://pypi.org/simple" }
@@ -540,6 +553,15 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/ab/5f/311725e2a905534dfee2dcb5b08414f249147f1f12252bfc2bd24caa075c/hf_xet-1.6.0-cp38-abi3-musllinux_1_2_x86_64.whl", hash = "sha256:8fb4f71cba6129110c3374a33f919001ff130488fc23553698e34cc1c2a1198c", size = 4675937, upload-time = "2026-08-03T22:33:08.616Z" },
     { url = "https://files.pythonhosted.org/packages/98/b7/8c59a66d15205024662f1d66968136f13893f96df1ddc5087e2e281fc95f/hf_xet-1.6.0-cp38-abi3-win_amd64.whl", hash = "sha256:fb4fadde1b2b70bf4c0c14a6dccbe7194b1c28947fefd5bbe3fed9d940676c3b", size = 4033128, upload-time = "2026-08-03T22:33:10.171Z" },
     { url = "https://files.pythonhosted.org/packages/73/63/ca511b6f802f28cf3489b280fe77475bcca8de85e81a6299d7916b5b5555/hf_xet-1.6.0-cp38-abi3-win_arm64.whl", hash = "sha256:3dc3e35441ba395006af5aaacc40ef2e603c51ef46c3530b9156185f00935ea3", size = 3859359, upload-time = "2026-08-03T22:33:11.725Z" },
+]
+
+[[package]]
+name = "home-assistant-intents"
+version = "2026.8.28"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/31/5f/ea4f5605a5f62ae7ac8b292e9d0a826cc6a9d8aa5cb9d0d22cc80cd8a7c5/home_assistant_intents-2026.8.28.tar.gz", hash = "sha256:d69d2070d933614a5263a9d83ac388d1ffb7056f85231ec15751bc5afa14e298", size = 659210, upload-time = "2026-08-28T20:46:04.709Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/fa/8a/ae294a45985b272482fc7ce0c0299fbe2cb8364d36b3ce1a4667b541d718/home_assistant_intents-2026.8.28-py3-none-any.whl", hash = "sha256:0bbdf1992e87868404614ff9433e92780dfd53561d7db19f6651415d17cdc2dd", size = 680976, upload-time = "2026-08-28T20:46:03.073Z" },
 ]
 
 [[package]]
@@ -2163,6 +2185,8 @@ deploy = [
 ]
 dev = [
     { name = "black" },
+    { name = "hassil" },
+    { name = "home-assistant-intents" },
     { name = "isort" },
     { name = "numpy" },
     { name = "pytest" },
@@ -2207,6 +2231,8 @@ requires-dist = [
 deploy = [{ name = "websockets", specifier = ">=17.1" }]
 dev = [
     { name = "black", specifier = ">=24.4" },
+    { name = "hassil", specifier = "==3.12.0" },
+    { name = "home-assistant-intents", specifier = "==2026.8.28" },
     { name = "isort", specifier = ">=5.13" },
     { name = "numpy", specifier = ">=2.2" },
     { name = "pytest", specifier = ">=8.2" },
@@ -2549,6 +2575,15 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/81/5b/879b2f932adfa7a053c360d50bc896c977fa6426109185f7c12ebdd0cb9d/tzlocal-5.4.4.tar.gz", hash = "sha256:8dbb8660838688a7b6ba4fed31d18dedf842afb4d47ca050d6d891c2c15f3be4", size = 31170, upload-time = "2026-06-29T08:03:40.026Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/9e/a4/017a7a6cbe387d961a688ec31364ae60a5c4e22c96ae9921b79a947c855d/tzlocal-5.4.4-py3-none-any.whl", hash = "sha256:aae09f0126a8a86fa736be266eb4a471380d26a0de3bc14844e7821fee3e2a15", size = 18115, upload-time = "2026-06-29T08:03:38.666Z" },
+]
+
+[[package]]
+name = "unicode-rbnf"
+version = "2.5.1"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/a7/a8/7fae3c3afa43a11d50a103eac8c849d5ed94fcb8c2524baefe4a0d210d18/unicode_rbnf-2.5.1.tar.gz", hash = "sha256:d0b3e77d1ce27666d3e67834518c53642ff191e674ee423faa89c37f554a7efb", size = 107263, upload-time = "2026-11-19T17:02:08.615Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/1e/8d/e4bf9faeb03094d79b27da492f52f2a7972918affc96b147e1dc4da3041b/unicode_rbnf-2.5.1-py3-none-any.whl", hash = "sha256:3107f12ba9e2ffe11fc993adaed0e024e3897959c2bfa66ceeeafa7c9a2d107a", size = 152882, upload-time = "2026-11-19T17:02:07.198Z" },
 ]
 
 [[package]]

@@ -51,6 +51,8 @@ deploy = [
 ]
 dev = [
     "black>=24.4",
+    "hassil==3.12.0",  # Home Assistant 2026.9.1's sentence matcher and its built-in sentences, so tests match questions as the VM does
+    "home-assistant-intents==2026.8.28",
     "isort>=5.13",
     "numpy>=2.2",
     "pytest>=8.2",

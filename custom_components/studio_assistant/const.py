@@ -1,6 +1,8 @@
 """Constants shared by the config flow and the conversation entity."""
 
 DOMAIN = "studio_assistant"
+# The intent of the custom "who is ..." sentence in custom_sentences/en/studio_assistant.yaml
+ASK_AGENT_INTENT = "StudioAssistantAskAgent"
 
 CONF_HARNESS_URL = "harness_url"
 CONF_HARNESS_API_KEY = "harness_api_key"

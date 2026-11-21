@@ -10,6 +10,10 @@ from pathlib import Path
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
+from homeassistant.helpers import intent
+
+from .ask_agent import AskAgentIntentHandler
+from .const import ASK_AGENT_INTENT
 
 VENDOR_DIR = Path(__file__).parent / "vendor"
 if VENDOR_DIR.is_dir() and str(VENDOR_DIR) not in sys.path:
@@ -19,12 +23,14 @@ PLATFORMS = [Platform.CONVERSATION]
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
+    intent.async_register(hass, AskAgentIntentHandler())
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
     entry.async_on_unload(entry.add_update_listener(async_reload_entry))
     return True
 
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
+    intent.async_remove(hass, ASK_AGENT_INTENT)
     return await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
 
 

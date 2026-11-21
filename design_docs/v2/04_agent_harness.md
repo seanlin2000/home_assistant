@@ -187,6 +187,25 @@ The benchmark keeps `OllamaClient` until M1 ends, so the bake-off can compare bo
 
 The conversation and the quiet requests have separate slots (doc 02 §3.4), so a summary never evicts the conversation's cache. But the two slots share one GPU, and a summary being written while you ask a question would slow your answer. The harness therefore runs background requests (conversation summaries and compaction) only when no question is in progress, one at a time. When a question arrives while one is running, the harness closes the background request, which makes llama-server stop it (checked in M2), and retries it once the question has been answered. A summary that cannot be written within an hour is dropped and logged.
 
+### 3.8 Questions Home Assistant would answer itself
+
+Added 2026-11-20. With "prefer handling commands locally" on, Home Assistant tries its built-in sentences before `studio_assistant` hears a question. That keeps lights, timers and music local, but one built-in sentence catches far more than it should. `who is [in] [the] {zone:state}` is meant for "who is home", yet its place slot takes any words. "Who is Hanashiro Anzu? Search the web." and "who is the president of France" were both answered "Not any", and the agent never ran (`processed_locally: true` in the pipeline run).
+
+The component now installs its own sentences, `custom_components/studio_assistant/custom_sentences/en/studio_assistant.yaml`, which `scripts/deploy_component.py` copies to `/config/custom_sentences/en/`:
+
+| Question | Matches | Answered by |
+|---|---|---|
+| "who is …" | `StudioAssistantAskAgent` (custom) | the agent |
+| "who is home", "who is at home" | `HassGetState` (custom, with the built-in's slots and response) | Home Assistant, as before |
+| everything else | the built-in sentences, unchanged | Home Assistant, or the agent when nothing matches |
+
+How the hand-off works, checked against Home Assistant 2026.9.1's source:
+- **A custom sentence beats every built-in one.** The default agent's strict match calls hassil's `recognize_best` with the custom-sentence metadata key, which drops built-in matches whenever a custom one matches.
+- **The custom "who is home" beats the custom "who is …".** Among custom matches, hassil prefers the one with the most literal words.
+- **The handler answers "no intent match" on purpose.** `async_handle_intents` returns nothing for any error other than "failed to handle" or "unknown", and the pipeline then sends the question to the agent as usual, with the filler sentence, streaming and follow-ups. An intent with no handler would instead raise `UnknownIntent`, which the default agent does not catch.
+
+`tests/test_custom_sentences.py` matches questions with the hassil and built-in sentence versions Home Assistant 2026.9.1 pins (`hassil` 3.12.0, `home-assistant-intents` 2026.8.28, in the dev group). Without our file, the test reproduces the 2026-11-20 run. A Home Assistant upgrade that moves those pins should move the dev pins with it.
+
 ## 4. Packages and what they do for the business logic
 
 | Package | Role |
