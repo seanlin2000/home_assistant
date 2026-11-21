@@ -1,10 +1,20 @@
 {
   "model": "omnivoice",
   "voice": "jarvis",
-  "revision": 0,
+  "revision": 1,
   "entries": [
+    {"written": "49ers", "say_as": "Forty Niners"},
+    {"written": "BIGBANG", "say_as": "Big Bang"},
+    {"written": "Doncic", "say_as": "Don-chich"},
+    {"written": "Heytea", "say_as": "Hey-Tea"},
     {"written": "Jokic", "say_as": "Yo-Kich"},
+    {"written": "Mahomes", "say_as": "Muh-homes"},
+    {"written": "Mixue", "say_as": "Me Shreh"},
     {"written": "Nvidia", "say_as": "N-Vidia"},
-    {"written": "Xi Jinping", "say_as": "She Jin Ping"}
+    {"written": "Qwen", "say_as": "Kwen"},
+    {"written": "Shai", "say_as": "Shay"},
+    {"written": "Tatum", "say_as": "Taytum"},
+    {"written": "Xi", "say_as": "She"},
+    {"written": "Xi Jinping", "say_as": "Shee Jin Ping"}
   ]
 }
