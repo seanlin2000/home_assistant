@@ -46,6 +46,11 @@ def last_good_ref() -> Path:
     return log_dir() / "last_good_ref"
 
 
+def applied_ref() -> Path:
+    """The commit whose restarts a deploy last carried out, kept or not: what the services run."""
+    return log_dir() / "applied_ref"
+
+
 def maintenance_flag() -> Path:
     """Exists while a deploy is changing things; the health check takes no action while it is present."""
     return log_dir() / "maintenance"
