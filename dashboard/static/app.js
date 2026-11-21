@@ -136,10 +136,14 @@ async function openExchange(day, index) {
   closeDrawer();
   closeSidebar();
   state.live = null;
-  state.selected = { day, index };
+  const picked = { day, index };
+  state.selected = picked;
   history.replaceState(null, "", exchangeAddress());
   renderList();
-  state.detail = await getJson(`/api/days/${day}/exchanges/${index}`);
+  const detail = await getJson(`/api/days/${day}/exchanges/${index}`);
+  // A later click, key press, or new chat may have taken over while this exchange loaded; drawing it now would show the wrong one.
+  if (state.selected !== picked) return;
+  state.detail = detail;
   continueConversationOf(state.detail);
   renderExchange(state.detail);
   if (state.view === "cache") renderPromptLayout();
@@ -196,16 +200,18 @@ function listRow(summary, index, fresh) {
 function renderExchange(detail) {
   const record = detail.record;
   const earlier = earlierTurns(detail);
-  const thread = el(
-    "div",
-    { class: "thread-inner" },
-    earlier,
-    earlier.length > 0 && el("div", { class: "divider" }, `this exchange · ${localTime(record.recorded_at)}`),
-    userTurn(record.user_text, questionNotes(detail)),
-    assistantTurn(detail),
-  );
-  $("thread").replaceChildren(thread);
-  $("thread").scrollTop = 0;
+  const divider = earlier.length > 0 && el("div", { class: "divider" }, `this exchange · ${localTime(record.recorded_at)}`);
+  const question = userTurn(record.user_text, questionNotes(detail));
+  $("thread").replaceChildren(el("div", { class: "thread-inner" }, earlier, divider, question, assistantTurn(detail)));
+  scrollThreadTo(divider || question);
+}
+
+// The thread shows the whole conversation, so it opens at the picked exchange instead of at the conversation's first question.
+function scrollThreadTo(element) {
+  const thread = $("thread");
+  thread.scrollTop = 0;
+  const topPadding = parseFloat(getComputedStyle(thread).paddingTop);
+  thread.scrollTop = element.getBoundingClientRect().top - thread.getBoundingClientRect().top - topPadding;
 }
 
 // Earlier questions in this conversation. One that has its own exchange record opens its steps and timing in place when clicked.
