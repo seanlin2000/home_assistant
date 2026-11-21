@@ -27,6 +27,7 @@ class OmniVoiceSettings(StrictModel):
     loudness_dbfs: float = Field(lt=0)
     lead_silence_seconds: float = Field(ge=0)
     trail_silence_seconds: float = Field(ge=0)
+    filler_trail_seconds: float = Field(ge=0)
     mlx_cache_limit_mib: int = Field(ge=0)
     mlx_wired_limit_mib: int = Field(ge=0)
 

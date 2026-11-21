@@ -19,14 +19,16 @@ from speech_server.worker import ModelThread
 from utils.pronunciation_utils import VERBATIM_SPEAKER, LivePronunciations, PronunciationStore
 from voice_server.handlers import SAMPLES_PER_CHUNK, VoiceHandler, voice_info
 from voice_server.settings import load_voice_settings
-from voice_server.speaker import FADE_OUT_SECONDS, PEAK_CEILING, TAIL_NOISE_DBFS, PieceFinish, SentenceSpeaker, levelled, with_even_edges
+from voice_server.speaker import FADE_OUT_SECONDS, PEAK_CEILING, TAIL_NOISE_DBFS, PieceFinish, SentenceSpeaker, levelled
 from voice_server.start_cache import StartCache
 
 SETTINGS = load_voice_settings()
 SAMPLE_RATE = 24000
 SAMPLES_PER_CHARACTER = 100
-FINISH = PieceFinish(loudness_dbfs=-20.0, lead_silence_seconds=0.1, trail_silence_seconds=0.35)
-EDGE_SAMPLES = round(FINISH.lead_silence_seconds * SAMPLE_RATE) + round(FINISH.trail_silence_seconds * SAMPLE_RATE)
+FINISH = PieceFinish(loudness_dbfs=-20.0, lead_silence_seconds=0.1, trail_silence_seconds=0.35, filler_trail_seconds=0.75)
+LEAD_SAMPLES = round(FINISH.lead_silence_seconds * SAMPLE_RATE)
+TRAIL_SAMPLES = round(FINISH.trail_silence_seconds * SAMPLE_RATE)
+FILLER_TRAIL_SAMPLES = round(FINISH.filler_trail_seconds * SAMPLE_RATE)
 ENGINE = "mlx-audio==0.6.5 mlx==0.32.4"
 
 
@@ -92,8 +94,12 @@ async def events_until(client: AsyncTcpClient, last_type: str) -> list[Event]:
 
 
 def heard_samples(*pieces: str) -> int:
-    """The stand-in tone is loud throughout, so trimming leaves it whole; each piece then gains its two edges of silence."""
-    return sum(len(piece) * SAMPLES_PER_CHARACTER + EDGE_SAMPLES for piece in pieces)
+    """The stand-in tone is loud throughout, so trimming leaves it whole; each piece then gains its two edges."""
+    return sum(len(piece) * SAMPLES_PER_CHARACTER + LEAD_SAMPLES + TRAIL_SAMPLES for piece in pieces)
+
+
+def heard_filler_samples(filler: str) -> int:
+    return len(filler) * SAMPLES_PER_CHARACTER + LEAD_SAMPLES + FILLER_TRAIL_SAMPLES
 
 
 def utterances(events: list[Event]) -> list[int]:
@@ -171,7 +177,7 @@ async def test_fillers_made_ahead_are_replayed_without_the_model(speaker: Senten
         events = await events_until(client, SynthesizeStopped().event().type)
 
     assert synthesizer.made == ["One moment.", "Let me look that up.", "It is 72 degrees."]
-    assert utterances(events) == [heard_samples("One moment."), heard_samples("It is 72 degrees.")]
+    assert utterances(events) == [heard_filler_samples("One moment."), heard_samples("It is 72 degrees.")]
 
 
 def test_each_piece_is_levelled_to_the_target_loudness_with_its_peak_capped() -> None:
@@ -184,33 +190,32 @@ def test_each_piece_is_levelled_to_the_target_loudness_with_its_peak_capped() ->
     assert np.array_equal(levelled(np.zeros(100, dtype=np.float32), -20.0), np.zeros(100))
 
 
-def test_each_piece_is_trimmed_to_its_speech_and_ends_in_set_silence_so_the_puck_never_holds_back_a_word() -> None:
+def test_a_sentence_is_trimmed_to_its_speech_and_ends_in_silence() -> None:
     """As OmniVoice made "Checking Reddit.": most of a second of near-silence first, and the last syllable still sounding at the very end."""
     near_silence = np.full(SAMPLE_RATE, 0.001, dtype=np.float32)
     speech_to_the_end = (0.3 * np.sin(2 * np.pi * 220 * np.arange(SAMPLE_RATE // 2) / SAMPLE_RATE)).astype(np.float32)
 
-    finished = with_even_edges(np.concatenate([near_silence, speech_to_the_end]), SAMPLE_RATE, FINISH)
+    finished = FINISH.sentence_with_edges(np.concatenate([near_silence, speech_to_the_end]), SAMPLE_RATE)
 
-    lead, trail = round(FINISH.lead_silence_seconds * SAMPLE_RATE), round(FINISH.trail_silence_seconds * SAMPLE_RATE)
-    assert len(finished) == lead + len(speech_to_the_end) + trail
-    assert not finished[:lead].any() and finished[-trail - 1] == 0.0
-    assert np.abs(finished[-trail - int(FADE_OUT_SECONDS * SAMPLE_RATE) // 2]) < 0.3
-    tail_dbfs = 20 * np.log10(np.sqrt(np.mean(finished[-trail:] ** 2)))
-    assert tail_dbfs == pytest.approx(TAIL_NOISE_DBFS, abs=1.0)
+    assert len(finished) == LEAD_SAMPLES + len(speech_to_the_end) + TRAIL_SAMPLES
+    assert not finished[:LEAD_SAMPLES].any() and not finished[-TRAIL_SAMPLES - 1 :].any()
+    assert np.abs(finished[-TRAIL_SAMPLES - int(FADE_OUT_SECONDS * SAMPLE_RATE) // 2]) < 0.3
 
 
-def test_the_silence_after_a_piece_is_faint_noise_that_survives_16_bit_audio_and_is_the_same_every_time() -> None:
-    """Zeros compress to nothing in the FLAC Home Assistant sends the puck, and the puck holds back about the last kilobyte; noise does not."""
+def test_a_filler_ends_in_faint_noise_that_survives_16_bit_audio_and_is_the_same_every_time() -> None:
+    """Zeros compress to almost nothing in the FLAC Home Assistant sends the puck, so only noise can fill the 8 KB the puck holds back."""
     speech = (0.3 * np.sin(2 * np.pi * 220 * np.arange(SAMPLE_RATE // 2) / SAMPLE_RATE)).astype(np.float32)
-    trail = round(FINISH.trail_silence_seconds * SAMPLE_RATE)
 
-    first, second = with_even_edges(speech, SAMPLE_RATE, FINISH), with_even_edges(speech, SAMPLE_RATE, FINISH)
+    first, second = FINISH.filler_with_edges(speech, SAMPLE_RATE), FINISH.filler_with_edges(speech, SAMPLE_RATE)
 
-    as_16_bit = np.round(first[-trail:] * 32767).astype(np.int16)
-    assert np.count_nonzero(as_16_bit) > trail // 2
+    tail = first[-FILLER_TRAIL_SAMPLES:]
+    assert len(first) == LEAD_SAMPLES + len(speech) + FILLER_TRAIL_SAMPLES
+    assert 20 * np.log10(np.sqrt(np.mean(tail**2))) == pytest.approx(TAIL_NOISE_DBFS, abs=1.0)
+    assert np.count_nonzero(np.round(tail * 32767).astype(np.int16)) > FILLER_TRAIL_SAMPLES // 2
     assert np.array_equal(first, second)
 
 
 def test_a_silent_piece_is_left_as_it_is() -> None:
     silent = np.zeros(SAMPLE_RATE, dtype=np.float32)
-    assert np.array_equal(with_even_edges(silent, SAMPLE_RATE, FINISH), silent)
+    assert np.array_equal(FINISH.sentence_with_edges(silent, SAMPLE_RATE), silent)
+    assert np.array_equal(FINISH.filler_with_edges(silent, SAMPLE_RATE), silent)

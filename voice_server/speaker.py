@@ -1,8 +1,8 @@
 """What the Wyoming handler asks for: one sentence, spoken as one or more pieces of audio, each ready as soon as it is made.
 
 A sentence over 150 characters is cut at its commas first (utils/spoken_sentence_utils.py), since OmniVoice makes a whole piece before any of it
-can play. Each piece is respelled from the voice's pronunciation dictionary, made on the model thread, levelled to Kokoro's loudness, and given
-even edges of silence. The filler and notice phrases are ready at start-up and replayed from memory, since they are spoken while the user waits for the first tool; each is
+can play. Each piece is respelled from the voice's pronunciation dictionary, made on the model thread, levelled to Kokoro's loudness, trimmed to
+its speech, and given set edges: silence after an answer's sentence, inaudible noise after a filler, which the wait for the answer follows. The filler and notice phrases are ready at start-up and replayed from memory, since they are spoken while the user waits for the first tool; each is
 read from the start cache (voice_server/start_cache.py) when an earlier start made it, and made and saved there when not.
 """
 
@@ -40,15 +40,30 @@ class Synthesizer(Protocol):
 
 @dataclass(frozen=True)
 class PieceFinish:
-    """What is done to each piece after the model makes it: levelled to Kokoro's loudness, then trimmed to its speech and given set silence."""
+    """What is done to each piece after the model makes it: levelled to Kokoro's loudness, then trimmed to its speech and given set edges."""
 
     loudness_dbfs: float
     lead_silence_seconds: float
     trail_silence_seconds: float
+    filler_trail_seconds: float
 
     @classmethod
     def from_settings(cls, settings: OmniVoiceSettings) -> "PieceFinish":
-        return cls(settings.loudness_dbfs, settings.lead_silence_seconds, settings.trail_silence_seconds)
+        return cls(settings.loudness_dbfs, settings.lead_silence_seconds, settings.trail_silence_seconds, settings.filler_trail_seconds)
+
+    def sentence_with_edges(self, samples: np.ndarray, sample_rate: int) -> np.ndarray:
+        """An answer's sentence ends in plain silence: the next sentence follows at once, so the puck's stream never runs dry after it."""
+        return self._with_edges(samples, sample_rate, np.zeros(round(self.trail_silence_seconds * sample_rate), dtype=np.float32))
+
+    def filler_with_edges(self, samples: np.ndarray, sample_rate: int) -> np.ndarray:
+        """The wait for the answer follows a filler, and the puck then holds back up to its last 8 KB: so those 8 KB are inaudible noise."""
+        return self._with_edges(samples, sample_rate, faint_noise(round(self.filler_trail_seconds * sample_rate)))
+
+    def _with_edges(self, samples: np.ndarray, sample_rate: int, trail: np.ndarray) -> np.ndarray:
+        speech = trimmed_to_speech(samples, sample_rate)
+        if speech is None:
+            return samples
+        return np.concatenate([np.zeros(round(self.lead_silence_seconds * sample_rate), dtype=np.float32), speech, trail])
 
 
 def levelled(samples: np.ndarray, loudness_dbfs: float) -> np.ndarray:
@@ -60,22 +75,19 @@ def levelled(samples: np.ndarray, loudness_dbfs: float) -> np.ndarray:
     return samples * min(gain, PEAK_CEILING / float(np.abs(samples).max()))
 
 
-def with_even_edges(samples: np.ndarray, sample_rate: int, finish: PieceFinish) -> np.ndarray:
-    """OmniVoice ends a piece on its last sound and may start it after up to a second of near-silence. The puck holds back the last moment of
-    audio when its stream runs dry, as it does after every filler while the answer is made, and plays it only when the answer arrives: so a piece
-    must end in silence, as Kokoro's did (about 0.2 s), or its last word stalls and stutters. Trimmed to its speech, faded out, and padded."""
+def trimmed_to_speech(samples: np.ndarray, sample_rate: int) -> np.ndarray | None:
+    """OmniVoice may start a piece after up to a second of near-silence and ends it on its last sound: cut to the speech, the last sound faded."""
     span = speech_span(samples, sample_rate)
     if span is None:
-        return samples
+        return None
     speech = samples[span[0] : span[1]].astype(np.float32)
     fade_length = min(len(speech), int(FADE_OUT_SECONDS * sample_rate))
     speech[len(speech) - fade_length :] *= np.linspace(1.0, 0.0, fade_length, dtype=np.float32)
-    lead = np.zeros(round(finish.lead_silence_seconds * sample_rate), dtype=np.float32)
-    return np.concatenate([lead, speech, faint_noise(round(finish.trail_silence_seconds * sample_rate))])
+    return speech
 
 
 def faint_noise(length: int) -> np.ndarray:
-    """Silence that costs bytes: the puck holds back about the last kilobyte of a stream that runs dry, and FLAC squeezes zeros to nothing."""
+    """Silence that costs bytes in the FLAC Home Assistant sends the puck, where digital zeros cost almost none."""
     return (np.random.default_rng(TAIL_NOISE_SEED).standard_normal(length) * 10 ** (TAIL_NOISE_DBFS / 20)).astype(np.float32)
 
 
@@ -134,7 +146,8 @@ class SentenceSpeaker:
         started = time.perf_counter()
         made_ahead = spoken in self._made_ahead
         levelled_audio = self._made_ahead[spoken] if made_ahead else await self._thread.run_async(self._levelled_audio, spoken)
-        audio = with_even_edges(levelled_audio, self.sample_rate, self._finish)
+        with_edges = self._finish.filler_with_edges if made_ahead else self._finish.sentence_with_edges
+        audio = with_edges(levelled_audio, self.sample_rate)
         source = "made ahead" if made_ahead else f"made in {time.perf_counter() - started:.2f} s"
         _LOGGER.info("%d characters, %.2f s of audio, %s: %s", len(spoken), len(audio) / self.sample_rate, source, spoken)
         return audio
