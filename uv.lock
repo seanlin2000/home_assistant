@@ -2191,6 +2191,8 @@ dev = [
     { name = "numpy" },
     { name = "pytest" },
     { name = "pytest-asyncio" },
+    { name = "regex", version = "2024.11.6", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-16-studio-assistant-voice'" },
+    { name = "regex", version = "2026.11.9", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-16-studio-assistant-speech' or extra == 'group-16-studio-assistant-speech-lab' or extra != 'group-16-studio-assistant-voice'" },
     { name = "wyoming" },
 ]
 docs = [
@@ -2198,6 +2200,7 @@ docs = [
 ]
 speech = [
     { name = "mlx-audio" },
+    { name = "regex", version = "2026.11.9", source = { registry = "https://pypi.org/simple" } },
     { name = "wyoming" },
 ]
 speech-lab = [
@@ -2237,11 +2240,13 @@ dev = [
     { name = "numpy", specifier = ">=2.2" },
     { name = "pytest", specifier = ">=8.2" },
     { name = "pytest-asyncio", specifier = ">=0.23" },
+    { name = "regex", specifier = ">=2024.11.6" },
     { name = "wyoming", specifier = ">=1.7.2" },
 ]
 docs = [{ name = "mkdocs-material", specifier = ">=9.7" }]
 speech = [
     { name = "mlx-audio", specifier = ">=0.6.5" },
+    { name = "regex", specifier = ">=2024.11.6" },
     { name = "wyoming", specifier = ">=1.7.2" },
 ]
 speech-lab = [

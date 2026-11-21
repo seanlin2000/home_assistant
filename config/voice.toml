@@ -16,6 +16,7 @@ reference_text = "Allow me to introduce myself. I am Jarvis, a virtual artificia
 reference_max_seconds = 20.0                 # mlx-audio's 10 s default would cut a longer clip without saying so
 steps = 32                                   # OmniVoice's own sampler; 16 was faster and audibly rougher
 language = "English"
+loudness_dbfs = -20.0                        # each piece levelled to Kokoro's loudness (its voiced RMS); OmniVoice comes out about 2 dB louder
 mlx_cache_limit_mib = 256                    # freed GPU memory MLX may keep for reuse; anything above goes back to macOS
 # Wired as the speech server wires Qwen3-ASR, so an idle spell cannot swap the model out; the agent sets MLX_METAL_RESIDENCY_REFRESH_INTERVAL_MS.
 mlx_wired_limit_mib = 3400
