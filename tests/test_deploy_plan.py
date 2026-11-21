@@ -36,8 +36,8 @@ def test_shared_core_restarts_the_harness_and_redeploys_the_component_only_for_v
     assert actions("assistant_core/agent_loop.py") == ["restart:mcp", "restart:harness", "restart:dashboard"]
 
 
-def test_harness_settings_restart_only_the_harness_and_its_code_also_the_dashboard_that_imports_it() -> None:
-    assert actions("config/harness.toml") == ["restart:harness"]
+def test_harness_settings_restart_the_harness_and_the_voice_that_makes_its_fillers_ahead_and_its_code_also_the_dashboard() -> None:
+    assert actions("config/harness.toml") == ["restart:harness", "restart:voice"]
     assert actions("assistant_service/app.py") == ["restart:harness", "restart:dashboard"]
 
 
@@ -56,7 +56,7 @@ def test_component_only_change_redeploys_the_component() -> None:
 
 def test_a_lock_change_only_syncs_until_the_sync_shows_which_environments_changed() -> None:
     assert actions("uv.lock") == ["sync_env"]
-    assert actions("pyproject.toml", "voice/kokoro_server.py") == ["sync_env", "restart:kokoro"]
+    assert actions("pyproject.toml", "voice/kokoro_server.py") == ["sync_env", "restart:voice"]
 
 
 def test_after_the_sync_only_the_services_of_a_changed_environment_restart() -> None:
@@ -64,8 +64,8 @@ def test_after_the_sync_only_the_services_of_a_changed_environment_restart() -> 
     plan = deploy.plan_actions(["uv.lock"])
 
     assert deploy.plan_after_sync(plan, []).actions == ["sync_env"]
-    assert deploy.plan_after_sync(plan, [speech]).actions == ["sync_env", "restart:speech"]
-    assert deploy.plan_after_sync(plan, [project]).actions == ["sync_env", "restart:mcp", "restart:harness", "restart:dashboard", "restart:kokoro"]
+    assert deploy.plan_after_sync(plan, [speech]).actions == ["sync_env", "restart:voice", "restart:speech"]  # Qwen3-ASR and OmniVoice
+    assert deploy.plan_after_sync(plan, [project]).actions == ["sync_env", "restart:mcp", "restart:harness", "restart:dashboard", "restart:voice"]
     assert deploy.plan_after_sync(plan, [speech]).reasons["restart:speech"] == ".venv-speech: the sync changed its installed packages"
     assert deploy.plan_after_sync(deploy.plan_actions(["uv.lock", "scripts/services.sh"]), [project, speech]).actions == ["sync_env", "reinstall_agents"]
 
@@ -78,9 +78,16 @@ def test_an_environment_counts_as_changed_when_its_installed_packages_differ() -
     assert deploy.environments_changed(before, before) == []
 
 
-def test_a_speech_server_change_restarts_only_the_speech_server() -> None:
-    assert actions("speech_server/handlers.py") == ["restart:speech"]
+def test_a_speech_server_change_restarts_the_speech_server_and_the_voice_that_reuses_its_parts() -> None:
+    assert actions("speech_server/handlers.py") == ["restart:voice", "restart:speech"]
     assert actions("config/speech.toml") == ["restart:speech"]
+
+
+def test_the_voices_code_settings_and_clip_restart_only_the_voice_and_a_settings_change_tells_home_assistant() -> None:
+    assert actions("voice_server/handlers.py", "config/voices/jarvis/reference.wav", "utils/spoken_sentence_utils.py") == ["restart:mcp", "restart:harness", "restart:dashboard", "restart:voice"]
+    assert actions("voice_server/handlers.py", "config/voices/jarvis/reference.wav") == ["restart:voice"]
+    assert actions("config/voice.toml") == ["restart:voice", "hand_voice_to_home_assistant"]
+    assert actions("config/voice.toml", "scripts/services.sh") == ["reinstall_agents", "hand_voice_to_home_assistant"]
 
 
 def test_services_script_change_reinstalls_agents_instead_of_individual_restarts() -> None:

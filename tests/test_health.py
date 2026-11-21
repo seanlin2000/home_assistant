@@ -27,7 +27,7 @@ UTMCTL_FROM_SSH_STDERR = (
 
 
 def healthy_checks() -> dict[str, Check]:
-    return {name: OK for name in ("llama", "mcp", "speech", "kokoro", "searxng", "home_assistant")} | {"vm": VM_UP}
+    return {name: OK for name in ("llama", "mcp", "speech", "voice", "searxng", "home_assistant")} | {"vm": VM_UP}
 
 
 def after_failures(checks: dict[str, Check], runs: int, state: State | None = None) -> State:
@@ -68,9 +68,9 @@ def test_kickstart_respects_the_cooldown() -> None:
 
 
 def test_unloaded_agent_is_skipped_not_failed() -> None:
-    checks = healthy_checks() | {"kokoro": Check(ok=None, detail="not loaded")}
+    checks = healthy_checks() | {"voice": Check(ok=None, detail="not loaded")}
     state = after_failures(checks, 4)
-    assert state.consecutive_failures["kokoro"] == 0
+    assert state.consecutive_failures["voice"] == 0
     assert health.decide_actions(checks, state, Policy(), NOW, maintenance=False) == []
 
 

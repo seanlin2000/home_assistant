@@ -33,6 +33,7 @@ from dotenv import dotenv_values, load_dotenv
 from assistant_service.settings import load_harness_config
 from ops.ha_client import HomeAssistant, entity_id, wait_for_api
 from serving.settings import read_api_key
+from voice_server.settings import load_voice_settings
 
 PROJECT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT))  # scripts/ is not a package; make `ops` importable when run as a file
@@ -49,7 +50,9 @@ ADDONS = {
     "5c53de3b_esphome": {"options": None},
     "core_openwakeword": {"options": {"threshold": 0.5, "trigger_level": 1}},
 }
-WYOMING_SERVICES = {"whisper": ("Whisper on the Mac", 10300), "kokoro": ("Kokoro on the Mac", 10210)}
+# The "kokoro" key names the entry for the voice's port, whichever engine (OmniVoice or Kokoro, config/voice.toml) answers there; the key stays so
+# the entry id recorded under HA_WYOMING_KOKORO_ENTRY keeps matching.
+WYOMING_SERVICES = {"whisper": ("Whisper on the Mac", 10300), "kokoro": ("The voice on the Mac", load_voice_settings().voice.port)}
 PIPELINE_NAME = "Jarvis"
 # The language and voice each text-to-speech engine is given when none is named. Both engines advertise region codes (en_US, en_GB); a bare "en" is
 # rejected at run time with tts-not-supported. Kokoro's Fable is a British voice, so it needs en_GB. Piper's voice is set on its add-on (ADDONS).

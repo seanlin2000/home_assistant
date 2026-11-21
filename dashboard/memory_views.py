@@ -27,6 +27,11 @@ APP_BUNDLE = re.compile(r"/([^/]+)\.app/")
 LLAMA_SERVER = "llama-server"
 STRATA = "Strata"  # its engine and the Python server in front of it
 ENGINES = (LLAMA_SERVER, STRATA)
+OMNIVOICE = "OmniVoice (mlx-audio), text to speech"
+KOKORO = "Kokoro, text to speech"
+VOICES = (OMNIVOICE, KOKORO)
+# Each pair takes turns: config/serving.toml runs one engine and config/voice.toml one voice, so the one not running is not listed as stopped.
+ALTERNATIVES = (ENGINES, VOICES)
 UNKNOWN_WEIGHTS_NOTE = "model weights not counted: the served model's files, named in config/serving.toml, could not be read"
 
 
@@ -40,7 +45,8 @@ SETUP_COMPONENTS = [
     SetupComponent(name=STRATA, pattern=r"/build-metal/strata\b|serve/server\.py"),
     SetupComponent(name="Home Assistant VM (UTM)", pattern=r"/QEMULauncher\b"),
     SetupComponent(name="Qwen3-ASR, speech to text", pattern=r"speech-server"),
-    SetupComponent(name="Kokoro, text to speech", pattern=r"kokoro-server"),
+    SetupComponent(name=OMNIVOICE, pattern=r"voice-server"),
+    SetupComponent(name=KOKORO, pattern=r"kokoro-server"),
     SetupComponent(name="harness", pattern=r"assistant-service"),
     SetupComponent(name="tool server", pattern=r"assistant-mcp"),
     SetupComponent(name="exchange dashboard", pattern=r"exchange-dashboard"),
@@ -110,17 +116,17 @@ def memory_view(outputs: MemoryOutputs, model_memory: ModelMemory | None) -> Mem
     setup_processes = {component.name: [process for process in processes if matches(component, process)] for component in SETUP_COMPONENTS}
     claimed = {process.pid for members in setup_processes.values() for process in members}
     setup_groups = [setup_group(name, members, model_memory) for name, members in setup_processes.items()]
-    setup = sorted(without_the_idle_engine(setup_groups), key=lambda group: (-group.ram_bytes, -group.compressed_bytes))
+    setup = sorted(without_the_idle_alternatives(setup_groups), key=lambda group: (-group.ram_bytes, -group.compressed_bytes))
     others = other_groups([process for process in processes if process.pid not in claimed])
     setup_ram = sum(group.ram_bytes for group in setup)
     others_ram = sum(group.ram_bytes for group in others)
     return MemoryView(machine=machine_memory(outputs, setup_ram + others_ram), setup=setup, setup_ram_bytes=setup_ram, others=others, others_ram_bytes=others_ram)
 
 
-def without_the_idle_engine(groups: list[ProcessGroup]) -> list[ProcessGroup]:
-    """Only one engine serves at a time, so the other is not listed as stopped while one runs; with neither running, both show as stopped."""
-    engine_runs = any(group.name in ENGINES and group.processes for group in groups)
-    return [group for group in groups if not (engine_runs and group.name in ENGINES and not group.processes)]
+def without_the_idle_alternatives(groups: list[ProcessGroup]) -> list[ProcessGroup]:
+    """Only one of each pair runs at a time, so the other is not listed as stopped while one runs; with neither running, both show as stopped."""
+    running_pairs = [pair for pair in ALTERNATIVES if any(group.name in pair and group.processes for group in groups)]
+    return [group for group in groups if not (group.name in {name for pair in running_pairs for name in pair} and not group.processes)]
 
 
 def running_processes(outputs: MemoryOutputs) -> list[RunningProcess]:

@@ -14,7 +14,7 @@ import functools
 import logging
 from typing import Any
 
-from wyoming.tts import Synthesize
+from wyoming.tts import Synthesize, SynthesizeVoice
 from wyoming_kokoro_torch import handler as kokoro_handler
 from wyoming_kokoro_torch.__main__ import main as upstream_main
 
@@ -63,6 +63,7 @@ def pronunciations_for(voice: str) -> LivePronunciations:
 async def handle_synthesize_respelled(handler: Any, synthesize: Synthesize, send_start: bool = True, send_stop: bool = True) -> bool:
     """Upstream's _handle_synthesize, given one sentence at a time (its sentence splitter has already run), with the sentence respelled; a request
     with the verbatim speaker (the dashboard's previews, which respell the text themselves) is read as sent."""
+    synthesize = with_a_voice_kokoro_has(handler, synthesize)
     if synthesize.voice and synthesize.voice.speaker == VERBATIM_SPEAKER:
         return await _ORIGINAL_HANDLE_SYNTHESIZE(handler, synthesize, send_start, send_stop)
     voice = synthesize.voice.name if synthesize.voice and synthesize.voice.name else handler.cli_args.voice
@@ -72,6 +73,15 @@ async def handle_synthesize_respelled(handler: Any, synthesize: Synthesize, send
     if respelled != synthesize.text:
         _LOGGER.info("respelled for %s: %r -> %r", voice, synthesize.text, respelled)
     return await _ORIGINAL_HANDLE_SYNTHESIZE(handler, Synthesize(text=respelled, voice=synthesize.voice), send_start, send_stop)
+
+
+def with_a_voice_kokoro_has(handler: Any, synthesize: Synthesize) -> Synthesize:
+    """A voice Kokoro does not have (OmniVoice's "jarvis", left in the pipeline after a switch back) becomes Kokoro's configured one. Upstream
+    would take its first letter as a language code and stay silent."""
+    if synthesize.voice is None or not synthesize.voice.name or synthesize.voice.name in handler.voices_info:
+        return synthesize
+    _LOGGER.warning("Kokoro has no voice %r; speaking with %s", synthesize.voice.name, handler.cli_args.voice)
+    return Synthesize(text=synthesize.text, voice=SynthesizeVoice(name=handler.cli_args.voice, speaker=synthesize.voice.speaker))
 
 
 def main() -> None:

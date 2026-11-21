@@ -35,9 +35,10 @@ from serving.strata import STRATA_ENGINE_PROCESS
 from utils.browser_utils import CHROME_RELEASE_PATH, FALLBACK_CHROME_MAJOR, ChromeRelease
 from utils.jsonl_utils import append_jsonl
 from utils.snapshot_utils import SnapshotMissing, read_snapshot
+from voice_server.settings import load_voice_settings
 from web_search_mcp.searxng_client import describe_unresponsive_engines
 
-LAUNCHD_SERVICES = ("llama", "mcp", "harness", "speech", "kokoro")
+LAUNCHD_SERVICES = ("llama", "mcp", "harness", "speech", "voice")
 LLAMA_SERVER_PROCESS = "llama-server"
 ENGINE_PROCESSES = (LLAMA_SERVER_PROCESS, STRATA_ENGINE_PROCESS)  # whichever serves the model (serving.toml's engine)
 LLAMA_RESTART_KEY = "kickstart:llama"
@@ -152,7 +153,7 @@ class Settings(BaseModel):
     harness_url: str = "http://127.0.0.1:8770"
     harness_key_path: Path = Field(default_factory=lambda: load_harness_config().service.api_key_path)
     speech_port: int = 10300
-    kokoro_port: int = 10210
+    voice_port: int = Field(default_factory=lambda: load_voice_settings().voice.port)
     searxng_url: str = "http://127.0.0.1:8080"
     ha_base: str | None = None
     ha_token: str | None = None
@@ -180,7 +181,7 @@ async def run_checks(settings: Settings, full: bool = False) -> dict[str, Check]
             timed("mcp", check_mcp(client, settings)),
             timed("harness", check_harness(client, settings)),
             timed("speech", check_tcp("127.0.0.1", settings.speech_port, settings.probe_timeout_seconds)),
-            timed("kokoro", check_tcp("127.0.0.1", settings.kokoro_port, settings.probe_timeout_seconds)),
+            timed("voice", check_tcp("127.0.0.1", settings.voice_port, settings.probe_timeout_seconds)),
             timed("searxng", check_searxng(client, settings, full)),
             timed("home_assistant", check_home_assistant(client, settings)),
             timed("vm", asyncio.to_thread(check_vm, settings.vm_name)),

@@ -11,7 +11,7 @@ from pathlib import Path
 import pytest
 
 SERVICES_SCRIPT = Path(__file__).resolve().parent.parent / "scripts" / "services.sh"
-SERVICES = ("llama", "mcp", "harness", "dashboard", "speech", "kokoro", "health", "listings", "newsletters")
+SERVICES = ("llama", "mcp", "harness", "dashboard", "speech", "voice", "health", "listings", "newsletters")
 FAKE_LAUNCHCTL = """#!/bin/bash
 # print TARGET | bootout TARGET | kickstart -k TARGET | bootstrap DOMAIN PLIST; the agent's name is the last dot-separated part of the label.
 label="${@: -1}"
@@ -41,6 +41,15 @@ if [[ "$1" == engine ]]; then cat "$HOME/Library/Application Support/studio-assi
 echo "serving $1 sees $(cat "$HOME/Library/Application Support/studio-assistant/engine" 2>/dev/null || echo default)" >>"$HOME/calls.log"
 [[ -z "$CHECK_FAILS" ]]
 """
+FAKE_VOICE = """#!/bin/bash
+# voice port prints 10210; voice check logs which voice it saw and fails on VOICE_CHECK_FAILS; voice handoff is logged
+override="$HOME/Library/Application Support/studio-assistant/voice_engine"
+case "$1" in
+port) echo 10210 ;;
+check) echo "voice check sees $(cat "$override" 2>/dev/null || echo default)" >>"$HOME/calls.log"; [[ -z "$VOICE_CHECK_FAILS" ]] ;;
+handoff) echo "voice handoff" >>"$HOME/calls.log" ;;
+esac
+"""
 FAKE_STRATA_SCRIPT = """#!/bin/bash
 echo "strata.sh $1" >>"$HOME/calls.log"
 [[ -z "$ENSURE_FAILS" ]]
@@ -56,7 +65,15 @@ port="${2#-iTCP:}"
 def mac(tmp_path: Path) -> dict[str, str]:
     bin_dir = tmp_path / "bin"
     bin_dir.mkdir()
-    for name, body in (("launchctl", FAKE_LAUNCHCTL), ("lsof", FAKE_LSOF), ("pgrep", FAKE_PGREP), ("pkill", FAKE_PKILL), ("serving", FAKE_SERVING), ("strata.sh", FAKE_STRATA_SCRIPT)):
+    for name, body in (
+        ("launchctl", FAKE_LAUNCHCTL),
+        ("lsof", FAKE_LSOF),
+        ("pgrep", FAKE_PGREP),
+        ("pkill", FAKE_PKILL),
+        ("serving", FAKE_SERVING),
+        ("strata.sh", FAKE_STRATA_SCRIPT),
+        ("voice", FAKE_VOICE),
+    ):
         (bin_dir / name).write_text(body)
         (bin_dir / name).chmod((bin_dir / name).stat().st_mode | stat.S_IEXEC)
     agents = tmp_path / "Library" / "LaunchAgents"
@@ -68,6 +85,8 @@ def mac(tmp_path: Path) -> dict[str, str]:
     environment = {"PATH": f"{bin_dir}:{os.environ['PATH']}", "HOME": str(tmp_path), "STUDIO_LOG_DIR": str(logs), "NOT_LOADED": "", "DOWN_PORTS": "", "REFUSED": ""}
     return environment | {
         "SERVING_CLI": str(bin_dir / "serving"),
+        "VOICE_CLI": str(bin_dir / "voice"),
+        "VOICE_CHECK_FAILS": "",
         "STRATA_SCRIPT": str(bin_dir / "strata.sh"),
         "ENSURE_FAILS": "",
         "DEFAULT_ENGINE": "",
@@ -104,7 +123,7 @@ def test_status_passes_only_when_every_agent_is_loaded_and_every_port_listens(ma
 
 def write_failing_snapshot(environment: dict[str, str]) -> None:
     """What the health agent records at load, while the agents beside it are still starting."""
-    checks = {name: {"ok": False, "detail": "connection refused"} for name in ("llama", "mcp", "harness", "speech", "kokoro")}
+    checks = {name: {"ok": False, "detail": "connection refused"} for name in ("llama", "mcp", "harness", "speech", "voice")}
     (Path(environment["STUDIO_LOG_DIR"]) / "health.json").write_text(json.dumps({"checked_at": "2026-11-15T01:00:00", "checks": checks}))
 
 
@@ -113,7 +132,7 @@ def test_status_shows_a_failing_health_snapshot_without_failing_on_it(mac: dict[
 
     shown = services("status", mac)
 
-    assert (shown.returncode, "FAILING harness, kokoro, llama, mcp, speech" in shown.stdout) == (0, True)
+    assert (shown.returncode, "FAILING harness, llama, mcp, speech, voice" in shown.stdout) == (0, True)
 
 
 def test_starting_the_agents_shows_what_is_still_loading_and_fails_only_when_launchd_refuses_one(mac: dict[str, str]) -> None:
@@ -121,9 +140,9 @@ def test_starting_the_agents_shows_what_is_still_loading_and_fails_only_when_lau
     still_loading = services("start", mac | {"DOWN_PORTS": "8090 10300 10210"})
     assert (still_loading.returncode, "speech: NOT listening on 10300" in still_loading.stdout) == (0, True)
 
-    refused = services("start", mac | {"REFUSED": "kokoro"})
+    refused = services("start", mac | {"REFUSED": "voice"})
     assert refused.returncode == 1
-    assert "failed to load: kokoro (Bootstrap failed: 5: Input/output error)" in refused.stderr
+    assert "failed to load: voice (Bootstrap failed: 5: Input/output error)" in refused.stderr
 
 
 def test_restarting_the_engine_stops_its_agent_and_waits_for_strata_to_exit_before_loading_it_again(mac: dict[str, str]) -> None:
@@ -170,3 +189,33 @@ def test_a_strata_install_that_fails_leaves_the_running_engine_alone(mac: dict[s
     restarted = services("restart", mac | {"DEFAULT_ENGINE": "strata", "ENSURE_FAILS": "1"}, "llama")
     assert (restarted.returncode, calls(mac)) == (1, ["strata.sh ensure"])
     assert "the running engine was left alone" in restarted.stderr
+
+
+def voice_override(environment: dict[str, str]) -> Path:
+    return Path(environment["HOME"]) / "Library" / "Application Support" / "studio-assistant" / "voice_engine"
+
+
+def test_switching_the_voice_checks_the_choice_restarts_the_voice_and_tells_home_assistant(mac: dict[str, str]) -> None:
+    switched = services("voice-engine", mac, "omnivoice")
+
+    assert switched.returncode == 0
+    assert voice_override(mac).read_text().strip() == "omnivoice"
+    assert calls(mac) == ["voice check sees omnivoice", "kickstart voice", "voice handoff"]
+
+    services("voice-engine", mac, "default")
+    assert not voice_override(mac).exists()
+
+
+def test_a_voice_switch_the_check_refuses_is_undone_and_nothing_restarts(mac: dict[str, str]) -> None:
+    services("voice-engine", mac, "kokoro")
+    (Path(mac["HOME"]) / "calls.log").unlink()
+
+    refused = services("voice-engine", mac | {"VOICE_CHECK_FAILS": "1"}, "omnivoice")
+
+    assert (refused.returncode, voice_override(mac).read_text().strip()) == (1, "kokoro")
+    assert calls(mac) == ["voice check sees omnivoice"]
+    assert services("voice-engine", mac, "piper").returncode == 1
+
+
+def test_status_reads_the_voices_port_from_its_settings(mac: dict[str, str]) -> None:
+    assert "voice: listening on 10210" in services("status", mac).stdout
