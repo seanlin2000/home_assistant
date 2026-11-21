@@ -19,7 +19,7 @@ from speech_server.worker import ModelThread
 from utils.pronunciation_utils import VERBATIM_SPEAKER, LivePronunciations, PronunciationStore
 from voice_server.handlers import SAMPLES_PER_CHUNK, VoiceHandler, voice_info
 from voice_server.settings import load_voice_settings
-from voice_server.speaker import FADE_OUT_SECONDS, PEAK_CEILING, PieceFinish, SentenceSpeaker, levelled, with_even_edges
+from voice_server.speaker import FADE_OUT_SECONDS, PEAK_CEILING, TAIL_NOISE_DBFS, PieceFinish, SentenceSpeaker, levelled, with_even_edges
 from voice_server.start_cache import StartCache
 
 SETTINGS = load_voice_settings()
@@ -193,8 +193,22 @@ def test_each_piece_is_trimmed_to_its_speech_and_ends_in_set_silence_so_the_puck
 
     lead, trail = round(FINISH.lead_silence_seconds * SAMPLE_RATE), round(FINISH.trail_silence_seconds * SAMPLE_RATE)
     assert len(finished) == lead + len(speech_to_the_end) + trail
-    assert not finished[:lead].any() and not finished[-trail:].any()
-    assert finished[-trail - 1] == 0.0 and np.abs(finished[-trail - int(FADE_OUT_SECONDS * SAMPLE_RATE) // 2]) < 0.3
+    assert not finished[:lead].any() and finished[-trail - 1] == 0.0
+    assert np.abs(finished[-trail - int(FADE_OUT_SECONDS * SAMPLE_RATE) // 2]) < 0.3
+    tail_dbfs = 20 * np.log10(np.sqrt(np.mean(finished[-trail:] ** 2)))
+    assert tail_dbfs == pytest.approx(TAIL_NOISE_DBFS, abs=1.0)
+
+
+def test_the_silence_after_a_piece_is_faint_noise_that_survives_16_bit_audio_and_is_the_same_every_time() -> None:
+    """Zeros compress to nothing in the FLAC Home Assistant sends the puck, and the puck holds back about the last kilobyte; noise does not."""
+    speech = (0.3 * np.sin(2 * np.pi * 220 * np.arange(SAMPLE_RATE // 2) / SAMPLE_RATE)).astype(np.float32)
+    trail = round(FINISH.trail_silence_seconds * SAMPLE_RATE)
+
+    first, second = with_even_edges(speech, SAMPLE_RATE, FINISH), with_even_edges(speech, SAMPLE_RATE, FINISH)
+
+    as_16_bit = np.round(first[-trail:] * 32767).astype(np.int16)
+    assert np.count_nonzero(as_16_bit) > trail // 2
+    assert np.array_equal(first, second)
 
 
 def test_a_silent_piece_is_left_as_it_is() -> None:
