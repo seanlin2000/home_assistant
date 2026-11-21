@@ -1,7 +1,7 @@
 """movies_showing, movie_details, and the nightly Fandango refresh behind them: which theaters count as Manhattan, one entry per movie across
 theaters and days, the session Fandango asks for and the snapshot kept when it fails, each movie's scores read nightly and its page read once, every
-filter and order the tools offer, this week and coming up, horror left out unless asked for, the replies when nothing matches or there is no snapshot,
-and the router, filler, and refresh command around them. The listings are the benchmark's own (benchmark/fixtures/movies/movies.json, 60 days from
+filter and order the tools offer, this week and coming up, wide and limited releases, a lowest critics score, revivals marked, horror left out
+unless asked for, the replies when nothing matches or there is no snapshot, and the router, filler, and refresh command around them. The listings are the benchmark's own (benchmark/fixtures/movies/movies.json, 60 days from
 2026-10-25); tests/fixtures/fandango_theaters.json is a trimmed copy of two of its raw days, and tests/fixtures/fandango_movie_details.json two
 movies' trimmed pages and three movies' scores."""
 
@@ -236,6 +236,38 @@ async def test_the_score_orders_put_the_best_reviewed_first_and_movies_without_a
     action = movie_lines(await ask(when="coming_up", sort_by="critics_score", genre="action", limit=25))
     scored = ["critics" in line for line in action]
     assert scored == sorted(scored, reverse=True) and scored.count(True) == 9 < len(action)  # every scored movie before every unscored one
+
+
+async def test_wide_releases_with_a_lowest_critics_score_leave_out_and_count_the_unscored() -> None:
+    reply = await ask(release_size="wide", min_critics_score=70, limit=25)
+    assert reply.split("\n")[0] == (
+        "Wide-release (at 5 theaters or more) movies with a critics score of 70% or more at Manhattan theaters, October 25 to 31, showing at the most"
+        " theaters first (11 of 11); 2 horror movies left out, which include_horror=true lists; 4 movies with no critics score yet left out, which"
+        " min_critics_score=0 lists:"
+    )
+    theater_counts = [int(count) for count in re.findall(r"playing at (\d+) theaters", reply)]
+    assert len(theater_counts) == 11 and min(theater_counts) == 5
+    assert min(int(score) for score in re.findall(r"critics (\d+)%", reply)) >= 70
+    assert "Clayface" not in reply and "Street Fighter" not in reply  # horror; 41%
+    assert "no critics score" not in await ask(release_size="wide")
+
+
+async def test_limited_releases_name_at_most_three_theaters_and_hold_the_lowest_score() -> None:
+    reply = await ask(release_size="limited", min_critics_score=70, sort_by="critics_score", limit=25)
+    assert reply.startswith("Limited-release (at 3 theaters or fewer) movies with a critics score of 70% or more")
+    assert "(25 of 27); 15 horror movies left out" in reply and "; 25 movies with no critics score yet left out" in reply
+    lines = movie_lines(reply)
+    assert len(lines) == 25 and not any("playing at" in line for line in lines)
+    assert min(int(score) for score in re.findall(r"critics (\d+)%", reply)) >= 70
+    assert listed_titles(reply)[:2] == ["Making Marie Antoinette", "Naza"] and "Wildwood" not in reply  # Wildwood: 100%, but at 12 theaters
+
+
+async def test_a_revival_is_marked_by_its_title_its_release_or_its_age_on_fandango() -> None:
+    for title in ["The Nightmare Before Christmas Re-Release", "A Place in the Sun", "Terrifier 3"]:  # a title word; an old number and no date; a 2024 release
+        assert movie_lines(await ask(title=title))[0].startswith(f"1. {title} | revival of an older film | ")
+    assert "revival" not in " ".join(movie_lines(await ask(title="Naza")))
+    assert (await ask_details("Vertigo")).split("\n")[1].startswith("revival of an older film | Mystery & Thriller |")
+    assert "revival" not in movie_lines(await ask())[0]
 
 
 async def test_details_say_what_one_movie_is_about_who_made_it_and_where_it_opens() -> None:

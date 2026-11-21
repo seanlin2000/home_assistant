@@ -14,7 +14,7 @@ from mcp.server.mcpserver import MCPServer
 from pydantic import Field
 
 from movies_mcp.details import movie_details_text, movies_named
-from movies_mcp.movies import DEFAULT_LIMIT, MovieGenre, MovieQuery, MovieSortBy, MoviesSnapshot, MovieWhen, found_movies
+from movies_mcp.movies import DEFAULT_LIMIT, MovieGenre, MovieQuery, MovieReleaseSize, MovieSortBy, MoviesSnapshot, MovieWhen, found_movies
 from movies_mcp.render import movies_text
 from movies_mcp.settings import MoviesSettings
 from utils.snapshot_utils import SnapshotMissing, answered_from_snapshot
@@ -38,10 +38,22 @@ def register_movies_tools(server: MCPServer, settings: MoviesSettings) -> None:
             MovieSortBy,
             Field(description="most_theaters: widest; release_date: newest or soonest; critics_score, audience_score: best reviewed"),
         ] = "most_theaters",
+        release_size: Annotated[MovieReleaseSize, Field(description="wide: 5+ theaters, popular; limited: 1-3 theaters, niche")] = "any",
+        min_critics_score: Annotated[int, Field(description='lowest Rotten Tomatoes critics percent, e.g. 70 for "good"; 0 for any')] = 0,
         limit: Annotated[int, Field(description="how many")] = DEFAULT_LIMIT,
     ) -> str:
         """Movies at Manhattan theaters, from Fandango, with rating, length, Rotten Tomatoes scores and theaters. Use this first for what is showing or coming up, before searching the web. Name movies in the order given; say scores as given. Horror is left out unless asked for; if the reply says how many were left out, mention they can be included. No showtimes: tell the user to check Fandango or the theater."""
-        query = MovieQuery(when=when, genre=genre, include_horror=include_horror, title=title, theater=theater, sort_by=sort_by, limit=limit)
+        query = MovieQuery(
+            when=when,
+            genre=genre,
+            include_horror=include_horror,
+            title=title,
+            theater=theater,
+            sort_by=sort_by,
+            release_size=release_size,
+            min_critics_score=min_critics_score,
+            limit=limit,
+        )
         return snapshot_answer(settings, lambda snapshot, today: clip_to_whole_lines(movies_text(found_movies(snapshot, query, today), query, snapshot, today), settings.max_words))
 
     @server.tool(name=MOVIE_DETAILS_TOOL_NAME)

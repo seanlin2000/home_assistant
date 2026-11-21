@@ -11,7 +11,7 @@ from datetime import date
 from pydantic import BaseModel
 
 from movies_mcp.movies import MOVIE_TITLES, Movie, MoviesSnapshot
-from movies_mcp.render import genre_parts, opening_parts, rating_parts, runtime_parts, score_parts
+from movies_mcp.render import genre_parts, opening_parts, rating_parts, revival_parts, runtime_parts, score_parts
 from utils.text_utils import spoken_month_day
 from utils.title_matching_utils import MatchRule
 
@@ -62,7 +62,7 @@ def one_movie_heading(movie: Movie, rule: MatchRule | None, asked: str) -> str:
 
 def facts_line(movie: Movie, today: date) -> str:
     people = people_parts(movie)
-    return " | ".join([*genre_parts(movie), *rating_parts(movie), *runtime_parts(movie), *people, *score_parts(movie), first_showing_text(movie, today)])
+    return " | ".join([*revival_parts(movie, today), *genre_parts(movie), *rating_parts(movie), *runtime_parts(movie), *people, *score_parts(movie), first_showing_text(movie, today)])
 
 
 def people_parts(movie: Movie) -> list[str]:
