@@ -308,7 +308,13 @@ def test_a_rollback_retires_the_agents_its_older_services_script_does_not_list(m
     booted_out = []
     monkeypatch.setattr(paths, "LAUNCH_AGENTS_DIR", agents)
     monkeypatch.setattr(deploy, "SERVICES_SCRIPT", older_services_script)
-    monkeypatch.setattr(deploy.subprocess, "run", lambda command, **_: booted_out.append(command[-1]))
+
+    def launchctl(command: list[str], **_: object) -> subprocess.CompletedProcess:
+        if command[1] == "bootout":
+            booted_out.append(command[-1])
+        return subprocess.CompletedProcess(command, 113)  # `launchctl print` of a job that is gone
+
+    monkeypatch.setattr(deploy.subprocess, "run", launchctl)
 
     deploy.retire_agents_the_checkout_does_not_list()
 
@@ -320,3 +326,76 @@ def test_a_services_script_without_its_list_is_refused_rather_than_guessed() -> 
     assert deploy.services_listed_in("SERVICES=(llama mcp)\n") == {"llama", "mcp"}
     with pytest.raises(SystemExit, match="no SERVICES"):
         deploy.services_listed_in("#!/usr/bin/env bash\n")
+
+
+class DeployThenRollBack:
+    """last_good is the running commit; a deploy of `failed` changes config/serving.toml, then its test question fails and the rollback switches
+    back to last_good. git answers from a checkout that moves with each checkout; the restarts are recorded per switch."""
+
+    def __init__(self, monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+        monkeypatch.setenv("STUDIO_LOG_DIR", str(tmp_path))
+        (tmp_path / "last_good_ref").write_text("good\n")
+        self.head = "good"
+        self.restarts: list[list[str]] = []
+        monkeypatch.setattr(deploy, "tree_is_dirty", lambda: False)
+        monkeypatch.setattr(deploy, "git", self.git)
+        monkeypatch.setattr(deploy, "run", lambda command, timeout=0: None)
+        monkeypatch.setattr(deploy, "check_manifest_matches_lock", lambda: None)
+        monkeypatch.setattr(deploy, "carry_out", lambda actions: self.restarts.append(actions) or [])
+        monkeypatch.setattr(deploy, "active_engine_here", lambda: "llama-server")
+
+    def git(self, *args: str) -> str:
+        if args[0] == "checkout":
+            self.head = args[-1]
+        if args[:2] == ("rev-parse", "HEAD"):
+            return self.head
+        if args[:2] == ("rev-parse", "--verify"):
+            return args[-1].removesuffix("^{commit}")
+        if args[:2] == ("diff", "--name-only"):
+            return "" if args[2] == args[3] else "config/serving.toml"
+        return ""
+
+
+def test_a_rollback_after_a_failed_test_question_restarts_what_the_failed_deploy_restarted(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    mac = DeployThenRollBack(monkeypatch, tmp_path)
+
+    forward = deploy.switch_to("failed", run_tests=False, dry_run=False)
+    back = deploy.switch_to(paths.last_good_ref().read_text().strip(), run_tests=False, dry_run=False)
+
+    assert (forward["from"], forward["to"], back["from"], back["to"]) == ("good", "failed", "failed", "good")
+    assert mac.restarts == [["restart:llama", "restart:harness"], ["restart:llama", "restart:harness"]]
+    assert (mac.head, paths.applied_ref().read_text().strip()) == ("good", "good")
+
+
+def test_a_mac_deployed_before_the_applied_commit_was_recorded_plans_from_its_last_good_commit(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    monkeypatch.setenv("STUDIO_LOG_DIR", str(tmp_path))
+    assert deploy.deployed_commit("checkout") == "checkout"
+    (tmp_path / "last_good_ref").write_text("good\n")
+    assert deploy.deployed_commit("checkout") == "good"
+    (tmp_path / "applied_ref").write_text("applied\n")
+    assert deploy.deployed_commit("checkout") == "applied"
+
+
+def test_retiring_an_agent_waits_until_launchd_has_let_it_go(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    agents = tmp_path / "LaunchAgents"
+    agents.mkdir()
+    (agents / "com.studio-assistant.voice.plist").write_text("<plist/>")
+    services_script = tmp_path / "services.sh"
+    services_script.write_text("SERVICES=(llama kokoro)\n")
+    still_loaded_for = iter([True, True, False])
+    commands: list[str] = []
+
+    def launchctl(command: list[str], **_: object) -> subprocess.CompletedProcess:
+        commands.append(command[1])
+        loaded = command[1] == "print" and next(still_loaded_for)
+        return subprocess.CompletedProcess(command, 0 if loaded else 113)
+
+    monkeypatch.setattr(paths, "LAUNCH_AGENTS_DIR", agents)
+    monkeypatch.setattr(deploy, "SERVICES_SCRIPT", services_script)
+    monkeypatch.setattr(deploy.subprocess, "run", launchctl)
+    monkeypatch.setattr(deploy.time, "sleep", lambda seconds: None)
+
+    deploy.retire_agents_the_checkout_does_not_list()
+
+    assert commands == ["bootout", "print", "print", "print"]
+    assert list(agents.iterdir()) == []

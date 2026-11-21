@@ -64,7 +64,7 @@ json_field() {
 }
 
 smoke() {
-    "$PYTHON" -m ops.smoke "$@"
+    "$PYTHON" -m ops.smoke --voice-host "$MINI_HOST" "$@"
 }
 
 cmd_bootstrap() {
