@@ -1,9 +1,9 @@
 """movies_showing, movie_details, and the nightly Fandango refresh behind them: which theaters count as Manhattan, one entry per movie across
 theaters and days, the session Fandango asks for and the snapshot kept when it fails, each movie's scores read nightly and its page read once, every
 filter and order the tools offer, this week and coming up, wide and limited releases, a lowest critics score, revivals marked, horror left out
-unless asked for, the replies when nothing matches or there is no snapshot, and the router, filler, and refresh command around them. The listings are the benchmark's own (benchmark/fixtures/movies/movies.json, 60 days from
-2026-10-25); tests/fixtures/fandango_theaters.json is a trimmed copy of two of its raw days, and tests/fixtures/fandango_movie_details.json two
-movies' trimmed pages and three movies' scores."""
+unless asked for, the replies when nothing matches or there is no snapshot, and the router, filler, and refresh command around them. The listings
+are the benchmark's own (benchmark/fixtures/movies/movies.json, 60 days from 2026-10-25); tests/fixtures/fandango_theaters.json is a trimmed copy
+of two of its raw days, and tests/fixtures/fandango_movie_details.json two movies' trimmed pages and three movies' scores."""
 
 import json
 import re
