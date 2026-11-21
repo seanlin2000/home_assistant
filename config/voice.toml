@@ -1,0 +1,21 @@
+# The voice that speaks the answers. OmniVoice (voice_server/, on mlx-audio) is being added beside Kokoro; until the voice agent can launch it,
+# Kokoro speaks. Kept apart from config/speech.toml so a voice change never restarts Qwen3-ASR. Unknown keys stop the voice rather than being ignored.
+
+[voice]
+engine = "kokoro"                            # "omnivoice" or "kokoro"; scripts/services.sh can override it on one Mac
+host = "0.0.0.0"                             # the Home Assistant VM reaches the port over the bridge
+port = 10210                                 # Kokoro's port, so Home Assistant's Wyoming entry for text to speech stays as it is
+
+# OmniVoice exactly as the Studio load test of 2026-11-20 measured it: no swap beside Flash Next and Qwen3-ASR, about 0.9 s per sentence, and no
+# lost or invented words across 2,724 read back by Qwen3-ASR.
+[voice.omnivoice]
+source = "mlx-community/OmniVoice-bf16"
+revision = "8fb0b754cad788aaefec690cd55c207e8a628f85"
+reference_clip = "config/voices/jarvis/reference.wav"   # 8.9 s, cleaned of its music and noise; relative to the project
+reference_text = "Allow me to introduce myself. I am Jarvis, a virtual artificial intelligence, and I'm here to assist you with a variety of tasks as best I can."
+reference_max_seconds = 20.0                 # mlx-audio's 10 s default would cut a longer clip without saying so
+steps = 32                                   # OmniVoice's own sampler; 16 was faster and audibly rougher
+language = "English"
+mlx_cache_limit_mib = 256                    # freed GPU memory MLX may keep for reuse; anything above goes back to macOS
+# Wired as the speech server wires Qwen3-ASR, so an idle spell cannot swap the model out; the agent sets MLX_METAL_RESIDENCY_REFRESH_INTERVAL_MS.
+mlx_wired_limit_mib = 3400
