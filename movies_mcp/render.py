@@ -35,17 +35,21 @@ def movies_text(found: MoviesFound, query: MovieQuery, snapshot: MoviesSnapshot,
 
 def heading(found: MoviesFound, query: MovieQuery, snapshot: MoviesSnapshot, today: date, shown: int) -> str:
     what = f"{movies_label(query)} at {theaters_label(found)}, {period_label(found.period, snapshot, today)}"
-    horror = left_out_note(found)
+    left_out = left_out_note(found)
     if not found.movies and query.title:
-        return f'No movie titled like "{query.title}" is showing at {theaters_label(found)} on Fandango, {period_label(found.period, snapshot, today)}{horror}. {NO_TITLE_ADVICE[query.when]}'
+        return f'No movie titled like "{query.title}" is showing at {theaters_label(found)} on Fandango, {period_label(found.period, snapshot, today)}{left_out}. {NO_TITLE_ADVICE[query.when]}'
     if not found.movies:
-        return f"No {what} on Fandango{horror}. Tell the user, and offer to drop a filter."
-    return f"{what[0].upper()}{what[1:]}, {order_label(query)} ({shown} of {len(found.movies)}){horror}:"
+        return f"No {what} on Fandango{left_out}. Tell the user, and offer to drop a filter."
+    return f"{what[0].upper()}{what[1:]}, {order_label(query)} ({shown} of {len(found.movies)}){left_out}:"
 
 
 def left_out_note(found: MoviesFound) -> str:
-    horror = [f"{found.horror_left_out} horror {plural('movie', found.horror_left_out)} left out, which include_horror=true lists"] if found.horror_left_out else []
-    unscored = [f"{found.unscored_left_out} {plural('movie', found.unscored_left_out)} with no critics score yet left out, which min_critics_score=0 lists"] if found.unscored_left_out else []
+    horror = [f"{found.horror_left_out} horror {plural('movie', found.horror_left_out)} left out, which movies_showing lists with include_horror=true"] if found.horror_left_out else []
+    unscored = (
+        [f"{found.unscored_left_out} {plural('movie', found.unscored_left_out)} with no critics score yet left out, which movies_showing lists with min_critics_score=0"]
+        if found.unscored_left_out
+        else []
+    )
     return "".join(f"; {note}" for note in horror + unscored)
 
 

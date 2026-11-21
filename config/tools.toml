@@ -71,6 +71,10 @@ marks_untrusted = true                      # the description too is written by 
 tier = "read_public"
 marks_untrusted = true                      # titles and genres written by Fandango and the theaters that list there
 
+[tools.popular_movies]
+tier = "read_public"
+marks_untrusted = true                      # the same Fandango titles and genres as movies_showing
+
 [tools.movie_details]
 tier = "read_public"
 marks_untrusted = true                      # the synopsis too is written by Fandango and the studios

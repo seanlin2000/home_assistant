@@ -127,6 +127,7 @@ HIGHEST_SCORE = 100
 # In the listings of 2026-11-14, 26 of this week's 124 movies were at five theaters or more and 98 at three or fewer, 87 of them at one.
 WIDE_RELEASE_MIN_THEATERS = 5
 LIMITED_RELEASE_MAX_THEATERS = 3
+POPULAR_MIN_CRITICS_SCORE = 70  # the user's own bar for a good movie
 REVIVAL_TITLE_WORDS = ("reissue", "re-release", "anniversary")  # Fandango's own words: "Dune: Part Two Reissue", "V for Vendetta 20th Anniversary"
 REVIVAL_AGE = timedelta(days=2 * 365)  # a late Manhattan opening of a film from last year is not a revival
 # Fandango gives many revivals no release date (Network, Local Hero), but it numbers movies in the order it adds them: TÁR, released October 2022,
@@ -147,6 +148,11 @@ class MovieQuery(BaseModel):
     min_critics_score: int = 0  # 0 asks for no lowest score, and keeps the movies without one
     revivals: MovieRevivals = "any"
     limit: int = DEFAULT_LIMIT
+
+    @classmethod
+    def popular(cls, genre: MovieGenre, sort_by: MovieSortBy, limit: int) -> "MovieQuery":
+        """The question asked most: good movies playing almost everywhere this week, new films only, horror left out."""
+        return cls(genre=genre, sort_by=sort_by, release_size="wide", min_critics_score=POPULAR_MIN_CRITICS_SCORE, revivals="none", limit=limit)
 
     @field_validator("limit")
     @classmethod

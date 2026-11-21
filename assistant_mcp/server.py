@@ -64,7 +64,7 @@ def build_server(
             "Web search through Brave's API, falling back to a local SearXNG instance, Wikipedia articles, exact calculator tools, the forecast for home, NBA and NFL statistics from ESPN, what is playing on Broadway, what movies are showing in Manhattan, what people on Reddit say, restaurants from the Michelin Guide, and the user's own email newsletters. Prefer"
             " search_and_read for questions about the world and wikipedia_lookup for settled facts, lists, and records; use the calculator tools for any arithmetic,"
             " weather_forecast for the weather, and game_scores, box_score, team_roster, roster_stats, player_stats, player_matchup, player_rankings, and team_rankings for NBA and NFL scores, rosters, and statistics,"
-            " broadway_shows for what is playing on Broadway and Off-Broadway, movies_showing and movie_details for what movies are showing in Manhattan theaters and what one is about,"
+            " broadway_shows for what is playing on Broadway and Off-Broadway, popular_movies, movies_showing and movie_details for the good movies playing widely, what movies are showing in Manhattan theaters, and what one is about,"
             " reddit_search when the user asks what people on Reddit or a subreddit say, restaurant_recommendations and restaurant_details for Michelin Guide restaurants,"
             " and newsletters_list, newsletter_summarize and newsletter_read for the user's newsletters."
         ),
