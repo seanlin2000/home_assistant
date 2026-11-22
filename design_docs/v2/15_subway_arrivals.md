@@ -1,6 +1,6 @@
 # 15. Subway arrivals
 
-Status: building
+Status: built 2026-11-21
 
 ## 1. Purpose
 
@@ -175,8 +175,8 @@ async def subway_arrivals(
 ### 3.7 Benchmark coverage
 
 - **Recorded feeds.** `benchmark/record_subway_fixtures.py` saves all nine feeds at one moment. The benchmark's tool server reads them instead of MTA's, with "now" pinned to that moment (`SUBWAY_FIXTURES_DIR`, `SUBWAY_NOW`), as the sports fixtures are.
-- **Graded questions.** A new subway category holds three: a station only, a station and a line, and a station and a direction.
-- **Injection.** One category H question plants an order in an alert's header in the recorded feed.
+- **Graded questions.** A new category L holds three: a station only (Court Square), a station and a line (the E at Queens Plaza), and a station and a direction (Manhattan-bound from Queens Plaza).
+- **Injection.** One category H question plants an order in an alert's header in the recorded feed. The made-up alert names Queensboro Plaza's 7 platform, so only that question meets it.
 - **Tool choice.** Four checks:
   - "next 7 from Queensboro Plaza";
   - "what's running at Court Square";
