@@ -15,12 +15,13 @@ from assistant_core import agent_loop
 from assistant_core.converse_protocol import ConverseRequest, HarnessHealth
 from assistant_core.llama_server_client import LlamaServerClient
 from assistant_core.mcp_http import HttpMcpToolBox, McpProtocolError
-from assistant_core.models import AgentEvent, AgentPolicy, AnswerDelta, Done, Message, Transcript
-from assistant_core.prompts import system_prompt
+from assistant_core.models import AgentEvent, AgentPolicy, AnswerDelta, Done, Message, Role, Transcript
+from assistant_core.prompts import SILENCE_MARKER, system_prompt
 from assistant_core.router import ROUTER_SYSTEM_PROMPT
 from assistant_core.tools import ToolBox, UnavailableToolBox
 from assistant_service.conversation_state import ConversationState
 from assistant_service.exchange_log import ExchangeArchive
+from assistant_service.stop_phrases import StopPhrases, is_stop_request
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -30,23 +31,43 @@ SECONDS_PER_MINUTE = 60
 
 
 class Harness:
-    def __init__(self, llm: LlamaServerClient, tool_server_url: str, policy: AgentPolicy, state: ConversationState, archive: ExchangeArchive, quiet_minutes: float) -> None:
+    def __init__(
+        self,
+        llm: LlamaServerClient,
+        tool_server_url: str,
+        policy: AgentPolicy,
+        state: ConversationState,
+        archive: ExchangeArchive,
+        quiet_minutes: float,
+        stop_phrases: StopPhrases,
+    ) -> None:
         self._llm = llm
         self._tool_server_url = tool_server_url
         self._policy = policy
         self._state = state
         self._archive = archive
         self._quiet_seconds = quiet_minutes * SECONDS_PER_MINUTE
+        self._stop_phrases = stop_phrases
         self._slots_warm = False
 
     async def converse(self, request: ConverseRequest) -> AsyncIterator[AgentEvent]:
         """Answer one question, logging the exchange when its transcript arrives."""
         self._state.record_exchange(request.conversation_id)
+        async for event in self._events_for(request.conversation):
+            if isinstance(event, Done):
+                self._record_exchange(request, event.transcript)
+            yield event
+
+    async def _events_for(self, conversation: list[Message]) -> AsyncIterator[AgentEvent]:
+        """A stop phrase is answered with silence before the tool server or the model is asked; anything else goes to the agent loop."""
+        question = agent_loop.latest_question(conversation)
+        if is_stop_request(question, self._stop_phrases):
+            _LOGGER.info("stop phrase heard, staying silent: %s", question)
+            yield Done(transcript=stop_phrase_transcript(self._llm.model_name, conversation))
+            return
         async with AsyncExitStack() as stack:
             tools = await self._open_tool_box(stack)
-            async for event in self._answer_or_apologise(request.conversation, tools):
-                if isinstance(event, Done):
-                    self._record_exchange(request, event.transcript)
+            async for event in self._answer_or_apologise(conversation, tools):
                 yield event
 
     def _record_exchange(self, request: ConverseRequest, transcript: Transcript) -> None:
@@ -116,3 +137,9 @@ class Harness:
 
 def unanswered_transcript(model: str, conversation: list[Message], error: str) -> Transcript:
     return Transcript(model=model, system_prompt=system_prompt(), conversation=list(conversation), spoken_text=MODEL_UNREACHABLE_ANSWER, final_answer=MODEL_UNREACHABLE_ANSWER, error=error)
+
+
+def stop_phrase_transcript(model: str, conversation: list[Message]) -> Transcript:
+    """The exchange a model silence would leave, with no model call: the component stops listening for a follow-up after it."""
+    answered = [*conversation, Message(role=Role.ASSISTANT, content=SILENCE_MARKER)]
+    return Transcript(model=model, system_prompt=system_prompt(), conversation=answered, final_answer=SILENCE_MARKER, stayed_silent=True)

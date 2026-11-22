@@ -16,3 +16,7 @@ tool_timeout_seconds = 60.0
 history_exchanges = 6                       # earlier exchanges replayed with each question; E4B stopped calling tools past three, Qwen 3.8 27B is tried at six
 route_questions = false                     # the router told E4B which tool to call; Qwen 3.8 27B chooses from the tool definitions
 think = "medium"                            # Qwen 3.8's thinking effort per request: "low", "medium" or "xhigh"; false for none
+# Answered with silence before the model is asked, which also closes the microphone (design doc v2/04 section 3.9). A phrase of two or more words
+# counts when the transcript starts with it, whatever follows, because people still talking in the room are recorded after it; a single word
+# counts only when it is the whole first sentence, so "Stop." ends the conversation and "Stop the music" is still a request.
+stop_phrases = ["stop talking", "be quiet", "we're done", "we are done", "that's all", "that's all for now", "stop", "quiet", "cancel"]

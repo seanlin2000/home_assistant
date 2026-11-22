@@ -10,6 +10,7 @@ from hassil import Intents, recognize_best
 from hassil.intents import TextSlotList
 from hassil.util import merge_dict
 
+from assistant_service.settings import load_harness_config
 from scripts.deploy_component import CUSTOM_SENTENCES, install_custom_sentences
 from utils.module_utils import module_from_file
 
@@ -76,3 +77,9 @@ def test_device_questions_still_match_home_assistants_built_in_sentences(install
 def test_the_deploy_installs_the_sentences_where_home_assistant_reads_them(tmp_path: Path) -> None:
     assert install_custom_sentences(tmp_path) == [Path("custom_sentences/en/studio_assistant.yaml")]
     assert (tmp_path / "custom_sentences" / "en" / "studio_assistant.yaml").read_text() == SENTENCES_FILE.read_text()
+
+
+@pytest.mark.parametrize("phrase", load_harness_config().answer.stop_phrases)
+def test_every_stop_phrase_reaches_the_agent_rather_than_a_built_in_sentence(installed: Intents, phrase: str) -> None:
+    """The harness answers these with silence (section 3.9); a built-in sentence catching one first would answer it instead."""
+    assert recognize_best(phrase, installed, slot_lists=SLOT_LISTS, language="en", best_metadata_key=METADATA_CUSTOM_SENTENCE, best_slot_name="name") is None

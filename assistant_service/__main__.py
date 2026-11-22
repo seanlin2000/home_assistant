@@ -14,6 +14,7 @@ from assistant_service.conversation_state import ConversationState
 from assistant_service.exchange_log import ExchangeArchive, ExchangeLog, TraceLog
 from assistant_service.harness import SECONDS_PER_MINUTE, Harness
 from assistant_service.settings import HarnessConfig, load_harness_config
+from assistant_service.stop_phrases import StopPhrases
 from ops import paths
 from serving.settings import ServingConfig, load_serving_config, read_api_key
 
@@ -39,6 +40,7 @@ def build_harness(config: HarnessConfig, serving: ServingConfig) -> Harness:
         state=ConversationState(config.service.state_path),
         archive=ExchangeArchive(ExchangeLog(paths.exchanges_dir()), TraceLog(paths.traces_dir())),
         quiet_minutes=config.service.conversation_quiet_minutes,
+        stop_phrases=StopPhrases.from_phrases(config.answer.stop_phrases),
     )
 
 

@@ -15,12 +15,14 @@ from assistant_service.conversation_state import ConversationState
 from assistant_service.exchange_log import ExchangeArchive, ExchangeLog, TraceLog
 from assistant_service.harness import MODEL_UNREACHABLE_ANSWER, Harness
 from assistant_service.settings import ALLOWED_HOSTS_VARIABLE, load_harness_config
+from assistant_service.stop_phrases import StopPhrases
 from serving.settings import load_serving_config
 from tests.fakes import ScriptedLLM, text_reply
 
 API_KEY = "test-key"
 UNREACHABLE_TOOL_SERVER = "http://127.0.0.1:1/mcp"
 QUESTION = [Message(role=Role.USER, content="How tall is the Eiffel Tower?")]
+STOP_PHRASES = ["be quiet", "stop"]
 
 
 class UnreachableLLM(ScriptedLLM):
@@ -40,6 +42,7 @@ def harness_with(llm: ScriptedLLM, tmp_path: Path) -> Harness:
         state=ConversationState(tmp_path / "state.sqlite3"),
         archive=ExchangeArchive(ExchangeLog(tmp_path / "exchanges"), TraceLog(tmp_path / "traces")),
         quiet_minutes=5,
+        stop_phrases=StopPhrases.from_phrases(STOP_PHRASES),
     )
 
 
@@ -165,3 +168,13 @@ def test_the_checked_in_config_loads_and_takes_the_window_from_the_served_model(
     assert (config.policy(serving).route_questions, config.policy(serving).think) == (config.answer.route_questions, config.answer.think)
     assert config.policy(serving).temperature == serving.served_model.sampling_for(config.answer.think).temperature
     assert config.service.tool_server_url.startswith("http://127.0.0.1:")
+
+
+async def test_a_stop_phrase_is_answered_with_silence_without_asking_the_model(tmp_path: Path) -> None:
+    harness = harness_with(ScriptedLLM([]), tmp_path)
+    request = ConverseRequest(conversation_id="c", conversation=[Message(role=Role.USER, content="Be quiet. So anyway the movie was")])
+    events = [event async for event in harness.converse(request)]
+    assert len(events) == 1 and isinstance(events[0], Done)
+    assert events[0].transcript.stayed_silent and not events[0].transcript.model_calls
+    [record] = ExchangeLog(tmp_path / "exchanges").read_since(date.min)
+    assert record.stayed_silent and not record.failed
