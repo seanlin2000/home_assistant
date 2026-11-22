@@ -206,6 +206,32 @@ How the hand-off works, checked against Home Assistant 2026.9.1's source:
 
 `tests/test_custom_sentences.py` matches questions with the hassil and built-in sentence versions Home Assistant 2026.9.1 pins (`hassil` 3.12.0, `home-assistant-intents` 2026.8.28, in the dev group). Without our file, the test reproduces the 2026-11-20 run. A Home Assistant upgrade that moves those pins should move the dev pins with it.
 
+### 3.9 Stop phrases
+
+Added 2026-11-21. Saying the wake word during an answer cuts it off, but the puck then listens again, and with people talking in the room their chatter becomes the next question. The model answers it, and follow-up listening (3.2) opens the microphone again.
+
+A short list of stop phrases in `config/harness.toml` (`stop_phrases`) ends that. `Harness._events_for` checks the question before it opens the tool server connection or asks the model:
+1. **A phrase of two or more words counts when the transcript starts with it**, whatever follows. Speech recognition keeps recording while the room is noisy, so "Be quiet. So anyway, the movie was…" still counts.
+2. **A single word counts only when it is the whole first sentence.** "Stop." ends the conversation, and "Stop the music" or "Cancel my timer" is still a request.
+3. **Before comparing,** the transcript is lowercased, curly apostrophes become straight, and a leading "hey Jarvis" or "Jarvis" is dropped.
+
+A match is answered with the silence marker and no model call. The exchange log records it like a silence from the model, and the component stops listening for a follow-up after it, as it does for any silence.
+
+| Phrases | Rule |
+|---|---|
+| stop talking, be quiet, we're done, we are done, that's all, that's all for now | starts the transcript |
+| stop, quiet, cancel | the whole first sentence |
+
+How the list and the rules were chosen:
+- **"Never mind" is left out** because people also use it to change the subject ("Never mind, what time is it?"). Home Assistant's built-in `HassNevermind` takes it before the agent hears it anyway.
+- **The harness decides, not the model.** Rewriting the question into "the user said nothing to you" would still cost a model call, and the model might answer anyway.
+- **A wrong match costs only a silence,** and the user asks again. Answering the room is the failure this section exists to prevent.
+- **Not in the agent loop or `models.py`.** Those are copied into the component, so changing them would need a component deploy. The benchmark runs the loop directly and never meets this check; `tests/test_stop_phrases.py` covers the rules.
+
+None of the phrases matches a built-in sentence of Home Assistant 2026.9.1, so every one reaches the harness. `tests/test_custom_sentences.py` checks this with the pinned sentences, so an upgrade that adds one shows up as a failing test.
+
+Still answered as before: the wake word followed only by people talking, with no stop phrase.
+
 ## 4. Packages and what they do for the business logic
 
 | Package | Role |
@@ -222,6 +248,7 @@ The `ollama` package leaves the dependencies when M1 ends.
 
 - `config/serving.toml`: each model's window and budget (3.4), next to its serving settings (doc 02 §3.5).
 - The harness's own settings, in its launchd agent and a small config file (doc 10): its port and allowed host names, its API key file, the tool server's address, and the answer settings that used to live in the component's options form (temperature, word budget, filler phrases).
+- `config/harness.toml` `stop_phrases`: what the user says to end a conversation, answered with silence (3.9).
 - `config/tools.toml`: every tool's tier and trust (doc 12 §5).
 - The component's options form: the harness's address and key, the follow-up switch, and `max_follow_ups`.
 

@@ -41,6 +41,7 @@ class AnswerSettings(StrictModel):
     history_exchanges: int
     route_questions: bool
     think: bool | str | None = None  # "low", "medium" or "xhigh" turns the model's thinking on at that effort, per request
+    stop_phrases: list[str] = []  # answered with silence before the model is asked (design doc v2/04 section 3.9)
 
 
 class HarnessConfig(StrictModel):
