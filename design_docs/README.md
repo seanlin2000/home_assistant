@@ -62,3 +62,4 @@ Start with `00_system_overview.md`: `v1/` for the assistant as built, `v2/` for 
 | `14_personal_data_tools.md` | Newsletters now; later Gmail, calendar, X, Reddit, and bank statements (v2) |
 | `15_subway_arrivals.md` | Live New York City subway arrivals and alerts at a station, from MTA's feeds (v2) |
 | `16_stock_quotes.md` | A stock's price, P/E, and recent returns, and the market through SPY, QQQ, and DIA, from Finnhub (v2) |
+| `17_custom_wake_word.md` | Training, testing, and flashing the "Hey Rotom" wake word so it matches the stock "Hey Jarvis" (v2) |
