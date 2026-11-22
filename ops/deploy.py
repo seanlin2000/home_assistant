@@ -80,6 +80,7 @@ RULES: tuple[Rule, ...] = (
             "reddit_mcp/",
             "restaurants_mcp/",
             "subway_mcp/",
+            "updates_mcp/",
             "newsletters_mcp/",
             "assistant_core/",
             "utils/",

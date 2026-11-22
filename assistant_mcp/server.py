@@ -1,5 +1,6 @@
 """The agent's tool server over streamable HTTP. Every tool package registers its tools on this one server: web search, the calculator tools, the home weather
-forecast, Wikipedia lookups, NBA and NFL scores and statistics, Broadway and movie listings, what people on Reddit say, and live New York City subway arrivals."""
+forecast, Wikipedia lookups, NBA and NFL scores and statistics, Broadway and movie listings, what people on Reddit say, live New York City subway arrivals, and
+the user's updates, which gather several of them in one call."""
 
 from pathlib import Path
 
@@ -25,6 +26,9 @@ from sports_mcp.register import register_sports_tools
 from sports_mcp.settings import SportsSettings, sports_settings_from_environment
 from subway_mcp.register import register_subway_tools
 from subway_mcp.settings import SubwaySettings, subway_settings_from_environment
+from updates_mcp.blocks import UpdateSources
+from updates_mcp.register import register_updates_tools
+from updates_mcp.settings import UpdatesSettings, updates_settings_from_environment
 from utils.http_access_utils import host_allowed, misdirected
 from weather_mcp.register import register_weather_tools
 from weather_mcp.settings import WeatherSettings, weather_settings_from_environment
@@ -52,6 +56,7 @@ def build_server(
     restaurants: RestaurantsSettings | None = None,
     newsletters: NewslettersSettings | None = None,
     subway: SubwaySettings | None = None,
+    updates: UpdatesSettings | None = None,
     tool_server: ToolServerSettings | None = None,
 ) -> MCPServer:
     cache = QueryCache(settings.cache_dir)
@@ -69,7 +74,8 @@ def build_server(
             " weather_forecast for the weather, and game_scores, box_score, team_roster, roster_stats, player_stats, player_matchup, player_rankings, and team_rankings for NBA and NFL scores, rosters, and statistics,"
             " broadway_shows for what is playing on Broadway and Off-Broadway, popular_movies, movies_showing and movie_details for the good movies playing widely, what movies are showing in Manhattan theaters, and what one is about,"
             " reddit_search when the user asks what people on Reddit or a subreddit say, restaurant_recommendations and restaurant_details for Michelin Guide restaurants,"
-            " newsletters_list, newsletter_summarize and newsletter_read for the user's newsletters, and subway_arrivals for New York City subway times at a station."
+            " newsletters_list, newsletter_summarize and newsletter_read for the user's newsletters, subway_arrivals for New York City subway times at a station,"
+            " and updates when the user asks for their updates."
         ),
     )
     register_web_search_tools(server, settings, search, extractor)
@@ -81,8 +87,11 @@ def build_server(
     register_movies_tools(server, movies or MoviesSettings())
     register_reddit_tools(server, reddit or RedditSettings(), search)  # reddit_search searches through the same client as web search
     register_restaurants_tools(server, restaurants or RestaurantsSettings())
-    register_newsletters_tools(server, newsletters or newsletters_settings_from_environment())  # the environment lets the benchmark and tests point it elsewhere
+    newsletters = newsletters or newsletters_settings_from_environment()  # the environment lets the benchmark and tests point it elsewhere
+    register_newsletters_tools(server, newsletters)
     register_subway_tools(server, subway or SubwaySettings())
+    update_sources = UpdateSources(newsletters, sports or SportsSettings(cache_dir=None), movies or MoviesSettings(), broadway or BroadwaySettings())
+    register_updates_tools(server, updates or UpdatesSettings(), update_sources)  # the same sources as each family's own tools
     register_operations_routes(server, allowed_host_list(tool_server or ToolServerSettings()))
     if fixture_pages:
         server.custom_route(FIXTURE_ROUTE, ["POST"])(fixture_route(fixture_pages))
@@ -124,6 +133,7 @@ def main() -> None:
         restaurants=restaurants_settings_from_environment(),
         newsletters=newsletters_settings_from_environment(),
         subway=subway_settings_from_environment(),
+        updates=updates_settings_from_environment(),
         tool_server=tool_server,
     ).run(transport="streamable-http", host=tool_server.host, port=tool_server.port, transport_security=transport_security_for(tool_server))
 

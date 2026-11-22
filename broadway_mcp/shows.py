@@ -5,7 +5,7 @@ tool's genre choices are spellings a model can pass, each standing for exactly o
 """
 
 from collections.abc import Callable
-from datetime import date
+from datetime import date, timedelta
 from enum import StrEnum
 from typing import Literal
 
@@ -174,3 +174,17 @@ def sort_key(sort_by: SortBy) -> Callable[[Show], tuple[float, int]]:
         "todaytix_rating": lambda show: (-(show.todaytix_rating if show.todaytix_rating is not None else NO_COUNT), -show.views_count),
     }
     return orders[sort_by]
+
+
+def first_previews_within(shows: list[Show], today: date, days: int) -> list[Show]:
+    """Broadway shows whose first preview falls after today and within the days given, soonest first. A show with no announced date is left out."""
+    last_day = today + timedelta(days=days)
+    starting = [show for show in shows if show.tier == Tier.BROADWAY and show.start_date is not None and today < show.start_date <= last_day]
+    return sorted(starting, key=lambda show: (show.start_date, show.name))
+
+
+def closings_within(shows: list[Show], today: date, days: int) -> list[Show]:
+    """Broadway shows closing from today to the days given, soonest first, including a limited run that has not opened yet."""
+    last_day = today + timedelta(days=days)
+    closing = [show for show in shows if show.tier == Tier.BROADWAY and show.end_date is not None and today <= show.end_date <= last_day]
+    return sorted(closing, key=lambda show: (show.end_date, show.name))
