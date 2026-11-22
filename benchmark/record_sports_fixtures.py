@@ -62,6 +62,7 @@ BOX_SCORE = {
         "teams": [{"team": {"id": KEEP}, "statistics": [{"name": KEEP, "displayValue": KEEP}]}],
         "players": [{"team": {"id": KEEP, "displayName": KEEP, "abbreviation": KEEP}, "statistics": [BOX_SCORE_PLAYERS]}],
     },
+    "article": {"headline": KEEP, "description": KEEP},
 }
 LIST_CATEGORY = {"name": KEEP, "displayName": KEEP, "splitId": KEEP, "names": KEEP, "totals": KEEP}
 RANKED_PLAYERS = {

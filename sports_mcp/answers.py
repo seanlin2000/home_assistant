@@ -5,10 +5,12 @@ seasons both played are read, and a game counts when it is in both logs with eac
 """
 
 import asyncio
-from datetime import date
+from datetime import date, timedelta
+
+from pydantic import BaseModel
 
 from sports_mcp.espn_client import EspnSession
-from sports_mcp.espn_records import FINISHED, NOT_PLAYED, BoxScore, FoundPlayer, Game, LoggedGame, RankedPlayer, RosterPlayer
+from sports_mcp.espn_records import FINISHED, NOT_PLAYED, BoxScore, FoundPlayer, Game, GameRecap, LoggedGame, RankedPlayer, RosterPlayer
 from sports_mcp.game_finder import closest_game, game_near_day, last_meeting, plays_in, whole_season
 from sports_mcp.leagues import League
 from sports_mcp.rankings import POSITION_CODES, PlayerRankingAsk, RankedList, TeamRankingAsk
@@ -53,6 +55,41 @@ async def recent_team_scores(session: EspnSession, league: League, team: Team) -
         "Next game": None if playing_today else min(upcoming, key=lambda game: game.day, default=None),
     }
     return team_games_text(league, team, today, around_today)
+
+
+class TeamUpdate(BaseModel):
+    """A team's game today or last night and its next game, for the updates tool. A night game in the West ends after midnight in New York, so
+    last night's game still counts the next morning."""
+
+    recent_game: Game | None  # finished or under way, today or yesterday (US Eastern dates)
+    recap: GameRecap | None  # the recent game's AP story, once it is finished and published
+    next_game: Game | None  # None once the season is over for the team: no game left in its regular season or playoffs
+
+
+async def team_update(session: EspnSession, league: League, team: Team) -> TeamUpdate:
+    recent = await recent_game(session, league, team)
+    box_score = await session.box_score(league, recent) if recent is not None and recent.state == FINISHED else None
+    return TeamUpdate(
+        recent_game=game_as_summarized(recent, box_score) if recent is not None else None,
+        recap=box_score.recap if box_score else None,
+        next_game=await next_game(session, league, team),
+    )
+
+
+async def recent_game(session: EspnSession, league: League, team: Team) -> Game | None:
+    """Today's game once it has started, else last night's finished one; read from the scoreboards, kept 30 seconds, so a live score is current."""
+    for day in (session.today, session.today - timedelta(days=1)):
+        played = [game for game in await session.scoreboard(league, day) if plays_in(team, game) and game.state != NOT_PLAYED]
+        if played:
+            return played[0]
+    return None
+
+
+async def next_game(session: EspnSession, league: League, team: Team) -> Game | None:
+    """The soonest game not yet started, today's included. ESPN lists the playoffs apart and adds each round's games as it is set."""
+    games = await whole_season(session, league, team, league.current_season(session.today))
+    upcoming = [game for game in games if game.state == NOT_PLAYED and game.day >= session.today]
+    return min(upcoming, key=lambda game: game.day, default=None)
 
 
 async def season_scores(session: EspnSession, league: League, team: Team, start_year: int, playoffs: bool) -> str:

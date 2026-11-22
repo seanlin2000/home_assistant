@@ -45,6 +45,10 @@ class NewsletterAnswers:
     def listing(self, asked_date: str, newsletter: str, topic: str) -> str:
         return self.answered(asked_date, lambda day, issues: self.list_issues(day, issues, newsletter, topic))
 
+    def headlines(self, asked_date: str) -> str:
+        """Each issue's publication and headline only, for the updates tool, which lists everything the user follows in one answer."""
+        return self.answered(asked_date, lambda day, issues: "\n".join([f"Newsletters for {self.spoken_day(day)}:", *(headline_line(issue) for issue in issues)]))
+
     def text(self, newsletter: str, asked_date: str, section: str) -> str:
         return self.answered(asked_date, lambda day, issues: self.issue_text(day, issues, newsletter, section))
 
@@ -173,6 +177,10 @@ def issue_line(issue: Issue, sections: list[Section]) -> str:
     """No arrival time: the model repeated it in every answer about newsletters, and the user does not want it. The day's issues come in arrival order."""
     titles = SECTION_SEPARATOR.join(listed_titles(sections)) or "no sections"
     return f'- {issue.publication}, "{issue.headline}", about {issue.words:,} words. Sections: {titles}.'
+
+
+def headline_line(issue: Issue) -> str:
+    return f'- {issue.publication}, "{issue.headline}"'
 
 
 def listed_titles(sections: list[Section]) -> list[str]:
