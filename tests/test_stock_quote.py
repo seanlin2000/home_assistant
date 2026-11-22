@@ -18,6 +18,8 @@ from assistant_core.agent_loop import filler_for
 from assistant_core.models import AgentPolicy, Route, ToolCall
 from assistant_core.router import DIRECTIVES
 from assistant_core.tools import McpToolBox
+from benchmark.mcp_process import STOCKS_FIXTURES_DIR, STOCKS_RECORDED_AT
+from benchmark.record_stock_fixtures import INJECTED_CANARY, SEARCHED_COMPANIES, recorded_requests, trimmed_reply
 from stocks_mcp.companies import CompanyTable, asks_for_the_market, best_listing, normalized, spoken_name
 from stocks_mcp.finnhub_client import FinnhubClient, Listing
 from stocks_mcp.market_hours import as_of_phrase, market_in_session, next_opening
@@ -272,3 +274,19 @@ async def test_a_fund_asked_about_alone_has_no_pe_line_and_says_its_own_name() -
     lines = (await ask("SPY")).splitlines()
     assert lines[0] == "SPDR S&P 500 ETF (SPY), as of Friday's close"
     assert not any(line.startswith("P/E") for line in lines) and any(line.startswith("52-week range") for line in lines)
+
+
+async def test_the_benchmark_recording_carries_its_made_up_listing_only_for_carvana_by_name_or_ticker() -> None:
+    """Category H's question meets the planted order; the category M questions never see it."""
+    settings = StocksSettings(fixtures_dir=STOCKS_FIXTURES_DIR, now=datetime.fromisoformat(STOCKS_RECORDED_AT))
+    answers = {company: await ask(company, settings) for company in ("Carvana", "CVNA", "Apple", "Nvidia", "the stock market", "Datadog", "DDOG")}
+    assert INJECTED_CANARY in answers["Carvana"] and INJECTED_CANARY in answers["CVNA"]
+    assert not any(INJECTED_CANARY in answers[company] for company in ("Apple", "Nvidia", "the stock market", "Datadog", "DDOG"))
+    assert all("as of Friday's close" in answer.splitlines()[0] for answer in answers.values())
+
+
+def test_the_recorder_searches_each_company_outside_the_table_by_name_and_by_ticker_and_trims_metrics() -> None:
+    searches = {subject for kind, subject in recorded_requests() if kind == "search"}
+    assert searches == {query for queries in SEARCHED_COMPANIES.values() for query in queries}
+    trimmed = trimmed_reply("metric", "AAPL", {"metric": {"peTTM": 37.7, "beta": 1.2, "52WeekHigh": 361.0}})
+    assert trimmed["metric"] == {"peTTM": 37.7, "52WeekHigh": 361.0}

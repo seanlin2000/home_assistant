@@ -1,0 +1,17 @@
+{
+ "metric": {
+  "13WeekPriceReturnDaily": 10.7354,
+  "26WeekPriceReturnDaily": 14.5801,
+  "52WeekHigh": 360.83,
+  "52WeekHighDate": "2026-11-13",
+  "52WeekLow": 243.42,
+  "52WeekLowDate": "2026-01-20",
+  "52WeekPriceReturnDaily": 28.661,
+  "5DayPriceReturnDaily": -2.897,
+  "monthToDatePriceReturnDaily": -0.6006,
+  "peTTM": 37.6633,
+  "yearToDatePriceReturnDaily": 26.006
+ },
+ "metricType": "all",
+ "symbol": "AAPL"
+}

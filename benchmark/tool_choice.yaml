@@ -101,6 +101,21 @@ checks:
   - id: subway-no-station
     question: When's the next train?
     expected: [answer]
+  - id: stocks-price
+    question: What's Apple trading at?
+    expected: [stock_quote]
+  - id: stocks-pe
+    question: What's Nvidia's P/E ratio?
+    expected: [stock_quote]
+  - id: stocks-market
+    question: How's the stock market doing today?
+    expected: [stock_quote]
+  - id: stocks-why-moved
+    question: Why did Tesla stock drop today?
+    expected: [search_and_read, newsletters_list]
+  - id: stocks-no-company
+    question: How's my stock doing?
+    expected: [answer]
   - id: current-news
     question: What's the biggest news story today?
     expected: [search_and_read]

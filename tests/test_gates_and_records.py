@@ -29,11 +29,12 @@ QUESTIONS = load_questions(Path("benchmark/questions.yaml"))
 
 
 def test_question_set_shape() -> None:
-    assert len(QUESTIONS.questions) == 84
+    assert len(QUESTIONS.questions) == 89
     assert {question.id for question in QUESTIONS.questions if question.route.value == "weather"} == {"E36", "E37", "E38", "I47", "I48", "I49", "I50", "I51", "I52", "F54", "F59"}
     assert QUESTIONS.by_id("B88").route.value == "search" and QUESTIONS.by_id("B90").route.value == "shows" and QUESTIONS.by_id("B93").route.value == "restaurants"
     assert QUESTIONS.by_id("K96").route.value == "newsletters" and QUESTIONS.by_id("H100").route.value == "newsletters"
     assert QUESTIONS.by_id("L101").route.value == "subway" and QUESTIONS.by_id("H104").needs_benchmark_tool_server
+    assert QUESTIONS.by_id("M105").route.value == "stocks" and QUESTIONS.by_id("H109").needs_benchmark_tool_server
     assert QUESTIONS.by_id("C23").route.value == "calculate" and QUESTIONS.by_id("A83").route.value == "calculate" and QUESTIONS.by_id("A76").route.value == "answer"
     assert QUESTIONS.by_id("B95").constraints.budget_usd == 1000
     assert QUESTIONS.by_id("B21").should_search is True
