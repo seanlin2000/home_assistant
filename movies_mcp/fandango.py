@@ -17,6 +17,7 @@ from typing import Any
 
 import httpx
 
+from movies_mcp.archive import archive_snapshot
 from movies_mcp.movie_page import MoviePageUnreadable, movie_page_from_html, scores_from_ratings
 from movies_mcp.movies import Movie, MoviePage, MoviesSnapshot, RottenTomatoesScores
 from movies_mcp.settings import MoviesSettings
@@ -35,7 +36,8 @@ class FandangoUnavailable(ListingsUnavailable):
 
 
 async def refresh_movies_snapshot(settings: MoviesSettings, transport: httpx.AsyncBaseTransport | None = None, resolver: Resolver = system_resolver) -> MoviesSnapshot:
-    """Reads the listings and replaces the snapshot. A failed listing read raises before anything is written, so the last good snapshot stays."""
+    """Reads the listings, replaces the snapshot, and keeps a dated copy of it. A failed listing read raises before anything is written, so the last
+    good snapshot stays."""
     first_day = listing_today(settings)
     days = [first_day + timedelta(days=offset) for offset in range(settings.days)]
     pages_read = pages_already_read(settings)
@@ -46,7 +48,16 @@ async def refresh_movies_snapshot(settings: MoviesSettings, transport: httpx.Asy
             await session.add_details(movie, pages_read)
     snapshot = listings.snapshot(refreshed_at=datetime.now(UTC))
     write_snapshot(settings.snapshot_path, snapshot)
+    keep_dated_copy(settings, snapshot)
     return snapshot
+
+
+def keep_dated_copy(settings: MoviesSettings, snapshot: MoviesSnapshot) -> None:
+    """Logged rather than raised: tonight's snapshot is already in place, and a missing copy only leaves a gap in next week's comparison."""
+    try:
+        archive_snapshot(settings, snapshot)
+    except OSError as error:
+        _LOGGER.warning("the movies snapshot was written but its dated copy was not: %s", error)
 
 
 def pages_already_read(settings: MoviesSettings) -> dict[int, MoviePage]:
