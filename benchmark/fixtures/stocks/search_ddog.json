@@ -1,0 +1,47 @@
+{
+ "count": 7,
+ "result": [
+  {
+   "description": "DATADOG INC - CLASS A",
+   "displaySymbol": "DDOG",
+   "symbol": "DDOG",
+   "type": "Common Stock"
+  },
+  {
+   "description": "DATADOG INC",
+   "displaySymbol": "DDOG.TO",
+   "symbol": "DDOG.TO",
+   "type": "Canadian DR"
+  },
+  {
+   "description": "DATADOG INC",
+   "displaySymbol": "DDOG.NE",
+   "symbol": "DDOG.NE",
+   "type": "Canadian DR"
+  },
+  {
+   "description": "DATADOG INC - CLASS A",
+   "displaySymbol": "DDOG.MX",
+   "symbol": "DDOG.MX",
+   "type": "Common Stock"
+  },
+  {
+   "description": "DATADOG INC - CLASS A",
+   "displaySymbol": "DDOG.VI",
+   "symbol": "DDOG.VI",
+   "type": "Common Stock"
+  },
+  {
+   "description": "BirdDog Technology Ltd",
+   "displaySymbol": "BDT.AX",
+   "symbol": "BDT.AX",
+   "type": "Common Stock"
+  },
+  {
+   "description": "Birddog Australia Pty Ltd",
+   "displaySymbol": "IPO-BIO.AX",
+   "symbol": "IPO-BIO.AX",
+   "type": "Common Stock"
+  }
+ ]
+}

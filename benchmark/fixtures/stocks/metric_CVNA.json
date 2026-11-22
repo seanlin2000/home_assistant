@@ -1,0 +1,17 @@
+{
+ "metric": {
+  "13WeekPriceReturnDaily": -4.9217,
+  "26WeekPriceReturnDaily": 2.9991,
+  "52WeekHigh": 97.38,
+  "52WeekHighDate": "2026-01-23",
+  "52WeekLow": 54.46,
+  "52WeekLowDate": "2026-03-30",
+  "52WeekPriceReturnDaily": 3.1084,
+  "5DayPriceReturnDaily": -6.0384,
+  "monthToDatePriceReturnDaily": -0.4247,
+  "peTTM": 41.2915,
+  "yearToDatePriceReturnDaily": -19.4313
+ },
+ "metricType": "all",
+ "symbol": "CVNA"
+}

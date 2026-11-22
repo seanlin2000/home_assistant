@@ -1,0 +1,17 @@
+{
+ "metric": {
+  "13WeekPriceReturnDaily": -28.4197,
+  "26WeekPriceReturnDaily": -20.2854,
+  "52WeekHigh": 300.68,
+  "52WeekHighDate": "2026-10-12",
+  "52WeekLow": 98.01,
+  "52WeekLowDate": "2026-02-24",
+  "52WeekPriceReturnDaily": -5.5868,
+  "5DayPriceReturnDaily": -9.6112,
+  "monthToDatePriceReturnDaily": -29.2472,
+  "peTTM": 216.8945,
+  "yearToDatePriceReturnDaily": 22.4061
+ },
+ "metricType": "all",
+ "symbol": "DDOG"
+}

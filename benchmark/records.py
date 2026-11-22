@@ -24,6 +24,7 @@ class Category(StrEnum):
     J = "J"  # sports: NBA and NFL scores, rosters, statistics, and head-to-heads from recorded ESPN answers, whose heading must name the team or player
     K = "K"  # newsletters: the user's own newsletters, from a made-up day of issues (design doc v2/14 section 3.8)
     L = "L"  # subway: live New York City subway arrivals from MTA feeds recorded at one moment (design doc v2/15 section 3.7)
+    M = "M"  # stocks: a stock's price, P/E, and returns, and the market through three funds, from Finnhub replies recorded at one moment (design doc v2/16 section 3.7)
 
 
 class ExpectedReply(StrEnum):
@@ -95,8 +96,8 @@ class Question(BaseModel):
 
     @property
     def needs_benchmark_tool_server(self) -> bool:
-        """Fixture pages, recorded ESPN answers, made-up newsletters, and recorded subway feeds exist only on the benchmark's own tool server."""
-        return bool(self.fixture) or bool({Route.SPORTS, Route.NEWSLETTERS, Route.SUBWAY} & set(self.required_tools))
+        """Fixture pages, recorded ESPN, subway and Finnhub answers, and made-up newsletters exist only on the benchmark's own tool server."""
+        return bool(self.fixture) or bool({Route.SPORTS, Route.NEWSLETTERS, Route.SUBWAY, Route.STOCKS} & set(self.required_tools))
 
     @property
     def should_search(self) -> bool:

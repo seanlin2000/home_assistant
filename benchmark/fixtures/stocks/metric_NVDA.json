@@ -1,0 +1,17 @@
+{
+ "metric": {
+  "13WeekPriceReturnDaily": -41.5378,
+  "26WeekPriceReturnDaily": -43.0987,
+  "52WeekHigh": 243.37,
+  "52WeekHighDate": "2026-10-06",
+  "52WeekLow": 124.5,
+  "52WeekLowDate": "2026-11-20",
+  "52WeekPriceReturnDaily": -30.5082,
+  "5DayPriceReturnDaily": -19.6042,
+  "monthToDatePriceReturnDaily": -38.6581,
+  "peTTM": 13.371,
+  "yearToDatePriceReturnDaily": -32.6917
+ },
+ "metricType": "all",
+ "symbol": "NVDA"
+}
