@@ -11,7 +11,7 @@ A wake word fails in two ways, and both frustrate people:
 - **False wakes.** The puck wakes when nobody asked: the TV, a conversation, a word that sounds close.
 - **Missed wakes.** Someone says "Hey Rotom" and nothing happens, so they repeat it louder or give up.
 
-**The bar is the stock "Hey Jarvis" model, measured on the same voices and the same audio, through the same puck.** It has to work for everyone in the household and for visiting friends and family, whose voices are never recorded. "Hey Jarvis" stays loaded as the fallback until "Hey Rotom" has passed a live trial.
+**The bar is the stock "Hey Jarvis" model, measured on the same voices and the same audio, through the same puck.** It has to work for everyone in the household and for visiting friends and family, most of whose voices are never recorded. "Hey Jarvis" stays loaded as the fallback until "Hey Rotom" has passed a live trial.
 
 Most people who train a custom microWakeWord model end up with one that wakes too often or misses too often (§3.2). This doc copies, step by step, the recipe that produced the stock models, and adds what that recipe lacked: real voices from this house and audio recorded through the puck itself.
 
@@ -128,32 +128,40 @@ All audio lives outside the repo, in `~/Library/Application Support/studio-assis
 - Speakers held under 800: Piper's README warns that the dataset's last speakers have too few recordings and give artifacts.
 - Speaker blends, speeds from 0.75 to 1.3, and varied expressiveness (Piper's noise scales).
 
-**Real recordings are few, and that is expected.** Friends visit rarely, so there are about 10 takes of friends saying "Hey Rotom", the owner can record as many as needed, and nobody has recorded "Hey Jarvis". Few real voices is not a problem for training: "Hey Jarvis" was trained on none, and its variety comes from Piper's hundreds of speakers. So the scarce real takes go where only they help, which is testing:
+**Screening the generated clips.** One "Okay Nabu" release improved markedly "after removing some bad samples from the training set". A clip that says "Rotten" or cuts off the "tom" teaches the model the wrong sound. Each batch is screened in two steps:
 
-| Recordings | Count today | Use |
+1. Automatic checks drop clips that are too short, too long, mostly silence, or clipped.
+2. A listening pass over a random sample of about 200 clips flags speaker IDs, blends, and respellings that say the phrase wrong. All of their clips are dropped, and the batch is regenerated without them.
+
+**Real voices: ten people, by phone.** Large studies of keyword spotting agree on two points:
+
+- A model trained only on synthetic speech can learn the synthetic engine's quirks and miss real voices.
+- A small amount of real speech closes most of that gap, and **the number of different speakers matters far more than the number of clips** (Synth4Kws).
+
+Nabu Casa's own "Okay Nabu" got better the same way: releases trained with recordings crowdsourced through the Wake Word Collective had fewer missed wakes and less bias across voices. Ten people can record, the owner among them. Nobody has to visit; each records on a phone in about five minutes:
+
+| Phrase | Takes per person | Use |
 |---|---|---|
-| Friends saying "Hey Rotom" | about 10 | Test only. Never trained on or transformed: they are the only real voices that stand in for visitors. |
-| The owner saying "Hey Rotom" | about 20; more are cheap | Half train the model, with voice transforms; half test it |
-| The owner saying "Hey Jarvis" | none; recorded in the same sessions | Test only: the like-for-like baseline for the owner's voice (§3.7) |
-| Friends saying both phrases on later visits | none yet | Added to the test set at each visit; no gate waits for them |
+| "Hey Rotom" | 10, varying speed and loudness, some called across a room | Training, and testing on people a model never heard (§3.6) |
+| "Hey Jarvis" | 10, the same way | Test only: each person's own baseline (§3.7) |
+| "Rotom" alone, and three close sounds from §3.3 | 5 | Negatives, spoken by real people |
 
-The owner's takes are recorded through the puck (§3.5):
+Every phone clip is replayed through the puck from three spots (§3.5), so each take becomes three recordings that sound like what the puck hears. The owner also records through the puck directly:
 
 - at 1 m, 3 m, and across the room;
 - with the TV off and on;
-- while a reply is playing;
-- fast, slow, quiet, and called out.
+- while a reply is playing.
 
-**Voice transforms.** As SEED does, the WORLD vocoder (pyworld) changes formants and pitch separately, so each training take becomes about 20 natural-sounding voices across age and gender. The SEED author reported 98.5% detected at 0.19 false wakes per hour from about 180 samples of this kind. Only one person tested it, on their own voice.
+**Voice transforms.** As SEED does, the WORLD vocoder (pyworld) changes formants and pitch separately, so each training take becomes about 20 natural-sounding voices across age and gender. The SEED author reported 98.5% detected at 0.19 false wakes per hour from about 180 samples of this kind. Only one person tested it, on their own voice. Transforms widen the voices a person can sound like, but not the way they say the phrase, which is why ten real speakers still matter.
 
-**Voices from other speech engines, the main test.** Ten real clips can only show misses in steps of 10 percentage points. That catches a model that fails visitors outright, not one that is a little worse than "Hey Jarvis". The like-for-like comparison therefore rests on hundreds of synthetic voices from engines training never uses:
+**Voices from other speech engines, a second test.** Hundreds of synthetic voices from engines training never uses add volume to the comparison, especially for voices the ten people lack:
 
 - Kokoro's voices;
 - OmniVoice voices designed across age and gender, including children, older adults, and higher voices.
 
-Both engines are already installed. Every test voice says both "Hey Rotom" and "Hey Jarvis", and each clip is replayed through the puck (§3.5) so that it sounds like what the puck hears.
+Both engines are already installed. Every test voice says both "Hey Rotom" and "Hey Jarvis", and each clip is replayed through the puck. One project's rule applies here: synthetic tests can reject a model, but they cannot qualify one. So the real voices decide, and the synthetic ones catch gaps the real ones cannot cover.
 
-**No test voice is ever in training.** Friends' takes and the other-engine voices live in their own folder, which the training scripts never read.
+**No test clip is ever in training.** Other-engine voices, every "Hey Jarvis" take, and anyone's takes held out for a trial model (§3.6) live in folders the training scripts never read for that run.
 
 **Sounds to ignore.**
 
@@ -179,7 +187,7 @@ The model must train and test on audio that sounds like what it hears in use. On
 
 The setting fills the disk if left on, so it is set only for recording sessions.
 
-**Replaying clips through the puck.** A speaker at 1 m, 3 m, and across the room plays each test clip while the puck records it. This gives puck-like audio for every clip that was not recorded on the puck: the other-engine voices, and any friend's take recorded on a phone. Hundreds of clips are too many for 15-second runs started by voice. The first tooling PR picks the capture path for bulk replay: either runs started through Home Assistant's API, or a capture-only firmware build that streams channel 1.
+**Replaying clips through the puck.** A speaker at 1 m, 3 m, and across the room plays each test clip while the puck records it. This gives puck-like audio for every clip that was not recorded on the puck: the other-engine voices, and every phone memo from the ten people (§3.4). Hundreds of clips are too many for 15-second runs started by voice. The first tooling PR picks the capture path for bulk replay: either runs started through Home Assistant's API, or a capture-only firmware build that streams channel 1.
 
 **To confirm before any recording session:** which channel, and at what level, ends up in Home Assistant's WAV. If it is not channel 1, or the level differs from the ×4 the model sees, a capture-only firmware variant streams channel 1 instead. Training on the wrong channel would teach the model a sound it never hears.
 
@@ -203,10 +211,18 @@ The setting fills the disk if left on, so it is set only for recording sessions.
 | PitchShift probability | Raised from 0.1 |
 | Network size | No larger than a 37,000-byte tensor arena, which okay_nabu shows the puck can hold |
 
+**Leave-two-out trial models.** Ten real speakers are too few to set four aside for testing: the model would learn from six people, and the test would rest on four. Instead:
+
+1. Train five trial models. Each leaves out a different pair of the ten people: their "Hey Rotom" takes and the voice transforms made from them.
+2. Score each trial model on the pair it never heard (§3.7). Every person is then tested once as an unknown visitor, and the test covers all ten voices.
+3. Train the final model on all ten people, with the same settings. Its expected result on visitors is the average of the five trials.
+
+The trial models are never flashed. They exist only to measure how the recipe treats voices it has not heard.
+
 **The machine.**
 
 - The laptop (M1 Pro, 16 GB), or the Studio only with production stopped. Training never runs beside production.
-- Each run's time is measured in the first training PR. Nothing here assumes how long a run takes.
+- Each run's time is measured in the first training PR. Nothing here assumes how long a run takes. One published microWakeWord model took 18 minutes for 10,000 steps on a cloud T4 GPU. A full round here is six runs: five trial models and the final one.
 
 **Every run is recorded:** the training config, the data counts, the pinned commit, and the evaluation results (§3.7). Any model can then be traced back to how it was made.
 
@@ -224,12 +240,13 @@ The setting fills the disk if left on, so it is set only for recording sessions.
 
 | Test set | "Hey Rotom" model | Stock "Hey Jarvis" |
 |---|---|---|
+| The ten people, replayed through the puck | Misses overall and per person, each person scored only by the trial model that never heard them | Each person's own "Hey Jarvis" takes, from the same sessions and spots |
 | Kokoro and OmniVoice voices, replayed through the puck | Misses overall and by voice group (higher, lower, children, older adults) | The same voices saying "Hey Jarvis" |
-| The owner's test takes | Misses | The owner's "Hey Jarvis" takes from the same sessions |
-| Friends' takes | Misses per friend | Only once later visits add their "Hey Jarvis" takes |
 | DiPCo evaluation set | False wakes per hour | Same audio |
 | Household audio (held out from training) | False wakes per hour | Same audio |
-| Similar-sounding phrases spoken by the owner | Count of wakes | Not applicable |
+| "Rotom" alone and similar-sounding phrases, spoken by the ten people | Count of wakes, from the trial models that never heard the speaker | Not applicable |
+
+About 300 recordings of each phrase (10 people × 10 takes × 3 spots) measure misses to within roughly 3 percentage points. Each person is compared with themselves, which is a stronger test than comparing different people.
 
 ### 3.8 Acceptance gates
 
@@ -237,15 +254,25 @@ The setting fills the disk if left on, so it is set only for recording sessions.
 
 | Measure | Bar |
 |---|---|
-| Misses, other-engine voices overall | No more than Hey Jarvis's + 2 percentage points, on the same voices |
+| Misses, the ten people overall (trial models) | No more than Hey Jarvis's + 2 percentage points, on the same people |
+| Misses, any one of the ten (trial models) | No more than that person's own "Hey Jarvis" misses + 10 points (3 of their 30 recordings) |
+| Misses, other-engine voices overall | No more than Hey Jarvis's + 2 points, on the same voices |
 | Misses, any one voice group (higher, lower, children, older adults) | No more than Hey Jarvis's on that group + 5 points |
-| Misses, the owner's test takes | No more than Hey Jarvis on the owner's own "Hey Jarvis" takes |
-| Friends' takes | At least 9 of 10 detected, and no friend missed on every take |
 | False wakes per hour, DiPCo | No more than Hey Jarvis on the same audio (about 0.56 per hour at its default cutoff, measured again by our harness) |
 | False wakes per hour, household audio | No more than Hey Jarvis on the same audio |
-| Similar-sounding phrases (§3.3), spoken by the owner | Each wakes the model in at most 1 of 20 takes; any phrase that wakes it at all is added as a negative for the next round |
+| "Rotom" alone and similar-sounding phrases, spoken by the ten people | Each wakes the model in at most 1 of 20 recordings; any phrase that wakes it at all is added as a negative for the next round |
 
-**Gate B, a two-week live trial, with "Hey Jarvis" still loaded:**
+The final model, trained on all ten people, must also clear the false-wake rows itself, since adding speakers changes what it wakes on.
+
+**Gate B opens with a playback test, right after flashing.** A fixed 30-minute playlist is played through a speaker at the puck while it runs the new firmware:
+
+- TV and podcast audio, including any where "Rotom" is said;
+- the ten people's "Rotom" alone and similar-sounding phrases;
+- 12 "Hey Rotom" takes at the end, from three spots.
+
+The bar is at most one false wake and all 12 takes detected. The playlist never changes, so every retrained model is compared on identical audio through the real puck. That is a check on the device itself, which no offline harness can give. (One project cut false wakes on such a playlist from 17 to 5 by retraining on the wakes it found.)
+
+**Then a two-week live trial, with "Hey Jarvis" still loaded:**
 
 | Measure | Bar | How it is counted |
 |---|---|---|
@@ -272,13 +299,13 @@ Build and flash use ESPHome 2026.6.0, as `docs/voice_pe_firmware.md` describes.
 ### 3.10 The retraining loop
 
 - **False wakes.** The puck sends audio only after a wake, so the trigger itself is never captured. What comes after it is: the TV or the conversation that set it off. With `debug_recording_dir` on during the trial, that audio joins the household negatives, and any phrase that keeps waking the puck joins the similar-sounding list.
-- **Misses.** An owner's take missed in the drill is recorded again through the puck and joins the training takes. A friend's take never joins training, or the test would no longer measure unknown voices.
-- A retrained model goes through Gate A again before it is flashed.
+- **Misses.** A take missed in the drill is recorded again through the puck and joins that person's training takes. Takes from anyone outside the ten, such as a later visitor, are test only: they are the one measure of voices no model has heard.
+- A retrained model goes through Gate A, five trial models included, and the playback test again before the live trial resumes.
 
 ### 3.11 Privacy
 
 - Recordings of the household and visitors never enter git; the repository is public. A `.gitignore` rule covers the `wake_word/` data folders, and recordings live under Application Support.
-- Everyone recorded agrees to it, knowing what the recordings are for. A visitor's recordings are deleted when they ask.
+- Everyone recorded agrees to it, knowing what the recordings are for. Phone memos are copied to the data folder and nowhere else, and a person's recordings are deleted when they ask.
 - The trained model is committed. It holds network weights, not audio, the same way Nabu Casa publishes "Hey Jarvis".
 
 ## 4. Packages and what they do for the business logic
@@ -311,10 +338,11 @@ The Piper generator model and the kahrendt datasets are downloads, about 10 GB i
 
 | Failure | What happens | What to do |
 |---|---|---|
-| Trained mostly on synthetic voices | Scores well offline, wakes too often or misses real people | Test only on voices training never heard: friends and other-engine voices, replayed through the puck |
+| Trained mostly on synthetic voices | Scores well offline, wakes too often or misses real people | Test only on voices a model never heard: the leave-two-out pairs and other-engine voices, replayed through the puck |
 | Training audio from the wrong channel or level | The model learns a sound the puck never hears | Confirm the channel (§3.5) before recording |
 | A test voice leaks into training | The test overstates how well unknown voices work | Test voices live in their own folder, which the training scripts never read |
-| Too few real test voices | A model that fails some visitors could pass the friends' check | The other-engine voices carry the comparison; each visit adds friends' takes; the live trial counts visitors' misses too |
+| Ten speakers miss a kind of voice | A model that fails some visitors could still pass Gate A | Leave-two-out trials test every person as a stranger; other-engine voice groups cover what the ten lack; the live trial counts visitors' misses too |
+| Bad generated clips | The model learns a wrong pronunciation | The screening pass (§3.4) drops whole speakers or respellings that say it wrong |
 | Higher voices missed | Children or some visitors cannot wake it | The per-group bar (§3.8), more pitch shift, more transformed voices |
 | TV or conversation says "Rotom" | False wakes during shows | "Rotom" alone is a negative; add the show's audio to household negatives |
 | The harness disagrees with the puck | Offline numbers mislead | Check the harness on stock "Hey Jarvis" first (§3.7) |
@@ -345,7 +373,7 @@ The Piper generator model and the kahrendt datasets are downloads, about 10 GB i
 
 **Echo cancellation (XMOS).** The puck's audio chip removes its own speaker's sound from the microphone signal, so it can hear a wake word over its own reply. The wake word model hears audio after this step, which is why training audio is recorded through the puck.
 
-**Test voices.** Voices used only for testing, never for training: friends' takes, and voices from speech engines training never uses. They stand in for visitors the model will never hear.
+**Test voices and leave-out trials.** A test voice must be one the model never heard, or the test flatters it. Voices from other speech engines are never trained on. With only ten real speakers, each trial model leaves two of them out, so every person is tested once as a stranger. They stand in for visitors the model will never hear.
 
 ## 8. Sources
 
@@ -367,4 +395,9 @@ The Piper generator model and the kahrendt datasets are downloads, about 10 GB i
 - Reddit, "Custom Wake Word in 2026" (read through Arctic Shift): <https://www.reddit.com/r/homeassistant/comments/1vkqiwm/custom_wake_word_in_2026/>
 - TaterTotterson microWakeWord trainer for Apple Silicon, considered and not used: <https://github.com/TaterTotterson/microWakeWord-Trainer-AppleSilicon>
 - Deepgram, negatives matter more than positives: <https://deepgram.com/learn/naively-training-a-wake-word-model-from-scratch>
+- Synth4Kws, how much real speech a synthetic-trained keyword model needs (speaker count matters most): <https://arxiv.org/html/2407.18879v1>
+- Wake Word Collective, Nabu Casa's crowdsourced "Okay Nabu" recordings: <https://www.home-assistant.io/blog/2024/10/24/wake-word-collective/>
+- microWakeWord releases ("Okay Nabu" notes on bias and bad samples): <https://github.com/OHF-Voice/micro-wake-word/releases>
+- "Hey Yossi", a model trained on real takes only (training time, "Yossi" alone still fires): <https://huggingface.co/danielrosehill/Hey-Yossi-microWakeWord>
+- open-horizon-labs microWakeWord fork, physical playback tests ("synthetic evaluation can reject a model, not qualify it"): <https://github.com/open-horizon-labs/microWakeWord>
 - How to judge a wake word model by recall and false wakes per hour: <https://dev.to/buguatec/how-to-get-a-wake-word-model-in-2026-3amo>
