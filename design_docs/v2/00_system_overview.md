@@ -8,7 +8,7 @@ v1 built a voice assistant whose text-in, text-out path works end to end: a spok
 
 1. **Memory.** When a conversation ends, the assistant saves a short summary of it as its own note, and later questions draw on the notes that match. Today it sees only a few minutes of Home Assistant's chat history. You read, edit, and delete the notes yourself in Obsidian.
 2. **Several tools per question.** "Is it warmer in Lisbon than here tomorrow, and by how much?" needs a forecast for two places and a subtraction. The loop plans for that and keeps the context small enough for a small model.
-3. **More tools.** Weather for any place, NBA and NFL statistics, Reddit threads, and live subway arrivals (doc 15) now; Gmail newsletters, a shared calendar, X posts, and bank statements after the new Mac (doc 14).
+3. **More tools.** Weather for any place, NBA and NFL statistics, Reddit threads, live subway arrivals (doc 15), and stock quotes (doc 16) now; Gmail newsletters, a shared calendar, X posts, and bank statements after the new Mac (doc 14).
 4. **Speed and control.** llama.cpp's `llama-server` replaces Ollama, so the harness controls prompt caching, context size, and every serving setting directly.
 
 Security outranks all four. Every new capability is designed around one assumption: a web page, email, or post will sometimes talk the model into something, so code, not the model, decides what reaches memory and what leaves the house (doc 12).
@@ -110,6 +110,7 @@ v2 holds only the docs that change or are new. Voice, Home Assistant, music, and
 | 12 Security | [12_security.md](12_security.md) | new | Threat model, trust marks, the guards, supply chain |
 | 14 Personal-data tools | [14_personal_data_tools.md](14_personal_data_tools.md) | new | Newsletters first; later Gmail, calendar, X, Reddit, and bank statements |
 | 15 Subway arrivals | [15_subway_arrivals.md](15_subway_arrivals.md) | new | Next trains and alerts at any New York City subway station, from MTA's live feeds |
+| 16 Stock quotes | [16_stock_quotes.md](16_stock_quotes.md) | new | A stock's price, P/E, and recent returns, and the market through three index funds, from Finnhub |
 
 ## 5. Subsystems and their tech stacks
 
@@ -161,6 +162,7 @@ v1's boundary still holds: audio, transcripts, the model, and inference stay on 
 | Reddit threads | Reddit sees the assistant's own account and which threads it reads. |
 | Search queries | As in v1, plus a guard: no query or URL may carry a private detail from memory that you did not say yourself in that exchange (doc 12). |
 | Subway stations | MTA sees the Studio fetch its whole feeds, never which station you asked about: stations are matched on the Mac (doc 15). |
+| Stock quotes | Finnhub sees which companies and tickers are asked about, under the assistant's own key (doc 16). |
 | Gmail, calendar, X, bank | After the new Mac, each under its own least-privilege access (doc 14). |
 
 ## 9. Milestones
