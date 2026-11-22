@@ -1,10 +1,10 @@
 """movies_showing, popular_movies, movie_details, and the nightly Fandango refresh behind them: which theaters count as Manhattan, one entry per
-movie across theaters and days, the session Fandango asks for and the snapshot kept when it fails, each movie's scores read nightly and its page
-read once, every filter and order the tools offer, this week and coming up, wide and limited releases, a lowest critics score, revivals marked,
-popular_movies' preset filters, horror left out unless asked for, the replies when nothing matches or there is no snapshot, and the router,
-filler, and refresh command around them. The listings are the benchmark's own (benchmark/fixtures/movies/movies.json, 60 days from
-2026-10-25); tests/fixtures/fandango_theaters.json is a trimmed copy of two of its raw days, and tests/fixtures/fandango_movie_details.json two
-movies' trimmed pages and three movies' scores."""
+movie across theaters and days, the session Fandango asks for and the snapshot kept when it fails and a dated copy kept when it succeeds, each
+movie's scores read nightly and its page read once, every filter and order the tools offer, this week and coming up, wide and limited releases,
+a lowest critics score, revivals marked, popular_movies' preset filters, horror left out unless asked for, the replies when nothing matches or
+there is no snapshot, and the router, filler, and refresh command around them. The listings are the benchmark's own
+(benchmark/fixtures/movies/movies.json, 60 days from 2026-10-25); tests/fixtures/fandango_theaters.json is a trimmed copy of two of its raw
+days, and tests/fixtures/fandango_movie_details.json two movies' trimmed pages and three movies' scores."""
 
 import json
 import re
@@ -109,7 +109,7 @@ async def test_the_refresh_opens_the_zip_page_first_then_reads_every_page_of_eve
     assert [(request.url.params["date"], request.url.params["page"]) for request in listing_requests[:3]] == [("2026-10-25", "1"), ("2026-10-25", "2"), ("2026-10-26", "1")]
     assert server.requests[1 : len(listing_requests) + 1] == listing_requests  # the listing first, then each movie's details
     assert all(request.headers["referer"] == "https://www.fandango.com/10036_movietimes" for request in server.requests[1:])
-    assert [path.name for path in tmp_path.iterdir()] == ["movies.json"]
+    assert sorted(path.name for path in tmp_path.iterdir()) == ["movies.json", "movies_archive"]
 
 
 async def test_only_manhattan_theaters_are_kept_and_each_movie_once_across_theaters_and_days(tmp_path: Path) -> None:
@@ -188,6 +188,21 @@ async def test_a_refused_session_writes_nothing_and_keeps_the_last_snapshot(tmp_
     with pytest.raises(FandangoUnavailable, match="403"):
         await refresh_movies_snapshot(settings, FandangoServer(status=403).transport, resolve_public)
     assert settings.snapshot_path.read_bytes() == kept
+
+
+async def test_each_refresh_keeps_a_copy_named_for_its_first_day_beside_the_snapshot(tmp_path: Path) -> None:
+    settings = fixture_settings(tmp_path)
+    snapshot = await refresh_movies_snapshot(settings, FandangoServer().transport, resolve_public)
+    copy_path = tmp_path / "movies_archive" / f"movies-{RECORDED_ON.isoformat()}.json"
+    assert read_snapshot(copy_path, MoviesSnapshot) == snapshot
+
+
+async def test_a_copy_that_cannot_be_written_leaves_the_refresh_and_its_snapshot_in_place(tmp_path: Path) -> None:
+    blocking_file = tmp_path / "not_a_folder"
+    blocking_file.write_text("")
+    settings = fixture_settings(tmp_path).model_copy(update={"archive_dir": blocking_file})
+    snapshot = await refresh_movies_snapshot(settings, FandangoServer().transport, resolve_public)
+    assert read_snapshot(settings.snapshot_path, MoviesSnapshot) == snapshot
 
 
 async def test_by_default_the_widest_releases_this_week_horror_left_out_and_counted() -> None:

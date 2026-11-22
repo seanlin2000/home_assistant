@@ -23,10 +23,17 @@ class MoviesSettings(BaseModel):
     seconds_between_requests: float = 1.0  # one request at a time: about 120 listing pages, then a scores read per movie and a page per new movie
     timeout_seconds: float = 30.0  # a page is up to about 4 MB
     snapshot_path: Path = DEFAULT_LISTINGS_DIR / "movies.json"
+    archive_dir: Path | None = None  # a dated copy of each night's snapshot, for what changed since last week; None keeps them beside the snapshot
+    archive_days: int = 14  # copies older than this are deleted; a week's comparison needs seven, the rest cover refreshes that failed
     stale_after_days: int = 3  # the refresh runs nightly; older than this, an answer says how old its listings are
     max_words: int = 1000
     today: date | None = None  # the day the benchmark's snapshot was taken; set only by the benchmark
     user_agent: str = ""  # empty sends what current Chrome sends (utils/browser_utils.py); set it only to try another agent
+
+    @property
+    def archive_directory(self) -> Path:
+        """Beside the snapshot unless set, so a test or benchmark that moves the snapshot moves its copies with it."""
+        return self.archive_dir or self.snapshot_path.parent / "movies_archive"
 
 
 def movies_settings_from_environment() -> MoviesSettings:
