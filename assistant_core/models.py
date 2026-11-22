@@ -22,6 +22,7 @@ class Route(StrEnum):
     RESTAURANTS = "restaurants"
     NEWSLETTERS = "newsletters"
     SUBWAY = "subway"
+    UPDATES = "updates"
     ANSWER = "answer"
 
 
@@ -85,6 +86,7 @@ class AgentPolicy(BaseModel):
     restaurants_filler_phrases: list[str] = Field(default_factory=lambda: list(DEFAULT_RESTAURANTS_FILLER_PHRASES))
     newsletters_filler_phrases: list[str] = Field(default_factory=lambda: list(DEFAULT_NEWSLETTERS_FILLER_PHRASES))
     subway_filler_phrases: list[str] = Field(default_factory=lambda: list(DEFAULT_SUBWAY_FILLER_PHRASES))
+    updates_filler_phrases: list[str] = Field(default_factory=lambda: list(DEFAULT_UPDATES_FILLER_PHRASES))
     reddit_filler_phrases: list[str] = Field(default_factory=lambda: list(DEFAULT_REDDIT_FILLER_PHRASES))
     reddit_still_trying_phrases: list[str] = Field(default_factory=lambda: list(DEFAULT_REDDIT_STILL_TRYING_PHRASES))
     reddit_unavailable_phrases: list[str] = Field(default_factory=lambda: list(DEFAULT_REDDIT_UNAVAILABLE_PHRASES))
@@ -104,6 +106,7 @@ class AgentPolicy(BaseModel):
             *self.restaurants_filler_phrases,
             *self.newsletters_filler_phrases,
             *self.subway_filler_phrases,
+            *self.updates_filler_phrases,
             *self.reddit_filler_phrases,
             *self.reddit_still_trying_phrases,
             *self.reddit_unavailable_phrases,
@@ -150,6 +153,10 @@ DEFAULT_SUBWAY_FILLER_PHRASES = (
     "Checking the train times.",
     "One moment, looking at the trains.",
 )
+DEFAULT_UPDATES_FILLER_PHRASES = (
+    "Let me gather your updates.",
+    "One moment, checking your updates.",
+)
 # Reddit is read through Arctic Shift, a free archive that times out under load. A second line follows when the call is still running (most likely
 # retrying), and a third replaces the silence when it never answered and the model searches the web instead. The first line gives no warning in advance:
 # the user found "it can be slow" more tiresome than the wait it warned of.
@@ -171,6 +178,7 @@ REDDIT_TOOL_NAMES = frozenset({"reddit_search"})
 RESTAURANTS_TOOL_NAMES = frozenset({"restaurant_recommendations", "restaurant_details"})
 NEWSLETTERS_TOOL_NAMES = frozenset({"newsletters_list", "newsletter_summarize", "newsletter_read"})
 SUBWAY_TOOL_NAMES = frozenset({"subway_arrivals"})
+UPDATES_TOOL_NAMES = frozenset({"updates"})
 # How reddit_search's answer starts when Arctic Shift never answered, so the agent loop knows to say the could-not-reach line.
 REDDIT_UNAVAILABLE_PREFIX = "Reddit error: Reddit did not answer"
 # The router's JSON: a route, up to two more, and a one-sentence plan. Forty tokens held the route alone and cut the plan off mid-string.
@@ -187,6 +195,7 @@ TOOL_NAMES_BY_ROUTE = {
     Route.RESTAURANTS: RESTAURANTS_TOOL_NAMES,
     Route.NEWSLETTERS: NEWSLETTERS_TOOL_NAMES,
     Route.SUBWAY: SUBWAY_TOOL_NAMES,
+    Route.UPDATES: UPDATES_TOOL_NAMES,
 }
 # The tools a live tool server must expose before the benchmark or the health check trusts it as ours (a stale server once served a different set).
 REQUIRED_TOOL_NAMES = frozenset({"search_and_read", "web_search", "fetch_page", "wikipedia_lookup", "calculate", "percent", "convert"})

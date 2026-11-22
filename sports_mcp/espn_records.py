@@ -11,7 +11,7 @@ from typing import Any
 from pydantic import BaseModel
 
 from sports_mcp.leagues import LEAGUE_TIMEZONE, League
-from sports_mcp.names import cleaned_name, cleaned_note, cleaned_stat
+from sports_mcp.names import cleaned_name, cleaned_note, cleaned_recap_headline, cleaned_recap_summary, cleaned_stat
 
 PLAYOFFS_SEASON_TYPE = 3
 NBA_LEADER_STAT = "points"
@@ -181,9 +181,17 @@ class BoxScoreSide(BaseModel):
     team_stats: list[str] = []  # "375 total yards"
 
 
+class GameRecap(BaseModel):
+    """The Associated Press story ESPN attaches to a finished game: its headline and its opening sentence."""
+
+    headline: str
+    summary: str
+
+
 class BoxScore(BaseModel):
     sides: list[BoxScoreSide]  # away team first, as ESPN lists them
     progress: GameProgress | None = None  # None when the summary has no header, and in a box score cached before the header was read
+    recap: GameRecap | None = None  # None before the story is published, for older games, and in a box score cached before recaps were read
 
     @property
     def has_players(self) -> bool:
@@ -430,9 +438,17 @@ def read_box_score(body: dict[str, Any], league: League) -> BoxScore:
         box_score = body["boxscore"]
         totals_by_team = {str(side["team"]["id"]): side.get("statistics", []) for side in box_score.get("teams", [])}
         sides = [read_box_score_side(side, totals_by_team.get(str(side["team"]["id"]), []), league) for side in box_score.get("players", [])]
-        return BoxScore(sides=sides, progress=read_game_progress(body))
+        return BoxScore(sides=sides, progress=read_game_progress(body), recap=read_recap(body))
     except (KeyError, IndexError, TypeError) as error:
         raise EspnShapeError(f"box score: {type(error).__name__} {error}") from error
+
+
+def read_recap(body: dict[str, Any]) -> GameRecap | None:
+    article = body.get("article") or {}
+    headline = cleaned_recap_headline(article.get("headline") or "")
+    if not headline:
+        return None
+    return GameRecap(headline=headline, summary=cleaned_recap_summary(article.get("description") or ""))
 
 
 def read_game_progress(body: dict[str, Any]) -> GameProgress | None:
