@@ -143,3 +143,7 @@ marks_untrusted = true                      # newsletter headlines, ESPN's recap
 [tools.subway_arrivals]
 tier = "read_public"
 marks_untrusted = true                      # arrival times are numbers, but MTA's alert headers are text people write (design doc v2/15 section 3.8)
+
+[tools.stock_quote]
+tier = "read_public"
+marks_untrusted = true                      # prices are numbers, but a name found through Finnhub's search is listing text (design doc v2/16 section 3.8)

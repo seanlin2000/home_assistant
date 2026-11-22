@@ -1,0 +1,17 @@
+{
+ "metric": {
+  "13WeekPriceReturnDaily": 15.364,
+  "26WeekPriceReturnDaily": 17.6712,
+  "52WeekHigh": 894950,
+  "52WeekHighDate": "2026-11-12",
+  "52WeekLow": 698000,
+  "52WeekLowDate": "2026-04-22",
+  "52WeekPriceReturnDaily": 14.1582,
+  "5DayPriceReturnDaily": -3.4608,
+  "monthToDatePriceReturnDaily": 5.3212,
+  "peTTM": 14.109,
+  "yearToDatePriceReturnDaily": 13.805
+ },
+ "metricType": "all",
+ "symbol": "BRK.B"
+}

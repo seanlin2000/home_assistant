@@ -22,6 +22,7 @@ class Route(StrEnum):
     RESTAURANTS = "restaurants"
     NEWSLETTERS = "newsletters"
     SUBWAY = "subway"
+    STOCKS = "stocks"
     UPDATES = "updates"
     ANSWER = "answer"
 
@@ -86,6 +87,7 @@ class AgentPolicy(BaseModel):
     restaurants_filler_phrases: list[str] = Field(default_factory=lambda: list(DEFAULT_RESTAURANTS_FILLER_PHRASES))
     newsletters_filler_phrases: list[str] = Field(default_factory=lambda: list(DEFAULT_NEWSLETTERS_FILLER_PHRASES))
     subway_filler_phrases: list[str] = Field(default_factory=lambda: list(DEFAULT_SUBWAY_FILLER_PHRASES))
+    stocks_filler_phrases: list[str] = Field(default_factory=lambda: list(DEFAULT_STOCKS_FILLER_PHRASES))
     updates_filler_phrases: list[str] = Field(default_factory=lambda: list(DEFAULT_UPDATES_FILLER_PHRASES))
     reddit_filler_phrases: list[str] = Field(default_factory=lambda: list(DEFAULT_REDDIT_FILLER_PHRASES))
     reddit_still_trying_phrases: list[str] = Field(default_factory=lambda: list(DEFAULT_REDDIT_STILL_TRYING_PHRASES))
@@ -106,6 +108,7 @@ class AgentPolicy(BaseModel):
             *self.restaurants_filler_phrases,
             *self.newsletters_filler_phrases,
             *self.subway_filler_phrases,
+            *self.stocks_filler_phrases,
             *self.updates_filler_phrases,
             *self.reddit_filler_phrases,
             *self.reddit_still_trying_phrases,
@@ -153,6 +156,10 @@ DEFAULT_SUBWAY_FILLER_PHRASES = (
     "Checking the train times.",
     "One moment, looking at the trains.",
 )
+DEFAULT_STOCKS_FILLER_PHRASES = (
+    "Checking the markets.",
+    "One moment, pulling up the quote.",
+)
 DEFAULT_UPDATES_FILLER_PHRASES = (
     "Let me gather your updates.",
     "One moment, checking your updates.",
@@ -178,6 +185,7 @@ REDDIT_TOOL_NAMES = frozenset({"reddit_search"})
 RESTAURANTS_TOOL_NAMES = frozenset({"restaurant_recommendations", "restaurant_details"})
 NEWSLETTERS_TOOL_NAMES = frozenset({"newsletters_list", "newsletter_summarize", "newsletter_read"})
 SUBWAY_TOOL_NAMES = frozenset({"subway_arrivals"})
+STOCKS_TOOL_NAMES = frozenset({"stock_quote"})
 UPDATES_TOOL_NAMES = frozenset({"updates"})
 # How reddit_search's answer starts when Arctic Shift never answered, so the agent loop knows to say the could-not-reach line.
 REDDIT_UNAVAILABLE_PREFIX = "Reddit error: Reddit did not answer"
@@ -195,6 +203,7 @@ TOOL_NAMES_BY_ROUTE = {
     Route.RESTAURANTS: RESTAURANTS_TOOL_NAMES,
     Route.NEWSLETTERS: NEWSLETTERS_TOOL_NAMES,
     Route.SUBWAY: SUBWAY_TOOL_NAMES,
+    Route.STOCKS: STOCKS_TOOL_NAMES,
     Route.UPDATES: UPDATES_TOOL_NAMES,
 }
 # The tools a live tool server must expose before the benchmark or the health check trusts it as ours (a stale server once served a different set).

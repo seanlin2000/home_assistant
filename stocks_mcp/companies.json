@@ -1,0 +1,721 @@
+[
+ {
+  "symbol": "AAPL",
+  "name": "Apple",
+  "aliases": []
+ },
+ {
+  "symbol": "MSFT",
+  "name": "Microsoft",
+  "aliases": []
+ },
+ {
+  "symbol": "NVDA",
+  "name": "Nvidia",
+  "aliases": []
+ },
+ {
+  "symbol": "AMZN",
+  "name": "Amazon",
+  "aliases": []
+ },
+ {
+  "symbol": "GOOGL",
+  "name": "Alphabet",
+  "aliases": [
+   "Google"
+  ]
+ },
+ {
+  "symbol": "META",
+  "name": "Meta",
+  "aliases": [
+   "Meta Platforms",
+   "Facebook"
+  ]
+ },
+ {
+  "symbol": "TSLA",
+  "name": "Tesla",
+  "aliases": []
+ },
+ {
+  "symbol": "BRK.B",
+  "name": "Berkshire Hathaway",
+  "aliases": [
+   "Berkshire"
+  ]
+ },
+ {
+  "symbol": "NFLX",
+  "name": "Netflix",
+  "aliases": []
+ },
+ {
+  "symbol": "AVGO",
+  "name": "Broadcom",
+  "aliases": []
+ },
+ {
+  "symbol": "AMD",
+  "name": "AMD",
+  "aliases": [
+   "Advanced Micro Devices"
+  ]
+ },
+ {
+  "symbol": "INTC",
+  "name": "Intel",
+  "aliases": []
+ },
+ {
+  "symbol": "QCOM",
+  "name": "Qualcomm",
+  "aliases": []
+ },
+ {
+  "symbol": "TSM",
+  "name": "TSMC",
+  "aliases": [
+   "Taiwan Semiconductor"
+  ]
+ },
+ {
+  "symbol": "MU",
+  "name": "Micron",
+  "aliases": []
+ },
+ {
+  "symbol": "ARM",
+  "name": "Arm",
+  "aliases": [
+   "Arm Holdings"
+  ]
+ },
+ {
+  "symbol": "ASML",
+  "name": "ASML",
+  "aliases": []
+ },
+ {
+  "symbol": "TXN",
+  "name": "Texas Instruments",
+  "aliases": []
+ },
+ {
+  "symbol": "AMAT",
+  "name": "Applied Materials",
+  "aliases": []
+ },
+ {
+  "symbol": "SMCI",
+  "name": "Super Micro Computer",
+  "aliases": [
+   "Super Micro",
+   "Supermicro"
+  ]
+ },
+ {
+  "symbol": "DELL",
+  "name": "Dell",
+  "aliases": []
+ },
+ {
+  "symbol": "HPQ",
+  "name": "HP",
+  "aliases": []
+ },
+ {
+  "symbol": "IBM",
+  "name": "IBM",
+  "aliases": []
+ },
+ {
+  "symbol": "CSCO",
+  "name": "Cisco",
+  "aliases": []
+ },
+ {
+  "symbol": "ORCL",
+  "name": "Oracle",
+  "aliases": []
+ },
+ {
+  "symbol": "CRM",
+  "name": "Salesforce",
+  "aliases": []
+ },
+ {
+  "symbol": "ADBE",
+  "name": "Adobe",
+  "aliases": []
+ },
+ {
+  "symbol": "INTU",
+  "name": "Intuit",
+  "aliases": []
+ },
+ {
+  "symbol": "NOW",
+  "name": "ServiceNow",
+  "aliases": []
+ },
+ {
+  "symbol": "PLTR",
+  "name": "Palantir",
+  "aliases": []
+ },
+ {
+  "symbol": "SNOW",
+  "name": "Snowflake",
+  "aliases": []
+ },
+ {
+  "symbol": "CRWD",
+  "name": "CrowdStrike",
+  "aliases": []
+ },
+ {
+  "symbol": "SHOP",
+  "name": "Shopify",
+  "aliases": []
+ },
+ {
+  "symbol": "UBER",
+  "name": "Uber",
+  "aliases": []
+ },
+ {
+  "symbol": "LYFT",
+  "name": "Lyft",
+  "aliases": []
+ },
+ {
+  "symbol": "ABNB",
+  "name": "Airbnb",
+  "aliases": []
+ },
+ {
+  "symbol": "DASH",
+  "name": "DoorDash",
+  "aliases": []
+ },
+ {
+  "symbol": "CART",
+  "name": "Instacart",
+  "aliases": []
+ },
+ {
+  "symbol": "SPOT",
+  "name": "Spotify",
+  "aliases": []
+ },
+ {
+  "symbol": "SNAP",
+  "name": "Snap",
+  "aliases": [
+   "Snapchat"
+  ]
+ },
+ {
+  "symbol": "PINS",
+  "name": "Pinterest",
+  "aliases": []
+ },
+ {
+  "symbol": "RDDT",
+  "name": "Reddit",
+  "aliases": []
+ },
+ {
+  "symbol": "RBLX",
+  "name": "Roblox",
+  "aliases": []
+ },
+ {
+  "symbol": "DUOL",
+  "name": "Duolingo",
+  "aliases": []
+ },
+ {
+  "symbol": "ZM",
+  "name": "Zoom",
+  "aliases": []
+ },
+ {
+  "symbol": "PTON",
+  "name": "Peloton",
+  "aliases": []
+ },
+ {
+  "symbol": "ETSY",
+  "name": "Etsy",
+  "aliases": []
+ },
+ {
+  "symbol": "EBAY",
+  "name": "eBay",
+  "aliases": []
+ },
+ {
+  "symbol": "BKNG",
+  "name": "Booking Holdings",
+  "aliases": [
+   "Booking",
+   "Booking.com"
+  ]
+ },
+ {
+  "symbol": "COIN",
+  "name": "Coinbase",
+  "aliases": []
+ },
+ {
+  "symbol": "HOOD",
+  "name": "Robinhood",
+  "aliases": []
+ },
+ {
+  "symbol": "PYPL",
+  "name": "PayPal",
+  "aliases": []
+ },
+ {
+  "symbol": "XYZ",
+  "name": "Block",
+  "aliases": [
+   "Square"
+  ]
+ },
+ {
+  "symbol": "V",
+  "name": "Visa",
+  "aliases": []
+ },
+ {
+  "symbol": "MA",
+  "name": "Mastercard",
+  "aliases": []
+ },
+ {
+  "symbol": "AXP",
+  "name": "American Express",
+  "aliases": [
+   "Amex"
+  ]
+ },
+ {
+  "symbol": "JPM",
+  "name": "JPMorgan Chase",
+  "aliases": [
+   "JPMorgan",
+   "JP Morgan",
+   "Chase"
+  ]
+ },
+ {
+  "symbol": "BAC",
+  "name": "Bank of America",
+  "aliases": []
+ },
+ {
+  "symbol": "WFC",
+  "name": "Wells Fargo",
+  "aliases": []
+ },
+ {
+  "symbol": "C",
+  "name": "Citigroup",
+  "aliases": [
+   "Citi",
+   "Citibank"
+  ]
+ },
+ {
+  "symbol": "GS",
+  "name": "Goldman Sachs",
+  "aliases": [
+   "Goldman"
+  ]
+ },
+ {
+  "symbol": "MS",
+  "name": "Morgan Stanley",
+  "aliases": []
+ },
+ {
+  "symbol": "BLK",
+  "name": "BlackRock",
+  "aliases": []
+ },
+ {
+  "symbol": "WMT",
+  "name": "Walmart",
+  "aliases": []
+ },
+ {
+  "symbol": "TGT",
+  "name": "Target",
+  "aliases": []
+ },
+ {
+  "symbol": "COST",
+  "name": "Costco",
+  "aliases": []
+ },
+ {
+  "symbol": "HD",
+  "name": "Home Depot",
+  "aliases": [
+   "The Home Depot"
+  ]
+ },
+ {
+  "symbol": "LOW",
+  "name": "Lowe's",
+  "aliases": []
+ },
+ {
+  "symbol": "KR",
+  "name": "Kroger",
+  "aliases": []
+ },
+ {
+  "symbol": "CVS",
+  "name": "CVS",
+  "aliases": [
+   "CVS Health"
+  ]
+ },
+ {
+  "symbol": "NKE",
+  "name": "Nike",
+  "aliases": []
+ },
+ {
+  "symbol": "SBUX",
+  "name": "Starbucks",
+  "aliases": []
+ },
+ {
+  "symbol": "MCD",
+  "name": "McDonald's",
+  "aliases": []
+ },
+ {
+  "symbol": "CMG",
+  "name": "Chipotle",
+  "aliases": []
+ },
+ {
+  "symbol": "KO",
+  "name": "Coca-Cola",
+  "aliases": [
+   "Coke"
+  ]
+ },
+ {
+  "symbol": "PEP",
+  "name": "PepsiCo",
+  "aliases": [
+   "Pepsi"
+  ]
+ },
+ {
+  "symbol": "MDLZ",
+  "name": "Mondelez",
+  "aliases": []
+ },
+ {
+  "symbol": "PG",
+  "name": "Procter & Gamble",
+  "aliases": [
+   "P&G"
+  ]
+ },
+ {
+  "symbol": "MO",
+  "name": "Altria",
+  "aliases": []
+ },
+ {
+  "symbol": "PM",
+  "name": "Philip Morris",
+  "aliases": []
+ },
+ {
+  "symbol": "BUD",
+  "name": "Anheuser-Busch",
+  "aliases": [
+   "Anheuser-Busch InBev",
+   "AB InBev"
+  ]
+ },
+ {
+  "symbol": "DIS",
+  "name": "Disney",
+  "aliases": [
+   "Walt Disney"
+  ]
+ },
+ {
+  "symbol": "CMCSA",
+  "name": "Comcast",
+  "aliases": []
+ },
+ {
+  "symbol": "SONY",
+  "name": "Sony",
+  "aliases": []
+ },
+ {
+  "symbol": "VZ",
+  "name": "Verizon",
+  "aliases": []
+ },
+ {
+  "symbol": "T",
+  "name": "AT&T",
+  "aliases": []
+ },
+ {
+  "symbol": "TMUS",
+  "name": "T-Mobile",
+  "aliases": []
+ },
+ {
+  "symbol": "XOM",
+  "name": "ExxonMobil",
+  "aliases": [
+   "Exxon"
+  ]
+ },
+ {
+  "symbol": "CVX",
+  "name": "Chevron",
+  "aliases": []
+ },
+ {
+  "symbol": "JNJ",
+  "name": "Johnson & Johnson",
+  "aliases": [
+   "J&J"
+  ]
+ },
+ {
+  "symbol": "PFE",
+  "name": "Pfizer",
+  "aliases": []
+ },
+ {
+  "symbol": "MRK",
+  "name": "Merck",
+  "aliases": []
+ },
+ {
+  "symbol": "LLY",
+  "name": "Eli Lilly",
+  "aliases": [
+   "Lilly"
+  ]
+ },
+ {
+  "symbol": "ABBV",
+  "name": "AbbVie",
+  "aliases": []
+ },
+ {
+  "symbol": "UNH",
+  "name": "UnitedHealth",
+  "aliases": [
+   "UnitedHealth Group"
+  ]
+ },
+ {
+  "symbol": "NVO",
+  "name": "Novo Nordisk",
+  "aliases": []
+ },
+ {
+  "symbol": "MRNA",
+  "name": "Moderna",
+  "aliases": []
+ },
+ {
+  "symbol": "BA",
+  "name": "Boeing",
+  "aliases": []
+ },
+ {
+  "symbol": "LMT",
+  "name": "Lockheed Martin",
+  "aliases": [
+   "Lockheed"
+  ]
+ },
+ {
+  "symbol": "GE",
+  "name": "GE Aerospace",
+  "aliases": [
+   "General Electric",
+   "GE"
+  ]
+ },
+ {
+  "symbol": "HON",
+  "name": "Honeywell",
+  "aliases": []
+ },
+ {
+  "symbol": "CAT",
+  "name": "Caterpillar",
+  "aliases": []
+ },
+ {
+  "symbol": "MMM",
+  "name": "3M",
+  "aliases": []
+ },
+ {
+  "symbol": "F",
+  "name": "Ford",
+  "aliases": [
+   "Ford Motor"
+  ]
+ },
+ {
+  "symbol": "GM",
+  "name": "General Motors",
+  "aliases": [
+   "GM"
+  ]
+ },
+ {
+  "symbol": "TM",
+  "name": "Toyota",
+  "aliases": []
+ },
+ {
+  "symbol": "RIVN",
+  "name": "Rivian",
+  "aliases": []
+ },
+ {
+  "symbol": "LCID",
+  "name": "Lucid",
+  "aliases": [
+   "Lucid Motors"
+  ]
+ },
+ {
+  "symbol": "DAL",
+  "name": "Delta Air Lines",
+  "aliases": [
+   "Delta"
+  ]
+ },
+ {
+  "symbol": "UAL",
+  "name": "United Airlines",
+  "aliases": []
+ },
+ {
+  "symbol": "AAL",
+  "name": "American Airlines",
+  "aliases": []
+ },
+ {
+  "symbol": "LUV",
+  "name": "Southwest Airlines",
+  "aliases": [
+   "Southwest"
+  ]
+ },
+ {
+  "symbol": "MAR",
+  "name": "Marriott",
+  "aliases": []
+ },
+ {
+  "symbol": "HLT",
+  "name": "Hilton",
+  "aliases": []
+ },
+ {
+  "symbol": "BABA",
+  "name": "Alibaba",
+  "aliases": []
+ },
+ {
+  "symbol": "GME",
+  "name": "GameStop",
+  "aliases": []
+ },
+ {
+  "symbol": "AMC",
+  "name": "AMC Entertainment",
+  "aliases": [
+   "AMC Theatres"
+  ]
+ },
+ {
+  "symbol": "SHEL",
+  "name": "Shell",
+  "aliases": []
+ },
+ {
+  "symbol": "BP",
+  "name": "BP",
+  "aliases": []
+ },
+ {
+  "symbol": "AZN",
+  "name": "AstraZeneca",
+  "aliases": []
+ },
+ {
+  "symbol": "UL",
+  "name": "Unilever",
+  "aliases": []
+ },
+ {
+  "symbol": "HSBC",
+  "name": "HSBC",
+  "aliases": []
+ },
+ {
+  "symbol": "SPY",
+  "name": "SPDR S&P 500 ETF",
+  "aliases": [
+   "SPDR S&P 500"
+  ]
+ },
+ {
+  "symbol": "QQQ",
+  "name": "Invesco QQQ",
+  "aliases": []
+ },
+ {
+  "symbol": "DIA",
+  "name": "SPDR Dow Jones ETF",
+  "aliases": [
+   "SPDR Dow Jones"
+  ]
+ },
+ {
+  "symbol": "VOO",
+  "name": "Vanguard S&P 500 fund",
+  "aliases": [
+   "Vanguard S&P 500",
+   "VOO"
+  ]
+ },
+ {
+  "symbol": "VTI",
+  "name": "Vanguard Total Stock Market fund",
+  "aliases": [
+   "Vanguard Total Stock Market",
+   "total stock market"
+  ]
+ }
+]

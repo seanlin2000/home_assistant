@@ -67,9 +67,9 @@ BREWFILE="$HERE/Brewfile"
 APP_SUPPORT_DIR="$HOME/Library/Application Support/studio-assistant"
 LOG_DIR="$HOME/Library/Logs/studio-assistant"
 VM_NAME="${HAOS_VM_NAME:-Home Assistant}"
-# The Brave Search key's Keychain item, as web_search_mcp/brave_client.py reads it.
+# The API keys' Keychain items, as web_search_mcp/brave_client.py and stocks_mcp/finnhub_client.py read them. Each travels as <account>.key.
 KEYCHAIN_SERVICE="studio-assistant"
-KEYCHAIN_ACCOUNT="brave-search-api"
+KEYCHAIN_ACCOUNTS=(brave-search-api finnhub-api)
 export PATH="/opt/homebrew/bin:$PATH"
 
 step() { printf '\n==> %s\n' "$*"; }
@@ -97,18 +97,18 @@ restore_keeping_backup() {
     run ditto "$source" "$target"
 }
 
-store_brave_key() {
-    # $1 the key file from the export. -U replaces an older key, so a rerun leaves one item.
-    local key_file="$1"
+store_keychain_key() {
+    # $1 the Keychain account, $2 the key file from the export. -U replaces an older key, so a rerun leaves one item.
+    local account="$1" key_file="$2"
     if $DRY_RUN; then
-        echo "    (dry run) security add-generic-password -U -s $KEYCHAIN_SERVICE -a $KEYCHAIN_ACCOUNT -w <the key from $key_file>"
+        echo "    (dry run) security add-generic-password -U -s $KEYCHAIN_SERVICE -a $account -w <the key from $key_file>"
         return
     fi
-    if security add-generic-password -U -s "$KEYCHAIN_SERVICE" -a "$KEYCHAIN_ACCOUNT" -w "$(cat "$key_file")"; then
+    if security add-generic-password -U -s "$KEYCHAIN_SERVICE" -a "$account" -w "$(cat "$key_file")"; then
         echo "    stored in the login Keychain"
     else
-        echo "    the Keychain refused (it is locked over SSH); at this Mac's keyboard run:" >&2
-        echo "      security add-generic-password -U -s $KEYCHAIN_SERVICE -a $KEYCHAIN_ACCOUNT -w" >&2
+        echo "    the Keychain refused (it is locked over SSH); run security unlock-keychain first, or at this Mac's keyboard run:" >&2
+        echo "      security add-generic-password -U -s $KEYCHAIN_SERVICE -a $account -w" >&2
     fi
 }
 
@@ -175,10 +175,12 @@ if [[ -n "$FROM" ]]; then
         echo "    the dashboard's history"
         run rsync -a --ignore-existing "$FROM/logs/" "$LOG_DIR/"
     fi
-    if [[ -s "$FROM/brave-search-api.key" ]]; then
-        echo "    the Brave Search key"
-        store_brave_key "$FROM/brave-search-api.key"
-    fi
+    for account in "${KEYCHAIN_ACCOUNTS[@]}"; do
+        if [[ -s "$FROM/$account.key" ]]; then
+            echo "    the $account key"
+            store_keychain_key "$account" "$FROM/$account.key"
+        fi
+    done
 fi
 
 # ---------------------------------------------------------------- 4. system settings (sudo: your password)
@@ -284,8 +286,9 @@ fi
 # ---------------------------------------------------------------- 8. the secrets on the drive
 if [[ -n "$FROM" ]]; then
     # Last, so a run that stops partway can be repeated from the same folder. The VM's disk on the drive still holds Home Assistant's own settings.
-    step "removing .env, the API keys and the Brave Search key from $FROM, now that this Mac holds them"
-    run rm -rf "$FROM/env" "$FROM/app-support" "$FROM/brave-search-api.key"
+    step "removing .env, the API keys and the Keychain keys from $FROM, now that this Mac holds them"
+    run rm -rf "$FROM/env" "$FROM/app-support"
+    for account in "${KEYCHAIN_ACCOUNTS[@]}"; do run rm -f "$FROM/$account.key"; done
 fi
 
 # ---------------------------------------------------------------- 9. what a person still has to do

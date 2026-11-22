@@ -220,7 +220,7 @@ A move is now two commands, each run at the Mac it changes:
     | `env` | `.env` | Addresses, Home Assistant's token, the Samba password |
     | `app-support/` | `~/Library/Application Support/studio-assistant/` | The API keys Home Assistant already holds, the harness database, the Brave spend log |
     | `logs/` | `exchanges/`, `traces/`, `pipeline_runs/` | The dashboard's history; service logs and health state describe the old Mac and stay |
-    | `brave-search-api.key` | the login Keychain | The one secret outside `.env` |
+    | `brave-search-api.key`, `finnhub-api.key` | the login Keychain | The secrets outside `.env`: the Brave Search key and the Finnhub key (doc 16) |
     | `vm/Home Assistant.utm` | UTM's folder | The configured Home Assistant, with its network card's MAC address, so the router gives it the same address |
     | `manifest.txt` | | When, from which Mac, the repository and commit |
 

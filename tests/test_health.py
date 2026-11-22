@@ -368,3 +368,9 @@ def test_an_engine_restart_that_hangs_is_reported_rather_than_blocking_the_healt
     monkeypatch.setattr(health.subprocess, "run", hanging_run)
     outcome = health.execute(health.Action(kind="kickstart", target="llama", reason="daily refresh"), health.Settings(llama_key_path=Path("/nonexistent")))
     assert "exit 124: no restart after 150 s" in outcome
+
+
+def test_the_stocks_check_passes_with_the_finnhub_key_and_is_skipped_without_it() -> None:
+    assert health.check_stocks_key(lambda: True) == Check(ok=True, detail="Finnhub key stored")
+    skipped = health.check_stocks_key(lambda: False)
+    assert skipped.ok is None and "stock_quote is not offered" in skipped.detail

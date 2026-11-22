@@ -1,8 +1,9 @@
-"""Word-budget helpers shared by the page reader, the Wikipedia tool, and the sports tools, the spoken dates of the listings tools, and the hidden
-characters stripped from tool output and from newsletters."""
+"""Word-budget helpers shared by the page reader, the Wikipedia tool, and the sports tools, the spoken dates and times of the listings, subway, and stock
+tools, and the hidden characters stripped from tool output and from newsletters."""
 
 import re
-from datetime import date
+from datetime import date, datetime
+from zoneinfo import ZoneInfo
 
 # Zero-width characters, bidirectional controls, and Unicode tag characters: invisible on screen, read by the model.
 HIDDEN_CHARACTERS = re.compile("[​-‏‪-‮⁠-⁤⁦-⁩﻿\U000e0000-\U000e007f]")
@@ -41,3 +42,8 @@ def word_count(text: str) -> int:
 def spoken_month_day(day: date, today: date) -> str:
     """ "October 30", with the year only when it is not this year's: "February 27, 2027"."""
     return f"{day:%B} {day.day}" if day.year == today.year else f"{day:%B} {day.day}, {day.year}"
+
+
+def spoken_time(moment: datetime, zone: ZoneInfo) -> str:
+    """ "5:09 PM", on the clock of the place the answer is about."""
+    return f"{moment.astimezone(zone):%-I:%M %p}"

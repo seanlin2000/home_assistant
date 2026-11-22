@@ -1,0 +1,41 @@
+{
+ "count": 6,
+ "result": [
+  {
+   "description": "HIMS & HERS HEALTH INC",
+   "displaySymbol": "HIMS",
+   "symbol": "HIMS",
+   "type": "Common Stock"
+  },
+  {
+   "description": "HIMS & HERS HEALTH INC",
+   "displaySymbol": "HIMS.MX",
+   "symbol": "HIMS.MX",
+   "type": "Common Stock"
+  },
+  {
+   "description": "Hims & Hers Health, Inc.",
+   "displaySymbol": "HIMS",
+   "symbol": "HIMS",
+   "type": "Common Stock"
+  },
+  {
+   "description": "Shri Ahimsa Naturals Ltd",
+   "displaySymbol": "SHRIAHIMSA.NS",
+   "symbol": "SHRIAHIMSA.NS",
+   "type": "Common Stock"
+  },
+  {
+   "description": "Hims Co Ltd",
+   "displaySymbol": "238490.KQ",
+   "symbol": "238490.KQ",
+   "type": "Common Stock"
+  },
+  {
+   "description": "Ahimsa Industries Ltd",
+   "displaySymbol": "AHIMSA.NS",
+   "symbol": "AHIMSA.NS",
+   "type": "Common Stock"
+  }
+ ]
+}

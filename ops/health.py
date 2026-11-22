@@ -13,7 +13,7 @@ import shutil
 import socket
 import subprocess
 import time
-from collections.abc import Awaitable
+from collections.abc import Awaitable, Callable
 from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
 
@@ -32,6 +32,7 @@ from ops.pipeline_runs import PipelineRunLog
 from ops.searxng_demand import SearxngPolicy, SearxngVerdict, judge_searxng_demand, read_searxng_demand
 from serving.settings import load_serving_config, read_api_key
 from serving.strata import STRATA_ENGINE_PROCESS
+from stocks_mcp.finnhub_client import finnhub_key_stored
 from utils.browser_utils import CHROME_RELEASE_PATH, FALLBACK_CHROME_MAJOR, ChromeRelease
 from utils.jsonl_utils import append_jsonl
 from utils.snapshot_utils import SnapshotMissing, read_snapshot
@@ -187,6 +188,7 @@ async def run_checks(settings: Settings, full: bool = False) -> dict[str, Check]
             timed("vm", asyncio.to_thread(check_vm, settings.vm_name)),
             timed("browser", asyncio.to_thread(check_browser_agent, CHROME_RELEASE_PATH, date.today())),
             timed("newsletters", asyncio.to_thread(check_newsletters_pull, newsletters_settings_from_environment(), datetime.now().astimezone())),
+            timed("stocks", asyncio.to_thread(check_stocks_key, finnhub_key_stored)),
         )
     checks = dict(results)
     for name in LAUNCHD_SERVICES:
@@ -336,6 +338,14 @@ def no_browser_record() -> Check:
     if agent_loaded("listings"):
         return Check(ok=False, detail=f"no Chrome release recorded although the listings agent is loaded; sending the fallback Chrome {FALLBACK_CHROME_MAJOR}")
     return Check(ok=None, detail=f"listings agent not loaded, so no Chrome release recorded; sending the fallback Chrome {FALLBACK_CHROME_MAJOR}")
+
+
+def check_stocks_key(key_stored: Callable[[], bool]) -> Check:
+    """Whether stock_quote can be offered: the tool server reads the Finnhub key from the Keychain when it starts (design doc v2/16 section 6). Before
+    the key is stored the check is skipped rather than failed, as the newsletters check is before its app password."""
+    if key_stored():
+        return Check(ok=True, detail="Finnhub key stored")
+    return Check(ok=None, detail="not set up: no Finnhub key in the Keychain, so stock_quote is not offered (design doc v2/16 section 5)")
 
 
 def check_newsletters_pull(settings: NewslettersSettings, now: datetime) -> Check:
