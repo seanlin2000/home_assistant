@@ -1,0 +1,17 @@
+{
+ "metric": {
+  "13WeekPriceReturnDaily": -22.4844,
+  "26WeekPriceReturnDaily": -14.4717,
+  "52WeekHigh": 17.78,
+  "52WeekHighDate": "2026-05-29",
+  "52WeekLow": 11.045,
+  "52WeekLowDate": "2026-11-19",
+  "52WeekPriceReturnDaily": -9.9919,
+  "5DayPriceReturnDaily": -3.4572,
+  "monthToDatePriceReturnDaily": -8.8163,
+  "peTTM": null,
+  "yearToDatePriceReturnDaily": -14.8628
+ },
+ "metricType": "all",
+ "symbol": "F"
+}

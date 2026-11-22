@@ -1,6 +1,6 @@
 # 16. Stock quotes
 
-Status: designed
+Status: building
 
 ## 1. Purpose
 
@@ -60,10 +60,13 @@ Finnhub's REST API at `https://finnhub.io/api/v1` serves US quotes and company m
 - Every quote's `t` was Friday, November 20, at 4:00 PM New York time, the close.
 - An unknown ticker (`FORD`) returns HTTP 200 with every field zero. The tool treats `t = 0` as "no such ticker".
 - "Month to date" is a real limit, not a choice. Finnhub has no trailing one-month return, so the tool never says "past month".
+- Berkshire's B shares (BRK.B) carry the A shares' 52-week range, $698,000 to $894,950, beside a $570 price. Toyota's US shares (TM) carry its Tokyo range in yen, a high of 4,000 beside a $207 price. A range that misses the price by more than half or double belongs to another listing, so it is left out (§3.5).
+- Ford's `peTTM` is null rather than negative. A missing P/E is left out, and a negative one is said as "none, because the company lost money".
+- Every one of the 127 tickers in the name table returned a quote, and its search listing named the same company (checked 2026-11-22).
 
 **Two calls per stock.** A single stock costs one quote and one metrics call. The market view costs three quotes. The response headers showed quotes and metrics counting against separate 60-per-minute limits, which matches Finnhub's terms of one limit per data type.
 
-**Whether the returns include today** could not be checked on a weekend. The name `…Daily` suggests they are computed from daily closes. PR 2 calls during trading hours: if the returns stop at the previous close, the result line says "through Thursday's close" (§3.5).
+**Whether the returns include today** could not be checked on a weekend. The name `…Daily` says they are computed from daily closes, so while the market trades the result line reads "Change through the last close". The first weekday call during trading hours confirms it; if the returns turn out to include today, the label drops "through the last close".
 
 ### 3.2 Name to ticker
 
@@ -76,18 +79,23 @@ The `company` argument holds what you said, in the model's spelling. It is resol
 | 3 | Capital letters shaped like a ticker: "NVDA", "F", "BRK.B" | Used as given |
 | 4 | Anything else: "Costco", "Rivian" | One `/search` call (below) |
 
-**The table.** About 100 companies people ask about, keyed by the names said aloud, with common aliases. Lookup ignores case and punctuation. It is written by hand and checked in.
+**The table.** 127 companies and funds people ask about, keyed by the names said aloud, with common aliases. Lookup ignores case and punctuation, and says "&" as "and", so "P&G" and "S&P" match. It is written by hand and checked in.
 
-The table exists for names a search gets wrong. Live on 2026-11-22, `/search?q=Ford` listed FORD.VI (Ford on the Vienna exchange) before F. "Berkshire Hathaway" returned only BRK.A, the class costing hundreds of thousands of dollars a share, when people mean BRK.B.
+The table exists for names a search gets wrong. Live on 2026-11-22:
+
+- `/search?q=Ford` listed FORD.VI (Ford on the Vienna exchange) before F.
+- "Berkshire Hathaway" returned only BRK.A, the class costing hundreds of thousands of dollars a share, when people mean BRK.B.
+- "Shell" returned only Shell's listings abroad, never SHEL, its US one. Common foreign companies (Shell, BP, AstraZeneca, Unilever, HSBC, Toyota, TSMC, Sony, and others) are in the table for that reason.
 
 **Only capitals count as a ticker.** "Ford" in the model's spelling is a name. Read as a ticker it would be FORD, a different company.
 
 **Choosing a search result:**
 
 1. **Drop listings outside the US.** Symbols with an exchange suffix (`FORD.VI`, `ONT.L`) are dropped. That also drops US class shares such as BRK.B, which is why they are in the table.
-2. **Keep only common stock and funds.** That means the `Common Stock` and `ETP` types.
+2. **Keep only shares and funds.** That means the `Common Stock`, `ETP`, `ADR`, and `NY Reg Shrs` types. Foreign companies such as Toyota and TSMC trade in the US as ADRs, and ASML as New York registry shares.
 3. **Prefer a name that starts with the words said.** "Ford" picks "Ford Motor Co" over "The Hartford" and "Rexford Industrial". Otherwise the first remaining result wins.
 4. **No result.** The tool says so (§3.8, item 8).
+5. **Names in capitals are said in ordinary case.** Finnhub lists many companies as "NVIDIA CORP", which a voice may spell out letter by letter, so such a name is said as "Nvidia Corp".
 
 **The company name and ticker always come first** in the result, and the tool description tells the model to say them, so a wrong match is heard.
 
@@ -126,14 +134,16 @@ So the result gives each fund's own price, labelled as a fund. Its header says "
 
 | Value | Written as | Example |
 |---|---|---|
-| A price of $10 or more | Whole dollars | $343 |
-| A price under $10 | Cents | $4.37 |
+| A price of $100 or more | Whole dollars | $343 |
+| A price under $100 | Cents | $11.17 |
 | A change in dollars | Cents | down $6.65 |
 | A percentage | One decimal, the word "percent" | down 1.9 percent |
 | P/E | One decimal | 37.7 |
 | A date | Month and day, plus the year if it is not this year (`utils/text_utils.spoken_month_day`) | January 20 |
 
-A metric Finnhub does not return is left out, never written as "n/a".
+Cents start below $100, not $10: Ford in whole dollars read "$11" beside a 52-week low of "$11".
+
+A metric Finnhub does not return is left out, never written as "n/a". So is a 52-week range that misses the price by more than half or double, which is another listing's (§3.1).
 
 Example result, from the live check on 2026-11-22:
 
@@ -212,7 +222,7 @@ The answers to doc 12 §3.12:
 
 | | Tokens |
 |---|---|
-| The tool's definition, added to the fixed prompt | about 300, estimated from subway's 310 for a similar length. PR 2 measures it. |
+| The tool's definition, added to the fixed prompt | about 280. Its name, description, and schema come to 1,039 characters against `subway_arrivals`' 1,151 by the same count, and subway's definition is about 310 tokens. |
 | One result | about 100 for a stock, about 80 for the market view |
 
 ## 4. Packages and what they do for the business logic
@@ -234,6 +244,7 @@ No new dependency.
 | `timeout_seconds` | 8 | How long one call may take |
 | `quote_cache_seconds` | 60 | How long a quote is reused while the market is open. When it is closed, a quote is held until the next 9:30 AM weekday. |
 | `metric_cache_seconds` | 21600 | How long metrics are reused (6 hours); they change once a day |
+| `search_cache_seconds` | 86400 | How long a symbol search is reused (a day) |
 | `fresh_trade_minutes` | 30 | A last trade younger than this, during trading hours, is said as a time rather than a close |
 | `user_agent` | `descriptive_user_agent("stocks")` | Names the project to Finnhub |
 | `fixtures_dir`, `now` | unset | Recorded replies and a pinned clock, for the benchmark and tests only |

@@ -1,0 +1,16 @@
+{
+ "metric": {
+  "13WeekPriceReturnDaily": -9.9135,
+  "26WeekPriceReturnDaily": -5.9859,
+  "52WeekHigh": 781.62,
+  "52WeekHighDate": "2026-10-06",
+  "52WeekLow": 629.28,
+  "52WeekLowDate": "2026-03-30",
+  "52WeekPriceReturnDaily": 5.7131,
+  "5DayPriceReturnDaily": -6.7761,
+  "monthToDatePriceReturnDaily": -8.7215,
+  "yearToDatePriceReturnDaily": 1.157
+ },
+ "metricType": "all",
+ "symbol": "SPY"
+}

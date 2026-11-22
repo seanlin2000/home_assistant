@@ -14,10 +14,10 @@ import time
 from assistant_core.llm_client import LLMClient
 from assistant_core.models import TOOL_NAMES_BY_ROUTE, AgentPolicy, Message, Role, Route, RouteDecision, ToolSpec
 
-TOOL_ROUTES = [Route.SEARCH, Route.CALCULATE, Route.WEATHER, Route.SPORTS, Route.SHOWS, Route.MOVIES, Route.RESTAURANTS, Route.REDDIT, Route.NEWSLETTERS, Route.SUBWAY, Route.UPDATES]
+TOOL_ROUTES = [Route.SEARCH, Route.CALCULATE, Route.WEATHER, Route.SPORTS, Route.SHOWS, Route.MOVIES, Route.RESTAURANTS, Route.REDDIT, Route.NEWSLETTERS, Route.SUBWAY, Route.STOCKS, Route.UPDATES]
 # Families the tool server offers only sometimes: the forecast needs home's coordinates, and an older tool server has no sports, show, movie, restaurant,
 # Reddit, newsletter, subway, or updates tools.
-OPTIONAL_ROUTES = (Route.WEATHER, Route.SPORTS, Route.SHOWS, Route.MOVIES, Route.RESTAURANTS, Route.REDDIT, Route.NEWSLETTERS, Route.SUBWAY, Route.UPDATES)
+OPTIONAL_ROUTES = (Route.WEATHER, Route.SPORTS, Route.SHOWS, Route.MOVIES, Route.RESTAURANTS, Route.REDDIT, Route.NEWSLETTERS, Route.SUBWAY, Route.STOCKS, Route.UPDATES)
 MAX_EXTRA_ROUTES = 2
 ROUTE_SCHEMA = {
     "type": "object",
@@ -29,8 +29,8 @@ ROUTE_SCHEMA = {
     "required": ["route"],
 }
 
-ROUTER_SYSTEM_PROMPT = """You sort spoken questions for a home voice assistant. Reply with JSON only: {"route": "search" | "calculate" | "weather" | "sports" | "shows" | "movies" | "restaurants" | "reddit" | "newsletters" | "subway" | "updates" | "answer", "also": [...], "plan": "..."}.
-search: the correct answer depends on facts that change over time or that the assistant cannot know without checking: current prices, rates, news, schedules, product availability, recent releases, market conditions, what to buy today, whether an offer is competitive right now, or a claim about a recent event. Also anything the user explicitly asks to be searched or looked up.
+ROUTER_SYSTEM_PROMPT = """You sort spoken questions for a home voice assistant. Reply with JSON only: {"route": "search" | "calculate" | "weather" | "sports" | "shows" | "movies" | "restaurants" | "reddit" | "newsletters" | "subway" | "stocks" | "updates" | "answer", "also": [...], "plan": "..."}.
+search: the correct answer depends on facts that change over time or that the assistant cannot know without checking: current prices, rates, news, schedules, product availability, recent releases, why a stock or the market moved, what to buy today, whether an offer is competitive right now, or a claim about a recent event. Also anything the user explicitly asks to be searched or looked up.
 calculate: the correct answer requires arithmetic on numbers in the question: percentages, totals over time, compounding, unit or temperature conversions, energy costs, loan payments, tips, splits, or date differences.
 weather: the coming or current weather or forecast, at home or in any named place: whether it will rain, how warm or cold it will get, whether to take an umbrella or a coat, the weekend forecast.
 sports: NBA or NFL game scores (live, recent, or long past), how a player did in one game, a team's roster, a player's season or career statistics, league leaders or rankings of players or teams, or how a player or team did against another. Other leagues and sports are search.
@@ -40,9 +40,10 @@ restaurants: where to eat in a city or neighbourhood, or near a place: restauran
 reddit: only when the user names Reddit or a subreddit and asks what is said there. A request for recommendations or opinions that does not name Reddit is search or answer.
 newsletters: what the user's own email newsletters say: what arrived today, what one newsletter or one of its sections says, or whether they mention a topic.
 subway: when the next New York City subway trains come at a station, which lines are running at a station now, or whether a line has delays there.
+stocks: a company's or fund's share price, its change today or over a period, its P/E ratio or 52-week range, or how the stock market is doing overall. Why a stock moved is search.
 updates: the user asks for their updates in general, naming no one topic, even when they say which parts to leave out.
 answer: everything else: explanations of how things work, reasoning, advice from what the user said, comparisons of ideas, opinions, clarifying questions, and settled history even when it sounds topical.
-Examples: "What hardware gives the most memory for a thousand dollars today?" -> search. "Is a four percent rent increase competitive in my neighborhood?" -> search. "Since the central bank cut rates last month, should I refinance?" -> search. "What year did the Berlin Wall fall?" -> answer. "Why can a sparse model run on a smaller GPU?" -> answer. "What is fifteen percent of eighty dollars?" -> calculate. "Do I need an umbrella tomorrow?" -> weather. "What's the weather in Lisbon this weekend?" -> weather. "Who won the 49ers game last night?" -> sports. "How many threes did Steph Curry make each season?" -> sports. "What's Tom Brady's record against Peyton Manning?" -> sports. "What musicals are on Broadway right now?" -> shows. "What is Hadestown about?" -> shows. "What movies are playing this weekend?" -> movies. "Is Clayface showing anywhere near me?" -> movies. "Any good Thai places in Brooklyn?" -> restaurants. "Where should we go for a special occasion in San Francisco?" -> restaurants. "What's Le Bernardin like?" -> restaurants. "What does Reddit say about Via Carota?" -> reddit. "What's in my newsletters today?" -> newsletters. "Summarize Money Stuff." -> newsletters. "When's the next 7 at Queensboro Plaza?" -> subway. "What's running at Court Square?" -> subway. "Any updates for me?" -> updates. "Give me my updates, but skip Broadway." -> updates. "Best soup dumplings in Flushing?" -> search. "Who won the World Cup in 2022?" -> search.
+Examples: "What hardware gives the most memory for a thousand dollars today?" -> search. "Is a four percent rent increase competitive in my neighborhood?" -> search. "Since the central bank cut rates last month, should I refinance?" -> search. "What year did the Berlin Wall fall?" -> answer. "Why can a sparse model run on a smaller GPU?" -> answer. "What is fifteen percent of eighty dollars?" -> calculate. "Do I need an umbrella tomorrow?" -> weather. "What's the weather in Lisbon this weekend?" -> weather. "Who won the 49ers game last night?" -> sports. "How many threes did Steph Curry make each season?" -> sports. "What's Tom Brady's record against Peyton Manning?" -> sports. "What musicals are on Broadway right now?" -> shows. "What is Hadestown about?" -> shows. "What movies are playing this weekend?" -> movies. "Is Clayface showing anywhere near me?" -> movies. "Any good Thai places in Brooklyn?" -> restaurants. "Where should we go for a special occasion in San Francisco?" -> restaurants. "What's Le Bernardin like?" -> restaurants. "What does Reddit say about Via Carota?" -> reddit. "What's in my newsletters today?" -> newsletters. "Summarize Money Stuff." -> newsletters. "When's the next 7 at Queensboro Plaza?" -> subway. "What's running at Court Square?" -> subway. "What's Apple trading at?" -> stocks. "How's the market doing today?" -> stocks. "Any updates for me?" -> updates. "Give me my updates, but skip Broadway." -> updates. "Best soup dumplings in Flushing?" -> search. "Who won the World Cup in 2022?" -> search.
 also: only when the question needs a second or third kind of tool after the first, in the order to use them; otherwise leave it out. plan: when also is given, one short sentence on how to use the tools together; otherwise leave it out.
 Examples: "Look up today's gold price and tell me what three ounces cost." -> {"route": "search", "also": ["calculate"], "plan": "Find today's gold price per ounce, then multiply it by three."} "Will it rain in Seattle tomorrow, and what time is the last ferry to Bainbridge?" -> {"route": "weather", "also": ["search"], "plan": "Get Seattle's forecast for tomorrow, then search the ferry schedule."} "Will Oslo be colder than here on Saturday?" -> {"route": "weather", "also": ["calculate"], "plan": "Get Saturday's forecast for Oslo and for home, then subtract the temperatures."} "What's tomorrow's high in Chicago in Celsius?" -> {"route": "weather", "also": ["calculate"], "plan": "Get Chicago's forecast for tomorrow, then convert the high to Celsius."}
 A comparison between places or a figure in other units needs the calculator as well as the forecast."""
@@ -95,6 +96,10 @@ SUBWAY_DIRECTIVE = """Routing for this question: SUBWAY.
 This question asks about New York City subway trains. Call subway_arrivals with the station the user named, the line only when they named one, and the direction only when they said where they are going. If they named no station, ask which station instead of calling. Do not search the web, and do not answer from memory. Answer from the times the tool returns, and say the station name it gives.
 Example call: subway_arrivals(station="Queensboro Plaza", line="7", direction="Manhattan")
 """
+STOCKS_DIRECTIVE = """Routing for this question: STOCKS.
+This question asks about a stock's price or performance, or how the market is doing. Call stock_quote with the company, fund, or ticker the user named, or with "the market" for the market as a whole. If they named no company, ask which one instead of calling. Do not search the web, and do not answer from memory. Answer from the numbers the tool returns, say the company name and as-of time it gives, and call SPY, QQQ, and DIA prices fund prices, never index levels.
+Example call: stock_quote(company="Apple")
+"""
 UPDATES_DIRECTIVE = """Routing for this question: UPDATES.
 The user asked for their updates. Call updates once, with skip set to the sections the user said to leave out, and include only for a section that is off unless asked for, when the user asks for it. Do not search the web, and do not answer from memory. Give each section briefly, in the order the tool returns them.
 Example call: updates(skip=["broadway_previews"])
@@ -110,6 +115,7 @@ DIRECTIVES = {
     Route.REDDIT: REDDIT_DIRECTIVE,
     Route.NEWSLETTERS: NEWSLETTERS_DIRECTIVE,
     Route.SUBWAY: SUBWAY_DIRECTIVE,
+    Route.STOCKS: STOCKS_DIRECTIVE,
     Route.UPDATES: UPDATES_DIRECTIVE,
 }
 # A question that needs several tools gets one directive: the routes in order, the plan, then each route's instruction and example call without its heading.

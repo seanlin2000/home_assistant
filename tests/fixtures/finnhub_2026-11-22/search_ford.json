@@ -1,0 +1,53 @@
+{
+ "count": 8,
+ "result": [
+  {
+   "description": "FORD MOTOR CO",
+   "displaySymbol": "FORD.VI",
+   "symbol": "FORD.VI",
+   "type": "Common Stock"
+  },
+  {
+   "description": "Ford Motor Co",
+   "displaySymbol": "F",
+   "symbol": "F",
+   "type": "Common Stock"
+  },
+  {
+   "description": "The Hartford Insurance Group, Inc.",
+   "displaySymbol": "HIG",
+   "symbol": "HIG",
+   "type": "Common Stock"
+  },
+  {
+   "description": "Rexford Industrial Realty, Inc.",
+   "displaySymbol": "REXR",
+   "symbol": "REXR",
+   "type": "Common Stock"
+  },
+  {
+   "description": "Weatherford International PLC",
+   "displaySymbol": "WFRD",
+   "symbol": "WFRD",
+   "type": "Common Stock"
+  },
+  {
+   "description": "Ford Otomotiv Sanayi AS",
+   "displaySymbol": "FROTO.E.IS",
+   "symbol": "FROTO.E.IS",
+   "type": "Common Stock"
+  },
+  {
+   "description": "Oxford Nanopore Technologies PLC",
+   "displaySymbol": "ONT.L",
+   "symbol": "ONT.L",
+   "type": "Common Stock"
+  },
+  {
+   "description": "Oxford Instruments PLC",
+   "displaySymbol": "OXIG.L",
+   "symbol": "OXIG.L",
+   "type": "Common Stock"
+  }
+ ]
+}

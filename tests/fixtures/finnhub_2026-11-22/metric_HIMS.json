@@ -1,0 +1,17 @@
+{
+ "metric": {
+  "13WeekPriceReturnDaily": -56.7792,
+  "26WeekPriceReturnDaily": -34.9376,
+  "52WeekHigh": 40.99,
+  "52WeekHighDate": "2025-12-05",
+  "52WeekLow": 13.74,
+  "52WeekLowDate": "2026-02-24",
+  "52WeekPriceReturnDaily": -56.5735,
+  "5DayPriceReturnDaily": -21.3362,
+  "monthToDatePriceReturnDaily": -47.2543,
+  "peTTM": null,
+  "yearToDatePriceReturnDaily": -55.0354
+ },
+ "metricType": "all",
+ "symbol": "HIMS"
+}

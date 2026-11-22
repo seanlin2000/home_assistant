@@ -8,6 +8,7 @@ from zoneinfo import ZoneInfo
 
 from subway_mcp.arrivals import ArrivalGroup, StationBoard
 from subway_mcp.stations import Station, StationTable
+from utils.text_utils import spoken_time
 
 NEW_YORK = ZoneInfo("America/New_York")
 UNSPOKEN_LABELS = frozenset({"", "Outbound", "Last Stop"})
@@ -27,7 +28,7 @@ class StationAnswer:
 
 def answer_text(answer: StationAnswer, table: StationTable) -> str:
     board = answer.board
-    lines = [f"{answer.station.name}, as of {spoken_time(answer.now)}"]
+    lines = [f"{answer.station.name}, as of {spoken_time(answer.now, NEW_YORK)}"]
     lines.extend(staleness_lines(answer.stale_seconds))
     if board.direction_unmatched:
         lines.append(f"No trains toward {answer.direction} in the next {answer.window_minutes} minutes; trains here go toward {spoken_list(destinations(board, table))}.")
@@ -37,10 +38,6 @@ def answer_text(answer: StationAnswer, table: StationTable) -> str:
     lines.extend(f"No {line} trains are coming. The {line} stops here in weekday daytime service." for line in board.missing_lines)
     lines.extend(f"Alert: {alert}" for alert in answer.alerts)
     return "\n".join(lines)
-
-
-def spoken_time(moment: datetime) -> str:
-    return f"{moment.astimezone(NEW_YORK):%-I:%M %p}"
 
 
 def staleness_lines(stale_seconds: float) -> list[str]:

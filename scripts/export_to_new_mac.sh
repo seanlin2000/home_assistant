@@ -9,7 +9,7 @@
 #   bash /Volumes/<drive>/studio-assistant-move/bootstrap_mac.sh
 #
 # This Mac's services and Home Assistant VM are stopped first, because a copy of a running VM's disk is corrupt, and left stopped: both copies of
-# the VM share one network address, so it must never run on two Macs. The folder holds .env's passwords, the API keys and the Brave Search key;
+# the VM share one network address, so it must never run on two Macs. The folder holds .env's passwords, the API keys and the Keychain's Brave and Finnhub keys;
 # delete it once the new Mac answers.
 set -euo pipefail
 
@@ -21,9 +21,9 @@ APP_SUPPORT_DIR="$HOME/Library/Application Support/studio-assistant"
 LOG_DIR="$HOME/Library/Logs/studio-assistant"
 # The dashboard's history (ops/paths.py). Service logs, health state and deploy records describe this Mac and stay behind.
 HISTORY_FOLDERS=(exchanges traces pipeline_runs)
-# The Brave Search key's Keychain item, as web_search_mcp/brave_client.py reads it.
+# The API keys' Keychain items, as web_search_mcp/brave_client.py and stocks_mcp/finnhub_client.py read them. Each travels as <account>.key.
 KEYCHAIN_SERVICE="studio-assistant"
-KEYCHAIN_ACCOUNT="brave-search-api"
+KEYCHAIN_ACCOUNTS=(brave-search-api finnhub-api)
 
 DESTINATION=""
 DRY_RUN=false
@@ -95,18 +95,19 @@ stop_vm() {
     done
 }
 
-export_brave_key() {
-    local key
-    key="$(security find-generic-password -s "$KEYCHAIN_SERVICE" -a "$KEYCHAIN_ACCOUNT" -w 2>/dev/null || true)"
+export_keychain_key() {
+    # $1 the Keychain account. Without a Brave key the new Mac searches with SearXNG; without a Finnhub key it offers no stock quotes.
+    local account="$1" key
+    key="$(security find-generic-password -s "$KEYCHAIN_SERVICE" -a "$account" -w 2>/dev/null || true)"
     if [[ -z "$key" ]]; then
-        echo "    no Brave Search key in this Mac's Keychain; the new Mac searches with SearXNG until one is added"
+        echo "    no $account key in this Mac's Keychain; the new Mac runs without it until one is added"
         return
     fi
     if $DRY_RUN; then
-        echo "    (dry run) write the Brave Search key to $MOVE_DIR/brave-search-api.key"
+        echo "    (dry run) write the $account key to $MOVE_DIR/$account.key"
         return
     fi
-    (umask 077 && printf '%s\n' "$key" >"$MOVE_DIR/brave-search-api.key")
+    (umask 077 && printf '%s\n' "$key" >"$MOVE_DIR/$account.key")
 }
 
 write_manifest() {
@@ -123,6 +124,7 @@ repo=$(git -C "$PROJECT_DIR" remote get-url origin)
 commit=$(git -C "$PROJECT_DIR" rev-parse HEAD)
 vm=$([[ -d "$MOVE_DIR/vm/$VM_NAME.utm" ]] && echo yes || echo no)
 brave_key=$([[ -s "$MOVE_DIR/brave-search-api.key" ]] && echo yes || echo no)
+finnhub_key=$([[ -s "$MOVE_DIR/finnhub-api.key" ]] && echo yes || echo no)
 EOF
 }
 
@@ -151,8 +153,8 @@ for folder in "${HISTORY_FOLDERS[@]}"; do
     if [[ -d "$LOG_DIR/$folder" ]]; then run ditto "$LOG_DIR/$folder" "$MOVE_DIR/logs/$folder"; fi
 done
 
-step "the Brave Search key from the Keychain"
-export_brave_key
+step "the Brave Search and Finnhub keys from the Keychain"
+for account in "${KEYCHAIN_ACCOUNTS[@]}"; do export_keychain_key "$account"; done
 
 step "the Home Assistant VM"
 if [[ -d "$VM_BUNDLE" ]]; then

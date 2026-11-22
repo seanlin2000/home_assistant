@@ -19,6 +19,7 @@ from assistant_core.models import (
     SEARCH_TOOL_NAMES,
     SHOWS_TOOL_NAMES,
     SPORTS_TOOL_NAMES,
+    STOCKS_TOOL_NAMES,
     SUBWAY_TOOL_NAMES,
     UPDATES_TOOL_NAMES,
     WEATHER_TOOL_NAMES,
@@ -364,7 +365,7 @@ async def stream_model_reply(
 
 def filler_for(tool_name: str, policy: AgentPolicy) -> str:
     """The sentence spoken while the first tool of an exchange runs: a web line for search tools, a forecast line for the weather, a numbers line for
-    sports, a listings line for shows and for movies, a Michelin line for restaurants, a newsletters line, a train line for the subway, an updates line, a Reddit line, a math line for everything else.
+    sports, a listings line for shows and for movies, a Michelin line for restaurants, a newsletters line, a train line for the subway, a markets line for stocks, an updates line, a Reddit line, a math line for everything else.
     """
     if tool_name in SEARCH_TOOL_NAMES:
         phrases = policy.filler_phrases
@@ -382,6 +383,8 @@ def filler_for(tool_name: str, policy: AgentPolicy) -> str:
         phrases = policy.newsletters_filler_phrases
     elif tool_name in SUBWAY_TOOL_NAMES:
         phrases = policy.subway_filler_phrases
+    elif tool_name in STOCKS_TOOL_NAMES:
+        phrases = policy.stocks_filler_phrases
     elif tool_name in UPDATES_TOOL_NAMES:
         phrases = policy.updates_filler_phrases
     elif tool_name in REDDIT_TOOL_NAMES:
